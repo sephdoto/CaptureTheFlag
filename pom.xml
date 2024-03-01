@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  	
+  <!-- Maintainer rsyed	-->
   <modelVersion>4.0.0</modelVersion>
   	
   <parent>
@@ -39,7 +39,7 @@
   	
 	
 	
-  <dependencies>
+ <dependencies>
     		
     <dependency>
       			
@@ -81,8 +81,25 @@
       <version>20240205</version>
       		
     </dependency>
+    
+  	<!--https://openjfx.io/openjfx-docs/#maven-->
+
+   <dependency>
+    <groupId>org.openjfx</groupId>
+    <artifactId>javafx-controls</artifactId>
+    <version>21.0.2</version>
+  </dependency>
+
+
+	<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-media -->
+	<dependency>
+    	<groupId>org.openjfx</groupId>
+    	<artifactId>javafx-media</artifactId>
+    	<version>23-ea+3</version>
+	</dependency>
+	
+</dependencies>
     	
-  </dependencies>
   	
   <build>
     		
