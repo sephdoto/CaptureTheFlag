@@ -2,6 +2,9 @@ package de.unimannheim.swt.pse.ctf.game.map;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
+import org.json.JSONWriter;
+import java.io.StringWriter;
+
 
 /**
  * using external JSON library, have to mention it in README; https://github.com/stleary/JSON-java/tree/master
@@ -60,9 +63,9 @@ public class JSON_Tools {
 				movement.setDirections(directions);
 			}
 			pieces[i].setMovement(movement);
-			System.out.println(ja.getJSONObject(i).getJSONObject("movement").has("directions"));
 		}
 		mt.setPieces(pieces);
+		System.out.println(mt.toJSONString());
 		return mt;
 	}
 	
