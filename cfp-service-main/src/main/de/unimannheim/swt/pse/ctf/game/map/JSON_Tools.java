@@ -19,7 +19,6 @@ public class JSON_Tools {
 	
 	/**
 	 * Creates a MapTemplate instance from a valid JSON String
-	 * 
 	 * @param jsonString
 	 * @return MapTemplate
 	 */
