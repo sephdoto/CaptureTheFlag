@@ -73,119 +73,121 @@ public class Layer {
 	
 	//Testing
 	public static void main(String[] args) throws Exception{
-		String testJson = " {\r\n"
-				+ "  \"gridSize\": [10, 10],\r\n"
-				+ "  \"teams\": 2,\r\n"
-				+ "  \"flags\": 1,\r\n"
-				+ "  \"blocks\": 0,\r\n"
-				+ "  \"pieces\": [\r\n"
-				+ "    {\r\n"
-				+ "      \"type\": \"Pawn\",\r\n"
-				+ "      \"attackPower\": 1,\r\n"
-				+ "      \"count\": 10,\r\n"
-				+ "      \"movement\": {\r\n"
-				+ "        \"directions\": {\r\n"
-				+ "          \"left\": 0,\r\n"
-				+ "          \"right\": 0,\r\n"
-				+ "          \"up\": 1,\r\n"
-				+ "          \"down\": 0,\r\n"
-				+ "          \"upLeft\": 1,\r\n"
-				+ "          \"upRight\": 1,\r\n"
-				+ "          \"downLeft\": 0,\r\n"
-				+ "          \"downRight\": 0\r\n"
-				+ "        }\r\n"
-				+ "      }\r\n"
-				+ "    },\r\n"
-				+ "    {\r\n"
-				+ "      \"type\": \"Rook\",\r\n"
-				+ "      \"attackPower\": 5,\r\n"
-				+ "      \"count\": 2,\r\n"
-				+ "      \"movement\": {\r\n"
-				+ "        \"directions\": {\r\n"
-				+ "          \"left\": 2,\r\n"
-				+ "          \"right\": 2,\r\n"
-				+ "          \"up\": 2,\r\n"
-				+ "          \"down\": 2,\r\n"
-				+ "          \"upLeft\": 0,\r\n"
-				+ "          \"upRight\": 0,\r\n"
-				+ "          \"downLeft\": 0,\r\n"
-				+ "          \"downRight\": 0\r\n"
-				+ "        }\r\n"
-				+ "      }\r\n"
-				+ "    },\r\n"
-				+ "    {\r\n"
-				+ "      \"type\": \"Knight\",\r\n"
-				+ "      \"attackPower\": 3,\r\n"
-				+ "      \"count\": 2,\r\n"
-				+ "      \"movement\": {\r\n"
-				+ "        \"shape\": {\r\n"
-				+ "          \"type\": \"lshape\"\r\n"
-				+ "        }\r\n"
-				+ "      }\r\n"
-				+ "    },\r\n"
-				+ "    {\r\n"
-				+ "      \"type\": \"Bishop\",\r\n"
-				+ "      \"attackPower\": 3,\r\n"
-				+ "      \"count\": 2,\r\n"
-				+ "      \"movement\": {\r\n"
-				+ "        \"directions\": {\r\n"
-				+ "          \"left\": 0,\r\n"
-				+ "          \"right\": 0,\r\n"
-				+ "          \"up\": 0,\r\n"
-				+ "          \"down\": 0,\r\n"
-				+ "          \"upLeft\": 2,\r\n"
-				+ "          \"upRight\": 2,\r\n"
-				+ "          \"downLeft\": 2,\r\n"
-				+ "          \"downRight\": 2\r\n"
-				+ "        }\r\n"
-				+ "      }\r\n"
-				+ "    },\r\n"
-				+ "    {\r\n"
-				+ "      \"type\": \"Queen\",\r\n"
-				+ "      \"attackPower\": 5,\r\n"
-				+ "      \"count\": 1,\r\n"
-				+ "      \"movement\": {\r\n"
-				+ "        \"directions\": {\r\n"
-				+ "          \"left\": 2,\r\n"
-				+ "          \"right\": 2,\r\n"
-				+ "          \"up\": 2,\r\n"
-				+ "          \"down\": 2,\r\n"
-				+ "          \"upLeft\": 2,\r\n"
-				+ "          \"upRight\": 2,\r\n"
-				+ "          \"downLeft\": 2,\r\n"
-				+ "          \"downRight\": 2\r\n"
-				+ "        }\r\n"
-				+ "      }\r\n"
-				+ "    },\r\n"
-				+ "    {\r\n"
-				+ "      \"type\": \"King\",\r\n"
-				+ "      \"attackPower\": 1,\r\n"
-				+ "      \"count\": 1,\r\n"
-				+ "      \"movement\": {\r\n"
-				+ "        \"directions\": {\r\n"
-				+ "          \"left\": 1,\r\n"
-				+ "          \"right\": 1,\r\n"
-				+ "          \"up\": 1,\r\n"
-				+ "          \"down\": 1,\r\n"
-				+ "          \"upLeft\": 1,\r\n"
-				+ "          \"upRight\": 1,\r\n"
-				+ "          \"downLeft\": 1,\r\n"
-				+ "          \"downRight\": 1\r\n"
-				+ "        }\r\n"
-				+ "      }\r\n"
-				+ "    }\r\n"
-				+ "  ],\r\n"
-				+ "  \"placement\": \"symmetrical\",\r\n"
-				+ "  \"totalTimeLimitInSeconds\": -1,\r\n"
-				+ "  \"moveTimeLimitInSeconds\": -1\r\n"
-				+ "}\r\n";
-		Layer ne = new Layer("http://localhost:8080/api/gamesesion");
+		String testJson = """
+				{
+  "gridSize": [10, 10],
+  "teams": 2,
+  "flags": 1,
+  "blocks": 0,
+  "pieces": [
+    {
+      "type": "Pawn",
+      "attackPower": 1,
+      "count": 10,
+      "movement": {
+        "directions": {
+          "left": 0,
+          "right": 0,
+          "up": 1,
+          "down": 0,
+          "upLeft": 1,
+          "upRight": 1,
+          "downLeft": 0,
+          "downRight": 0
+        }
+      }
+    },
+    {
+      "type": "Rook",
+      "attackPower": 5,
+      "count": 2,
+      "movement": {
+        "directions": {
+          "left": 2,
+          "right": 2,
+          "up": 2,
+          "down": 2,
+          "upLeft": 0,
+          "upRight": 0,
+          "downLeft": 0,
+          "downRight": 0
+        }
+      }
+    },
+    {
+      "type": "Knight",
+      "attackPower": 3,
+      "count": 2,
+      "movement": {
+        "shape": {
+          "type": "lshape"
+        }
+      }
+    },
+    {
+      "type": "Bishop",
+      "attackPower": 3,
+      "count": 2,
+      "movement": {
+        "directions": {
+          "left": 0,
+          "right": 0,
+          "up": 0,
+          "down": 0,
+          "upLeft": 2,
+          "upRight": 2,
+          "downLeft": 2,
+          "downRight": 2
+        }
+      }
+    },
+    {
+      "type": "Queen",
+      "attackPower": 5,
+      "count": 1,
+      "movement": {
+        "directions": {
+          "left": 2,
+          "right": 2,
+          "up": 2,
+          "down": 2,
+          "upLeft": 2,
+          "upRight": 2,
+          "downLeft": 2,
+          "downRight": 2
+        }
+      }
+    },
+    {
+      "type": "King",
+      "attackPower": 1,
+      "count": 1,
+      "movement": {
+        "directions": {
+          "left": 1,
+          "right": 1,
+          "up": 1,
+          "down": 1,
+          "upLeft": 1,
+          "upRight": 1,
+          "downLeft": 1,
+          "downRight": 1
+        }
+      }
+    }
+  ],
+  "placement": "symmetrical",
+  "totalTimeLimitInSeconds": -1,
+  "moveTimeLimitInSeconds": -1
+}
+
+				""";
+		Layer ne = new Layer("http://localhost:8080/api/gamesession");
 		Gson gson1 = new Gson();
 		MapTemplate template = gson1.fromJson(testJson, MapTemplate.class);
 		System.out.println(template.getTeams());
 		System.out.println(ne.createGameSession(template));
 //		ne.createGameSession(template);
-		
 		
 	}
 	
