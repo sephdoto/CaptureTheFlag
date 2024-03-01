@@ -2,8 +2,11 @@ package de.unimannheim.swt.pse.ctf.game.map;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
-import org.json.JSONWriter;
-import java.io.StringWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.File;
 
 
 /**
@@ -11,12 +14,38 @@ import java.io.StringWriter;
  *@author sistumpf
  */
 public class JSON_Tools {
+	static String mapTemplateFolder = "."+File.separator+"cfp-service-main"+File.separator+"src"+File.separator+"main"+File.separator+"resources"+File.separator+"maptemplates"+File.separator;
 	
-	//Test method, remove later
-	public static void main(String args[]) {
-		MapFromJson(jsonString);
+	/**
+	 * Saves a MapTemplate as a file in mapTemplateFolder.
+	 * The file Name must be given as mapName.
+	 * @param mapName
+	 * @param mapTemplate
+	 */
+	public static void saveMapTemplateAsFile(String mapName, MapTemplate mapTemplate) {
+		byte[] contentBytes = mapTemplate.toJSONString().getBytes();
+		try {
+			File file = new File(mapTemplateFolder+mapName+".json");
+			Files.write(file.toPath(), contentBytes);
+			System.out.println(file.toPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
+	/**
+	 * Returns a MapTemplate from a given mapName. The mapName must exist in resources.maptemplates
+	 * @param mapName
+	 * @return mapTemplate
+	 * @throws MapNotFoundException
+	 */
+	public static MapTemplate readMapTemplate(String mapName) throws MapNotFoundException {
+		if(!Files.exists(Paths.get(mapTemplateFolder+mapName+".json")))
+			throw new MapNotFoundException(mapName);
+		
+		return MapFromJson(fileToString(mapTemplateFolder+mapName+".json"));
+	}
+		
 	/**
 	 * Creates a MapTemplate instance from a valid JSON String
 	 * @param jsonString
@@ -64,119 +93,30 @@ public class JSON_Tools {
 			pieces[i].setMovement(movement);
 		}
 		mt.setPieces(pieces);
-		System.out.println(mt.toJSONString());
 		return mt;
 	}
 	
+	/**
+	 * Returns a files content as String.
+	 * Source must be a Path.
+	 * @param source
+	 */
+	private static String fileToString(String source) {
+		String content = null; 
+		try {
+			content = Files.readString(Paths.get(source), StandardCharsets.UTF_8);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return content;
+	}
 	
-	// Test String, remove later
-	static String jsonString = """ 
-			{
-  "gridSize": [10, 10],
-  "teams": 2,
-  "flags": 1,
-  "blocks": 0,
-  "pieces": [
-    {
-      "type": "Pawn",
-      "attackPower": 1,
-      "count": 10,
-      "movement": {
-        "directions": {
-          "left": 0,
-          "right": 0,
-          "up": 1,
-          "down": 0,
-          "upLeft": 1,
-          "upRight": 1,
-          "downLeft": 0,
-          "downRight": 0
-        }
-      }
-    },
-    {
-      "type": "Rook",
-      "attackPower": 5,
-      "count": 2,
-      "movement": {
-        "directions": {
-          "left": 2,
-          "right": 2,
-          "up": 2,
-          "down": 2,
-          "upLeft": 0,
-          "upRight": 0,
-          "downLeft": 0,
-          "downRight": 0
-        }
-      }
-    },
-    {
-      "type": "Knight",
-      "attackPower": 3,
-      "count": 2,
-      "movement": {
-        "shape": {
-          "type": "lshape"
-        }
-      }
-    },
-    {
-      "type": "Bishop",
-      "attackPower": 3,
-      "count": 2,
-      "movement": {
-        "directions": {
-          "left": 0,
-          "right": 0,
-          "up": 0,
-          "down": 0,
-          "upLeft": 2,
-          "upRight": 2,
-          "downLeft": 2,
-          "downRight": 2
-        }
-      }
-    },
-    {
-      "type": "Queen",
-      "attackPower": 5,
-      "count": 1,
-      "movement": {
-        "directions": {
-          "left": 2,
-          "right": 2,
-          "up": 2,
-          "down": 2,
-          "upLeft": 2,
-          "upRight": 2,
-          "downLeft": 2,
-          "downRight": 2
-        }
-      }
-    },
-    {
-      "type": "King",
-      "attackPower": 1,
-      "count": 1,
-      "movement": {
-        "directions": {
-          "left": 1,
-          "right": 1,
-          "up": 1,
-          "down": 1,
-          "upLeft": 1,
-          "upRight": 1,
-          "downLeft": 1,
-          "downRight": 1
-        }
-      }
-    }
-  ],
-  "placement": "symmetrical",
-  "totalTimeLimitInSeconds": -1,
-  "moveTimeLimitInSeconds": -1
-}
-
-			""";
+	/**
+	 * Gets thrown if you access a map that doesn't exist in mapTemplateFolder
+	 */
+	static class MapNotFoundException extends Exception {
+		MapNotFoundException(String mapName){
+			super("There is no MapTemplate named " + mapName + " in " + mapTemplateFolder);
+		}
+	}
 }
