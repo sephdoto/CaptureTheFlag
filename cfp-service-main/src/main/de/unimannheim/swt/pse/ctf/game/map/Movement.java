@@ -39,6 +39,7 @@ public class Movement implements JSONString {
      * @author sistumpf
      * @return String
      */
+    @Override
     public String toJSONString() {
     	return (shape != null ? shape.toJSONString() : directions.toJSONString());
     }

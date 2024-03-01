@@ -8,7 +8,7 @@ import org.json.JSONString;
 /**
  * This class represents a game specific configuration.
  */
-public class MapTemplate {
+public class MapTemplate implements JSONString {
 
     @Schema(
             description = "grid size. format [rows, columns]",
@@ -116,6 +116,7 @@ public class MapTemplate {
      * @author sistumpf
      * @return String
      */
+    @Override
     public String toJSONString() {
     	JSONObject jsonObject = new JSONObject();
     	jsonObject.put("gridSize", "["+gridSize[0]+","+gridSize[1]+"]");

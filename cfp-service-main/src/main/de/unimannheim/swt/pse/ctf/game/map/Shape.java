@@ -29,6 +29,7 @@ public class Shape implements JSONString{
      * @author sistumpf
      * @return String
      */
+    @Override
     public String toJSONString() {
     	return new JSONObject().put("shape", new JSONObject().put("type",type)).toString();
     }

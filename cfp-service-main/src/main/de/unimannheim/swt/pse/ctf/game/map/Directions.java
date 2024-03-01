@@ -111,7 +111,8 @@ public class Directions implements JSONString {
      * returns this classes JSON String representation
      * @author sistumpf
      * @return String
-     */
+     */    
+    @Override
     public String toJSONString() {
     	JSONObject jsonObject = new JSONObject();
         jsonObject.put("left", left);
