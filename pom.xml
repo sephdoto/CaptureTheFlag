@@ -82,21 +82,34 @@
       		
     </dependency>
     
-  	<!--https://openjfx.io/openjfx-docs/#maven-->
+<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-base -->
+<dependency>
+    <groupId>org.openjfx</groupId>
+    <artifactId>javafx-base</artifactId>
+    <version>23-ea+3</version>
+</dependency>
 
-   <dependency>
+
+<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-graphics -->
+<dependency>
+    <groupId>org.openjfx</groupId>
+    <artifactId>javafx-graphics</artifactId>
+    <version>23-ea+3</version>
+</dependency>
+
+<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-media -->
+<dependency>
+    <groupId>org.openjfx</groupId>
+    <artifactId>javafx-media</artifactId>
+    <version>23-ea+3</version>
+</dependency>
+
+<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-controls -->
+<dependency>
     <groupId>org.openjfx</groupId>
     <artifactId>javafx-controls</artifactId>
-    <version>21.0.2</version>
-  </dependency>
-
-
-	<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-media -->
-	<dependency>
-    	<groupId>org.openjfx</groupId>
-    	<artifactId>javafx-media</artifactId>
-    	<version>23-ea+3</version>
-	</dependency>
+    <version>23-ea+3</version>
+</dependency>
 	
 </dependencies>
     	
