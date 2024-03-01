@@ -1,5 +1,7 @@
 package de.unimannheim.swt.pse.ctf.game.map;
 
+import org.json.JSONObject;
+
 import de.unimannheim.swt.pse.ctf.game.state.Piece;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
@@ -58,5 +60,19 @@ public class PieceDescription {
 
     public void setMovement(Movement movement) {
         this.movement = movement;
+    }
+    
+    /**
+     * returns this classes JSON String representation
+     * @author sistumpf
+     * @return String
+     */
+    public String toJSONString() {
+    	JSONObject jsonObject = new JSONObject();
+    	jsonObject.put("type", type);
+    	jsonObject.put("attackPower", attackPower);
+    	jsonObject.put("count", count);
+    	jsonObject.put("movement", movement);
+    	return jsonObject.toString(2);
     }
 }

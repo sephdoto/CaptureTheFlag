@@ -1,6 +1,9 @@
 package de.unimannheim.swt.pse.ctf.game.map;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONString;
 
 /**
  * This class represents a game specific configuration.
@@ -106,5 +109,24 @@ public class MapTemplate {
 
     public void setMoveTimeLimitInSeconds(int moveTimeLimitInSeconds) {
         this.moveTimeLimitInSeconds = moveTimeLimitInSeconds;
+    }
+    
+    /**
+     * returns this classes JSON String representation
+     * @author sistumpf
+     * @return String
+     */
+    public String toJSONString() {
+    	JSONObject jsonObject = new JSONObject();
+    	jsonObject.put("gridSize", "["+gridSize[0]+","+gridSize[1]+"]");
+    	jsonObject.put("teams", teams);
+    	jsonObject.put("flags", flags);
+    	jsonObject.put("blocks", blocks);
+    	JSONArray jsonArray = new JSONArray(pieces);
+    	jsonObject.put("pieces", jsonArray);
+    	jsonObject.put("placement", placement);
+    	jsonObject.put("totalTimeLimitInSeconds", totalTimeLimitInSeconds);
+    	jsonObject.put("moveTimeLimitInSeconds", moveTimeLimitInSeconds);	
+    	return jsonObject.toString(2);
     }
 }
