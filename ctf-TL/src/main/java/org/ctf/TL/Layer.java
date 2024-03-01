@@ -51,6 +51,7 @@ public class Layer {
 		
 		HttpRequest postRequest = HttpRequest.newBuilder()
 					.uri(new URI(url))
+					.header("Content-Type", "application/json")
 					.POST(BodyPublishers.ofString(sessionString))
 					.build();
 		
@@ -185,7 +186,6 @@ public class Layer {
 		Layer ne = new Layer("http://localhost:8080/api/gamesession");
 		Gson gson1 = new Gson();
 		MapTemplate template = gson1.fromJson(testJson, MapTemplate.class);
-		System.out.println(template.getTeams());
 		System.out.println(ne.createGameSession(template));
 //		ne.createGameSession(template);
 		
