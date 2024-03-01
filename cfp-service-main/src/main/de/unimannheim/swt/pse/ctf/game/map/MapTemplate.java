@@ -119,7 +119,7 @@ public class MapTemplate implements JSONString {
     @Override
     public String toJSONString() {
     	JSONObject jsonObject = new JSONObject();
-    	jsonObject.put("gridSize", "["+gridSize[0]+","+gridSize[1]+"]");
+    	jsonObject.put("gridSize", gridSize);
     	jsonObject.put("teams", teams);
     	jsonObject.put("flags", flags);
     	jsonObject.put("blocks", blocks);
