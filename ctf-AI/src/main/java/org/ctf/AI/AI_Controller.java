@@ -1,5 +1,5 @@
 package org.ctf.AI;
-
+//TODO Fix Wildcard import...Google Code Bullshit doesnt allow wildcard impports
 import de.unimannheim.swt.pse.ctf.game.state.*;
 
 public class AI_Controller {
