@@ -50,7 +50,7 @@ public class ApiError extends Throwable{
     * Uses a BUILDER class to create and use Objects
     * @author rsyed
     */
-	public static class ApiErrorBuilder{
+	public static class ApiErrorBuilder extends Throwable{
 
         // required parameters
         private HttpStatus currentStatus;
@@ -71,8 +71,9 @@ public class ApiError extends Throwable{
             return this;
         } 
 
-        public ApiErrorBuilder debugMessage(String debugMessage){
-            this.debugMessage = debugMessage;
+        public ApiErrorBuilder debugMessage(Throwable ex){
+            this.message = "Unexpected error";
+            this.debugMessage = ex.getLocalizedMessage();
             return this;
         } 
 
