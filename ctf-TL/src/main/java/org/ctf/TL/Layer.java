@@ -1,5 +1,6 @@
 package org.ctf.TL;
 
+import de.unimannheim.swt.pse.ctf.controller.GameSession;
 import de.unimannheim.swt.pse.ctf.controller.data.GameSessionRequest;
 import de.unimannheim.swt.pse.ctf.controller.data.GameSessionResponse;
 import de.unimannheim.swt.pse.ctf.controller.data.GiveupRequest;
@@ -9,7 +10,7 @@ import de.unimannheim.swt.pse.ctf.controller.data.MoveRequest;
 import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Move;
-import de.unimannheim.swt.pse.ctf.game.state.Piece;
+
 
 import java.io.IOException;
 import java.net.URI;
@@ -23,7 +24,6 @@ import java.net.http.HttpResponse.BodyHandlers;
 import com.google.gson.Gson;
 
 
-
 /**
  * Layer file which is going to contain commands sent to the Rest API running on the game server
  *@author rsyed
@@ -31,25 +31,22 @@ import com.google.gson.Gson;
 public class Layer {
 	private String url;				//Stores the URL to connect to
 	private Gson gson;				//Gson object to convert classes to Json
-	private String gameSessionURL;
+	private String urlWithID;
 	
 	//Data Blocks for the Layer
-	private GameSessionResponse gsRes;
-	private String gameSessionID;	
+	private GameSessionResponse gameSessionResponse;
+	private String gameSessionID; //Stores the sessionId
+
 	
-	private JoinGameResponse jgRes;
+	private JoinGameResponse joinGameResponse;
 	private String teamSecret;
 	private String teamID;
 	private String teamColor;
-	
-	
-	
 	
 	/**
 	 * Creates a Layer Object which can then be used to communicate with the Server 
 	 * The URL and the port the layer binds to are given on object creation
 	 * @param url
-	 * @param po
 	 */
 	public Layer(String url) {
 		this.url = url;
@@ -60,41 +57,32 @@ public class Layer {
 	/**
 	 * Creates a Game Session if object is not connected to any game session
 	 * Receives a template object which it uses to create the body for the API request
-	 * Returns CODE
+	 * Returns GameSessionResponse and HTTP Codes
 	 * 200 Game session created
 	 * 500 Unknown error occurred
 	 * @param template
-	 * 
 	 */
-	public int createGameSession(MapTemplate template) throws URISyntaxException, InterruptedException, IOException {
-		int code = 500;
-		if( gameSessionID == null ) {												
-			GameSessionRequest gametemp = new GameSessionRequest();
-			gametemp.setTemplate(template);
+	public void createGameSession(MapTemplate template) throws ApiError {
+		//TODO decide the return type of the Method. The Response alone isnt a GameSession Object
+		GameSessionRequest gsr = new GameSessionRequest();
+		gsr.setTemplate(template);			
+
+		String jsonPayload = gson.toJson(gsr);				
+		//Performs the POST request 
+
+		HttpResponse<String> serverResponse = POSTRequest( url , jsonPayload );
 			
-			String sessionString = gson.toJson(gametemp);
-			
-			HttpRequest postRequest = HttpRequest.newBuilder()
-						.uri(new URI(url))
-						.header("Content-Type", "application/json")
-						.POST(BodyPublishers.ofString(sessionString))
-						.build();
-			
-			HttpClient httpClient = HttpClient.newHttpClient();
-			
-			HttpResponse<String> postResponse = httpClient.send(postRequest, BodyHandlers.ofString());
-			
-			gsRes = gson.fromJson(postResponse.body(), GameSessionResponse.class);
-			gameSessionID = gsRes.getId();
-			
-			//Getting Response code
-			code = postResponse.statusCode();
-			if ( code == 200 ) {
-				gameSessionURL = url + "/" + gameSessionID + "/";
-			}
-		}
+		//Parses Server Response to expected class
+		gameSessionResponse = gson.fromJson(serverResponse.body(), GameSessionResponse.class);
 		
-		return code;
+		int returnedCode = serverResponse.statusCode();
+
+		if (returnedCode == 200){
+			gameSessionID = gameSessionResponse.getId(); //Sets the Session ID for the Layer
+			urlWithID = url + "/" + gameSessionID; //Creates URL with Session ID for use later
+		} else if (returnedCode == 500) {
+			throw new ApiError.ApiErrorBuilder(500).build();
+		}
 	}
 	
 	/**
@@ -109,31 +97,30 @@ public class Layer {
 	 * 500 Unknown error occurred
 	 * @param mov
 	 */
-	public int makeMove(Move mov) throws URISyntaxException, InterruptedException, IOException {
-		int code = 500;
-		if( gameSessionID!=null && teamID!=null ) {
-			
+	public void makeMove(Move mov) throws ApiError{
 			MoveRequest moveReq = new MoveRequest();
 			moveReq.setTeamId(teamID);
 			moveReq.setTeamSecret(teamSecret);
 			moveReq.setPieceId(mov.getPieceId());
 			moveReq.setNewPosition(mov.getNewPosition());
-			
-			String sessionString = gson.toJson(moveReq);
-			
-			HttpRequest postRequest = HttpRequest.newBuilder()
-						.uri(new URI(gameSessionURL + "move"))
-						.header("Content-Type", "application/json")
-						.POST(BodyPublishers.ofString(sessionString))
-						.build();
-			
-			HttpClient httpClient = HttpClient.newHttpClient();
-			
-			HttpResponse<String> postResponse = httpClient.send(postRequest, BodyHandlers.ofString());
-			
-			code = postResponse.statusCode();
-		}
-		return code;
+
+			HttpResponse<String> postResponse = POSTRequest(urlWithID+"/move",gson.toJson(moveReq));
+
+			int returnedCode = postResponse.statusCode();
+
+			if (returnedCode == 200){
+
+			} else if (returnedCode == 403) {
+				throw new ApiError.ApiErrorBuilder(403).message("Move is forbidden for given team (anti-cheat").build();
+			} else if (returnedCode == 404){
+				throw new ApiError.ApiErrorBuilder(404).message("Game session not found").build();
+			}  else if (returnedCode == 409){
+				throw new ApiError.ApiErrorBuilder(409).message("Invalid move").build();
+			}  else if (returnedCode == 410){
+				throw new ApiError.ApiErrorBuilder(410).message("Game is over").build();
+			} else if (returnedCode == 500){
+				throw new ApiError.ApiErrorBuilder(500).message("Unknown error occurred").build();
+			}
 	}
 	
 	/**
@@ -147,45 +134,30 @@ public class Layer {
 	 * @param teamName
 	 * 
 	 */
-	public int joinGame(String teamName) throws URISyntaxException, InterruptedException, IOException {
-		int code = 500;
-		if( gameSessionID!=null ) {												
+	public void joinGame(String teamName) throws ApiError {
+			//TODO decide the return type of the Method.					
 			JoinGameRequest joinGameRequest = new JoinGameRequest();
 			joinGameRequest.setTeamId(teamName);
 			
-			String sessionString = gson.toJson(joinGameRequest);
-			
-			HttpRequest postRequest = HttpRequest.newBuilder()
-						.uri(new URI(gameSessionURL + "join"))
-						.header("Content-Type", "application/json")
-						.POST(BodyPublishers.ofString(sessionString))
-						.build();
-			
-			HttpClient httpClient = HttpClient.newHttpClient();
-			
-			HttpResponse<String> postResponse = httpClient.send(postRequest, BodyHandlers.ofString());
-			
-			jgRes = gson.fromJson(postResponse.body(), JoinGameResponse.class);
-			
-			code = postResponse.statusCode();
-			
-			if( code==200 ) {
-				teamSecret = jgRes.getTeamSecret();
-				teamID = jgRes.getTeamId();
-				
-				//TODO Team Color coming up empty in testing
-				teamColor = jgRes.getTeamColor();
-				
-//				DebugCODE to check Data
-//				System.out.println(teamSecret);
-//				System.out.println(teamID);
-//				System.out.println(teamColor);
-			}
-			return code;
-		}
-			
+			HttpResponse<String> postResponse = POSTRequest( urlWithID+"/join" , gson.toJson(joinGameRequest) );
 
-		return code;
+			joinGameResponse = gson.fromJson(postResponse.body(), JoinGameResponse.class);
+			
+			int returnedCode = postResponse.statusCode();
+
+			//TODO Team Color coming up empty in testing
+			if (returnedCode == 200){
+				teamSecret = joinGameResponse.getTeamSecret();
+				teamID = joinGameResponse.getTeamId();
+				teamColor = joinGameResponse.getTeamColor();
+				throw new ApiError.ApiErrorBuilder(200).message("Team joined").build();
+			} else if (returnedCode == 404){
+				throw new ApiError.ApiErrorBuilder(404).message("Game session not found").build();
+			}  else if (returnedCode == 429){
+				throw new ApiError.ApiErrorBuilder(429).message("No more team slots available").build();
+			} else if (returnedCode == 500){
+				throw new ApiError.ApiErrorBuilder(500).message("Unknown error occurred").build();
+			}
 	}
 	
 	/**
@@ -197,29 +169,29 @@ public class Layer {
 	 * 410 Game is over
 	 * 500 Unknown error occurred
 	 */
-	public int giveUp() throws URISyntaxException, InterruptedException, IOException {
-		int code = 500;
-		if( gameSessionID!=null && teamID!=null ) {												
+	public void giveUp() throws ApiError  {
+						
 			GiveupRequest giveUpRequest = new GiveupRequest();
 			giveUpRequest.setTeamId(teamID);
 			giveUpRequest.setTeamSecret(teamSecret);
 			
 			String sessionString = gson.toJson(giveUpRequest);
 			
-			HttpRequest postRequest = HttpRequest.newBuilder()
-						.uri(new URI(gameSessionURL + "giveup"))
-						.header("Content-Type", "application/json")
-						.POST(BodyPublishers.ofString(sessionString))
-						.build();
+			HttpResponse<String> postResponse = POSTRequest( urlWithID+"/giveup" , gson.toJson(giveUpRequest) );
 			
-			HttpClient httpClient = HttpClient.newHttpClient();
-			
-			HttpResponse<String> postResponse = httpClient.send(postRequest, BodyHandlers.ofString());
-			
-			code = postResponse.statusCode();
-			return code;
-		}
-			return code;  //DUMMY RETURN: Can be modified to a custom code so that we can use it for error handling later
+			int returnedCode = postResponse.statusCode();
+
+			if (returnedCode == 200){
+				throw new ApiError.ApiErrorBuilder(200).message("Request completed").build();
+			} else if (returnedCode == 403){
+				throw new ApiError.ApiErrorBuilder(403).message("Give up is forbidden for given team (anti-cheat)").build();
+			} else if (returnedCode == 404){
+				throw new ApiError.ApiErrorBuilder(404).message("Game session not found").build();
+			}  else if (returnedCode == 410){
+				throw new ApiError.ApiErrorBuilder(410).message("Game is over").build();
+			} else if (returnedCode == 500){
+				throw new ApiError.ApiErrorBuilder(500).message("Unknown error occurred").build();
+			}
 	}	
 	
 	/**
@@ -229,66 +201,40 @@ public class Layer {
 	 * 404 Game session not found
 	 * 500 Unknown error occurred
 	 */
-	public int getCurrentSession() throws URISyntaxException, InterruptedException, IOException {
-		int code = 500;
-		if ( gameSessionID != null ) {
+	public void getCurrentSession() throws ApiError {
+			//TODO decide the return type of the Method.
+			HttpResponse<String> getResponse = GETRequest(urlWithID);
+			//TODO Object returned from Server. Decide what to do with it
+			gameSessionResponse = gson.fromJson(getResponse.body(), GameSessionResponse.class);
 			
-			HttpRequest postRequest = HttpRequest.newBuilder()
-						.uri(new URI(url + "/" + gameSessionID))
-						.header("Content-Type", "application/json")
-						.build();
-			
-			HttpClient httpClient = HttpClient.newHttpClient();
-			
-			HttpResponse<String> postResponse = httpClient.send(postRequest, BodyHandlers.ofString());
-			
-			gsRes = gson.fromJson(postResponse.body(), GameSessionResponse.class);
-			code = postResponse.statusCode();
-			return code;
-		}
-		return code;
+			int returnedCode = getResponse.statusCode();
+			if (returnedCode == 200){
+				throw new ApiError.ApiErrorBuilder(200).message("Game session response returned").build();
+			} else if (returnedCode == 404){
+				throw new ApiError.ApiErrorBuilder(404).message("Game session not found").build();
+			} else if (returnedCode == 500){
+				throw new ApiError.ApiErrorBuilder(500).message("Unknown error occurred").build();
+			}
 	}
 	
 	/**
-	 * Gets the current Session
+	 * Delets the current Session
 	 * Return Codes
 	 * 200 Game session response returned
 	 * 404 Game session not found
 	 * 500 Unknown error occurred
 	 */
-	public int deleteCurrentSession() throws URISyntaxException, InterruptedException, IOException {
-		int code = 500;
-		if ( gameSessionID != null ) {
-			
-			HttpRequest postRequest = HttpRequest.newBuilder()
-						.uri(new URI(url + "/" + gameSessionID))
-						.header("Content-Type", "application/json")
-						.DELETE()
-						.build();
-			
-			HttpClient httpClient = HttpClient.newHttpClient();
-			
-			HttpResponse<String> postResponse = httpClient.send(postRequest, BodyHandlers.ofString());
-			
-			code = postResponse.statusCode();
-			reset();
-			return code;
-		}
-		return code;
-	}
+	public void deleteCurrentSession() throws ApiError {			
+			HttpResponse<String> deleteResponse = DELETERequest(urlWithID);
+			int returnedCode = deleteResponse.statusCode();
+			if (returnedCode == 200){
+				throw new ApiError.ApiErrorBuilder(200).message("Game session response returned").build();
+			} else if (returnedCode == 404){
+				throw new ApiError.ApiErrorBuilder(404).message("Game session not found").build();
+			} else if (returnedCode == 500){
+				throw new ApiError.ApiErrorBuilder(500).message("Unknown error occurred").build();
+			}
 	
-	/**
-	 * Method to reset the current layer to its default state
-	 */
-	private String reset() {
-		gameSessionURL = null;
-		gsRes = null;
-		gameSessionID = null;	
-		jgRes = null;
-		teamSecret = null;
-		teamID = null;
-		teamColor = null;
-		return "Layer Reset";
 	}
 	
 	/**
@@ -299,142 +245,80 @@ public class Layer {
 	 * 404 Game session not found
 	 * 500 Unknown error occurred
 	 */
-	public GameState getCurrentState() throws URISyntaxException, InterruptedException, IOException {
+	public GameState getCurrentState() throws ApiError  {
+		HttpResponse<String> getResponse = GETRequest(urlWithID+"/state");
+		
+		GameState returnedState = gson.fromJson(getResponse.body(), GameState.class);
 
-			HttpRequest postRequest = HttpRequest.newBuilder()
-					.uri(new URI(gameSessionURL + "state"))
-					.header("Content-Type", "application/json")
-					.build();
-		
-		HttpClient httpClient = HttpClient.newHttpClient();
-		
-		HttpResponse<String> postResponse = httpClient.send(postRequest, BodyHandlers.ofString());
-		
-		return gson.fromJson(postResponse.body(), GameState.class);
+		int returnedCode = getResponse.statusCode();
+		if (returnedCode == 200){
+			throw new ApiError.ApiErrorBuilder(200).message("Game state returned").build();
+		} else if (returnedCode == 404){
+			throw new ApiError.ApiErrorBuilder(404).message("Game session not found").build();
+		} else if (returnedCode == 500){
+			throw new ApiError.ApiErrorBuilder(500).message("Unknown error occurred").build();
+		}
+
+		return returnedState;
 	}
 
-	
-	
-	//Testing
-	public static void main(String[] args) throws Exception {
-		String testJson = """
-				{
-  "gridSize": [10, 10],
-  "teams": 2,
-  "flags": 1,
-  "blocks": 0,
-  "pieces": [
-    {
-      "type": "Pawn",
-      "attackPower": 1,
-      "count": 10,
-      "movement": {
-        "directions": {
-          "left": 0,
-          "right": 0,
-          "up": 1,
-          "down": 0,
-          "upLeft": 1,
-          "upRight": 1,
-          "downLeft": 0,
-          "downRight": 0
-        }
-      }
-    },
-    {
-      "type": "Rook",
-      "attackPower": 5,
-      "count": 2,
-      "movement": {
-        "directions": {
-          "left": 2,
-          "right": 2,
-          "up": 2,
-          "down": 2,
-          "upLeft": 0,
-          "upRight": 0,
-          "downLeft": 0,
-          "downRight": 0
-        }
-      }
-    },
-    {
-      "type": "Knight",
-      "attackPower": 3,
-      "count": 2,
-      "movement": {
-        "shape": {
-          "type": "lshape"
-        }
-      }
-    },
-    {
-      "type": "Bishop",
-      "attackPower": 3,
-      "count": 2,
-      "movement": {
-        "directions": {
-          "left": 0,
-          "right": 0,
-          "up": 0,
-          "down": 0,
-          "upLeft": 2,
-          "upRight": 2,
-          "downLeft": 2,
-          "downRight": 2
-        }
-      }
-    },
-    {
-      "type": "Queen",
-      "attackPower": 5,
-      "count": 1,
-      "movement": {
-        "directions": {
-          "left": 2,
-          "right": 2,
-          "up": 2,
-          "down": 2,
-          "upLeft": 2,
-          "upRight": 2,
-          "downLeft": 2,
-          "downRight": 2
-        }
-      }
-    },
-    {
-      "type": "King",
-      "attackPower": 1,
-      "count": 1,
-      "movement": {
-        "directions": {
-          "left": 1,
-          "right": 1,
-          "up": 1,
-          "down": 1,
-          "upLeft": 1,
-          "upRight": 1,
-          "downLeft": 1,
-          "downRight": 1
-        }
-      }
-    }
-  ],
-  "placement": "symmetrical",
-  "totalTimeLimitInSeconds": -1,
-  "moveTimeLimitInSeconds": -1
-}
-
-				""";
-		Layer ne = new Layer("http://localhost:8080/api/gamesession");
-		Gson gson1 = new Gson();
-		MapTemplate template = gson1.fromJson(testJson, MapTemplate.class);
-		System.out.println(ne.createGameSession(template));
-		System.out.println(ne.joinGame("Seph"));
-		System.out.println(ne.getCurrentSession());
-		System.out.println(ne.deleteCurrentSession());
+	/**
+	*Method to perform a POST HTTP Request and 
+	*@param urlInput	baseURL
+	*@param jsonPayload String Representation of a json
+	*/
+	private HttpResponse<String> POSTRequest(String urlInput, String jsonPayload){
+		
+		HttpResponse<String> ret = null;
+		try {
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri(new URI(urlInput))
+				.header("Content-Type", "application/json")
+				.POST(BodyPublishers.ofString(jsonPayload))
+				.build();
+			ret = HttpClient.newHttpClient().send(request, BodyHandlers.ofString());
+			return ret;
+		} catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
+			e.printStackTrace();
+		}
+		return ret;
 	}
-	
 
-	
+	/**
+	*Method which takes a URL and performs a GET HTTP request and returns the response
+	*@param additionalString
+	*/
+	private HttpResponse<String> GETRequest(String urlInput){
+		HttpResponse<String> ret = null;
+		try {
+			HttpRequest request = HttpRequest.newBuilder()
+			.uri(new URI(urlInput))
+			.header("Content-Type", "application/json")
+			.GET()
+			.build();
+			ret = HttpClient.newHttpClient().send(request, BodyHandlers.ofString());
+		} catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
+		e.printStackTrace();
+	}
+	return ret;
+	}
+
+	/**
+	*Method which takes a URL and performs a DELETE HTTP request and returns the response
+	*@param additionalString
+	*/
+	private HttpResponse<String> DELETERequest(String urlInput){
+		HttpResponse<String> ret = null;
+		try {
+			HttpRequest request = HttpRequest.newBuilder()
+			.uri(new URI(urlInput))
+			.header("Content-Type", "application/json")
+			.DELETE()
+			.build();
+			ret = HttpClient.newHttpClient().send(request, BodyHandlers.ofString());
+		} catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
+		e.printStackTrace();
+	}
+	return ret;
+	}
 }
