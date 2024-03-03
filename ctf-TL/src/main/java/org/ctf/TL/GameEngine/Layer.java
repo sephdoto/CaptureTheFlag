@@ -1,4 +1,4 @@
-package org.ctf.TL;
+package org.ctf.TL.GameEngine;
 
 import de.unimannheim.swt.pse.ctf.controller.data.GameSessionRequest;
 import de.unimannheim.swt.pse.ctf.controller.data.GameSessionResponse;
@@ -9,6 +9,8 @@ import de.unimannheim.swt.pse.ctf.controller.data.MoveRequest;
 import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Move;
+import de.unimannheim.swt.pse.ctf.game.state.Team;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -17,6 +19,17 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+
+import org.ctf.TL.Exceptions.ApiError;
+
+import de.unimannheim.swt.pse.ctf.game.exceptions.Accepted;
+import de.unimannheim.swt.pse.ctf.game.exceptions.ForbiddenMove;
+import de.unimannheim.swt.pse.ctf.game.exceptions.GameOver;
+import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
+import de.unimannheim.swt.pse.ctf.game.exceptions.NoMoreTeamSlots;
+import de.unimannheim.swt.pse.ctf.game.exceptions.SessionNotFound;
+import de.unimannheim.swt.pse.ctf.game.exceptions.UnknownError;
+
 import com.google.gson.Gson;
 
 /**
@@ -24,6 +37,7 @@ import com.google.gson.Gson;
  * the game server
  * 
  * @author rsyed
+ * @return Layer Object
  */
 public class Layer {
 	private String url; // Stores the URL to connect to
@@ -35,7 +49,7 @@ public class Layer {
 	private String gameSessionID; // Stores the sessionId
 
 	private JoinGameResponse joinGameResponse;
-	private String teamSecret;
+	private String teamSecret; //Only set when a valid join is done
 	private String teamID;
 	private String teamColor;
 
@@ -60,7 +74,7 @@ public class Layer {
 	 * 
 	 * @param template
 	 */
-	public void createGameSession(MapTemplate template) throws ApiError {
+	public void createGameSession(MapTemplate template) {
 		// TODO decide the return type of the Method. The Response alone isnt a
 		// GameSession Object
 		GameSessionRequest gsr = new GameSessionRequest();
@@ -76,12 +90,13 @@ public class Layer {
 
 		int returnedCode = serverResponse.statusCode();
 
-		if (returnedCode == 200) {
-			gameSessionID = gameSessionResponse.getId(); // Sets the Session ID for the Layer
-			urlWithID = url + "/" + gameSessionID; // Creates URL with Session ID for use later
-		} else if (returnedCode == 500) {
-			throw new ApiError.ApiErrorBuilder(500).build();
-		}
+			if (returnedCode == 200) {
+				gameSessionID = gameSessionResponse.getId(); // Sets the Session ID for the Layer
+				urlWithID = url + "/" + gameSessionID; // Creates URL with Session ID for use later
+				throw new Accepted();
+			} else if (returnedCode == 500) {
+				throw new UnknownError();
+			}
 	}
 
 	/**
@@ -98,7 +113,7 @@ public class Layer {
 	 * 
 	 * @param mov
 	 */
-	public void makeMove(Move mov) throws ApiError {
+	public void makeMove(Move mov) {
 		MoveRequest moveReq = new MoveRequest();
 		moveReq.setTeamId(teamID);
 		moveReq.setTeamSecret(teamSecret);
@@ -109,19 +124,19 @@ public class Layer {
 
 		int returnedCode = postResponse.statusCode();
 
-		if (returnedCode == 200) {
-
-		} else if (returnedCode == 403) {
-			throw new ApiError.ApiErrorBuilder(403).message("Move is forbidden for given team (anti-cheat").build();
-		} else if (returnedCode == 404) {
-			throw new ApiError.ApiErrorBuilder(404).message("Game session not found").build();
-		} else if (returnedCode == 409) {
-			throw new ApiError.ApiErrorBuilder(409).message("Invalid move").build();
-		} else if (returnedCode == 410) {
-			throw new ApiError.ApiErrorBuilder(410).message("Game is over").build();
-		} else if (returnedCode == 500) {
-			throw new ApiError.ApiErrorBuilder(500).message("Unknown error occurred").build();
-		}
+			if (returnedCode == 200) {
+				throw new Accepted();
+			} else if (returnedCode == 403) {
+				throw new ForbiddenMove();
+			} else if (returnedCode == 404) {
+				throw new SessionNotFound();
+			} else if (returnedCode == 409) {
+				throw new InvalidMove();
+			} else if (returnedCode == 410) {
+				throw new GameOver();
+			} else if (returnedCode == 500) {
+				throw new UnknownError();
+			}
 	}
 
 	/**
@@ -135,9 +150,10 @@ public class Layer {
 	 * 
 	 * @param teamName
 	 * 
+	 * @return String JSON
 	 */
-	public void joinGame(String teamName) throws ApiError {
-		// TODO decide the return type of the Method.
+	public Team joinGame(String teamName) {
+
 		JoinGameRequest joinGameRequest = new JoinGameRequest();
 		joinGameRequest.setTeamId(teamName);
 
@@ -148,18 +164,22 @@ public class Layer {
 		int returnedCode = postResponse.statusCode();
 
 		// TODO Team Color coming up empty in testing
-		if (returnedCode == 200) {
-			teamSecret = joinGameResponse.getTeamSecret();
-			teamID = joinGameResponse.getTeamId();
-			teamColor = joinGameResponse.getTeamColor();
-			throw new ApiError.ApiErrorBuilder(200).message("Team joined").build();
-		} else if (returnedCode == 404) {
-			throw new ApiError.ApiErrorBuilder(404).message("Game session not found").build();
+		if (returnedCode == 404) {
+			throw new SessionNotFound();
 		} else if (returnedCode == 429) {
-			throw new ApiError.ApiErrorBuilder(429).message("No more team slots available").build();
+			throw new NoMoreTeamSlots();
 		} else if (returnedCode == 500) {
-			throw new ApiError.ApiErrorBuilder(500).message("Unknown error occurred").build();
+			throw new UnknownError();
+		} else {
+		teamSecret = joinGameResponse.getTeamSecret();
+		teamID = joinGameResponse.getTeamId();
+		teamColor = joinGameResponse.getTeamColor();
+		Team returnObject = new Team();
+		returnObject.setId(teamID);
+		returnObject.setColor(teamColor);
+		return returnObject;
 		}
+		
 	}
 
 	/**
@@ -172,7 +192,7 @@ public class Layer {
 	 * 410 Game is over
 	 * 500 Unknown error occurred
 	 */
-	public void giveUp() throws ApiError {
+	public void giveUp() {
 
 		GiveupRequest giveUpRequest = new GiveupRequest();
 		giveUpRequest.setTeamId(teamID);
@@ -181,18 +201,17 @@ public class Layer {
 		HttpResponse<String> postResponse = POSTRequest(urlWithID + "/giveup", gson.toJson(giveUpRequest));
 
 		int returnedCode = postResponse.statusCode();
-
-		if (returnedCode == 200) {
-			throw new ApiError.ApiErrorBuilder(200).message("Request completed").build();
-		} else if (returnedCode == 403) {
-			throw new ApiError.ApiErrorBuilder(403).message("Give up is forbidden for given team (anti-cheat)").build();
-		} else if (returnedCode == 404) {
-			throw new ApiError.ApiErrorBuilder(404).message("Game session not found").build();
-		} else if (returnedCode == 410) {
-			throw new ApiError.ApiErrorBuilder(410).message("Game is over").build();
-		} else if (returnedCode == 500) {
-			throw new ApiError.ApiErrorBuilder(500).message("Unknown error occurred").build();
-		}
+			if (returnedCode == 200) {
+				throw new Accepted();
+			} else if (returnedCode == 403) {
+				throw new ForbiddenMove();
+			} else if (returnedCode == 404) {
+				throw new SessionNotFound();
+			} else if (returnedCode == 410) {
+				throw new GameOver();
+			} else {
+				throw new UnknownError();
+			}
 	}
 
 	/**
@@ -202,20 +221,21 @@ public class Layer {
 	 * 404 Game session not found
 	 * 500 Unknown error occurred
 	 */
-	public void getCurrentSession() throws ApiError {
+	public void getCurrentSession() {
 		// TODO decide the return type of the Method.
 		HttpResponse<String> getResponse = GETRequest(urlWithID);
 		// TODO Object returned from Server. Decide what to do with it
 		gameSessionResponse = gson.fromJson(getResponse.body(), GameSessionResponse.class);
 
 		int returnedCode = getResponse.statusCode();
-		if (returnedCode == 200) {
-			throw new ApiError.ApiErrorBuilder(200).message("Game session response returned").build();
-		} else if (returnedCode == 404) {
-			throw new ApiError.ApiErrorBuilder(404).message("Game session not found").build();
-		} else if (returnedCode == 500) {
-			throw new ApiError.ApiErrorBuilder(500).message("Unknown error occurred").build();
-		}
+
+			if (returnedCode == 200) {
+				throw new Accepted();
+			} else if (returnedCode == 404) {
+				throw new SessionNotFound();
+			} else if (returnedCode == 500) {
+				throw new UnknownError();
+			}
 	}
 
 	/**
@@ -225,18 +245,18 @@ public class Layer {
 	 * 404 Game session not found
 	 * 500 Unknown error occurred
 	 */
-	public void deleteCurrentSession() throws ApiError {
+	public void deleteCurrentSession() {
 		HttpResponse<String> deleteResponse = DELETERequest(urlWithID);
 
 		int returnedCode = deleteResponse.statusCode();
-		if (returnedCode == 200) {
-			throw new ApiError.ApiErrorBuilder(200).message("Game session response returned").build();
-		} else if (returnedCode == 404) {
-			throw new ApiError.ApiErrorBuilder(404).message("Game session not found").build();
-		} else if (returnedCode == 500) {
-			throw new ApiError.ApiErrorBuilder(500).message("Unknown error occurred").build();
-		}
 
+			 if (returnedCode == 404) {
+				throw new SessionNotFound();
+			} else if (returnedCode == 500) {
+				throw new UnknownError();
+			} else {
+				throw new Accepted();
+			}
 	}
 
 	/**
@@ -246,22 +266,23 @@ public class Layer {
 	 * 200 Game state returned
 	 * 404 Game session not found
 	 * 500 Unknown error occurred
+	 * 
+	 * @return GameState
 	 */
-	public GameState getCurrentState() throws ApiError {
+	public GameState getCurrentState() {
 		HttpResponse<String> getResponse = GETRequest(urlWithID + "/state");
 
 		GameState returnedState = gson.fromJson(getResponse.body(), GameState.class);
 
 		int returnedCode = getResponse.statusCode();
-		if (returnedCode == 200) {
-			throw new ApiError.ApiErrorBuilder(200).message("Game state returned").build();
-		} else if (returnedCode == 404) {
-			throw new ApiError.ApiErrorBuilder(404).message("Game session not found").build();
-		} else if (returnedCode == 500) {
-			throw new ApiError.ApiErrorBuilder(500).message("Unknown error occurred").build();
-		}
 
-		return returnedState;
+			if (returnedCode == 404) {
+				throw new ApiError.ApiErrorBuilder(404).message("Game session not found").build();
+			} else if (returnedCode == 500) {
+				throw new ApiError.ApiErrorBuilder(500).message("Unknown error occurred").build();
+			} else {
+				return returnedState;
+			}
 	}
 
 	/**
@@ -269,6 +290,7 @@ public class Layer {
 	 * 
 	 * @param urlInput    baseURL
 	 * @param jsonPayload String Representation of a json
+	 * @return HttpResponse<String>
 	 */
 	private HttpResponse<String> POSTRequest(String urlInput, String jsonPayload) {
 
@@ -292,6 +314,7 @@ public class Layer {
 	 * response
 	 * 
 	 * @param urlInput
+	 * @return HttpResponse<String>
 	 */
 	private HttpResponse<String> GETRequest(String urlInput) {
 		HttpResponse<String> ret = null;
@@ -313,6 +336,7 @@ public class Layer {
 	 * response
 	 * 
 	 * @param urlInput
+	 * @return HttpResponse<String>
 	 */
 	private HttpResponse<String> DELETERequest(String urlInput) {
 		HttpResponse<String> ret = null;
