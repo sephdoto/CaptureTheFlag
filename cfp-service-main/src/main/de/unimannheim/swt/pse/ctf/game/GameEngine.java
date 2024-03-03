@@ -1,7 +1,11 @@
 //TODO Add license if applicable
 package de.unimannheim.swt.pse.ctf.game;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
+import java.util.Random;
+
 import de.unimannheim.swt.pse.ctf.game.exceptions.Accepted;
 import de.unimannheim.swt.pse.ctf.game.exceptions.SessionNotFound;
 import de.unimannheim.swt.pse.ctf.game.exceptions.UnknownError;
@@ -15,6 +19,8 @@ import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Move;
 import de.unimannheim.swt.pse.ctf.game.state.Piece;
 import de.unimannheim.swt.pse.ctf.game.state.Team;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import com.google.gson.Gson;
 
 /**
@@ -24,10 +30,16 @@ import com.google.gson.Gson;
  */
 public class GameEngine implements Game {
 
-    Team currentTeam;
-    String teamSecret;
-    GameSession currentSession;
+    private MapTemplate currentTemplate; // Saves a copy of the template
     private GameState gameState;
+    private int maxTeams;
+    private int remainingTeamSlots;
+    private int maxFlags;
+    private boolean isStarted; // Initial value
+    private boolean isGameOver;
+    private boolean timeLimit;
+    private Date startedDate;
+    private Date endDate;
 
     /**
      * Creates a game session with the corresponding Map passed onto as the Template
@@ -37,9 +49,24 @@ public class GameEngine implements Game {
      */
     @Override
     public GameState create(MapTemplate template) {
-        // Create a GameSession and
+        // TODO Parse the Map template to create an Initial Game State
+        this.currentTemplate = template; // Saves a copy of the initial template
 
-        return null;
+        GameState gameState = new GameState();
+        gameState.setGrid(new String[template.getGridSize()[0]][template.getGridSize()[1]]); // Ints with empty grid of
+                                                                                             // specified size //Parsing
+                                                                                             // the Size
+        this.maxTeams = template.getTeams(); // Setting Max Number of teams allowed
+        this.remainingTeamSlots = maxTeams; // Setting Initial Number of Teams in GameEngine Instance
+        this.maxFlags = template.getFlags(); // Setting Initial Number of Teams in GameEngine Instance
+
+        // Setting Flags
+        this.isStarted = false;
+        this.isGameOver = false;
+
+        // Setting State
+        this.gameState = gameState;
+        return this.gameState;
     }
 
     /**
@@ -49,7 +76,7 @@ public class GameEngine implements Game {
      */
     @Override
     public GameState getCurrentGameState() {
-        return null;
+        return this.gameState;
     }
 
     /**
@@ -67,8 +94,12 @@ public class GameEngine implements Game {
      */
     @Override
     public int getRemainingGameTimeInSeconds() {
-        // TODO Auto-generated method stub
-        return 0;
+        if (!timeLimit) { // If no limit is set returns -1
+            return -1;
+        } else if (isGameOver) { // if GameOver flag is set returns 0
+            return 0;
+        }
+        return 1; // Otherwise returns 1
     }
 
     /**
@@ -86,8 +117,7 @@ public class GameEngine implements Game {
      */
     @Override
     public int getRemainingTeamSlots() {
-        // TODO Auto-generated method stub
-        return 0;
+        return remainingTeamSlots;
     }
 
     /**
@@ -95,8 +125,7 @@ public class GameEngine implements Game {
      */
     @Override
     public Date getStartedDate() {
-        // TODO Auto-generated method stub
-        return null;
+        return startedDate;
     }
 
     /**
@@ -119,7 +148,12 @@ public class GameEngine implements Game {
      */
     @Override
     public void giveUp(String teamId) {
+        Team[] teamBlock = getCurrentGameState().getTeams();
+        int currentTeam = getCurrentGameState().getCurrentTeam() - 1;
 
+        if (teamBlock[currentTeam].getId().equals(teamId)) {
+            // CODE TO DELETE WHATS LEFT OF THE TEAM and give up
+        }
     }
 
     /**
@@ -129,8 +163,11 @@ public class GameEngine implements Game {
      */
     @Override
     public boolean isGameOver() {
-        // TODO Auto-generated method stub
-        return false;
+        if (isGameOver) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -145,7 +182,9 @@ public class GameEngine implements Game {
      */
     @Override
     public boolean isStarted() {
-        // TODO Auto-generated method stub
+        if (isStarted && !isGameOver && getCurrentGameState() != null) {
+            return true;
+        }
         return false;
     }
 
@@ -155,10 +194,9 @@ public class GameEngine implements Game {
      * @param move {@link Move}
      * @return true if move is valid based on current game state, false otherwise
      */
-    // TODO Need to understand logic for how valid move is calculated
     @Override
     public boolean isValidMove(Move move) {
-        // TODO Auto-generated method stub
+        // TODO Need to write logic
         return false;
     }
 
@@ -175,11 +213,32 @@ public class GameEngine implements Game {
      * @return Team
      * @throws NoMoreTeamSlots No more team slots available
      */
-
     // TODO do proper joinGameLogic
     @Override
     public Team joinGame(String teamId) {
-        return null;
+        // Initial check if Slots are even available
+        if (remainingTeamSlots < 0) {
+            throw new NoMoreTeamSlots();
+        }
+
+        Team[] currentTeams = getCurrentGameState().getTeams(); // Gets array of teams from currentGameState
+
+        for (int i = 0; i <= currentTeams.length; i++) { // Loops over it to
+            if (currentTeams[i] != null) { // find the first empty team
+                currentTeams[i].setId(teamId); // sets the team ID
+                remainingTeamSlots--;
+                break;
+            }
+        }
+
+        // TODO Extra Method to place pieces on the Grid when joining
+
+        // Code for handling game start
+        startGame();
+
+        // Code for return
+        int teamSelector = randomGen(currentTemplate.getTeams() - 1, 5); // updates team selector with a random Number
+        return currentTeams[teamSelector];
     }
 
     /**
@@ -194,4 +253,43 @@ public class GameEngine implements Game {
         // TODO Implement
     }
 
+    /**
+     * Returns a random number between 0 and max
+     * Does specified number of iterations
+     *
+     * @param max
+     * @param iterations
+     * 
+     */
+    public int randomGen(int max, int iterations) {
+        Random rand = new Random();
+        int ret = 0;
+        for (int i = 0; i <= iterations; i++) {
+            ret = rand.nextInt(max);
+        }
+        return ret;
+    }
+
+    /**
+     * Helper method to Start the game
+     * 
+     */
+    private void startGame() {
+        this.isStarted = true; // Starts the game because all teams have joined
+
+        LocalDateTime localDateTime = LocalDateTime.now(); // Gets a localDateTime Obj
+        this.startedDate = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+
+        Long seconds = Integer.toUnsignedLong(currentTemplate.getTotalTimeLimitInSeconds());
+
+        if (seconds > 0) { // Checks if its a timed Game
+            LocalDateTime modifiedDateTime = localDateTime.plusMinutes(seconds); // Adds seconds to a new Object
+            this.endDate = Date.from(modifiedDateTime.atZone(ZoneId.systemDefault()).toInstant()); // Converts and saves
+                                                                                                   // it to endDate
+        } else if (seconds == 0) {
+            this.isGameOver = true;
+        } else {
+            this.timeLimit = false;
+        }
+    }
 }
