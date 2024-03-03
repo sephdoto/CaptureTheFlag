@@ -1,12 +1,15 @@
 package de.unimannheim.swt.pse.ctf.game.map;
 
+import de.unimannheim.swt.pse.ctf.constants.*;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.io.File;
+
 
 
 /**
@@ -14,8 +17,6 @@ import java.io.File;
  *@author sistumpf
  */
 public class JSON_Tools {
-	static String mapTemplateFolder = "."+File.separator+"cfp-service-main"+File.separator+"src"+File.separator+"main"+File.separator+"resources"+File.separator+"maptemplates"+File.separator;
-	
 	/**
 	 * Saves a MapTemplate as a file in mapTemplateFolder.
 	 * The file Name must be given as mapName.
@@ -25,9 +26,9 @@ public class JSON_Tools {
 	public static void saveMapTemplateAsFile(String mapName, MapTemplate mapTemplate) {
 		byte[] contentBytes = mapTemplate.toJSONString().getBytes();
 		try {
-			File file = new File(mapTemplateFolder+mapName+".json");
+			File file = new File(Constants.mapTemplateFolder+mapName+".json");
 			Files.write(file.toPath(), contentBytes);
-			System.out.println(file.toPath());
+			System.out.println(file.toPath().toAbsolutePath());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -40,10 +41,11 @@ public class JSON_Tools {
 	 * @throws MapNotFoundException
 	 */
 	public static MapTemplate readMapTemplate(String mapName) throws MapNotFoundException {
-		if(!Files.exists(Paths.get(mapTemplateFolder+mapName+".json")))
+		Path path = Paths.get(Constants.mapTemplateFolder+mapName+".json");
+		if(!Files.exists(path))
 			throw new MapNotFoundException(mapName);
 		
-		return MapFromJson(fileToString(mapTemplateFolder+mapName+".json"));
+		return MapFromJson(fileToString(Constants.mapTemplateFolder+mapName+".json"));
 	}
 		
 	/**
@@ -53,7 +55,6 @@ public class JSON_Tools {
 	 */
 	public static MapTemplate MapFromJson(String jsonString) {
 		MapTemplate mt = new MapTemplate();
-		
 		JSONObject jo = new JSONObject(jsonString);
 		
 		mt.setGridSize(new int[] {jo.getJSONArray("gridSize").getInt(0), jo.getJSONArray("gridSize").getInt(1)});
@@ -114,9 +115,9 @@ public class JSON_Tools {
 	/**
 	 * Gets thrown if you access a map that doesn't exist in mapTemplateFolder
 	 */
-	static class MapNotFoundException extends Exception {
+	public static class MapNotFoundException extends Exception {
 		MapNotFoundException(String mapName){
-			super("There is no MapTemplate named " + mapName + " in " + mapTemplateFolder);
+			super("There is no MapTemplate named " + mapName + " in " + Constants.mapTemplateFolder);
 		}
 	}
 }
