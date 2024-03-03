@@ -41,6 +41,8 @@ public class GameEngine implements Game {
     private Date startedDate;
     private Date endDate;
 
+    private String[] colorList;
+
     /**
      * Creates a game session with the corresponding Map passed onto as the Template
      * 
@@ -51,6 +53,7 @@ public class GameEngine implements Game {
     public GameState create(MapTemplate template) {
         // TODO Parse the Map template to create an Initial Game State
         this.currentTemplate = template; // Saves a copy of the initial template
+        this.colorList = new String[]{"red", "green","yellow","white","black","blue"}; //Inits a String Array with predefined colors
 
         GameState gameState = new GameState();
         gameState.setGrid(new String[template.getGridSize()[0]][template.getGridSize()[1]]); // Ints with empty grid of
@@ -84,8 +87,7 @@ public class GameEngine implements Game {
      */
     @Override
     public Date getEndDate() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.endDate;
     }
 
     /**
@@ -178,7 +180,7 @@ public class GameEngine implements Game {
      * <li>{@link Game#getCurrentGameState()} != null</li>
      * </ul>
      *
-     * @return
+     * @return boolean
      */
     @Override
     public boolean isStarted() {
@@ -214,29 +216,30 @@ public class GameEngine implements Game {
      * @throws NoMoreTeamSlots No more team slots available
      */
     // TODO do proper joinGameLogic
+    // TODO Ask tutor how they mean to start a game.....through the exception ? or filling team slots and calling joinGame one more time to start it?
     @Override
     public Team joinGame(String teamId) {
         // Initial check if Slots are even available
-        if (remainingTeamSlots < 0) {
-            throw new NoMoreTeamSlots();
-        }
-
-        Team[] currentTeams = getCurrentGameState().getTeams(); // Gets array of teams from currentGameState
-
-        for (int i = 0; i <= currentTeams.length; i++) { // Loops over it to
-            if (currentTeams[i] != null) { // find the first empty team
-                currentTeams[i].setId(teamId); // sets the team ID
-                remainingTeamSlots--;
-                break;
+        try {
+            if (this.getRemainingTeamSlots() < 0) {
+                throw new NoMoreTeamSlots();
+            } else {
+                makeNAddTeam(teamId);
+                //TODO Method here to load and arrange pieces
             }
+        } catch (NoMoreTeamSlots e) {
+            startGame();
         }
+        
+        
 
         // TODO Extra Method to place pieces on the Grid when joining
 
         // Code for handling game start
-        startGame();
+        
 
-        // Code for return
+        // Code for Random starting team selection return
+        Team[] currentTeams = getCurrentGameState().getTeams();
         int teamSelector = randomGen(currentTemplate.getTeams() - 1, 5); // updates team selector with a random Number
         return currentTeams[teamSelector];
     }
@@ -292,4 +295,48 @@ public class GameEngine implements Game {
             this.timeLimit = false;
         }
     }
+
+    /**
+     * Helper method to add a team to the gameState
+     * Takes in a String which it uses to create a team
+     * @param teamID
+     */
+    private void makeNAddTeam(String teamID){
+        Team[] currentTeams = getCurrentGameState().getTeams(); // Gets array of teams from currentGameState
+
+        for (int i = 0 ; i < currentTeams.length; i++) { // Loops over it to
+            if (currentTeams[i] == null) { // find the first empty team
+                currentTeams[i] = new Team();
+                currentTeams[i].setId(teamID); // sets the team ID
+                currentTeams[i].setColor(getRandColor());  //gets a randomly selected color from the list
+
+                remainingTeamSlots--;
+                
+                getCurrentGameState().setTeams(currentTeams);     //Returns the updated Team array to the Game State
+                
+                if(remainingTeamSlots<=0){ 
+                    startGame();
+                    break;
+                }
+                break;
+            }
+        }
+    }
+    
+    /**
+     * Helper method to add a randomly selected color from an array
+     * "noColor" String is used to define a already used color
+     */
+    private String getRandColor(){
+        String ret = "noColor";
+        while(ret.equals("noColor")){
+            int ran = randomGen(colorList.length-1,1);
+            if(!colorList[ran].equals("noColor")){
+                ret = colorList[ran];
+                colorList[ran] = "noColor";
+            }
+        }
+        return ret;
+    }
+
 }
