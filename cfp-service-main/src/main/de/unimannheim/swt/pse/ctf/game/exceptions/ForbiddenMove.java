@@ -8,4 +8,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * that is marked with a HTTP status if thrown.
  */
 @ResponseStatus(value = HttpStatus.FORBIDDEN, reason="Move is forbidden for current team")
-public class ForbiddenMove extends RuntimeException {}
+public class ForbiddenMove extends RuntimeException {
+
+}

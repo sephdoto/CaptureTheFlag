@@ -1,4 +1,4 @@
-package org.ctf.TL;
+package org.ctf.TL.Exceptions;
 
 import java.time.LocalDateTime;
 import org.springframework.http.HttpStatus;
@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 * Uses a BUILDER class to create and use Objects
 *@author rsyed
 */
-public class ApiError extends Throwable{
+public class ApiError extends RuntimeException{
 
     private HttpStatus currentStatus;   //required
     private LocalDateTime timeStamp;

@@ -4,10 +4,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Represents a special exception (game is over)
+ * Represents a special exception (Game session not found)
  * that is marked with a HTTP status if thrown.
+ * @author rsyed
  */
-@ResponseStatus(value = HttpStatus.GONE, reason="Game is over")
-public class GameOver extends RuntimeException {
-    
+@ResponseStatus(value = HttpStatus.NOT_FOUND, reason="Game session not found")
+public class SessionNotFound extends RuntimeException {
+
 }
