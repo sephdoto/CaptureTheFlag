@@ -19,7 +19,8 @@ import java.io.File;
 public class JSON_Tools {
 	/**
 	 * Saves a MapTemplate as a file in mapTemplateFolder.
-	 * The file Name must be given as mapName.
+	 * The file Name must be given as mapName, without an ending.
+	 * Example: save mapTemplate as template.json:   saveMapTemplateAsFile("template", mapTemplate)
 	 * @param mapName
 	 * @param mapTemplate
 	 */
@@ -35,7 +36,9 @@ public class JSON_Tools {
 	}
 	
 	/**
-	 * Returns a MapTemplate from a given mapName. The mapName must exist in resources.maptemplates
+	 * Returns a MapTemplate from a given mapName. 
+	 * The mapName must exist in resources.maptemplates.
+	 * Example: read template.json from resources.maptemplates:   readMapTemplate("template")
 	 * @param mapName
 	 * @return mapTemplate
 	 * @throws MapNotFoundException
