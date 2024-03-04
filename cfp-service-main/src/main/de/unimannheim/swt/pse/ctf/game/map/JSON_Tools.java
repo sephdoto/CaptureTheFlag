@@ -23,15 +23,27 @@ public class JSON_Tools {
 	 * Example: save mapTemplate as template.json:   saveMapTemplateAsFile("template", mapTemplate)
 	 * @param mapName
 	 * @param mapTemplate
+	 * @throws IOException 
 	 */
-	public static void saveMapTemplateAsFile(String mapName, MapTemplate mapTemplate) {
+	public static void saveMapTemplateAsFile(String mapName, MapTemplate mapTemplate) throws IOException {
 		byte[] contentBytes = mapTemplate.toJSONString().getBytes();
+		File file = new File(Constants.mapTemplateFolder+mapName+".json");
+		Files.write(file.toPath(), contentBytes);
+	}
+	
+	/**
+	 * Returns a MapTemplate from a given File. 
+	 * The File should be choosen in the GameEngine via a FileChooser, so it surely exists.
+	 * @param mapName
+	 * @return mapTemplate
+	 * @throws IOException, IncompleteMapTemplateException
+	 */
+	public static MapTemplate readMapTemplate(File mapTemplate) throws IOException, IncompleteMapTemplateException {
 		try {
-			File file = new File(Constants.mapTemplateFolder+mapName+".json");
-			Files.write(file.toPath(), contentBytes);
-			System.out.println(file.toPath().toAbsolutePath());
-		} catch (IOException e) {
-			e.printStackTrace();
+			return MapFromJson(fileToString(mapTemplate.getAbsolutePath()));
+		} catch(org.json.JSONException jsone) {
+			Files.delete(mapTemplate.toPath());
+			throw new IncompleteMapTemplateException(mapTemplate.getName());
 		}
 	}
 	
@@ -42,13 +54,19 @@ public class JSON_Tools {
 	 * @param mapName
 	 * @return mapTemplate
 	 * @throws MapNotFoundException
+	 * @deprecated use {@link #readMapTemplate(File mapTemplate)} instead.
 	 */
+	@Deprecated
 	public static MapTemplate readMapTemplate(String mapName) throws MapNotFoundException {
 		Path path = Paths.get(Constants.mapTemplateFolder+mapName+".json");
 		if(!Files.exists(path))
 			throw new MapNotFoundException(mapName);
 		
-		return MapFromJson(fileToString(Constants.mapTemplateFolder+mapName+".json"));
+		try {
+			return MapFromJson(fileToString(Constants.mapTemplateFolder+mapName+".json"));
+		} catch (IOException e) {e.printStackTrace();}
+		
+		return null;
 	}
 		
 	/**
@@ -102,17 +120,11 @@ public class JSON_Tools {
 	
 	/**
 	 * Returns a files content as String.
-	 * Source must be a Path.
-	 * @param source
+	 * @param path
+	 * @throws IOException 
 	 */
-	private static String fileToString(String source) {
-		String content = null; 
-		try {
-			content = Files.readString(Paths.get(source), StandardCharsets.UTF_8);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return content;
+	private static String fileToString(String path) throws IOException {
+		return Files.readString(Paths.get(path), StandardCharsets.UTF_8);
 	}
 	
 	/**
@@ -121,6 +133,15 @@ public class JSON_Tools {
 	public static class MapNotFoundException extends Exception {
 		MapNotFoundException(String mapName){
 			super("There is no MapTemplate named " + mapName + " in " + Constants.mapTemplateFolder);
+		}
+	}
+	
+	/**
+	 * Gets thrown if you access a map that doesn't exist in mapTemplateFolder
+	 */
+	public static class IncompleteMapTemplateException extends org.json.JSONException {
+		IncompleteMapTemplateException(String mapName){
+			super("The MapTemplate " + mapName + " is incomplete and got deleted.");
 		}
 	}
 }
