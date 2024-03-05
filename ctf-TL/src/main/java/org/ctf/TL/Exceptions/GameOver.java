@@ -4,11 +4,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Represents a special exception (Accepted/OK)
+ * Represents a special exception (game is over)
  * that is marked with a HTTP status if thrown.
- * @author rsyed
  */
-@ResponseStatus(value = HttpStatus.OK, reason="OK")
-public class Accepted extends RuntimeException {
-
+@ResponseStatus(value = HttpStatus.GONE, reason="Game is over")
+public class GameOver extends RuntimeException {
+    
 }

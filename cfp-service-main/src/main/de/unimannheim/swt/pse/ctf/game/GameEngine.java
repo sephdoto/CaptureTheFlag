@@ -3,12 +3,12 @@ package de.unimannheim.swt.pse.ctf.game;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Random;
-
-import de.unimannheim.swt.pse.ctf.game.exceptions.Accepted;
-import de.unimannheim.swt.pse.ctf.game.exceptions.SessionNotFound;
-import de.unimannheim.swt.pse.ctf.game.exceptions.UnknownError;
 
 import de.unimannheim.swt.pse.ctf.controller.GameSession;
 import de.unimannheim.swt.pse.ctf.game.exceptions.GameOver;
@@ -40,9 +40,8 @@ public class GameEngine implements Game {
     private boolean timeLimit;
     private Date startedDate;
     private Date endDate;
-
-    private String[] colorList;
-
+    private List<String> colorList;
+    
     /**
      * Creates a game session with the corresponding Map passed onto as the Template
      * 
@@ -53,8 +52,7 @@ public class GameEngine implements Game {
     public GameState create(MapTemplate template) {
         // TODO Parse the Map template to create an Initial Game State
         this.currentTemplate = template; // Saves a copy of the initial template
-        this.colorList = new String[]{"red", "green","yellow","white","black","blue"}; //Inits a String Array with predefined colors
-
+        colorList =  new LinkedList<>(Arrays.asList(new String[]{"red" , "green", "yellow" , "white" , "black" , "blue" })); //Inits a String LL with predefined colors
         GameState gameState = new GameState();
         gameState.setGrid(new String[template.getGridSize()[0]][template.getGridSize()[1]]); // Ints with empty grid of
                                                                                              // specified size //Parsing
@@ -235,8 +233,6 @@ public class GameEngine implements Game {
 
         // TODO Extra Method to place pieces on the Grid when joining
 
-        // Code for handling game start
-        
 
         // Code for Random starting team selection return
         Team[] currentTeams = getCurrentGameState().getTeams();
@@ -308,6 +304,7 @@ public class GameEngine implements Game {
             if (currentTeams[i] == null) { // find the first empty team
                 currentTeams[i] = new Team();
                 currentTeams[i].setId(teamID); // sets the team ID
+                //Fix Color assignment:
                 currentTeams[i].setColor(getRandColor());  //gets a randomly selected color from the list
 
                 remainingTeamSlots--;
@@ -326,17 +323,15 @@ public class GameEngine implements Game {
     /**
      * Helper method to add a randomly selected color from an array
      * "noColor" String is used to define a already used color
+     * NOT THREADSAFE
+     * @return a color randomly chosen from a predefined list. Else defaults to black
      */
     private String getRandColor(){
-        String ret = "noColor";
-        while(ret.equals("noColor")){
-            int ran = randomGen(colorList.length-1,1);
-            if(!colorList[ran].equals("noColor")){
-                ret = colorList[ran];
-                colorList[ran] = "noColor";
-            }
+        int randSelector = randomGen(colorList.size(),1);
+        if(colorList.size() >=1){
+            return colorList.get(randSelector);
+        } else {
+            return "BLACK";
         }
-        return ret;
     }
-
 }

@@ -4,11 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Represents a special exception (Accepted/OK)
+ * Represents a special exception (move request is invalid)
  * that is marked with a HTTP status if thrown.
- * @author rsyed
  */
-@ResponseStatus(value = HttpStatus.OK, reason="OK")
-public class Accepted extends RuntimeException {
-
-}
+@ResponseStatus(value = HttpStatus.CONFLICT, reason="Move is invalid")
+public class InvalidMove extends RuntimeException {}

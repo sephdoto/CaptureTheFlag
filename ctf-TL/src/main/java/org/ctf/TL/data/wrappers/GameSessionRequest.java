@@ -1,6 +1,8 @@
 package org.ctf.TL.data.wrappers;
 
-import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
+
+import org.ctf.TL.data.map.MapTemplate;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**

@@ -1,4 +1,4 @@
-package org.ctf.TL.Exceptions;
+package org.ctf.TL.exceptions;
 
 import java.time.LocalDateTime;
 import org.springframework.http.HttpStatus;

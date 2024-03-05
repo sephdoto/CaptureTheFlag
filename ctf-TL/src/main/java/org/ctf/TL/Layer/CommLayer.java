@@ -1,15 +1,4 @@
-package org.ctf.TL.Layer;
-
-import de.unimannheim.swt.pse.ctf.controller.data.GameSessionRequest;
-import de.unimannheim.swt.pse.ctf.controller.data.GameSessionResponse;
-import de.unimannheim.swt.pse.ctf.controller.data.GiveupRequest;
-import de.unimannheim.swt.pse.ctf.controller.data.JoinGameRequest;
-import de.unimannheim.swt.pse.ctf.controller.data.JoinGameResponse;
-import de.unimannheim.swt.pse.ctf.controller.data.MoveRequest;
-import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
-import de.unimannheim.swt.pse.ctf.game.state.GameState;
-import de.unimannheim.swt.pse.ctf.game.state.Move;
-import de.unimannheim.swt.pse.ctf.game.state.Team;
+package org.ctf.TL.layer;
 
 import java.io.IOException;
 import java.net.URI;
@@ -20,15 +9,24 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
-import org.ctf.TL.Exceptions.Accepted;
-import org.ctf.TL.Exceptions.ApiError;
-import org.ctf.TL.Exceptions.SessionNotFound;
-import org.ctf.TL.Exceptions.UnknownError;
-
-import de.unimannheim.swt.pse.ctf.game.exceptions.ForbiddenMove;
-import de.unimannheim.swt.pse.ctf.game.exceptions.GameOver;
-import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
-import de.unimannheim.swt.pse.ctf.game.exceptions.NoMoreTeamSlots;
+import org.ctf.TL.data.map.MapTemplate;
+import org.ctf.TL.data.wrappers.GameSessionRequest;
+import org.ctf.TL.data.wrappers.GameSessionResponse;
+import org.ctf.TL.data.wrappers.GiveupRequest;
+import org.ctf.TL.data.wrappers.JoinGameRequest;
+import org.ctf.TL.data.wrappers.JoinGameResponse;
+import org.ctf.TL.data.wrappers.MoveRequest;
+import org.ctf.TL.exceptions.Accepted;
+import org.ctf.TL.exceptions.ApiError;
+import org.ctf.TL.exceptions.ForbiddenMove;
+import org.ctf.TL.exceptions.GameOver;
+import org.ctf.TL.exceptions.InvalidMove;
+import org.ctf.TL.exceptions.NoMoreTeamSlots;
+import org.ctf.TL.exceptions.SessionNotFound;
+import org.ctf.TL.exceptions.UnknownError;
+import org.ctf.TL.state.GameState;
+import org.ctf.TL.state.Move;
+import org.ctf.TL.state.Team;
 
 import com.google.gson.Gson;
 
