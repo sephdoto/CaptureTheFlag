@@ -297,6 +297,8 @@ public class GameEngine implements Game {
      * Takes in a String which it uses to create a team
      * @param teamID
      */
+
+     //TODO this method is fucky
     private void makeNAddTeam(String teamID){
         Team[] currentTeams = getCurrentGameState().getTeams(); // Gets array of teams from currentGameState
 

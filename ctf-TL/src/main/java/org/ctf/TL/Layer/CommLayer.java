@@ -23,6 +23,7 @@ import org.ctf.TL.exceptions.GameOver;
 import org.ctf.TL.exceptions.InvalidMove;
 import org.ctf.TL.exceptions.NoMoreTeamSlots;
 import org.ctf.TL.exceptions.SessionNotFound;
+import org.ctf.TL.exceptions.URLError;
 import org.ctf.TL.exceptions.UnknownError;
 import org.ctf.TL.state.GameState;
 import org.ctf.TL.state.Move;
@@ -37,15 +38,18 @@ import com.google.gson.Gson;
  * @author rsyed
  * @return Layer Object
  */
-public class CommLayer {
-	private String url; // Stores the URL to connect to
-	private Gson gson; // Gson object to convert classes to Json
-	private String urlWithID;
-
+public class CommLayer implements CommInterface {
+	//Data Block for Connection
+	private String url; // Stores the URL to connect to	: Example URL http://localhost:8080
+	private String urlWithID; //Stores the extended URL	: Example URL http://localhost:8080/api/gamesession/{sessionID}
+	
 	// Data Blocks for the Layer
+	private Gson gson; // Gson object to convert classes to Json
 	private GameSessionResponse gameSessionResponse;
 	private String gameSessionID; // Stores the sessionId
 
+
+	
 	private JoinGameResponse joinGameResponse;
 	private String teamSecret; //Only set when a valid join is done
 	private String teamID;
@@ -55,10 +59,11 @@ public class CommLayer {
 	 * Creates a Layer Object which can then be used to communicate with the Server
 	 * The URL and the port the layer binds to are given on object creation
 	 * 
-	 * @param url
+	 * @param url 
+	 * Example URL http://localhost:8080
 	 */
 	public CommLayer(String url) {
-		this.url = url;
+		
 		gson = new Gson(); // creates a gson Object on creation to conserve memory
 	}
 
@@ -66,35 +71,36 @@ public class CommLayer {
 	 * Creates a Game Session if object is not connected to any game session
 	 * Receives a template object which it uses to create the body for the API
 	 * request
-	 * Returns GameSessionResponse and HTTP Codes
+	 * Returns GameSessionResponse containing a session ID, start and end date, Gameover flag, and winner flag
 	 * 200 Game session created
 	 * 500 Unknown error occurred
 	 * 
-	 * @param template
+	 * @param map
+	 * @returns GameSessionResponse
 	 */
-	public void createGameSession(MapTemplate template) {
-		// TODO decide the return type of the Method. The Response alone isnt a
-		// GameSession Object
+	@Override
+	public GameSessionResponse createGameSession(MapTemplate map) {
 		GameSessionRequest gsr = new GameSessionRequest();
-		gsr.setTemplate(template);
+		gsr.setTemplate(map);
 
 		String jsonPayload = gson.toJson(gsr);
+		
 		// Performs the POST request
-
-		HttpResponse<String> serverResponse = POSTRequest(url, jsonPayload);
+		HttpResponse<String> serverResponse = POSTRequest(url , jsonPayload);
 
 		// Parses Server Response to expected class
 		gameSessionResponse = gson.fromJson(serverResponse.body(), GameSessionResponse.class);
 
+		//Saves the code of the server response
 		int returnedCode = serverResponse.statusCode();
 
-			if (returnedCode == 200) {
-				gameSessionID = gameSessionResponse.getId(); // Sets the Session ID for the Layer
-				urlWithID = url + "/" + gameSessionID; // Creates URL with Session ID for use later
-				throw new Accepted();
-			} else if (returnedCode == 500) {
-				throw new UnknownError();
-			}
+		if (returnedCode == 500) {
+			throw new UnknownError();
+		} else if (returnedCode == 404){
+			throw new URLError("URL Error");
+		}
+
+		return gameSessionResponse;
 	}
 
 	/**
@@ -111,6 +117,7 @@ public class CommLayer {
 	 * 
 	 * @param mov
 	 */
+	@Override
 	public void makeMove(Move mov) {
 		MoveRequest moveReq = new MoveRequest();
 		moveReq.setTeamId(teamID);
@@ -123,7 +130,7 @@ public class CommLayer {
 		int returnedCode = postResponse.statusCode();
 
 			if (returnedCode == 200) {
-				throw new Accepted();
+				throw new Accepted(200);
 			} else if (returnedCode == 403) {
 				throw new ForbiddenMove();
 			} else if (returnedCode == 404) {
@@ -146,11 +153,13 @@ public class CommLayer {
 	 * 429 No more team slots available
 	 * 500 Unknown error occurred
 	 * 
+	 * The Return is data needed for your team to communicate with
 	 * @param teamName
 	 * 
 	 * @return String JSON
 	 */
-	public Team joinGame(String teamName) {
+	@Override
+	public JoinGameResponse joinGame(String teamName) {
 
 		JoinGameRequest joinGameRequest = new JoinGameRequest();
 		joinGameRequest.setTeamId(teamName);
@@ -161,23 +170,15 @@ public class CommLayer {
 
 		int returnedCode = postResponse.statusCode();
 
-		// TODO Team Color coming up empty in testing
 		if (returnedCode == 404) {
 			throw new SessionNotFound();
 		} else if (returnedCode == 429) {
 			throw new NoMoreTeamSlots();
 		} else if (returnedCode == 500) {
 			throw new UnknownError();
-		} else {
-		teamSecret = joinGameResponse.getTeamSecret();
-		teamID = joinGameResponse.getTeamId();
-		teamColor = joinGameResponse.getTeamColor();
-		Team returnObject = new Team();
-		returnObject.setId(teamID);
-		returnObject.setColor(teamColor);
-		return returnObject;
-		}
-		
+		}	
+
+		return joinGameResponse;
 	}
 
 	/**
@@ -190,7 +191,8 @@ public class CommLayer {
 	 * 410 Game is over
 	 * 500 Unknown error occurred
 	 */
-	public void giveUp() {
+	@Override
+	public void giveUp(String ID, String secret) {
 
 		GiveupRequest giveUpRequest = new GiveupRequest();
 		giveUpRequest.setTeamId(teamID);
@@ -200,7 +202,7 @@ public class CommLayer {
 
 		int returnedCode = postResponse.statusCode();
 			if (returnedCode == 200) {
-				throw new Accepted();
+				throw new Accepted(200);
 			} else if (returnedCode == 403) {
 				throw new ForbiddenMove();
 			} else if (returnedCode == 404) {
@@ -219,7 +221,8 @@ public class CommLayer {
 	 * 404 Game session not found
 	 * 500 Unknown error occurred
 	 */
-	public void getCurrentSession() {
+	@Override
+	public void getCurrentSession(){
 		// TODO decide the return type of the Method.
 		HttpResponse<String> getResponse = GETRequest(urlWithID);
 		// TODO Object returned from Server. Decide what to do with it
@@ -227,9 +230,7 @@ public class CommLayer {
 
 		int returnedCode = getResponse.statusCode();
 
-			if (returnedCode == 200) {
-				throw new Accepted();
-			} else if (returnedCode == 404) {
+			if (returnedCode == 404) {
 				throw new SessionNotFound();
 			} else if (returnedCode == 500) {
 				throw new UnknownError();
@@ -243,6 +244,7 @@ public class CommLayer {
 	 * 404 Game session not found
 	 * 500 Unknown error occurred
 	 */
+	@Override
 	public void deleteCurrentSession() {
 		HttpResponse<String> deleteResponse = DELETERequest(urlWithID);
 
@@ -253,7 +255,7 @@ public class CommLayer {
 			} else if (returnedCode == 500) {
 				throw new UnknownError();
 			} else {
-				throw new Accepted();
+				throw new Accepted(200);
 			}
 	}
 
@@ -267,6 +269,7 @@ public class CommLayer {
 	 * 
 	 * @return GameState
 	 */
+	@Override
 	public GameState getCurrentState() {
 		HttpResponse<String> getResponse = GETRequest(urlWithID + "/state");
 
