@@ -39,21 +39,9 @@ import com.google.gson.Gson;
  * @return Layer Object
  */
 public class CommLayer implements CommInterface {
-	//Data Block for Connection
-	private String url; // Stores the URL to connect to	: Example URL http://localhost:8080
-	private String urlWithID; //Stores the extended URL	: Example URL http://localhost:8080/api/gamesession/{sessionID}
-	
+
 	// Data Blocks for the Layer
 	private Gson gson; // Gson object to convert classes to Json
-	private GameSessionResponse gameSessionResponse;
-	private String gameSessionID; // Stores the sessionId
-
-
-	
-	private JoinGameResponse joinGameResponse;
-	private String teamSecret; //Only set when a valid join is done
-	private String teamID;
-	private String teamColor;
 
 	/**
 	 * Creates a Layer Object which can then be used to communicate with the Server
@@ -142,43 +130,6 @@ public class CommLayer implements CommInterface {
 			} else if (returnedCode == 500) {
 				throw new UnknownError();
 			}
-	}
-
-	/**
-	 * Joins a Game Session if object is connected to a game session
-	 * Receives a teamName which is used as teamID
-	 * Return Codes
-	 * 200 Team joined
-	 * 404 Game session not found
-	 * 429 No more team slots available
-	 * 500 Unknown error occurred
-	 * 
-	 * The Return is data needed for your team to communicate with
-	 * @param teamName
-	 * 
-	 * @return String JSON
-	 */
-	@Override
-	public JoinGameResponse joinGame(String teamName) {
-
-		JoinGameRequest joinGameRequest = new JoinGameRequest();
-		joinGameRequest.setTeamId(teamName);
-
-		HttpResponse<String> postResponse = POSTRequest(urlWithID + "/join", gson.toJson(joinGameRequest));
-
-		joinGameResponse = gson.fromJson(postResponse.body(), JoinGameResponse.class);
-
-		int returnedCode = postResponse.statusCode();
-
-		if (returnedCode == 404) {
-			throw new SessionNotFound();
-		} else if (returnedCode == 429) {
-			throw new NoMoreTeamSlots();
-		} else if (returnedCode == 500) {
-			throw new UnknownError();
-		}	
-
-		return joinGameResponse;
 	}
 
 	/**
@@ -281,9 +232,8 @@ public class CommLayer implements CommInterface {
 				throw new SessionNotFound();
 			} else if (returnedCode == 500) {
 				throw new UnknownError();
-			} else {
-				return returnedState;
 			}
+		return returnedState;
 	}
 
 	/**
