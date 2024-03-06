@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import org.ctf.TL.data.map.MapTemplate;
+import org.ctf.TL.layer.CommInterface;
 import org.ctf.TL.layer.CommLayer;
 import org.ctf.TL.state.Team;
 import org.ctf.TL.data.wrappers.GameSessionResponse;
@@ -146,8 +147,13 @@ public class ServerCommandTests {
         //testConnectionTimedGameMode();
         //testMalformedConnection();
         //testConnectionTimedMoveMode();
-        //join();
-        joinNDelete();
+       try {
+        join();
+        } catch (Exception e) {
+         e.printStackTrace();
+        }
+        
+        //joinNDelete();
 
     }
 
@@ -264,7 +270,7 @@ public class ServerCommandTests {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
     
-            CommLayer testL = new CommLayer("http://localhost:8080");
+            CommInterface testL = new CommLayer("http://localhost:8080");
             GameSessionResponse testResponse = testL.createGameSession(test);
             System.out.println(gson.toJson(testResponse));
     }
@@ -382,7 +388,7 @@ public class ServerCommandTests {
           Gson gson = new GsonBuilder().setPrettyPrinting().create();
           MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
   
-          CommLayer testL = new CommLayer("http://localhost:8080");
+          CommInterface testL = new CommLayer("http://localhost:8080");
           GameSessionResponse testResponse = testL.createGameSession(test);
           System.out.println(gson.toJson(testResponse));
   }  
@@ -500,7 +506,7 @@ public class ServerCommandTests {
           Gson gson = new GsonBuilder().setPrettyPrinting().create();
           MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
   
-          CommLayer testL = new CommLayer("http://localhost:8080");
+          CommInterface testL = new CommLayer("http://localhost:8080");
           GameSessionResponse testResponse = testL.createGameSession(test);
           System.out.println(gson.toJson(testResponse));
   }
@@ -618,7 +624,7 @@ public class ServerCommandTests {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
 
-        CommLayer testL = new CommLayer("http://localhost:8080");
+        CommInterface testL = new CommLayer("http://localhost:8080");
         GameSessionResponse testResponse = testL.createGameSession(test);
         System.out.println(gson.toJson(testResponse));
 }
@@ -735,7 +741,7 @@ public class ServerCommandTests {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
 
-        CommLayer testL = new CommLayer("http://localhost:8080");
+        CommInterface testL = new CommLayer("http://localhost:8080");
         GameSessionResponse testResponse = testL.createGameSession(test);
         System.out.println(gson.toJson(testResponse));
     }
@@ -745,7 +751,7 @@ public class ServerCommandTests {
       Gson gson = new GsonBuilder().setPrettyPrinting().create();
       MapTemplate test = gson.fromJson(goodKnownLoad, MapTemplate.class);
 
-      CommLayer testL = new CommLayer("http://localhost:8080");
+      CommInterface testL = new CommLayer("http://localhost:8080");
       GameSessionResponse testResponse = testL.createGameSession(test);
       System.out.println(gson.toJson(testResponse));
       Team testTeam1 = testL.joinGame("Player1");
@@ -764,7 +770,7 @@ public class ServerCommandTests {
       Gson gson = new GsonBuilder().setPrettyPrinting().create();
       MapTemplate test = gson.fromJson(goodKnownLoad, MapTemplate.class);
 
-      CommLayer testL = new CommLayer("http://localhost:8080");
+      CommInterface testL = new CommLayer("http://localhost:8080");
       GameSessionResponse testResponse = testL.createGameSession(test);
       System.out.println(gson.toJson(testResponse));
 

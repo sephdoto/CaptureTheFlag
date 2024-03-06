@@ -1,6 +1,6 @@
 //Private TEST File to test code snippets
 
-package org.ctf.TL.Layer;
+package org.ctf.TL.layer;
 
 import java.util.Arrays;
 import java.util.Collections;
