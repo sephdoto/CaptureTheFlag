@@ -17,7 +17,6 @@ import org.ctf.TL.data.wrappers.JoinGameRequest;
 import org.ctf.TL.data.wrappers.JoinGameResponse;
 import org.ctf.TL.data.wrappers.MoveRequest;
 import org.ctf.TL.exceptions.Accepted;
-import org.ctf.TL.exceptions.ApiError;
 import org.ctf.TL.exceptions.ForbiddenMove;
 import org.ctf.TL.exceptions.GameOver;
 import org.ctf.TL.exceptions.InvalidMove;
@@ -27,7 +26,6 @@ import org.ctf.TL.exceptions.URLError;
 import org.ctf.TL.exceptions.UnknownError;
 import org.ctf.TL.state.GameState;
 import org.ctf.TL.state.Move;
-import org.ctf.TL.state.Team;
 
 import com.google.gson.Gson;
 
@@ -47,11 +45,10 @@ public class CommLayer implements CommInterface {
 	 * Creates a Layer Object which can then be used to communicate with the Server
 	 * The URL and the port the layer binds to are given on object creation
 	 * 
-	 * @param url 
-	 * Example URL http://localhost:8080
+	 * @param url
+	 *            Example URL http://localhost:8080
 	 */
-	public CommLayer(String url) {
-		
+	public CommLayer() {
 		gson = new Gson(); // creates a gson Object on creation to conserve memory
 	}
 
@@ -59,36 +56,87 @@ public class CommLayer implements CommInterface {
 	 * Creates a Game Session if object is not connected to any game session
 	 * Receives a template object which it uses to create the body for the API
 	 * request
-	 * Returns GameSessionResponse containing a session ID, start and end date, Gameover flag, and winner flag
+	 * Returns GameSessionResponse containing a session ID, start and end date,
+	 * Gameover flag, and winner flag
 	 * 200 Game session created
 	 * 500 Unknown error occurred
 	 * 
+	 * @param URL
 	 * @param map
+	 * 
 	 * @returns GameSessionResponse
+	 * @throws UnknownError
+	 * @throws URLError
+	 * @throws Accepted
 	 */
 	@Override
-	public GameSessionResponse createGameSession(MapTemplate map) {
+	public GameSessionResponse createGameSession(String URL, MapTemplate map) {
 		GameSessionRequest gsr = new GameSessionRequest();
 		gsr.setTemplate(map);
 
 		String jsonPayload = gson.toJson(gsr);
-		
+
 		// Performs the POST request
-		HttpResponse<String> serverResponse = POSTRequest(url , jsonPayload);
+		HttpResponse<String> serverResponse = POSTRequest(URL, jsonPayload);
 
 		// Parses Server Response to expected class
-		gameSessionResponse = gson.fromJson(serverResponse.body(), GameSessionResponse.class);
+		GameSessionResponse gameSessionResponse = gson.fromJson(serverResponse.body(), GameSessionResponse.class);
 
-		//Saves the code of the server response
+		// Saves the code of the server response
 		int returnedCode = serverResponse.statusCode();
 
 		if (returnedCode == 500) {
 			throw new UnknownError();
-		} else if (returnedCode == 404){
+		} else if (returnedCode == 404) {
 			throw new URLError("URL Error");
 		}
-
 		return gameSessionResponse;
+	}
+
+	/**
+	 * Joins a Game Session if object is connected to a game session
+	 * Receives a
+	 * String URL to use while making the request
+	 * String for proposed teamID
+	 * Return Codes
+	 * 200 Team joined
+	 * 404 Game session not found
+	 * 429 No more team slots available
+	 * 500 Unknown error occurred
+	 * 
+	 * The Return is data needed for your team to communicate with
+	 * 
+	 * @param URL
+	 * @param teamName
+	 * 
+	 * @return String JSON
+	 * 
+	 * @throws SessionNotFound
+	 * @throws NoMoreTeamSlots
+	 * @throws UnknownError
+	 * @throws Accepted
+	 */
+	@Override
+	public JoinGameResponse joinGame(String URL, String teamName) {
+
+		JoinGameRequest joinGameRequest = new JoinGameRequest();
+		joinGameRequest.setTeamId(teamName);
+
+		HttpResponse<String> postResponse = POSTRequest(URL + "/join", gson.toJson(joinGameRequest));
+
+		JoinGameResponse joinGameResponse = gson.fromJson(postResponse.body(), JoinGameResponse.class);
+
+		int returnedCode = postResponse.statusCode();
+
+		if (returnedCode == 404) {
+			throw new SessionNotFound();
+		} else if (returnedCode == 429) {
+			throw new NoMoreTeamSlots();
+		} else if (returnedCode == 500) {
+			throw new UnknownError();
+		}
+
+		return joinGameResponse;
 	}
 
 	/**
@@ -103,33 +151,43 @@ public class CommLayer implements CommInterface {
 	 * 410 Game is over
 	 * 500 Unknown error occurred
 	 * 
-	 * @param mov
+	 * @param URL
+	 * @param teamID
+	 * @param teamSecret
+	 * @param move
+	 * 
+	 * @throws Accepted
+	 * @throws ForbiddenMove
+	 * @throws SessionNotFound
+	 * @throws InvalidMove
+	 * @throws GameOver
+	 * @throws UnknownError
 	 */
 	@Override
-	public void makeMove(Move mov) {
+	public void makeMove(String URL, String teamID, String teamSecret, Move move) {
 		MoveRequest moveReq = new MoveRequest();
 		moveReq.setTeamId(teamID);
 		moveReq.setTeamSecret(teamSecret);
-		moveReq.setPieceId(mov.getPieceId());
-		moveReq.setNewPosition(mov.getNewPosition());
+		moveReq.setPieceId(move.getPieceId());
+		moveReq.setNewPosition(move.getNewPosition());
 
-		HttpResponse<String> postResponse = POSTRequest(urlWithID + "/move", gson.toJson(moveReq));
+		HttpResponse<String> postResponse = POSTRequest(URL + "/move", gson.toJson(moveReq));
 
 		int returnedCode = postResponse.statusCode();
 
-			if (returnedCode == 200) {
-				throw new Accepted(200);
-			} else if (returnedCode == 403) {
-				throw new ForbiddenMove();
-			} else if (returnedCode == 404) {
-				throw new SessionNotFound();
-			} else if (returnedCode == 409) {
-				throw new InvalidMove();
-			} else if (returnedCode == 410) {
-				throw new GameOver();
-			} else if (returnedCode == 500) {
-				throw new UnknownError();
-			}
+		if (returnedCode == 200) {
+			throw new Accepted(200);
+		} else if (returnedCode == 403) {
+			throw new ForbiddenMove();
+		} else if (returnedCode == 404) {
+			throw new SessionNotFound();
+		} else if (returnedCode == 409) {
+			throw new InvalidMove();
+		} else if (returnedCode == 410) {
+			throw new GameOver();
+		} else if (returnedCode == 500) {
+			throw new UnknownError();
+		}
 	}
 
 	/**
@@ -141,114 +199,145 @@ public class CommLayer implements CommInterface {
 	 * 404 Game session not found
 	 * 410 Game is over
 	 * 500 Unknown error occurred
+	 * 
+	 * @param URL
+	 * @param teamID
+	 * @param teamSecret
+	 * 
+	 * @throws Accepted
+	 * @throws SessionNotFound
+	 * @throws ForbiddenMove
+	 * @throws GameOver
+	 * @throws UnknownError
 	 */
 	@Override
-	public void giveUp(String ID, String secret) {
+	public void giveUp(String URL, String teamID, String teamSecret) {
 
 		GiveupRequest giveUpRequest = new GiveupRequest();
 		giveUpRequest.setTeamId(teamID);
 		giveUpRequest.setTeamSecret(teamSecret);
 
-		HttpResponse<String> postResponse = POSTRequest(urlWithID + "/giveup", gson.toJson(giveUpRequest));
+		HttpResponse<String> postResponse = POSTRequest(URL + "/giveup", gson.toJson(giveUpRequest));
 
 		int returnedCode = postResponse.statusCode();
-			if (returnedCode == 200) {
-				throw new Accepted(200);
-			} else if (returnedCode == 403) {
-				throw new ForbiddenMove();
-			} else if (returnedCode == 404) {
-				throw new SessionNotFound();
-			} else if (returnedCode == 410) {
-				throw new GameOver();
-			} else {
-				throw new UnknownError();
-			}
+		if (returnedCode == 200) {
+			throw new Accepted(200);
+		} else if (returnedCode == 403) {
+			throw new ForbiddenMove();
+		} else if (returnedCode == 404) {
+			throw new SessionNotFound();
+		} else if (returnedCode == 410) {
+			throw new GameOver();
+		} else {
+			throw new UnknownError();
+		}
 	}
 
 	/**
-	 * Gets the current Session
+	 * Gets the State of the current Session
 	 * Return Codes
 	 * 200 Game session response returned
 	 * 404 Game session not found
 	 * 500 Unknown error occurred
+	 * 
+	 * @param URL
+	 * @return GameSessionResponse
+	 * @throws Accepted
+	 * @throws SessionNotFound
+	 * @throws UnknownError
 	 */
 	@Override
-	public void getCurrentSession(){
-		// TODO decide the return type of the Method.
-		HttpResponse<String> getResponse = GETRequest(urlWithID);
-		// TODO Object returned from Server. Decide what to do with it
-		gameSessionResponse = gson.fromJson(getResponse.body(), GameSessionResponse.class);
+	public GameSessionResponse getCurrentSessionState(String URL) {
+		HttpResponse<String> getResponse = GETRequest(URL);
+		GameSessionResponse gameSessionResponse = gson.fromJson(getResponse.body(), GameSessionResponse.class);
 
 		int returnedCode = getResponse.statusCode();
 
-			if (returnedCode == 404) {
-				throw new SessionNotFound();
-			} else if (returnedCode == 500) {
-				throw new UnknownError();
-			}
+		if (returnedCode == 404) {
+			throw new SessionNotFound();
+		} else if (returnedCode == 500) {
+			throw new UnknownError();
+		}
+
+		return gameSessionResponse;
 	}
 
 	/**
-	 * Delets the current Session
+	 * Deletes the current Session
 	 * Return Codes
 	 * 200 Game session response returned
 	 * 404 Game session not found
 	 * 500 Unknown error occurred
+	 * 
+	 * @param URL
+	 * @throws Accepted
+	 * @throws SessionNotFound
+	 * @throws UnknownError
+	 * 
 	 */
 	@Override
-	public void deleteCurrentSession() {
-		HttpResponse<String> deleteResponse = DELETERequest(urlWithID);
+	public void deleteCurrentSession(String URL) {
+		HttpResponse<String> deleteResponse = DELETERequest(URL);
 
 		int returnedCode = deleteResponse.statusCode();
 
-			 if (returnedCode == 404) {
-				throw new SessionNotFound();
-			} else if (returnedCode == 500) {
-				throw new UnknownError();
-			} else {
-				throw new Accepted(200);
-			}
+		if (returnedCode == 404) {
+			throw new SessionNotFound();
+		} else if (returnedCode == 500) {
+			throw new UnknownError();
+		} else {
+			throw new Accepted(200);
+		}
 	}
 
 	/**
 	 * Gets the current Session
-	 * Returns Game State Object
+	 * Returns GameState Object
 	 * Codes internally thrown
 	 * 200 Game state returned
 	 * 404 Game session not found
 	 * 500 Unknown error occurred
 	 * 
+	 * @param URL
 	 * @return GameState
+	 * @throws Accepted
+	 * @throws SessionNotFound
+	 * @throws UnknownError
 	 */
 	@Override
-	public GameState getCurrentState() {
-		HttpResponse<String> getResponse = GETRequest(urlWithID + "/state");
+	public GameState getCurrentGameState(String URL) {
+		HttpResponse<String> getResponse = GETRequest(URL + "/state");
 
 		GameState returnedState = gson.fromJson(getResponse.body(), GameState.class);
 
 		int returnedCode = getResponse.statusCode();
 
-			if (returnedCode == 404) {
-				throw new SessionNotFound();
-			} else if (returnedCode == 500) {
-				throw new UnknownError();
-			}
+		if (returnedCode == 404) {
+			throw new SessionNotFound();
+		} else if (returnedCode == 500) {
+			throw new UnknownError();
+		}
 		return returnedState;
 	}
 
 	/**
 	 * Method to perform a POST HTTP Request and
 	 * 
-	 * @param urlInput    baseURL
+	 * @param URL
 	 * @param jsonPayload String Representation of a json
 	 * @return HttpResponse<String>
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws NullPointerException
+	 * 
 	 */
-	private HttpResponse<String> POSTRequest(String urlInput, String jsonPayload) {
+	private HttpResponse<String> POSTRequest(String URL, String jsonPayload) {
 
 		HttpResponse<String> ret = null;
 		try {
 			HttpRequest request = HttpRequest.newBuilder()
-					.uri(new URI(urlInput))
+					.uri(new URI(URL))
 					.header("Content-Type", "application/json")
 					.POST(BodyPublishers.ofString(jsonPayload))
 					.build();
@@ -264,14 +353,18 @@ public class CommLayer implements CommInterface {
 	 * Method which takes a URL and performs a GET HTTP request and returns the
 	 * response
 	 * 
-	 * @param urlInput
+	 * @param URL
 	 * @return HttpResponse<String>
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws NullPointerException
 	 */
-	private HttpResponse<String> GETRequest(String urlInput) {
+	private HttpResponse<String> GETRequest(String URL) {
 		HttpResponse<String> ret = null;
 		try {
 			HttpRequest request = HttpRequest.newBuilder()
-					.uri(new URI(urlInput))
+					.uri(new URI(URL))
 					.header("Content-Type", "application/json")
 					.GET()
 					.build();
@@ -286,14 +379,18 @@ public class CommLayer implements CommInterface {
 	 * Method which takes a URL and performs a DELETE HTTP request and returns the
 	 * response
 	 * 
-	 * @param urlInput
+	 * @param URL
 	 * @return HttpResponse<String>
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws NullPointerException
 	 */
-	private HttpResponse<String> DELETERequest(String urlInput) {
+	private HttpResponse<String> DELETERequest(String URL) {
 		HttpResponse<String> ret = null;
 		try {
 			HttpRequest request = HttpRequest.newBuilder()
-					.uri(new URI(urlInput))
+					.uri(new URI(URL))
 					.header("Content-Type", "application/json")
 					.DELETE()
 					.build();
