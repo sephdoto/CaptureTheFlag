@@ -2,6 +2,7 @@ package de.unimannheim.swt.pse.ctf;
 
 import de.unimannheim.swt.pse.ctf.game.DummyGame;
 import de.unimannheim.swt.pse.ctf.game.Game;
+import de.unimannheim.swt.pse.ctf.game.GameEngine;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,7 +24,7 @@ public class CtfApplication {
 	 */
 	public static Game createGameEngine() {
 		// FIXME change object
-		return new DummyGame();
+		return new GameEngine();
 	}
 
 }

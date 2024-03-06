@@ -30,9 +30,10 @@ import com.google.gson.Gson;
  */
 public class GameEngine implements Game {
 
+    private GameState gameState; //MAIN Data Store for GameEngine
+
     private MapTemplate currentTemplate; // Saves a copy of the template
-    private GameState gameState;
-    private int maxTeams;
+
     private int remainingTeamSlots;
     private int maxFlags;
     private boolean isStarted; // Initial value
@@ -53,13 +54,11 @@ public class GameEngine implements Game {
         // TODO Parse the Map template to create an Initial Game State
         this.currentTemplate = template; // Saves a copy of the initial template
         colorList =  new LinkedList<>(Arrays.asList(new String[]{"red" , "green", "yellow" , "white" , "black" , "blue" })); //Inits a String LL with predefined colors
+        
         GameState gameState = new GameState();
-        gameState.setGrid(new String[template.getGridSize()[0]][template.getGridSize()[1]]); // Ints with empty grid of
-                                                                                             // specified size //Parsing
-                                                                                             // the Size
-        this.maxTeams = template.getTeams(); // Setting Max Number of teams allowed
-        this.remainingTeamSlots = maxTeams; // Setting Initial Number of Teams in GameEngine Instance
-        this.maxFlags = template.getFlags(); // Setting Initial Number of Teams in GameEngine Instance
+        gameState.setGrid(new String[template.getGridSize()[0]][template.getGridSize()[1]]); // Ints with empty grid of specified size
+        gameState.setTeams(new Team[template.getTeams()]);
+        
 
         // Setting Flags
         this.isStarted = false;
@@ -77,7 +76,7 @@ public class GameEngine implements Game {
      */
     @Override
     public GameState getCurrentGameState() {
-        return this.gameState;
+        return gameState;
     }
 
     /**
@@ -218,6 +217,7 @@ public class GameEngine implements Game {
     @Override
     public Team joinGame(String teamId) {
         // Initial check if Slots are even available
+        // Check if .....Team with same name exists
         try {
             if (this.getRemainingTeamSlots() < 0) {
                 throw new NoMoreTeamSlots();
