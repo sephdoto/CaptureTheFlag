@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 import java.io.File;
 
 
-
 /**
  * using external JSON library, have to mention it in README; https://github.com/stleary/JSON-java/tree/master
  *@author sistumpf
@@ -27,7 +26,7 @@ public class JSON_Tools {
 	 */
 	public static void saveMapTemplateAsFile(String mapName, MapTemplate mapTemplate) throws IOException {
 		byte[] contentBytes = mapTemplate.toJSONString().getBytes();
-		File file = new File(constants.Constants.mapTemplateFolder+mapName+".json");
+		File file = new File(org.ctf.Client.constants.Constants.mapTemplateFolder+mapName+".json");
 		Files.write(file.toPath(), contentBytes);
 	}
 	
@@ -58,12 +57,12 @@ public class JSON_Tools {
 	 */
 	@Deprecated
 	public static MapTemplate readMapTemplate(String mapName) throws MapNotFoundException {
-		Path path = Paths.get(constants.Constants.mapTemplateFolder+mapName+".json");
+		Path path = Paths.get(org.ctf.Client.constants.Constants.mapTemplateFolder+mapName+".json");
 		if(!Files.exists(path))
 			throw new MapNotFoundException(mapName);
 		
 		try {
-			return MapFromJson(fileToString(constants.Constants.mapTemplateFolder+mapName+".json"));
+			return MapFromJson(fileToString(org.ctf.Client.constants.Constants.mapTemplateFolder+mapName+".json"));
 		} catch (IOException e) {e.printStackTrace();}
 		
 		return null;
@@ -132,7 +131,7 @@ public class JSON_Tools {
 	 */
 	public static class MapNotFoundException extends Exception {
 		MapNotFoundException(String mapName){
-			super("There is no MapTemplate named " + mapName + " in " + constants.Constants.mapTemplateFolder);
+			super("There is no MapTemplate named " + mapName + " in " + org.ctf.Client.constants.Constants.mapTemplateFolder);
 		}
 	}
 	
