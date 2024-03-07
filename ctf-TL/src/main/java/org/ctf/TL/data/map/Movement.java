@@ -1,7 +1,6 @@
-package org.ctf.TL.data.map;
+package org.ctf.tl.data.map;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.json.JSONObject;
 import org.json.JSONString;
 
 /**

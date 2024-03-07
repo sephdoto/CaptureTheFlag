@@ -1,6 +1,6 @@
-package org.ctf.TL.state;
+package org.ctf.tl.state;
 
-import de.unimannheim.swt.pse.ctf.game.map.PieceDescription;
+import org.ctf.tl.data.map.PieceDescription;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**

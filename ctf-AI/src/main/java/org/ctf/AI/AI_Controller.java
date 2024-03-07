@@ -1,22 +1,18 @@
 package org.ctf.AI;
-//TODO Fix Wildcard import...Google Code Bullshit doesnt allow wildcard impports
-import de.unimannheim.swt.pse.ctf.game.state.GameState;
-import de.unimannheim.swt.pse.ctf.game.state.Piece;
-import de.unimannheim.swt.pse.ctf.game.state.Move;
-import de.unimannheim.swt.pse.ctf.game.state.Team;
-import de.unimannheim.swt.pse.ctf.game.map.Directions;
-import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
-import de.unimannheim.swt.pse.ctf.game.map.Movement;
-import de.unimannheim.swt.pse.ctf.game.map.PieceDescription;
-import de.unimannheim.swt.pse.ctf.game.map.Shape;
-import de.unimannheim.swt.pse.ctf.game.map.PlacementType;
-import de.unimannheim.swt.pse.ctf.game.map.ShapeType;
 
-import org.ctf.Client.JSON_Tools;
-import org.ctf.Client.constants.Constants;
+
+import org.ctf.tl.state.Piece;
+import org.ctf.tl.state.Move;
+import org.ctf.tl.state.Team;
+
 
 import java.io.File;
 import java.io.IOException;
+
+import org.ctf.client.JSON_Tools;
+import org.ctf.client.constants.Constants;
+import org.ctf.tl.data.map.MapTemplate;
+import org.ctf.tl.state.GameState;
 
 public class AI_Controller {
 

@@ -1,4 +1,4 @@
-package org.ctf.TL.data.map;
+package org.ctf.tl.data.map;
 
 import org.json.JSONObject;
 import org.json.JSONString;

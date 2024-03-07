@@ -1,4 +1,4 @@
-package org.ctf.TL.data.map;
+package org.ctf.tl.data.map;
 
 /**
  * This enum represents strategies for piece placements.

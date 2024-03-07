@@ -1,7 +1,7 @@
-package org.ctf.TL.data.wrappers;
+package org.ctf.tl.data.wrappers;
 
 
-import org.ctf.TL.data.map.MapTemplate;
+import org.ctf.tl.data.map.MapTemplate;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

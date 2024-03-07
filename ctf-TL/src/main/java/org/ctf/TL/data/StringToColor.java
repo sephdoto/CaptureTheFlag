@@ -1,4 +1,4 @@
-package org.ctf.TL.data;
+package org.ctf.tl.data;
 
 import java.awt.Color;
 

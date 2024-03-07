@@ -1,4 +1,4 @@
-package org.ctf.TL.layer;
+package org.ctf.tl.layer;
 
 import java.io.IOException;
 import java.net.URI;
@@ -9,23 +9,23 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
-import org.ctf.TL.data.map.MapTemplate;
-import org.ctf.TL.data.wrappers.GameSessionRequest;
-import org.ctf.TL.data.wrappers.GameSessionResponse;
-import org.ctf.TL.data.wrappers.GiveupRequest;
-import org.ctf.TL.data.wrappers.JoinGameRequest;
-import org.ctf.TL.data.wrappers.JoinGameResponse;
-import org.ctf.TL.data.wrappers.MoveRequest;
-import org.ctf.TL.exceptions.Accepted;
-import org.ctf.TL.exceptions.ForbiddenMove;
-import org.ctf.TL.exceptions.GameOver;
-import org.ctf.TL.exceptions.InvalidMove;
-import org.ctf.TL.exceptions.NoMoreTeamSlots;
-import org.ctf.TL.exceptions.SessionNotFound;
-import org.ctf.TL.exceptions.URLError;
-import org.ctf.TL.exceptions.UnknownError;
-import org.ctf.TL.state.GameState;
-import org.ctf.TL.state.Move;
+import org.ctf.tl.data.map.MapTemplate;
+import org.ctf.tl.data.wrappers.GameSessionRequest;
+import org.ctf.tl.data.wrappers.GameSessionResponse;
+import org.ctf.tl.data.wrappers.GiveupRequest;
+import org.ctf.tl.data.wrappers.JoinGameRequest;
+import org.ctf.tl.data.wrappers.JoinGameResponse;
+import org.ctf.tl.data.wrappers.MoveRequest;
+import org.ctf.tl.exceptions.Accepted;
+import org.ctf.tl.exceptions.ForbiddenMove;
+import org.ctf.tl.exceptions.GameOver;
+import org.ctf.tl.exceptions.InvalidMove;
+import org.ctf.tl.exceptions.NoMoreTeamSlots;
+import org.ctf.tl.exceptions.SessionNotFound;
+import org.ctf.tl.exceptions.URLError;
+import org.ctf.tl.exceptions.UnknownError;
+import org.ctf.tl.state.GameState;
+import org.ctf.tl.state.Move;
 
 import com.google.gson.Gson;
 

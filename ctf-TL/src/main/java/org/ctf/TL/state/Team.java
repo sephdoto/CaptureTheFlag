@@ -1,4 +1,4 @@
-package org.ctf.TL.state;
+package org.ctf.tl.state;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
