@@ -35,6 +35,7 @@ import javafx.scene.text.Text;
  * @author mkrakows
  * startpoint for the Gui Application
  * Opens HomeScreen
+ * xxx
  */
 
 public class Main extends Application {
