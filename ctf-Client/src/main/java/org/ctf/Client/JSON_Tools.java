@@ -1,6 +1,6 @@
-package de.unimannheim.swt.pse.ctf.game.map;
+package org.ctf.Client;
 
-import de.unimannheim.swt.pse.ctf.constants.*;
+import de.unimannheim.swt.pse.ctf.game.map.*;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class JSON_Tools {
 	 */
 	public static void saveMapTemplateAsFile(String mapName, MapTemplate mapTemplate) throws IOException {
 		byte[] contentBytes = mapTemplate.toJSONString().getBytes();
-		File file = new File(Constants.mapTemplateFolder+mapName+".json");
+		File file = new File(constants.Constants.mapTemplateFolder+mapName+".json");
 		Files.write(file.toPath(), contentBytes);
 	}
 	
@@ -43,7 +43,7 @@ public class JSON_Tools {
 			return MapFromJson(fileToString(mapTemplate.getAbsolutePath()));
 		} catch(org.json.JSONException jsone) {
 			Files.delete(mapTemplate.toPath());
-			throw new IncompleteMapTemplateException(mapTemplate.getName());
+			throw new IncompleteMapTemplateException(mapTemplate.getName());  // reihenfolge ändern
 		}
 	}
 	
@@ -58,12 +58,12 @@ public class JSON_Tools {
 	 */
 	@Deprecated
 	public static MapTemplate readMapTemplate(String mapName) throws MapNotFoundException {
-		Path path = Paths.get(Constants.mapTemplateFolder+mapName+".json");
+		Path path = Paths.get(constants.Constants.mapTemplateFolder+mapName+".json");
 		if(!Files.exists(path))
 			throw new MapNotFoundException(mapName);
 		
 		try {
-			return MapFromJson(fileToString(Constants.mapTemplateFolder+mapName+".json"));
+			return MapFromJson(fileToString(constants.Constants.mapTemplateFolder+mapName+".json"));
 		} catch (IOException e) {e.printStackTrace();}
 		
 		return null;
@@ -132,7 +132,7 @@ public class JSON_Tools {
 	 */
 	public static class MapNotFoundException extends Exception {
 		MapNotFoundException(String mapName){
-			super("There is no MapTemplate named " + mapName + " in " + Constants.mapTemplateFolder);
+			super("There is no MapTemplate named " + mapName + " in " + constants.Constants.mapTemplateFolder);
 		}
 	}
 	

@@ -1,11 +1,33 @@
 package org.ctf.AI;
 //TODO Fix Wildcard import...Google Code Bullshit doesnt allow wildcard impports
-import de.unimannheim.swt.pse.ctf.game.state.*;
+import de.unimannheim.swt.pse.ctf.game.state.GameState;
+import de.unimannheim.swt.pse.ctf.game.state.Piece;
+import de.unimannheim.swt.pse.ctf.game.state.Move;
+import de.unimannheim.swt.pse.ctf.game.state.Team;
+import de.unimannheim.swt.pse.ctf.game.map.Directions;
+import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
+import de.unimannheim.swt.pse.ctf.game.map.Movement;
+import de.unimannheim.swt.pse.ctf.game.map.PieceDescription;
+import de.unimannheim.swt.pse.ctf.game.map.Shape;
+import de.unimannheim.swt.pse.ctf.game.map.PlacementType;
+import de.unimannheim.swt.pse.ctf.game.map.ShapeType;
+import constants.Constants;
+import org.ctf.Client.JSON_Tools;
+import java.io.File;
+import java.io.IOException;
 
 public class AI_Controller {
 
 	//used for testing
 	public static void main(String[] args) {
+		MapTemplate mt = null;
+		try {
+			mt = JSON_Tools.readMapTemplate(new File(Constants.mapTemplateFolder+"test.json"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+		
 		Team team1 = new Team();
 		team1.setBase(new int[] {2,2});			//
 		team1.setColor("red");
@@ -20,10 +42,10 @@ public class AI_Controller {
 		team2.setPieces(null);
 		
 		Piece piece = new Piece();
-		piece.setDescription(null);
-		piece.setId(null);
-		piece.setPosition(null);
-		piece.setTeamId(null);
+		piece.setDescription(mt.getPieces()[0]);
+		piece.setId("pawnTeam1");
+		piece.setPosition(new int[] {0,0});
+		piece.setTeamId("team1");
 		
 		Move lastMove = new Move();
 		lastMove.setNewPosition(null);
@@ -31,19 +53,31 @@ public class AI_Controller {
 		
 		GameState testState = new GameState();
 		testState.setCurrentTeam(1);
-		String[][] example = new String[][] {{"","","","",""},{"","","","",""},{"","","","",""},{"","","","",""},{"","","","",""}};
-				String x = "[\n" +
-                "   [\"b:1\", \"\", \"\", \"\", \"\"],\n" +
-                "   [\"\", \"p:1_1\", \"p:1_2\", \"p:1_3\", \"\"],\n" +
-                "   [\"b\", \"\", \"\", \"\", \"b\"],\n" +
-                "   [\"\", \"p:2_1\", \"p:2_2\", \"p:2_3\", \"\"],\n" +
-                "   [\"\", \"\", \"\", \"\", \"b:2\"]\n" +
-                "]";
+		String[][] example = new String[][] {
+			{"","","","","","","","","",""},
+			{"","","","","","","","","",""},
+			{"","","","","","","","","",""},
+			{"","","","","","","","","",""},
+			{"","","","","","","","","",""},
+			{"","","","","","","","","",""},
+			{"","","","","","","","","",""},
+			{"","","","","","","","","",""},
+			{"","","","","","","","","",""},
+			{"","","","","","","","","",""}
+			};
 		testState.setGrid(example);
 		testState.setLastMove(lastMove);
 		testState.setTeams(new Team[]{team1, team2});
 		
-		System.out.println(x);
+		System.out.println(mt.getPieces()[0].getType());
+		
+		mt.setGridSize(null);
+		try {
+			JSON_Tools.saveMapTemplateAsFile("test", mt);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		RandomAI.pickMove("");
 	}
 	

@@ -25,7 +25,7 @@
     
     <dependency>
         <groupId>de.uni-mannheim.swt.pse</groupId>
-        <artifactId>ctf</artifactId>
+        <artifactId>ctf-Client</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </dependency>
 
