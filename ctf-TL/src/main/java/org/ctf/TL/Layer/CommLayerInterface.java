@@ -50,9 +50,7 @@ public interface CommLayerInterface {
      * 
      * @param URL
      * @param teamName
-     * 
-     * @return String JSON
-     * 
+     * @return JoinGameResponse
      * @throws SessionNotFound
      * @throws NoMoreTeamSlots
      * @throws UnknownError
@@ -76,7 +74,6 @@ public interface CommLayerInterface {
      * @param teamID
      * @param teamSecret
      * @param move
-     * 
      * @throws Accepted
      * @throws ForbiddenMove
      * @throws SessionNotFound
@@ -99,7 +96,6 @@ public interface CommLayerInterface {
      * @param URL
      * @param teamID
      * @param teamSecret
-     * 
      * @throws Accepted
      * @throws SessionNotFound
      * @throws ForbiddenMove
