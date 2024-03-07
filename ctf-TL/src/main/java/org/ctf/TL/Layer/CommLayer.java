@@ -36,7 +36,7 @@ import com.google.gson.Gson;
  * @author rsyed
  * @return Layer Object
  */
-public class CommLayer implements CommInterface {
+public class CommLayer implements CommLayerInterface {
 
 	// Data Blocks for the Layer
 	private Gson gson; // Gson object to convert classes to Json
@@ -285,8 +285,6 @@ public class CommLayer implements CommInterface {
 			throw new SessionNotFound();
 		} else if (returnedCode == 500) {
 			throw new UnknownError();
-		} else {
-			throw new Accepted(200);
 		}
 	}
 
