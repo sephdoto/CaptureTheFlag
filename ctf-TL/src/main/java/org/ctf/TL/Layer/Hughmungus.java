@@ -8,9 +8,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import org.ctf.TL.data.map.Directions;
-import org.ctf.TL.data.map.Movement;
-import org.ctf.TL.data.map.PieceDescription;
+import org.ctf.client.data.map.Directions;
+import org.ctf.client.data.map.Movement;
+import org.ctf.client.data.map.PieceDescription;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

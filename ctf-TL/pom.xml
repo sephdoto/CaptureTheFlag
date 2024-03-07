@@ -27,7 +27,11 @@
  		<artifactId>ctf</artifactId>
   		<version>0.0.1-SNAPSHOT</version>
   	</dependency>
-  
+    <dependency>
+    	<groupId>de.uni-mannheim.swt.pse</groupId>
+ 		  <artifactId>ctf-Client</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>

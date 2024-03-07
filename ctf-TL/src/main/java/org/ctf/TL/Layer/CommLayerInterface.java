@@ -1,18 +1,18 @@
 package org.ctf.TL.layer;
 
-import org.ctf.TL.data.map.MapTemplate;
-import org.ctf.TL.data.wrappers.GameSessionResponse;
-import org.ctf.TL.data.wrappers.JoinGameResponse;
-import org.ctf.TL.exceptions.Accepted;
-import org.ctf.TL.exceptions.ForbiddenMove;
-import org.ctf.TL.exceptions.GameOver;
-import org.ctf.TL.exceptions.InvalidMove;
-import org.ctf.TL.exceptions.NoMoreTeamSlots;
-import org.ctf.TL.exceptions.SessionNotFound;
-import org.ctf.TL.exceptions.URLError;
-import org.ctf.TL.exceptions.UnknownError;
-import org.ctf.TL.state.GameState;
-import org.ctf.TL.state.Move;
+import org.ctf.client.data.map.MapTemplate;
+import org.ctf.client.data.wrappers.GameSessionResponse;
+import org.ctf.client.data.wrappers.JoinGameResponse;
+import org.ctf.client.exceptions.Accepted;
+import org.ctf.client.exceptions.ForbiddenMove;
+import org.ctf.client.exceptions.GameOver;
+import org.ctf.client.exceptions.InvalidMove;
+import org.ctf.client.exceptions.NoMoreTeamSlots;
+import org.ctf.client.exceptions.SessionNotFound;
+import org.ctf.client.exceptions.URLError;
+import org.ctf.client.exceptions.UnknownError;
+import org.ctf.client.state.GameState;
+import org.ctf.client.state.Move;
 
 public interface CommLayerInterface {
 
