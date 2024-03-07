@@ -1,4 +1,4 @@
-package org.ctf.client.constants;
+package org.ctf.Client.constants;
 
 import java.io.File;
 import java.nio.file.Paths;

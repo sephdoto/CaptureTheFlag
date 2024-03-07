@@ -12,8 +12,8 @@ import de.unimannheim.swt.pse.ctf.game.map.Shape;
 import de.unimannheim.swt.pse.ctf.game.map.PlacementType;
 import de.unimannheim.swt.pse.ctf.game.map.ShapeType;
 
-import org.ctf.client.JSON_Tools;
-import org.ctf.client.constants.Constants;
+import org.ctf.Client.JSON_Tools;
+import org.ctf.Client.constants.Constants;
 
 import java.io.File;
 import java.io.IOException;
