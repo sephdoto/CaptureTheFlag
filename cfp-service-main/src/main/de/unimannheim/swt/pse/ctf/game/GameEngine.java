@@ -324,7 +324,7 @@ public class GameEngine implements Game {
     
     /**
      * Helper method to add a randomly selected color from an array
-     * "noColor" String is used to define a already used color
+     * "noColor" String is used to define a already used color 
      * NOT THREADSAFE
      * @return a color randomly chosen from a predefined list. Else defaults to black
      */
@@ -335,5 +335,18 @@ public class GameEngine implements Game {
         } else {
             return "BLACK";
         }
+    }
+    
+    /**
+     * Helper method to visualize the boardh
+     * @author ysiebenh
+     */
+    private void printState() {
+    	for( String[]  x : this.gameState.getGrid()) {
+    		for( String y : x) {
+    			System.out.print(y);
+    		}
+    		System.out.println("");
+    	}
     }
 }
