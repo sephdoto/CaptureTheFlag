@@ -1,4 +1,4 @@
-package de.unimannheim.swt.pse.ctf.constants;
+package constants;
 
 import java.io.File;
 import java.nio.file.Paths;
