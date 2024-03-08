@@ -6,6 +6,7 @@ import org.ctf.client.state.Move;
 import org.ctf.client.state.data.map.Directions;
 import org.ctf.client.state.data.map.ShapeType;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -16,19 +17,60 @@ import java.util.Set;
  * Everything needed for choosing a random move
  */
 public class RandomAI {
-
 	/**
-	 * Given a GameState, the pickMove method is able to randomly choose the next move.
-	 * From all pieces a random piece is chosen, if it is able to move its move is randomly chosen.
+	 * Use this to get a random move from a GameState with either the complex or simple algorithm.
+	 * The complex algorithm is recommended but might be a little slower sometimes.
+	 * @param gameState
+	 * @param complex
+	 * @return a valid random move
+	 * @throws NoMovesLeftException
+	 * @throws InvalidShapeException
+	 */
+	public static Move pickMove(GameState gameState, boolean complex) throws NoMovesLeftException, InvalidShapeException {
+		if(complex)
+			return pickMoveComplex(gameState);
+		else {
+			return pickMoveSimple(gameState);
+		}
+	}
+	
+	/**
+	 * Given a GameState, the next move is randomly chosen.
+	 * Heavily relies on randomness, might be a lot faster or a lot slower than {@link #pickMoveComplex(GameState gameState)}.
+	 * This Method cannot notice when there are no moves left.
+	 * @param gameState
+	 * @return a valid random Move
+	 * @throws InvalidShapeException
+	 */
+	public static Move pickMoveSimple(GameState gameState) throws InvalidShapeException {
+		Move move = new Move();
+		
+		Piece[] pieces = gameState.getTeams()[gameState.getCurrentTeam()].getPieces();
+		do {
+			Piece picked = pieces[(int)(Math.random() * pieces.length)];
+			if(picked.getDescription().getMovement().getDirections() != null) {		//move if Directions
+				int randomDirection = (int)(Math.random()*8);
+				int reach = (int)(Math.random() * getReach(picked.getDescription().getMovement().getDirections(), randomDirection));
+				move = checkMoveValidity(gameState, picked, randomDirection, reach);
+			} else {	//move if Shape
+				move = validShapeDirection(gameState, picked, (int)(Math.random()*8));
+			}
+		} while (move == null);
+		return move;
+	}
+	
+	/**
+	 * Given a GameState, the next move is randomly chosen.
+	 * A random piece is chosen out of all pieces, if it is able to move its move is randomly chosen.
 	 * If the piece is not able to move a new piece is chosen from the remaining pieces.
 	 * If no move is possible a NoMovesLeftException is thrown.
 	 * If a piece moves in an unknown Shape an InvalidShapeException is thrown.
 	 * @param gameState
-	 * @return a random Move
+	 * @return a valid random Move
 	 * @throws NoMovesLeftException
 	 * @throws InvalidShapeException 
 	 */
-	public static Move pickMove(GameState gameState) throws NoMovesLeftException, InvalidShapeException {
+	public static Move pickMoveComplex(GameState gameState) throws NoMovesLeftException, InvalidShapeException {
 		ArrayList<Piece> pieceList = new ArrayList<Piece>();
 		Move move = new Move();
 		
@@ -128,8 +170,6 @@ public class RandomAI {
 			return null;
 		}
 	}
-	
-	
 	
 	/**
 	 * Returns a Move from a given set of possible directions to move in.
@@ -272,7 +312,10 @@ public class RandomAI {
 			super("Team " + team + " can not move.");
 		}
 	}
-	
+
+	/**
+	 * Gets thrown if a Shape is not yet implemented in RandomAI
+	 */
 	public static class InvalidShapeException extends Exception {
 		InvalidShapeException(String shape){
 			super("Unknown shape: " + shape);

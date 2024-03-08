@@ -33,7 +33,7 @@ public class AI_Controller {
 		Move move = new Move();
 		double time = System.nanoTime();
 		try {
-			move = RandomAI.pickMove(testState);
+			move = RandomAI.pickMove(testState, true);
 		} catch (NoMovesLeftException e) {e.printStackTrace();}
 		catch (InvalidShapeException inse) {inse.printStackTrace();}
 		System.out.println(((System.nanoTime() - time)/1000000) + " ms");
@@ -79,11 +79,11 @@ public class AI_Controller {
 		}
 		team2.setPieces(pieces2);
 		
-		for(Piece p : pieces2) {
+		/*for(Piece p : pieces2) {
 			p.getDescription().getMovement().setDirections(null);
 			p.getDescription().getMovement().setShape(new Shape());
 			p.getDescription().getMovement().getShape().setType(ShapeType.lshape);
-		}
+		}*/
 		
 		
 		Move lastMove = new Move();
