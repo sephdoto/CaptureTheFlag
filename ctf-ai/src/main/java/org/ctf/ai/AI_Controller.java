@@ -23,22 +23,43 @@ public class AI_Controller {
 		MapTemplate mt = null;
 		try {
 			mt = JSON_Tools.readMapTemplate(new File(Constants.mapTemplateFolder+"10x10_2teams_example.json"));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
-		}
-		
+		} catch (Exception e) {e.printStackTrace();return;}
 		
 		GameState testState = getTestState(mt);
 		Move move = new Move();
-		double time = System.nanoTime();
-		try {
-			move = RandomAI.pickMove(testState, true);
-		} catch (NoMovesLeftException e) {e.printStackTrace();}
-		catch (InvalidShapeException inse) {inse.printStackTrace();}
-		System.out.println(((System.nanoTime() - time)/1000000) + " ms");
-		System.out.println(move.getPieceId() + " " + move.getNewPosition()[0] + "." + move.getNewPosition()[1]);
+		
+		int i = 0;
+		int max = 10000;
+		int timeMedian=0;
+		System.out.println(max + " Iterationen von pickMove()");
+		for(; i<max; i++) {
+			long time = System.nanoTime();
+			try {
+				move = RandomAI.pickMove(testState, true);
+			} catch (NoMovesLeftException e) {e.printStackTrace();}
+			catch (InvalidShapeException inse) {inse.printStackTrace();}
+			timeMedian += (System.nanoTime() - time);
+//			System.out.println(move.getPieceId() + ", " + move.getNewPosition()[0] + " " + move.getNewPosition()[1] + ", time: " + (System.nanoTime() - time));
+		}
+		double passedTimeMs = (timeMedian/(double)i)/1000000.;
+		System.out.println((Math.round(passedTimeMs*1000000000)/1000000000.) + " ms pro random move (complex)");
+		
+		i = 0;
+		timeMedian=0;
+		for(; i<max; i++) {
+			long time = System.nanoTime();
+			try {
+				move = RandomAI.pickMove(testState, false);
+			} catch (NoMovesLeftException e) {e.printStackTrace();}
+			catch (InvalidShapeException inse) {inse.printStackTrace();}
+			timeMedian += (System.nanoTime() - time);
+//			System.out.println(move.getPieceId() + ", " + move.getNewPosition()[0] + " " + move.getNewPosition()[1] + ", time: " + (System.nanoTime() - time));
+		}
+		passedTimeMs = (timeMedian/(double)i)/1000000.;
+		System.out.println((Math.round(passedTimeMs*1000000000)/1000000000.) + " ms pro random move (simple)");
 	}
+	
+	
 	
 	public static GameState getTestState(MapTemplate mt) {
 		Team team1 = new Team();
@@ -78,13 +99,13 @@ public class AI_Controller {
 			pieces2[i].setTeamId(team1.getId());
 		}
 		team2.setPieces(pieces2);
-		
-		/*for(Piece p : pieces2) {
+		/*
+		for(Piece p : pieces2) {
 			p.getDescription().getMovement().setDirections(null);
 			p.getDescription().getMovement().setShape(new Shape());
 			p.getDescription().getMovement().getShape().setType(ShapeType.lshape);
-		}*/
-		
+		}
+		*/
 		
 		Move lastMove = new Move();
 		lastMove.setNewPosition(null);
