@@ -16,6 +16,7 @@ public class Hughmungus {
 
 
     public static void main(String args[]){
+        @SuppressWarnings("unused")
         String jso = """
         {
             "type": "King",
@@ -83,7 +84,9 @@ public class Hughmungus {
         String jsonPayload = gson.toJson(testPiece);
         String jsonPayloadPretty = gsonPretty.toJson(testPiece);
 
+        @SuppressWarnings("unused")
         Boolean checkagainstNormal = sim.equals(jsonPayload);
+        @SuppressWarnings("unused")
         Boolean checkagainstPrettyPrint = sim.equals(jsonPayloadPretty);
      /*    System.out.println(checkagainstNormal);
         System.out.println(checkagainstPrettyPrint);
@@ -95,9 +98,11 @@ public class Hughmungus {
         System.out.println(jsonPayloadPretty); */
 
         PieceDescription fromsim = gson.fromJson(sim, PieceDescription.class);
+        @SuppressWarnings("unused")
         PieceDescription normal = gson.fromJson(jsonPayloadPretty, PieceDescription.class);
        Movement siMov =  fromsim.getMovement();
-       Directions siDir = siMov.getDirections();
+       @SuppressWarnings("unused")
+      Directions siDir = siMov.getDirections();
 
 
 /* {
