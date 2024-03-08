@@ -5,10 +5,11 @@ import org.ctf.client.state.Piece;
 import org.ctf.client.state.Move;
 import org.ctf.client.state.Team;
 import org.ctf.client.state.data.map.MapTemplate;
+import org.ctf.client.state.data.map.Shape;
+import org.ctf.client.state.data.map.ShapeType;
 import org.ctf.client.tools.JSON_Tools;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.ctf.ai.RandomAI.NoMovesLeftException;
 import org.ctf.client.constants.Constants;
@@ -29,12 +30,11 @@ public class AI_Controller {
 		
 		GameState testState = getTestState(mt);
 		Move move = new Move();
+		double time = System.nanoTime();
 		try {
 			move = RandomAI.pickMove(testState);
-		} catch (NoMovesLeftException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (NoMovesLeftException e) {e.printStackTrace();}
+		System.out.println(((System.nanoTime() - time)/1000000) + " ms");
 		System.out.println(move.getPieceId() + " " + move.getNewPosition()[0] + "." + move.getNewPosition()[1]);
 	}
 	
@@ -76,6 +76,12 @@ public class AI_Controller {
 			pieces2[i].setTeamId(team1.getId());
 		}
 		team2.setPieces(pieces2);
+		
+		for(Piece p : pieces2) {
+			p.getDescription().getMovement().setDirections(null);
+			p.getDescription().getMovement().setShape(new Shape());
+			p.getDescription().getMovement().getShape().setType(ShapeType.lshape);
+		}
 		
 		
 		Move lastMove = new Move();

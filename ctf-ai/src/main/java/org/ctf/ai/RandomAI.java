@@ -4,6 +4,8 @@ import org.ctf.client.state.GameState;
 import org.ctf.client.state.Piece;
 import org.ctf.client.state.Move;
 import org.ctf.client.state.data.map.Directions;
+import org.ctf.client.state.data.map.ShapeType;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -55,7 +57,19 @@ public class RandomAI {
 				}
 				
 			} else {	//Move if Shape
-				// shape
+				ArrayList<Move> shapeMoves = new ArrayList<Move>();
+				for(int i=0; i<8; i++) {
+					Move shapeMove = validShapeDirection(gameState, picked, i);
+					if(shapeMove != null) {
+						shapeMoves.add(shapeMove);
+					}
+				}
+				if(shapeMoves.size() > 0) {
+					return getShapeMove(shapeMoves);
+				} else {
+					pieceList.remove(random);
+					continue;
+				}
 			}
 			
 		}
@@ -67,12 +81,52 @@ public class RandomAI {
 		return move;
 	}
 	
+	static Move getShapeMove(ArrayList<Move> moveArrayList) {
+		return moveArrayList.get((int)(moveArrayList.size() * Math.random()));
+	}
+	
 	/**
-	 * 
+	 * Checks if a Shape (currently only l shape) move is valid.
+	 * The Shape-Direction is given as a number (0-7).
+	 * @param gameState
+	 * @param piece
+	 * @param direction
+	 * @return false if the move is invalid.
+	 */
+	static Move validShapeDirection(GameState gameState, Piece piece, int direction) {
+		int[] pos = new int[] {piece.getPosition()[0],piece.getPosition()[1]};
+		
+		if(piece.getDescription().getMovement().getShape().getType() == ShapeType.lshape) {
+			switch(direction) {
+				case 0: pos[0] -= 2; pos[1] -= 1; break;	//2up1left
+				case 1: pos[0] -= 2; pos[1] += 1; break;	//2up1right
+				case 2: pos[1] += 2; pos[0] -= 1; break;	//2right1up
+				case 3: pos[1] += 2; pos[0] += 1; break;	//2right1down
+				case 4: pos[0] += 2; pos[1] -= 1; break;	//2down1left
+				case 5: pos[0] += 2; pos[1] += 1; break;	//2down1right
+				case 6: pos[1] -= 2; pos[0] -= 1; break;	//2left1up
+				case 7: pos[1] -= 2; pos[0] += 1; break;	//2left1down
+			}
+		}
+		
+		if(validPos(pos, piece, gameState)) {
+			Move move = new Move();
+			move.setPieceId(piece.getId());
+			move.setNewPosition(pos);
+			return move;
+		} else {
+			return null;
+		}
+	}
+	
+	
+	
+	/**
+	 * Returns a Move from a given set of possible directions to move in.
 	 * @param dirMap
 	 * @param piece
 	 * @param gameState
-	 * @return
+	 * @return a valid move
 	 */
 	static Move getDirectionMove(HashMap<Integer,Integer> dirMap, Piece piece, GameState gameState) {
 		int randomKey = (int)dirMap.keySet().toArray()[(int)(dirMap.size() * Math.random())];
@@ -139,6 +193,7 @@ public class RandomAI {
 	 * @param gameState
 	 * @return true if the position can be occupied.
 	 */
+	//TODO: Bases werden noch nicht berücksichtigt, ich weiß noch nicht wie man damit umgehen muss.
 	static boolean validPos(int[] pos, Piece piece, GameState gameState) {
 		//out of bounds check
 		if(pos[0] < 0 || 
