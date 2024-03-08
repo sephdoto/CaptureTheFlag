@@ -1,13 +1,13 @@
-package org.ctf.client;
+package org.ctf.client.tools;
 
 import org.ctf.client.constants.Constants;
-import org.ctf.tl.data.map.Directions;
-import org.ctf.tl.data.map.MapTemplate;
-import org.ctf.tl.data.map.Movement;
-import org.ctf.tl.data.map.PieceDescription;
-import org.ctf.tl.data.map.PlacementType;
-import org.ctf.tl.data.map.Shape;
-import org.ctf.tl.data.map.ShapeType;
+import org.ctf.client.state.data.map.Directions;
+import org.ctf.client.state.data.map.MapTemplate;
+import org.ctf.client.state.data.map.Movement;
+import org.ctf.client.state.data.map.PieceDescription;
+import org.ctf.client.state.data.map.PlacementType;
+import org.ctf.client.state.data.map.Shape;
+import org.ctf.client.state.data.map.ShapeType;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import java.io.IOException;

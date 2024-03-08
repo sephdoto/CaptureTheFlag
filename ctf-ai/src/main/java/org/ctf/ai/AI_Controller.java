@@ -1,18 +1,17 @@
 package org.ctf.ai;
 
 
-import org.ctf.tl.state.Piece;
-import org.ctf.tl.state.Move;
-import org.ctf.tl.state.Team;
-
+import org.ctf.client.state.Piece;
+import org.ctf.client.state.Move;
+import org.ctf.client.state.Team;
+import org.ctf.client.state.data.map.MapTemplate;
+import org.ctf.client.tools.JSON_Tools;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.ctf.client.JSON_Tools;
 import org.ctf.client.constants.Constants;
-import org.ctf.tl.data.map.MapTemplate;
-import org.ctf.tl.state.GameState;
+import org.ctf.client.state.GameState;
 
 public class AI_Controller {
 

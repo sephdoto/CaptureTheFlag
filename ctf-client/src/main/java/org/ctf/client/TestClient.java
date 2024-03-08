@@ -1,19 +1,19 @@
 package org.ctf.client;
 
-import org.ctf.tl.data.map.MapTemplate;
-import org.ctf.tl.data.wrappers.GameSessionResponse;
-import org.ctf.tl.data.wrappers.JoinGameResponse;
-import org.ctf.tl.exceptions.Accepted;
-import org.ctf.tl.exceptions.ForbiddenMove;
-import org.ctf.tl.exceptions.GameOver;
-import org.ctf.tl.exceptions.InvalidMove;
-import org.ctf.tl.exceptions.NoMoreTeamSlots;
-import org.ctf.tl.exceptions.SessionNotFound;
-import org.ctf.tl.exceptions.URLError;
-import org.ctf.tl.layer.CommLayer;
-import org.ctf.tl.state.GameState;
-import org.ctf.tl.state.Move;
-import org.ctf.tl.state.Team;
+import org.ctf.client.layer.CommLayer;
+import org.ctf.client.state.GameState;
+import org.ctf.client.state.Move;
+import org.ctf.client.state.Team;
+import org.ctf.client.state.data.exceptions.Accepted;
+import org.ctf.client.state.data.exceptions.ForbiddenMove;
+import org.ctf.client.state.data.exceptions.GameOver;
+import org.ctf.client.state.data.exceptions.InvalidMove;
+import org.ctf.client.state.data.exceptions.NoMoreTeamSlots;
+import org.ctf.client.state.data.exceptions.SessionNotFound;
+import org.ctf.client.state.data.exceptions.URLError;
+import org.ctf.client.state.data.map.MapTemplate;
+import org.ctf.client.state.data.wrappers.GameSessionResponse;
+import org.ctf.client.state.data.wrappers.JoinGameResponse;
 
 import com.google.gson.Gson;
 

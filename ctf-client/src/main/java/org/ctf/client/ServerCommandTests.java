@@ -1,6 +1,8 @@
 package org.ctf.client;
 
-import org.ctf.tl.data.map.MapTemplate;
+
+
+import org.ctf.client.state.data.map.MapTemplate;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

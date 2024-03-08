@@ -105,7 +105,6 @@
     <module>ctf-UI</module>
     <module>ctf-AI</module>
     <module>ctf-Client</module>
-    <module>ctf-TL</module>
   </modules>
   
 </project>
