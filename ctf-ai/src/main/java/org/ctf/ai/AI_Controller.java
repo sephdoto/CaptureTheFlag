@@ -1,4 +1,4 @@
-package org.ctf.ai;
+package org.ctf.AI;
 
 
 import org.ctf.tl.state.Piece;
