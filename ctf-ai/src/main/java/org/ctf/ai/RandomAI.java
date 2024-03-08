@@ -1,4 +1,4 @@
-package org.ctf.AI;
+package org.ctf.ai;
 
 public class RandomAI {
 
