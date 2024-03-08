@@ -11,6 +11,7 @@ import org.ctf.client.tools.JSON_Tools;
 
 import java.io.File;
 
+import org.ctf.ai.RandomAI.InvalidShapeException;
 import org.ctf.ai.RandomAI.NoMovesLeftException;
 import org.ctf.client.constants.Constants;
 import org.ctf.client.state.GameState;
@@ -34,6 +35,7 @@ public class AI_Controller {
 		try {
 			move = RandomAI.pickMove(testState);
 		} catch (NoMovesLeftException e) {e.printStackTrace();}
+		catch (InvalidShapeException inse) {inse.printStackTrace();}
 		System.out.println(((System.nanoTime() - time)/1000000) + " ms");
 		System.out.println(move.getPieceId() + " " + move.getNewPosition()[0] + "." + move.getNewPosition()[1]);
 	}

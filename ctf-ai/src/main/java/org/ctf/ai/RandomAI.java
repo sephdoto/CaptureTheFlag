@@ -22,11 +22,13 @@ public class RandomAI {
 	 * From all pieces a random piece is chosen, if it is able to move its move is randomly chosen.
 	 * If the piece is not able to move a new piece is chosen from the remaining pieces.
 	 * If no move is possible a NoMovesLeftException is thrown.
+	 * If a piece moves in an unknown Shape an InvalidShapeException is thrown.
 	 * @param gameState
 	 * @return a random Move
 	 * @throws NoMovesLeftException
+	 * @throws InvalidShapeException 
 	 */
-	public static Move pickMove(GameState gameState) throws NoMovesLeftException {
+	public static Move pickMove(GameState gameState) throws NoMovesLeftException, InvalidShapeException {
 		ArrayList<Piece> pieceList = new ArrayList<Piece>();
 		Move move = new Move();
 		
@@ -81,19 +83,25 @@ public class RandomAI {
 		return move;
 	}
 	
+	/**
+	 * Selects and returns a random Move from an ArrayList which contains Moves.
+	 * @param moveArrayList
+	 * @return
+	 */
 	static Move getShapeMove(ArrayList<Move> moveArrayList) {
 		return moveArrayList.get((int)(moveArrayList.size() * Math.random()));
 	}
 	
 	/**
-	 * Checks if a Shape (currently only l shape) move is valid.
+	 * Checks if a Shape (currently only l-shape) move is valid.
 	 * The Shape-Direction is given as a number (0-7).
 	 * @param gameState
 	 * @param piece
 	 * @param direction
 	 * @return false if the move is invalid.
+	 * @throws InvalidShapeException 
 	 */
-	static Move validShapeDirection(GameState gameState, Piece piece, int direction) {
+	static Move validShapeDirection(GameState gameState, Piece piece, int direction) throws InvalidShapeException {
 		int[] pos = new int[] {piece.getPosition()[0],piece.getPosition()[1]};
 		
 		if(piece.getDescription().getMovement().getShape().getType() == ShapeType.lshape) {
@@ -107,6 +115,8 @@ public class RandomAI {
 				case 6: pos[1] -= 2; pos[0] -= 1; break;	//2left1up
 				case 7: pos[1] -= 2; pos[0] += 1; break;	//2left1down
 			}
+		} else {
+			throw new InvalidShapeException(piece.getDescription().getMovement().getShape().getType().toString());
 		}
 		
 		if(validPos(pos, piece, gameState)) {
@@ -260,6 +270,12 @@ public class RandomAI {
 	public static class NoMovesLeftException extends Exception {
 		NoMovesLeftException(String team){
 			super("Team " + team + " can not move.");
+		}
+	}
+	
+	public static class InvalidShapeException extends Exception {
+		InvalidShapeException(String shape){
+			super("Unknown shape: " + shape);
 		}
 	}
 }
