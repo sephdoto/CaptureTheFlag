@@ -68,7 +68,7 @@ public class GameEngine implements Game {
         	}
         }
         
-        //placing flags TODO more than 4 teams?
+        //placing flags TODO more than 4 teams? h
         if(template.getTeams() == 2) {
         	newGrid[0][0] = "b:1";
         	newGrid[newGrid.length-1][newGrid[0].length-1] = "b:2";
