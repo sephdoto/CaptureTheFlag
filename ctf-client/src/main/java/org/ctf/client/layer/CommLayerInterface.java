@@ -31,16 +31,20 @@ public interface CommLayerInterface {
   GameSessionResponse createGameSession(String URL, MapTemplate map);
 
   /**
-   * Makes a request to the server, specified in the URL, to join the game using the specified
-   * teamName. Returns the server reponse as well as HTTP status codes thrown as exceptions
+   * Method makes a move request to the API using the input parameters. Returns the server reponse
+   * as well as HTTP status codes thrown as exceptions
    *
    * @param URL
-   * @param teamName
-   * @return JoinGameResponse
-   * @throws SessionNotFound (404)
-   * @throws NoMoreTeamSlots (429)
-   * @throws UnknownError (500)
+   * @param teamID
+   * @param teamSecret
+   * @param move
    * @throws Accepted (200)
+   * @throws ForbiddenMove (403)
+   * @throws SessionNotFound (404)
+   * @throws InvalidMove (409)
+   * @throws GameOver (410)
+   * @throws UnknownError (500)
+   * @throws URLError (404)
    */
   JoinGameResponse joinGame(String URL, String teamName);
 
@@ -58,6 +62,7 @@ public interface CommLayerInterface {
    * @throws InvalidMove (409)
    * @throws GameOver (410)
    * @throws UnknownError (500)
+   * @throws URLError (404)
    */
   void makeMove(String URL, String teamID, String teamSecret, Move move);
 
@@ -74,6 +79,7 @@ public interface CommLayerInterface {
    * @throws ForbiddenMove (403)
    * @throws GameOver (410)
    * @throws UnknownError (500)
+   * @throws URLError (404)
    */
   void giveUp(String URL, String teamID, String teamSecret);
 
@@ -87,6 +93,7 @@ public interface CommLayerInterface {
    * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws UnknownError (500)
+   * @throws URLError (404)
    */
   GameSessionResponse getCurrentSessionState(String URL);
 
@@ -98,6 +105,7 @@ public interface CommLayerInterface {
    * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws UnknownError (500)
+   * @throws URLError (404)
    */
   void deleteCurrentSession(String URL);
 
@@ -110,6 +118,7 @@ public interface CommLayerInterface {
    * @throws Accepted
    * @throws SessionNotFound
    * @throws UnknownError
+   * @throws URLError (404)
    */
   GameState getCurrentGameState(String URL);
 }
