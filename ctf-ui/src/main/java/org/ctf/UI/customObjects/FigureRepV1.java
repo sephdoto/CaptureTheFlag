@@ -1,4 +1,4 @@
-package customObjects;
+package org.ctf.UI.customObjects;
 
 /**
  * @author mkrakows
