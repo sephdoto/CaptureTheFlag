@@ -7,24 +7,22 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
-import de.unimannheim.swt.pse.ctf.controller.GameSession;
+
 import de.unimannheim.swt.pse.ctf.game.exceptions.GameOver;
 import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
 import de.unimannheim.swt.pse.ctf.game.exceptions.NoMoreTeamSlots;
 import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
+import de.unimannheim.swt.pse.ctf.game.map.PieceDescription;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Move;
 import de.unimannheim.swt.pse.ctf.game.state.Piece;
-import de.unimannheim.swt.pse.ctf.game.state.Team;
-import io.swagger.v3.oas.annotations.media.Schema;
-
-import com.google.gson.Gson;
+import de.unimannheim.swt.pse.ctf.game.state.Team; 
 
 /**
- * Game Engine Implementation
+ * Game Engine Implementation\
+ * TODO Create Game, Start game, move 
  * 
  * @author rsyed
  */
@@ -56,22 +54,114 @@ public class GameEngine implements Game {
         colorList =  new LinkedList<>(Arrays.asList(new String[]{"red" , "green", "yellow" , "white" , "black" , "blue" })); //Inits a String LL with predefined colors
         
         GameState gameState = new GameState();
-        gameState.setGrid(new String[template.getGridSize()[0]][template.getGridSize()[1]]); // Ints with empty grid of specified size
+        //gameState.setGrid(new String[template.getGridSize()[0]][template.getGridSize()[1]]); // Ints with empty grid of specified size
         gameState.setTeams(new Team[template.getTeams()]);
         
         String[][] newGrid = new String[template.getGridSize()[0]][template.getGridSize()[1]];
         
-        for(String[] x : newGrid) {
-        	for(String y : x) {
-        		y = "";
+        
+        
+        //this for loop initializes the grid with empty Strings
+        for(int i = 0; i < newGrid.length; i++) {
+        	for(int j = 0; j < newGrid[i].length; j++) {
+        		newGrid[i][j] = "";
         	}
         }
+        
+        //placing flags TODO more than 4 teams?
+        if(template.getTeams() == 2) {
+        	newGrid[0][0] = "b:1";
+        	newGrid[newGrid.length-1][newGrid[0].length-1] = "b:2";
+        }
+        else if(template.getTeams() == 4) {
+        	newGrid[0][0] = "b:1";
+        	newGrid[newGrid.length-1][0] = "b:2";
+        	newGrid[0][newGrid[0].length-1] = "b:3";
+        	newGrid[newGrid.length-1][newGrid[0].length-1] = "b:4";
+        }
+                
+        
+        //placing pieces (symmetrical)
+        //TODO different placement types
+        int count = 1;
+        int teamID = 1;
+        LinkedList<Piece> indPieces = new LinkedList<Piece>();
+        for(PieceDescription piece : template.getPieces()) { //repeat for every team?
+        	for(int i = 0; i < piece.getCount();i++) {
+        		Piece x = new Piece();
+        		x.setId(Integer.toString(count++));
+        		x.setDescription(piece);
+        		x.setTeamId(Integer.toString(teamID)); //TODO team id
+        		indPieces.add(x);
+        	}
+        }
+        
+      //initializing team 1
+        	Team team = new Team();
+        	team.setId(Integer.toString(teamID));
+        	Piece[] pieces = new Piece[indPieces.size()];
+        	int iterator = 0;
+        	for(Piece p : indPieces) {
+        		pieces[iterator++] = p;
+        	}
+        	gameState.getTeams()[0] = team;
+        
+        
+        int row = 1;
+        while(!indPieces.isEmpty()) {
+	        for(int i = 0; i < newGrid[0].length; i++) {
+	        	Piece piece = indPieces.pop();
+	        	newGrid[row][i] = "p:" + piece.getTeamId() + "_" + piece.getId();
+	        }
+	        row++;
+        }
+        
+        count = 1;
+        teamID = 2;
+        LinkedList<Piece> indPieces2 = new LinkedList<Piece>();
+        for(PieceDescription piece : template.getPieces()) { //repeat for every team?
+        	for(int i = 0; i < piece.getCount();i++) {
+        		Piece x = new Piece();
+        		x.setId(Integer.toString(count++));
+        		x.setDescription(piece);
+        		x.setTeamId(Integer.toString(teamID)); //TODO team id
+        		indPieces2.add(x);
+        	}
+        }
+        
+        row = newGrid.length - 2;
+        while(!indPieces2.isEmpty()) {
+	        for(int i = newGrid[0].length-1; i >= 0; i--) {
+	        	Piece piece = indPieces2.pop();
+	        	newGrid[row][i] = "p:" + piece.getTeamId() + "_" + piece.getId();
+	        }
+	        row--;
+        }
+
+        
+        
+      //placing blocks   TODO odd numbers?(only divisible by 2)
+        for(int i = 0; i < template.getBlocks(); i++) {
+        	int x = (int) (Math.random() * template.getGridSize()[0]);
+        	int y = (int) (Math.random() * (template.getGridSize()[1]/2));
+        	
+        	if(newGrid[x][y].equals("")) {
+        		newGrid[x][y] = "b";
+        		newGrid[newGrid.length-x-1][newGrid[0].length-y-1] = "b";
+        		i++;	
+        	}
+        	else i--;
+        }
+        
+        // selecting starting team
+        gameState.setCurrentTeam((int)(Math.random()*2)+1);
         
         // Setting Flags
         this.isStarted = false;
         this.isGameOver = false;
 
         // Setting State
+        gameState.setGrid(newGrid);
         this.gameState = gameState;
         return this.gameState;
     }
@@ -360,7 +450,14 @@ public class GameEngine implements Game {
     public static void main(String[] args) {
     	GameEngine test = new GameEngine();
     	MapTemplate testMap = new MapTemplate();
+    	PieceDescription[] pieces = new PieceDescription[1];
+    	pieces[0] = new PieceDescription();
+    	pieces[0].setAttackPower(5);
+    	pieces[0].setCount(10);
     	testMap.setGridSize(new int[]{10,10});
+    	testMap.setTeams(2);
+    	testMap.setBlocks(2);
+    	testMap.setPieces(pieces);
     	test.create(testMap);
     	test.printState();
     	
