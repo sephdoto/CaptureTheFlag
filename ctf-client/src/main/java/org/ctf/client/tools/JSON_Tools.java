@@ -10,8 +10,6 @@ import org.ctf.client.state.data.map.Shape;
 import org.ctf.client.state.data.map.ShapeType;
 import org.json.JSONObject;
 import org.json.JSONArray;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -22,8 +20,8 @@ import java.io.File;
 
 
 /**
- * Using the  external JSON and gson library, MapTemplates can be saved as and created from a JSON String.
- * @author sistumpf
+ * using external JSON library, have to mention it in README; https://github.com/stleary/JSON-java/tree/master
+ *@author sistumpf
  */
 public class JSON_Tools {
 	/**
@@ -35,7 +33,7 @@ public class JSON_Tools {
 	 * @throws IOException 
 	 */
 	public static void saveMapTemplateAsFile(String mapName, MapTemplate mapTemplate) throws IOException {
-		byte[] contentBytes = StringFromMap(mapTemplate).getBytes();
+		byte[] contentBytes = mapTemplate.toJSONString().getBytes();
 		File file = new File(Constants.mapTemplateFolder+mapName+".json");
 		Files.write(file.toPath(), contentBytes);
 	}
@@ -126,16 +124,6 @@ public class JSON_Tools {
 		mt.setPieces(pieces);
 		return mt;
 	}
-	   
-	/**
-     * Creates a JSON String from a valid MapTemplate instance
-     * @param jsonString
-     * @return MapTemplate
-     */
-	public static String StringFromMap(MapTemplate mapTemplate) {
-	  Gson gson = new GsonBuilder().setPrettyPrinting().create(); 
-      return gson.toJson(mapTemplate);
-	}
 	
 	/**
 	 * Returns a files content as String.
@@ -147,16 +135,16 @@ public class JSON_Tools {
 	}
 	
 	/**
-	 * Gets thrown if a MapTemplate that doesn't exist in mapTemplateFolder is accessed.
+	 * Gets thrown if you access a map that doesn't exist in mapTemplateFolder
 	 */
 	public static class MapNotFoundException extends Exception {
-	    MapNotFoundException(String mapName){
+		MapNotFoundException(String mapName){
 			super("There is no MapTemplate named " + mapName + " in " + Constants.mapTemplateFolder);
 		}
 	}
 	
 	/**
-	 * Gets thrown if a MapTemplate doesn't contain all information needed to build a GameState.
+	 * Gets thrown if you access a map that doesn't exist in mapTemplateFolder
 	 */
 	public static class IncompleteMapTemplateException extends org.json.JSONException {
 		IncompleteMapTemplateException(String mapName){

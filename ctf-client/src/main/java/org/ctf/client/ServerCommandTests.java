@@ -1,8 +1,7 @@
-package org.ctf.Client;
+package org.ctf.client;
 
 
 
-import org.ctf.client.TestClient;
 import org.ctf.client.state.data.map.MapTemplate;
 
 import com.google.gson.Gson;

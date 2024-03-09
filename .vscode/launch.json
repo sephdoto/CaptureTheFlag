@@ -6,41 +6,6 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Hughmungus",
-            "request": "launch",
-            "mainClass": "org.ctf.client.layer.Hughmungus",
-            "projectName": "ctf-Client"
-        },
-        {
-            "type": "java",
-            "name": "App",
-            "request": "launch",
-            "mainClass": "org.ctf.UI.App",
-            "projectName": "ctf-UI"
-        },
-        {
-            "type": "java",
-            "name": "EntryPoint",
-            "request": "launch",
-            "mainClass": "org.ctf.UI.EntryPoint",
-            "projectName": "ctf-UI"
-        },
-        {
-            "type": "java",
-            "name": "Main",
-            "request": "launch",
-            "mainClass": "org.ctf.UI.Main",
-            "projectName": "ctf-UI"
-        },
-        {
-            "type": "java",
-            "name": "GameEngine",
-            "request": "launch",
-            "mainClass": "de.unimannheim.swt.pse.ctf.game.GameEngine",
-            "projectName": "ctf"
-        },
-        {
-            "type": "java",
             "name": "Main",
             "request": "launch",
             "mainClass": "application.Main",
