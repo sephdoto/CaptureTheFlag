@@ -59,7 +59,14 @@ public class GameEngine implements Game {
         gameState.setGrid(new String[template.getGridSize()[0]][template.getGridSize()[1]]); // Ints with empty grid of specified size
         gameState.setTeams(new Team[template.getTeams()]);
         
-
+        String[][] newGrid = new String[template.getGridSize()[0]][template.getGridSize()[1]];
+        
+        for(String[] x : newGrid) {
+        	for(String y : x) {
+        		y = "";
+        	}
+        }
+        
         // Setting Flags
         this.isStarted = false;
         this.isGameOver = false;
@@ -338,15 +345,26 @@ public class GameEngine implements Game {
     }
     
     /**
-     * Helper method to visualize the boardh
+     * Helper method to visualize the board
      * @author ysiebenh
      */
     private void printState() {
     	for( String[]  x : this.gameState.getGrid()) {
     		for( String y : x) {
-    			System.out.print(y);
+    			System.out.print("[" + y + "]");
     		}
     		System.out.println("");
     	}
     }
+    
+    public static void main(String[] args) {
+    	GameEngine test = new GameEngine();
+    	MapTemplate testMap = new MapTemplate();
+    	testMap.setGridSize(new int[]{10,10});
+    	test.create(testMap);
+    	test.printState();
+    	
+    }
+    
+    
 }

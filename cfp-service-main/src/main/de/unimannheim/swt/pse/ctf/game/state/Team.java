@@ -3,7 +3,7 @@ package de.unimannheim.swt.pse.ctf.game.state;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * This class represents a team together with all its pieces.
+ * This class represents a team together with all its pieces. hhhhh
  */
 public class Team {
     @Schema(
