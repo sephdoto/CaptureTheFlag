@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "GameEngine",
+            "request": "launch",
+            "mainClass": "de.unimannheim.swt.pse.ctf.game.GameEngine",
+            "projectName": "ctf"
+        },
+        {
+            "type": "java",
             "name": "Main",
             "request": "launch",
             "mainClass": "application.Main",
