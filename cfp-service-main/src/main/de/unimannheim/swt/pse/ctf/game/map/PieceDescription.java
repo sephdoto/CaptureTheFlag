@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Min;
 /**
  * This class describes a {@link Piece} in a game.
  */
-public class PieceDescription implements JSONString {
+public class PieceDescription {
 
     @Schema(
             description = "unique piece type (e.g., 'Pawn' or 'Rook')"
@@ -61,20 +61,5 @@ public class PieceDescription implements JSONString {
 
     public void setMovement(Movement movement) {
         this.movement = movement;
-    }
-    
-    /**
-     * returns this classes JSON String representation
-     * @author sistumpf
-     * @return String
-     */
-    @Override
-    public String toJSONString() {
-    	JSONObject jsonObject = new JSONObject();
-    	jsonObject.put("type", type);
-    	jsonObject.put("attackPower", attackPower);
-    	jsonObject.put("count", count);
-    	jsonObject.put("movement", movement);
-    	return jsonObject.toString(2);
     }
 }

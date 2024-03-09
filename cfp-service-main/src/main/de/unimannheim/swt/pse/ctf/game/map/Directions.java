@@ -8,7 +8,7 @@ import org.json.JSONString;
  * This class represents possible piece movements
  * in terms of squares to move in one or more direction(s).
  */
-public class Directions implements JSONString {
+public class Directions {
 
     @Schema(
             description = "move N squares left"
@@ -105,24 +105,5 @@ public class Directions implements JSONString {
 
     public void setDownRight(int downRight) {
         this.downRight = downRight;
-    }
-    
-    /**
-     * returns this classes JSON String representation
-     * @author sistumpf
-     * @return String
-     */    
-    @Override
-    public String toJSONString() {
-    	JSONObject jsonObject = new JSONObject();
-        jsonObject.put("left", left);
-        jsonObject.put("right", right);
-        jsonObject.put("up", up);
-        jsonObject.put("down", down);
-        jsonObject.put("upLeft", upLeft);
-        jsonObject.put("upRight", upRight);
-        jsonObject.put("downLeft", downLeft);
-        jsonObject.put("downRight", downRight);
-        return new JSONObject().put("directions", jsonObject).toString();
     }
 }
