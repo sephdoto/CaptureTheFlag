@@ -1,11 +1,13 @@
 package de.unimannheim.swt.pse.ctf.game.map;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.json.JSONObject;
+import org.json.JSONString;
 
 /**
  * This class represents a possible movement.
  */
-public class Movement {
+public class Movement implements JSONString {
 
     @Schema(
             description = "directions a piece can move. if set, shape must NOT be set"
@@ -30,5 +32,15 @@ public class Movement {
 
     public void setShape(Shape shape) {
         this.shape = shape;
+    }
+    
+    /**
+     * returns this classes JSON String representation
+     * @author sistumpf
+     * @return String
+     */
+    @Override
+    public String toJSONString() {
+    	return (shape != null ? shape.toJSONString() : directions.toJSONString());
     }
 }
