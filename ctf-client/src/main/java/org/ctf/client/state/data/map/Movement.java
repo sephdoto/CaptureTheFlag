@@ -1,7 +1,6 @@
 package org.ctf.client.state.data.map;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.json.JSONString;
 
 /**
  * This class represents a possible movement.

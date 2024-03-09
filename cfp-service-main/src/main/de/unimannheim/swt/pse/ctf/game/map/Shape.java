@@ -1,9 +1,6 @@
 package de.unimannheim.swt.pse.ctf.game.map;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.json.JSONObject;
-import org.json.JSONString;
-
 
 /**
  * This class represents a shape movement (e.g., L-shape as known from chess).

@@ -147,7 +147,7 @@ public class JSON_Tools {
 	}
 	
 	/**
-	 * Gets thrown if you access a map that doesn't exist in mapTemplateFolder
+	 * Gets thrown if a MapTemplate that doesn't exist in mapTemplateFolder is accessed.
 	 */
 	public static class MapNotFoundException extends Exception {
 	    MapNotFoundException(String mapName){
@@ -156,7 +156,7 @@ public class JSON_Tools {
 	}
 	
 	/**
-	 * Gets thrown if you access a map that doesn't exist in mapTemplateFolder
+	 * Gets thrown if a MapTemplate doesn't contain all information needed to build a GameState.
 	 */
 	public static class IncompleteMapTemplateException extends org.json.JSONException {
 		IncompleteMapTemplateException(String mapName){

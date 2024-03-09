@@ -1,8 +1,5 @@
 package de.unimannheim.swt.pse.ctf.game.map;
 
-import org.json.JSONObject;
-import org.json.JSONString;
-
 import de.unimannheim.swt.pse.ctf.game.state.Piece;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
