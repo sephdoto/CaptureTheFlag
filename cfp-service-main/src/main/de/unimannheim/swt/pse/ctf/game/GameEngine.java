@@ -22,7 +22,7 @@ import de.unimannheim.swt.pse.ctf.game.state.Team;
 
 /**
  * Game Engine Implementation\
- * TODO Create Game, Start game, movee 
+ * TODO Create Game, Start game, move 
  * 
  * @author rsyed
  */
@@ -81,7 +81,7 @@ public class GameEngine implements Game {
         }
                 
         
-        //placing pieces (symmetrical)
+        //initializing pieces team 1 (symmetrical)
         //TODO different placement types
         int count = 1;
         int teamID = 1;
@@ -97,16 +97,18 @@ public class GameEngine implements Game {
         }
         
       //initializing team 1
-        	Team team = new Team();
-        	team.setId(Integer.toString(teamID));
+        	Team team1 = new Team();
+        	team1.setId(Integer.toString(teamID));
         	Piece[] pieces = new Piece[indPieces.size()];
         	int iterator = 0;
         	for(Piece p : indPieces) {
         		pieces[iterator++] = p;
         	}
-        	gameState.getTeams()[0] = team;
+        	Team[] teams = new Team[2];
+        	teams[0] = team1;
+        	//gameState.getTeams()[0] = team1;
         
-        
+        //putting the pieces on the board (team1)
         int row = 1;
         while(!indPieces.isEmpty()) {
 	        for(int i = 0; i < newGrid[0].length; i++) {
@@ -115,7 +117,7 @@ public class GameEngine implements Game {
 	        }
 	        row++;
         }
-        
+        //initializing pieces team 2
         count = 1;
         teamID = 2;
         LinkedList<Piece> indPieces2 = new LinkedList<Piece>();
@@ -129,6 +131,19 @@ public class GameEngine implements Game {
         	}
         }
         
+      //initializing team 2
+    	Team team2 = new Team();
+    	team1.setId(Integer.toString(teamID));
+    	Piece[] pieces2 = new Piece[indPieces2.size()];
+    	int iterator2 = 0;
+    	for(Piece p : indPieces2) {
+    		pieces2[iterator2++] = p;
+    	}
+    	teams[1] = team2;
+    	//gameState.getTeams()[0] = team1;
+    	gameState.setTeams(teams);
+        
+    	//putting the pieces on the board (team2)
         row = newGrid.length - 2;
         while(!indPieces2.isEmpty()) {
 	        for(int i = newGrid[0].length-1; i >= 0; i--) {
@@ -346,7 +361,11 @@ public class GameEngine implements Game {
      */
     @Override
     public void makeMove(Move move) {
-        // TODO Implement
+        if(true){//move is valid
+        		//TODO implement
+        
+        }	
+        	
     }
 
     /**
