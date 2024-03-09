@@ -13,4 +13,8 @@ public class URLError extends RuntimeException {
     public URLError(int message){
         super(Integer.toString(message));
     }
+
+    public URLError(){
+        super();
+    }
 }
