@@ -173,7 +173,7 @@ public class RandomAI {
    * This method picks a random dirction-reach pair and returns a Move to this position using {@link #checkMoveValidity(GameState gameState, Piece piece, int direction, int reach)}.
    * If the position is invalid this process is tried again till a valid move is generated.
    * If a random position is invalid the HashMap reach value is lowered to ensure the same position is not picked again.
-   * This method assumes the HashMap contains elements.
+   * This method assumes the HashMap contains elements and all directions contain at least 1 valid position.
    * @param dirMap
    * @param piece
    * @param gameState
@@ -185,12 +185,10 @@ public class RandomAI {
 
     while(true) {
       reach = (int)(Math.random() * dirMap.get(randomKey) +1);
-      System.out.print(reach);
       Move newPos = checkMoveValidity(gameState, piece, randomKey, reach);
       if(newPos != null)
         return newPos;
       dirMap.replace(randomKey, reach - 1);
-      System.out.println(", new reach: " + dirMap.get(randomKey));
       continue;
     }
   }

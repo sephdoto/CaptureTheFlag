@@ -12,6 +12,7 @@ import org.ctf.client.state.Team;
 import org.ctf.client.state.data.map.Directions;
 import org.ctf.client.tools.JSON_Tools;
 import org.ctf.client.tools.JSON_Tools.MapNotFoundException;
+import java.util.HashMap;
 
 
 class RandomAITest {
@@ -44,7 +45,13 @@ class RandomAITest {
 
 	@Test
 	void testGetDirectionMove() {
-		fail("Not yet implemented");
+		Piece rook = gameState.getTeams()[1].getPieces()[1];				//rook on 7,3
+		HashMap<Integer, Integer> dirMap = new HashMap<Integer, Integer>();
+		dirMap.put(2,5);													//rook can only move to one field ()
+		int[] onlyPosition = new int[]{6,3};								//the only possible Position is 6,3
+		int[] newPosition = RandomAI.getDirectionMove(dirMap, rook, gameState).getNewPosition();
+		
+		assertArrayEquals(onlyPosition, newPosition);
 	}
 
 	/**
