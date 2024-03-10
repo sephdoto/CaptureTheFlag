@@ -110,13 +110,14 @@ public class GameEngine implements Game {
         
         //putting the pieces on the board (team1)
         int row = 1;
-        while(!indPieces.isEmpty()) {
-	        for(int i = 0; i < newGrid[0].length; i++) {
-	        	Piece piece = indPieces.pop();
-	        	newGrid[row][i] = "p:" + piece.getTeamId() + "_" + piece.getId();
+        
+	    for(int i = 0; i < newGrid[0].length; i++) {
+	    	while(!indPieces.isEmpty()) {
+	       	Piece piece = indPieces.pop();
+	       	newGrid[row][i] = "p:" + piece.getTeamId() + "_" + piece.getId();
 	        }
 	        row++;
-        }
+	    }
         //initializing pieces team 2
         count = 1;
         teamID = 2;
@@ -145,12 +146,13 @@ public class GameEngine implements Game {
         
     	//putting the pieces on the board (team2)
         row = newGrid.length - 2;
-        while(!indPieces2.isEmpty()) {
-	        for(int i = newGrid[0].length-1; i >= 0; i--) {
-	        	Piece piece = indPieces2.pop();
-	        	newGrid[row][i] = "p:" + piece.getTeamId() + "_" + piece.getId();
+        
+        for(int i = newGrid[0].length-1; i >= 0; i--) {
+	       	while(!indPieces2.isEmpty()) {
+	       	Piece piece = indPieces2.pop();
+	       	newGrid[row][i] = "p:" + piece.getTeamId() + "_" + piece.getId();
 	        }
-	        row--;
+	    row--;
         }
 
         
@@ -477,10 +479,13 @@ public class GameEngine implements Game {
     public static void main(String[] args) {
     	GameEngine test = new GameEngine();
     	MapTemplate testMap = new MapTemplate();
-    	PieceDescription[] pieces = new PieceDescription[1];
+    	PieceDescription[] pieces = new PieceDescription[2];
     	pieces[0] = new PieceDescription();
     	pieces[0].setAttackPower(5);
     	pieces[0].setCount(10);
+    	pieces[1] = new PieceDescription();
+    	pieces[1].setAttackPower(1);
+    	pieces[1].setCount(3);
     	testMap.setGridSize(new int[]{10,10});
     	testMap.setTeams(2);
     	testMap.setBlocks(2);
