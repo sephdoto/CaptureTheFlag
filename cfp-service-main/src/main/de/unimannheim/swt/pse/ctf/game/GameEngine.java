@@ -24,7 +24,7 @@ import de.unimannheim.swt.pse.ctf.game.state.Team;
  * Game Engine Implementation\
  * TODO Create Game, Start game, move 
  * 
- * @author rsyed
+ * @author rsyed & ysiebenh
  */
 public class GameEngine implements Game {
 
@@ -263,7 +263,7 @@ public class GameEngine implements Game {
         int currentTeam = getCurrentGameState().getCurrentTeam() - 1;
 
         if (teamBlock[currentTeam].getId().equals(teamId)) {
-            // CODE TO DELETE WHATS LEFT OF THE TEAM and give up
+            // TODO CODE TO DELETE WHATS LEFT OF THE TEAM and give up
         }
     }
 
@@ -308,7 +308,7 @@ public class GameEngine implements Game {
     @Override
     public boolean isValidMove(Move move) {
         // TODO Need to write logic
-        return false;
+        return true;
     }
 
     /**
@@ -357,14 +357,22 @@ public class GameEngine implements Game {
      *
      * @param move {@link Move}
      * @throws InvalidMove Requested move is invalid
-     * @throws GameOver    Game is over
+     * @throws GameOver Game is over
      */
     @Override
     public void makeMove(Move move) {
-        if(true){//move is valid
-        		//TODO implement
-        
+        if(isValidMove(move)){
+        		for(int i = 0; i < this.gameState.getGrid().length; i++) {
+        			for(int j = 0; j < this.gameState.getGrid()[i].length; j++) {
+        				if(this.gameState.getGrid()[i][j].equals(move.getPieceId())) {
+        					this.gameState.getGrid()[i][j] = "";
+        				}
+        			}
+        		}
+        		this.gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
+        		//TODO implement gameover check 
         }	
+        else throw new InvalidMove();
         	
     }
 
@@ -478,6 +486,12 @@ public class GameEngine implements Game {
     	testMap.setBlocks(2);
     	testMap.setPieces(pieces);
     	test.create(testMap);
+    	
+    	int[] futuresquare = {2,0};
+    	Move testmove = new Move();
+    	testmove.setNewPosition(futuresquare);
+    	testmove.setPieceId("p:1_1");
+    	test.makeMove(testmove);
     	test.printState();
     	
     }
