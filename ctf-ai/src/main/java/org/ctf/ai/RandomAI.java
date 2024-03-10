@@ -123,7 +123,7 @@ public class RandomAI {
   }
 
   /**
-   * Selects and returns a random Move from an ArrayList which contains Moves.
+   * Selects and returns a random Move from an ArrayList which only contains valid Moves.
    * @param moveArrayList
    * @return
    */
