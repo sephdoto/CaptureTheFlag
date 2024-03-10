@@ -328,7 +328,8 @@ public class RandomAI {
 
 
   /**
-   * Returns a pieces maximum reach into a certain direction,
+   * Returns a pieces maximum reach into a certain direction.
+   * Assumes the direction is valid, doesn't catch Null Pointer Exceptions.
    * @param directions
    * @param dir
    * @return int reach
@@ -348,7 +349,7 @@ public class RandomAI {
   }
 
   /**
-   * Gets thrown if the current team cannot move
+   * Gets thrown if the current team cannot move.
    */
   public static class NoMovesLeftException extends Exception {
     NoMovesLeftException(String team){
@@ -357,7 +358,7 @@ public class RandomAI {
   }
 
   /**
-   * Gets thrown if a Shape is not yet implemented in RandomAI
+   * Gets thrown if a Shape is not yet implemented in RandomAI.
    */
   public static class InvalidShapeException extends Exception {
     InvalidShapeException(String shape){
