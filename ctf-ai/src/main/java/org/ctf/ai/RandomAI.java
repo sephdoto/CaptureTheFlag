@@ -315,7 +315,7 @@ public class RandomAI {
 
     //weaker opponent check
     for(Piece p : gameState.getTeams()[occupantTeam].getPieces()) {
-      if(p.getId().equals(occupant.split(":")[1].split("_")[1])) {
+      if(p.getId().equals(occupant)) {
         if(p.getDescription().getAttackPower() <= piece.getDescription().getAttackPower()) {
           return true;
         }
