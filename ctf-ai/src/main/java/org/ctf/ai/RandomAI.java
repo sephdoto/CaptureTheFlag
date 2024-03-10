@@ -217,7 +217,7 @@ public class RandomAI {
     if(!validPos(pos, piece, gameState)) {
       return null;
     } else if(!sightLine(gameState, new int[] {pos[0], pos[1]}, direction, reach)) {
-        return null;
+      return null;
     } else {
       Move move = new Move();
       move.setPieceId(piece.getId());
@@ -229,11 +229,14 @@ public class RandomAI {
   /**
    * Checks if two positions have a direct line of sight.
    * The line of sight can be disrupted by pieces, blocks or bases in between them.
+   * The old position is calculated from the new Position minus the reach in the negative direction the piece took to get to newPos.
+   * In simpler words, if a piece went from 2,2 to 2,0 (2 to left) newPos would be [2,0], reach would be 2 and the direction 0 (left)
    * @param gameState
-   * @param piece
    * @param newPos
+   * @param direction
    * @param reach
    * @return true if there is no obstacle in between
+   * @return false if any obstacle is in between or the target position is not on the grid
    */
   //TODO bis jetzt blockieren Bases noch die Sicht, ich weiß nicht ob das so korrekt ist
   static boolean sightLine(GameState gameState, int[] newPos, int direction, int reach) {
@@ -241,15 +244,19 @@ public class RandomAI {
     --reach;
     for(; reach > 0; reach--) {
       newPos = updatePos(newPos, direction, -1);
-      if(grid[newPos[0]][newPos[1]].equals("")) {
-        continue;
-      } else {
+      try {
+        if(grid[newPos[0]][newPos[1]].equals("")) {
+          continue;
+        } else {
+          return false;
+        }
+      } catch (IndexOutOfBoundsException ioe) {
         return false;
       }
     }
     return true;
   }
-  
+
   /**
    * Updates the y,x position of a piece.
    * A given int[2] positional Array is altered by going a given amount of steps (reach) into a given direction.
