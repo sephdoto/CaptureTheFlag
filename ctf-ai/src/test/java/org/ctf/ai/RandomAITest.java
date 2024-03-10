@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.ctf.client.state.data.map.MapTemplate;
+import org.ctf.ai.RandomAI.InvalidShapeException;
 import org.ctf.client.state.GameState;
 import org.ctf.client.state.Move;
 import org.ctf.client.state.Piece;
@@ -12,6 +13,8 @@ import org.ctf.client.state.Team;
 import org.ctf.client.state.data.map.Directions;
 import org.ctf.client.tools.JSON_Tools;
 import org.ctf.client.tools.JSON_Tools.MapNotFoundException;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -35,12 +38,39 @@ class RandomAITest {
 
 	@Test
 	void testGetShapeMove() {
-		fail("Not yet implemented");
+		Move move1 = new Move();
+		ArrayList<Move> moveList = new ArrayList<Move>();
+		moveList.add(move1);
+		
+		assertEquals(move1, RandomAI.getShapeMove(moveList));
 	}
 
 	@Test
-	void testValidShapeDirection() {
-		fail("Not yet implemented");
+	void testValidShapeDirection()  {
+		Piece knight = new Piece();
+		knight.setId("p:1_9");
+		knight.setPosition(new int[]{9,0});
+		knight.setTeamId("team1");
+		knight.setDescription(getTestTemplate().getPieces()[2]);	//new knight with l-shape movement
+		gameState.getGrid()[9][0] = knight.getId();					//knight is only able to move 2up1right or 2right1up
+		gameState.getGrid()[8][2] = "b";							//now knight only got 1 valid position to jump on, 2up1right, onto 7,1
+		gameState.getGrid()[8][0] = "b";
+		gameState.getGrid()[8][1] = "b";
+		gameState.getGrid()[9][1] = "b";							//completely enclosing the knight in blocks
+		
+		try {
+			assertNull(RandomAI.validShapeDirection(gameState, knight, 0));		//invalid direction (OutOfBounds): 2up1left
+			assertNotNull(RandomAI.validShapeDirection(gameState, knight, 1));	//only valid direction: 2up1right
+			assertNull(RandomAI.validShapeDirection(gameState, knight, 2));		//invalid direction (block): 2right1up
+			assertNull(RandomAI.validShapeDirection(gameState, knight, 3));		//invalid direction (OutOfBounds): 2right1down
+			assertNull(RandomAI.validShapeDirection(gameState, knight, 4));		//invalid direction (OutOfBounds): 2down1left
+			assertNull(RandomAI.validShapeDirection(gameState, knight, 5));		//invalid direction (OutOfBounds): 2down1right
+			assertNull(RandomAI.validShapeDirection(gameState, knight, 6));		//invalid direction (OutOfBounds): 2left1up
+			assertNull(RandomAI.validShapeDirection(gameState, knight, 7));		//invalid direction (OutOfBounds): 2left1down
+			assertNull(RandomAI.validShapeDirection(gameState, knight, 8));		//invalid direction (direction does not exist)
+		} catch(InvalidShapeException ise) {
+			fail("No Exception Should be thrown");
+		}
 	}
 
 	@Test
