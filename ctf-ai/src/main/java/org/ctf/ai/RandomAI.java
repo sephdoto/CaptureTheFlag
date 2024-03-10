@@ -189,8 +189,9 @@ public class RandomAI {
   }
 
   /**
-   * Checks if a piece can walk any fields into a given direction.
-   * The direction is given as a number (0-7).
+   * This method tests if a piece could walk into a given direction.
+   * It does not test if a pieces reach in a direction is >0.
+   * The direction is given as an int (0-7).
    * @param gameState
    * @param piece
    * @param direction
@@ -201,8 +202,9 @@ public class RandomAI {
   }
 
   /**
-   * Returns the Move if a piece can walk onto a specific position.
-   * The direction is given as a number (0-7) and and int that specifies how many fields into that direction.
+   * Returns the Move if a piece can occupy specific position.	 
+   * This method does not test if a pieces reach in a direction is >0.
+   * The direction is given as an int (0-7) and reach as an int that specifies how many fields into that direction.
    * @param gameState
    * @param piece
    * @param direction
