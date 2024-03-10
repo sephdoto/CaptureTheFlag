@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import org.ctf.client.state.data.map.MapTemplate;
 import org.ctf.ai.RandomAI.InvalidShapeException;
+import org.ctf.ai.RandomAI.NoMovesLeftException;
 import org.ctf.client.state.GameState;
 import org.ctf.client.state.Move;
 import org.ctf.client.state.Piece;
@@ -22,18 +23,169 @@ class RandomAITest {
 	static GameState gameState;
 
 	@BeforeEach
-	void setUp() throws Exception{
+	void setUp() {
 		gameState = getTestState();
 	}
 
+	/**
+	 * This Method does not know if no more moves are possible
+	 */
 	@Test
 	void testPickMoveSimple() {
-		fail("Not yet implemented");
+		GameState gameState = getEmptyTestState();					//get an empty gameState that only contains two teams and their bases
+		Piece knight = new Piece();
+		knight.setId("p:1_1");
+		knight.setPosition(new int[]{9,0});
+		knight.setTeamId("team1");
+		knight.setDescription(getTestTemplate().getPieces()[2]);	//new knight with l-shape movement
+		gameState.getTeams()[1].setPieces(new Piece[] {knight});	//add knight to team1's pieces
+		gameState.getGrid()[9][0] = knight.getId();					//knight is only able to move 2up1right or 2right1up
+		gameState.getGrid()[8][2] = "b";							//now knight only got 1 valid position to jump on, 2up1right, onto 7,1
+		int[] onlyPos = new int[] {7,1};							//the only valid position to move on is 7,1
+
+		try {
+			assertArrayEquals(onlyPos, RandomAI.pickMoveSimple(gameState).getNewPosition());		//only 1 move possible, onto a free field
+		} catch (InvalidShapeException e) {
+			fail("All shapes are valid");
+		}
+		//	<-- end test 1, move to a free field -->  //
+		
+		
+		Piece pawn = new Piece();
+		pawn.setId("p:0_1");
+		pawn.setPosition(new int[]{7,1});
+		pawn.setTeamId("team0");									//place a pawn onto the only valid position, a knight is able to capture it
+		pawn.setDescription(getTestTemplate().getPieces()[0]);		//new pawn
+		gameState.getTeams()[0].setPieces(new Piece[] {pawn});		//add pawn to team0's pieces
+		gameState.getGrid()[7][1] = pawn.getId();					//little guy gets sacrificed
+		
+		try {
+			assertArrayEquals(onlyPos, RandomAI.pickMoveSimple(gameState).getNewPosition());		//only 1 move possible, capture the pawn!
+		} catch (InvalidShapeException e) {
+			fail("All shapes are valid");
+		}
+		//  <-- end test 2, capture a weaker piece -->  //
+		
+		Piece queen = new Piece();
+		queen.setId("p:1_1");
+		queen.setPosition(new int[]{5,5});
+		queen.setTeamId("team1");
+		queen.setDescription(getTestTemplate().getPieces()[4]);		//new queen in the middle of the board
+		gameState.getTeams()[1].setPieces(new Piece[] {queen});		//add queen to team1's pieces
+		gameState.getGrid()[5][5] = queen.getId();					
+		gameState.getGrid()[5][4] = "b";
+		gameState.getGrid()[5][6] = "b";
+		gameState.getGrid()[4][4] = "b";
+		gameState.getGrid()[4][5] = "b";
+		gameState.getGrid()[4][6] = "b";
+		gameState.getGrid()[6][4] = "b";
+		gameState.getGrid()[6][5] = "b";
+		gameState.getGrid()[7][7] = "b";		
+		gameState.getGrid()[7][1] = "b";			//only valid move now is 6,6
+		
+		try {
+			assertArrayEquals(new int[] {6,6}, RandomAI.pickMoveSimple(gameState).getNewPosition());		//only 1 move possible, onto a free field
+		} catch (InvalidShapeException e) {
+			fail("All shapes are valid");
+		}
+		//	<-- end test 3, move queen to a free field -->  //
 	}
 
 	@Test
 	void testPickMoveComplex() {
-		fail("Not yet implemented");
+		GameState gameState = getEmptyTestState();					//get an empty gameState that only contains two teams and their bases
+		Piece knight = new Piece();
+		knight.setId("p:1_1");
+		knight.setPosition(new int[]{9,0});
+		knight.setTeamId("team1");
+		knight.setDescription(getTestTemplate().getPieces()[2]);	//new knight with l-shape movement
+		gameState.getTeams()[1].setPieces(new Piece[] {knight});	//add knight to team1's pieces
+		gameState.getGrid()[9][0] = knight.getId();					//knight is only able to move 2up1right or 2right1up
+		gameState.getGrid()[8][2] = "b";							//now knight only got 1 valid position to jump on, 2up1right, onto 7,1
+		int[] onlyPos = new int[] {7,1};							//the only valid position to move on is 7,1
+
+		try {
+			assertArrayEquals(onlyPos, RandomAI.pickMoveComplex(gameState).getNewPosition());		//only 1 move possible, onto a free field
+		} catch (InvalidShapeException e) {
+			fail("All shapes are valid");
+		}
+		catch (NoMovesLeftException e) {
+			fail("There are still moves left");
+		}
+		//	<-- end test 1, move to a free field -->  //
+		
+		
+		Piece pawn = new Piece();
+		pawn.setId("p:0_1");
+		pawn.setPosition(new int[]{7,1});
+		pawn.setTeamId("team0");									//place a pawn onto the only valid position, a knight is able to capture it
+		pawn.setDescription(getTestTemplate().getPieces()[0]);		//new pawn
+		gameState.getTeams()[0].setPieces(new Piece[] {pawn});		//add pawn to team0's pieces
+		gameState.getGrid()[7][1] = pawn.getId();					//little guy gets sacrificed
+		
+		try {
+			assertArrayEquals(onlyPos, RandomAI.pickMoveComplex(gameState).getNewPosition());		//only 1 move possible, capture the pawn!
+		} catch (InvalidShapeException e) {
+			fail("All shapes are valid");
+		}
+		catch (NoMovesLeftException e) {
+			fail("There are still moves left");
+		}
+		//  <-- end test 2, capture a weaker piece -->  //
+		
+		
+		Piece rook = new Piece();
+		rook.setId("p:0_1");
+		rook.setPosition(new int[]{7,1});
+		rook.setTeamId("team0");									//place a rook onto the only valid position, a knight is not able to capture it
+		rook.setDescription(getTestTemplate().getPieces()[1]);		//new rook
+		gameState.getTeams()[0].setPieces(new Piece[] {rook});		//add rook to team0's pieces
+		gameState.getGrid()[7][1] = pawn.getId();					//big guy stands rock solid
+		
+		Exception nml = assertThrows(NoMovesLeftException.class, () -> RandomAI.pickMoveComplex(gameState));
+		String expectedMessage = "Team team1 can not move.";
+		String actualMessage = nml.getMessage();
+		
+		assertEquals(expectedMessage, actualMessage);
+		//  <-- end test 3, rook cannot be captured, no moves left -->  //
+
+		GameState newGameState = getEmptyTestState();							//get new empty GameState
+		Piece queen = new Piece();
+		queen.setId("p:1_1");
+		queen.setPosition(new int[]{5,5});
+		queen.setTeamId("team1");
+		queen.setDescription(getTestTemplate().getPieces()[4]);		//new queen in the middle of the board
+		newGameState.getTeams()[1].setPieces(new Piece[] {queen});		//add queen to team1's pieces
+		newGameState.getGrid()[5][5] = queen.getId();					
+		newGameState.getGrid()[5][4] = "b";
+		newGameState.getGrid()[5][6] = "b";
+		newGameState.getGrid()[4][4] = "b";
+		newGameState.getGrid()[4][5] = "b";
+		newGameState.getGrid()[4][6] = "b";
+		newGameState.getGrid()[6][4] = "b";
+		newGameState.getGrid()[6][5] = "b";
+		newGameState.getGrid()[6][6] = "b";							//enclose queen with blocks, no valid moves left
+		
+		nml = assertThrows(NoMovesLeftException.class, () -> RandomAI.pickMoveComplex(gameState));
+		expectedMessage = "Team team1 can not move.";
+		actualMessage = nml.getMessage();
+		
+		assertEquals(expectedMessage, actualMessage);
+		//  <-- end test 4, queen enclose by blocks, cannot move -->  //
+		
+		
+		newGameState.getGrid()[6][6] = "";							//open one block for queen
+		newGameState.getGrid()[7][7] = "b";							//only valid move now is 6,6
+		
+		try {
+			assertArrayEquals(new int[] {6,6}, RandomAI.pickMoveComplex(newGameState).getNewPosition());		//only 1 move possible, onto a free field
+		} catch (InvalidShapeException e) {
+			fail("All shapes are valid");
+		}
+		catch (NoMovesLeftException e) {
+			fail("There are still moves left");
+		}
+		//	<-- end test 5, move queen to a free field -->  //
 	}
 
 	@Test
@@ -68,8 +220,8 @@ class RandomAITest {
 			assertNull(RandomAI.validShapeDirection(gameState, knight, 6));		//invalid direction (OutOfBounds): 2left1up
 			assertNull(RandomAI.validShapeDirection(gameState, knight, 7));		//invalid direction (OutOfBounds): 2left1down
 			assertNull(RandomAI.validShapeDirection(gameState, knight, 8));		//invalid direction (direction does not exist)
-		} catch(InvalidShapeException ise) {
-			fail("No Exception Should be thrown");
+		} catch (InvalidShapeException e) {
+			fail("All shapes are valid");
 		}
 	}
 
@@ -180,7 +332,55 @@ class RandomAITest {
 		assertEquals(-1, RandomAI.getReach(rookDirections, 8));		//invalid direction: -1
 	}
 
+	
+	/**
+	 * Creates a test GameState from the example Map. 
+	 * @return GameState
+	 */
+	private GameState getEmptyTestState() {
+		Team team1 = new Team();
+		team1.setBase(new int[] {0,0});
+		team1.setColor("red");
+		team1.setFlag(new int[] {0,0});
+		team1.setId("team0");
 
+		Team team2 = new Team();
+		team2.setBase(new int[] {9,9});
+		team2.setColor("blue");
+		team2.setFlag(new int[] {9,9});
+		team2.setId("team1");
+
+		Piece[] pieces1 = new Piece[0];
+		team1.setPieces(pieces1);
+
+		Piece[] pieces2 = new Piece[0];
+		team2.setPieces(pieces2);
+
+		Move lastMove = new Move();
+		lastMove.setNewPosition(null);
+		lastMove.setPieceId(null);
+
+		GameState testState = new GameState();
+		testState.setCurrentTeam(1);
+		String[][] example = new String[][] {
+			{"b:0","","","","","","","","",""},
+			{"","","","","","","","","",""},
+			{"","","","","","","","","",""},
+			{"","","","","","","","","",""},
+			{"","","","","","","","","",""},
+			{"","","","","","","","","",""},
+			{"","","","","","","","","",""},
+			{"","","","","","","","","",""},
+			{"","","","","","","","","",""},
+			{"","","","","","","","","","b:1"}
+		};
+		testState.setGrid(example);
+		testState.setLastMove(lastMove);
+		testState.setTeams(new Team[]{team1, team2});
+
+		return testState;
+	}
+	
 	/**
 	 * Creates a test GameState from the example Map. 
 	 * @return GameState
