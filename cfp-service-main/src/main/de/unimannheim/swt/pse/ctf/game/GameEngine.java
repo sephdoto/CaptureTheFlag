@@ -110,14 +110,14 @@ public class GameEngine implements Game {
         
         //putting the pieces on the board (team1)
         int row = 1;
-        
-	    for(int i = 0; i < newGrid[0].length; i++) {
-	    	while(!indPieces.isEmpty()) {
-	       	Piece piece = indPieces.pop();
-	       	newGrid[row][i] = "p:" + piece.getTeamId() + "_" + piece.getId();
+        while(!indPieces.isEmpty()) {
+	        for(int i = 0; i < newGrid[0].length; i++) {
+	        	if(indPieces.isEmpty()) break;
+	        	Piece piece = indPieces.pop();
+	        	newGrid[row][i] = "p:" + piece.getTeamId() + "_" + piece.getId();
 	        }
 	        row++;
-	    }
+        }
         //initializing pieces team 2
         count = 1;
         teamID = 2;
@@ -146,13 +146,13 @@ public class GameEngine implements Game {
         
     	//putting the pieces on the board (team2)
         row = newGrid.length - 2;
-        
-        for(int i = newGrid[0].length-1; i >= 0; i--) {
-	       	while(!indPieces2.isEmpty()) {
-	       	Piece piece = indPieces2.pop();
-	       	newGrid[row][i] = "p:" + piece.getTeamId() + "_" + piece.getId();
+        while(!indPieces2.isEmpty()) {
+	        for(int i = newGrid[0].length-1; i >= 0; i--) {
+	        	if(indPieces2.isEmpty()) break;
+	        	Piece piece = indPieces2.pop();
+	        	newGrid[row][i] = "p:" + piece.getTeamId() + "_" + piece.getId();
 	        }
-	    row--;
+	        row--;
         }
 
         
