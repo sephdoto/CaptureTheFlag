@@ -50,7 +50,6 @@ class RandomAITest {
 		}
 		//	<-- end test 1, move to a free field -->  //
 		
-		
 		Piece pawn = new Piece();
 		pawn.setId("p:0_1");
 		pawn.setPosition(new int[]{7,1});
@@ -114,7 +113,6 @@ class RandomAITest {
 		}
 		//	<-- end test 1, move to a free field -->  //
 		
-		
 		Piece pawn = new Piece();
 		pawn.setId("p:0_1");
 		pawn.setPosition(new int[]{7,1});
@@ -132,7 +130,6 @@ class RandomAITest {
 			fail("There are still moves left");
 		}
 		//  <-- end test 2, capture a weaker piece -->  //
-		
 		
 		Piece rook = new Piece();
 		rook.setId("p:0_1");
@@ -172,7 +169,6 @@ class RandomAITest {
 		
 		assertEquals(expectedMessage, actualMessage);
 		//  <-- end test 4, queen enclose by blocks, cannot move -->  //
-		
 		
 		newGameState.getGrid()[6][6] = "";							//open one block for queen
 		newGameState.getGrid()[7][7] = "b";							//only valid move now is 6,6
@@ -295,7 +291,6 @@ class RandomAITest {
 		assertArrayEquals(posititon, RandomAI.updatePos(new int[] {4,6}, 6, 1));        //down left
 		assertArrayEquals(posititon, RandomAI.updatePos(new int[] {4,4}, 7, 1));        //down right
 		assertArrayEquals(new int[]{0,0}, RandomAI.updatePos(new int[] {9,9}, 4, 9));   //lower right corner to upper left corner
-
 	}
 
 	@Test
@@ -342,13 +337,13 @@ class RandomAITest {
 		team1.setBase(new int[] {0,0});
 		team1.setColor("red");
 		team1.setFlag(new int[] {0,0});
-		team1.setId("team0");
+		team1.setId("1");
 
 		Team team2 = new Team();
 		team2.setBase(new int[] {9,9});
 		team2.setColor("blue");
 		team2.setFlag(new int[] {9,9});
-		team2.setId("team1");
+		team2.setId("0");
 
 		Piece[] pieces1 = new Piece[0];
 		team1.setPieces(pieces1);
@@ -391,13 +386,13 @@ class RandomAITest {
 		team1.setBase(new int[] {0,0});
 		team1.setColor("red");
 		team1.setFlag(new int[] {0,0});
-		team1.setId("team0");
+		team1.setId("0");
 
 		Team team2 = new Team();
 		team2.setBase(new int[] {9,9});
 		team2.setColor("blue");
 		team2.setFlag(new int[] {9,9});
-		team2.setId("team1");
+		team2.setId("1");
 
 		Piece[] pieces1 = new Piece[8];
 		for(int i=0; i<8; i++) {
