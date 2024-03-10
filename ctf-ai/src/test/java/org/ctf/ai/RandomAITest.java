@@ -54,7 +54,17 @@ class RandomAITest {
 
 	@Test
 	void testCheckMoveValidity() {
-		fail("Not yet implemented");
+		Piece rook = gameState.getTeams()[1].getPieces()[1];				//rook on 7,3
+		Piece rook2 = gameState.getTeams()[1].getPieces()[3];				//rook on 7,5
+		assertNull(RandomAI.checkMoveValidity(gameState, rook, 0, 2));		//rook cannot walk over another same team rook
+		assertNull(RandomAI.checkMoveValidity(gameState, rook, 1, 1));		//rook cannot walk onto another same team rook
+		assertNotNull(RandomAI.checkMoveValidity(gameState, rook, 2, 1));	//rook can walk on the empty space above
+		assertNull(RandomAI.checkMoveValidity(gameState, rook, 2, 3));		//rook cannot jump over the block above
+		assertNotNull(RandomAI.checkMoveValidity(gameState, rook, 3, 1));	//rook can walk on the empty space below
+		//this method doesn't test if a piece can actually walk in the given direction.
+		assertNotNull(RandomAI.checkMoveValidity(gameState, rook, 6, 1));	//piece could go to the empty field below-left
+		assertNull(RandomAI.checkMoveValidity(gameState, rook2, 4, 4));		//piece could not walk over a block to the empty field above-left 3,1
+		assertNull(RandomAI.checkMoveValidity(gameState, rook2, 4, 0));		//piece could not walk onto its own position
 	}
 
 	@Test
