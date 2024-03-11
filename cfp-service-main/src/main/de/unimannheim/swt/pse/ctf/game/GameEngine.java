@@ -24,7 +24,7 @@ import de.unimannheim.swt.pse.ctf.game.state.Team;
  * Game Engine Implementation\
  * TODO Create Game, Start game, move 
  * 
- * @author rsyed & ysiebenh
+ * @author rsyed & ysiebenh & sistumpf
  */
 public class GameEngine implements Game {
 
@@ -309,8 +309,8 @@ public class GameEngine implements Game {
      */
     @Override
     public boolean isValidMove(Move move) {
-        // TODO Need to write logic
-        return true;
+      Piece piece = (Piece)(Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(move.getPieceId())));
+      return AI_Tools.validPos(move.getNewPosition(), piece, gameState);      
     }
 
     /**
