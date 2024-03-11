@@ -1,5 +1,7 @@
 package org.ctf.client;
 
+import java.util.Date;
+
 import org.ctf.client.layer.CommLayer;
 import org.ctf.client.state.GameState;
 import org.ctf.client.state.Move;
@@ -13,6 +15,8 @@ import org.ctf.client.state.data.exceptions.URLError;
 import org.ctf.client.state.data.map.MapTemplate;
 import org.ctf.client.state.data.wrappers.GameSessionResponse;
 import org.ctf.client.state.data.wrappers.JoinGameResponse;
+
+import com.google.gson.Gson;
 
 /**
  * Base Client file which is going to use the Translation Layer to talk to the game server
