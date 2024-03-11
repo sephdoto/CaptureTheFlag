@@ -23,7 +23,6 @@ import javafx.scene.paint.Color;
 
 /**
  * Game Engine Implementation\
- * TODO Create Game, Start game, move 
  * 
  * @author rsyed & ysiebenh & sistumpf
  */
@@ -66,31 +65,21 @@ public class GameEngine implements Game {
         
         //placing the bases/flags 
         //TODO multiple flags in a base??????
-        newGrid = placeFlags(template, newGrid);
+        newGrid = BoardSetUp.placeFlags(template, newGrid);
        
         //initializing teams
        	Team[] teams = new Team[2];
        	gameState.setTeams(teams);
-   		teams[0] = initializeTeam(1);
-   		teams[1] = initializeTeam(2);
+   		teams[0] = BoardSetUp.initializeTeam(1, template);
+   		teams[1] = BoardSetUp.initializeTeam(2, template);
    		
    		//placing the pieces 
-        newGrid = placePieces(teams, newGrid);
+        newGrid = BoardSetUp.placePieces(teams, newGrid);
           
-      //placing blocks   TODO odd numbers?(only divisible by 2)
-        for(int i = 0; i < template.getBlocks(); i++) {
-        	int x = (int) (Math.random() * template.getGridSize()[0]);
-        	int y = (int) (Math.random() * (template.getGridSize()[1]/2));
-        	
-        	if(newGrid[x][y].equals("")) {
-        		newGrid[x][y] = "b";
-        		newGrid[newGrid.length-x-1][newGrid[0].length-y-1] = "b";
-        		i++;	
-        	}
-        	else i--;
-        }
-        
-        // selecting starting team
+        //placing blocks   TODO odd numbers?(only divisible by 2)
+        newGrid = BoardSetUp.placeBlocks(newGrid, template.getBlocks());
+       
+        // selecting starting team, here or in joinGame?
         gameState.setCurrentTeam((int)(Math.random()*2)+1);
         
         // Setting Flags
@@ -378,7 +367,7 @@ public class GameEngine implements Game {
      * 
      * @return 
      */
-    private String getRandColor(){
+    static String getRandColor(){
         Random rand = new Random();
            int r = rand.nextInt(255); // [0,255]
            int g = rand.nextInt(255); // [0,255]
@@ -400,97 +389,6 @@ public class GameEngine implements Game {
     	}
     }
     
-    /**
-     * This is a helper method to place the flags in the create method
-     * 
-     * @author ysiebenh
-     * @param MapTemplate template, String[][] grid
-     * @return String[][] grid with flags placed 
-     */
-    private String[][] placeFlags(MapTemplate template, String[][] grid) {
-    	String[][] newGrid = Arrays.copyOf(grid, grid.length);
-        if(template.getTeams() == 2) {
-        	newGrid[0][0] = "b:1";
-        	newGrid[newGrid.length-1][newGrid[0].length-1] = "b:2";
-        }
-        else if(template.getTeams() == 4) {
-        	newGrid[0][0] = "b:1";
-        	newGrid[newGrid.length-1][0] = "b:2";
-        	newGrid[0][newGrid[0].length-1] = "b:3";
-        	newGrid[newGrid.length-1][newGrid[0].length-1] = "b:4";
-        }
-    	return newGrid;
-    }
-    
-    /**
-     * This is a helper method to initialize the teams in create 
-     * 
-     * @author ysiebenh
-     * @param int teamID
-     * @return Team thats initialized
-     */
-    private Team initializeTeam(int teamID) {
-    	//initializing pieces team 1 (symmetrical)
-        //TODO different placement types
-        int count = 1;
-        LinkedList<Piece> indPieces = new LinkedList<Piece>();
-        for(PieceDescription piece : this.currentTemplate.getPieces()) {
-        	for(int i = 0; i < piece.getCount();i++) {
-        		Piece x = new Piece();
-        		x.setId(Integer.toString(count++));
-        		x.setDescription(piece);
-        		x.setTeamId(Integer.toString(teamID)); //TODO team id
-        		indPieces.add(x);
-        	}
-        }
-        
-      //initializing team 
-        	Team team = new Team();
-        	team.setId(Integer.toString(teamID));
-            team.setColor(getRandColor());
-        	Piece[] pieces = new Piece[indPieces.size()];
-        	int iterator = 0;
-        	for(Piece p : indPieces) {
-        		pieces[iterator++] = p;
-        	}
-        	team.setPieces(pieces);
-        
-        
-    	return team;
-    }
-    
-    private String[][] placePieces(Team[] teams, String[][] grid){
-    	//TODO more than two teams
-    	//TODO different types
-    	//putting the pieces on the board (team1)
-    	String[][] newGrid = Arrays.copyOf(grid, grid.length);
-        int row = 1;
-        int column = 0;
-	    for(int i = 0; i < teams[0].getPieces().length; i++) {
-	       	if(column == newGrid[0].length) {
-	       		row++;
-	       		column = 0;
-	       	}
-        	Piece piece = teams[0].getPieces()[i];	        	
-        	newGrid[row][column] = "p:" + piece.getTeamId() + "_" + piece.getId();
-	        column++;
-	        }
-	        
-	    //putting pieces on the board (team2)    
-	    row = newGrid.length - 2;
-	    column = newGrid[0].length-1;
-	    for(int i = 0; i < teams[0].getPieces().length; i++) {
-        	if(column == -1) {
-        		row--;
-		  		column = newGrid[0].length-1;
-        	}
-    	Piece piece = teams[0].getPieces()[i];
-    	newGrid[row][column] = "p:" + piece.getTeamId() + "_" + piece.getId();
-    	column--;	
-		}
-	    return newGrid;
-    }
-    
     public static void main(String[] args) {
     	GameEngine test = new GameEngine();
     	MapTemplate testMap = new MapTemplate();
@@ -503,14 +401,14 @@ public class GameEngine implements Game {
     	pieces[1].setCount(3);
     	testMap.setGridSize(new int[]{10,10});
     	testMap.setTeams(2);
-    	testMap.setBlocks(2);
+    	testMap.setBlocks(4);
     	testMap.setPieces(pieces);
     	test.create(testMap);
     	
     	int[] futuresquare = {2,0};
-    	//Move testmove = new Move();
-    	//testmove.setNewPosition(futuresquare);
-    	//testmove.setPieceId("p:1_1");
+    	Move testmove = new Move();
+    	testmove.setNewPosition(futuresquare);
+    	testmove.setPieceId("p:1_1");
     	//test.makeMove(testmove);
     	test.printState();
     	System.out.println(test.gameState.getTeams()[0].getColor().toString());
