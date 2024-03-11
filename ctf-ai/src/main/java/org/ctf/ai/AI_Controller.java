@@ -1,146 +1,127 @@
 package org.ctf.ai;
 
-
 import org.ctf.client.state.Piece;
 import org.ctf.client.state.Move;
 import org.ctf.client.state.Team;
 import org.ctf.client.state.data.map.MapTemplate;
-import org.ctf.client.state.data.map.Shape;
-import org.ctf.client.state.data.map.ShapeType;
 import org.ctf.client.tools.JSON_Tools;
 import org.ctf.client.tools.JSON_Tools.MapNotFoundException;
-
-import java.io.File;
-
-import org.ctf.ai.RandomAI.InvalidShapeException;
-import org.ctf.ai.RandomAI.NoMovesLeftException;
-import org.ctf.client.constants.Constants;
+import java.util.Arrays;
+import org.ctf.ai.AI_Tools.InvalidShapeException;
+import org.ctf.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.client.constants.Constants.AI;
 import org.ctf.client.state.GameState;
 
+
+/**
+ * @author sistumpf
+ * This class requests a GameState from the server, uses one of the implemented AIs to generate the next move and finally returns
+ * said move back to the server.
+ */
 public class AI_Controller {
 
-	//used for testing
-	public static void main(String[] args) {
-		MapTemplate mt = null;
-		try {
-			mt = JSON_Tools.readMapTemplate(new File(Constants.mapTemplateFolder+"10x10_2teams_example.json"));
-		} catch (Exception e) {e.printStackTrace();return;}
-		
-		GameState testState = getTestState();
-		Move move = new Move();
-		
-		int i = 0;
-		int max = 10000;
-		int timeMedian=0;
-		System.out.println(max + " Iterationen von pickMove()");
-		for(; i<max; i++) {
-			long time = System.nanoTime();
-			try {
-				move = RandomAI.pickMove(testState, true);
-			} catch (NoMovesLeftException e) {e.printStackTrace();}
-			catch (InvalidShapeException inse) {inse.printStackTrace();}
-			timeMedian += (System.nanoTime() - time);
-//			System.out.println(move.getPieceId() + ", " + move.getNewPosition()[0] + " " + move.getNewPosition()[1] + ", time: " + (System.nanoTime() - time));
-		}
-		double passedTimeMs = (timeMedian/(double)i)/1000000.;
-		System.out.println((Math.round(passedTimeMs*1000000000)/1000000000.) + " ms pro random move (complex)");
-		
-		i = 0;
-		timeMedian=0;
-		for(; i<max; i++) {
-			long time = System.nanoTime();
-			try {
-				move = RandomAI.pickMove(testState, false);
-			} catch (NoMovesLeftException e) {e.printStackTrace();}
-			catch (InvalidShapeException inse) {inse.printStackTrace();}
-			timeMedian += (System.nanoTime() - time);
-//			System.out.println(move.getPieceId() + ", " + move.getNewPosition()[0] + " " + move.getNewPosition()[1] + ", time: " + (System.nanoTime() - time));
-		}
-		passedTimeMs = (timeMedian/(double)i)/1000000.;
-		System.out.println((Math.round(passedTimeMs*1000000000)/1000000000.) + " ms pro random move (simple)");
-	}
-	
-	
-	
-	/**
-	 * Creates a test GameState from the example Map. 
-	 * @return GameState
-	 */
-	public static GameState getTestState() {
-		MapTemplate mt = getTestTemplate();
-		Team team1 = new Team();
-		team1.setBase(new int[] {0,0});
-		team1.setColor("red");
-		team1.setFlag(new int[] {0,0});
-		team1.setId("0");
+  public static Move getNextMove(GameState gameState, AI ai) throws NoMovesLeftException, InvalidShapeException {
+    switch(ai) {
+      case RANDOM:          return RandomAI.pickMoveComplex(gameState);
+      case SIMPLE_RANDOM:   return RandomAI.pickMoveSimple(gameState);
+      default:              return RandomAI.pickMoveComplex(gameState);
+    }
+  }
 
-		Team team2 = new Team();
-		team2.setBase(new int[] {9,9});
-		team2.setColor("blue");
-		team2.setFlag(new int[] {9,9});
-		team2.setId("1");
+  //used for testing
+  public static void main(String[] args) {
+    try {
+      Move nextMove = getNextMove(getTestState(), AI.RANDOM);
+      
+      System.out.println(nextMove.getPieceId() + " moves from (" + 
+            java.util.stream.IntStream.of(((Piece)(Arrays.asList(getTestState().getTeams()[1].getPieces()).stream().filter(p->p.getId().equals(nextMove.getPieceId())).toArray()[0])).getPosition())
+            .mapToObj(String::valueOf).collect(java.util.stream.Collectors.joining(","))
+          + ") to (" + nextMove.getNewPosition()[0] + "," + nextMove.getNewPosition()[1] + ")");
+    } catch (NoMovesLeftException | InvalidShapeException e) {e.printStackTrace();}
 
-		Piece[] pieces1 = new Piece[8];
-		for(int i=0; i<8; i++) {
-			pieces1[i] = new Piece(); 
-			pieces1[i].setDescription(mt.getPieces()[1]);
-			pieces1[i].setId("p:0_"+(i+1));
-			if(i<2)
-				pieces1[i].setPosition(new int[] {1,4+i});
-			else
-				pieces1[i].setPosition(new int[] {2,i});    
-			pieces1[i].setTeamId(team1.getId());
-		}
-		team1.setPieces(pieces1);
+  }
 
-		Piece[] pieces2 = new Piece[8];
-		for(int i=0; i<8; i++) {
-			pieces2[i] = new Piece(); 
-			pieces2[i].setDescription(mt.getPieces()[1]);
-			pieces2[i].setId("p:1_"+(i+1));
-			if(i<6)
-				pieces2[i].setPosition(new int[] {7,2+i});
-			else
-				pieces2[i].setPosition(new int[] {8,i-2});  
-			pieces2[i].setTeamId(team1.getId());
-		}
-		team2.setPieces(pieces2);
 
-		Move lastMove = new Move();
-		lastMove.setNewPosition(null);
-		lastMove.setPieceId(null);
 
-		GameState testState = new GameState();
-		testState.setCurrentTeam(1);
-		String[][] example = new String[][] {
-			{"b:0","","","","","","","","",""},
-			{"","","","",pieces1[0].getId(),pieces1[1].getId(),"","","",""},
-			{"","",pieces1[2].getId(),pieces1[3].getId(),pieces1[4].getId(),pieces1[5].getId(),pieces1[6].getId(),pieces1[7].getId(),"",""},
-			{"","","","","","","","","",""},
-			{"","","","","","","","b","",""},
-			{"","","","b","","","","","",""},
-			{"","","","","","","","","",""},
-			{"","",pieces2[0].getId(),pieces2[1].getId(),pieces2[2].getId(),pieces2[3].getId(),pieces2[4].getId(),pieces2[5].getId(),"",""},
-			{"","","","",pieces2[6].getId(),pieces2[7].getId(),"","","",""},
-			{"","","","","","","","","","b:1"}
-		};
-		testState.setGrid(example);
-		testState.setLastMove(lastMove);
-		testState.setTeams(new Team[]{team1, team2});
+  /**
+   * Creates a test GameState from the example Map. 
+   * @return GameState
+   */
+  public static GameState getTestState() {
+    MapTemplate mt = getTestTemplate();
+    Team team1 = new Team();
+    team1.setBase(new int[] {0,0});
+    team1.setColor("red");
+    team1.setFlag(new int[] {0,0});
+    team1.setId("0");
 
-		return testState;
-	}
+    Team team2 = new Team();
+    team2.setBase(new int[] {9,9});
+    team2.setColor("blue");
+    team2.setFlag(new int[] {9,9});
+    team2.setId("1");
 
-	/**
-	 * Returns the test MapTemplate from the resource folder. 
-	 * @return MapTemplate
-	 */
-	@SuppressWarnings("deprecation")
-	public static MapTemplate getTestTemplate() {
-		MapTemplate mt = new MapTemplate();
-		try {
-			mt = JSON_Tools.readMapTemplate("10x10_2teams_example");
-		} catch (MapNotFoundException e) {e.printStackTrace();}
-		return mt;
-	}
+    Piece[] pieces1 = new Piece[8];
+    for(int i=0; i<8; i++) {
+      pieces1[i] = new Piece(); 
+      pieces1[i].setDescription(mt.getPieces()[1]);
+      pieces1[i].setId("p:0_"+(i+1));
+      if(i<2)
+        pieces1[i].setPosition(new int[] {1,4+i});
+      else
+        pieces1[i].setPosition(new int[] {2,i});    
+      pieces1[i].setTeamId(team1.getId());
+    }
+    team1.setPieces(pieces1);
+
+    Piece[] pieces2 = new Piece[8];
+    for(int i=0; i<8; i++) {
+      pieces2[i] = new Piece(); 
+      pieces2[i].setDescription(mt.getPieces()[1]);
+      pieces2[i].setId("p:1_"+(i+1));
+      if(i<6)
+        pieces2[i].setPosition(new int[] {7,2+i});
+      else
+        pieces2[i].setPosition(new int[] {8,i-2});  
+      pieces2[i].setTeamId(team1.getId());
+    }
+    team2.setPieces(pieces2);
+
+    Move lastMove = new Move();
+    lastMove.setNewPosition(null);
+    lastMove.setPieceId(null);
+
+    GameState testState = new GameState();
+    testState.setCurrentTeam(1);
+    String[][] example = new String[][] {
+      {"b:0","","","","","","","","",""},
+      {"","","","",pieces1[0].getId(),pieces1[1].getId(),"","","",""},
+      {"","",pieces1[2].getId(),pieces1[3].getId(),pieces1[4].getId(),pieces1[5].getId(),pieces1[6].getId(),pieces1[7].getId(),"",""},
+      {"","","","","","","","","",""},
+      {"","","","","","","","b","",""},
+      {"","","","b","","","","","",""},
+      {"","","","","","","","","",""},
+      {"","",pieces2[0].getId(),pieces2[1].getId(),pieces2[2].getId(),pieces2[3].getId(),pieces2[4].getId(),pieces2[5].getId(),"",""},
+      {"","","","",pieces2[6].getId(),pieces2[7].getId(),"","","",""},
+      {"","","","","","","","","","b:1"}
+    };
+    testState.setGrid(example);
+    testState.setLastMove(lastMove);
+    testState.setTeams(new Team[]{team1, team2});
+
+    return testState;
+  }
+
+  /**
+   * Returns the test MapTemplate from the resource folder. 
+   * @return MapTemplate
+   */
+  @SuppressWarnings("deprecation")
+  public static MapTemplate getTestTemplate() {
+    MapTemplate mt = new MapTemplate();
+    try {
+      mt = JSON_Tools.readMapTemplate("10x10_2teams_example");
+    } catch (MapNotFoundException e) {e.printStackTrace();}
+    return mt;
+  }
 }
