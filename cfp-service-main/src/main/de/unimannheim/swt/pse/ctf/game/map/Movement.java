@@ -1,37 +1,29 @@
 package de.unimannheim.swt.pse.ctf.game.map;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.json.JSONObject;
-import org.json.JSONString;
 
-/**
- * This class represents a possible movement.
- */
+/** This class represents a possible movement. */
 public class Movement {
 
-    @Schema(
-            description = "directions a piece can move. if set, shape must NOT be set"
-    )
-    private Directions directions;
-    @Schema(
-            description = "shapes a piece can move (e.g., L. if set, directions must NOT be set"
-    )
-    private Shape shape;
+  @Schema(description = "directions a piece can move. if set, shape must NOT be set")
+  private Directions directions;
 
-    public Directions getDirections() {
-        return directions;
-    }
+  @Schema(description = "shapes a piece can move (e.g., L. if set, directions must NOT be set")
+  private Shape shape;
 
-    public void setDirections(Directions directions) {
-        this.directions = directions;
-    }
+  public Directions getDirections() {
+    return directions;
+  }
 
-    public Shape getShape() {
-        return shape;
-    }
+  public void setDirections(Directions directions) {
+    this.directions = directions;
+  }
 
-    public void setShape(Shape shape) {
-        this.shape = shape;
-    }
-    
+  public Shape getShape() {
+    return shape;
+  }
+
+  public void setShape(Shape shape) {
+    this.shape = shape;
+  }
 }
