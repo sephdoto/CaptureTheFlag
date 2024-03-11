@@ -1,4 +1,4 @@
-package org.ctf.Client;
+package org.ctf.client;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
