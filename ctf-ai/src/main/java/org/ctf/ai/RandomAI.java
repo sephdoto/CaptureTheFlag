@@ -10,30 +10,16 @@ import java.util.HashMap;
 
 /**
  * @author sistumpf
- * Everything needed for choosing a random move
+ * Two different Algorithms for choosing random moves.
+ * Simple relies purely on randomness while choosing pieces and their moves and does not realize positions without valid moves;
+ * Complex tries to minimize choosing invalid moves and has noMoreMove checks built in.
+ * Simple is not recommended but could probably be useful in some cases.
  */
 public class RandomAI extends AI_Tools {
   /**
-   * Use this to get a random move from a GameState with either the complex or simple algorithm.
-   * The complex algorithm is recommended but might be a little slower sometimes.
-   * @param gameState
-   * @param complex
-   * @return a valid random move
-   * @throws NoMovesLeftException
-   * @throws InvalidShapeException
-   */
-  public static Move pickMove(GameState gameState, boolean complex) throws NoMovesLeftException, InvalidShapeException {
-    if(complex)
-      return pickMoveComplex(gameState);
-    else {
-      return pickMoveSimple(gameState);
-    }
-  }
-
-  /**
    * Given a GameState, the next move is randomly chosen.
    * Heavily relies on randomness, might be a lot faster or a lot slower than {@link #pickMoveComplex(GameState gameState)}.
-   * This Method cannot notice when there are no moves left.
+   * This Method is not able to notice when there are no moves left.
    * @param gameState
    * @return a valid random Move
    * @throws InvalidShapeException
