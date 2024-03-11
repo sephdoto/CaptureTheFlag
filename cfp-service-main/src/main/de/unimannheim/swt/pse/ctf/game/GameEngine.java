@@ -50,18 +50,13 @@ public class GameEngine implements Game {
      */
     @Override
     public GameState create(MapTemplate template) {
-        // TODO Parse the Map template to create an Initial Game State
         this.currentTemplate = template; // Saves a copy of the initial template
         colorList =  new LinkedList<>(Arrays.asList(new String[]{"red" , "green", "yellow" , "white" , "black" , "blue" })); //Inits a String LL with predefined colors
         
         GameState gameState = new GameState();
-        //gameState.setGrid(new String[template.getGridSize()[0]][template.getGridSize()[1]]); // Ints with empty grid of specified size
-        gameState.setTeams(new Team[template.getTeams()]);
-        
+        gameState.setTeams(new Team[template.getTeams()]);        
         String[][] newGrid = new String[template.getGridSize()[0]][template.getGridSize()[1]];
-        
-        
-        
+             
         //this for loop initializes the grid with empty Strings
         for(int i = 0; i < newGrid.length; i++) {
         	for(int j = 0; j < newGrid[i].length; j++) {
@@ -69,97 +64,19 @@ public class GameEngine implements Game {
         	}
         }
         
-        //placing flags TODO more than 4 teams? h
-        if(template.getTeams() == 2) {
-        	newGrid[0][0] = "b:1";
-        	newGrid[newGrid.length-1][newGrid[0].length-1] = "b:2";
-        }
-        else if(template.getTeams() == 4) {
-        	newGrid[0][0] = "b:1";
-        	newGrid[newGrid.length-1][0] = "b:2";
-        	newGrid[0][newGrid[0].length-1] = "b:3";
-        	newGrid[newGrid.length-1][newGrid[0].length-1] = "b:4";
-        }
-                
-        
-        //initializing pieces team 1 (symmetrical)
-        //TODO different placement types
-        int count = 1;
-        int teamID = 1;
-        LinkedList<Piece> indPieces = new LinkedList<Piece>();
-        for(PieceDescription piece : template.getPieces()) { //repeat for every team?
-        	for(int i = 0; i < piece.getCount();i++) {
-        		Piece x = new Piece();
-        		x.setId(Integer.toString(count++));
-        		x.setDescription(piece);
-        		x.setTeamId(Integer.toString(teamID)); //TODO team id
-        		indPieces.add(x);
-        	}
-        }
-        
-      //initializing team 1
-        	Team team1 = new Team();
-        	team1.setId(Integer.toString(teamID));
-            team1.setColor(getRandColor());
-        	Piece[] pieces = new Piece[indPieces.size()];
-        	int iterator = 0;
-        	for(Piece p : indPieces) {
-        		pieces[iterator++] = p;
-        	}
-        	Team[] teams = new Team[2];
-        	teams[0] = team1;
-        	//gameState.getTeams()[0] = team1;
-        
-        //putting the pieces on the board (team1)
-        int row = 1;
-        while(!indPieces.isEmpty()) {
-	        for(int i = 0; i < newGrid[0].length; i++) {
-	        	if(indPieces.isEmpty()) break;
-	        	Piece piece = indPieces.pop();
-	        	newGrid[row][i] = "p:" + piece.getTeamId() + "_" + piece.getId();
-	        }
-	        row++;
-        }
-        //initializing pieces team 2
-        count = 1;
-        teamID = 2;
-        LinkedList<Piece> indPieces2 = new LinkedList<Piece>();
-        for(PieceDescription piece : template.getPieces()) { //repeat for every team?
-        	for(int i = 0; i < piece.getCount();i++) {
-        		Piece x = new Piece();
-        		x.setId(Integer.toString(count++));
-        		x.setDescription(piece);
-        		x.setTeamId(Integer.toString(teamID)); //TODO team id
-        		indPieces2.add(x);
-        	}
-        }
-        
-      //initializing team 2
-    	Team team2 = new Team();
-    	team2.setId(Integer.toString(teamID));
-        team2.setColor(getRandColor());
-    	Piece[] pieces2 = new Piece[indPieces2.size()];
-    	int iterator2 = 0;
-    	for(Piece p : indPieces2) {
-    		pieces2[iterator2++] = p;
-    	}
-    	teams[1] = team2;
-    	//gameState.getTeams()[0] = team1;
-    	gameState.setTeams(teams);
-        
-    	//putting the pieces on the board (team2)
-        row = newGrid.length - 2;
-        while(!indPieces2.isEmpty()) {
-	        for(int i = newGrid[0].length-1; i >= 0; i--) {
-	        	if(indPieces2.isEmpty()) break;
-	        	Piece piece = indPieces2.pop();
-	        	newGrid[row][i] = "p:" + piece.getTeamId() + "_" + piece.getId();
-	        }
-	        row--;
-        }
-
-        
-        
+        //placing the bases/flags 
+        //TODO multiple flags in a base??????
+        newGrid = placeFlags(template, newGrid);
+       
+        //initializing teams
+       	Team[] teams = new Team[2];
+       	gameState.setTeams(teams);
+   		teams[0] = initializeTeam(1);
+   		teams[1] = initializeTeam(2);
+   		
+   		//placing the pieces 
+        newGrid = placePieces(teams, newGrid);
+          
       //placing blocks   TODO odd numbers?(only divisible by 2)
         for(int i = 0; i < template.getBlocks(); i++) {
         	int x = (int) (Math.random() * template.getGridSize()[0]);
@@ -483,6 +400,97 @@ public class GameEngine implements Game {
     	}
     }
     
+    /**
+     * This is a helper method to place the flags in the create method
+     * 
+     * @author ysiebenh
+     * @param MapTemplate template, String[][] grid
+     * @return String[][] grid with flags placed 
+     */
+    private String[][] placeFlags(MapTemplate template, String[][] grid) {
+    	String[][] newGrid = Arrays.copyOf(grid, grid.length);
+        if(template.getTeams() == 2) {
+        	newGrid[0][0] = "b:1";
+        	newGrid[newGrid.length-1][newGrid[0].length-1] = "b:2";
+        }
+        else if(template.getTeams() == 4) {
+        	newGrid[0][0] = "b:1";
+        	newGrid[newGrid.length-1][0] = "b:2";
+        	newGrid[0][newGrid[0].length-1] = "b:3";
+        	newGrid[newGrid.length-1][newGrid[0].length-1] = "b:4";
+        }
+    	return newGrid;
+    }
+    
+    /**
+     * This is a helper method to initialize the teams in create 
+     * 
+     * @author ysiebenh
+     * @param int teamID
+     * @return Team thats initialized
+     */
+    private Team initializeTeam(int teamID) {
+    	//initializing pieces team 1 (symmetrical)
+        //TODO different placement types
+        int count = 1;
+        LinkedList<Piece> indPieces = new LinkedList<Piece>();
+        for(PieceDescription piece : this.currentTemplate.getPieces()) {
+        	for(int i = 0; i < piece.getCount();i++) {
+        		Piece x = new Piece();
+        		x.setId(Integer.toString(count++));
+        		x.setDescription(piece);
+        		x.setTeamId(Integer.toString(teamID)); //TODO team id
+        		indPieces.add(x);
+        	}
+        }
+        
+      //initializing team 
+        	Team team = new Team();
+        	team.setId(Integer.toString(teamID));
+            team.setColor(getRandColor());
+        	Piece[] pieces = new Piece[indPieces.size()];
+        	int iterator = 0;
+        	for(Piece p : indPieces) {
+        		pieces[iterator++] = p;
+        	}
+        	team.setPieces(pieces);
+        
+        
+    	return team;
+    }
+    
+    private String[][] placePieces(Team[] teams, String[][] grid){
+    	//TODO more than two teams
+    	//TODO different types
+    	//putting the pieces on the board (team1)
+    	String[][] newGrid = Arrays.copyOf(grid, grid.length);
+        int row = 1;
+        int column = 0;
+	    for(int i = 0; i < teams[0].getPieces().length; i++) {
+	       	if(column == newGrid[0].length) {
+	       		row++;
+	       		column = 0;
+	       	}
+        	Piece piece = teams[0].getPieces()[i];	        	
+        	newGrid[row][column] = "p:" + piece.getTeamId() + "_" + piece.getId();
+	        column++;
+	        }
+	        
+	    //putting pieces on the board (team2)    
+	    row = newGrid.length - 2;
+	    column = newGrid[0].length-1;
+	    for(int i = 0; i < teams[0].getPieces().length; i++) {
+        	if(column == -1) {
+        		row--;
+		  		column = newGrid[0].length-1;
+        	}
+    	Piece piece = teams[0].getPieces()[i];
+    	newGrid[row][column] = "p:" + piece.getTeamId() + "_" + piece.getId();
+    	column--;	
+		}
+	    return newGrid;
+    }
+    
     public static void main(String[] args) {
     	GameEngine test = new GameEngine();
     	MapTemplate testMap = new MapTemplate();
@@ -500,11 +508,13 @@ public class GameEngine implements Game {
     	test.create(testMap);
     	
     	int[] futuresquare = {2,0};
-    	Move testmove = new Move();
-    	testmove.setNewPosition(futuresquare);
-    	testmove.setPieceId("p:1_1");
-    	test.makeMove(testmove);
+    	//Move testmove = new Move();
+    	//testmove.setNewPosition(futuresquare);
+    	//testmove.setPieceId("p:1_1");
+    	//test.makeMove(testmove);
     	test.printState();
+    	System.out.println(test.gameState.getTeams()[0].getColor().toString());
+    	System.out.println(test.gameState.getTeams()[1].getColor().toString());
     	
     }
     
