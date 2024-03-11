@@ -1,4 +1,4 @@
-package java.de.unimannheim.swt.pse.ctf.controller;
+package de.unimannheim.swt.pse.ctf.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.controller.data.*;
