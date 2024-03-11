@@ -3,13 +3,13 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>de.uni-mannheim.swt.pse</groupId>
-    <artifactId>ctf</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <groupId>org.ctf</groupId>
+    <artifactId>cfp14</artifactId>
+    <version>0.1.0</version>
   </parent>
-  <groupId>de.uni-mannheim.swt.pse</groupId>
+  <groupId>org.ctf</groupId>
   <artifactId>ctf-UI</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.1.0</version>
   <name>ctf-UI</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
