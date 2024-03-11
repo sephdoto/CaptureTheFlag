@@ -25,7 +25,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>compile</scope>
+			<scope>test</scope>
 		</dependency>
   
     <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
@@ -64,7 +64,7 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <configuration>
-                        <skip>true</skip>
+                        <skip>false</skip>
                     </configuration>
                 </plugin>
             </plugins>
