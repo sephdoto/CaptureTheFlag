@@ -16,20 +16,20 @@ public class BoardSetUp {
      * @param MapTemplate template, String[][] grid
      * @return String[][] grid with flags placed 
      */
-    static String[][] placeFlags(MapTemplate template, String[][] grid) {
-    	String[][] newGrid = Arrays.copyOf(grid, grid.length);
-        if(template.getTeams() == 2) {
-        	newGrid[0][0] = "b:1";
-        	newGrid[newGrid.length-1][newGrid[0].length-1] = "b:2";
-        }
-        else if(template.getTeams() == 4) {
-        	newGrid[0][0] = "b:1";
-        	newGrid[newGrid.length-1][0] = "b:2";
-        	newGrid[0][newGrid[0].length-1] = "b:3";
-        	newGrid[newGrid.length-1][newGrid[0].length-1] = "b:4";
-        }
-    	return newGrid;
-    }
+	 static String[][] placeFlags(MapTemplate template, String[][] grid) {
+	    	String[][] newGrid = Arrays.copyOf(grid, grid.length);
+	        if(template.getTeams() == 2) {
+	        	newGrid[0][newGrid[0].length/2] = "b:1";
+	        	newGrid[newGrid.length-1][newGrid[0].length/2] = "b:2";
+	        }
+	        else if(template.getTeams() == 4) {
+	        	newGrid[0][0] = "b:1";
+	        	newGrid[newGrid.length-1][0] = "b:2";
+	        	newGrid[0][newGrid[0].length-1] = "b:3";
+	        	newGrid[newGrid.length-1][newGrid[0].length-1] = "b:4";
+	        }
+	    	return newGrid;
+	    }
     
     /**
      * This is a helper method to initialize the teams in create 
