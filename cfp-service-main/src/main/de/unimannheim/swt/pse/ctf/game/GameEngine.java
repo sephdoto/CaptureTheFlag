@@ -302,8 +302,8 @@ public class GameEngine implements Game {
     }
 
     /**
+     * @author sistumpf
      * Checks whether a move is valid based on the current game state.
-     *
      * @param move {@link Move}
      * @return true if move is valid based on current game state, false otherwise
      */
@@ -363,19 +363,24 @@ public class GameEngine implements Game {
      */
     @Override
     public void makeMove(Move move) {
-        if(isValidMove(move)){
-        		for(int i = 0; i < this.gameState.getGrid().length; i++) {
-        			for(int j = 0; j < this.gameState.getGrid()[i].length; j++) {
-        				if(this.gameState.getGrid()[i][j].equals(move.getPieceId())) {
-        					this.gameState.getGrid()[i][j] = "";
-        				}
-        			}
-        		}
-        		this.gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
-        		//TODO implement gameover check 
-        }	
-        else throw new InvalidMove();
-        	
+        if(!isValidMove(move))
+          throw new InvalidMove();
+        
+        String occupant = gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]];
+        int[] oldPos = ((Piece)(Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p->p.getId().equals(move.getPieceId())).toArray()[0])).getPosition();
+
+        gameState.getGrid()[oldPos[0]][oldPos[1]] = "";
+        gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
+
+        if(occupant.contains("p:")) {
+          int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
+          gameState.getTeams()[occupantTeam].setPieces((Piece[])Arrays.asList(gameState.getTeams()[occupantTeam].getPieces()).stream().filter(p->!p.getId().equals(occupant)).toArray());
+        }
+        
+        gameState.setCurrentTeam((gameState.getCurrentTeam()+1) % gameState.getTeams().length);
+        gameState.setLastMove(move);
+
+        //TODO Flagge/Base Logik, GameOver check, 
     }
 
     /**
