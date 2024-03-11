@@ -2,6 +2,7 @@ package org.ctf.client;
 
 
 
+import org.ctf.client.state.GameState;
 import org.ctf.client.state.data.map.MapTemplate;
 
 import com.google.gson.Gson;
@@ -153,9 +154,16 @@ public class ServerCommandTests {
             client.connect("http://localhost:8080", test);
             System.out.println(client.getSessionID());
 
-            client.joinGame("team1");
+            /* client.joinGame("team1");
             System.out.println(client.getSecretID());
-            client.deleteSession();
+            client.joinGame("team2");
+            System.out.println(client.getSecretID()); */
+            client.refreshSession();
+            GameState gs = client.getState();
+            //System.out.println(gson.toJson(gs));
+            System.out.println(client.gameOver);
+            
+            
     }
           
   public static void testConnectionBothAltModesEnabled(){
