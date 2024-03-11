@@ -39,8 +39,8 @@ public class BoardSetUp {
      * @return Team thats initialized
      */
      static Team initializeTeam(int teamID, MapTemplate template) {
-    	//initializing pieces team 1 (symmetrical)
         //TODO different placement types
+    	//Creating the Pieces for the team 
         int count = 1;
         LinkedList<Piece> indPieces = new LinkedList<Piece>();
         for(PieceDescription piece : template.getPieces()) {
@@ -57,7 +57,14 @@ public class BoardSetUp {
         	Team team = new Team();
         	team.setId(Integer.toString(teamID));
             team.setColor(GameEngine.getRandColor());
-        	Piece[] pieces = new Piece[indPieces.size()];
+            if(teamID == 1) {
+            	team.setBase(new int[]{0,0});
+            }
+            else if(teamID == 2) {
+            	team.setBase(new int[]{template.getGridSize()[1]-1,template.getGridSize()[0]-1});
+            }
+            
+        	Piece[] pieces = new Piece[indPieces.size()]; //putting the pieces in an array 
         	int iterator = 0;
         	for(Piece p : indPieces) {
         		pieces[iterator++] = p;
