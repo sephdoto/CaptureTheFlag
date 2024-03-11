@@ -18,7 +18,8 @@ import de.unimannheim.swt.pse.ctf.game.map.PieceDescription;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Move;
 import de.unimannheim.swt.pse.ctf.game.state.Piece;
-import de.unimannheim.swt.pse.ctf.game.state.Team; 
+import de.unimannheim.swt.pse.ctf.game.state.Team;
+import javafx.scene.paint.Color; 
 
 /**
  * Game Engine Implementation\
@@ -99,6 +100,7 @@ public class GameEngine implements Game {
       //initializing team 1
         	Team team1 = new Team();
         	team1.setId(Integer.toString(teamID));
+            team1.setColor(getRandColor());
         	Piece[] pieces = new Piece[indPieces.size()];
         	int iterator = 0;
         	for(Piece p : indPieces) {
@@ -134,7 +136,8 @@ public class GameEngine implements Game {
         
       //initializing team 2
     	Team team2 = new Team();
-    	team1.setId(Integer.toString(teamID));
+    	team2.setId(Integer.toString(teamID));
+        team2.setColor(getRandColor());
     	Piece[] pieces2 = new Piece[indPieces2.size()];
     	int iterator2 = 0;
     	for(Piece p : indPieces2) {
@@ -454,18 +457,17 @@ public class GameEngine implements Game {
     }
     
     /**
-     * Helper method to add a randomly selected color from an array
-     * "noColor" String is used to define a already used color 
-     * NOT THREADSAFE
-     * @return a color randomly chosen from a predefined list. Else defaults to black
+     * Helper method returns HEX Codes for colors
+     * 
+     * @return 
      */
     private String getRandColor(){
-        int randSelector = randomGen(colorList.size(),1);
-        if(colorList.size() >=1){
-            return colorList.get(randSelector);
-        } else {
-            return "BLACK";
-        }
+        Random rand = new Random();
+           int r = rand.nextInt(255); // [0,255]
+           int g = rand.nextInt(255); // [0,255]
+           int b = rand.nextInt(255); // [0,255]
+           Color testColor = Color.rgb(r, g, b);
+           return testColor.toString();
     }
     
     /**
