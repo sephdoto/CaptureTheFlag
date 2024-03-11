@@ -2,6 +2,7 @@ package org.ctf.ai;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import org.ctf.client.state.GameState;
 import org.ctf.client.state.Move;
 import org.ctf.client.state.Piece;
@@ -18,7 +19,7 @@ public class AI_Tools {
 	   * @param moveArrayList
 	   * @return
 	   */
-	  static Move getShapeMove(ArrayList<Move> moveArrayList) {
+	  static Move getRandomShapeMove(ArrayList<Move> moveArrayList) {
 	    return moveArrayList.get((int)(moveArrayList.size() * Math.random()));
 	  }
 
@@ -29,7 +30,7 @@ public class AI_Tools {
 	   * @param piece
 	   * @param direction
 	   * @return false if the move is invalid.
-	   * @throws InvalidShapeException 
+	   * @throws InvalidShapeException if the Shape is not yet implemented here
 	   */
 	  static Move validShapeDirection(GameState gameState, Piece piece, int direction) throws InvalidShapeException {
 	    int[] pos = new int[] {piece.getPosition()[0],piece.getPosition()[1]};
@@ -57,6 +58,47 @@ public class AI_Tools {
 	    } else {
 	      return null;
 	    }
+	  }
+	  
+	  /**
+	   * Creates an ArrayList with all valid Moves a piece with shape movement can do.
+	   * @param gameState
+	   * @param picked
+	   * @return ArrayList<Move>
+	   * @throws InvalidShapeException
+	   */
+	  public static ArrayList<Move> createShapeMoveList(GameState gameState, Piece picked) throws InvalidShapeException {
+		  ArrayList<Move> shapeMoves = new ArrayList<Move>();
+	      for(int i=0; i<8; i++) {
+	        Move shapeMove = validShapeDirection(gameState, picked, i);
+	        if(shapeMove != null) {
+	          shapeMoves.add(shapeMove);
+	        }
+	      }
+	      return shapeMoves;
+	  }
+	  
+	  /**
+	   * Creates a key-value map where a direction is the key and a value is the pieces maximum reach into that direction.
+	   * This map only applies for the Piece picked.
+	   * The reach value is directly from MapTemplate, this method only checks if the positions adjacent to a piece are occupied.
+	   * @param gameState
+	   * @param picked
+	   * @return HashMap<Integer,Integer>
+	   */
+	  public static HashMap<Integer,Integer> createDirectionMap(GameState gameState, Piece picked) {
+		  HashMap<Integer,Integer> dirMap = new HashMap<Integer,Integer>();
+	      for(int i=0; i<8; i++) {
+	        int reach = getReach(picked.getDescription().getMovement().getDirections(), i);
+	        if(reach > 0) {
+	          if(validDirection(gameState, picked, i)) {
+	            dirMap.put(i, reach);
+	          } else {
+	            continue;
+	          }
+	        }
+	      }
+		  return dirMap;
 	  }
 
 	  /**
@@ -250,7 +292,9 @@ public class AI_Tools {
 	   * Gets thrown if the current team cannot move.
 	   */
 	  public static class NoMovesLeftException extends Exception {
-	    NoMovesLeftException(String team){
+		private static final long serialVersionUID = -5045376294141974451L;
+
+		NoMovesLeftException(String team){
 	      super("Team " + team + " can not move.");
 	    }
 	  }
@@ -259,7 +303,9 @@ public class AI_Tools {
 	   * Gets thrown if a Shape is not yet implemented in RandomAI.
 	   */
 	  public static class InvalidShapeException extends Exception {
-	    InvalidShapeException(String shape){
+		private static final long serialVersionUID = -574558731715073847L;
+
+		InvalidShapeException(String shape){
 	      super("Unknown shape: " + shape);
 	    }
 	  }

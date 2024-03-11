@@ -3,9 +3,8 @@ package org.ctf.ai;
 import org.ctf.client.state.GameState;
 import org.ctf.client.state.Piece;
 import org.ctf.client.state.Move;
-import org.ctf.client.state.data.map.Directions;
-import org.ctf.client.state.data.map.ShapeType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 
@@ -45,11 +44,11 @@ public class RandomAI extends AI_Tools {
     Piece[] pieces = gameState.getTeams()[gameState.getCurrentTeam()].getPieces();
     do {
       Piece picked = pieces[(int)(Math.random() * pieces.length)];
-      if(picked.getDescription().getMovement().getDirections() != null) {		//move if Directions
+      if(picked.getDescription().getMovement().getDirections() != null) {
         int randomDirection = (int)(Math.random()*8);
         int reach = (int)(Math.random() * getReach(picked.getDescription().getMovement().getDirections(), randomDirection));
         move = checkMoveValidity(gameState, picked, randomDirection, reach);
-      } else {	//move if Shape
+      } else {
         move = validShapeDirection(gameState, picked, (int)(Math.random()*8));
       }
     } while (move == null);
@@ -68,56 +67,34 @@ public class RandomAI extends AI_Tools {
    * @throws InvalidShapeException 
    */
   public static Move pickMoveComplex(GameState gameState) throws NoMovesLeftException, InvalidShapeException {
-    ArrayList<Piece> pieceList = new ArrayList<Piece>();
+    ArrayList<Piece> piecesCurrentTeam = new ArrayList<Piece>(Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()));
     Move move = new Move();
 
-    for(Piece piece : gameState.getTeams()[gameState.getCurrentTeam()].getPieces())
-      pieceList.add(piece);
-
-    while(pieceList.size() > 0) {		
-      int random = (int)(Math.random() * pieceList.size());
-      Piece picked = pieceList.get(random);
+    while(piecesCurrentTeam.size() > 0) {		
+      int random = (int)(Math.random() * piecesCurrentTeam.size());
+      Piece picked = piecesCurrentTeam.get(random);
 
       if(picked.getDescription().getMovement().getDirections() != null) {		//move if Directions
-        HashMap<Integer,Integer> dirMap = new HashMap<Integer,Integer>();
-        for(int i=0; i<8; i++) {
-          int reach = getReach(picked.getDescription().getMovement().getDirections(), i);
-          if(reach > 0) {
-            if(validDirection(gameState, pieceList.get(random), i)) {
-              dirMap.put(i, reach);
-            } else {
-              continue;
-            }
-          }
-        }
+        HashMap<Integer,Integer> dirMap = createDirectionMap(gameState, picked);
         if(dirMap.size() > 0) {
           return getDirectionMove(dirMap, picked, gameState);
         } else {
-          pieceList.remove(random);
+        	piecesCurrentTeam.remove(random);
           continue;
         }
-
-      } else {	//Move if Shape
-        ArrayList<Move> shapeMoves = new ArrayList<Move>();
-        for(int i=0; i<8; i++) {
-          Move shapeMove = validShapeDirection(gameState, picked, i);
-          if(shapeMove != null) {
-            shapeMoves.add(shapeMove);
-          }
-        }
+      } else {																	//Move if Shape
+    	ArrayList<Move> shapeMoves = createShapeMoveList(gameState, picked);
         if(shapeMoves.size() > 0) {
-          return getShapeMove(shapeMoves);
+          return getRandomShapeMove(shapeMoves);
         } else {
-          pieceList.remove(random);
+        	piecesCurrentTeam.remove(random);
           continue;
         }
       }
-
     }
 
-    if(pieceList.size() == 0)
+    if(piecesCurrentTeam.size() == 0)
       throw new NoMovesLeftException(gameState.getTeams()[gameState.getCurrentTeam()].getId());
-
 
     return move;
   }

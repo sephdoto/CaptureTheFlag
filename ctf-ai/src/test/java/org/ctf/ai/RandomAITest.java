@@ -4,19 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import org.ctf.client.state.data.map.MapTemplate;
 import org.ctf.ai.AI_Tools.InvalidShapeException;
 import org.ctf.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.client.state.GameState;
-import org.ctf.client.state.Move;
 import org.ctf.client.state.Piece;
-import org.ctf.client.state.Team;
-import org.ctf.client.state.data.map.Directions;
-import org.ctf.client.tools.JSON_Tools;
-import org.ctf.client.tools.JSON_Tools.MapNotFoundException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 
 class RandomAITest {

@@ -1,15 +1,10 @@
 package org.ctf.ai;
 
-import org.ctf.client.state.data.map.MapTemplate;
 import org.ctf.ai.AI_Tools.InvalidShapeException;
-import org.ctf.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.client.state.GameState;
 import org.ctf.client.state.Move;
 import org.ctf.client.state.Piece;
-import org.ctf.client.state.Team;
 import org.ctf.client.state.data.map.Directions;
-import org.ctf.client.tools.JSON_Tools;
-import org.ctf.client.tools.JSON_Tools.MapNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,12 +28,12 @@ public class AI_ToolsTest {
 	}
 
 	@Test
-	void testGetShapeMove() {
+	void testGetRandomShapeMove() {
 		Move move1 = new Move();
 		ArrayList<Move> moveList = new ArrayList<Move>();
 		moveList.add(move1);
 
-		assertEquals(move1, RandomAI.getShapeMove(moveList));
+		assertEquals(move1, RandomAI.getRandomShapeMove(moveList));
 	}
 
 	@Test
@@ -48,11 +43,11 @@ public class AI_ToolsTest {
 		knight.setPosition(new int[]{9,0});
 		knight.setTeamId("team1");
 		knight.setDescription(TestValues.getTestTemplate().getPieces()[2]);	//new knight with l-shape movement
-		gameState.getGrid()[9][0] = knight.getId();					//knight is only able to move 2up1right or 2right1up
-		gameState.getGrid()[8][2] = "b";							//now knight only got 1 valid position to jump on, 2up1right, onto 7,1
+		gameState.getGrid()[9][0] = knight.getId();							//knight is only able to move 2up1right or 2right1up
+		gameState.getGrid()[8][2] = "b";									//now knight only got 1 valid position to jump on, 2up1right, onto 7,1
 		gameState.getGrid()[8][0] = "b";
 		gameState.getGrid()[8][1] = "b";
-		gameState.getGrid()[9][1] = "b";							//completely enclosing the knight in blocks
+		gameState.getGrid()[9][1] = "b";									//completely enclosing the knight in blocks
 
 		try {
 			assertNull(RandomAI.validShapeDirection(gameState, knight, 0));		//invalid direction (OutOfBounds): 2up1left
@@ -68,7 +63,52 @@ public class AI_ToolsTest {
 			fail("All shapes are valid");
 		}
 	}
+	
+	@Test
+	void testCreateShapeMoveList() {
+		Piece knight = new Piece();
+		knight.setId("p:1_9");
+		knight.setPosition(new int[]{9,0});
+		knight.setTeamId("team1");
+		knight.setDescription(TestValues.getTestTemplate().getPieces()[2]);		//new knight with l-shape movement
+		gameState.getGrid()[9][0] = knight.getId();								//knight is only able to move 2up1right or 2right1up
+		ArrayList<Move> shapeMoves = new ArrayList<Move>();						//this ArrayList contains both possible moves
+		Move move1 = new Move();
+		move1.setNewPosition(new int[] {7,1});
+		move1.setPieceId(knight.getId());
+		Move move2 = new Move();
+		move2.setNewPosition(new int[] {8,2});
+		move2.setPieceId(knight.getId());
+		shapeMoves.add(move1);
+		shapeMoves.add(move2);
+		
+		ArrayList<Move> aiToolsShapeMoves = new ArrayList<Move>();
+		try {
+			 aiToolsShapeMoves = AI_Tools.createShapeMoveList(gameState, knight);
+		} catch (InvalidShapeException e) {
+			fail("All shapes are valid");
+		}
+		
+		assertEquals(shapeMoves.size(), aiToolsShapeMoves.size());				//both ArrayLists should have the same (ammount of) elements
+		assertArrayEquals(shapeMoves.get(0).getNewPosition(), aiToolsShapeMoves.get(0).getNewPosition());
+		assertEquals(shapeMoves.get(0).getPieceId(), aiToolsShapeMoves.get(0).getPieceId());
+		assertArrayEquals(shapeMoves.get(1).getNewPosition(), aiToolsShapeMoves.get(1).getNewPosition());
+		assertEquals(shapeMoves.get(1).getPieceId(), aiToolsShapeMoves.get(1).getPieceId());
+	}
 
+	@Test
+	void testCreateDirectionMap() {
+		HashMap<Integer, Integer> dirMap = new HashMap<Integer, Integer>();
+		Piece picked = gameState.getTeams()[1].getPieces()[1];					//rook on 7,3
+		dirMap.put(2, 2);														//the rook can move 2 fields up
+		dirMap.put(3, 2);														//the rook can move 2 fields down
+		assertEquals(dirMap, AI_Tools.createDirectionMap(gameState, picked));
+		
+		gameState.getGrid()[6][4] = "b";										//completely enclosing the rook on 7,4
+		picked = gameState.getTeams()[1].getPieces()[2];						//rook on 7,4
+		assertEquals(new HashMap<Integer, Integer>(), AI_Tools.createDirectionMap(gameState, picked));
+	}
+	
 	@Test
 	void testGetDirectionMove() {
 		Piece rook = gameState.getTeams()[1].getPieces()[1];				//rook on 7,3
