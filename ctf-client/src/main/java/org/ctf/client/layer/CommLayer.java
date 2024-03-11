@@ -77,7 +77,7 @@ public class CommLayer implements CommLayerInterface {
 		String jsonPayload = gson.toJson(gsr);
 
 		// Performs the POST request
-		HttpResponse<String> serverResponse = POSTRequest(URL, jsonPayload);
+		HttpResponse<String> serverResponse = postRequest(URL, jsonPayload);
 
 		// Parses Server Response to expected class
 		GameSessionResponse gameSessionResponse = gson.fromJson(serverResponse.body(), GameSessionResponse.class);
@@ -122,7 +122,7 @@ public class CommLayer implements CommLayerInterface {
 		JoinGameRequest joinGameRequest = new JoinGameRequest();
 		joinGameRequest.setTeamId(teamName);
 
-		HttpResponse<String> postResponse = POSTRequest(URL + "/join", gson.toJson(joinGameRequest));
+		HttpResponse<String> postResponse = postRequest(URL + "/join", gson.toJson(joinGameRequest));
 
 		JoinGameResponse joinGameResponse = gson.fromJson(postResponse.body(), JoinGameResponse.class);
 
@@ -171,7 +171,7 @@ public class CommLayer implements CommLayerInterface {
 		moveReq.setPieceId(move.getPieceId());
 		moveReq.setNewPosition(move.getNewPosition());
 
-		HttpResponse<String> postResponse = POSTRequest(URL + "/move", gson.toJson(moveReq));
+		HttpResponse<String> postResponse = postRequest(URL + "/move", gson.toJson(moveReq));
 
 		int returnedCode = postResponse.statusCode();
 
@@ -217,7 +217,7 @@ public class CommLayer implements CommLayerInterface {
 		giveUpRequest.setTeamId(teamID);
 		giveUpRequest.setTeamSecret(teamSecret);
 
-		HttpResponse<String> postResponse = POSTRequest(URL + "/giveup", gson.toJson(giveUpRequest));
+		HttpResponse<String> postResponse = postRequest(URL + "/giveup", gson.toJson(giveUpRequest));
 
 		int returnedCode = postResponse.statusCode();
 		if (returnedCode == 200) {
@@ -248,7 +248,7 @@ public class CommLayer implements CommLayerInterface {
 	 */
 	@Override
 	public GameSessionResponse getCurrentSessionState(String URL) {
-		HttpResponse<String> getResponse = GETRequest(URL);
+		HttpResponse<String> getResponse = getRequest(URL);
 		GameSessionResponse gameSessionResponse = gson.fromJson(getResponse.body(), GameSessionResponse.class);
 
 		int returnedCode = getResponse.statusCode();
@@ -277,7 +277,7 @@ public class CommLayer implements CommLayerInterface {
 	 */
 	@Override
 	public void deleteCurrentSession(String URL) {
-		HttpResponse<String> deleteResponse = DELETERequest(URL);
+		HttpResponse<String> deleteResponse = deleteRequest(URL);
 
 		int returnedCode = deleteResponse.statusCode();
 
@@ -304,7 +304,7 @@ public class CommLayer implements CommLayerInterface {
 	 */
 	@Override
 	public GameState getCurrentGameState(String URL) {
-		HttpResponse<String> getResponse = GETRequest(URL + "/state");
+		HttpResponse<String> getResponse = getRequest(URL + "/state");
 
 		GameState returnedState = gson.fromJson(getResponse.body(), GameState.class);
 
@@ -330,7 +330,7 @@ public class CommLayer implements CommLayerInterface {
 	 * @throws NullPointerException
 	 * 
 	 */
-	private HttpResponse<String> POSTRequest(String URL, String jsonPayload) {
+	private HttpResponse<String> postRequest(String URL, String jsonPayload) {
 
 		HttpResponse<String> ret = null;
 		try {
@@ -340,9 +340,8 @@ public class CommLayer implements CommLayerInterface {
 					.POST(BodyPublishers.ofString(jsonPayload))
 					.build();
 			ret = HttpClient.newHttpClient().send(request, BodyHandlers.ofString());
-			return ret;
 		} catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
-			e.printStackTrace();
+			throw new URLError("Error in the post requester");
 		}
 		return ret;
 	}
@@ -358,7 +357,7 @@ public class CommLayer implements CommLayerInterface {
 	 * @throws InterruptedException
 	 * @throws NullPointerException
 	 */
-	private HttpResponse<String> GETRequest(String URL) {
+	private HttpResponse<String> getRequest(String URL) {
 		HttpResponse<String> ret = null;
 		try {
 			HttpRequest request = HttpRequest.newBuilder()
@@ -368,7 +367,7 @@ public class CommLayer implements CommLayerInterface {
 					.build();
 			ret = HttpClient.newHttpClient().send(request, BodyHandlers.ofString());
 		} catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
-			e.printStackTrace();
+			throw new URLError("Error in the get requester");
 		}
 		return ret;
 	}
@@ -384,7 +383,7 @@ public class CommLayer implements CommLayerInterface {
 	 * @throws InterruptedException
 	 * @throws NullPointerException
 	 */
-	private HttpResponse<String> DELETERequest(String URL) {
+	private HttpResponse<String> deleteRequest(String URL) {
 		HttpResponse<String> ret = null;
 		try {
 			HttpRequest request = HttpRequest.newBuilder()
@@ -394,7 +393,7 @@ public class CommLayer implements CommLayerInterface {
 					.build();
 			ret = HttpClient.newHttpClient().send(request, BodyHandlers.ofString());
 		} catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
-			e.printStackTrace();
+			throw new URLError("Error in the delete requester");
 		}
 		return ret;
 	}
