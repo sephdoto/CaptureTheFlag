@@ -33,9 +33,7 @@ public class GameEngine implements Game {
     private MapTemplate currentTemplate; // Saves a copy of the template
 
     private int remainingTeamSlots;
-    private int maxFlags;
 
-    private boolean isStarted; // Initial value
     private boolean isGameOver;
 
     //Blocks for branches in game mode
@@ -45,7 +43,7 @@ public class GameEngine implements Game {
     
     /**
      * Creates a game session with the corresponding Map passed onto as the Template
-     * 
+     * @author everyone lol
      * @param template
      * @return GameState
      */
@@ -85,7 +83,6 @@ public class GameEngine implements Game {
         
         this.remainingTeamSlots = template.getTeams()-1;
         // Setting Flags
-        this.isStarted = false;
         this.isGameOver = false;
 
         //TODO CODE BLOCK HERE LATER FOR ALT MODE BRANCHES
@@ -107,7 +104,7 @@ public class GameEngine implements Game {
      * <li>if all team slots are finally assigned, implicitly starts the game by
      * picking a starting team at random</li>
      * </ul>
-     *
+     * @author rsyed
      * @param teamId Team ID
      * @return Team
      * @throws NoMoreTeamSlots No more team slots available
@@ -126,8 +123,9 @@ public class GameEngine implements Game {
                 this.remainingTeamSlots = getRemainingTeamSlots()-1;
                 if(getRemainingTeamSlots() <0){
                     // START THE GAME
+                    this.isGameOver = false;
                     gameState.setCurrentTeam((int)(Math.random()*2)+1);
-                    this.isStarted = true;
+                    
                     //TODO CHECK FOR OTHER BRANCHES AND make logic here for flags etc
                 }
             }
@@ -168,11 +166,7 @@ public class GameEngine implements Game {
      */
     @Override
     public boolean isGameOver() {
-        if (isGameOver) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.isGameOver;
     }
 
     /**
@@ -187,7 +181,11 @@ public class GameEngine implements Game {
      */
     @Override
     public boolean isStarted() {
-        return this.isStarted;
+        if( (isGameOver() == false) && (getCurrentGameState() != null)){
+            return true;
+        } else {
+            return false;
+        }   
     }
 
     /**
@@ -198,8 +196,12 @@ public class GameEngine implements Game {
      */
     @Override
     public boolean isValidMove(Move move) {
-      Piece piece = (Piece)(Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(move.getPieceId())));
-      return AI_Tools.validPos(move.getNewPosition(), piece, gameState);      
+        if(isStarted()){
+            Piece piece = (Piece)(Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(move.getPieceId())));
+            return AI_Tools.validPos(move.getNewPosition(), piece, gameState);    
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -247,7 +249,7 @@ public class GameEngine implements Game {
 
     /**
      * Make a move
-     *
+     * @author sistumpf
      * @param move {@link Move}
      * @throws InvalidMove Requested move is invalid
      * @throws GameOver Game is over
@@ -316,7 +318,6 @@ public class GameEngine implements Game {
      * @author rsyed
      */
     private void startGame() {
-        this.isStarted = true; // Starts the game because all teams have joined
 
         LocalDateTime localDateTime = LocalDateTime.now(); // Gets a localDateTime Obj
         this.startedDate = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
@@ -352,14 +353,14 @@ public class GameEngine implements Game {
     
     /**
      * Helper method returns HEX Codes for colors
-     * 
+     * @author rsyed
      * @return 
      */
     static String getRandColor(){
         Random rand = new Random();
-           int r = rand.nextInt(255); // [0,255]
-           int g = rand.nextInt(255); // [0,255]
-           int b = rand.nextInt(255); // [0,255]
+           int r = rand.nextInt(255);
+           int g = rand.nextInt(255); 
+           int b = rand.nextInt(255); 
            Color testColor = Color.rgb(r, g, b);
            return testColor.toString();
     }

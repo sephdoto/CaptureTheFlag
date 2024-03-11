@@ -82,8 +82,6 @@ public class TestClient {
 
     this.gameSessionID = response.getId(); // Saves SessionID
     this.urlWithID = URL + "/" + gameSessionID; // Creates URL with Session ID for use later
-
-    //TIME LEFT IN YOUR TURN IS CALCULATED CLIENT SIDE
   }
 
   /**

@@ -34,7 +34,6 @@ public class ServerCommandTests {
      
         //join();
         //joinNDelete();
-
     }
 
   public static void testConnection(){
@@ -147,21 +146,24 @@ public class ServerCommandTests {
               }
             """;
             
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            //Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            Gson gson = new Gson();
             MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
     
             TestClient client = new TestClient();
-            client.connect("http://localhost:8080", test);
+            client.connect("http://localhost:8888", test);
             System.out.println(client.getSessionID());
 
-            /* client.joinGame("team1");
+            client.joinGame("team1");
             System.out.println(client.getSecretID());
             client.joinGame("team2");
-            System.out.println(client.getSecretID()); */
+            System.out.println(client.getSecretID());
+            client.joinGame("team3");
+            System.out.println(client.getSecretID());
             client.refreshSession();
             GameState gs = client.getState();
-            //System.out.println(gson.toJson(gs));
-            System.out.println(client.gameOver);
+            System.out.println(gson.toJson(gs));
+            //System.out.println(client.gameOver);
             
             
     }
