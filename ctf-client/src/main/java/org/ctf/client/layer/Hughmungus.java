@@ -8,6 +8,7 @@ import java.util.Random;
 import org.ctf.client.state.data.map.Directions;
 import org.ctf.client.state.data.map.Movement;
 import org.ctf.client.state.data.map.PieceDescription;
+import org.ctf.client.tools.JSON_Tools;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -77,7 +78,7 @@ public class Hughmungus {
         kMove.setDirections(nd);
         testPiece.setMovement(kMove);
 
-        String sim = testPiece.toJSONString();
+        String sim = JSON_Tools.stringFromMap(testPiece);
 
         Gson gson = new Gson();
         Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();

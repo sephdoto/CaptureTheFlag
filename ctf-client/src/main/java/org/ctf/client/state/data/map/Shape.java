@@ -8,7 +8,7 @@ import org.json.JSONString;
 /**
  * This class represents a shape movement (e.g., L-shape as known from chess).
  */
-public class Shape implements JSONString{
+public class Shape {
 
     @Schema(
             description = "the type of movement"
@@ -21,16 +21,5 @@ public class Shape implements JSONString{
 
     public void setType(ShapeType type) {
         this.type = type;
-    }
-    
-
-    /**
-     * returns this classes JSON String representation
-     * @author sistumpf
-     * @return String
-     */
-    @Override
-    public String toJSONString() {
-    	return new JSONObject().put("shape", new JSONObject().put("type",type)).toString();
     }
 }
