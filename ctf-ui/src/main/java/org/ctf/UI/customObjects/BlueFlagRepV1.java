@@ -17,7 +17,7 @@ public class BlueFlagRepV1 extends Pane {
 	Game quatsch;
 	public BlueFlagRepV1(int size, BackgroundCell parentCell) {
 		this.parent = parentCell;
-	Image bImage = new Image(getClass().getResourceAsStream("flagBlue.png"));
+	Image bImage = new Image(getClass().getResourceAsStream("flagRed.png"));
 	CostumFigurePain rc = new CostumFigurePain(bImage, "Queen",parent,quatsch);
 	rc.prefWidthProperty().bind(Bindings.divide(widthProperty(), 2));
 	rc.prefHeightProperty().bind(Bindings.divide(heightProperty(), 2));

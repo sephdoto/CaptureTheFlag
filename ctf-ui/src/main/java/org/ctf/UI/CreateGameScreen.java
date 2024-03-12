@@ -88,6 +88,7 @@ public class CreateGameScreen  {
 	static String[][] exm2 = { { "b", "p:1_2", "b","" }, { "b", "p:2_3", "b" ,""},{ "b", "", "","" } };
 	static String selected;
 	static Label mapName;
+	static VBox rightVBox;
 
 	public static void initCreateGameScreen(Stage stage) {
 		s = stage;
@@ -104,6 +105,8 @@ public class CreateGameScreen  {
 		v.getChildren().add(headerBox);
 		v.getChildren().add(center);
 		Scene s = new Scene(v, 1000, 500);
+		stage.setMinHeight(500);
+		stage.setMinWidth(900);
 		stage.setScene(s);
 		stage.show();
 	}
@@ -132,6 +135,7 @@ public class CreateGameScreen  {
 		h.prefWidthProperty().bind(right.widthProperty().multiply(0.7));
 		h.prefHeightProperty().bind(right.heightProperty().multiply(0.1));
 		right.getChildren().addAll(ls,c,h);
+		rightVBox = right;
 		return right;
 	}
 	private static HBox createHeaderBox() {
@@ -160,8 +164,8 @@ public class CreateGameScreen  {
 			mapName.setText(selected);
 			center.getChildren().clear();
 			GamePane p = createLeftSidPane(selected);
-			l2.setText(selected);
-			center.getChildren().addAll(p,createRightSide());
+			//l2.setText(selected);
+			center.getChildren().addAll(p,rightVBox);
 		});
 	}
 	private static GamePane createInitLeftSidPane(String[][] name) {

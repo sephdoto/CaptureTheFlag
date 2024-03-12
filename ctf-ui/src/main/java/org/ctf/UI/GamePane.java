@@ -28,6 +28,11 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+/**
+ * @author mkrakows
+ * This class represents the GameBoard on which the figures are placed
+ * it is realized y using a GridPane and resizable for any kind of map
+ */
 public class GamePane extends HBox {
 	String[][] map;
 	int rows;
@@ -70,7 +75,7 @@ public class GamePane extends HBox {
 			rowConstraints.setValignment(VPos.CENTER);
 			gridPane.getRowConstraints().add(rowConstraints);
 		}
-		this.addMouseListener(gridPane);
+		//this.addMouseListener(gridPane);
 		this.fillGridPane(gridPane);
 		vBox.getChildren().add(gridPane);
 
@@ -79,22 +84,22 @@ public class GamePane extends HBox {
 		HBox.setHgrow(this, Priority.ALWAYS);
 
 	}
-	public void addMouseListener(GridPane gridPane) {
-		gridPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent e) {
-				EventTarget target = e.getTarget();
-				if(target.toString().equals("Square")) {
-					System.out.println("Square");
-				} 
-//				if (target.toString().equals("Queen")) {
-//					System.out.println("Queen");
-//				}
-				
-			}
-		});
-	}
+//	public void addMouseListener(GridPane gridPane) {
+//		gridPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
+//
+//			@Override
+//			public void handle(MouseEvent e) {
+//				EventTarget target = e.getTarget();
+//				if(target.toString().equals("Square")) {
+//					System.out.println("Square");
+//				} 
+////				if (target.toString().equals("Queen")) {
+////					System.out.println("Queen");
+////				}
+//				
+//			}
+//		});
+//	}
 
 	public void fillGridPane(GridPane gridPane) {
 		for (int i = 0; i < rows; i++) {
