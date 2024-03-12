@@ -1,5 +1,6 @@
 package de.unimannheim.swt.pse.ctf.game;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Random;
@@ -133,28 +134,33 @@ public class BoardSetUp {
     }
     
     /**
-     * This is a helper method to place the pieces on the board in the create method 
+     * This is a helper method to place the blocks on the board in the create method 
      * 
-     * @author ysiebenh
-     * @param String[][] grid, int blocks number of blocks
-     * @return String[][] the finished board
+     * @author sistumpf
+     * @param MapTemplate mt, used as a seed for pseudo random number generating
+     * @param String[][] grid
+     * @param int blocks, number of blocks to be placed
+     * @return String[][] grid with blocks placed on it
      */
-     static String[][] placeBlocks(String[][] grid, int blocks){
-    	 //placing blocks   TODO odd numbers?(only divisible by 2)
-    	String[][] newGrid = Arrays.copyOf(grid, grid.length);
-        for(int i = 0; i < blocks; i++) {
-        	int x = (int) (Math.random() * grid[i].length);
-        	int y = (int) (Math.random() * (grid.length/2));
-        	
-        	if(newGrid[x][y].equals("")) {
-        		newGrid[x][y] = "b";
-        		newGrid[newGrid.length-x-1][newGrid[0].length-y-1] = "b";
-        		i++;	
-        	}
-        	else i--;
-        }
-        return newGrid;
+     static String[][] placeBlocks(MapTemplate mt, String[][] grid, int blocks){
+    	 ArrayList<Integer[]> freeList = new ArrayList<Integer[]>();
+    	 for(int i=0; i<grid.length; i++) {
+    		 for(int j=0; j<grid[i].length; j++) {
+    			 if(grid[i][j].equals("")) {
+    				 freeList.add(new Integer[] {i,j});
+    			 }
+    		 }
+    	 }
+    	 
+    	 for(; blocks>0; blocks--) {
+    		 int x = seededRandom(mt, blocks, freeList.size());
+    		 grid[freeList.get(x)[0]][freeList.get(x)[1]] = "b";
+    		 freeList.remove(x);
+    	 }
+
+        return grid;
     }
+
      
      /**
       * This method should be used instead of Math.random() to generate deterministic positive pseudo random values.

@@ -77,7 +77,7 @@ public class GameEngine implements Game {
         newGrid = BoardSetUp.placePieces(teams, newGrid);
           
         //placing blocks   TODO odd numbers?
-        newGrid = BoardSetUp.placeBlocks(newGrid, template.getBlocks());
+        newGrid = BoardSetUp.placeBlocks(template, newGrid, template.getBlocks());
        
         // selecting starting team, here or in joinGame?
         
