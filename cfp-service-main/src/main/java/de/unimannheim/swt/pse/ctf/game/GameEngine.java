@@ -382,16 +382,16 @@ public class GameEngine implements Game {
     	
     	GameEngine test = new GameEngine();
     	MapTemplate testMap = new MapTemplate();
-    	PieceDescription[] pieces = new PieceDescription[2];
+    	PieceDescription[] pieces = new PieceDescription[1];
     	pieces[0] = new PieceDescription();
     	pieces[0].setAttackPower(5);
     	pieces[0].setCount(10);
-    	pieces[1] = new PieceDescription();
-    	pieces[1].setAttackPower(1);
-    	pieces[1].setCount(3);
+    	//pieces[1] = new PieceDescription();
+    	//pieces[1].setAttackPower(1);
+    	//pieces[1].setCount(3);
     	testMap.setGridSize(new int[]{10,10});
     	testMap.setTeams(2);
-    	testMap.setBlocks(4);
+    	testMap.setBlocks(0);
     	testMap.setPieces(pieces);
     	test.create(testMap);
     	

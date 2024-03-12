@@ -20,7 +20,7 @@ public class BoardSetUp {
 	    	String[][] newGrid = Arrays.copyOf(grid, grid.length);
 	        if(template.getTeams() == 2) {
 	        	newGrid[newGrid.length/4][newGrid[0].length/2] = "b:1";
-	        	newGrid[newGrid.length-newGrid.length/4][newGrid[0].length/2] = "b:2";
+	        	newGrid[newGrid.length-(newGrid.length/4)-1][newGrid[0].length/2] = "b:2";
 	        }
 	        else if(template.getTeams() == 4) {
 	        	newGrid[0][0] = "b:1";
@@ -95,9 +95,15 @@ public class BoardSetUp {
 	       		row++;
 	       		column = 0;
 	       	}
-        	Piece piece = teams[0].getPieces()[i];	        	
-        	newGrid[row][column] = "p:" + piece.getTeamId() + "_" + piece.getId();
-	        column++;
+	       	if(!newGrid[row][column].equals("")) {
+	       		column++;
+	       		i--;
+	       	}
+	       	else {
+	       		Piece piece = teams[0].getPieces()[i];	        
+	       		newGrid[row][column] = "p:" + piece.getTeamId() + "_" + piece.getId();
+	       		column++;
+	       		}
 	        }
 	        
 	    //putting pieces on the board (team2)    
@@ -108,9 +114,15 @@ public class BoardSetUp {
         		row--;
 		  		column = newGrid[0].length-1;
         	}
-    	Piece piece = teams[0].getPieces()[i];
-    	newGrid[row][column] = "p:" + piece.getTeamId() + "_" + piece.getId();
-    	column--;	
+        	if(!newGrid[row][column].equals("")) {
+	       		column--;
+	       		i--;
+	       	}
+	       	else {
+	       		Piece piece = teams[0].getPieces()[i];
+	       		newGrid[row][column] = "p:" + piece.getTeamId() + "_" + piece.getId();
+	       		column--;
+	       	}	
 		}
 	    return newGrid;
     }
