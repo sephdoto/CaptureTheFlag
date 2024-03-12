@@ -50,7 +50,7 @@ public class HomeSceneController {
     return mn;
   }
   
-  public void switchToJoinScene () {
-	  
+  public void switchToJoinScene (Stage stage) {
+	  stage.setScene(new SceneCreator().createJoinScene());
   }
 }

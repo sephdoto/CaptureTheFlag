@@ -53,7 +53,7 @@ public class App extends Application {
               }
             });
     HomeScreenButton i2 = new HomeScreenButton("CREATE GAME", () -> {});
-    HomeScreenButton i3 = new HomeScreenButton("JOIN GAME", () -> {});
+    HomeScreenButton i3 = new HomeScreenButton("JOIN GAME", () -> {new HomeSceneController().switchToJoinScene(mainStage);});
     VBox vbox = new VBox(11, i1, i2, i3);
     vbox.setAlignment(Pos.CENTER);
     vbox.setMaxWidth(50);
