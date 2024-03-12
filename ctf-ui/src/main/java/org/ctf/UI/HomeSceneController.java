@@ -49,4 +49,8 @@ public class HomeSceneController {
     mn.getMenus().add(fileMenu);
     return mn;
   }
+  
+  public void switchToJoinScene () {
+	  
+  }
 }
