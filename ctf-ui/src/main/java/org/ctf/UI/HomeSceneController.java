@@ -51,6 +51,6 @@ public class HomeSceneController {
   }
   
   public void switchToJoinScene (Stage stage) {
-	  stage.setScene(new SceneCreator().createJoinScene());
+	  stage.setScene(new SceneCreator(this).createJoinScene());
   }
 }
