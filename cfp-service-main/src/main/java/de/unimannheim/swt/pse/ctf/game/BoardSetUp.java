@@ -2,6 +2,11 @@ package de.unimannheim.swt.pse.ctf.game;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Random;
+import java.util.stream.Stream;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 import de.unimannheim.swt.pse.ctf.game.map.PieceDescription;
@@ -150,4 +155,19 @@ public class BoardSetUp {
         }
         return newGrid;
     }
+     
+     /**
+      * This method should be used instead of Math.random() to generate deterministic positive pseudo random values.
+      * Changing modifier changes the resulting output for the same seed.
+      * 
+      * @author sistumpf
+      * @param MapTemplate mt, gets converted to a random seed
+      * @param int modifier, to get different random values with the same seed
+      * @param upperBound, upper bound for returned random values, upperBound = 3 -> values 0 to 2
+      * @return
+      */
+     static int seededRandom(MapTemplate mt, int modifier, int upperBound) {
+    	 int seed = (new Gson().toJson(mt) + String.valueOf(modifier)).hashCode();
+    	 return new Random(seed).nextInt(upperBound);
+     }
 }
