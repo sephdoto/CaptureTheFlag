@@ -76,7 +76,7 @@ public class GameEngine implements Game {
    		//placing the pieces 
         newGrid = BoardSetUp.placePieces(teams, newGrid);
           
-        //placing blocks   TODO odd numbers?(only divisible by 2)
+        //placing blocks   TODO odd numbers?
         newGrid = BoardSetUp.placeBlocks(newGrid, template.getBlocks());
        
         // selecting starting team, here or in joinGame?
@@ -379,6 +379,7 @@ public class GameEngine implements Game {
     }
     
     public static void main(String[] args) {
+    	
     	GameEngine test = new GameEngine();
     	MapTemplate testMap = new MapTemplate();
     	PieceDescription[] pieces = new PieceDescription[2];
@@ -402,6 +403,7 @@ public class GameEngine implements Game {
     	test.printState();
     	System.out.println(test.gameState.getTeams()[0].getColor().toString());
     	System.out.println(test.gameState.getTeams()[1].getColor().toString());
+    	
     	
     }
     

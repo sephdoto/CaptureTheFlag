@@ -19,8 +19,8 @@ public class BoardSetUp {
 	 static String[][] placeFlags(MapTemplate template, String[][] grid) {
 	    	String[][] newGrid = Arrays.copyOf(grid, grid.length);
 	        if(template.getTeams() == 2) {
-	        	newGrid[0][newGrid[0].length/2] = "b:1";
-	        	newGrid[newGrid.length-1][newGrid[0].length/2] = "b:2";
+	        	newGrid[newGrid.length/4][newGrid[0].length/2] = "b:1";
+	        	newGrid[newGrid.length-newGrid.length/4][newGrid[0].length/2] = "b:2";
 	        }
 	        else if(template.getTeams() == 4) {
 	        	newGrid[0][0] = "b:1";
