@@ -1,3 +1,4 @@
+
 package org.ctf.UI;
 
 import org.ctf.UI.customObjects.*;
@@ -21,6 +22,7 @@ import javafx.stage.Stage;
  * @author mkrakows Generates the code for the Scene in that one can choose a Map a show it on the
  *     screen
  */
+@Deprecated
 public class LoadMapSceneController implements Initializable {
   String[][] exm = {{"", "p:1_2", ""}, {"", "p:2_3", "b"}, {"", "", ""}};
   int rows = exm.length;
