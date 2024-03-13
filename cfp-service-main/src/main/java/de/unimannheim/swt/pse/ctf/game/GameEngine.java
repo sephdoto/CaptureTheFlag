@@ -53,28 +53,24 @@ public class GameEngine implements Game {
                 
         GameState gameState = new GameState();
         gameState.setTeams(new Team[template.getTeams()]);        
-        String[][] newGrid = new String[template.getGridSize()[0]][template.getGridSize()[1]];
-             
-        //this for loop initializes the grid with empty Strings
-        for(int i = 0; i < newGrid.length; i++) {
-        	for(int j = 0; j < newGrid[i].length; j++) {
-        		newGrid[i][j] = "";
+    	String[][] grid = new String[template.getGridSize()[0]][template.getGridSize()[1]];
+    	for(int i = 0; i < grid.length; i++) {
+        	for(int j = 0; j < grid[i].length; j++) {
+        		grid[i][j] = "";
         	}
         }
-        
-        //placing the bases/flags 
-        //TODO multiple flags in a base??????
-        newGrid = BoardSetUp.placeFlags(template, newGrid);
+        gameState.setGrid(grid);
        
         //initializing teams
         Team[] teams = new Team[template.getTeams()];
-        for(int i = 0,j =1;i<teams.length;i++,j++){
-            teams[i] = BoardSetUp.initializeTeam(j, template);
+        for(int i = 0;i<teams.length;i++){
+            teams[i] = BoardSetUp.initializeTeam(i, template);
         }
         gameState.setTeams(teams);
-   		
+       
+        BoardSetUp.initPieces(gameState, template);
    		//placing the pieces and blocks
-        BoardSetUp.placePiecesAndBlocks(template, teams, newGrid, template.getBlocks());
+        BoardSetUp.initGrid(gameState, template);
         
         
         // selecting starting team, here or in joinGame?
@@ -89,7 +85,6 @@ public class GameEngine implements Game {
         //END OF CODE BLOCK FOR BRANCHES
 
         // Setting State
-        gameState.setGrid(newGrid);
         this.gameState = gameState;
         return this.gameState;
     }
@@ -272,6 +267,15 @@ public class GameEngine implements Game {
         gameState.setLastMove(move);
 
         //TODO Flagge/Base Logik, GameOver check, 
+        if(gameOverCheck())
+        	this.isGameOver = true;
+    }
+    
+    
+    public boolean gameOverCheck() {
+    	System.out.println("Flags: " + gameState.getTeams()[0].getFlag());
+    	Arrays.stream(gameState.getTeams()).iterator().forEachRemaining(team -> System.out.println(team.getFlag()));
+    	return true;
     }
 
     
@@ -408,6 +412,10 @@ public class GameEngine implements Game {
     	System.out.println(test.gameState.getTeams()[0].getColor().toString());
     	System.out.println(test.gameState.getTeams()[1].getColor().toString());
     	
+    	Move move = new Move();
+    	move.setPieceId(test.getCurrentGameState().getTeams()[0].getPieces()[0].getId());
+    	System.out.println(test.getCurrentGameState().getTeams()[1].getBase()[0]);
+//    	test.makeMove(move);
     	
     }
     

@@ -12,31 +12,11 @@ import com.google.gson.reflect.TypeToken;
 import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 import de.unimannheim.swt.pse.ctf.game.map.PieceDescription;
 import de.unimannheim.swt.pse.ctf.game.map.PlacementType;
+import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Piece;
 import de.unimannheim.swt.pse.ctf.game.state.Team;
 
 public class BoardSetUp {
-	   /**
-     * This is a helper method to place the flags in the create method
-     * 
-     * @author ysiebenh
-     * @param MapTemplate template, String[][] grid
-     * @return String[][] grid with flags placed 
-     */
-	 static String[][] placeFlags(MapTemplate template, String[][] grid) {
-	    	String[][] newGrid = Arrays.copyOf(grid, grid.length);
-	        if(template.getTeams() == 2) {
-	        	newGrid[newGrid.length/4][newGrid[0].length/2] = "b:1";
-	        	newGrid[newGrid.length-(newGrid.length/4)-1][newGrid[0].length/2] = "b:2";
-	        }
-	        else if(template.getTeams() == 4) {
-	        	newGrid[0][0] = "b:1";
-	        	newGrid[newGrid.length-1][0] = "b:2";
-	        	newGrid[0][newGrid[0].length-1] = "b:3";
-	        	newGrid[newGrid.length-1][newGrid[0].length-1] = "b:4";
-	        }
-	    	return newGrid;
-	    }
     
     /**
      * This is a helper method to initialize the teams in create 
@@ -53,9 +33,9 @@ public class BoardSetUp {
         for(PieceDescription piece : template.getPieces()) {
         	for(int i = 0; i < piece.getCount();i++) {
         		Piece x = new Piece();
-        		x.setId(Integer.toString(count++));
+        		x.setId("p:"+teamID+"_"+Integer.toString(count++));
         		x.setDescription(piece);
-        		x.setTeamId(Integer.toString(teamID)); //TODO team id
+        		x.setTeamId(Integer.toString(teamID));
         		indPieces.add(x);
         	}
         }
@@ -64,12 +44,16 @@ public class BoardSetUp {
         	Team team = new Team();
         	team.setId(Integer.toString(teamID));
             team.setColor(GameEngine.getRandColor());
-            if(teamID == 1) {
+            
+            //TODO die Bases müssen anders gesetzt werden.
+            if(teamID == 0) {
             	team.setBase(new int[]{0,0});
             }
-            else if(teamID == 2) {
+            else if(teamID == 1) {
             	team.setBase(new int[]{template.getGridSize()[1]-1,template.getGridSize()[0]-1});
             }
+            
+            team.setFlag(new int[] {template.getFlags()});
             
         	Piece[] pieces = new Piece[indPieces.size()]; //putting the pieces in an array 
         	int iterator = 0;
@@ -77,15 +61,35 @@ public class BoardSetUp {
         		pieces[iterator++] = p;
         	}
         	team.setPieces(pieces);
-        
-        
+        	
     	return team;
     }
      
      /**
-      * Pieces and Blocks get placed based on the PlacementType from the MapTemplate. 
-      * PlaceType specific methods to place the pieces are called.
-      * The block placement Algorithm remains the same but the way it is used differs with placements.
+      * This method decides what method to call for placing pieces.
+      * @author sistumpf
+      * @param gameState
+      * @param template
+      */
+     static void initPieces(GameState gameState, MapTemplate template) {
+    	 switch(template.getPlacement()) {
+         case symmetrical: 
+           placePiecesSymmetrical(gameState);
+           break;
+         case spaced_out:
+           placePiecesSpaced(gameState);
+           break;
+         case defensive:
+           placePiecesDefensive(gameState);
+           break;
+       }
+     }
+     
+     /**
+      * This Method creates a GameStates grid.
+      * Teams, Pieces and Bases must already be initialized in the GameState.
+      * Pieces and Bases are placed right on their in gameState.getTeams()[x] specified position.
+      * Blocks get placed based on the PlacementType from the MapTemplate. 
       * 
       * @author sistumpf
       * @param MapTemplate template
@@ -94,11 +98,18 @@ public class BoardSetUp {
       * @param int blocks
       * @return grid with placed pieces and blocks
       */
-    static String[][] placePiecesAndBlocks(MapTemplate template, Team[] teams, String[][] grid,int blocks){
+    static void initGrid(GameState gameState, MapTemplate template){
+    	String[][] grid = gameState.getGrid();
+    	
+    	for(Team team : gameState.getTeams()) {
+    		grid[team.getBase()[0]][team.getBase()[1]] = "b:" + team.getId();
+    		for(Piece piece : team.getPieces()) {
+    			grid[piece.getPosition()[0]][piece.getPosition()[1]] = piece.getId();
+    		}
+    	}
+    	
       switch(template.getPlacement()) {
         case symmetrical: 
-          grid = placePiecesSymmetrical(teams, grid);
-            
           //placing blocks   TODO more than two teams
           String[][] blockGrid = Arrays.copyOf(grid, grid.length/2);
           placeBlocks(template, blockGrid, template.getBlocks()/2);
@@ -114,16 +125,12 @@ public class BoardSetUp {
           
           break;
         case spaced_out:
-          placePiecesSpaced(teams, grid);
           placeBlocks(template, grid, template.getBlocks());
           break;
         case defensive:
-          placePiecesDefensive(teams, grid);
           placeBlocks(template, grid, template.getBlocks());
           break;
       }
-      
-      return grid;
     }
 
     /**
@@ -132,8 +139,8 @@ public class BoardSetUp {
      * @param grid
      * @return
      */    
-    static String[][] placePiecesSpaced(Team[] teams, String[][] grid){
-      return null;
+    static void placePiecesSpaced(GameState gameState){
+      return ;
     }
 
     /**
@@ -142,8 +149,8 @@ public class BoardSetUp {
      * @param grid
      * @return
      */
-    static String[][] placePiecesDefensive(Team[] teams, String[][] grid){
-      return null;
+    static void placePiecesDefensive(GameState gameState){
+      return ;
     }
     
     /**
@@ -154,49 +161,47 @@ public class BoardSetUp {
      * placed 
      * @return String[][] the finished board
      */
-     static String[][] placePiecesSymmetrical(Team[] teams, String[][] grid){
+     static void placePiecesSymmetrical(GameState gameState){
     	//TODO more than two teams
     	//putting the pieces on the board (team1)
-    	String[][] newGrid = Arrays.copyOf(grid, grid.length);
         int row = 1;
         int column = 0;
-	    for(int i = 0; i < teams[0].getPieces().length; i++) {
-	       	if(column == newGrid[0].length) {
+	    for(int i = 0; i < gameState.getTeams()[0].getPieces().length; i++) {
+	       	if(column == gameState.getGrid()[0].length) {
 	       		row++;
 	       		column = 0;
 	       	}
-	       	if(!newGrid[row][column].equals("")) {
+	       	if(!gameState.getGrid()[row][column].equals("")) {
 	       		column++;
 	       		i--;
 	       	}
 	       	else {
-	       		Piece piece = teams[0].getPieces()[i];	 
+	       		Piece piece = gameState.getTeams()[0].getPieces()[i];	 
 	       		piece.setPosition(new int[]{row, column});
-	       		newGrid[row][column] = "p:" + piece.getTeamId() + "_" + piece.getId();
+	       		gameState.getGrid()[row][column] = "p:" + piece.getTeamId() + "_" + piece.getId();
 	       		column++;
 	       		}
 	        }
 	        
 	    //putting pieces on the board (team2)    
-	    row = newGrid.length - 2;
-	    column = newGrid[0].length-1;
-	    for(int i = 0; i < teams[0].getPieces().length; i++) {
+	    row = gameState.getGrid().length - 2;
+	    column = gameState.getGrid()[0].length-1;
+	    for(int i = 0; i < gameState.getTeams()[0].getPieces().length; i++) {
         	if(column == -1) {
         		row--;
-		  		column = newGrid[0].length-1;
+		  		column = gameState.getGrid()[0].length-1;
         	}
-        	if(!newGrid[row][column].equals("")) {
+        	if(!gameState.getGrid()[row][column].equals("")) {
 	       		column--;
 	       		i--;
 	       	}
 	       	else {
-	       		Piece piece = teams[1].getPieces()[i];
+	       		Piece piece = gameState.getTeams()[1].getPieces()[i];
 	       		piece.setPosition(new int[]{row, column});
-	       		newGrid[row][column] = "p:" + piece.getTeamId() + "_" + piece.getId();
+	       		gameState.getGrid()[row][column] = "p:" + piece.getTeamId() + "_" + piece.getId();
 	       		column--;
 	       	}	
 		}
-	    return newGrid;
     }
     
     /**
@@ -208,13 +213,13 @@ public class BoardSetUp {
      * @param int blocks, number of blocks to be placed
      * @return String[][] grid with blocks placed on it
      */
-     static String[][] placeBlocks(MapTemplate mt, String[][] grid, int blocks){
+     static void placeBlocks(MapTemplate mt, String[][] grid, int blocks){
     	 ArrayList<Integer[]> freeList = new ArrayList<Integer[]>();
     	 for(int i=0; i<grid.length; i++) {
     		 for(int j=0; j<grid[i].length; j++) {
     			 if(grid[i][j].equals("")) {
     				 freeList.add(new Integer[] {i,j});
-    			 }
+    			 } 
     		 }
     	 }
     	 
@@ -223,8 +228,6 @@ public class BoardSetUp {
     		 grid[freeList.get(x)[0]][freeList.get(x)[1]] = "b";
     		 freeList.remove(x);
     	 }
-
-        return grid;
     }
 
      

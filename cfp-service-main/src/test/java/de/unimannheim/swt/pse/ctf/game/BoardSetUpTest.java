@@ -16,7 +16,7 @@ class BoardSetUpTest {
 		String[][] grid = new String[][]
 				{{"","!","","!"},{"!","!",""},{"!","!"},{""}};
 		String[][] gridMuster = new String[][] {{"b","!","b","!"},{"!","!","b"},{"!","!"},{"b"}};
-		grid = BoardSetUp.placeBlocks(testTemplate(), grid, 4);
+		BoardSetUp.placeBlocks(testTemplate(), grid, 4);
 		
 		printGrid(grid);
 		System.out.println("----------");
@@ -24,7 +24,7 @@ class BoardSetUpTest {
 		
 		grid = new String[][] {{"","",""},{"","",""},{"","",""}};
 		gridMuster = new String[][] {{"","b","b"},{"b","b",""},{"","b",""}};
-		grid = BoardSetUp.placeBlocks(testTemplate(), grid, 5);
+		BoardSetUp.placeBlocks(testTemplate(), grid, 5);
 		
 		printGrid(grid);
 		System.out.println("----------");
@@ -32,7 +32,7 @@ class BoardSetUpTest {
 		
 		grid = new String[][] {{"","",""},{"","",""},{"","",""}};
 		gridMuster = new String[][] {{"b","b","b"},{"","b",""},{"","b","b"}};
-		grid = BoardSetUp.placeBlocks(testTemplate(), grid, 6);
+		BoardSetUp.placeBlocks(testTemplate(), grid, 6);
 		
 		printGrid(grid);
 		System.out.println("----------");
