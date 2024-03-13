@@ -1,5 +1,7 @@
 package org.ctf.UI;
 
+import org.ctf.UI.customObjects.JoinItem;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -63,6 +65,7 @@ public class SceneCreator {
 		vbox.setMargin(butBox, new Insets(25));
 		vbox.getChildren().add(searchField);
 		VBox glist = new VBox();
+		glist.getChildren().add(new JoinItem("2435263", "Peter"));
 		glist.setAlignment(Pos.TOP_CENTER);
 		vbox.getChildren().add(glist);
 		vbox.getChildren().add(butBox);
