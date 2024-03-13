@@ -170,7 +170,8 @@ public class BoardSetUp {
 	       		i--;
 	       	}
 	       	else {
-	       		Piece piece = teams[0].getPieces()[i];	        
+	       		Piece piece = teams[0].getPieces()[i];	 
+	       		piece.setPosition(new int[]{row, column});
 	       		newGrid[row][column] = "p:" + piece.getTeamId() + "_" + piece.getId();
 	       		column++;
 	       		}
@@ -189,7 +190,8 @@ public class BoardSetUp {
 	       		i--;
 	       	}
 	       	else {
-	       		Piece piece = teams[0].getPieces()[i];
+	       		Piece piece = teams[1].getPieces()[i];
+	       		piece.setPosition(new int[]{row, column});
 	       		newGrid[row][column] = "p:" + piece.getTeamId() + "_" + piece.getId();
 	       		column--;
 	       	}	
