@@ -11,6 +11,7 @@ import com.google.gson.reflect.TypeToken;
 
 import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 import de.unimannheim.swt.pse.ctf.game.map.PieceDescription;
+import de.unimannheim.swt.pse.ctf.game.map.PlacementType;
 import de.unimannheim.swt.pse.ctf.game.state.Piece;
 import de.unimannheim.swt.pse.ctf.game.state.Team;
 
@@ -80,6 +81,70 @@ public class BoardSetUp {
         
     	return team;
     }
+     
+     /**
+      * Pieces and Blocks get placed based on the PlacementType from the MapTemplate. 
+      * PlaceType specific methods to place the pieces are called.
+      * The block placement Algorithm remains the same but the way it is used differs with placements.
+      * 
+      * @author sistumpf
+      * @param MapTemplate template
+      * @param Team[] teams
+      * @param String[][] grid
+      * @param int blocks
+      * @return grid with placed pieces and blocks
+      */
+    static String[][] placePiecesAndBlocks(MapTemplate template, Team[] teams, String[][] grid,int blocks){
+      switch(template.getPlacement()) {
+        case symmetrical: 
+          grid = placePiecesSymmetrical(teams, grid);
+            
+          //placing blocks   TODO more than two teams
+          String[][] blockGrid = Arrays.copyOf(grid, grid.length/2);
+          placeBlocks(template, blockGrid, template.getBlocks()/2);
+          
+          for(int y=0; y<blockGrid.length; y++) {
+            for(int x=0; x<blockGrid[y].length; x++) {
+              if(blockGrid[y][x].equals("b")) {
+                grid[y][x] = "b";
+                grid[grid.length-1-y][grid[y].length-1-x] = "b";
+              }
+            }
+          }
+          
+          break;
+        case spaced_out:
+          placePiecesSpaced(teams, grid);
+          placeBlocks(template, grid, template.getBlocks());
+          break;
+        case defensive:
+          placePiecesDefensive(teams, grid);
+          placeBlocks(template, grid, template.getBlocks());
+          break;
+      }
+      
+      return grid;
+    }
+
+    /**
+     * DUMMY TODO implement this method
+     * @param teams
+     * @param grid
+     * @return
+     */    
+    static String[][] placePiecesSpaced(Team[] teams, String[][] grid){
+      return null;
+    }
+
+    /**
+     * DUMMY TODO implement this method
+     * @param teams
+     * @param grid
+     * @return
+     */
+    static String[][] placePiecesDefensive(Team[] teams, String[][] grid){
+      return null;
+    }
     
     /**
      * This is a helper method to place the pieces on the board in the create method 
@@ -89,9 +154,8 @@ public class BoardSetUp {
      * placed 
      * @return String[][] the finished board
      */
-     static String[][] placePieces(Team[] teams, String[][] grid){
+     static String[][] placePiecesSymmetrical(Team[] teams, String[][] grid){
     	//TODO more than two teams
-    	//TODO different types
     	//putting the pieces on the board (team1)
     	String[][] newGrid = Arrays.copyOf(grid, grid.length);
         int row = 1;

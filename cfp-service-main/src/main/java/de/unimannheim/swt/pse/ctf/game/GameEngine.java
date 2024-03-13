@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-
-
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import de.unimannheim.swt.pse.ctf.game.exceptions.GameOver;
 import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
 import de.unimannheim.swt.pse.ctf.game.exceptions.NoMoreTeamSlots;
@@ -73,12 +73,10 @@ public class GameEngine implements Game {
         }
         gameState.setTeams(teams);
    		
-   		//placing the pieces 
-        newGrid = BoardSetUp.placePieces(teams, newGrid);
-          
-        //placing blocks   TODO odd numbers?
-        newGrid = BoardSetUp.placeBlocks(template, newGrid, template.getBlocks());
-       
+   		//placing the pieces and blocks
+        BoardSetUp.placePiecesAndBlocks(template, teams, newGrid, template.getBlocks());
+        
+        
         // selecting starting team, here or in joinGame?
         
         this.remainingTeamSlots = template.getTeams()-1;
@@ -393,6 +391,12 @@ public class GameEngine implements Game {
     	testMap.setTeams(2);
     	testMap.setBlocks(0);
     	testMap.setPieces(pieces);
+    	
+        String mapString = "{\"gridSize\":[10,10],\"teams\":2,\"flags\":1,\"pieces\":[{\"type\":\"Pawn\",\"attackPower\":1,\"count\":10,\"movement\":{\"directions\":{\"left\":0,\"right\":0,\"up\":1,\"down\":0,\"upLeft\":1,\"upRight\":1,\"downLeft\":0,\"downRight\":0}}},{\"type\":\"Rook\",\"attackPower\":5,\"count\":2,\"movement\":{\"directions\":{\"left\":2,\"right\":2,\"up\":2,\"down\":2,\"upLeft\":0,\"upRight\":0,\"downLeft\":0,\"downRight\":0}}},{\"type\":\"Knight\",\"attackPower\":3,\"count\":2,\"movement\":{\"shape\":{\"type\":\"lshape\"}}},{\"type\":\"Bishop\",\"attackPower\":3,\"count\":2,\"movement\":{\"directions\":{\"left\":0,\"right\":0,\"up\":0,\"down\":0,\"upLeft\":2,\"upRight\":2,\"downLeft\":2,\"downRight\":2}}},{\"type\":\"Queen\",\"attackPower\":5,\"count\":1,\"movement\":{\"directions\":{\"left\":2,\"right\":2,\"up\":2,\"down\":2,\"upLeft\":2,\"upRight\":2,\"downLeft\":2,\"downRight\":2}}},{\"type\":\"King\",\"attackPower\":1,\"count\":1,\"movement\":{\"directions\":{\"left\":1,\"right\":1,\"up\":1,\"down\":1,\"upLeft\":1,\"upRight\":1,\"downLeft\":1,\"downRight\":1}}}],\"blocks\":10,\"placement\":\"symmetrical\",\"totalTimeLimitInSeconds\":-1,\"moveTimeLimitInSeconds\":-1}\r\n";
+        Gson gson = new Gson();
+        new TypeToken<>() {}.getType(); 
+        testMap = gson.fromJson(mapString, MapTemplate.class);
+    	
     	test.create(testMap);
     	
     	int[] futuresquare = {2,0};
