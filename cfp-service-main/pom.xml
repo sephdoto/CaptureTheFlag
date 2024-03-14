@@ -1,72 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-    <groupId>org.ctf</groupId>
-    <artifactId>cfp14</artifactId>
-    <version>0.1.0</version>
-  </parent>
-	<groupId>de.uni-mannheim.swt.pse</groupId>
-	<artifactId>ctf</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>ctf</name>
-	<description>capture the flag service</description>
-	<properties>
-		<java.version>17</java.version>
-		<springdoc.version>2.3.0</springdoc.version>
-	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.ctf</groupId>
+        <artifactId>cfp14</artifactId>
+        <version>0.1.0</version>
+    </parent>
+    <groupId>de.uni-mannheim.swt.pse</groupId>
+    <artifactId>ctf</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>ctf</name>
+    <description>capture the flag service</description>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-  
-    <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.10.1</version>
-    </dependency>  		
+    <properties>
+        <java.version>17</java.version>
+        <springdoc.version>2.3.0</springdoc.version>
+    </properties>
 
-    <!-- https://mvnrepository.com/artifact/org.json/json -->    		
-	  <dependency>  		    
-		  <groupId>org.json</groupId> 		    
-		  <artifactId>json</artifactId>		    
-		  <version>20240205</version>    		
-	  </dependency>
-     <dependency>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-controls</artifactId>
-        <version>21.0.2</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-fxml -->
-    <dependency>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-fxml</artifactId>
-        <version>21.0.2</version>
-    </dependency>
-    <dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.json/json -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20240205</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>21.0.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-fxml -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>21.0.2</version>
+        </dependency>
+        <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
             <version>21.0.2</version>
-            </dependency>
-  </dependencies>
- <build>
-            <plugins>
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <configuration>
-                        <skip>false</skip>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </build>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
 </project>

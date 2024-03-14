@@ -27,13 +27,6 @@
         },
         {
             "type": "java",
-            "name": "Main",
-            "request": "launch",
-            "mainClass": "application.Main",
-            "projectName": "ctf-UI"
-        },
-        {
-            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"
@@ -54,18 +47,11 @@
         },
         {
             "type": "java",
-            "name": "Hughmungus",
-            "request": "launch",
-            "mainClass": "org.ctf.tl.layer.Hughmungus",
-            "projectName": "ctf-TL"
-        },
-        {
-            "type": "java",
             "name": "Main",
             "request": "launch",
             "vmArgs": "--module-path C:/Programming Utils/javafx-sdk-21.0.2/lib --add-modules javafx.controls,javafx.fxml",
             "mainClass": "Main",
-            "projectName": "ctf-UI"
+            "projectName": "ctf-ui"
         },
         {
             "type": "java",
