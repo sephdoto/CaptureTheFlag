@@ -1,8 +1,8 @@
-package org.ctf.UI;
-
-import org.ctf.UI.customObjects.*;
+package org.ctf.ui;
 
 import java.io.IOException;
+
+import org.ctf.ui.customobjects.*;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.Timeline;

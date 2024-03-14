@@ -1,6 +1,6 @@
-package org.ctf.UI.customObjects;
+package org.ctf.ui.customobjects;
 
-import org.ctf.UI.Game;
+import org.ctf.ui.Game;
 
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;

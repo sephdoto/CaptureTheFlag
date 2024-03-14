@@ -1,6 +1,6 @@
-package org.ctf.UI;
+package org.ctf.ui;
 
-import org.ctf.UI.customObjects.CostumFigurePain;
+import org.ctf.ui.customobjects.CostumFigurePain;
 
 import javafx.scene.layout.GridPane;
 

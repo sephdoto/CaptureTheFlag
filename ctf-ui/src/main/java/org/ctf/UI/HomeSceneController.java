@@ -1,4 +1,4 @@
-package org.ctf.UI;
+package org.ctf.ui;
 
 /**
  * @author mkrakows This Class controls what happens when clicking the buttons on the HomeScreen

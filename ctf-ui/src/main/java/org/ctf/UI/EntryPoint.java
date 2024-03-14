@@ -1,4 +1,5 @@
-package org.ctf.UI;
+package org.ctf.ui;
+
 
 /**
  * Accessor File to allow proper exposure of dependencies

@@ -1,4 +1,4 @@
-package org.ctf.UI.customObjects;
+package org.ctf.ui.customobjects;
 
 
 import java.util.ArrayList;

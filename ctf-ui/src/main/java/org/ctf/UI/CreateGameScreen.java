@@ -1,4 +1,4 @@
-package org.ctf.UI;
+package org.ctf.ui;
 
 
 import java.io.IOException;

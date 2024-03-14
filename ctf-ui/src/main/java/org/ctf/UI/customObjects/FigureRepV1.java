@@ -1,4 +1,4 @@
-package org.ctf.UI.customObjects;
+package org.ctf.ui.customobjects;
 /**
  * @author mkrakows
  * this class represents a region that for now just contains a rectangle that has  the size of the region

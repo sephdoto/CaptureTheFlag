@@ -1,11 +1,9 @@
+package org.ctf.ui;
 
-package org.ctf.UI;
-
-import org.ctf.UI.customObjects.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import org.ctf.UI.customObjects.FigureRepV1;
+import org.ctf.ui.customobjects.*;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

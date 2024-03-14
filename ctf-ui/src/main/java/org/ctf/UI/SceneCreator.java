@@ -1,6 +1,6 @@
-package org.ctf.UI;
+package org.ctf.ui;
 
-import org.ctf.UI.customObjects.JoinItem;
+import org.ctf.ui.customobjects.JoinItem;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

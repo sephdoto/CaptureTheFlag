@@ -1,4 +1,4 @@
-package org.ctf.UI;
+package org.ctf.ui;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

@@ -1,11 +1,11 @@
-package org.ctf.UI;
+package org.ctf.ui;
 
 import javax.management.BadAttributeValueExpException;
 
-import org.ctf.UI.customObjects.BackgroundCell;
-import org.ctf.UI.customObjects.BlockRepV2;
-import org.ctf.UI.customObjects.BlueFlagRepV1;
-import org.ctf.UI.customObjects.FigureRepV2;
+import org.ctf.ui.customobjects.BackgroundCell;
+import org.ctf.ui.customobjects.BlockRepV2;
+import org.ctf.ui.customobjects.BlueFlagRepV1;
+import org.ctf.ui.customobjects.FigureRepV2;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;

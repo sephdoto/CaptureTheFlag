@@ -1,4 +1,4 @@
-package org.ctf.UI.customObjects;
+package org.ctf.ui.customobjects;
 
 import javafx.beans.binding.Bindings;
 import javafx.scene.layout.Pane;
