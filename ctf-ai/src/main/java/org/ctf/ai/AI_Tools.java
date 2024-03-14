@@ -1,6 +1,7 @@
 package org.ctf.ai;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.ctf.client.state.GameState;
@@ -14,6 +15,35 @@ import org.ctf.client.state.data.map.ShapeType;
  * This class includes useful methods to analyze and work with GameStates and Moves.
  */
 public class AI_Tools {
+		/**
+		 * TODO change location of this method, location might not not be final
+		 * @author sistumpf
+		 * @param GameState gameState
+		 * @param String pieceID
+		 * @return ArrayList<int[]> that contains all valid positions a piece could move to
+		 */
+	  	public static ArrayList<int[]> getPossibleMoves(GameState gameState, String pieceID) {
+			Piece piece = (Piece) Arrays.stream(gameState.getTeams()[Integer.parseInt(pieceID.split(":")[1].split("_")[0])].getPieces()).filter(p -> p.getId().equals(pieceID)).toArray()[0];
+			ArrayList<int[]> possibleMoves = new ArrayList<int[]>();
+			
+			if(piece.getDescription().getMovement().getDirections() == null) {
+				try {
+					AI_Tools.createShapeMoveList(gameState, piece).stream().forEach(m -> possibleMoves.add(m.getNewPosition()));
+				} catch (InvalidShapeException e) {e.printStackTrace();}
+				
+			} else {
+				HashMap<Integer, Integer> dirMap = AI_Tools.createDirectionMap(gameState, piece);
+				for(Integer direction : dirMap.keySet()) {
+					for(int reach = dirMap.get(direction); reach>0; reach--) {
+						Move move = AI_Tools.checkMoveValidity(gameState, piece, direction, reach);
+						if(move != null)
+							possibleMoves.add(move.getNewPosition());
+					}
+				}
+			}
+			return possibleMoves;
+		}
+	
 	  /**
 	   * Selects and returns a random Move from an ArrayList which only contains valid Moves.
 	   * @param moveArrayList

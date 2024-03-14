@@ -6,7 +6,11 @@ import org.ctf.client.state.Team;
 import org.ctf.client.state.data.map.MapTemplate;
 import org.ctf.client.tools.JSON_Tools;
 import org.ctf.client.tools.JSON_Tools.MapNotFoundException;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+
 import org.ctf.ai.AI_Tools.InvalidShapeException;
 import org.ctf.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.client.constants.Constants.AI;
@@ -39,9 +43,15 @@ public class AI_Controller {
           + ") to (" + nextMove.getNewPosition()[0] + "," + nextMove.getNewPosition()[1] + ")");
     } catch (NoMovesLeftException | InvalidShapeException e) {e.printStackTrace();}
 
+    
+    
+	GameState gameState = getTestState();
+	String pieceId = gameState.getTeams()[1].getPieces()[1].getId();
+	ArrayList<int[]> moves = AI_Tools.getPossibleMoves(gameState, pieceId);
+	moves.stream().forEach(i -> System.out.println(i[0] +"."+ i[1] + " , "));
   }
 
-
+  
 
   /**
    * Creates a test GameState from the example Map. 
