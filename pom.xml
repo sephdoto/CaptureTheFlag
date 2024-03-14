@@ -90,9 +90,9 @@
 
   <modules>
     <module>cfp-service-main</module>
-    <module>ctf-UI</module>
-    <module>ctf-AI</module>
-    <module>ctf-Client</module>
+    <module>ctf-ui</module>
+    <module>ctf-ai</module>
+    <module>ctf-client</module>
   </modules>
 
    <build>

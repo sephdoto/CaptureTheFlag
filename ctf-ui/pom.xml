@@ -8,9 +8,9 @@
     <version>0.1.0</version>
   </parent>
   <groupId>org.ctf</groupId>
-  <artifactId>ctf-UI</artifactId>
+  <artifactId>ctf-ui</artifactId>
   <version>0.1.0</version>
-  <name>ctf-UI</name>
+  <name>ctf-ui</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
