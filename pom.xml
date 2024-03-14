@@ -86,6 +86,7 @@
     <module>ctf-ui</module>
     <module>ctf-ai</module>
     <module>ctf-client</module>
+    <module>shared</module>
   </modules>
 
   <build>
