@@ -1,13 +1,14 @@
 package org.ctf.client.tools;
 
-import org.ctf.client.constants.Constants;
-import org.ctf.client.state.data.map.Directions;
-import org.ctf.client.state.data.map.MapTemplate;
-import org.ctf.client.state.data.map.Movement;
-import org.ctf.client.state.data.map.PieceDescription;
-import org.ctf.client.state.data.map.PlacementType;
-import org.ctf.client.state.data.map.Shape;
-import org.ctf.client.state.data.map.ShapeType;
+import org.ctf.shared.constants.Constants;
+import org.ctf.shared.state.data.map.Directions;
+import org.ctf.shared.state.data.map.MapTemplate;
+import org.ctf.shared.state.data.map.Movement;
+import org.ctf.shared.state.data.map.PieceDescription;
+import org.ctf.shared.state.data.map.PlacementType;
+import org.ctf.shared.state.data.map.Shape;
+import org.ctf.shared.state.data.map.ShapeType;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.json.JSONObject;

@@ -3,18 +3,18 @@ package org.ctf.client;
 import java.util.Date;
 
 import org.ctf.client.layer.CommLayer;
-import org.ctf.client.state.GameState;
-import org.ctf.client.state.Move;
-import org.ctf.client.state.data.exceptions.Accepted;
-import org.ctf.client.state.data.exceptions.ForbiddenMove;
-import org.ctf.client.state.data.exceptions.GameOver;
-import org.ctf.client.state.data.exceptions.InvalidMove;
-import org.ctf.client.state.data.exceptions.NoMoreTeamSlots;
-import org.ctf.client.state.data.exceptions.SessionNotFound;
-import org.ctf.client.state.data.exceptions.URLError;
-import org.ctf.client.state.data.map.MapTemplate;
 import org.ctf.client.state.data.wrappers.GameSessionResponse;
 import org.ctf.client.state.data.wrappers.JoinGameResponse;
+import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.Move;
+import org.ctf.shared.state.data.exceptions.Accepted;
+import org.ctf.shared.state.data.exceptions.ForbiddenMove;
+import org.ctf.shared.state.data.exceptions.GameOver;
+import org.ctf.shared.state.data.exceptions.InvalidMove;
+import org.ctf.shared.state.data.exceptions.NoMoreTeamSlots;
+import org.ctf.shared.state.data.exceptions.SessionNotFound;
+import org.ctf.shared.state.data.exceptions.URLError;
+import org.ctf.shared.state.data.map.MapTemplate;
 
 import com.google.gson.Gson;
 

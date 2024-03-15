@@ -1,10 +1,10 @@
 package org.ctf.ai;
 
 import org.ctf.ai.AI_Tools.InvalidShapeException;
-import org.ctf.client.state.GameState;
-import org.ctf.client.state.Move;
-import org.ctf.client.state.Piece;
-import org.ctf.client.state.data.map.Directions;
+import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.Move;
+import org.ctf.shared.state.Piece;
+import org.ctf.shared.state.data.map.Directions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

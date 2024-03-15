@@ -1,4 +1,4 @@
-package org.ctf.client.state.data.exceptions;
+package org.ctf.shared.state.data.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

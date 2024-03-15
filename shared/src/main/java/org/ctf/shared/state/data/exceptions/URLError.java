@@ -1,4 +1,4 @@
-package org.ctf.client.state.data.exceptions;
+package org.ctf.shared.state.data.exceptions;
 
 /**
  * Represents a special exception 404 Not Found (URL Error)

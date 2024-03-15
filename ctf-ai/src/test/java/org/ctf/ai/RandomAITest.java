@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import org.ctf.ai.AI_Tools.InvalidShapeException;
 import org.ctf.ai.AI_Tools.NoMovesLeftException;
-import org.ctf.client.state.GameState;
-import org.ctf.client.state.Piece;
+import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.Piece;
 
 
 class RandomAITest {

@@ -1,4 +1,4 @@
-package org.ctf.client.state.data.map;
+package org.ctf.shared.state.data.map;
 
 import org.json.JSONObject;
 import org.json.JSONString;

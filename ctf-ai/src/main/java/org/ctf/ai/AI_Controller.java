@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import org.ctf.ai.AI_Tools.InvalidShapeException;
 import org.ctf.ai.AI_Tools.NoMovesLeftException;
-import org.ctf.client.constants.Constants.AI;
-import org.ctf.client.state.GameState;
-import org.ctf.client.state.Move;
-import org.ctf.client.state.Piece;
-import org.ctf.client.state.Team;
-import org.ctf.client.state.data.map.MapTemplate;
 import org.ctf.client.tools.JSON_Tools;
 import org.ctf.client.tools.JSON_Tools.MapNotFoundException;
+import org.ctf.shared.constants.Constants.AI;
+import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.Move;
+import org.ctf.shared.state.Piece;
+import org.ctf.shared.state.Team;
+import org.ctf.shared.state.data.map.MapTemplate;
 
 /**
  * @author sistumpf This class requests a GameState from the server, uses one of the implemented AIs

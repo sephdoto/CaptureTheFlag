@@ -1,6 +1,6 @@
-package org.ctf.client.state;
+package org.ctf.shared.state;
 
-import org.ctf.client.state.data.map.PieceDescription;
+import org.ctf.shared.state.data.map.PieceDescription;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

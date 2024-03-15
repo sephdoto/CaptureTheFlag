@@ -5,10 +5,12 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import org.ctf.client.state.data.map.Directions;
-import org.ctf.client.state.data.map.Movement;
-import org.ctf.client.state.data.map.PieceDescription;
+
 import org.ctf.client.tools.JSON_Tools;
+import org.ctf.shared.state.data.map.Directions;
+import org.ctf.shared.state.data.map.Movement;
+import org.ctf.shared.state.data.map.PieceDescription;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

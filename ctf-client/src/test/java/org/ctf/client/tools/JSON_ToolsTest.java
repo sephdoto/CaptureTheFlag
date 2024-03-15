@@ -6,10 +6,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import org.ctf.client.constants.Constants;
-import org.ctf.client.state.data.map.MapTemplate;
 import org.ctf.client.tools.JSON_Tools.IncompleteMapTemplateException;
 import org.ctf.client.tools.JSON_Tools.MapNotFoundException;
+import org.ctf.shared.constants.Constants;
+import org.ctf.shared.state.data.map.MapTemplate;
+
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.Gson;
 import org.junit.jupiter.api.AfterAll;

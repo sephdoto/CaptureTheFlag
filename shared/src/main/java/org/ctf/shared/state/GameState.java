@@ -1,4 +1,4 @@
-package org.ctf.client.state;
+package org.ctf.shared.state;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

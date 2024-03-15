@@ -1,6 +1,6 @@
 package org.ctf.client.state.data.wrappers;
 
-import org.ctf.client.state.data.map.MapTemplate;
+import org.ctf.shared.state.data.map.MapTemplate;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

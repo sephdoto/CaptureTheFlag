@@ -1,4 +1,4 @@
-package org.ctf.client.state.data.map;
+package org.ctf.shared.state.data.map;
 
 /**
  * This enum represents strategies for piece placements.

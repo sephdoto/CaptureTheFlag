@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import org.ctf.client.state.GameState;
-import org.ctf.client.state.Move;
-import org.ctf.client.state.Piece;
-import org.ctf.client.state.data.map.Directions;
-import org.ctf.client.state.data.map.ShapeType;
+import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.Move;
+import org.ctf.shared.state.Piece;
+import org.ctf.shared.state.data.map.Directions;
+import org.ctf.shared.state.data.map.ShapeType;
 
 /**
  * @author sistumpf

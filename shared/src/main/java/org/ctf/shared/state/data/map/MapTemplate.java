@@ -1,4 +1,4 @@
-package org.ctf.client.state.data.map;
+package org.ctf.shared.state.data.map;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.json.JSONArray;

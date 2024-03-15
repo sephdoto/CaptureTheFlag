@@ -2,8 +2,8 @@ package org.ctf.client;
 
 
 
-import org.ctf.client.state.GameState;
-import org.ctf.client.state.data.map.MapTemplate;
+import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.data.map.MapTemplate;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
