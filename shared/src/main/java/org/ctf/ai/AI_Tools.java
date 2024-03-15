@@ -16,8 +16,8 @@ import org.ctf.shared.state.data.map.ShapeType;
  */
 public class AI_Tools {
 		/**
-		 * TODO change location of this method, location might not not be final
-		 * @author sistumpf
+		 * Given a Piece and a GameState containing the Piece, an ArrayList with all valid locations the Piece can walk on is returned.
+		 * The ArrayList contains int[2] values, representing a (y,x) location on the grid.
 		 * @param GameState gameState
 		 * @param String pieceID
 		 * @return ArrayList<int[]> that contains all valid positions a piece could move to
