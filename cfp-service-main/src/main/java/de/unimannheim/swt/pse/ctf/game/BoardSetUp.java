@@ -108,29 +108,7 @@ public class BoardSetUp {
     		}
     	}
     	
-      switch(template.getPlacement()) {
-        case symmetrical: 
-          //placing blocks   TODO more than two teams
-          String[][] blockGrid = Arrays.copyOf(grid, grid.length/2);
-          placeBlocks(template, blockGrid, template.getBlocks()/2);
-          
-          for(int y=0; y<blockGrid.length; y++) {
-            for(int x=0; x<blockGrid[y].length; x++) {
-              if(blockGrid[y][x].equals("b")) {
-                grid[y][x] = "b";
-                grid[grid.length-1-y][grid[y].length-1-x] = "b";
-              }
-            }
-          }
-          
-          break;
-        case spaced_out:
-          placeBlocks(template, grid, template.getBlocks());
-          break;
-        case defensive:
-          placeBlocks(template, grid, template.getBlocks());
-          break;
-      }
+    	placeBlocks(template, grid, template.getBlocks());
     }
 
     /**
