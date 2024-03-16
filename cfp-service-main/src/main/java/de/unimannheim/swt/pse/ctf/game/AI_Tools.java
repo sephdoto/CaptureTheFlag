@@ -1,19 +1,51 @@
 package de.unimannheim.swt.pse.ctf.game;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
+import de.unimannheim.swt.pse.ctf.game.map.Directions;
+import de.unimannheim.swt.pse.ctf.game.map.ShapeType;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Move;
 import de.unimannheim.swt.pse.ctf.game.state.Piece;
-import de.unimannheim.swt.pse.ctf.game.map.Directions;
-import de.unimannheim.swt.pse.ctf.game.map.ShapeType;
+
 
 /**
  * @author sistumpf
- * This class includes useful methods to analyze and work with GameStates and Moves.
+ * This class is a copy of AI_Tools from shared class but it uses and returns classes from the server.
+ * As the map or state package exists in the shared and ctf module, here the ctf versions are used.
  */
 public class AI_Tools {
+		/**
+		 * Given a Piece and a GameState containing the Piece, an ArrayList with all valid locations the Piece can walk on is returned.
+		 * The ArrayList contains int[2] values, representing a (y,x) location on the grid.
+		 * @param GameState gameState
+		 * @param String pieceID
+		 * @return ArrayList<int[]> that contains all valid positions a piece could move to
+		 */
+	  	public static ArrayList<int[]> getPossibleMoves(GameState gameState, String pieceID) {
+			Piece piece = Arrays.stream(gameState.getTeams()[Integer.parseInt(pieceID.split(":")[1].split("_")[0])].getPieces()).filter(p -> p.getId().equals(pieceID)).findFirst().get();
+			ArrayList<int[]> possibleMoves = new ArrayList<int[]>();
+			
+			if(piece.getDescription().getMovement().getDirections() == null) {
+				try {
+					AI_Tools.createShapeMoveList(gameState, piece).stream().forEach(m -> possibleMoves.add(m.getNewPosition()));
+				} catch (InvalidShapeException e) {e.printStackTrace();}
+				
+			} else {
+				HashMap<Integer, Integer> dirMap = AI_Tools.createDirectionMap(gameState, piece);
+				for(Integer direction : dirMap.keySet()) {
+					for(int reach = dirMap.get(direction); reach>0; reach--) {
+						Move move = AI_Tools.checkMoveValidity(gameState, piece, direction, reach);
+						if(move != null)
+							possibleMoves.add(move.getNewPosition());
+					}
+				}
+			}
+			return possibleMoves;
+		}
+	
 	  /**
 	   * Selects and returns a random Move from an ArrayList which only contains valid Moves.
 	   * @param moveArrayList

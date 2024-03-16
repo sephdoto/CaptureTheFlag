@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import de.unimannheim.swt.pse.ctf.game.exceptions.GameOver;
@@ -189,12 +190,11 @@ public class GameEngine implements Game {
      */
     @Override
     public boolean isValidMove(Move move) {
-        if(isStarted()){
-        	Piece piece = Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(move.getPieceId())).findFirst().get();
-            return AI_Tools.validPos(move.getNewPosition(), piece, gameState);    
-        } else {
-            return false;
-        }
+    	if(isStarted()){
+    		return AI_Tools.getPossibleMoves(this.gameState, move.getPieceId()).stream().anyMatch(
+    				i -> i[0] == move.getNewPosition()[0] && i[1] == move.getNewPosition()[1]);
+    	}
+    	return false;
     }
 
     /**
@@ -419,5 +419,19 @@ public class GameEngine implements Game {
     	
     }
     
+    /**
+     * TODO Test Konstruktor von Simon
+     * Kann entfernt werden wenn das Generieren von GameStates funktioniert, wird in der Test Klasse gebraucht.
+     */
+    public GameEngine(GameState gameState) {
+    	this.gameState = gameState;
+    	this.isGameOver = false;
+    }
+    /**
+     * TODO Default Konstruktor von Simon
+     * Kann entfernt werden wenn das Generieren von GameStates funktioniert, wird in der Test Klasse gebraucht.
+     */
+    public GameEngine() {
+    }
     
 }
