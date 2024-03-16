@@ -164,6 +164,7 @@ public class GameEngine implements Game {
     }
 
     /**
+     * @author rsyed
      * Checks whether the game is started based on the current {@link GameState}.
      *
      * <ul>

@@ -14,7 +14,7 @@ import com.google.gson.GsonBuilder;
  * Tests for the layer and the responses it gives out.
  */
 public class ServerCommandTests {
-    
+  public GameState gs = new GameState();
     /* Notes while testing
      * on successful request. Returns gamesessionID, gameover flag and winners;
      * if flags for ALTERNATE game modes are set in the map, then also returns data
@@ -23,9 +23,12 @@ public class ServerCommandTests {
      * which is a VERY weird behaviour
      * 
      */
-
+  public synchronized void setState(GameState gs){
+      this.gs = gs;
+  }
 
     public static void main (String[] args){
+      
       //Uncomment to do invidivual tests
         testConnection();
         //testConnectionTimedGameMode();
@@ -35,6 +38,9 @@ public class ServerCommandTests {
         //join();
         //joinNDelete();
     }
+
+
+    
 
   public static void testConnection(){
         String jsonPayload = """
@@ -158,11 +164,82 @@ public class ServerCommandTests {
             System.out.println(client.getSecretID());
             client.joinGame("team2");
             System.out.println(client.getSecretID());
-            client.joinGame("team3");
-            System.out.println(client.getSecretID());
-            client.refreshSession();
-            GameState gs = client.getState();
-            System.out.println(gson.toJson(gs));
+            //client.joinGame("team3");
+           // System.out.println(client.getSecretID());
+            client.refreshSession(); 
+            ServerCommandTests st = new ServerCommandTests();
+
+            Thread t = new Thread() {
+              public void run() {
+                long start1 = System.currentTimeMillis();
+              for(int i = 0; i < 10000;i++){
+                st.setState(client.getState());
+                //System.out.println(gson.toJson(gs));
+              }
+              long end1 = System.currentTimeMillis();  
+              System.out.println("T1 Elapsed Time in ms: "+ (end1-start1));
+            }
+          };
+          t.start();
+
+          Thread t2 = new Thread() {
+            public void run() {
+              long start2 = System.currentTimeMillis();
+              for(int i = 0; i < 10000;i++){
+                st.setState(client.getState());
+                //System.out.println(gson.toJson(gs));
+              }
+              long end2 = System.currentTimeMillis();  
+              System.out.println("T2 Elapsed Time in ms: "+ (end2-start2));
+            }
+        };
+        t2.start();
+
+        Thread t3 = new Thread() {
+          public void run() {
+            long start1 = System.currentTimeMillis();
+              for(int i = 0; i < 10000;i++){
+                st.setState(client.getState());
+                //System.out.println(gson.toJson(gs));
+              }
+              long end1 = System.currentTimeMillis();  
+              System.out.println("T3 Elapsed Time in ms: "+ (end1-start1));
+            }
+      };
+      t3.start();
+
+      Thread t4 = new Thread() {
+        public void run() {
+          long start1 = System.currentTimeMillis();
+              for(int i = 0; i < 10000;i++){
+                st.setState(client.getState());
+                //System.out.println(gson.toJson(gs));
+              }
+              long end1 = System.currentTimeMillis();  
+              System.out.println("T4 Elapsed Time in ms: "+ (end1-start1));
+            
+        }
+    };
+    t4.start();
+    
+    Thread t5 = new Thread() {
+      public void run() {
+        long start1 = System.currentTimeMillis();
+        try {
+          sleep(10000);
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        long end1 = System.currentTimeMillis();  
+              System.out.println("T4 Elapsed Time in ms: "+ (end1-start1));
+      }
+  };
+  t5.start();
+           
+            //long end1 = System.currentTimeMillis();      
+           // System.out.println("Elapsed Time in ms: "+ (end1-start1));
+            
             //System.out.println(client.gameOver);
             
             

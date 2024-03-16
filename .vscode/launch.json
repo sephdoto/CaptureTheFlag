@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ServerCommandTests",
+            "request": "launch",
+            "mainClass": "org.ctf.client.ServerCommandTests",
+            "projectName": "ctf-client"
+        },
+        {
+            "type": "java",
             "name": "GameEngine",
             "request": "launch",
             "mainClass": "de.unimannheim.swt.pse.ctf.game.GameEngine",
@@ -58,7 +65,10 @@
             "name": "CtfApplication",
             "request": "launch",
             "mainClass": "de.unimannheim.swt.pse.ctf.CtfApplication",
-            "projectName": "ctf"
+            "projectName": "ctf",
+            "noDebug": false,
+            "__progressId": "77aea0c7-7869-4f36-b31f-486e91de5ae2",
+            "__origin": "internal"
         }
     ]
 }
