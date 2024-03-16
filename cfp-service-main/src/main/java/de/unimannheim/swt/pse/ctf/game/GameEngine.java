@@ -190,7 +190,7 @@ public class GameEngine implements Game {
     @Override
     public boolean isValidMove(Move move) {
         if(isStarted()){
-            Piece piece = (Piece)(Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(move.getPieceId())));
+        	Piece piece = Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(move.getPieceId())).findFirst().get();
             return AI_Tools.validPos(move.getNewPosition(), piece, gameState);    
         } else {
             return false;

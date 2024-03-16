@@ -23,7 +23,7 @@ public class AI_Tools {
 		 * @return ArrayList<int[]> that contains all valid positions a piece could move to
 		 */
 	  	public static ArrayList<int[]> getPossibleMoves(GameState gameState, String pieceID) {
-			Piece piece = (Piece) Arrays.stream(gameState.getTeams()[Integer.parseInt(pieceID.split(":")[1].split("_")[0])].getPieces()).filter(p -> p.getId().equals(pieceID)).toArray()[0];
+			Piece piece = Arrays.stream(gameState.getTeams()[Integer.parseInt(pieceID.split(":")[1].split("_")[0])].getPieces()).filter(p -> p.getId().equals(pieceID)).findFirst().get();
 			ArrayList<int[]> possibleMoves = new ArrayList<int[]>();
 			
 			if(piece.getDescription().getMovement().getDirections() == null) {
