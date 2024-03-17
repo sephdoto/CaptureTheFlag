@@ -17,13 +17,13 @@ public class TestValues {
 		Team team1 = new Team();
 		team1.setBase(new int[] {0,0});
 		team1.setColor("red");
-		team1.setFlag(new int[] {0,0});
+		team1.setFlag(new int[] {1});
 		team1.setId("0");
 
 		Team team2 = new Team();
 		team2.setBase(new int[] {9,9});
 		team2.setColor("blue");
-		team2.setFlag(new int[] {9,9});
+		team2.setFlag(new int[] {1});
 		team2.setId("1");
 
 		Piece[] pieces1 = new Piece[0];
@@ -66,13 +66,13 @@ public class TestValues {
 		Team team1 = new Team();
 		team1.setBase(new int[] {0,0});
 		team1.setColor("red");
-		team1.setFlag(new int[] {0,0});
+		team1.setFlag(new int[] {mt.getFlags()});
 		team1.setId("0");
 
 		Team team2 = new Team();
 		team2.setBase(new int[] {9,9});
 		team2.setColor("blue");
-		team2.setFlag(new int[] {9,9});
+		team2.setFlag(new int[] {mt.getFlags()});
 		team2.setId("1");
 
 		Piece[] pieces1 = new Piece[8];

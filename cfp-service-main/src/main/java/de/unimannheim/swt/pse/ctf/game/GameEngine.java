@@ -4,6 +4,7 @@ package de.unimannheim.swt.pse.ctf.game;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -217,17 +218,32 @@ public class GameEngine implements Game {
     }
 
     /**
-     *
+     * Returns the remaining time in seconds.
+     * @author sistumpf
      * @return -1 if no total game time limit set, 0 if over, > 0 if seconds remain
      */
     @Override
     public int getRemainingGameTimeInSeconds() {
-        if (!timeLimit) { // If no limit is set returns -1
-            return -1;
-        } else if (isGameOver) { // if GameOver flag is set returns 0
-            return 0;
-        }
-        return 1; // Otherwise returns 1
+      if (!timeLimit) {
+        return -1;
+      } else if (isGameOver) {
+        return 0;
+      }
+      
+      Calendar now = Calendar.getInstance();
+      Calendar end = Calendar.getInstance();
+      end.setTime(endDate);
+      
+      if(now.after(end))
+        return 0;  
+      
+      int returnTime;
+      try{
+        returnTime = Math.toIntExact((end.getTimeInMillis() - now.getTimeInMillis()) / 1000);
+      } catch (ArithmeticException ae) {
+        returnTime = Integer.MAX_VALUE;
+      }
+      return returnTime;
     }
 
     /**
@@ -250,36 +266,56 @@ public class GameEngine implements Game {
      */
     @Override
     public void makeMove(Move move) {
-        if(!isValidMove(move))
-          throw new InvalidMove();
-        
-        String occupant = gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]];
-        int[] oldPos = ((Piece)(Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p->p.getId().equals(move.getPieceId())).toArray()[0])).getPosition();
+      if(isGameOver()) {
+        return;
+      } else if(!isValidMove(move)) {
+        throw new InvalidMove();
+      }
 
-        gameState.getGrid()[oldPos[0]][oldPos[1]] = "";
-        gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
+      String occupant = gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]];
+      int[] oldPos = ((Piece)(Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p->p.getId().equals(move.getPieceId())).toArray()[0])).getPosition();
 
-        if(occupant.contains("p:")) {
-          int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
-          gameState.getTeams()[occupantTeam].setPieces((Piece[])Arrays.asList(gameState.getTeams()[occupantTeam].getPieces()).stream().filter(p->!p.getId().equals(occupant)).toArray());
+      gameState.getGrid()[oldPos[0]][oldPos[1]] = "";
+      gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
+
+      if(occupant.contains("p:")) {
+        int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
+        gameState.getTeams()[occupantTeam].setPieces((Piece[])Arrays.asList(gameState.getTeams()[occupantTeam].getPieces()).stream().filter(p->!p.getId().equals(occupant)).toArray());
+      }
+
+      gameState.setCurrentTeam((gameState.getCurrentTeam()+1) % gameState.getTeams().length);
+      gameState.setLastMove(move);
+
+      
+      //TODO Flagge/Base Logik
+      gameOverCheck();
+    }
+
+
+    /**
+     * The {@link GameEngine#isGameOver()} method only returns the {@link GameEngine#isGameOver} value, so this method
+     * implements the game over checks.
+     * It updates the isGameOver {@link GameEngine#isGameOver} value accordingly.
+     * @author sistumpf
+     */
+    public void gameOverCheck() {
+      if(getRemainingGameTimeInSeconds() == 0) {
+        this.isGameOver = true;
+        return;
+      }
+      
+      for(Team team : gameState.getTeams()) {
+        if(team.getFlag()[0] < 1) {
+          this.isGameOver = true;
+          return;
+        } else if (team.getPieces().length == 0) {
+          this.isGameOver = true;
+          return;
         }
-        
-        gameState.setCurrentTeam((gameState.getCurrentTeam()+1) % gameState.getTeams().length);
-        gameState.setLastMove(move);
-
-        //TODO Flagge/Base Logik, GameOver check, 
-        if(gameOverCheck())
-        	this.isGameOver = true;
-    }
-    
-    
-    public boolean gameOverCheck() {
-    	System.out.println("Flags: " + gameState.getTeams()[0].getFlag());
-    	Arrays.stream(gameState.getTeams()).iterator().forEachRemaining(team -> System.out.println(team.getFlag()));
-    	return true;
+      }
     }
 
-    
+
     /**
      * @return Start {@link Date} of game
      */
@@ -424,9 +460,11 @@ public class GameEngine implements Game {
      * TODO Test Konstruktor von Simon
      * Kann entfernt werden wenn das Generieren von GameStates funktioniert, wird in der Test Klasse gebraucht.
      */
-    public GameEngine(GameState gameState) {
+    public GameEngine(GameState gameState, boolean isGameOver, boolean withTimeLimit, Date endDate) {
     	this.gameState = gameState;
-    	this.isGameOver = false;
+    	this.isGameOver = isGameOver;
+    	this.endDate = endDate;
+    	this.timeLimit = withTimeLimit;
     }
     /**
      * TODO Default Konstruktor von Simon
