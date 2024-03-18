@@ -1,7 +1,10 @@
 package org.ctf.ai.mcts;
 
+import java.util.ArrayList;
 import java.util.Random;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.state.Team;
+
 
 public class MCTS {
     Random rand;
@@ -73,12 +76,13 @@ public class MCTS {
      * @return null if anything unforeseen happens
      */
     TreeNode expand(TreeNode selected){
+    	/*
         for(int i=0; i < selected.children.length; i++) {
             if(selected.children[i] == null && selected.gameState[i + (selected.player ? 0 : Constants.CHILDREN)] != 0) {
                 selected.children[i] = oneMove(selected, i + (selected.player ? 0 : Constants.CHILDREN));           
                 return selected.children[i];
             }
-        }
+        }*/
         return null;
     }
 
@@ -91,8 +95,9 @@ public class MCTS {
      *         false if player B wins the simulation (either by getting more beans or player A having no moves left)
      *         default case is a heuristic. if it returns value > 0, player A is winning
      */
-    boolean simulate(TreeNode simulateOn){      
+    int[] simulate(TreeNode simulateOn){      
         int isTerminal = isTerminal(simulateOn);
+        /*
         
         for(int i=0; i < Constants.MAX_STEPS && isTerminal == 4; i++, isTerminal = isTerminal(simulateOn)) {
             int field = pickField(simulateOn);
@@ -117,6 +122,8 @@ public class MCTS {
                 int score = terminalHeuristic(simulateOn);
                 return score == 0 ? !simulateOn.player : score > 0;
             }
+            */
+        return null;
     }
 
 
@@ -134,31 +141,24 @@ public class MCTS {
     
 
     /**
-     * picks a (random) field to make a move on
-     * @return an int between 0 and Constants.Children (if it's player As turn)
-     *         an int between Constants.Children and 2 * Constants.Children (if it's player Bs turn)
+     * picks a (random) move to make a move on
+     * @return a random chosen move out of an ArrayList containing possible moves.
      */
-    short pickField(TreeNode simulateOn) {
-        short field;
-        do {
-            field = (short) (rand.nextInt(Constants.CHILDREN) + (simulateOn.player ? 0 : Constants.CHILDREN));
-        } while(simulateOn.gameState[field] == 0);
-        return field;
+    int[] pickField(ArrayList<int[]> moveList) {
+        return moveList.get(rand.nextInt(moveList.size()));
     }
 
 
     /**
      * propagates the simulation result up the tree until the root element is reached
      * @param node on which the simulation was executed
-     * @param winner of the simulation, winner == true if player A won
+     * @param an int Array containing as many spaces as teams are left, a place in the Array corresponds to the teamId and contains the number of wins of that team.
      */
-    void backpropagate(TreeNode child, boolean winner){
+    void backpropagate(TreeNode child, int[] wins){
         while(child != null) {
-            if(winner) {
-                child.winsP1++;
-            } else {
-                child.winsP2++;
-            }
+        	for(int i : wins) {
+        		child.wins[i] += wins[i];
+        	}
             child = child.parent;
         }
     }
@@ -169,63 +169,25 @@ public class MCTS {
      * generates an array with a players 6 fields and their number of beans,
      * checks if any of the players have more than half the beans needed to win or have any moves left
      * @param a node to check if it is terminal
-     * @return 0 if player A won by gaining more beans
-     *         1 if player B won by gaining more beans
-     *         2 if player has no more moves left
-     *         4 if the node is not terminal
+     * @return -1 if the game is not over
+     * 		   0 - Integer.MAX_VALUE winner team id
      */
-    byte isTerminal(TreeNode node) {
-        if(getMoves(node) == 0) {
-            return 2;
-        } else if(node.pointsP1 > Constants.HALF_THE_BEANS) {
-            return 0;
-        } else if(node.pointsP2 > Constants.HALF_THE_BEANS) {
-            return 1;
-        } else {
-            return 4;
-        }
-    }
-
-    /**
-     * checks how many moves are possible on a nodes gameState.
-     * uses the nodes attribute "player" which stores if it is player As or Bs turn
-     * to select the right side of the board for checking
-     * @param TreeNode to be checked
-     * @return number of possible moves from the given state
-     */
-    int getMoves(TreeNode node) {
-        int possibleMoves = 0;
-        for(int i=0; i < node.children.length; i++) {
-            if(node.gameState[i + (node.player ? 0 : Constants.CHILDREN)] != 0) {
-                possibleMoves++;
-            }
-        }
-        return possibleMoves;
+    int isTerminal(TreeNode node) {
+    	if(node.gameState.getTeams().length == 1)
+    		return Integer.parseInt(node.gameState.getTeams()[0].getId());
+    	//TODO : wenn ein Team verloren hat wird es aus der Teams liste des GameStates entfernt
+    	
+    	return -1;
     }
 
 
     /**
-     * checks if all possible children from a specific node are expanded
+     * Checks if all possible children from a specific node are expanded
      * @param parent node
      * @return true if all children are expanded
      */
     boolean isFullyExpanded(TreeNode parent) {
-        return numberOfChildren(parent) == getMoves(parent);
-    }
-
-
-    /**
-     * checks how many children nodes are expanded on a given parent node
-     * @param parent
-     * @return number of expanded children
-     */
-    int numberOfChildren(TreeNode parent) {
-        int expandedChildren = 0;
-        for(TreeNode node : parent.children) {
-            if(node == null)
-                expandedChildren--;
-        }
-        return expandedChildren;
+    	return parent.possibleMoves.keySet().size() == 0;
     }
 
     
@@ -282,6 +244,15 @@ public class MCTS {
      * @return a child node containing the simulation result
      */
     TreeNode oneMove(TreeNode parent, int field) {
+    	TreeNode child = parent.clone();
+    	String key = parent.possibleMoves.keySet().toArray()[rand.nextInt(parent.possibleMoves.keySet().size())].toString();	//TODO test
+    	int randomMove = rand.nextInt(parent.possibleMoves.get(key).size());
+    	int[] move = parent.possibleMoves.get(key).get(randomMove);	//TODO test	
+    	parent.possibleMoves.get(key).remove(randomMove);
+    	if(parent.possibleMoves.get(key).size() == 0)
+    		parent.possibleMoves.remove(key);
+    	
+    	/*
         TreeNode child = parent.clone();
 
         child.gameState[field] = 0;
@@ -301,8 +272,9 @@ public class MCTS {
             } else {
                 break;
             }
-        }
+        }*/
         
+    	
         return child;
     }   
     
