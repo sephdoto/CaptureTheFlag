@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CtfClientApplication",
+            "request": "launch",
+            "mainClass": "org.ctf.client.CtfClientApplication",
+            "projectName": "ctf-client"
+        },
+        {
+            "type": "java",
+            "name": "clientTest",
+            "request": "launch",
+            "mainClass": "org.ctf.client.clientTest",
+            "projectName": "ctf-client"
+        },
+        {
+            "type": "java",
             "name": "ServerCommandTests",
             "request": "launch",
             "mainClass": "org.ctf.client.ServerCommandTests",

@@ -30,8 +30,7 @@ import org.ctf.shared.state.data.map.MapTemplate;
 import com.google.gson.Gson;
 
 /**
- * Layer file which is going to contain commands sent to the Rest API running on
- * the game server
+ * V1 of Communication Layer which is using Java library to make calls and get data from the REST Api Server
  * 
  * @author rsyed
  * @return Layer Object

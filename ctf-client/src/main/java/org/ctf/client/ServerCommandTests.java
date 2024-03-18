@@ -149,7 +149,7 @@ public class ServerCommandTests {
     MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
 
     TestClient client = new TestClient();
-    client.connect("http://localhost:8888", test);
+    client.connect("http://localhost:8080", test);
     System.out.println(client.getSessionID());
 
     client.joinGame("team1");
@@ -160,7 +160,7 @@ public class ServerCommandTests {
     // System.out.println(client.getSecretID());
     client.refreshSession();
     GameState  gs = client.getState();
-    System.out.println(gson.toJson(gs));
+   // System.out.println(gson.toJson(gs));
     
     ServerCommandTests st = new ServerCommandTests();
 

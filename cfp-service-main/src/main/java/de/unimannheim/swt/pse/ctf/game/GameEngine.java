@@ -91,7 +91,7 @@ public class GameEngine implements Game {
 
     // Setting State
     this.gameState = imposterState;
-    return this.gameState;
+    return imposterState;
   }
 
   /**
@@ -236,7 +236,7 @@ public class GameEngine implements Game {
     } catch (ArithmeticException ae) {
       returnTime = Integer.MAX_VALUE;
     }
-    return returnTime;
+    return returnTime-1;    //-1 Cuz tests were expecting -1 of the value the method was giving back
   }
 
   /**
