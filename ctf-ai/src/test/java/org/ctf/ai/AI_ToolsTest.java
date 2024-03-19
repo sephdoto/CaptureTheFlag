@@ -193,11 +193,8 @@ public class AI_ToolsTest {
 		assertFalse(RandomAI.validPos(new int[] {2,2}, weakPiece, gameState));									//weak Pawn cannot capture a stronger rook from team0
 		assertFalse(RandomAI.validPos(new int[] {7,2}, gameState.getTeams()[0].getPieces()[0], gameState));		//rook team1 cannot capture a team1 piece
 		assertFalse(RandomAI.validPos(new int[] {5,3}, gameState.getTeams()[0].getPieces()[0], gameState));		//5,3 is occupied by a block
-
-		//TODO walk on same team base check (I dont know the behavior for this)
-		assertFalse(RandomAI.validPos(new int[] {9,9}, gameState.getTeams()[0].getPieces()[0], gameState));
-		//TODO walk on opponent base check (I dont know the behavior for this)
-		assertFalse(RandomAI.validPos(new int[] {0,0}, gameState.getTeams()[0].getPieces()[0], gameState));
+		assertFalse(RandomAI.validPos(new int[] {9,9}, gameState.getTeams()[0].getPieces()[0], gameState));		//it is not possible to walk on the own base
+		assertTrue(RandomAI.validPos(new int[] {0,0}, gameState.getTeams()[0].getPieces()[0], gameState));		//it is possible to walk on an opponents base
 	}
 
 	@Test

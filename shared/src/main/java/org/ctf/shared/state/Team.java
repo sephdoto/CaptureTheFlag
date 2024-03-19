@@ -15,13 +15,13 @@ public class Team {
     )
     private String color;
     @Schema(
-            description = "the base(s) of the team"
+            description = "the position of the base of the team"
     )
     private int[] base;
     @Schema(
             description = "how many flags are in each base"
     )
-    private int[] flag;
+    private int flags;
     @Schema(
             description = "remaining pieces on the grid"
     )
@@ -31,7 +31,7 @@ public class Team {
         this.id = "";
         this.color = "";
         this.base = new int[2];
-        this.flag = new int[2];
+        this.flags = 1;
         this.pieces = new Piece[0];
     }
 
@@ -59,14 +59,6 @@ public class Team {
         this.base = base;
     }
 
-    public int[] getFlag() {
-        return flag;
-    }
-
-    public void setFlag(int[] flag) {
-        this.flag = flag;
-    }
-
     public Piece[] getPieces() {
         return pieces;
     }
@@ -75,4 +67,11 @@ public class Team {
         this.pieces = pieces;
     }
 
+    public int getFlags() {
+        return flags;
+    }
+
+    public void setFlags(int flags) {
+        this.flags = flags;
+    }
 }

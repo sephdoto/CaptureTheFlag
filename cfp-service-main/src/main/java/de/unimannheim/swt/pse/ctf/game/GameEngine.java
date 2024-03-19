@@ -256,7 +256,7 @@ public class GameEngine implements Game {
   }
 
   /**
-   * Make a move
+   * Here a move, if valid, updates the grid, a pieces position, a teams flags and the time.
    *
    * @author sistumpf
    * @param move {@link Move}
@@ -272,13 +272,8 @@ public class GameEngine implements Game {
     }
 
     String occupant = gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]];
-    int[] oldPos =
-        ((Piece)
-                (Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces())
-                    .stream()
-                    .filter(p -> p.getId().equals(move.getPieceId()))
-                    .toArray()[0]))
-            .getPosition();
+    Piece picked = Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(move.getPieceId())).findFirst().get();
+    int[] oldPos = picked.getPosition();
 
     gameState.getGrid()[oldPos[0]][oldPos[1]] = "";
     gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
@@ -290,6 +285,9 @@ public class GameEngine implements Game {
               Arrays.asList(gameState.getTeams()[occupantTeam].getPieces()).stream()
                   .filter(p -> !p.getId().equals(occupant))
                   .toArray());
+    } else if (occupant.contains("b:")) {
+    	gameState.getTeams()[Integer.parseInt(picked.getTeamId())].setFlags(gameState.getTeams()[Integer.parseInt(picked.getTeamId())].getFlags() -1);
+    	respawnPiece(picked);
     }
 
     gameState.setCurrentTeam((gameState.getCurrentTeam() + 1) % gameState.getTeams().length);
@@ -301,8 +299,18 @@ public class GameEngine implements Game {
       this.nextMoveTime = lastMoveTime.plusSeconds(currentTemplate.getMoveTimeLimitInSeconds());
     }
 
-    // TODO Flagge/Base Logik
     gameOverCheck();
+  }
+  
+  /**
+   * TODO
+   * Respawns a Piece near its own base after it captured a flag.
+   * Alters the pieces position and places it on the grid.
+   * @author sistumpf
+   * @param piece
+   */
+  public void respawnPiece(Piece piece) {
+	  
   }
 
   /**
@@ -319,7 +327,7 @@ public class GameEngine implements Game {
     }
 
     for (Team team : gameState.getTeams()) {
-      if (team.getFlag()[0] < 1) {
+      if (team.getFlags() < 1) {
         this.isGameOver = true;
         this.endDate =
             Date.from(

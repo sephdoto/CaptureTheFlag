@@ -46,7 +46,7 @@ public class BoardSetUp {
       team.setBase(new int[] {template.getGridSize()[1] - 1, template.getGridSize()[0] - 1});
     }
 
-    team.setFlag(new int[] {template.getFlags()});
+    team.setFlags(template.getFlags());
 
     Piece[] pieces = new Piece[indPieces.size()]; // putting the pieces in an array
     int iterator = 0;
