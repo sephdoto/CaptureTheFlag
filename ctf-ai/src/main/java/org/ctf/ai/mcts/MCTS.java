@@ -3,19 +3,18 @@ package org.ctf.ai.mcts;
 import java.util.ArrayList;
 import java.util.Random;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
 
 
 public class MCTS {
     Random rand;
     public TreeNode root;
-    public int player;      //player A if player==0, player B if player==6
     public int simulationCounter;
     public int heuristicCounter;
     public int expansionCounter;
 
-    public MCTS(TreeNode root, int offset) {
-        this.player = offset;
+    public MCTS(TreeNode root) {
         this.root = root;
         this.rand = new Random();
     }
@@ -28,7 +27,7 @@ public class MCTS {
      * @param Constant C used in the UCT formula
      * @return the algorithms choice for the best move
      */
-    public int getState(int milis, float C){
+    public Move getMove(int milis, float C){
         long time = System.currentTimeMillis();
 
         while(System.currentTimeMillis() - time < milis){
@@ -37,12 +36,12 @@ public class MCTS {
             backpropagate(selected, simulate(selected));
         }
 
-        int bestChild = getRootBest(root);
+        TreeNode bestChild = getRootBest(root);
          
         // Hier werden wichtige Daten zur Auswahl ausgegeben 
 //      printResults(bestChild);
         
-        return (bestChild);
+        return (bestChild.gameState.getLastMove());
     }
 
 
@@ -217,18 +216,16 @@ public class MCTS {
     }
     
     /**
-     * checks all children from a given node for the best move, assuming all nodes are expanded and already simulated.
-     * a move is identical to the childrens place in the root nodes children array:
-     * if children[0] is the best state the best move is 1, for children[1] the best move is 2, ...
+     * Checks all children from a given node for the best move, assuming all nodes are expanded and already simulated.
      * @param a node where all children will be checked for the best move
-     * @return the best move as an int 0-5
+     * @return the TreeNode containing the best Move
      */
-    int getRootBest(TreeNode root) {
-        int bestChild = 0;
+    TreeNode getRootBest(TreeNode root) {
+        TreeNode bestChild = null;
                 
         for(int i=0; i < root.children.length; i++) {
             if(root.children[i] != null && root.children[i] == bestChild(root, 0))
-                bestChild = i;
+                bestChild = root.children[i];
         }
         
         return bestChild;
@@ -251,6 +248,8 @@ public class MCTS {
     	parent.possibleMoves.get(key).remove(randomMove);
     	if(parent.possibleMoves.get(key).size() == 0)
     		parent.possibleMoves.remove(key);
+    	
+    	//TODO alter GameState, alter lastMove
     	
     	/*
         TreeNode child = parent.clone();
@@ -284,7 +283,7 @@ public class MCTS {
      * @param best move chosen by getRootBest() method
      */
     public void printResults(int move) {
-        System.out.println("Knoten expandiert: " + expansionCounter +"\nSimulationen bis zum Ende: " + simulationCounter + ", Heuristik angewendet: " + heuristicCounter + ", gewähltes Feld: " + (move + player +1));
+        System.out.println("Knoten expandiert: " + expansionCounter +"\nSimulationen bis zum Ende: " + simulationCounter + ", Heuristik angewendet: " + heuristicCounter + ", Move: " +"gotta implement");
         for(int i=0; i<root.children.length; i++) {
             if(root.children[i] != null)
                 System.out.println("child "+ i + " Gewinnchance: " + Math.round(root.children[i].getV()* 1000000)/10000. + "% bei " + root.children[i].getNK() + " Knoten");

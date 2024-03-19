@@ -6,18 +6,18 @@ import java.util.HashMap;
 import org.ctf.ai.AI_Tools;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
+import org.ctf.shared.state.Team;
 
 public class TreeNode {
     TreeNode parent;
     TreeNode[] children;
     HashMap<String, ArrayList<int[]>> possibleMoves;
     GameState gameState;
-    int[] points;
-    int player;   //welches team am Zug ist
     int[] wins;
     
-    public TreeNode(TreeNode parent, GameState gameState, int[] points, int player, int[] wins) {
+    public TreeNode(TreeNode parent, GameState gameState, int player, int[] wins) {
         this.parent = parent;
+        this.possibleMoves = new HashMap<String, ArrayList<int[]>>();
         int children = 0;
         for(Piece p : gameState.getTeams()[gameState.getCurrentTeam()].getPieces()) {
           possibleMoves.put(p.getId(), AI_Tools.getPossibleMoves(gameState, p.getId()));
@@ -25,8 +25,6 @@ public class TreeNode {
         }
         this.children = new TreeNode[children];
         this.gameState = gameState;
-        this.points = points;
-        this.player = gameState.getCurrentTeam();
         this.wins = new int[gameState.getTeams().length];
     }
 
@@ -66,12 +64,23 @@ public class TreeNode {
      * @return a copy of the current node
      */
     public TreeNode clone() {
-      TreeNode treeNode = new TreeNode(this, copyGameState(gameState), Arrays.copyOf(points, points.length), (player +1) % gameState.getTeams().length, Arrays.copyOf(wins, wins.length));
+      TreeNode treeNode = new TreeNode(this, copyGameState(gameState), (gameState.getCurrentTeam() +1) % gameState.getTeams().length, Arrays.copyOf(wins, wins.length));
       return treeNode;
     }
     
     //TODO implementieren?
     public GameState copyGameState(GameState gameState) {
-      return gameState;
+    	GameState newState = new GameState();
+    	gameState.setCurrentTeam(gameState.getCurrentTeam());
+    	gameState.setLastMove(gameState.getLastMove());
+    	Team[] teams = new Team[gameState.getTeams().length];
+    	for(int i=0; i<teams.length; i++)
+    	gameState.setTeams(null);
+    	
+    	String[][] newGrid = new String[gameState.getGrid().length][gameState.getGrid()[0].length];
+    	for(int i=0; i<gameState.getGrid().length; i++)
+    		newGrid[i] = gameState.getGrid()[i].clone();
+    	gameState.setGrid(newGrid);
+    	return gameState;
     }
 }
