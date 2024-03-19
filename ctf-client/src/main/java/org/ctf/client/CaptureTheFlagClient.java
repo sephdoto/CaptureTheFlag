@@ -6,10 +6,9 @@ import org.ctf.client.state.data.wrappers.GiveupRequest;
 import org.ctf.client.state.data.wrappers.JoinGameRequest;
 import org.ctf.client.state.data.wrappers.JoinGameResponse;
 import org.ctf.client.state.data.wrappers.MoveRequest;
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.GameState;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -21,11 +20,10 @@ public class CaptureTheFlagClient {
 
   @Autowired
   public CaptureTheFlagClient() {
-    init();
-  } 
-
-  private void init(){
-    this.restClient = RestClient.builder().baseUrl("http://" + org.ctf.shared.constants.Constants.remoteIP + ":" +  org.ctf.shared.constants.Constants.remotePort + "/api/").build();
+    this.restClient =
+        RestClient.builder()
+            .baseUrl("http://" + Constants.remoteIP + ":" + Constants.remotePort + "/api/")
+            .build();
   }
 
   public GameSessionResponse createGameSession(GameSessionRequest gameSessionRequest) {
@@ -36,9 +34,9 @@ public class CaptureTheFlagClient {
         .body(gameSessionRequest)
         .accept(MediaType.APPLICATION_JSON)
         .retrieve()
-       // .onStatus(status -> status.value() == 404, (request, response) -> {
-    //      throw new URLError("URL Error")
-     // })
+        // .onStatus(status -> status.value() == 404, (request, response) -> {
+        //      throw new URLError("URL Error")
+        // })
         .body(GameSessionResponse.class);
   }
 

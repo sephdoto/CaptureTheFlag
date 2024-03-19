@@ -28,12 +28,6 @@ public class cfpClientController {
 
   private static final Logger LOG = LoggerFactory.getLogger(cfpClientController.class);
 
-  /*   @Value("${destination.url}")
-  private String readurl;
-
-  @Value("${destination.port}")
-  private String readport; */
-
   @Autowired private CaptureTheFlagClient cfpClient = new CaptureTheFlagClient();
 
   /**
