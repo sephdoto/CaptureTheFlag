@@ -79,13 +79,7 @@ public class ApiError extends RuntimeException{
 
         public ApiError build(){
 			ApiError error = new ApiError(this);
-            validationChecks(error);
             return error;
 		}
-
-        //TODO remove method if not needed
-        private void validationChecks(ApiError error){
-            //Empty Method incase we need a ErrorValidationCheck Maybe
-        }
     }
 }

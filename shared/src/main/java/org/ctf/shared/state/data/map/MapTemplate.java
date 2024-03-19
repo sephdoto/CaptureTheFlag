@@ -1,9 +1,6 @@
 package org.ctf.shared.state.data.map;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONString;
 
 /**
  * This class represents a game specific configuration.

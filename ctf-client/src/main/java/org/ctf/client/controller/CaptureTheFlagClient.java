@@ -1,4 +1,4 @@
-package org.ctf.client;
+package org.ctf.client.controller;
 
 import org.ctf.client.state.data.wrappers.GameSessionRequest;
 import org.ctf.client.state.data.wrappers.GameSessionResponse;

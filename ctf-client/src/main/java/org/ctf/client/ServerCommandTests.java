@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import org.ctf.client.controller.cfpClientController;
+import org.ctf.client.controller.ctfHTTPClient;
 import org.ctf.client.layer.CommLayer;
 import org.ctf.client.state.data.wrappers.GameSessionRequest;
 import org.ctf.client.state.data.wrappers.GameSessionResponse;
