@@ -79,7 +79,7 @@ class GameEngineTest {
     assertFalse(gameEngine.isGameOver());                                       //ongoing game, not game over
     
     GameState gameState = TestValues.getTestState();
-    gameState.getTeams()[0].setFlags(0);
+    gameState.getTeams()[0].setFlag(new int[] {0});
     gameEngine = new GameEngine(gameState, false, true, new Date(852003));      //new GameEngine with modified gameState (team0 flags = 0)
     gameEngine.gameOverCheck();
     assertTrue(gameEngine.isGameOver());                                        //a team got no flags left
