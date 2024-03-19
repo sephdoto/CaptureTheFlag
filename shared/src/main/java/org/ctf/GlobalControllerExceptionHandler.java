@@ -1,4 +1,4 @@
-package org.ctf.client.controller;
+package org.ctf;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;

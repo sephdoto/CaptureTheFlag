@@ -82,11 +82,11 @@
   </dependencies>
 
   <modules>
-    <module>cfp-service-main</module>
     <module>ctf-ui</module>
     <module>ctf-ai</module>
     <module>ctf-client</module>
     <module>shared</module>
+    <module>cfp-service-main</module>
   </modules>
 
   <build>

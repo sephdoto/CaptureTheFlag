@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.ctf.client.CaptureTheFlagClient;
 import org.ctf.client.state.data.wrappers.GameSessionRequest;
 import org.ctf.client.state.data.wrappers.GameSessionResponse;
 import org.ctf.client.state.data.wrappers.GiveupRequest;

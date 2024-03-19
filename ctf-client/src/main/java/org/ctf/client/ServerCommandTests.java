@@ -3,6 +3,7 @@ package org.ctf.client;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.ctf.client.controller.HTTPServicer;
 import org.ctf.client.controller.cfpClientController;
 import org.ctf.client.controller.ctfHTTPClient;
 import org.ctf.client.layer.CommLayer;
@@ -367,8 +368,9 @@ public class ServerCommandTests {
     GameSessionRequest request = new GameSessionRequest();
     request.setTemplate(test);
 
-    cfpClientController controller = new cfpClientController();
-    GameSessionResponse response = controller.createGameSession(request);
+    HTTPServicer shell = new HTTPServicer();
+		ctfHTTPClient service = shell.getService();
+    GameSessionResponse response = service.createGameSession(request);
     //client.connect("http://localhost:8888", test);
     
 
