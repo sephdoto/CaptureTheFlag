@@ -11,6 +11,4 @@ public class CtfClientApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CtfClientApplication.class, args);
 	}
-
-
 }

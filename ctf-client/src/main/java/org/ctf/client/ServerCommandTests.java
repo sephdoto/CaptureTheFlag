@@ -2,6 +2,11 @@ package org.ctf.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import org.ctf.client.controller.cfpClientController;
+import org.ctf.client.layer.CommLayer;
+import org.ctf.client.state.data.wrappers.GameSessionRequest;
+import org.ctf.client.state.data.wrappers.GameSessionResponse;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 
@@ -24,7 +29,8 @@ public class ServerCommandTests {
   public static void main(String[] args) {
 
     // Uncomment to do invidivual tests
-    testConnection();
+   // testConnection();
+    testClientConnection();
     // testConnectionTimedGameMode();
     // testMalformedConnection();
     // testConnectionTimedMoveMode();
@@ -144,12 +150,13 @@ public class ServerCommandTests {
           }
         """;
 
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    
-    MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
+        GameSessionRequest request = new GameSessionRequest();
+        request.setTemplate(test);
 
     TestClient client = new TestClient();
-    client.connect("http://localhost:8080", test);
+    client.connect("http://localhost:9999", test);
     System.out.println(client.getSessionID());
 
     client.joinGame("team1");
@@ -243,7 +250,7 @@ public class ServerCommandTests {
 
   }
 
-  public static void testConnectionBothAltModesEnabled() {
+  public static void testClientConnection() {
     String jsonPayload =
         """
         {
@@ -356,9 +363,15 @@ public class ServerCommandTests {
 
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
+    GameSessionRequest request = new GameSessionRequest();
+    request.setTemplate(test);
 
-    TestClient client = new TestClient();
-    client.connect("http://localhost:8080", test);
+    cfpClientController controller = new cfpClientController();
+    GameSessionResponse response = controller.createGameSession(request);
+    //client.connect("http://localhost:8888", test);
+    
+
+    System.out.println(gson.toJson(response));
   }
 
   public static void testConnectionTimedGameMode() {

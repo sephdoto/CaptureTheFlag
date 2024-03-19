@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: org.ctf.ai.AI_ToolsTest
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.053 s -- in org.ctf.ai.AI_ToolsTest

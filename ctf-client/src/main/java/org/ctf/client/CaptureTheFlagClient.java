@@ -7,6 +7,9 @@ import org.ctf.client.state.data.wrappers.JoinGameRequest;
 import org.ctf.client.state.data.wrappers.JoinGameResponse;
 import org.ctf.client.state.data.wrappers.MoveRequest;
 import org.ctf.shared.state.GameState;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -16,12 +19,13 @@ public class CaptureTheFlagClient {
 
   private RestClient restClient;
 
-  public CaptureTheFlagClient(String url, String port) {
-    this.restClient = RestClient.builder().baseUrl(url + ":" + port + "/api/").build();
-  }
-
+  @Autowired
   public CaptureTheFlagClient() {
-    this.restClient = RestClient.builder().baseUrl("http://localhost:8080").build();
+    init();
+  } 
+
+  private void init(){
+    this.restClient = RestClient.builder().baseUrl("http://" + org.ctf.shared.constants.Constants.remoteIP + ":" +  org.ctf.shared.constants.Constants.remotePort + "/api/").build();
   }
 
   public GameSessionResponse createGameSession(GameSessionRequest gameSessionRequest) {

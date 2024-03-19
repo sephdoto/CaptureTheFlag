@@ -13,7 +13,10 @@ public class Constants {
 	public static final int TIME = 5000;           //time in milliseconds the algorithm is allowed to take
 	public static final int MAX_STEPS = 100;       //maximum of possible simulation steps the algorithm is allowed to take
 	
-	
+	//package client 
+	public static final String remoteIP = "localhost";
+	public static final String remotePort = "8888";
+
 	public enum AI {
 	  RANDOM, SIMPLE_RANDOM
 	}

@@ -1,0 +1,39 @@
+POST http://localhost:9999/api-client/ HTTP/1.1
+content-type: application/json
+
+{
+  "template": {
+    "gridSize": [
+      10,
+      10
+    ],
+    "teams": 2,
+    "flags": 1,
+    "pieces": [
+      {
+        "type": "string",
+        "attackPower": 1,
+        "count": 1,
+        "movement": {
+          "directions": {
+            "left": 0,
+            "right": 0,
+            "up": 0,
+            "down": 0,
+            "upLeft": 0,
+            "upRight": 0,
+            "downLeft": 0,
+            "downRight": 0
+          },
+          "shape": {
+            "type": "lshape"
+          }
+        }
+      }
+    ],
+    "blocks": 0,
+    "placement": "symmetrical",
+    "totalTimeLimitInSeconds": 0,
+    "moveTimeLimitInSeconds": 0
+  }
+}

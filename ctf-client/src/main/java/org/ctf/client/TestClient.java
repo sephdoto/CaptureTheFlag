@@ -67,7 +67,7 @@ public class TestClient {
    */
   public void connect(String URL, MapTemplate Map) {
     this.comm = new CommLayer();
-    URL = URL + "/api/gamesession";
+    URL = URL + "/api-client/gamesession";
     GameSessionResponse response = new GameSessionResponse();
 
     try {

@@ -44,7 +44,6 @@ public class CommLayer implements CommLayerInterface {
 	 * Creates a Layer Object which can then be used to communicate with the Server The URL and the
 	 * port the layer binds to are given on object creation. Example URL http://localhost:8080
 	 *
-	 * @param url
 	 */
 	public CommLayer() {
 	  gson = new Gson();
