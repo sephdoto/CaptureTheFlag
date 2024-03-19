@@ -3,7 +3,10 @@ package de.unimannheim.swt.pse.ctf.game;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Random;
+import java.util.stream.Stream;
 import org.ctf.ai.AI_Tools.InvalidShapeException;
+import com.google.gson.Gson;
 import de.unimannheim.swt.pse.ctf.game.map.Directions;
 import de.unimannheim.swt.pse.ctf.game.map.ShapeType;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
@@ -17,6 +20,57 @@ import de.unimannheim.swt.pse.ctf.game.state.Piece;
  * As the map or state package exists in the shared and ctf module, here the ctf versions are used.
  */
 public class AI_Tools {
+  /**
+   * Returns a valid position on which a Piece can safely respawn.
+   * @param gameState to access the grid and generate pseudo random numbers
+   * @param basePos the position of the base of the Piece that gets respawned
+   * @return valid position to respawn a piece on, null shouldn't be returned (compiler needs it).
+   */
+  public static int[] respawnPiecePosition(GameState gameState, int[] basePos) {
+    int[] xTransforms = {-1, -1, -1, 0, 1, 1, 1, 0};
+    int[] yTransforms = {-1, 0, 1, 1, 1, 0, -1, -1};
+
+    for(int distance=1; distance<gameState.getGrid().length; distance++) {
+      for(int clockHand=0; clockHand<distance*8; clockHand++) {
+        int x = basePos[1] + xTransforms[clockHand] * distance;
+        int y = basePos[0] + yTransforms[clockHand] * distance;
+        int[] newPos = new int[] {y,x};
+        if(positionOutOfBounds(gameState.getGrid(), newPos))
+          continue;
+        
+        if(emptyField(gameState.getGrid(), newPos)) {
+          for(int i=1, j=-1, randX = seededRandom(gameState.getGrid(), i, 8, 0), randY = seededRandom(gameState.getGrid(), j, 8, 0);; 
+              i++, j--, randX = seededRandom(gameState.getGrid(), i, 8, 0), randY = seededRandom(gameState.getGrid(), j, 8, 0)) {
+            x = basePos[1] + xTransforms[randX] * distance;
+            y = basePos[0] + yTransforms[randY] * distance;
+            newPos = new int[] {y,x};
+            if(positionOutOfBounds(gameState.getGrid(), newPos))
+              continue;
+            if(emptyField(gameState.getGrid(), newPos))
+              return newPos;
+          }
+        }
+      }
+    }
+    return null;
+  }
+  
+  /**
+   * This method should be used instead of Math.random() to generate deterministic positive pseudo
+   * random values. Changing modifier changes the resulting output for the same seed.
+   * @param grid, used as a base to generate a random seed
+   * @param modifier, to get different random values with the same seed
+   * @param upperBound, upper bound for returned random values, upperBound = 3 -> values 0 to 2
+   * @param lowerBound, like upperBound but on the lower end and included in the return value
+   * @return pseudo random value
+   */
+  static int seededRandom(String[][] grid, int modifier, int upperBound, int lowerBound) {
+    StringBuilder sb = new StringBuilder();
+    Stream.of(grid).forEach(s -> Stream.of(s).forEach(ss -> sb.append(ss)));
+    int seed = sb.append(modifier).toString().hashCode();
+    return new Random(seed).nextInt(upperBound-lowerBound) + lowerBound;
+  }
+  
   /**
    * Given a Piece and a GameState containing the Piece, an ArrayList with all valid locations the Piece can walk on is returned.
    * The ArrayList contains int[2] values, representing a (y,x) location on the grid.
@@ -258,50 +312,89 @@ public class AI_Tools {
    * @param gameState
    * @return true if the position can be occupied.
    */
-  //TODO: Bases werden noch nicht berücksichtigt, ich weiß noch nicht wie man damit umgehen muss.
   static boolean validPos(int[] pos, Piece piece, GameState gameState) {
-    //out of bounds check
-    if(pos[0] < 0 || 
-        pos[1] < 0 ||
-        pos[0] >= gameState.getGrid()[0].length || 
-        pos[1] >= gameState.getGrid()[1].length) {
+    //checks if the position can be occupied
+    if(positionOutOfBounds(gameState.getGrid(), pos))
       return false;
-    }
-
-    String occupant = gameState.getGrid()[pos[0]][pos[1]];
-    //free position check
-    if(occupant.equals("")) {
+    if(emptyField(gameState.getGrid(), pos))
       return true;
-    }
-
-    //occupied by block check
-    if(occupant.equals("b")) {
+    if(occupiedByBlock(gameState.getGrid(), pos))
       return false;
-    }
-
-    //same team occupant check
-    int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
-    if(occupantTeam == gameState.getCurrentTeam()) {
+    if(occupiedBySameTeam(gameState, pos))
       return false;
-    }
+    if(otherTeamsBase(gameState.getGrid(), pos, piece))
+      return true;
+    if(occupiedByWeakerOpponent(gameState, pos, piece))
+      return true;
 
-    //weaker opponent check
-    for(Piece p : gameState.getTeams()[occupantTeam].getPieces()) {
-      if(p.getId().equals(occupant)) {
-        if(p.getDescription().getAttackPower() <= piece.getDescription().getAttackPower()) {
+    //if opponent is stronger or something unforeseen happens
+    return false;
+  }
+  
+  /**
+   * @param GameState gameState
+   * @param int[] pos
+   * @return true if the position is out of bounds
+   */
+  static boolean positionOutOfBounds(String[][] grid, int[] pos) {
+    return(pos[0] < 0 || 
+        pos[1] < 0 ||
+        pos[0] >= grid.length || 
+        pos[1] >= grid[0].length);
+  }
+  /**
+   * @param gameState
+   * @param pos
+   * @return true if the position is an empty Field "" and can be occupied
+   */
+  static boolean emptyField(String[][] grid, int[] pos) {
+    return grid[pos[0]][pos[1]].equals("");
+  }
+  /**
+   * @param gameState
+   * @param pos
+   * @return true if the position is occupied by a block and cannot be walked on
+   */
+  static boolean occupiedByBlock(String[][] grid, int[] pos) {
+    return grid[pos[0]][pos[1]].equals("b");
+  }
+  /**
+   * @param gameState
+   * @param pos
+   * @return true if the position is occupied by a Piece of the same Team
+   */
+  static boolean occupiedBySameTeam(GameState gameState, int[] pos) {
+    return gameState.getCurrentTeam() == Integer.parseInt(gameState.getGrid()[pos[0]][pos[1]].split(":")[1].split("_")[0]);
+  }
+  /**
+   * @param gameState
+   * @param pos
+   * @param picked
+   * @return true if the position is occupied by a weaker opponent that can be captured
+   */
+  static boolean occupiedByWeakerOpponent(GameState gameState, int[] pos, Piece picked) {
+    for(Piece p : gameState.getTeams()[Integer.parseInt(gameState.getGrid()[pos[0]][pos[1]].split(":")[1].split("_")[0])].getPieces()) {
+      if(p.getId().equals(gameState.getGrid()[pos[0]][pos[1]])) {
+        if(p.getDescription().getAttackPower() <= picked.getDescription().getAttackPower()) {
           return true;
+        } else {
+          return false;
         }
       }
     }
-
-    //opponent base check
-    if(occupant.contains("b:")) {
-      if(!occupant.split("b:")[1].equals(piece.getId())) {
+    return false;
+  }
+  /**
+   * @param gameState
+   * @param pos
+   * @return true if the position is occupied by another teams base and a flag can be captured
+   */
+  static boolean otherTeamsBase(String[][] grid, int[] pos, Piece picked) {
+    if(grid[pos[0]][pos[1]].contains("b:")) {
+      if(!grid[pos[0]][pos[1]].split("b:")[1].equals(picked.getId())) {
         return true;
       }
     }
-
-    //if opponent is stronger or something unforeseen happens
     return false;
   }
 

@@ -11,6 +11,9 @@ import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 
 class BoardSetUpTest {
 
+  /**
+   * @author sistumpf
+   */
 	@Test
 	void testPlaceBlocks() {
 		String[][] grid = new String[][]
@@ -39,7 +42,10 @@ class BoardSetUpTest {
 		assertArrayEquals(gridMuster, grid);									//Belegung wie vorher mit 6 Blöcken
 	
 	}
-	
+
+	  /**
+	   * @author sistumpf
+	   */
 	@Test
 	void testSeedRandom() {
 		int mult0 = BoardSetUp.seededRandom(TestValues.getTestTemplate(), 0, 10);
@@ -54,12 +60,11 @@ class BoardSetUpTest {
 		assertEquals(2, bound3);
 		assertEquals(8, bound9);
 	}
+	
 
-	
-	
-	
-	
-	
+	  /**
+	   * @author sistumpf
+	   */	
 	static void printGrid(String[][] grid) {
 		for(String[] s : grid) {
 			for(String ss : s) {

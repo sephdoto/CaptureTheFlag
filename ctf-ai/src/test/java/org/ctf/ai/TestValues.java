@@ -8,6 +8,11 @@ import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.Team;
 import org.ctf.shared.state.data.map.MapTemplate;
 
+
+/**
+ * This class returns test GameStates and MapTemplates.
+ * @author sistumpf
+ */
 public class TestValues {
 	/**
 	 * Creates a test GameState from the example Map. 

@@ -15,8 +15,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 /**
- * This is used for testing Methods which are not used in the ctf-ai module.
+ * This class is used for testing Methods which are not used in the ctf-ai module.
  * Those methods were implemented for different use cases than the RandomAI.
+ * @author sistumpf
  */
 class AI_ToolsTest {
 
@@ -39,6 +40,26 @@ class AI_ToolsTest {
     actuallyValidMoves.clear();
     
     assertArrayEquals(moves.toArray(), actuallyValidMoves.toArray());
+  }
+  
+  @Test
+  void testRespawnPiecePosition() {
+    GameState gameState = getTestState();
+    int[] basePos = new int[] {2,4};
+    gameState.getGrid()[1][3] = "b";
+    gameState.getGrid()[3][3] = "b";
+    gameState.getGrid()[3][5] = "b";                                    //1 free field in direct contact to 2,4: 3,4
+    int[] pos = AI_Tools.respawnPiecePosition(gameState, basePos);
+    assertArrayEquals(new int[] {3,4}, pos);
+    
+
+    gameState.getGrid()[3][4] = "b";                                    //block last free field, distance from base must be +1
+    pos = AI_Tools.respawnPiecePosition(gameState, basePos);
+    assertArrayEquals(new int[] {4,6}, pos);                            //randomly chosen field: 4,4. Should stay the same every time (with this gameState)
+    
+    gameState.getGrid()[0][0] = "b";                                    //alter gameState so the seeded random chooses another field, even though 4,4 is free to be occupied
+    pos = AI_Tools.respawnPiecePosition(gameState, basePos);
+    assertArrayEquals(new int[] {4,4}, pos);                            //randomly chosen field: 0,4. Should stay the same every time (with this gameState)
   }
 
 

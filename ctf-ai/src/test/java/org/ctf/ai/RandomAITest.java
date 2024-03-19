@@ -10,6 +10,10 @@ import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
 
 
+/**
+ * Test class for RandomAI
+ * @author sistumpf
+ */
 class RandomAITest {
 	static GameState gameState;
 

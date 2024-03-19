@@ -272,6 +272,7 @@ public class GameEngine implements Game {
     }
 
     String occupant = gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]];
+    int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
     Piece picked = Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(move.getPieceId())).findFirst().get();
     int[] oldPos = picked.getPosition();
 
@@ -279,15 +280,14 @@ public class GameEngine implements Game {
     gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
 
     if (occupant.contains("p:")) {
-      int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
-      gameState.getTeams()[occupantTeam].setPieces(
+       gameState.getTeams()[occupantTeam].setPieces(
           (Piece[])
               Arrays.asList(gameState.getTeams()[occupantTeam].getPieces()).stream()
                   .filter(p -> !p.getId().equals(occupant))
                   .toArray());
     } else if (occupant.contains("b:")) {
-    	gameState.getTeams()[Integer.parseInt(picked.getTeamId())].setFlags(gameState.getTeams()[Integer.parseInt(picked.getTeamId())].getFlags() -1);
-    	respawnPiece(picked);
+    	gameState.getTeams()[occupantTeam].setFlags(gameState.getTeams()[occupantTeam].getFlags() -1);
+    	picked.setPosition(AI_Tools.respawnPiecePosition(gameState, gameState.getTeams()[gameState.getCurrentTeam()].getBase()));
     }
 
     gameState.setCurrentTeam((gameState.getCurrentTeam() + 1) % gameState.getTeams().length);
@@ -302,16 +302,6 @@ public class GameEngine implements Game {
     gameOverCheck();
   }
   
-  /**
-   * TODO
-   * Respawns a Piece near its own base after it captured a flag.
-   * Alters the pieces position and places it on the grid.
-   * @author sistumpf
-   * @param piece
-   */
-  public void respawnPiece(Piece piece) {
-	  
-  }
 
   /**
    * The {@link GameEngine#isGameOver()} method only returns the {@link GameEngine#isGameOver}
@@ -516,6 +506,17 @@ public class GameEngine implements Game {
    */
   public GameEngine(GameState gameState, boolean isGameOver, boolean withTimeLimit, Date endDate) {
     this.gameState = gameState;
+    this.isGameOver = isGameOver;
+    this.endDate = endDate;
+    this.timeLimitedGame = withTimeLimit;
+  }
+  /**
+   * TODO Test Konstruktor von Simon Kann entfernt werden wenn das Generieren von GameStates
+   * funktioniert, wird in der Test Klasse gebraucht.
+   */
+  public GameEngine(GameState gameState, MapTemplate mt, boolean isGameOver, boolean withTimeLimit, Date endDate) {
+    this.gameState = gameState;
+    this.currentTemplate = mt;
     this.isGameOver = isGameOver;
     this.endDate = endDate;
     this.timeLimitedGame = withTimeLimit;
