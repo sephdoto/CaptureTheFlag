@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 /**
  * This class represents a game specific configuration.
  */
-public class MapTemplate  {
+public class MapTemplate {
 
     @Schema(
             description = "grid size. format [rows, columns]",
@@ -31,7 +31,7 @@ public class MapTemplate  {
     )
     private int blocks;
     @Schema(
-            description = "placement strategy for pieces and blocks",
+            description = "placement strategy for pieces",
             example = "symmetrical, spaced_out or defensive (see Enum 'PlacementType' for more details)"
     )
     private PlacementType placement;
@@ -107,5 +107,4 @@ public class MapTemplate  {
     public void setMoveTimeLimitInSeconds(int moveTimeLimitInSeconds) {
         this.moveTimeLimitInSeconds = moveTimeLimitInSeconds;
     }
-
 }

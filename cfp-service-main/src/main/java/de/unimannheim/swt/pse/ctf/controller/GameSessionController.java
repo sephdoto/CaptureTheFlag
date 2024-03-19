@@ -203,8 +203,8 @@ public class GameSessionController {
         Game game = gameSession.getGame();
 
         Move move = new Move();
-        move.setPieceId(move.getPieceId());
-        move.setNewPosition(move.getNewPosition());
+        move.setPieceId(moveRequest.getPieceId());
+        move.setNewPosition(moveRequest.getNewPosition());
 
         game.makeMove(move);
     }
