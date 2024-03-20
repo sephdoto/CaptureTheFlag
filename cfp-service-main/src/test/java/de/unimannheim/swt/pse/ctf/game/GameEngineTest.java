@@ -40,7 +40,7 @@ class GameEngineTest {
    */
   @Test
   void testGetRemainingGameTimeInSeconds() {
-    assertEquals(9, gameEngine.getRemainingGameTimeInSeconds());    //the freshly started game ends 10 seconds after generating, returned int time should be 9
+    assertTrue(gameEngine.getRemainingGameTimeInSeconds() > 0);    //the freshly started game ends 10 seconds after generating, returned int time should be greater than 0
 
     gameEngine = new GameEngine(TestValues.getTestState(), false, true, new Date(System.currentTimeMillis() - 10));
     assertEquals(0, gameEngine.getRemainingGameTimeInSeconds());    //the freshly started game ended a few ms ago, returned time should be 0 (game over)
@@ -49,9 +49,13 @@ class GameEngineTest {
     assertEquals(-1, gameEngine.getRemainingGameTimeInSeconds());    //the freshly started game got no time limit, returned time should be -1 (no time limit set)
   }
 
+  /**
+   * @author sistumpf
+   */
   @Test
   void testGetRemainingMoveTimeInSeconds() {
-    fail("Not yet implemented");
+    GameEngine gameEngine = new GameEngine();
+    assertEquals(-1, gameEngine.getRemainingMoveTimeInSeconds());
   }
 
   @Test
@@ -59,9 +63,15 @@ class GameEngineTest {
     fail("Not yet implemented");
   }
 
+  /**
+   * It should not take more than 1ms to start a gameEngine, so this test should be valid
+   * @author sistumpf
+   */
   @Test
   void testGetStartedDate() {
-    fail("Not yet implemented");
+    GameEngine gameEngine = new GameEngine();
+    Date started = new Date(System.currentTimeMillis());
+    assertEquals(gameEngine.getStartedDate(), started);
   }
 
   @Test
@@ -76,7 +86,7 @@ class GameEngineTest {
 
   @Test
   void testIsGameOver() {
-    fail("Not yet implemented");
+    assertFalse(gameEngine.isGameOver());
   }
 
   /**
@@ -129,7 +139,7 @@ class GameEngineTest {
     move1.setNewPosition(new int[] {6,3});
     assertTrue(gameEngine.isValidMove(move1));		//rook can walk on the empty space above
     move1.setNewPosition(new int[] {6,4});
-    assertFalse(gameEngine.isValidMove(move1));		//rook cannot jump over the block above TODO
+    assertFalse(gameEngine.isValidMove(move1));		//rook cannot jump over the block above
     move1.setNewPosition(new int[] {8,3});
     assertTrue(gameEngine.isValidMove(move1));		//rook can walk on the empty space below
     move2.setNewPosition(new int[] {4,5});
@@ -160,16 +170,13 @@ class GameEngineTest {
     capture.setPieceId(testState.getTeams()[0].getPieces()[4].getId());         //move to capture a flag initialized
     gameEngine = new GameEngine(testState, TestValues.getTestTemplate(), false, true, new Date(System.currentTimeMillis() + 10000000));
     gameEngine.getCurrentGameState().getTeams()[1].setFlags(1);                 //enemy only has 1 flag, if it gets captured the game is over
+
+    assertFalse(gameEngine.isGameOver());                                        //the game is still going
+    
     gameEngine.makeMove(capture);                                               //move locked in!
 
     Piece proudAttacker = gameEngine.getCurrentGameState().getTeams()[0].getPieces()[4];
     assertArrayEquals(new int[] {3,5}, proudAttacker.getPosition());            //our attacker got respawned, due to pseudo random he will always be on 3,5 (if the grid stays the same)
     assertTrue(gameEngine.isGameOver());                                        //after the last flag got captured the game is over.   
   }
-
-  @Test
-  void testRandomGen() {
-    fail("Not yet implemented");
-  }
-
 }

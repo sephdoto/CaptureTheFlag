@@ -40,7 +40,6 @@ public class GameEngine implements Game {
   // Game state is taking care of all time calculations
   private boolean timeLimitedGame;
   private boolean moveTimeLimitedGame;
-  private boolean timeLimit;
   private Date startedDate;
   private Date endDate;
   private LocalDateTime lastMoveTime;
@@ -518,6 +517,7 @@ public class GameEngine implements Game {
     this.gameState = gameState;
     this.currentTemplate = mt;
     this.isGameOver = isGameOver;
+    this.startedDate = new Date(System.currentTimeMillis());
     this.endDate = endDate;
     this.timeLimitedGame = withTimeLimit;
   }
@@ -526,5 +526,8 @@ public class GameEngine implements Game {
    * TODO Default Konstruktor von Simon Kann entfernt werden wenn das Generieren von GameStates
    * funktioniert, wird in der Test Klasse gebraucht.
    */
-  public GameEngine() {}
+  public GameEngine() {
+    this.startedDate = new Date(System.currentTimeMillis());
+    this.timeLimitedGame = false;
+  }
 }
