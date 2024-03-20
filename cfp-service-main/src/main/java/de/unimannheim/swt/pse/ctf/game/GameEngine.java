@@ -105,9 +105,6 @@ public class GameEngine implements Game {
    * @return Team
    * @throws NoMoreTeamSlots No more team slots available
    */
-  // TODO do proper joinGameLogic
-  // TODO Ask tutor how they mean to start a game.....through the exception ? or filling team slots
-  // and calling joinGame one more time to start it?
   @Override
   public Team joinGame(String teamId) {
     // Initial check if Slots are even available
@@ -176,7 +173,7 @@ public class GameEngine implements Game {
    */
   @Override
   public boolean isStarted() {
-    if ((isGameOver() == false) && (getCurrentGameState() != null)) {
+    if ((!isGameOver) && (getCurrentGameState() != null)) {
       return true;
     } else {
       return false;
@@ -264,12 +261,16 @@ public class GameEngine implements Game {
   public void makeMove(Move move) {
     if (isGameOver()) {
       return;
-    } else if (!isValidMove(move)) {
+    } else if (!isValidMove(move) ) {
       throw new InvalidMove();
     }
 
     String occupant = gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]];
-    Piece picked = Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(move.getPieceId())).findFirst().get();
+    Piece picked =
+        Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream()
+            .filter(p -> p.getId().equals(move.getPieceId()))
+            .findFirst()
+            .get();
     int[] oldPos = picked.getPosition();
 
     gameState.getGrid()[oldPos[0]][oldPos[1]] = "";
@@ -278,18 +279,19 @@ public class GameEngine implements Game {
       int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
       gameState.getTeams()[occupantTeam].setPieces(
           Arrays.asList(gameState.getTeams()[occupantTeam].getPieces()).stream()
-          .filter(p -> !p.getId().equals(occupant))
-          .toArray(Piece[]::new));
+              .filter(p -> !p.getId().equals(occupant))
+              .toArray(Piece[]::new));
       gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
       picked.setPosition(move.getNewPosition());
-    } 
-    else if (occupant.contains("b:")) {
+    } else if (occupant.contains("b:")) {
       int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
-      gameState.getTeams()[occupantTeam].setFlags(gameState.getTeams()[occupantTeam].getFlags() -1);
-      picked.setPosition(AI_Tools.respawnPiecePosition(gameState, gameState.getTeams()[gameState.getCurrentTeam()].getBase()));
+      gameState.getTeams()[occupantTeam].setFlags(
+          gameState.getTeams()[occupantTeam].getFlags() - 1);
+      picked.setPosition(
+          AI_Tools.respawnPiecePosition(
+              gameState, gameState.getTeams()[gameState.getCurrentTeam()].getBase()));
       gameState.getGrid()[picked.getPosition()[0]][picked.getPosition()[1]] = picked.getId();
-    } 
-    else {    
+    } else {
       gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
       picked.setPosition(move.getNewPosition());
     }
@@ -304,6 +306,22 @@ public class GameEngine implements Game {
     }
 
     gameOverCheck();
+  }
+
+  /**
+   * Helper method to perform a turn check. So that players cannot move out of turn moves.
+   *
+   * @author rsyed
+   * @param move Name of the team
+   * @return boolean
+   */
+  private boolean isturn(Move move) {
+    int moveTeamIdentifier = Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0]);
+    if (moveTeamIdentifier == gameState.getCurrentTeam()-1){
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -368,22 +386,6 @@ public class GameEngine implements Game {
   }
 
   /**
-   * Returns a random number between 0 and max Does specified number of iterations
-   *
-   * @author rsyed
-   * @param max
-   * @param iterations
-   */
-  public int randomGen(int max, int iterations) {
-    Random rand = new Random();
-    int ret = 0;
-    for (int i = 0; i <= iterations; i++) {
-      ret = rand.nextInt(max);
-    }
-    return ret;
-  }
-
-  /**
    * Helper method to Start the game
    *
    * @author rsyed
@@ -399,8 +401,8 @@ public class GameEngine implements Game {
   }
 
   /**
-   * Helper method to add a team to the gameState Takes in a String which it uses to create a team,
-   * also needs a position to add the team at Also sets a random color to the team
+   * Helper method to add a team to the gameState. It takes in a String which it uses to create a
+   * team, also needs a position to add the team at Also sets a random color to the team
    *
    * @author rsyed
    * @param teamID Name of the team

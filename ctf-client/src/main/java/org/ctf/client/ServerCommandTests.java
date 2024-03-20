@@ -28,7 +28,15 @@ public class ServerCommandTests {
 
     // Uncomment to do invidivual tests
    // testConnection();
-    testStart();
+    //testStart();
+    String move = "p:1_n";
+    String[] split = move.split("[:._n]");
+    for(String a: split){
+      System.out.println(a);
+    }
+    int moveTeam = Integer.parseInt( "p:2_n".split(":")[1].split("_")[0]);
+    System.out.println(moveTeam);
+
     // testConnectionTimedGameMode();
     // testMalformedConnection();
     // testConnectionTimedMoveMode();

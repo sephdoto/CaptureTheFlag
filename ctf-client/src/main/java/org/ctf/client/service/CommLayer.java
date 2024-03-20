@@ -380,6 +380,7 @@ public class CommLayer implements CommLayerInterface {
       HttpRequest request =
           HttpRequest.newBuilder()
               .uri(new URI(URL))
+              
               .header("Content-Type", "application/json")
               .DELETE()
               .build();
