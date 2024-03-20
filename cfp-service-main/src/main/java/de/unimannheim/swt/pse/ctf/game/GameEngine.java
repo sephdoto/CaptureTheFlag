@@ -263,8 +263,11 @@ public class GameEngine implements Game {
    */
   @Override
   public void makeMove(Move move) {
-    if(!movePreconditionsMet(move))
+    if (isGameOver()) {
       return;
+    } else if (!isValidMove(move) ) {
+      throw new InvalidMove();
+    }
 
     String occupant = gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]];
     Piece picked =
@@ -300,15 +303,6 @@ public class GameEngine implements Game {
     gameState.setCurrentTeam((gameState.getCurrentTeam() + 1) % gameState.getTeams().length);
     gameState.setLastMove(move);
 
-    afterMoveCleanup();
-  }
-  
-  /**
-   * Call this after making a move.
-   * Timer gets updated, gameOverChecks are made.
-   * @author sistumpf, rsyed
-   */
-  void afterMoveCleanup() {
     // Update Time
     if (this.moveTimeLimitedGame) {
       this.lastMoveTime = LocalDateTime.now();
@@ -316,20 +310,6 @@ public class GameEngine implements Game {
     }
 
     gameOverCheck();
-  }
-  
-  /**
-   * Call this before making a move.
-   * @param move
-   * @return false if the move is invalid, either because it is the wrong player, the move itself is invalid or the game is already over.
-   */
-  boolean movePreconditionsMet(Move move) {
-    if(isGameOver() || !isTurn(move)) {
-      return false;
-    } else if(!isValidMove(move)) {
-      throw new InvalidMove();
-    } 
-    return true;
   }
 
   /**
@@ -339,9 +319,13 @@ public class GameEngine implements Game {
    * @param move Name of the team
    * @return boolean
    */
-  private boolean isTurn(Move move) {
+  private boolean isturn(Move move) {
     int moveTeamIdentifier = Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0]);
-    return (moveTeamIdentifier == gameState.getCurrentTeam()-1);
+    if (moveTeamIdentifier == gameState.getCurrentTeam()-1){
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -354,24 +338,27 @@ public class GameEngine implements Game {
   public void gameOverCheck() {
     if (getRemainingGameTimeInSeconds() == 0) {
       this.isGameOver = true;
-    } else {
-      for (Team team : gameState.getTeams()) {
-        if (team.getFlags() < 1) {
-          this.isGameOver = true;
-          break;
-        } else if (team.getPieces().length == 0) {
-          this.isGameOver = true;
-          break;
-        }
-      }
+      return;
     }
-    
-    if(this.isGameOver) {
-      this.endDate =
-          Date.from(
-              LocalDateTime.now()
-              .atZone(ZoneId.systemDefault())
-              .toInstant()); // Sets game end time
+
+    for (Team team : gameState.getTeams()) {
+      if (team.getFlags() < 1) {
+        this.isGameOver = true;
+        this.endDate =
+            Date.from(
+                LocalDateTime.now()
+                    .atZone(ZoneId.systemDefault())
+                    .toInstant()); // Sets game end time
+        return;
+      } else if (team.getPieces().length == 0) {
+        this.isGameOver = true;
+        this.endDate =
+            Date.from(
+                LocalDateTime.now()
+                    .atZone(ZoneId.systemDefault())
+                    .toInstant()); // Sets game end time
+        return;
+      }
     }
   }
 
