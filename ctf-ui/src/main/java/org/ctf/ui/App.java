@@ -58,9 +58,10 @@ public class App extends Application {
 		vw.fitWidthProperty().bind(root.widthProperty());
 		vw.fitHeightProperty().bind(root.heightProperty());
 		HomeScreenButton i1 = new HomeScreenButton("CREATE MAP", () -> {
-			CreateGameScreen.initCreateGameScreen(mainStage);
+			ssc.switchToMapEditorScene(mainStage);
 		});
 		HomeScreenButton i2 = new HomeScreenButton("CREATE GAME", () -> {
+			CreateGameScreen.initCreateGameScreen(mainStage);
 		});
 		HomeScreenButton i3 = new HomeScreenButton("JOIN GAME", () -> {
 			new HomeSceneController().switchToJoinScene(mainStage);
