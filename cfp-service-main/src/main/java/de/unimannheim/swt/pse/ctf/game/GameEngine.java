@@ -263,11 +263,8 @@ public class GameEngine implements Game {
    */
   @Override
   public void makeMove(Move move) {
-    if(!movePreconditionsMet(move)){
+    if(!movePreconditionsMet(move))
       return;
-    } else if (!isValidMove(move) ) {
-      throw new InvalidMove();
-    }
 
     String occupant = gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]];
     Piece picked =
@@ -349,11 +346,7 @@ public class GameEngine implements Game {
    */
   private boolean isTurn(Move move) {
     int moveTeamIdentifier = Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0]);
-    if (moveTeamIdentifier == gameState.getCurrentTeam()-1){
-      return true;
-    } else {
-      return false;
-    }
+    return (moveTeamIdentifier == gameState.getCurrentTeam()-1);
   }
 
   /**
@@ -366,27 +359,23 @@ public class GameEngine implements Game {
   public void gameOverCheck() {
     if (getRemainingGameTimeInSeconds() == 0) {
       this.isGameOver = true;
-      return;
-    }
-
-    for (Team team : gameState.getTeams()) {
-      if (team.getFlags() < 1) {
-        this.isGameOver = true;
-        this.endDate =
-            Date.from(
-                LocalDateTime.now()
-                    .atZone(ZoneId.systemDefault())
-                    .toInstant()); // Sets game end time
-        return;
-      } else if (team.getPieces().length == 0) {
-        this.isGameOver = true;
-        this.endDate =
-            Date.from(
-                LocalDateTime.now()
-                    .atZone(ZoneId.systemDefault())
-                    .toInstant()); // Sets game end time
-        return;
+    } else {
+      for (Team team : gameState.getTeams()) {
+        if (team.getFlags() < 1) {
+          this.isGameOver = true;
+          break;
+        } else if (team.getPieces().length == 0) {
+          this.isGameOver = true;
+          break;
+        }
       }
+    }
+    if(this.isGameOver) {
+      this.endDate =
+          Date.from(
+              LocalDateTime.now()
+              .atZone(ZoneId.systemDefault())
+              .toInstant()); // Sets game end time
     }
   }
 
