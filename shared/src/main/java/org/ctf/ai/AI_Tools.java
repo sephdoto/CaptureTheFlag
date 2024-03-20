@@ -80,7 +80,7 @@ public class AI_Tools {
 
     if(piece.getDescription().getMovement().getDirections() == null) {
       try {
-        AI_Tools.createShapeMoveList(gameState, piece).stream().forEach(m -> possibleMoves.add(m.getNewPosition()));
+        possibleMoves = getShapeMoves(gameState, piece);
       } catch (InvalidShapeException e) {e.printStackTrace();}
 
     } else {
@@ -101,63 +101,47 @@ public class AI_Tools {
    * @param moveArrayList
    * @return randomly picked move
    */
-  static Move getRandomShapeMove(ArrayList<Move> moveArrayList) {
-    return moveArrayList.get((int)(moveArrayList.size() * Math.random()));
-  }
-
-  /**
-   * Checks if a Shape (currently only l-shape) move is valid.
-   * The Shape-Direction is given as a number (0-7).
-   * @param gameState
-   * @param piece
-   * @param direction
-   * @return false if the move is invalid.
-   * @throws InvalidShapeException if the Shape is not yet implemented here
-   */
-  static Move validShapeDirection(GameState gameState, Piece piece, int direction) throws InvalidShapeException {
-    int[] pos = new int[] {piece.getPosition()[0],piece.getPosition()[1]};
-
-    if(piece.getDescription().getMovement().getShape().getType() == ShapeType.lshape) {
-      switch(direction) {
-        case 0: pos[0] -= 2; pos[1] -= 1; break;    //2up1left
-        case 1: pos[0] -= 2; pos[1] += 1; break;    //2up1right
-        case 2: pos[1] += 2; pos[0] -= 1; break;    //2right1up
-        case 3: pos[1] += 2; pos[0] += 1; break;    //2right1down
-        case 4: pos[0] += 2; pos[1] -= 1; break;    //2down1left
-        case 5: pos[0] += 2; pos[1] += 1; break;    //2down1right
-        case 6: pos[1] -= 2; pos[0] -= 1; break;    //2left1up
-        case 7: pos[1] -= 2; pos[0] += 1; break;    //2left1down
-      }
-    } else {
-      throw new InvalidShapeException(piece.getDescription().getMovement().getShape().getType().toString());
-    }
-
-    if(validPos(pos, piece, gameState)) {
-      Move move = new Move();
-      move.setPieceId(piece.getId());
-      move.setNewPosition(pos);
-      return move;
-    } else {
-      return null;
-    }
+  static Move getRandomShapeMove(ArrayList<int[]> moveArrayList, String pieceId) {
+    Move move = new Move();
+    move.setPieceId(pieceId);
+    move.setNewPosition(moveArrayList.get((int)(moveArrayList.size() * Math.random())));
+    return move;
   }
 
   /**
    * Creates an ArrayList with all valid Moves a piece with shape movement can do.
    * @param gameState
-   * @param picked
-   * @return ArrayList<Move>
-   * @throws InvalidShapeException
+   * @param piece
+   * @return ArrayList containing all valid moves
+   * @throws InvalidShapeException if the Shape is not yet implemented here
    */
-  public static ArrayList<Move> createShapeMoveList(GameState gameState, Piece picked) throws InvalidShapeException {
-    ArrayList<Move> shapeMoves = new ArrayList<Move>();
-    for(int i=0; i<8; i++) {
-      Move shapeMove = validShapeDirection(gameState, picked, i);
-      if(shapeMove != null) {
-        shapeMoves.add(shapeMove);
+  static ArrayList<int[]> getShapeMoves(GameState gameState, Piece piece) throws InvalidShapeException {
+    ArrayList<int[]> positions = new ArrayList<int[]>();
+    int[] xTransforms;
+    int[] yTransforms;
+    int[] direction;
+
+    if(piece.getDescription().getMovement().getShape().getType() == ShapeType.lshape) {
+      //transforms go left-down-right-up, first 12 outer layer, then inner layer
+      xTransforms = new int[] {-2, -2, -2, -1, 0, 1, 2, 2, 2, 1, 0, -1, /*inner layer*/ -1, 0, 1, 0};
+      yTransforms = new int[] {-1, 0, 1, 2, 2, 2, 1, 0, -1, -2, -2, -2, /*inner layer*/ 0, 1, 0, -1};
+      direction = new int []  {0, 0, 0, 3, 3, 3, 1, 1, 1, 2, 2, 2};
+    } else {
+      throw new InvalidShapeException(piece.getDescription().getMovement().getShape().getType().toString());
+    }
+
+    for(int i=0; i<xTransforms.length; i++) {
+      int[] newPos = new int[] {piece.getPosition()[0] + yTransforms[i], piece.getPosition()[1] + xTransforms[i]};
+      if(validPos(newPos, piece, gameState)) {
+        if(i >= direction.length) {
+          positions.add(newPos);
+        }
+        else if(sightLine(gameState, new int[] {piece.getPosition()[0] + yTransforms[(1+(i/3)*3)], piece.getPosition()[1] + xTransforms[(1+(i/3)*3)]}, direction[i], 2)) {
+          positions.add(newPos);
+        }
       }
     }
-    return shapeMoves;
+    return positions;
   }
 
   /**

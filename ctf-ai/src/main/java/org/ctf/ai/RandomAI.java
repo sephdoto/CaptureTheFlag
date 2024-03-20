@@ -36,7 +36,7 @@ public class RandomAI extends AI_Tools {
         int reach = (int)(Math.random() * getReach(picked.getDescription().getMovement().getDirections(), randomDirection));
         move = checkMoveValidity(gameState, picked, randomDirection, reach);
       } else {
-        move = validShapeDirection(gameState, picked, (int)(Math.random()*8));
+        move = getRandomShapeMove(getShapeMoves(gameState, picked), picked.getId());
       }
     } while (move == null);
     return move;
@@ -70,9 +70,9 @@ public class RandomAI extends AI_Tools {
           continue;
         }
       } else {																	//Move if Shape
-    	ArrayList<Move> shapeMoves = createShapeMoveList(gameState, picked);
+    	ArrayList<int[]> shapeMoves = getShapeMoves(gameState, picked);
         if(shapeMoves.size() > 0) {
-          return getRandomShapeMove(shapeMoves);
+          return getRandomShapeMove(shapeMoves, picked.getId());
         } else {
         	piecesCurrentTeam.remove(random);
           continue;
