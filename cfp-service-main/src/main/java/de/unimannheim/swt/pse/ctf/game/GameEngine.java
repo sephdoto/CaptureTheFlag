@@ -269,29 +269,29 @@ public class GameEngine implements Game {
     }
 
     String occupant = gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]];
-    int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
-    Piece picked =
-        Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream()
-            .filter(p -> p.getId().equals(move.getPieceId()))
-            .findFirst()
-            .get();
+    Piece picked = Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(move.getPieceId())).findFirst().get();
     int[] oldPos = picked.getPosition();
 
     gameState.getGrid()[oldPos[0]][oldPos[1]] = "";
-    gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
 
     if (occupant.contains("p:")) {
+      int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
       gameState.getTeams()[occupantTeam].setPieces(
-          (Piece[])
-              Arrays.asList(gameState.getTeams()[occupantTeam].getPieces()).stream()
-                  .filter(p -> !p.getId().equals(occupant))
-                  .toArray());
-    } else if (occupant.contains("b:")) {
-      gameState.getTeams()[occupantTeam].setFlags(
-          gameState.getTeams()[occupantTeam].getFlags() - 1);
-      picked.setPosition(
-          AI_Tools.respawnPiecePosition(
-              gameState, gameState.getTeams()[gameState.getCurrentTeam()].getBase()));
+          Arrays.asList(gameState.getTeams()[occupantTeam].getPieces()).stream()
+          .filter(p -> !p.getId().equals(occupant))
+          .toArray(Piece[]::new));
+      gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
+      picked.setPosition(move.getNewPosition());
+    } 
+    else if (occupant.contains("b:")) {
+      int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
+      gameState.getTeams()[occupantTeam].setFlags(gameState.getTeams()[occupantTeam].getFlags() -1);
+      picked.setPosition(AI_Tools.respawnPiecePosition(gameState, gameState.getTeams()[gameState.getCurrentTeam()].getBase()));
+      gameState.getGrid()[picked.getPosition()[0]][picked.getPosition()[1]] = picked.getId();
+    } 
+    else {    
+      gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
+      picked.setPosition(move.getNewPosition());
     }
 
     gameState.setCurrentTeam((gameState.getCurrentTeam() + 1) % gameState.getTeams().length);

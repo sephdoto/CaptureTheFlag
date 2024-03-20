@@ -3,7 +3,7 @@ package org.ctf.ai;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
-
+import org.ctf.shared.ai.AI_Tools;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;

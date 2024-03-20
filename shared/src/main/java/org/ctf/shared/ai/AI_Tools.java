@@ -1,4 +1,4 @@
-package org.ctf.ai;
+package org.ctf.shared.ai;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,7 +60,7 @@ public class AI_Tools {
    * @param lowerBound, like upperBound but on the lower end and included in the return value
    * @return pseudo random value
    */
-  static int seededRandom(String[][] grid, int modifier, int upperBound, int lowerBound) {
+  public static int seededRandom(String[][] grid, int modifier, int upperBound, int lowerBound) {
     StringBuilder sb = new StringBuilder();
     Stream.of(grid).forEach(s -> Stream.of(s).forEach(ss -> sb.append(ss)));
     int seed = sb.append(modifier).toString().hashCode();
@@ -102,7 +102,7 @@ public class AI_Tools {
    * @param pieceId
    * @return randomly picked move
    */
-  static Move getRandomShapeMove(ArrayList<int[]> positionArrayList, String pieceId) {
+  public static Move getRandomShapeMove(ArrayList<int[]> positionArrayList, String pieceId) {
     Move move = new Move();
     move.setPieceId(pieceId);
     move.setNewPosition(positionArrayList.get((int)(positionArrayList.size() * Math.random())));
@@ -116,7 +116,7 @@ public class AI_Tools {
    * @return ArrayList containing all valid moves
    * @throws InvalidShapeException if the Shape is not yet implemented here
    */
-  static ArrayList<int[]> getShapeMoves(GameState gameState, Piece piece) throws InvalidShapeException {
+  public static ArrayList<int[]> getShapeMoves(GameState gameState, Piece piece) throws InvalidShapeException {
     ArrayList<int[]> positions = new ArrayList<int[]>();
     int[] xTransforms;
     int[] yTransforms;
@@ -179,7 +179,7 @@ public class AI_Tools {
    * @param gameState
    * @return a valid move
    */
-  static Move getDirectionMove(HashMap<Integer,Integer> dirMap, Piece piece, GameState gameState) {
+  public static Move getDirectionMove(HashMap<Integer,Integer> dirMap, Piece piece, GameState gameState) {
     int randomKey = (int)dirMap.keySet().toArray()[(int)(dirMap.size() * Math.random())];
     int reach;
 
@@ -202,7 +202,7 @@ public class AI_Tools {
    * @param direction
    * @return false if there are no possible moves in this direction, true otherwise.
    */
-  static boolean validDirection(GameState gameState, Piece piece, int direction) {
+  public static boolean validDirection(GameState gameState, Piece piece, int direction) {
     return checkMoveValidity(gameState, piece, direction, 1) != null;
   }
 
@@ -217,7 +217,7 @@ public class AI_Tools {
    * @return a Move instance with the piece and its new position
    * @return null if the piece can't occupy the position or the position is not in the grid
    */
-  static Move checkMoveValidity(GameState gameState, Piece piece, int direction, int reach) {
+  public static Move checkMoveValidity(GameState gameState, Piece piece, int direction, int reach) {
     int[] pos = new int[] {piece.getPosition()[0],piece.getPosition()[1]};
     updatePos(pos, direction, reach);
 
@@ -245,7 +245,7 @@ public class AI_Tools {
    * @return true if there is no obstacle in between
    * @return false if any obstacle is in between or the target position is not on the grid
    */
-  static boolean sightLine(GameState gameState, int[] newPos, int direction, int reach) {
+  public static boolean sightLine(GameState gameState, int[] newPos, int direction, int reach) {
     String[][] grid = gameState.getGrid();
     --reach;
     for(; reach > 0; reach--) {
@@ -271,7 +271,7 @@ public class AI_Tools {
    * @param reach
    * @return updated position
    */
-  static int[] updatePos(int[] pos, int direction, int reach) {
+  public static int[] updatePos(int[] pos, int direction, int reach) {
     switch(direction) {
       case 0: pos[1] -= reach; break;                   //left
       case 1: pos[1] += reach; break;                   //right
@@ -292,7 +292,7 @@ public class AI_Tools {
    * @param gameState
    * @return true if the position can be occupied.
    */
-  static boolean validPos(int[] pos, Piece piece, GameState gameState) {
+  public static boolean validPos(int[] pos, Piece piece, GameState gameState) {
     //checks if the position can be occupied
     if(positionOutOfBounds(gameState.getGrid(), pos))
       return false;
@@ -317,7 +317,7 @@ public class AI_Tools {
    * @param pos
    * @return true if the position is out of bounds
    */
-  static boolean positionOutOfBounds(String[][] grid, int[] pos) {
+  public static boolean positionOutOfBounds(String[][] grid, int[] pos) {
     return(pos[0] < 0 || 
         pos[1] < 0 ||
         pos[0] >= grid.length || 
@@ -329,7 +329,7 @@ public class AI_Tools {
    * @param pos
    * @return true if the position is an empty Field "" and can be occupied
    */
-  static boolean emptyField(String[][] grid, int[] pos) {
+  public static boolean emptyField(String[][] grid, int[] pos) {
     return grid[pos[0]][pos[1]].equals("");
   }
   /**
@@ -338,7 +338,7 @@ public class AI_Tools {
    * @param pos
    * @return true if the position is occupied by a block and cannot be walked on
    */
-  static boolean occupiedByBlock(String[][] grid, int[] pos) {
+  public static boolean occupiedByBlock(String[][] grid, int[] pos) {
     return grid[pos[0]][pos[1]].equals("b");
   }
   /**
@@ -347,7 +347,7 @@ public class AI_Tools {
    * @param pos
    * @return true if the position is occupied by a Piece of the same Team
    */
-  static boolean occupiedBySameTeam(GameState gameState, int[] pos) {
+  public static boolean occupiedBySameTeam(GameState gameState, int[] pos) {
     return gameState.getCurrentTeam() == Integer.parseInt(gameState.getGrid()[pos[0]][pos[1]].split(":")[1].split("_")[0]);
   }
   /**
@@ -357,7 +357,7 @@ public class AI_Tools {
    * @param picked
    * @return true if the position is occupied by a weaker opponent that can be captured
    */
-  static boolean occupiedByWeakerOpponent(GameState gameState, int[] pos, Piece picked) {
+  public static boolean occupiedByWeakerOpponent(GameState gameState, int[] pos, Piece picked) {
     for(Piece p : gameState.getTeams()[Integer.parseInt(gameState.getGrid()[pos[0]][pos[1]].split(":")[1].split("_")[0])].getPieces()) {
       if(p.getId().equals(gameState.getGrid()[pos[0]][pos[1]])) {
         if(p.getDescription().getAttackPower() <= picked.getDescription().getAttackPower()) {
@@ -376,7 +376,7 @@ public class AI_Tools {
    * @param picked
    * @return true if the position is occupied by another teams base and a flag can be captured
    */
-  static boolean otherTeamsBase(String[][] grid, int[] pos, Piece picked) {
+  public static boolean otherTeamsBase(String[][] grid, int[] pos, Piece picked) {
     if(grid[pos[0]][pos[1]].contains("b:")) {
       if(!grid[pos[0]][pos[1]].split("b:")[1].equals(picked.getId())) {
         return true;
@@ -393,7 +393,7 @@ public class AI_Tools {
    * @param dir
    * @return reach into direction dir
    */
-  static int getReach(Directions directions, int dir) {
+  public static int getReach(Directions directions, int dir) {
     switch(dir) {
       case 0: return directions.getLeft();
       case 1: return directions.getRight();
@@ -413,7 +413,7 @@ public class AI_Tools {
   public static class NoMovesLeftException extends Exception {
     private static final long serialVersionUID = -5045376294141974451L;
 
-    NoMovesLeftException(String team){
+    public NoMovesLeftException(String team){
       super("Team " + team + " can not move.");
     }
   }
@@ -424,7 +424,7 @@ public class AI_Tools {
   public static class InvalidShapeException extends Exception {
     private static final long serialVersionUID = -574558731715073847L;
 
-    InvalidShapeException(String shape){
+    public InvalidShapeException(String shape){
       super("Unknown shape: " + shape);
     }
   }

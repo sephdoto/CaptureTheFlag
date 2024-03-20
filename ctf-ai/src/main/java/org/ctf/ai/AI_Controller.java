@@ -2,10 +2,10 @@ package org.ctf.ai;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import org.ctf.ai.AI_Tools.InvalidShapeException;
-import org.ctf.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.client.tools.JSON_Tools;
 import org.ctf.client.tools.JSON_Tools.MapNotFoundException;
+import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
+import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;

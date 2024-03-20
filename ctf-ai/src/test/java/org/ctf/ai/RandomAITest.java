@@ -5,9 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import org.ctf.ai.AI_Tools.InvalidShapeException;
-import org.ctf.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
+import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
 
