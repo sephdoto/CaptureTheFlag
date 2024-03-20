@@ -77,8 +77,6 @@ public class GameEngine implements Game {
     // placing the pieces and blocks
     BoardSetUp.initGrid(imposterState, template);
 
-    // selecting starting team, here or in joinGame?
-
     this.remainingTeamSlots = template.getTeams() - 1;
     // Setting Flags
     this.isGameOver = false;
@@ -235,7 +233,7 @@ public class GameEngine implements Game {
     } catch (ArithmeticException ae) {
       returnTime = Integer.MAX_VALUE;
     }
-    return returnTime-1;    //-1 Cuz tests were expecting -1 of the value the method was giving back
+    return returnTime - 1; // -1 Cuz tests were expecting -1 of the value the method was giving back
   }
 
   /**
@@ -272,21 +270,28 @@ public class GameEngine implements Game {
 
     String occupant = gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]];
     int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
-    Piece picked = Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(move.getPieceId())).findFirst().get();
+    Piece picked =
+        Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream()
+            .filter(p -> p.getId().equals(move.getPieceId()))
+            .findFirst()
+            .get();
     int[] oldPos = picked.getPosition();
 
     gameState.getGrid()[oldPos[0]][oldPos[1]] = "";
     gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
 
     if (occupant.contains("p:")) {
-       gameState.getTeams()[occupantTeam].setPieces(
+      gameState.getTeams()[occupantTeam].setPieces(
           (Piece[])
               Arrays.asList(gameState.getTeams()[occupantTeam].getPieces()).stream()
                   .filter(p -> !p.getId().equals(occupant))
                   .toArray());
     } else if (occupant.contains("b:")) {
-    	gameState.getTeams()[occupantTeam].setFlags(gameState.getTeams()[occupantTeam].getFlags() -1);
-    	picked.setPosition(AI_Tools.respawnPiecePosition(gameState, gameState.getTeams()[gameState.getCurrentTeam()].getBase()));
+      gameState.getTeams()[occupantTeam].setFlags(
+          gameState.getTeams()[occupantTeam].getFlags() - 1);
+      picked.setPosition(
+          AI_Tools.respawnPiecePosition(
+              gameState, gameState.getTeams()[gameState.getCurrentTeam()].getBase()));
     }
 
     gameState.setCurrentTeam((gameState.getCurrentTeam() + 1) % gameState.getTeams().length);
@@ -300,7 +305,6 @@ public class GameEngine implements Game {
 
     gameOverCheck();
   }
-  
 
   /**
    * The {@link GameEngine#isGameOver()} method only returns the {@link GameEngine#isGameOver}
@@ -509,11 +513,17 @@ public class GameEngine implements Game {
     this.endDate = endDate;
     this.timeLimitedGame = withTimeLimit;
   }
+
   /**
    * TODO Test Konstruktor von Simon Kann entfernt werden wenn das Generieren von GameStates
    * funktioniert, wird in der Test Klasse gebraucht.
    */
-  public GameEngine(GameState gameState, MapTemplate mt, boolean isGameOver, boolean withTimeLimit, Date endDate) {
+  public GameEngine(
+      GameState gameState,
+      MapTemplate mt,
+      boolean isGameOver,
+      boolean withTimeLimit,
+      Date endDate) {
     this.gameState = gameState;
     this.currentTemplate = mt;
     this.isGameOver = isGameOver;

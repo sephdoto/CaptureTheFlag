@@ -1,5 +1,6 @@
 package org.ctf.client;
 
+import com.google.gson.Gson;
 import java.util.Date;
 
 import org.ctf.client.service.CommLayer;
@@ -16,18 +17,13 @@ import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.shared.state.data.exceptions.URLError;
 import org.ctf.shared.state.data.map.MapTemplate;
 
-import com.google.gson.Gson;
-
 /**
- * Base Client file which is going to use the Translation Layer to talk to the game server
- *
- * <p>Also saves data critical for the GameState
- *
+ * Abstraction of a Data Handler which uses a layer to communicate with a server and hold the returned data
+ * Also saves data critical for UI, while providing it with additional functionality
  * @author rsyed
- */
-public class TestClient extends DataHandler {
-
-  public GameState currentState; // Main DataStore
+*/
+public abstract class DataHandler {
+  public volatile GameState currentState; // Main DataStore
   // tracks grid, teams, current team(move), last move,
 
   private Gson gson; // Gson object for conversions
@@ -36,15 +32,6 @@ public class TestClient extends DataHandler {
   // Block to store Data from Game Session
   public String gameSessionID; // Sets the Session ID for the Layer
   private String urlWithID; // Creates URL with Session ID for use later
-  public GameSessionResponse gameResponse;
-
-  public GameSessionResponse getGameResponse() {
-    return gameResponse;
-  }
-
-  public void setGameResponse(GameSessionResponse gameResponse) {
-    this.gameResponse = gameResponse;
-  }
 
   // Block for Team Data
   private String teamSecret;
@@ -60,19 +47,27 @@ public class TestClient extends DataHandler {
   public boolean gameOver;
   public String[] winner;
 
-  /** Constructor which inits some objects on creation */
-  public TestClient() {
+  public DataHandler() {
     this.gson = new Gson(); // creates a gson Object on creation to conserve memory
     this.currentState = new GameState();
   }
 
+  /**
+   * Connect method to establish connection to the server
+   *
+   * @param URL "localhost:8080"
+   * @param port 8888
+   * @param Map MapTemplate Object
+   * @throws URLError 404
+   * @throws UnknownError 500
+   */
   void connect(String URL, String port, MapTemplate map) {
     this.comm = new CommLayer();
     URL = "http://" + URL + ":" + port + "/api/gamesession";
-    gameResponse = new GameSessionResponse();
+    GameSessionResponse response = new GameSessionResponse();
 
     try {
-      gameResponse = comm.createGameSession(URL, map);
+      response = comm.createGameSession(URL, map);
     } catch (UnknownError e) {
       System.out.println("Something wong");
     } catch (URLError e) {
@@ -81,7 +76,7 @@ public class TestClient extends DataHandler {
       System.out.println("We Gucci");
     }
 
-    this.gameSessionID = gameResponse.getId(); // Saves SessionID
+    this.gameSessionID = response.getId(); // Saves SessionID
     this.urlWithID = URL + "/" + gameSessionID; // Creates URL with Session ID for use later
   }
 
@@ -93,8 +88,7 @@ public class TestClient extends DataHandler {
    * @throws NoMoreTeamSlots
    * @throws UnknownError
    */
-  @Override
-  public void joinGame(String teamName) {
+  void joinGame(String teamName) {
     JoinGameResponse response = new JoinGameResponse();
 
     try {
@@ -130,9 +124,7 @@ public class TestClient extends DataHandler {
    * @throws GameOver (410)
    * @throws UnknownError (500)
    */
-  @Override
   public void makeMove(String teamID, String secret, Move move) {
-
     try {
       comm.makeMove(urlWithID, teamID, teamSecret, move);
     } catch (Accepted e) {
@@ -151,7 +143,6 @@ public class TestClient extends DataHandler {
     }
   }
 
-  @Override
   public void giveUp() {
     comm.giveUp(urlWithID, teamID, teamSecret);
     updateState();
@@ -159,57 +150,38 @@ public class TestClient extends DataHandler {
   }
 
   // syncs session state with server
-  @Override
-  public void updateState() {
+  void updateState() {
     this.currentState = comm.getCurrentGameState(urlWithID);
   }
 
   // Refreshes the session
-  @Override
-  public void refreshSession() {
+  void refreshSession() {
     GameSessionResponse gsr = new GameSessionResponse();
     try {
-        gsr = comm.getCurrentSessionState(urlWithID);
+      gsr = comm.getCurrentSessionState(urlWithID);
+    } catch (Accepted e) {
+      this.gameOver = gsr.isGameOver();
+      if (gsr.getGameStarted() != null) {
+        this.startDate = gsr.getGameStarted();
+      }
 
-    } catch (Accepted  e) {
-        this.gameOver = gsr.isGameOver();
-        if (gsr.getGameStarted() != null) {
-          this.startDate = gsr.getGameStarted();
-        }
+      if (gsr.getGameEnded() != null) {
+        this.endDate = gsr.getGameEnded();
+      }
 
-        if (gsr.getGameEnded() != null) {
-          this.endDate = gsr.getGameEnded();
-        }
-
-        if (gsr.getWinner() != null) {
-          this.winner = gsr.getWinner();
-        }
-    } catch (SessionNotFound  e) {
-        throw new SessionNotFound();
-    } catch (UnknownError  e) {
-        throw new UnknownError();
+      if (gsr.getWinner() != null) {
+        this.winner = gsr.getWinner();
+      }
+    } catch (SessionNotFound e) {
+      throw new SessionNotFound();
+    } catch (UnknownError e) {
+      throw new UnknownError();
     }
   }
 
-  @Override
-  public void changeSession() {
-    
-  }
+  void changeSession() {}
 
-  @Override
-  public void deleteSession() {
+  void deleteSession() {
     comm.deleteCurrentSession(urlWithID);
-  }
-
-  public String getSessionID() {
-    return this.gameSessionID;
-  }
-
-  public String getSecretID() {
-    return this.teamSecret;
-  }
-
-  public GameState getState() {
-    return this.currentState;
   }
 }

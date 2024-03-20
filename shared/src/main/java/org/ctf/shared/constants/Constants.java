@@ -3,6 +3,10 @@ package org.ctf.shared.constants;
 import java.io.File;
 import java.nio.file.Paths;
 
+/**
+ * Constants class to hold control variables
+ * @author sistumpf
+ */
 public class Constants {
 	//package map, class JSON_Tools
 	public static String mapTemplateFolder = Paths.get("").toAbsolutePath().toString().split("cfp14")[0]+"cfp14"+File.separator+File.separator+"cfp-service-main"+File.separator+"src"+File.separator+"main"+File.separator+"resources"+File.separator+"maptemplates"+File.separator;
@@ -13,9 +17,13 @@ public class Constants {
 	public static final int TIME = 5000;           //time in milliseconds the algorithm is allowed to take
 	public static final int MAX_STEPS = 100;       //maximum of possible simulation steps the algorithm is allowed to take
 	
-	//package client 
+	/**
+ 	* Constants needed to make the base URI of the restClient 
+ 	* @author rsyed
+ 	*/
 	public static final String remoteIP = "localhost";
 	public static final String remotePort = "8888";
+	public static final String remoteBinder = "/api/";
 
 	public enum AI {
 	  RANDOM, SIMPLE_RANDOM

@@ -1,5 +1,6 @@
 package org.ctf.client;
 
+import com.google.gson.Gson;
 import java.util.Date;
 
 import org.ctf.client.service.CommLayer;
@@ -16,17 +17,10 @@ import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.shared.state.data.exceptions.URLError;
 import org.ctf.shared.state.data.map.MapTemplate;
 
-import com.google.gson.Gson;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-/**
- * Base Client file which is going to use the Translation Layer to talk to the game server
- *
- * <p>Also saves data critical for the GameState
- *
- * @author rsyed
- */
-public class TestClient extends DataHandler {
-
+public class ReactiveDataHandler {
   public GameState currentState; // Main DataStore
   // tracks grid, teams, current team(move), last move,
 
@@ -36,15 +30,6 @@ public class TestClient extends DataHandler {
   // Block to store Data from Game Session
   public String gameSessionID; // Sets the Session ID for the Layer
   private String urlWithID; // Creates URL with Session ID for use later
-  public GameSessionResponse gameResponse;
-
-  public GameSessionResponse getGameResponse() {
-    return gameResponse;
-  }
-
-  public void setGameResponse(GameSessionResponse gameResponse) {
-    this.gameResponse = gameResponse;
-  }
 
   // Block for Team Data
   private String teamSecret;
@@ -61,28 +46,21 @@ public class TestClient extends DataHandler {
   public String[] winner;
 
   /** Constructor which inits some objects on creation */
-  public TestClient() {
+  public ReactiveDataHandler() {
     this.gson = new Gson(); // creates a gson Object on creation to conserve memory
-    this.currentState = new GameState();
+    //this.currentState = new GameState();
   }
 
-  void connect(String URL, String port, MapTemplate map) {
-    this.comm = new CommLayer();
-    URL = "http://" + URL + ":" + port + "/api/gamesession";
-    gameResponse = new GameSessionResponse();
-
-    try {
-      gameResponse = comm.createGameSession(URL, map);
-    } catch (UnknownError e) {
-      System.out.println("Something wong");
-    } catch (URLError e) {
-      System.out.println("Bruh check the URL");
-    } catch (Accepted e) {
-      System.out.println("We Gucci");
-    }
-
-    this.gameSessionID = gameResponse.getId(); // Saves SessionID
-    this.urlWithID = URL + "/" + gameSessionID; // Creates URL with Session ID for use later
+  /**
+   * Connect method to establish connection to the server
+   *
+   * @param URL "http://localhost:8080"
+   * @param Map
+   * @throws URLError 404
+   * @throws UnknownError 500
+   */
+  public void connect(String URL, MapTemplate Map) {
+    
   }
 
   /**
@@ -93,7 +71,6 @@ public class TestClient extends DataHandler {
    * @throws NoMoreTeamSlots
    * @throws UnknownError
    */
-  @Override
   public void joinGame(String teamName) {
     JoinGameResponse response = new JoinGameResponse();
 
@@ -130,7 +107,6 @@ public class TestClient extends DataHandler {
    * @throws GameOver (410)
    * @throws UnknownError (500)
    */
-  @Override
   public void makeMove(String teamID, String secret, Move move) {
 
     try {
@@ -151,7 +127,6 @@ public class TestClient extends DataHandler {
     }
   }
 
-  @Override
   public void giveUp() {
     comm.giveUp(urlWithID, teamID, teamSecret);
     updateState();
@@ -159,47 +134,43 @@ public class TestClient extends DataHandler {
   }
 
   // syncs session state with server
-  @Override
   public void updateState() {
     this.currentState = comm.getCurrentGameState(urlWithID);
   }
 
   // Refreshes the session
-  @Override
+
   public void refreshSession() {
     GameSessionResponse gsr = new GameSessionResponse();
     try {
-        gsr = comm.getCurrentSessionState(urlWithID);
+      gsr = comm.getCurrentSessionState(urlWithID);
+    } catch (Accepted e) {
+      this.gameOver = gsr.isGameOver();
+      if (gsr.getGameStarted() != null) {
+        this.startDate = gsr.getGameStarted();
+      }
 
-    } catch (Accepted  e) {
-        this.gameOver = gsr.isGameOver();
-        if (gsr.getGameStarted() != null) {
-          this.startDate = gsr.getGameStarted();
-        }
+      if (gsr.getGameEnded() != null) {
+        this.endDate = gsr.getGameEnded();
+      }
 
-        if (gsr.getGameEnded() != null) {
-          this.endDate = gsr.getGameEnded();
-        }
-
-        if (gsr.getWinner() != null) {
-          this.winner = gsr.getWinner();
-        }
-    } catch (SessionNotFound  e) {
-        throw new SessionNotFound();
-    } catch (UnknownError  e) {
-        throw new UnknownError();
+      if (gsr.getWinner() != null) {
+        this.winner = gsr.getWinner();
+      }
+    } catch (SessionNotFound e) {
+      throw new SessionNotFound();
+    } catch (UnknownError e) {
+      throw new UnknownError();
     }
   }
 
-  @Override
-  public void changeSession() {
-    
-  }
+  public void changeSession() {}
 
-  @Override
   public void deleteSession() {
     comm.deleteCurrentSession(urlWithID);
   }
+
+  // Methods for Testing Returns
 
   public String getSessionID() {
     return this.gameSessionID;
@@ -209,7 +180,4 @@ public class TestClient extends DataHandler {
     return this.teamSecret;
   }
 
-  public GameState getState() {
-    return this.currentState;
-  }
 }

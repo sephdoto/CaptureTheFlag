@@ -1,4 +1,4 @@
-package org.ctf.client.layer;
+package org.ctf.client.service;
 
 import org.ctf.client.state.data.wrappers.GameSessionResponse;
 import org.ctf.client.state.data.wrappers.JoinGameResponse;
