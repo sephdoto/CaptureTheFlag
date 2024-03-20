@@ -33,7 +33,7 @@ public class AI_Tools {
         int[] newPos = new int[] {y,x};
         if(positionOutOfBounds(gameState.getGrid(), newPos))
           continue;
-        
+
         if(emptyField(gameState.getGrid(), newPos)) {
           for(int i=1, j=-1, randX = seededRandom(gameState.getGrid(), i, 8, 0), randY = seededRandom(gameState.getGrid(), j, 8, 0);; 
               i++, j--, randX = seededRandom(gameState.getGrid(), i, 8, 0), randY = seededRandom(gameState.getGrid(), j, 8, 0)) {
@@ -50,7 +50,7 @@ public class AI_Tools {
     }
     return null;
   }
-  
+
   /**
    * This method should be used instead of Math.random() to generate deterministic positive pseudo
    * random values. Changing modifier changes the resulting output for the same seed.
@@ -66,7 +66,7 @@ public class AI_Tools {
     int seed = sb.append(modifier).toString().hashCode();
     return new Random(seed).nextInt(upperBound-lowerBound) + lowerBound;
   }
-  
+
   /**
    * Given a Piece and a GameState containing the Piece, an ArrayList with all valid locations the Piece can walk on is returned.
    * The ArrayList contains int[2] values, representing a (y,x) location on the grid.
@@ -98,13 +98,14 @@ public class AI_Tools {
 
   /**
    * Selects and returns a random Move from an ArrayList which only contains valid Moves.
-   * @param moveArrayList
+   * @param positionArrayList
+   * @param pieceId
    * @return randomly picked move
    */
-  static Move getRandomShapeMove(ArrayList<int[]> moveArrayList, String pieceId) {
+  static Move getRandomShapeMove(ArrayList<int[]> positionArrayList, String pieceId) {
     Move move = new Move();
     move.setPieceId(pieceId);
-    move.setNewPosition(moveArrayList.get((int)(moveArrayList.size() * Math.random())));
+    move.setNewPosition(positionArrayList.get((int)(positionArrayList.size() * Math.random())));
     return move;
   }
 
@@ -244,7 +245,6 @@ public class AI_Tools {
    * @return true if there is no obstacle in between
    * @return false if any obstacle is in between or the target position is not on the grid
    */
-  //TODO bis jetzt blockieren Bases noch die Sicht, ich weiß nicht ob das so korrekt ist
   static boolean sightLine(GameState gameState, int[] newPos, int direction, int reach) {
     String[][] grid = gameState.getGrid();
     --reach;
@@ -310,10 +310,11 @@ public class AI_Tools {
     //if opponent is stronger or something unforeseen happens
     return false;
   }
-  
+
   /**
-   * @param GameState gameState
-   * @param int[] pos
+   * Checks if a position is not contained in the grid.
+   * @param grid
+   * @param pos
    * @return true if the position is out of bounds
    */
   static boolean positionOutOfBounds(String[][] grid, int[] pos) {
@@ -323,7 +324,8 @@ public class AI_Tools {
         pos[1] >= grid[0].length);
   }
   /**
-   * @param gameState
+   * Checks if a position on the grid contains an empty String.
+   * @param grid
    * @param pos
    * @return true if the position is an empty Field "" and can be occupied
    */
@@ -331,7 +333,8 @@ public class AI_Tools {
     return grid[pos[0]][pos[1]].equals("");
   }
   /**
-   * @param gameState
+   * Checks if a position on the grid contains a block.
+   * @param grid
    * @param pos
    * @return true if the position is occupied by a block and cannot be walked on
    */
@@ -339,7 +342,8 @@ public class AI_Tools {
     return grid[pos[0]][pos[1]].equals("b");
   }
   /**
-   * @param gameState
+   * Checks if a position on the grid is occupied by a piece from the current team.
+   * @param grid
    * @param pos
    * @return true if the position is occupied by a Piece of the same Team
    */
@@ -347,6 +351,7 @@ public class AI_Tools {
     return gameState.getCurrentTeam() == Integer.parseInt(gameState.getGrid()[pos[0]][pos[1]].split(":")[1].split("_")[0]);
   }
   /**
+   * Checks if a position on the grid is occupied by a piece with a weaker or the same AttackPower as a given piece.
    * @param gameState
    * @param pos
    * @param picked
@@ -365,8 +370,10 @@ public class AI_Tools {
     return false;
   }
   /**
-   * @param gameState
+   * Checks if a position on the grid is occupied by an opponents base.
+   * @param grid
    * @param pos
+   * @param picked
    * @return true if the position is occupied by another teams base and a flag can be captured
    */
   static boolean otherTeamsBase(String[][] grid, int[] pos, Piece picked) {
@@ -384,7 +391,7 @@ public class AI_Tools {
    * Assumes the direction is valid, doesn't catch Null Pointer Exceptions.
    * @param directions
    * @param dir
-   * @return int reach
+   * @return reach into direction dir
    */
   static int getReach(Directions directions, int dir) {
     switch(dir) {
