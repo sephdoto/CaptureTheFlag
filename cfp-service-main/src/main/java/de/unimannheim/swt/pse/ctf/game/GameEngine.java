@@ -39,6 +39,7 @@ public class GameEngine implements Game {
   // Blocks for branches in game mode
   // Game state is taking care of all time calculations
   private boolean timeLimitedGame;
+  private LocalDateTime gameEndsAt;
   private boolean moveTimeLimitedGame;
   private Date startedDate;
   private Date endDate;
@@ -196,11 +197,14 @@ public class GameEngine implements Game {
 
   /**
    * Get current state of the game
-   *
+   * 
    * @return GameState
    */
   @Override
   public GameState getCurrentGameState() {
+    //TODO Maybe use this as a updater method
+    gameOverCheck();
+    turnTimeLimitedChecks();
     return gameState;
   }
 
@@ -300,7 +304,7 @@ public class GameEngine implements Game {
     gameState.setLastMove(move);
 
     // Update Time
-    if (this.timeLimitedGame) {
+    if (this.moveTimeLimitedGame) {
       this.lastMoveTime = LocalDateTime.now();
       this.nextMoveTime = lastMoveTime.plusSeconds(currentTemplate.getMoveTimeLimitInSeconds());
     }
@@ -309,7 +313,7 @@ public class GameEngine implements Game {
   }
 
   /**
-   * Helper method to perform a turn check. So that players cannot move out of turn moves.
+   * Helper method to perform a turn check. So that players cannot make out of turn moves.
    *
    * @author rsyed
    * @param move Name of the team
@@ -398,6 +402,13 @@ public class GameEngine implements Game {
             LocalDateTime.now()
                 .atZone(ZoneId.systemDefault())
                 .toInstant()); // Sets the TimeStamp for when the game started
+    if(this.timeLimitedGame){
+      this.gameEndsAt = LocalDateTime.now().plusSeconds(currentTemplate.getTotalTimeLimitInSeconds()); // Sets the TimeStamp for when the game started
+    }
+    if(this.moveTimeLimitedGame){
+      this.lastMoveTime = LocalDateTime.now();
+      this.nextMoveTime = lastMoveTime.plusSeconds(currentTemplate.getMoveTimeLimitInSeconds());
+    }
   }
 
   /**
@@ -453,9 +464,24 @@ public class GameEngine implements Game {
   private void setAltGameModes(MapTemplate template) {
     if (template.getTotalTimeLimitInSeconds() != -1) {
       this.timeLimitedGame = true;
+    } else{
+      this.timeLimitedGame = false;
     }
     if (template.getMoveTimeLimitInSeconds() != -1) {
       this.moveTimeLimitedGame = true;
+    } else {
+      this.moveTimeLimitedGame = false;
+    }
+  }
+
+   /**
+   * Helper method to change whose turn it is if time runs out
+   *
+   * @author rsyed
+   */
+  private void turnTimeLimitedChecks() {
+    if(getRemainingMoveTimeInSeconds() < 0){
+      gameState.setCurrentTeam((gameState.getCurrentTeam() + 1) % gameState.getTeams().length);
     }
   }
 
