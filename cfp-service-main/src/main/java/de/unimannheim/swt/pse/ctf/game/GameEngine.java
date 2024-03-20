@@ -263,7 +263,7 @@ public class GameEngine implements Game {
    */
   @Override
   public void makeMove(Move move) {
-    if (isGameOver()) {
+    if(!movePreconditionsMet(move)){
       return;
     } else if (!isValidMove(move) ) {
       throw new InvalidMove();
@@ -309,7 +309,35 @@ public class GameEngine implements Game {
       this.nextMoveTime = lastMoveTime.plusSeconds(currentTemplate.getMoveTimeLimitInSeconds());
     }
 
+    afterMoveCleanup();
+  }
+  
+  /**
+   * Call this after making a move.
+   * Timer gets updated, gameOverChecks are made.
+   * @author sistumpf, rsyed
+   */
+  private void afterMoveCleanup() {
+    // Update Time
+    if (this.moveTimeLimitedGame) {
+      this.lastMoveTime = LocalDateTime.now();
     gameOverCheck();
+  }
+  }
+
+
+    /**
+   * Call this before making a move.
+   * @param move
+   * @return false if the move is invalid, either because it is the wrong player, the move itself is invalid or the game is already over.
+   */
+  private boolean movePreconditionsMet(Move move) {
+    if(isGameOver() || !isTurn(move)) {
+      return false;
+    } else if(!isValidMove(move)) {
+      throw new InvalidMove();
+    } 
+    return true;
   }
 
   /**
@@ -319,7 +347,7 @@ public class GameEngine implements Game {
    * @param move Name of the team
    * @return boolean
    */
-  private boolean isturn(Move move) {
+  private boolean isTurn(Move move) {
     int moveTeamIdentifier = Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0]);
     if (moveTeamIdentifier == gameState.getCurrentTeam()-1){
       return true;
