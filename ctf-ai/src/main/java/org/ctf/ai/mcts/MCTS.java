@@ -56,10 +56,7 @@ public class MCTS {
    * @return the node to simulate on
    */
   TreeNode selectAndExpand(TreeNode node, float C){
-    /*
-         / prueft alle 6 Felder des Spielers ob Zuege moeglich sind, wenn ja wird die Schleife ausgefuehrt
-     */
-    while(isTerminal(node) != 2) {
+    while(isTerminal(node) == -1) {
       if(!isFullyExpanded(node)){
         expansionCounter++;
         return expand(node);
@@ -80,7 +77,9 @@ public class MCTS {
   TreeNode expand(TreeNode selected){
     for(int i=0; i<selected.children.length; i++) {
       if(selected.children[i] == null) {
-        selected.children[i] = oneRandomMove(selected, i);
+        selected.children[i] = oneRandomMove(selected);
+        //TODO  aus oneRandomMove entfernt, sollte unwichtig sein aber marken     parent.children[childPosition] = child;
+
         return selected.children[i];
       }
     }
@@ -98,33 +97,22 @@ public class MCTS {
    */
   int[] simulate(TreeNode simulateOn){      
     int isTerminal = isTerminal(simulateOn);
-    /*
-
-        for(int i=0; i < Constants.MAX_STEPS && isTerminal == 4; i++, isTerminal = isTerminal(simulateOn)) {
-            int field = pickField(simulateOn);
-            simulateOn = this.oneMove(simulateOn, field);
-        }
-
-        switch(isTerminal) {
-            case 0:                                         //Spieler A hat mehr als die Haelfte der Punkte
-                simulationCounter++; 
-                return true;
-            case 1:                                         //Spieler B hat mehr als die Haelfte der Punkte
-                simulationCounter++; 
-                return false;
-            case 2:                                         //aktueller Spieler hat keine Bohnen mehr
-                simulationCounter++;
-                if((simulateOn.player ? simulateOn.pointsP1 : simulateOn.pointsP2) > Constants.HALF_THE_BEANS)
-                    return simulateOn.player;               //aktueller Spieler hat mehr als die Haelfte aller Punkte
-                else
-                    return !simulateOn.player;              //aktueller Spieler hat weniger als die Haelfte aller Punkte
-            default:                                        //kein Endzustand: Heuristik bewertet Spielzustand
-                heuristicCounter++;
-                int score = terminalHeuristic(simulateOn);
-                return score == 0 ? !simulateOn.player : score > 0;
-            }
-     */
-    return null;
+    int[] winners = new int[simulateOn.gameState.getTeams().length];
+    
+    //TODO multithreadding
+    
+    for(int i=0; i < Constants.MAX_STEPS && isTerminal == -1; i++, isTerminal = isTerminal(simulateOn)) {
+      simulateOn = oneRandomMove(simulateOn);
+    }
+    if(isTerminal < 0) {
+      simulationCounter++;
+      winners[terminalHeuristic(simulateOn)] += 1;
+    } else {
+      heuristicCounter++;
+      winners[isTerminal] += 1;
+    }
+    
+    return winners;
   }
 
 
@@ -170,15 +158,24 @@ public class MCTS {
    * generates an array with a players 6 fields and their number of beans,
    * checks if any of the players have more than half the beans needed to win or have any moves left
    * @param a node to check if it is terminal
-   * @return -1 if the game is not over
+   * @return -1 if the game is not in a terminal state
    * 		   0 - Integer.MAX_VALUE winner team id
    */
   int isTerminal(TreeNode node) {
+    //TODO : wenn ein Team verloren hat wird es aus der Teams liste des GameStates entfernt
+    //TODO Node Moves left check richtig hier??
+    //nodeNoMovesLeft(node);
+    
     if(node.gameState.getTeams().length == 1)
       return Integer.parseInt(node.gameState.getTeams()[0].getId());
-    //TODO : wenn ein Team verloren hat wird es aus der Teams liste des GameStates entfernt
 
     return -1;
+  }
+  
+  void nodeNoMovesLeft(TreeNode node) {
+    //TODO alter node so the team without a move gets removed. 
+    // its the next teams turn then.
+    // if it got no moves left, repeat
   }
 
 
@@ -242,10 +239,14 @@ public class MCTS {
    * @param the move in form of the selected element in the parents array
    * @return a child node containing the simulation result
    */
-  TreeNode oneRandomMove(TreeNode parent, int childPosition) {
+  TreeNode oneRandomMove(TreeNode parent) {
     GameState gameState = parent.copyGameState();
-
-    String key = parent.possibleMoves.keySet().toArray()[rand.nextInt(parent.possibleMoves.keySet().size())].toString();	//TODO test
+    String key = "";
+    try {
+    key = parent.possibleMoves.keySet().toArray()[rand.nextInt(parent.possibleMoves.keySet().size())].toString();	//TODO test
+    } 
+    catch (Exception e) {
+      parent.printMe(""); System.out.println(parent.possibleMoves.keySet().size());} 
     int randomMove = rand.nextInt(parent.possibleMoves.get(key).size());
     int[] movePos = parent.possibleMoves.get(key).get(randomMove);	//TODO test	
     parent.possibleMoves.get(key).remove(randomMove);
@@ -260,7 +261,6 @@ public class MCTS {
     removeTeamCheck(gameState);
 
     TreeNode child = parent.clone(gameState);
-    parent.children[childPosition] = child;
 
     return child;
   }   

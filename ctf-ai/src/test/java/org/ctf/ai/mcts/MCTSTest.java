@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import org.ctf.ai.TestValues;
 import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.Move;
+import org.ctf.shared.state.Piece;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,8 +22,39 @@ class MCTSTest {
   }
 
   @Test
-  void testGetState() {
-    fail("Not yet implemented");
+  void testGetMove() {
+    gameState = TestValues.getEmptyTestState();
+    gameState.getTeams()[0].setBase(new int[] {0,0});
+    gameState.getTeams()[0].setFlags(1);
+    gameState.getTeams()[0].setId("0");
+    Piece[] pieces0 = new Piece[1];
+    pieces0[0] = new Piece();
+    pieces0[0].setDescription(TestValues.getTestTemplate().getPieces()[2]);
+    pieces0[0].setId("p:0_1");
+    pieces0[0].setPosition(new int[] {0,1});
+    pieces0[0].setTeamId("0");
+    gameState.getTeams()[0].setPieces(pieces0);
+    
+    gameState.getTeams()[1].setBase(new int[] {9,9});
+    gameState.getTeams()[1].setFlags(1);
+    gameState.getTeams()[1].setId("1");
+    Piece[] pieces1 = new Piece[1];
+    pieces1[0] = new Piece();
+    pieces1[0].setDescription(TestValues.getTestTemplate().getPieces()[2]);
+    pieces1[0].setId("p:1_1");
+    pieces1[0].setPosition(new int[] {9,8});
+    pieces1[0].setTeamId("1");
+    gameState.getTeams()[1].setPieces(pieces1);
+    gameState.getGrid()[0][1] = pieces0[0].getId();
+    gameState.getGrid()[9][8] = pieces1[0].getId();
+    
+    TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
+    mcts = new MCTS(parent);
+ 
+//    Move move = mcts.getMove(1000, (float)Math.sqrt(2));
+//    System.out.println("Piece: " + move.getPieceId() + " moves to " + move.getNewPosition()[0] + ", " + move.getNewPosition()[1]);
+  for(int i=0; i<100000; i++)
+    mcts.oneRandomMove(mcts.root);
   }
 
   @Test
@@ -117,7 +150,7 @@ class MCTSTest {
 
     int[] piece1_8_pos = root.gameState.getTeams()[1].getPieces()[7].getPosition();
 
-    mcts.oneRandomMove(root, 0);
+    root.children[0] = mcts.oneRandomMove(root);
     int[] piece1_8_pos_new = root.children[0].gameState.getTeams()[1].getPieces()[7].getPosition();
 
     assertFalse(Arrays.equals(piece1_8_pos, piece1_8_pos_new));
@@ -141,7 +174,7 @@ class MCTSTest {
     int[] piece1_8_pos = root.gameState.getTeams()[1].getPieces()[7].getPosition();
     int piecesTeam0 = root.gameState.getTeams()[0].getPieces().length;
 
-    mcts.oneRandomMove(root, 0);
+    root.children[0] = mcts.oneRandomMove(root);
     int[] piece1_8_pos_new = root.children[0].gameState.getTeams()[1].getPieces()[7].getPosition();
     int piecesTeam0new = root.children[0].gameState.getTeams()[0].getPieces().length;
     
@@ -166,7 +199,7 @@ class MCTSTest {
 
     int[] piece1_8_pos = root.gameState.getTeams()[1].getPieces()[7].getPosition();
    
-    mcts.oneRandomMove(root, 0);
+    root.children[0] = mcts.oneRandomMove(root);
 
     int[] piece1_8_pos_new = root.children[0].gameState.getTeams()[1].getPieces()[7].getPosition();
  
