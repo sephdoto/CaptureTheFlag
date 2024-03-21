@@ -1,5 +1,7 @@
 package org.ctf.ui.customobjects;
 
+
+
 import org.ctf.ui.Game;
 
 import javafx.event.EventHandler;
@@ -16,12 +18,14 @@ import javafx.scene.paint.Color;
  * This class represents a general representation of a game figure that is represented by an image
  */
 public class CostumFigurePain extends Pane {
-	Game game;
-	String name;
+	public Game game;
+	public String name; //id
 	Image bImage;
+	ImageView vw;
 	BackgroundCell parent;
-	int posX;
-	int posY;
+	public int posX;
+	public int posY;
+	boolean active;
 	
 	/**
 	 * @author mkrakows
@@ -36,24 +40,16 @@ public class CostumFigurePain extends Pane {
 	 * @param game: A figure always knows the game it is playing in (Access to Game has to be guaranteed when a figure is chosen with 
 	 * a MouseClick)
 	 */
-	public CostumFigurePain(Image bImage, String name, BackgroundCell parent, Game game) {
-	this.game = game;
-	this.posX = parent.x;
-	this.posY = parent.y;
-	this.parent = parent;
-	this.bImage = bImage;
+	public CostumFigurePain( String name) {
 	this.name = name;
-	ImageView vw = new ImageView(bImage);
-	vw.fitWidthProperty().bind(this.widthProperty());
-	vw.fitHeightProperty().bind(this.heightProperty());
-	this.getChildren().add(vw);
+	this.active = false;
 	this.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
+		
 		@Override
 		public void handle(MouseEvent e) {
-			System.out.println("Hallo: " + parent.getPosition()[0]+ ", " + parent.getPosition()[1]);
-			showShadow(vw);
-	        game.setCurrent(CostumFigurePain.this);
+			if(active) {
+				performMouseClick();
+			}
 		}
 	});
 	}
@@ -63,7 +59,7 @@ public class CostumFigurePain extends Pane {
 	 * creates a Shadow which can be used to highlight the currently selected Figure
 	 * @param ImageView
 	 */
-	public void showShadow(ImageView vw) {
+	public void showShadow() {
 		DropShadow borderGlow = new DropShadow();
         borderGlow.setColor(Color.BLACK);
         borderGlow.setOffsetX(0f);
@@ -71,11 +67,44 @@ public class CostumFigurePain extends Pane {
         vw.setEffect(borderGlow);
 	}
 	
+	public void performMouseClick() {
+		if(game.currentPlayer != null) {
+			game.currentPlayer.disableShadow();				}
+	System.out.println("Hallo: " + posX + ", " + posY);
+	showShadow();
+	game.setCurrent(CostumFigurePain.this);
+	game.showPossibleMoves();
+	}
+	
+	public void disableShadow() {
+		vw.setEffect(null);
+	}
+	
+	
+	public void setImage() {
+		this.vw = new ImageView(bImage);
+		vw.fitWidthProperty().bind(this.widthProperty());
+		vw.fitHeightProperty().bind(this.heightProperty());
+		this.getChildren().add(vw);
+	}
+	
 
 	public void setParent(BackgroundCell parent) {
 		this.parent = parent;
+		this.posX = parent.x;
+		this.posY = parent.y;
 	}
-
+	
+	public void setActive() {
+		this.active = true;
+	}
+	
+	public void setUnactive() {
+		this.active = false;
+	}
+	
+	
+	
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub

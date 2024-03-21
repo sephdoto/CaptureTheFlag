@@ -1,11 +1,14 @@
 package org.ctf.ui;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import javax.management.BadAttributeValueExpException;
 
 import org.ctf.ui.customobjects.BackgroundCell;
-import org.ctf.ui.customobjects.BlockRepV2;
-import org.ctf.ui.customobjects.BlueFlagRepV1;
-import org.ctf.ui.customobjects.FigureRepV2;
+import org.ctf.ui.customobjects.BlockRepV3;
+import org.ctf.ui.customobjects.CostumFigurePain;
+import org.ctf.ui.customobjects.DameRep;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
@@ -34,30 +37,39 @@ import javafx.scene.paint.Color;
  * it is realized y using a GridPane and resizable for any kind of map
  */
 public class GamePane extends HBox {
+	
 	String[][] map;
 	int rows;
 	int cols;
-
+	final VBox vBox;
+	HashMap<String, CostumFigurePain> team1 = new HashMap<String, CostumFigurePain>();
+	HashMap<String, CostumFigurePain> team2 = new HashMap<String, CostumFigurePain>();
+	ArrayList<CostumFigurePain> allFigures = new ArrayList<CostumFigurePain>();
+	//ArrayList<BackgroundCell> cells = new ArrayList<BackgroundCell>();
+	HashMap<Integer, BackgroundCell> cells = new HashMap<Integer, BackgroundCell>();
+	 GridPane gridPane;
+	
+	
 	public GamePane(String[][] map) {
 		this.map = map;
 		rows = map.length;
 		cols = map[0].length;
-		final VBox vBox = new VBox();
-
+		vBox = new VBox();
+//		vBox.setStyle("-fx-border-color: blue; "
+//				+ "-fx-border-width: 1.5px");
 		vBox.alignmentProperty().set(Pos.CENTER);
 		alignmentProperty().set(Pos.BOTTOM_CENTER);
 		paddingProperty().set(new Insets(10));
-		final GridPane gridPane = new GridPane();
+		 gridPane = new GridPane();
 
-		gridPane.setGridLinesVisible(true);
-		gridPane.setAlignment(Pos.CENTER);
+		//gridPane.setGridLinesVisible(true);
+		//gridPane.setAlignment(Pos.CENTER);
 
-		final NumberBinding binding = Bindings.min(widthProperty().divide(cols), heightProperty().divide(rows));
+		 NumberBinding binding = Bindings.min(widthProperty().divide(cols), heightProperty().divide(rows));
 		// gridPane.setMinSize(300, 300);
 		vBox.prefWidthProperty().bind(binding.multiply(cols));
 		vBox.prefHeightProperty().bind(binding.multiply(rows));
 		vBox.setMaxSize(Control.USE_PREF_SIZE, Control.USE_PREF_SIZE);
-
 		vBox.setFillWidth(true);
 		VBox.setVgrow(gridPane, Priority.ALWAYS);
 
@@ -76,8 +88,8 @@ public class GamePane extends HBox {
 			gridPane.getRowConstraints().add(rowConstraints);
 		}
 		//this.addMouseListener(gridPane);
-		this.fillGridPane(gridPane);
-		vBox.getChildren().add(gridPane);
+		this.fillGridPane();
+		
 
 		getChildren().add(vBox);
 
@@ -100,22 +112,50 @@ public class GamePane extends HBox {
 //			}
 //		});
 //	}
+	public void moveFigure(int x) {
+		cells.get(x).addBlock(new BlockRepV3());
+		
+	}
+	
+	
+	public int generateKey(int x, int y) {
+		return x* 31 + y;
+	}
+	
+	private void bindSize(BackgroundCell c) {
+		c.prefHeightProperty().bind(vBox.heightProperty().divide(rows));
+		c.prefWidthProperty().bind(vBox.widthProperty().divide(cols));
+	}
+	
 
-	public void fillGridPane(GridPane gridPane) {
+	
+	public void fillGridPane() {
+		if(!vBox.getChildren().isEmpty()) {
+			vBox.getChildren().clear();
+		}
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
 				String objectRep = map[i][j];
 				BackgroundCell child = new BackgroundCell(i, j);
-				;
+				//bindSize(child);
+				cells.put(generateKey(i, j),child);
 				if (objectRep.startsWith("p:1")) {
-					child.getChildren().add(new BlueFlagRepV1(10, child));
+					DameRep d1 = new DameRep(objectRep);
+					team1.put(objectRep, d1);
+					allFigures.add(d1);
+					child.addFigure(d1);
+					
 
 				} else if (objectRep.startsWith("p:2")) {
 					// child = new FigureRepV2(10, Color.BLUE);
-					child.getChildren().add(new FigureRepV2(10, Color.BLUE));
+					DameRep d2 = new DameRep(objectRep);
+					team2.put(objectRep, d2);
+					allFigures.add(d2);
+					child.addFigure(d2);
+					
 				} else if (objectRep.equals("b")) {
 					// child = new BlockRepV2(10);
-					child.getChildren().add(new BlockRepV2());
+					child.addBlock(new BlockRepV3());
 				} else if (objectRep.startsWith("b:1")) {
 
 				} else {
@@ -124,7 +164,9 @@ public class GamePane extends HBox {
 				GridPane.setRowIndex(child, i);
 				GridPane.setColumnIndex(child, j);
 				gridPane.getChildren().add(child);
+				
 			}
 		}
+		vBox.getChildren().add(gridPane);
 	}
 }

@@ -86,6 +86,17 @@ public class CreateGameScreen  {
 	static StoreMapArrays maps = new StoreMapArrays();
 	static String[][] exm = { { "b", "p:1_2", "b" }, { "b", "p:2_3", "b" },{ "b", "", "" } };
 	static String[][] exm2 = { { "b", "p:1_2", "b","" }, { "b", "p:2_3", "b" ,""},{ "b", "", "","" } };
+	static String[][] exm3 = {
+			  {"p:1_1", "p:1_2", "p:1_3", "p:1_4", "p:1_5", "p:1_6", "p:1_7", "p:1_8"},
+			  {"", "", "", "", "", "", "", ""},
+			  {"", "", "", "", "", "", "", ""},
+			  {"", "", "", "b", "", "", "", ""},
+			  {"", "", "b", "", "", "", "", ""},
+			  {"", "", "", "", "b", "", "", ""},
+			  {"", "", "", "", "", "", "", ""},
+			  {"p:2_3", "p:2_3", "p:2_3", "p:2_3", "p:2_3", "p:2_3", "p:2_3", "p:2_3"}
+			};
+	  
 	static String selected;
 	static Label mapName;
 	static VBox rightVBox;
@@ -94,6 +105,7 @@ public class CreateGameScreen  {
 		s = stage;
 		maps.putMap("exmaple", exm);
 		maps.putMap("example2", exm2);
+		maps.putMap("exm3", exm3);
 		v = new VBox();
 		HBox headerBox = createHeaderBox();
 		center = new HBox();
@@ -104,10 +116,10 @@ public class CreateGameScreen  {
 		center.getChildren().addAll(gm, right);
 		v.getChildren().add(headerBox);
 		v.getChildren().add(center);
-		Scene s = new Scene(v, 1000, 500);
+		Scene scene = new Scene(v, 1000, 500);
 		stage.setMinHeight(500);
 		stage.setMinWidth(900);
-		stage.setScene(s);
+		stage.setScene(scene);
 		stage.show();
 	}
 
@@ -134,7 +146,22 @@ public class CreateGameScreen  {
 		VBox.setMargin(h, new Insets(90,0,0,0));
 		h.prefWidthProperty().bind(right.widthProperty().multiply(0.7));
 		h.prefHeightProperty().bind(right.heightProperty().multiply(0.1));
-		right.getChildren().addAll(ls,c,h);
+		h.setOnAction(event ->{
+			PlayGameScreen.initPlayGameScreen(s, gm);
+		});
+		
+		Button backButton = new Button("back");
+		VBox.setMargin(backButton, new Insets(100,0,0,0));
+		backButton.prefWidthProperty().bind(right.widthProperty().multiply(0.5));
+		backButton.prefHeightProperty().bind(right.heightProperty().multiply(0.05));
+		backButton.setOnAction(e -> {
+			Scene scene = App.getScene();
+		    s = App.getStage();
+		    s.setScene(scene);
+		});
+		
+		
+		right.getChildren().addAll(ls,c,h,backButton);
 		rightVBox = right;
 		return right;
 	}
@@ -144,15 +171,15 @@ public class CreateGameScreen  {
 		headerBox.setStyle("-fx-background-color: violet");
 		//javafx.scene.control.Button bx = new Button("back");
 		mapName = new Label("Your Map:");
-		mapName.setFont(Font.font(30));
+		mapName.setFont(Font.font(30));		
 		//headerBox.getChildren().add( bx);
-		headerBox.getChildren().add(mapName);
+		headerBox.getChildren().addAll(mapName);
 		return headerBox;
 	}
 	
 	private static GamePane createLeftSidPane(String name) {
 		String[][] map = maps.getMap(name);
-		GamePane gm = new GamePane(map);
+		gm = new GamePane(map);
 		gm.prefWidthProperty().bind(s.widthProperty().multiply(0.7));
 		gm.prefHeightProperty().bind(s.heightProperty());
 		return gm;
