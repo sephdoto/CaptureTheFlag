@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import org.ctf.ai.TestValues;
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
@@ -23,6 +24,84 @@ class MCTSTest {
 
   @Test
   void testGetMove() {
+    gameState = TestValues.getEmptyTestState();
+    gameState.getTeams()[0].setBase(new int[] {0,0});
+    gameState.getTeams()[0].setFlags(1);
+    gameState.getTeams()[0].setId("0");
+    Piece[] pieces0 = new Piece[1];
+    pieces0[0] = new Piece();
+    pieces0[0].setDescription(TestValues.getTestTemplate().getPieces()[4]);
+    pieces0[0].setId("p:0_1");
+    pieces0[0].setPosition(new int[] {0,1});
+    pieces0[0].setTeamId("0");
+    gameState.getTeams()[0].setPieces(pieces0);
+    
+    gameState.getTeams()[1].setBase(new int[] {9,9});
+    gameState.getTeams()[1].setFlags(1);
+    gameState.getTeams()[1].setId("1");
+    Piece[] pieces1 = new Piece[1];
+    pieces1[0] = new Piece();
+    pieces1[0].setDescription(TestValues.getTestTemplate().getPieces()[4]);
+    pieces1[0].setId("p:1_1");
+    pieces1[0].setPosition(new int[] {2,0});
+    pieces1[0].setTeamId("1");
+    gameState.getTeams()[1].setPieces(pieces1);
+    gameState.getGrid()[0][1] = pieces0[0].getId();
+    gameState.getGrid()[2][0] = pieces1[0].getId();
+    
+    TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
+    mcts = new MCTS(parent);
+    
+    System.out.println("parent Grid:");
+    parent.printGrid();
+ 
+    
+    Move move = mcts.getMove(5000, (float)Math.sqrt(2));
+
+    System.out.println(mcts.printResults(move));
+    
+    mcts.alterGameState(mcts.root.gameState, move);
+    mcts.root.printGrid();
+  }
+  
+  @Test
+  void testMctsWorks() {
+    int randomTillEnd = 0;
+    while(mcts.isTerminal(mcts.root) == -1) {
+      randomTillEnd++;
+      mcts.root = mcts.oneRandomMove(mcts.root);
+      mcts.removeTeamCheck(mcts.root.gameState);
+      
+//      mcts.root.printGrid();
+//      System.out.println("");
+    }
+    
+    gameState = TestValues.getTestState();
+    TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
+    mcts = new MCTS(parent);
+    
+    int mctsTillEnd = 0;
+    while(mcts.isTerminal(mcts.root) == -1) {
+
+      Move move = mcts.getMove(3000, Constants.C);
+      
+      TreeNode tn = mcts.root;
+      mcts.alterGameState(tn.gameState, move);
+      
+      tn = mcts.oneRandomMove(tn.clone(tn.copyGameState()));
+      
+      tn.printGrid();
+      System.out.println(++mctsTillEnd + " " + mcts.expansionCounter);
+
+      mcts = new MCTS(tn);
+    }
+    mcts.root.printGrid();
+    System.out.println("random steps till end: " + randomTillEnd + ", mcts steps till end: " + mctsTillEnd);
+
+  }
+  
+  @Test
+  void testOneRandomMove() {
     gameState = TestValues.getEmptyTestState();
     gameState.getTeams()[0].setBase(new int[] {0,0});
     gameState.getTeams()[0].setFlags(1);
@@ -51,10 +130,12 @@ class MCTSTest {
     TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
     mcts = new MCTS(parent);
  
-//    Move move = mcts.getMove(1000, (float)Math.sqrt(2));
-//    System.out.println("Piece: " + move.getPieceId() + " moves to " + move.getNewPosition()[0] + ", " + move.getNewPosition()[1]);
-  for(int i=0; i<100000; i++)
-    mcts.oneRandomMove(mcts.root);
+    //    Move move = mcts.getMove(1000, (float)Math.sqrt(2));
+    //    System.out.println("Piece: " + move.getPieceId() + " moves to " + move.getNewPosition()[0] + ", " + move.getNewPosition()[1]);
+    for(int i=0; i<parent.possibleMoves.size(); i++) {
+      if(-1 == mcts.isTerminal(mcts.root))
+        mcts.oneRandomMove(mcts.root);
+    }
   }
 
   @Test
@@ -88,10 +169,34 @@ class MCTSTest {
   }
 
   @Test
-  void testIsTerminal() {
-    fail("Not yet implemented");
-  }
+  void testIsTerminal_noMovesLeft() {
+    //two teams
+    gameState = TestValues.getEmptyTestState();
+    gameState.setCurrentTeam(0);
+    TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
+    MCTS mcts = new MCTS(parent);
 
+    assertEquals(1, mcts.isTerminal(mcts.root));
+  
+    //three teams
+    gameState = TestValues.getThreeTeamsEmptyTestState();
+    gameState.setCurrentTeam(0);
+    parent = new TreeNode(null, gameState, new int[] {0,0});
+    mcts = new MCTS(parent);
+
+    assertEquals(2, mcts.isTerminal(mcts.root));
+  }
+  @Test
+  void testIsTerminal_movesLeft() {
+    gameState = TestValues.getTestState();
+    gameState.setCurrentTeam(0);
+    TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
+    MCTS mcts = new MCTS(parent);
+
+    assertEquals(-1, mcts.isTerminal(mcts.root));
+  }
+  
+  
   @Test
   void testIsFullyExpanded() {
     fail("Not yet implemented");

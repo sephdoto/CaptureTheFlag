@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
+import org.ctf.shared.state.Team;
 import org.ctf.shared.state.data.map.Directions;
 import org.ctf.shared.state.data.map.ShapeType;
 
@@ -16,6 +17,28 @@ import org.ctf.shared.state.data.map.ShapeType;
  *     Moves.
  */
 public class AI_Tools {
+  /**
+   * Removes a certain team from the GameState.
+   * team is the place of the team in the GameState.getTeams Array.
+   * @param gameState
+   * @param team
+   */
+  public static void removeTeam(GameState gameState, int team) {
+    gameState.getGrid()[gameState.getTeams()[team].getBase()[0]][gameState.getTeams()[team].getBase()[1]] = "";
+    for(Piece p : gameState.getTeams()[team].getPieces())
+      gameState.getGrid()[p.getPosition()[0]][p.getPosition()[1]] = "";
+    
+    Team[] teams = new Team[gameState.getTeams().length -1];
+    for(int j=0; j<gameState.getTeams().length; j++) {
+      if(j < team) {
+        teams[j] = gameState.getTeams()[j];
+      } else if (j > team) {
+        teams[j-1] = gameState.getTeams()[j];
+      }
+    }
+    gameState.setTeams(teams);
+  }
+  
   /**
    * Returns a valid position on which a Piece can safely respawn.
    *

@@ -12,10 +12,17 @@ public class Constants {
 	public static String mapTemplateFolder = Paths.get("").toAbsolutePath().toString().split("cfp14")[0]+"cfp14"+File.separator+File.separator+"cfp-service-main"+File.separator+"src"+File.separator+"main"+File.separator+"resources"+File.separator+"maptemplates"+File.separator;
 	
 	
-	//package ai.mcts, classrs MCTS & TreeNode
+	//package ai.mcts, classes MCTS & TreeNode
 	public static final float C = (float)Math.E/2;             //used to calculate UCT
-	public static final int TIME = 5000;           //time in milliseconds the algorithm is allowed to take
-	public static final int MAX_STEPS = 100;       //maximum of possible simulation steps the algorithm is allowed to take
+	public static final int TIME = 5000;                       //time in milliseconds the algorithm is allowed to take
+	public static final int MAX_STEPS = 50;                    //maximum of possible simulation steps the algorithm is allowed to take
+	
+	//package ai.mcts, class MCTS. used for heuristic
+	public static final int attackPowerMultiplier = 1;         //how much the pieces attack power is valued
+	public static final int pieceMultiplier = 1;               //how much having one piece is valued
+	public static final int flagMultiplier = 1000;               //how much having a flag is valued
+	public static final int directionMultiplier = 1;           //how much a pieces reach into a certain direction is valued
+	public static final int shapeReachMultiplier = 1;          //for valuing a shape Similar to a Direction movement. Calculated as 8 * this value (instead of 8 directions)
 	
 	/**
  	* Constants needed to make the base URI of the restClient 

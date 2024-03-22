@@ -2,8 +2,13 @@ package org.ctf.ai.mcts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.ctf.ai.RandomAI;
 import org.ctf.shared.ai.AI_Tools;
+import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
+import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
@@ -12,14 +17,19 @@ import org.ctf.shared.state.Piece;
 
 public class MCTS {
   Random rand;
+  int teams;
   public TreeNode root;
-  public int simulationCounter;
-  public int heuristicCounter;
-  public int expansionCounter;
+  public AtomicInteger simulationCounter;
+  public AtomicInteger heuristicCounter;
+  public AtomicInteger expansionCounter;
 
   public MCTS(TreeNode root) {
     this.root = root;
     this.rand = new Random();
+    simulationCounter = new AtomicInteger();
+    heuristicCounter = new AtomicInteger();
+    expansionCounter = new AtomicInteger();
+    this.teams = root.gameState.getTeams().length;
   }
 
 
@@ -32,7 +42,7 @@ public class MCTS {
    */
   public Move getMove(int milis, float C){
     long time = System.currentTimeMillis();
-
+    
     while(System.currentTimeMillis() - time < milis){
       //Schritte des UCT abarbeiten
       TreeNode selected = selectAndExpand(root, C);
@@ -58,7 +68,7 @@ public class MCTS {
   TreeNode selectAndExpand(TreeNode node, float C){
     while(isTerminal(node) == -1) {
       if(!isFullyExpanded(node)){
-        expansionCounter++;
+        expansionCounter.incrementAndGet();
         return expand(node);
       } else {
         node = bestChild(node, C);
@@ -78,8 +88,6 @@ public class MCTS {
     for(int i=0; i<selected.children.length; i++) {
       if(selected.children[i] == null) {
         selected.children[i] = oneRandomMove(selected);
-        //TODO  aus oneRandomMove entfernt, sollte unwichtig sein aber marken     parent.children[childPosition] = child;
-
         return selected.children[i];
       }
     }
@@ -88,8 +96,8 @@ public class MCTS {
 
 
   /**
-   * simulates a game from a specific node to finish (or a maximum step value of Constants.MAX_STEPS simulation),
-   * first checks if a node is in a terminal state, if thats the case the simulation ends and the result is returned
+   * Simulates a game from a specific node to finish (or a maximum step value of Constants.MAX_STEPS simulation),
+   * First checks if a node is in a terminal state, if thats the case the simulation ends and the result is returned
    * @param the node from which a game is going to be simulated
    * @return true if player A wins the simulation (either by getting more beans or player B having no moves left), 
    *         false if player B wins the simulation (either by getting more beans or player A having no moves left)
@@ -97,35 +105,56 @@ public class MCTS {
    */
   int[] simulate(TreeNode simulateOn){      
     int isTerminal = isTerminal(simulateOn);
-    int[] winners = new int[simulateOn.gameState.getTeams().length];
-    
+    int[] winners = new int[this.teams];
+
     //TODO multithreadding
-    
+
     for(int i=0; i < Constants.MAX_STEPS && isTerminal == -1; i++, isTerminal = isTerminal(simulateOn)) {
       simulateOn = oneRandomMove(simulateOn);
+      removeTeamCheck(simulateOn.gameState);
     }
     if(isTerminal < 0) {
-      simulationCounter++;
+      heuristicCounter.incrementAndGet();
       winners[terminalHeuristic(simulateOn)] += 1;
     } else {
-      heuristicCounter++;
+      simulationCounter.incrementAndGet();
       winners[isTerminal] += 1;
     }
-    
+
     return winners;
   }
 
 
   /**
-   * a heuristic to evaluate the winner of a given nodes gameState.
-   * the heuristics choice depends on the games phase: start-, middle- or end-game
+   * A heuristic to evaluate the winner of a given nodes gameState.
    * @param a node which will be analyzed
-   * @return an Integer the describes the game,
-   *          >0: player A got a better position
-   *          =<0: player B got a better position
+   * @return the best teams teamId (as an int)
    */
   int terminalHeuristic(TreeNode node) {
-    return 0;
+    Team[] teams = node.gameState.getTeams();
+    int[] points = new int[teams.length];
+    
+    for(int i=0; i<teams.length; i++) {
+      for(Piece p : teams[i].getPieces()) {
+        points[i] += p.getDescription().getAttackPower() * Constants.attackPowerMultiplier;
+        points[i] += 1 * Constants.pieceMultiplier;
+        
+        if(p.getDescription().getMovement().getDirections() != null) {
+          for(int dir=0; dir<8; dir++)
+            points[i] += AI_Tools.getReach(p.getDescription().getMovement().getDirections(), dir) * Constants.directionMultiplier;
+        } else {
+          points[i] += 8 * Constants.shapeReachMultiplier;
+        }
+      }
+      points[i] += teams[i].getFlags() * Constants.flagMultiplier;
+    }
+
+    int max = 0;
+    for(int i=0; i<points.length; i++)
+      if(points[i] > points[max])
+        max = i;
+    
+    return max;
   }
 
 
@@ -145,39 +174,47 @@ public class MCTS {
    */
   void backpropagate(TreeNode child, int[] wins){
     while(child != null) {
-      for(int i : wins) {
+      for(int i = 0; i<wins.length; i++) {
         child.wins[i] += wins[i];
       }
       child = child.parent;
     }
+
   }
 
 
   /**
-   * checks if a game is in a terminal state.
-   * generates an array with a players 6 fields and their number of beans,
-   * checks if any of the players have more than half the beans needed to win or have any moves left
+   * Checks if a game is in a terminal state.
+   * 
    * @param a node to check if it is terminal
    * @return -1 if the game is not in a terminal state
    * 		   0 - Integer.MAX_VALUE winner team id
    */
   int isTerminal(TreeNode node) {
-    //TODO : wenn ein Team verloren hat wird es aus der Teams liste des GameStates entfernt
-    //TODO Node Moves left check richtig hier??
-    //nodeNoMovesLeft(node);
-    
-    if(node.gameState.getTeams().length == 1)
-      return Integer.parseInt(node.gameState.getTeams()[0].getId());
-
+    for(int i=0; i<node.gameState.getTeams().length; i++) {
+      if(node.gameState.getTeams().length == 1)
+        return Integer.parseInt(node.gameState.getTeams()[0].getId());
+      
+      int currentTeam = (node.gameState.getCurrentTeam() + i) % node.gameState.getTeams().length;
+      boolean canMove = false;
+      for(int j=0; !canMove && j<node.gameState.getTeams()[node.gameState.getCurrentTeam()].getPieces().length; j++) {
+        //only if a move can be made no exception is thrown
+        try {
+          RandomAI.pickMoveComplex(node.gameState);
+          canMove = true;
+        } catch (NoMovesLeftException e) {} 
+        catch (InvalidShapeException e) {}
+      }
+      if(canMove) {
+        return -1;
+      } else {
+        AI_Tools.removeTeam(node.gameState, currentTeam);
+        i = -1;
+      }
+    }
+      
     return -1;
   }
-  
-  void nodeNoMovesLeft(TreeNode node) {
-    //TODO alter node so the team without a move gets removed. 
-    // its the next teams turn then.
-    // if it got no moves left, repeat
-  }
-
 
   /**
    * Checks if all possible children from a specific node are expanded
@@ -241,47 +278,38 @@ public class MCTS {
    */
   TreeNode oneRandomMove(TreeNode parent) {
     GameState gameState = parent.copyGameState();
-    String key = "";
-    try {
-    key = parent.possibleMoves.keySet().toArray()[rand.nextInt(parent.possibleMoves.keySet().size())].toString();	//TODO test
-    } 
-    catch (Exception e) {
-      parent.printMe(""); System.out.println(parent.possibleMoves.keySet().size());} 
-    int randomMove = rand.nextInt(parent.possibleMoves.get(key).size());
-    int[] movePos = parent.possibleMoves.get(key).get(randomMove);	//TODO test	
+    Move move = getAndRemoveMove(parent);
+    alterGameState(gameState, move);
+
+    TreeNode child = parent.clone(gameState);
+
+    return child;
+  }   
+  
+  Move getAndRemoveMove(TreeNode parent){
+    String key = parent.possibleMoves.keySet().toArray()[rand.nextInt(parent.possibleMoves.keySet().size())].toString();
+    int randomMove = rand.nextInt(parent.possibleMoves.get(key).size());  
+    int[] movePos = parent.possibleMoves.get(key).get(randomMove);
     parent.possibleMoves.get(key).remove(randomMove);
-    if(parent.possibleMoves.get(key).size() == 0) {
+    if(parent.possibleMoves.get(key).size() <= 0) {
       parent.possibleMoves.remove(key);
     }
     Move move = new Move();
     move.setPieceId(key);
     move.setNewPosition(movePos);
 
-    alterGameState(gameState, move);
-    removeTeamCheck(gameState);
-
-    TreeNode child = parent.clone(gameState);
-
-    return child;
-  }   
+    return move;
+  }
 
   /**
    * This method checks if a team got no more flags or no more pieces.
    * @param gameState
    */
   void removeTeamCheck(GameState gameState) {
-    for(int i=0; i<gameState.getTeams().length; i++) {
+    for(int i=0; i<gameState.getTeams().length && gameState.getTeams().length > 1; i++) {
       if(gameState.getTeams()[i].getFlags() == 0 ||
           gameState.getTeams()[i].getPieces().length == 0) {
-        Team[] teams = new Team[gameState.getTeams().length -1];
-        for(int j=0; j<gameState.getTeams().length; j++) {
-          if(j < i) {
-            teams[j] = gameState.getTeams()[j];
-          } else if (j > i) {
-            teams[j-1] = gameState.getTeams()[j];
-          }
-        }
-        gameState.setTeams(teams);
+        AI_Tools.removeTeam(gameState, i);
       }
     }
   }
@@ -328,11 +356,17 @@ public class MCTS {
    * prints some important values to the console
    * @param best move chosen by getRootBest() method
    */
-  public void printResults(int move) {
-    System.out.println("Knoten expandiert: " + expansionCounter +"\nSimulationen bis zum Ende: " + simulationCounter + ", Heuristik angewendet: " + heuristicCounter + ", Move: " +"gotta implement");
-    for(int i=0; i<root.children.length; i++) {
-      if(root.children[i] != null)
-        System.out.println("child "+ i + " Gewinnchance: " + Math.round(root.children[i].getV()* 1000000)/10000. + "% bei " + root.children[i].getNK() + " Knoten");
+  public String printResults(Move move) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("Piece " + move.getPieceId() + " moves to " + move.getNewPosition()[0] + "," + move.getNewPosition()[1]);
+    sb.append("\nNodes expanded: " + expansionCounter +", simulations till the end: " + simulationCounter + ", heuristic used: " + heuristicCounter);
+    sb.append("\nBest children:");
+    Arrays.sort(root.children);
+    for(int i=0; i<(root.children.length > 5 ? 5 : root.children.length); i++) {
+      Move rootMove = root.children[i].gameState.getLastMove();
+      sb.append("\n   " + rootMove.getPieceId() + " to [" + rootMove.getNewPosition()[0] + "," + rootMove.getNewPosition()[1] + "]"
+      + " winning chance: " + (root.children[i].getV() * 100) + "% with " + root.children[i].getNK() + " nodes" + ", uct: " + root.children[i].getUCT(1) + " wins 0 " + root.children[i].wins[0] + ", wins 1 " + root.children[i].wins[1]);
     }
+    return sb.toString();
   }
 }
