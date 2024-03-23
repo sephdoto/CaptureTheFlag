@@ -32,7 +32,7 @@ class MCTSTest {
     pieces0[0] = new Piece();
     pieces0[0].setDescription(TestValues.getTestTemplate().getPieces()[4]);
     pieces0[0].setId("p:0_1");
-    pieces0[0].setPosition(new int[] {0,1});
+    pieces0[0].setPosition(new int[] {0,2});
     pieces0[0].setTeamId("0");
     gameState.getTeams()[0].setPieces(pieces0);
     
@@ -49,6 +49,7 @@ class MCTSTest {
     gameState.getGrid()[0][1] = pieces0[0].getId();
     gameState.getGrid()[2][0] = pieces1[0].getId();
     
+    gameState.setCurrentTeam(0);
     TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
     mcts = new MCTS(parent);
     
@@ -83,21 +84,40 @@ class MCTSTest {
     int mctsTillEnd = 0;
     while(mcts.isTerminal(mcts.root) == -1) {
 
-      Move move = mcts.getMove(3000, Constants.C);
+      Move move = mcts.getMove(1000, Constants.C);
+      ++mctsTillEnd;
       
       TreeNode tn = mcts.root;
       mcts.alterGameState(tn.gameState, move);
-      
-      tn = mcts.oneRandomMove(tn.clone(tn.copyGameState()));
-      
-      tn.printGrid();
-      System.out.println(++mctsTillEnd + " " + mcts.expansionCounter);
 
+      mcts.removeTeamCheck(mcts.root.gameState);
+      System.out.println("\nROUND: " + mctsTillEnd + "\n" + mcts.printResults(tn.gameState.getLastMove()) + "\n");
+      tn.printGrid();
+      
+      if(mcts.isTerminal(tn) != -1)
+        break;
+
+      tn = mcts.oneRandomMove(tn.clone(tn.copyGameState()));
+      ++mctsTillEnd;
+
+      mcts.removeTeamCheck(mcts.root.gameState);
+      System.out.println("\nROUND: " + mctsTillEnd + "\nPiece " + tn.gameState.getLastMove().getPieceId() + "\n");
+      tn.printGrid();
+      
+      for(int i=0; i<tn.parent.children.length; i++) {
+        tn.parent.children[i] = null;
+      }
+      tn.parent = null;
+      for(int i = 0; i<tn.children.length; i++)
+        tn.children[i] = null;
+      tn.wins = new int[] {0,0};
+      
+      
       mcts = new MCTS(tn);
     }
-    mcts.root.printGrid();
     System.out.println("random steps till end: " + randomTillEnd + ", mcts steps till end: " + mctsTillEnd);
-
+    System.out.println("Random Steps: " + randomTillEnd + ", MCTS Steps:" + mctsTillEnd);
+    assertTrue(mctsTillEnd < randomTillEnd);
   }
   
   @Test

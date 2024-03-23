@@ -18,6 +18,7 @@ import org.ctf.shared.state.Piece;
 public class MCTS {
   Random rand;
   int teams;
+  int maxDistance;
   public TreeNode root;
   public AtomicInteger simulationCounter;
   public AtomicInteger heuristicCounter;
@@ -30,6 +31,7 @@ public class MCTS {
     heuristicCounter = new AtomicInteger();
     expansionCounter = new AtomicInteger();
     this.teams = root.gameState.getTeams().length;
+    this.maxDistance = (int)Math.round(Math.sqrt(Math.pow(root.gameState.getGrid().length, 2) + Math.pow(root.gameState.getGrid()[0].length, 2)));
   }
 
 
@@ -40,7 +42,7 @@ public class MCTS {
    * @param Constant C used in the UCT formula
    * @return the algorithms choice for the best move
    */
-  public Move getMove(int milis, float C){
+  public Move getMove(int milis, double C){
     long time = System.currentTimeMillis();
     
     while(System.currentTimeMillis() - time < milis){
@@ -65,7 +67,7 @@ public class MCTS {
    * @param constant C used in UCBk formula
    * @return the node to simulate on
    */
-  TreeNode selectAndExpand(TreeNode node, float C){
+  TreeNode selectAndExpand(TreeNode node, double C){
     while(isTerminal(node) == -1) {
       if(!isFullyExpanded(node)){
         expansionCounter.incrementAndGet();
@@ -106,10 +108,10 @@ public class MCTS {
   int[] simulate(TreeNode simulateOn){      
     int isTerminal = isTerminal(simulateOn);
     int[] winners = new int[this.teams];
-
+    int count = Constants.MAX_STEPS;
     //TODO multithreadding
-
-    for(int i=0; i < Constants.MAX_STEPS && isTerminal == -1; i++, isTerminal = isTerminal(simulateOn)) {
+    
+    for(;count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn)) {
       simulateOn = oneRandomMove(simulateOn);
       removeTeamCheck(simulateOn.gameState);
     }
@@ -118,9 +120,9 @@ public class MCTS {
       winners[terminalHeuristic(simulateOn)] += 1;
     } else {
       simulationCounter.incrementAndGet();
-      winners[isTerminal] += 1;
+      winners[isTerminal] += count;
     }
-
+    
     return winners;
   }
 
@@ -133,11 +135,20 @@ public class MCTS {
   int terminalHeuristic(TreeNode node) {
     Team[] teams = node.gameState.getTeams();
     int[] points = new int[teams.length];
+    int[][] bases = new int[teams.length][2];
+    for(int i=0; i<bases.length; i++)
+      bases[i] = teams[i].getBase();
     
     for(int i=0; i<teams.length; i++) {
       for(Piece p : teams[i].getPieces()) {
         points[i] += p.getDescription().getAttackPower() * Constants.attackPowerMultiplier;
         points[i] += 1 * Constants.pieceMultiplier;
+        for(int j=0; j<teams.length; j++) {
+          if(j == i)
+            continue;
+          points[i] += (this.maxDistance - Math.sqrt(Math.pow(teams[j].getBase()[1]-p.getPosition()[1], 2) 
+              + Math.pow(teams[j].getBase()[0]-p.getPosition()[0], 2))) * Constants.distanceBaseMultiplier;
+        }        
         
         if(p.getDescription().getMovement().getDirections() != null) {
           for(int dir=0; dir<8; dir++)
@@ -232,9 +243,9 @@ public class MCTS {
    * @param parent node
    * @return the child node with the highest UCT value
    */
-  TreeNode bestChild(TreeNode parent, float c) {
-    float uctCurrent;
-    float uctMax = 0;
+  TreeNode bestChild(TreeNode parent, double c) {
+    double uctCurrent;
+    double uctMax = 0;
     TreeNode bestChild = null;
 
     for(int i=0; i<parent.children.length; i++) {
@@ -365,7 +376,7 @@ public class MCTS {
     for(int i=0; i<(root.children.length > 5 ? 5 : root.children.length); i++) {
       Move rootMove = root.children[i].gameState.getLastMove();
       sb.append("\n   " + rootMove.getPieceId() + " to [" + rootMove.getNewPosition()[0] + "," + rootMove.getNewPosition()[1] + "]"
-      + " winning chance: " + (root.children[i].getV() * 100) + "% with " + root.children[i].getNK() + " nodes" + ", uct: " + root.children[i].getUCT(1) + " wins 0 " + root.children[i].wins[0] + ", wins 1 " + root.children[i].wins[1]);
+      + " winning chance: " + (root.children[i].getV() * 100) + "% with " + root.children[i].getNK() + " nodes" + ", uct: " + root.children[i].getUCT(Constants.C) + " wins 0 " + root.children[i].wins[0] + ", wins 1 " + root.children[i].wins[1]);
     }
     return sb.toString();
   }

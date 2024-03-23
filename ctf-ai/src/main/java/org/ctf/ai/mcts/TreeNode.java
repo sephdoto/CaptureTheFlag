@@ -44,17 +44,17 @@ public class TreeNode implements Comparable<TreeNode> {
     * due to the creation of children the player is stored as a boolean attribute of this class.
     * @return V value for UCT
     */
-   public float getV() {
+   public double getV() {
      int team = (gameState.getCurrentTeam()-1) % gameState.getTeams().length;
      team = team >= 0 ? team : team*-1;
-     return wins[team] / (float)getNK();
+     return wins[team] / (double)getNK();
    }
 
    /**
     * @return returns the UCT value of the current node
     */
-   public float getUCT(float C) {
-     return getV() + C * (float)Math.sqrt((float)Math.log(parent.getNK()) / getNK());
+   public double getUCT(double C) {
+     return getV() + C * Math.sqrt((double)Math.log(parent.getNK()) / getNK());
    }
 
    /**
@@ -104,7 +104,7 @@ public class TreeNode implements Comparable<TreeNode> {
 
    @Override
    public int compareTo(TreeNode node) {
-     return Float.compare(node.getV(), getV());
+     return Double.compare(node.getV(), getV());
    }
 
    /**

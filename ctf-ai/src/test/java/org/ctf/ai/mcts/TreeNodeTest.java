@@ -41,7 +41,7 @@ class TreeNodeTest {
     assertEquals(Math.round(2/3.*100)/100., Math.round(child1.getV()*100)/100.);
     
     assertEquals(Math.round(1.44f*100)/100., Math.round(child1.getUCT(1)*100)/100.);
-    float c = child2.getUCT(1);
+    double c = child2.getUCT(1);
     assertEquals(Math.round(1.11f*100)/100., Math.round(c*100)/100.);
   }
 
