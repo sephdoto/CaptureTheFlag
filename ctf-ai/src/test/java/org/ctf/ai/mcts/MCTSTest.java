@@ -21,6 +21,31 @@ class MCTSTest {
     TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
     mcts = new MCTS(parent);
   }
+  
+  @Test
+  void testPerformance() {
+    long expansions = 0;
+    int count = 0;
+    int timeInMilis = 100;
+    int[] wins = new int[] {0,0};
+    
+    for(;count<100 ; count++) {
+      mcts = new MCTS(mcts.root.clone(mcts.root.copyGameState()));
+      mcts.root.wins = new int[] {0,0};
+      mcts.getMove(timeInMilis, Constants.C);
+      expansions += mcts.expansionCounter.get();
+      wins[0] += mcts.root.wins[0];
+      wins[1] += mcts.root.wins[1];
+    }
+    wins[0] /= count;
+    wins[1] /= count;
+    
+    System.out.println(count + " simulations with " + timeInMilis + " ms, average expansions/run: " + ((Math.round(((double)expansions/count)*1000))/1000.)
+        + ",\tavg. wins: [" + wins[0] + ", " + wins[1] + "]");
+
+    MCTS debug = mcts;
+    ;
+  }
 
   @Test
   void testGetMove() {
@@ -68,6 +93,7 @@ class MCTSTest {
   
   @Test
   void testMctsWorks() {
+    System.out.println("cores: " + Constants.numThreads);
     int randomTillEnd = 0;
     while(mcts.isTerminal(mcts.root) == -1) {
       randomTillEnd++;
@@ -88,8 +114,8 @@ class MCTSTest {
       mcts.alterGameState(tn.gameState, move);
 
       mcts.removeTeamCheck(mcts.root.gameState);
-//      System.out.println("\nROUND: " + mctsTillEnd + "\n" + mcts.printResults(tn.gameState.getLastMove()) + "\n");
-//      tn.printGrid();
+      System.out.println("\nROUND: " + mctsTillEnd + "\n" + mcts.printResults(tn.gameState.getLastMove()) + "\n");
+      tn.printGrid();
       
       if(mcts.isTerminal(tn) != -1)
         break;
@@ -98,9 +124,9 @@ class MCTSTest {
       ++mctsTillEnd;
 
       mcts.removeTeamCheck(mcts.root.gameState);
-//      System.out.println("\nROUND: " + mctsTillEnd + "\nRandom: Piece " + tn.gameState.getLastMove().getPieceId() + " to " 
-//      + tn.gameState.getLastMove().getNewPosition()[0] + "," + tn.gameState.getLastMove().getNewPosition()[1] + "\n");
-//      tn.printGrid();
+      System.out.println("\nROUND: " + mctsTillEnd + "\nRandom: Piece " + tn.gameState.getLastMove().getPieceId() + " to " 
+      + tn.gameState.getLastMove().getNewPosition()[0] + "," + tn.gameState.getLastMove().getNewPosition()[1] + "\n");
+      tn.printGrid();
       
       for(int i=0; i<tn.parent.children.length; i++) {
         tn.parent.children[i] = null;
@@ -165,6 +191,13 @@ class MCTSTest {
     fail("Not yet implemented");
   }
 
+  @Test
+  void testMultiSimulate() {
+    int[] winners = mcts.multiSimulate(mcts.root);
+    for(int i : winners)
+      System.out.print(i + " ");
+  }
+  
   @Test
   void testSimulate() {
     fail("Not yet implemented");

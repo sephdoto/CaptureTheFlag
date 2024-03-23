@@ -15,11 +15,12 @@ public class Constants {
 	//package ai.mcts, classes MCTS & TreeNode
 	public static final double C = Math.E/2;             //used to calculate UCT
 	public static final int TIME = 5000;                       //time in milliseconds the algorithm is allowed to take
-	public static final int MAX_STEPS = 50;                    //maximum of possible simulation steps the algorithm is allowed to take
+	public static final int MAX_STEPS = 60;                    //maximum of possible simulation steps the algorithm is allowed to take
+	public static final int numThreads = Runtime.getRuntime().availableProcessors() /2;                    
 	
 	//package ai.mcts, class MCTS. used for heuristic
 	public static final int attackPowerMultiplier = 5;         //how much the pieces attack power is valued
-	public static final int pieceMultiplier = 10;               //how much having one piece is valued
+	public static final int pieceMultiplier = 15;               //how much having one piece is valued
 	public static final int flagMultiplier = 100;              //how much having a flag is valued
 	public static final int directionMultiplier = 2;           //how much a pieces reach into a certain direction is valued
 	public static final int shapeReachMultiplier = 1;          //for valuing a shape Similar to a Direction movement. Calculated as 8 * this value (instead of 8 directions)

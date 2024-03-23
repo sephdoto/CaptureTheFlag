@@ -2,8 +2,12 @@ package org.ctf.ai.mcts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.ctf.ai.RandomAI;
 import org.ctf.shared.ai.AI_Tools;
@@ -23,6 +27,7 @@ public class MCTS {
   public AtomicInteger simulationCounter;
   public AtomicInteger heuristicCounter;
   public AtomicInteger expansionCounter;
+  ExecutorService executorService;
 
   public MCTS(TreeNode root) {
     this.root = root;
@@ -32,6 +37,7 @@ public class MCTS {
     expansionCounter = new AtomicInteger();
     this.teams = root.gameState.getTeams().length;
     this.maxDistance = (int)Math.round(Math.sqrt(Math.pow(root.gameState.getGrid().length, 2) + Math.pow(root.gameState.getGrid()[0].length, 2)));
+    this.executorService  = Executors.newFixedThreadPool(Constants.numThreads);
   }
 
 
@@ -48,7 +54,7 @@ public class MCTS {
     while(System.currentTimeMillis() - time < milis){
       //Schritte des UCT abarbeiten
       TreeNode selected = selectAndExpand(root, C);
-      backpropagate(selected, simulate(selected));
+      backpropagate(selected, multiSimulate(selected));
     }
 
     TreeNode bestChild = getRootBest(root);
@@ -56,6 +62,7 @@ public class MCTS {
     // Hier werden wichtige Daten zur Auswahl ausgegeben 
     //      printResults(bestChild);
 
+    this.executorService.shutdown();
     return (bestChild.gameState.getLastMove());
   }
 
@@ -96,6 +103,36 @@ public class MCTS {
     return null;
   }
 
+  int[] multiSimulate(TreeNode simulateOn) { 
+    int[] winners = new int[simulateOn.gameState.getTeams().length];
+    
+    try {
+     // Create a list of Callable tasks for parallel execution
+      List<Callable<int[]>> tasks = new ArrayList<>();
+      for (int i = 0; i < Constants.numThreads; i++) {
+        tasks.add(() -> {
+          return simulate(simulateOn.clone(simulateOn.copyGameState()));
+        });
+      }
+
+      // Submit tasks for parallel execution
+      List<Future<int[]>> futures = executorService.invokeAll(tasks);
+      for(int i=0; i<futures.size(); i++) {
+        try {
+        int[] wins = futures.get(i).get();
+        for(int j=0; j<wins.length; j++) {
+            winners[j] += wins[j];
+          
+        }} catch(Exception e) {}
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return winners;
+  }
+  
 
   /**
    * Simulates a game from a specific node to finish (or a maximum step value of Constants.MAX_STEPS simulation),
