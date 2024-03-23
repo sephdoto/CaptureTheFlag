@@ -197,12 +197,12 @@ public class GameEngine implements Game {
 
   /**
    * Get current state of the game
-   * 
+   *
    * @return GameState
    */
   @Override
   public GameState getCurrentGameState() {
-    //TODO Maybe use this as a updater method
+    // TODO Maybe use this as a updater method
     gameOverCheck();
     turnTimeLimitedChecks();
     return gameState;
@@ -263,8 +263,7 @@ public class GameEngine implements Game {
    */
   @Override
   public void makeMove(Move move) {
-    if(!movePreconditionsMet(move))
-      return;
+    if (!movePreconditionsMet(move)) return;
 
     String occupant = gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]];
     Piece picked =
@@ -308,32 +307,33 @@ public class GameEngine implements Game {
 
     afterMoveCleanup();
   }
-  
+
   /**
-   * Call this after making a move.
-   * Timer gets updated, gameOverChecks are made.
+   * Call this after making a move. Timer gets updated, gameOverChecks are made.
+   *
    * @author sistumpf, rsyed
    */
   private void afterMoveCleanup() {
     // Update Time
     if (this.moveTimeLimitedGame) {
       this.lastMoveTime = LocalDateTime.now();
-    gameOverCheck();
-  }
+      gameOverCheck();
+    }
   }
 
-
-    /**
+  /**
    * Call this before making a move.
+   *
    * @param move
-   * @return false if the move is invalid, either because it is the wrong player, the move itself is invalid or the game is already over.
+   * @return false if the move is invalid, either because it is the wrong player, the move itself is
+   *     invalid or the game is already over.
    */
   private boolean movePreconditionsMet(Move move) {
-    if(isGameOver() || !isTurn(move)) {
+    if (isGameOver() || !isTurn(move)) {
       return false;
-    } else if(!isValidMove(move)) {
+    } else if (!isValidMove(move)) {
       throw new InvalidMove();
-    } 
+    }
     return true;
   }
 
@@ -341,12 +341,12 @@ public class GameEngine implements Game {
    * Helper method to perform a turn check. So that players cannot make out of turn moves.
    *
    * @author rsyed
-   * @param move Name of the team
+   * @param move To extract the team from the piece being moved
    * @return boolean
    */
   private boolean isTurn(Move move) {
     int moveTeamIdentifier = Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0]);
-    return (moveTeamIdentifier == gameState.getCurrentTeam()-1);
+    return (moveTeamIdentifier == gameState.getCurrentTeam() - 1);
   }
 
   /**
@@ -357,8 +357,9 @@ public class GameEngine implements Game {
    * @author sistumpf
    */
   public void gameOverCheck() {
-    if (getRemainingGameTimeInSeconds() == 0) {
+    if (getRemainingGameTimeInSeconds() == 0) { // Time Limited Game Check
       this.isGameOver = true;
+      //TODO Calculate the winner of a time limited game
     } else {
       for (Team team : gameState.getTeams()) {
         if (team.getFlags() < 1) {
@@ -370,12 +371,10 @@ public class GameEngine implements Game {
         }
       }
     }
-    if(this.isGameOver) {
+    if (this.isGameOver) {
       this.endDate =
           Date.from(
-              LocalDateTime.now()
-              .atZone(ZoneId.systemDefault())
-              .toInstant()); // Sets game end time
+              LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()); // Sets game end time
     }
   }
 
@@ -419,10 +418,15 @@ public class GameEngine implements Game {
             LocalDateTime.now()
                 .atZone(ZoneId.systemDefault())
                 .toInstant()); // Sets the TimeStamp for when the game started
-    if(this.timeLimitedGame){
-      this.gameEndsAt = LocalDateTime.now().plusSeconds(currentTemplate.getTotalTimeLimitInSeconds()); // Sets the TimeStamp for when the game started
+    if (this.timeLimitedGame) {
+      this.gameEndsAt =
+          LocalDateTime.now()
+              .plusSeconds(
+                  currentTemplate
+                      .getTotalTimeLimitInSeconds()); // Sets the TimeStamp for when the game should
+      // end
     }
-    if(this.moveTimeLimitedGame){
+    if (this.moveTimeLimitedGame) {
       this.lastMoveTime = LocalDateTime.now();
       this.nextMoveTime = lastMoveTime.plusSeconds(currentTemplate.getMoveTimeLimitInSeconds());
     }
@@ -481,7 +485,7 @@ public class GameEngine implements Game {
   private void setAltGameModes(MapTemplate template) {
     if (template.getTotalTimeLimitInSeconds() != -1) {
       this.timeLimitedGame = true;
-    } else{
+    } else {
       this.timeLimitedGame = false;
     }
     if (template.getMoveTimeLimitInSeconds() != -1) {
@@ -491,13 +495,13 @@ public class GameEngine implements Game {
     }
   }
 
-   /**
+  /**
    * Helper method to change whose turn it is if time runs out
    *
    * @author rsyed
    */
   private void turnTimeLimitedChecks() {
-    if(getRemainingMoveTimeInSeconds() < 0){
+    if (getRemainingMoveTimeInSeconds() < 0) {
       gameState.setCurrentTeam((gameState.getCurrentTeam() + 1) % gameState.getTeams().length);
     }
   }
