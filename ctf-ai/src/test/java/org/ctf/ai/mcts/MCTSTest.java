@@ -23,13 +23,68 @@ class MCTSTest {
   }
   
   @Test
+  void bestMctsAlgorithm() {
+    gameState = TestValues.getTestState();
+    TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
+    MCTS_TestDouble mcts = new MCTS_TestDouble(parent);
+    
+    int mctsTillEnd = 0;
+    int timeForMove = 3000;
+    
+    while(mcts.isTerminal(mcts.root) == -1) {
+      mcts = new MCTS_TestDouble(mcts.root.clone((mcts.root.gameState)));
+      
+      Move move = mcts.getMove(timeForMove, Constants.C);
+      ++mctsTillEnd;      
+      TreeNode tn = mcts.root;
+      mcts.alterGameState(tn.gameState, move);
+
+      mcts.removeTeamCheck(mcts.root.gameState);
+      System.out.println("\nROUND: " + mctsTillEnd + ", MCTS_TestDouble\n" + mcts.printResults(tn.gameState.getLastMove()) + "\n");
+      tn.printGrid();
+      
+      if(mcts.isTerminal(tn) != -1)
+        break;
+      
+      clearNodeParentAndChildren(tn);
+      
+      tn = tn.clone((tn.gameState));
+      
+      MCTS mcts2 = new MCTS(tn);
+      move = mcts2.getMove(timeForMove, Constants.C);
+      ++mctsTillEnd;      
+      tn = mcts2.root;
+      mcts2.alterGameState(tn.gameState, move);
+
+      mcts2.removeTeamCheck(mcts2.root.gameState);
+      System.out.println("\nROUND: " + mctsTillEnd + ", MCTS\n" + mcts2.printResults(tn.gameState.getLastMove()) + "\n");
+      tn.printGrid();
+
+      clearNodeParentAndChildren(tn);
+      
+      mcts = new MCTS_TestDouble(tn);
+    }
+    System.out.println("\n\nWinner is... " + (mctsTillEnd%2!=0 ? "MCTS_TestDouble " : "MCTS"));
+  }
+  void clearNodeParentAndChildren(TreeNode tn) {
+    if(tn.parent != null)
+      for(int i=0; i<tn.parent.children.length; i++) {
+        tn.parent.children[i] = null;
+      }
+    tn.parent = null;
+    for(int i = 0; i<tn.children.length; i++)
+      tn.children[i] = null;
+    tn.wins = new int[] {0,0};
+  }
+  
+  @Test
   void testPerformance() {
     long expansions = 0;
     int count = 0;
-    int timeInMilis = 100;
+    int timeInMilis = 1000;
     int[] wins = new int[] {0,0};
     
-    for(;count<100 ; count++) {
+    for(;count<1 ; count++) {
       mcts = new MCTS(mcts.root.clone(mcts.root.copyGameState()));
       mcts.root.wins = new int[] {0,0};
       mcts.getMove(timeInMilis, Constants.C);
@@ -42,9 +97,6 @@ class MCTSTest {
     
     System.out.println(count + " simulations with " + timeInMilis + " ms, average expansions/run: " + ((Math.round(((double)expansions/count)*1000))/1000.)
         + ",\tavg. wins: [" + wins[0] + ", " + wins[1] + "]");
-
-    MCTS debug = mcts;
-    ;
   }
 
   @Test
@@ -93,11 +145,10 @@ class MCTSTest {
   
   @Test
   void testMctsWorks() {
-    System.out.println("cores: " + Constants.numThreads);
     int randomTillEnd = 0;
     while(mcts.isTerminal(mcts.root) == -1) {
       randomTillEnd++;
-      mcts.root = mcts.oneRandomMove(mcts.root);
+      mcts.root = mcts.oneMove(mcts.root);
       mcts.removeTeamCheck(mcts.root.gameState);
     }
     
@@ -120,13 +171,13 @@ class MCTSTest {
       if(mcts.isTerminal(tn) != -1)
         break;
 
-      tn = mcts.oneRandomMove(tn.clone(tn.copyGameState()));
+      tn = mcts.oneMove(tn.clone(tn.copyGameState()));
       ++mctsTillEnd;
 
       mcts.removeTeamCheck(mcts.root.gameState);
-      System.out.println("\nROUND: " + mctsTillEnd + "\nRandom: Piece " + tn.gameState.getLastMove().getPieceId() + " to " 
-      + tn.gameState.getLastMove().getNewPosition()[0] + "," + tn.gameState.getLastMove().getNewPosition()[1] + "\n");
-      tn.printGrid();
+//      System.out.println("\nROUND: " + mctsTillEnd + "\nRandom: Piece " + tn.gameState.getLastMove().getPieceId() + " to " 
+//      + tn.gameState.getLastMove().getNewPosition()[0] + "," + tn.gameState.getLastMove().getNewPosition()[1] + "\n");
+//      tn.printGrid();
       
       for(int i=0; i<tn.parent.children.length; i++) {
         tn.parent.children[i] = null;
@@ -177,7 +228,7 @@ class MCTSTest {
     //    System.out.println("Piece: " + move.getPieceId() + " moves to " + move.getNewPosition()[0] + ", " + move.getNewPosition()[1]);
     for(int i=0; i<parent.possibleMoves.size(); i++) {
       if(-1 == mcts.isTerminal(mcts.root))
-        mcts.oneRandomMove(mcts.root);
+        mcts.oneMove(mcts.root);
     }
   }
 
@@ -218,6 +269,45 @@ class MCTSTest {
     fail("Not yet implemented");
   }
 
+  @Test
+  void testgetAndRemoveMoveHeuristic() {
+    gameState = TestValues.getEmptyTestState();
+    gameState.getTeams()[0].setBase(new int[] {0,0});
+    gameState.getTeams()[0].setFlags(1);
+    gameState.getTeams()[0].setId("0");
+    Piece[] pieces0 = new Piece[1];
+    pieces0[0] = new Piece();
+    pieces0[0].setDescription(TestValues.getTestTemplate().getPieces()[2]);
+    pieces0[0].setId("p:0_1");
+    pieces0[0].setPosition(new int[] {0,1});
+    pieces0[0].setTeamId("0");
+    gameState.getTeams()[0].setPieces(pieces0);
+    gameState.getTeams()[1].setBase(new int[] {9,9});
+    gameState.getTeams()[1].setFlags(1);
+    gameState.getTeams()[1].setId("1");
+    Piece[] pieces1 = new Piece[1];
+    pieces1[0] = new Piece();
+    pieces1[0].setDescription(TestValues.getTestTemplate().getPieces()[1]);
+    pieces1[0].getDescription().setAttackPower(3);
+    pieces1[0].setId("p:1_1");
+    pieces1[0].setPosition(new int[] {2,0});
+    pieces1[0].setTeamId("1");
+    gameState.getTeams()[1].setPieces(pieces1);
+    gameState.getGrid()[0][1] = pieces0[0].getId();
+    gameState.getGrid()[2][0] = pieces1[0].getId();
+    MCTS mcts = new MCTS(new TreeNode(null, gameState, null));
+
+    Move move = mcts.getAndRemoveMoveHeuristic(mcts.root);
+    assertEquals(0, move.getNewPosition()[0]);
+    assertEquals(0, move.getNewPosition()[1]);
+    
+    gameState.setCurrentTeam(0);
+    mcts = new MCTS(new TreeNode(null, gameState, null));
+    move = mcts.getAndRemoveMoveHeuristic(mcts.root);
+    assertEquals(2, move.getNewPosition()[0]);
+    assertEquals(0, move.getNewPosition()[1]);
+ }
+  
   @Test
   void testIsTerminal_noMovesLeft() {
     //two teams
@@ -305,7 +395,7 @@ class MCTSTest {
 
     int[] piece1_8_pos = root.gameState.getTeams()[1].getPieces()[7].getPosition();
 
-    root.children[0] = mcts.oneRandomMove(root);
+    root.children[0] = mcts.oneMove(root);
     int[] piece1_8_pos_new = root.children[0].gameState.getTeams()[1].getPieces()[7].getPosition();
 
     assertFalse(Arrays.equals(piece1_8_pos, piece1_8_pos_new));
@@ -329,7 +419,7 @@ class MCTSTest {
     int[] piece1_8_pos = root.gameState.getTeams()[1].getPieces()[7].getPosition();
     int piecesTeam0 = root.gameState.getTeams()[0].getPieces().length;
 
-    root.children[0] = mcts.oneRandomMove(root);
+    root.children[0] = mcts.oneMove(root);
     int[] piece1_8_pos_new = root.children[0].gameState.getTeams()[1].getPieces()[7].getPosition();
     int piecesTeam0new = root.children[0].gameState.getTeams()[0].getPieces().length;
     
@@ -354,7 +444,7 @@ class MCTSTest {
 
     int[] piece1_8_pos = root.gameState.getTeams()[1].getPieces()[7].getPosition();
    
-    root.children[0] = mcts.oneRandomMove(root);
+    root.children[0] = mcts.oneMove(root);
 
     int[] piece1_8_pos_new = root.children[0].gameState.getTeams()[1].getPieces()[7].getPosition();
  
