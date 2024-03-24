@@ -93,11 +93,13 @@ public class MCTS {
    * @return the new child
    * @return null if anything unforeseen happens
    */
-  TreeNode expand(TreeNode selected){
-    for(int i=0; i<selected.children.length; i++) {
-      if(selected.children[i] == null) {
-        selected.children[i] = oneMove(selected);
-        return selected.children[i];
+  TreeNode expand(TreeNode parent){
+    for(int i=0; i<parent.children.length; i++) {
+      if(parent.children[i] == null) {
+        TreeNode child = parent.clone(parent.copyGameState());
+        oneMove(child, parent);
+        parent.children[i] = child;
+        return child;
       }
     }
     return null;
@@ -111,7 +113,7 @@ public class MCTS {
       List<Callable<int[]>> tasks = new ArrayList<>();
       for (int i = 0; i < Constants.numThreads; i++) {
         tasks.add(() -> {
-          return simulate(simulateOn.clone(simulateOn.copyGameState()));
+          return simulate(simulateOn);
         });
       }
 
@@ -122,8 +124,8 @@ public class MCTS {
         int[] wins = futures.get(i).get();
         for(int j=0; j<wins.length; j++) {
             winners[j] += wins[j];
-          
-        }} catch(Exception e) {}
+        }
+        } catch(Exception e) {}
       }
 
     } catch (Exception e) {
@@ -143,13 +145,13 @@ public class MCTS {
    *         default case is a heuristic. if it returns value > 0, player A is winning
    */
   int[] simulate(TreeNode simulateOn){      
+    simulateOn = simulateOn.clone(simulateOn.copyGameState());
     int isTerminal = isTerminal(simulateOn);
     int[] winners = new int[this.teams];
     int count = Constants.MAX_STEPS;
-    //TODO multithreadding
     
     for(;count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn)) {
-      simulateOn = oneMove(simulateOn);
+      oneMove(simulateOn, simulateOn);
       removeTeamCheck(simulateOn.gameState);
     }
     if(isTerminal < 0) {
@@ -157,7 +159,8 @@ public class MCTS {
       winners[terminalHeuristic(simulateOn)] += 1;
     } else {
       simulationCounter.incrementAndGet();
-      winners[isTerminal] += count;
+      //TODO: count zum Testen durch isTerminal ersetzen
+      winners[isTerminal] += 1;
     }
     
     return winners;
@@ -337,14 +340,9 @@ public class MCTS {
    * @param the move in form of the selected element in the parents array
    * @return a child node containing the simulation result
    */
-  TreeNode oneMove(TreeNode parent) {
-    GameState gameState = parent.copyGameState();
-    Move move = getAndRemoveMoveHeuristic(parent);
-    alterGameState(gameState, move);
-
-    TreeNode child = parent.clone(gameState);
-
-    return child;
+  void oneMove(TreeNode alter, TreeNode original) {
+    alterGameState(alter.gameState, getAndRemoveMoveHeuristic(original));
+    alter.initPossibleMovesAndChildren();
   }   
   
   @SuppressWarnings("unlikely-arg-type")

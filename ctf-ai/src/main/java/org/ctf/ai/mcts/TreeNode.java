@@ -17,6 +17,12 @@ public class TreeNode implements Comparable<TreeNode> {
 
   public TreeNode(TreeNode parent, GameState gameState, int[] wins) {
     this.parent = parent;
+    this.gameState = gameState;
+    this.wins = wins != null ? wins : new int[gameState.getTeams().length];
+    initPossibleMovesAndChildren();
+  }
+  
+  public void initPossibleMovesAndChildren() {
     this.possibleMoves = new HashMap<String, ArrayList<int[]>>();
     int children = 0;
     for(Piece p : gameState.getTeams()[gameState.getCurrentTeam()].getPieces()) {
@@ -28,8 +34,6 @@ public class TreeNode implements Comparable<TreeNode> {
     }
 
     this.children = new TreeNode[children];
-    this.gameState = gameState;
-    this.wins = wins != null ? wins : new int[gameState.getTeams().length];
   }
 
   /** 

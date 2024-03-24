@@ -149,7 +149,6 @@ public class MCTS_TestDouble {
     int isTerminal = isTerminal(simulateOn);
     int[] winners = new int[this.teams];
     int count = Constants.MAX_STEPS;
-    //TODO multithreadding
     
     for(;count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn)) {
       simulateOn = oneRandomMove(simulateOn);
@@ -160,7 +159,8 @@ public class MCTS_TestDouble {
       winners[terminalHeuristic(simulateOn)] += 1;
     } else {
       simulationCounter.incrementAndGet();
-      winners[isTerminal] += count;
+      //TODO: count zum Testen durch isTerminal ersetzen
+      winners[isTerminal] += 1;
     }
     
     return winners;
@@ -196,7 +196,7 @@ public class MCTS_TestDouble {
         }
       }
       
-      for(int j=0; j<teams.length; j++) {
+      /*for(int j=0; j<teams.length; j++) {
         if(j == i)
           continue;
         for(Piece ep : teams[j].getPieces()) {
@@ -204,7 +204,7 @@ public class MCTS_TestDouble {
           points[i] -= (this.maxDistance - Math.sqrt(Math.pow(teams[i].getBase()[1]-ep.getPosition()[1], 2) 
               + Math.pow(teams[i].getBase()[0]-ep.getPosition()[0], 2))) * Constants.distanceBaseMultiplier * 2;
         }  
-      }
+      }*/
       
       points[i] += teams[i].getFlags() * Constants.flagMultiplier;
     }

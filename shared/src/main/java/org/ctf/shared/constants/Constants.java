@@ -13,9 +13,9 @@ public class Constants {
 	
 	
 	//package ai.mcts, classes MCTS & TreeNode
-	public static final double C = Math.E/2;             //used to calculate UCT
+	public static final double C = Math.E/2;                   //used to calculate UCT
 	public static final int TIME = 5000;                       //time in milliseconds the algorithm is allowed to take
-	public static final int MAX_STEPS = 60;                    //maximum of possible simulation steps the algorithm is allowed to take
+	public static final int MAX_STEPS = 100;                    //maximum of possible simulation steps the algorithm is allowed to take
 	public static final int numThreads = Runtime.getRuntime().availableProcessors() /2;                    
 	
 	//package ai.mcts, class MCTS. used for heuristic
