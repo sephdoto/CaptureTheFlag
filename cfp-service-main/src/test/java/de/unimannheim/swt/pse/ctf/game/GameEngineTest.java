@@ -17,7 +17,7 @@ class GameEngineTest {
    */
   @BeforeEach
   void setUp() {
-    gameEngine = new GameEngine(TestValues.getTestState(), false, true, new Date(System.currentTimeMillis() + 10000000));
+    gameEngine = new GameEngine(TestValues.getTestState(), TestValues.getTestTemplate(), false, true, new Date(System.currentTimeMillis() + 10000000));
   }
 
   @Test
@@ -42,7 +42,7 @@ class GameEngineTest {
   void testGetRemainingGameTimeInSeconds() {
     assertTrue(gameEngine.getRemainingGameTimeInSeconds() > 0);    //the freshly started game ends 10 seconds after generating, returned int time should be greater than 0
 
-    gameEngine = new GameEngine(TestValues.getTestState(), false, true, new Date(System.currentTimeMillis() - 10));
+    gameEngine = new GameEngine(TestValues.getTestState(), TestValues.getTestTemplate(), false, true, new Date(System.currentTimeMillis() - 10));
     assertEquals(0, gameEngine.getRemainingGameTimeInSeconds());    //the freshly started game ended a few ms ago, returned time should be 0 (game over)
 
     gameEngine = new GameEngine(TestValues.getTestState(), false, false, new Date(System.currentTimeMillis() - 10));
@@ -99,18 +99,18 @@ class GameEngineTest {
 
     GameState gameState = TestValues.getTestState();
     gameState.getTeams()[0].setFlags(1);
-    gameEngine = new GameEngine(gameState, false, true, new Date(852003));      //new GameEngine with modified gameState (team0 flags = 0)
+    gameEngine = new GameEngine(gameState, TestValues.getTestTemplate(), false, true, new Date(852003));      //new GameEngine with modified gameState (team0 flags = 0)
     gameEngine.gameOverCheck();
     assertTrue(gameEngine.isGameOver());                                        //a team got no flags left
 
     gameState = TestValues.getTestState();
     gameState.getTeams()[0].setPieces(new Piece[] {});
-    gameEngine = new GameEngine(gameState, false, true, new Date(852003));      //new GameEngine with modified gameState (team0 pieces = {})
+    gameEngine = new GameEngine(gameState, TestValues.getTestTemplate(), false, true, new Date(852003));      //new GameEngine with modified gameState (team0 pieces = {})
     gameEngine.gameOverCheck();
     assertTrue(gameEngine.isGameOver());                                        //a team got no pieces left
 
     gameState = TestValues.getTestState();
-    gameEngine = new GameEngine(gameState, false, true, new Date(System.currentTimeMillis() - 1000000));  //new GameEngine with modified gameState (already ended)
+    gameEngine = new GameEngine(gameState, TestValues.getTestTemplate(), false, true, new Date(System.currentTimeMillis() - 1000000));  //new GameEngine with modified gameState (already ended)
     gameEngine.gameOverCheck();
     assertTrue(gameEngine.isGameOver());                                        //game time over
   }

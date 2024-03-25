@@ -236,7 +236,7 @@ public class GameEngine implements Game {
     } catch (ArithmeticException ae) {
       returnTime = Integer.MAX_VALUE;
     }
-    return returnTime - 1; // -1 Cuz tests were expecting -1 of the value the method was giving back
+    return returnTime;
   }
 
   /**
@@ -570,7 +570,7 @@ public class GameEngine implements Game {
    */
   private void turnTimeLimitedChecks() {
     if (getRemainingMoveTimeInSeconds() < 0) {
-      gameState.setCurrentTeam((gameState.getCurrentTeam() + 1) % gameState.getTeams().length);
+      AI_Tools.toNextTeam(gameState);
     }
   }
 
@@ -627,8 +627,13 @@ public class GameEngine implements Game {
   public GameEngine(GameState gameState, boolean isGameOver, boolean withTimeLimit, Date endDate) {
     this.gameState = gameState;
     this.isGameOver = isGameOver;
+    this.startedDate = new Date(System.currentTimeMillis());
     this.endDate = endDate;
     this.timeLimitedGame = withTimeLimit;
+    if (withTimeLimit) {
+      this.lastMoveTime = LocalDateTime.now();
+      this.nextMoveTime = lastMoveTime.plusSeconds(currentTemplate.getMoveTimeLimitInSeconds());
+    }
   }
 
   /**
@@ -647,6 +652,10 @@ public class GameEngine implements Game {
     this.startedDate = new Date(System.currentTimeMillis());
     this.endDate = endDate;
     this.timeLimitedGame = withTimeLimit;
+    if (withTimeLimit) {
+      this.lastMoveTime = LocalDateTime.now();
+      this.nextMoveTime = lastMoveTime.plusSeconds(currentTemplate.getMoveTimeLimitInSeconds());
+    }
   }
 
   /**
