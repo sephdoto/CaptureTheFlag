@@ -102,15 +102,6 @@ public class TreeNode implements Comparable<TreeNode> {
      newState.setGrid(newGrid);
      return newState;
    }
-   
-   public static GameState toNextTeam(GameState gameState) {
-     for(int i=(gameState.getCurrentTeam()+1) % gameState.getTeams().length; ;i = (i + 1) % gameState.getTeams().length) {
-       if(gameState.getTeams()[i] != null) {
-         gameState.setCurrentTeam(i);
-         return gameState;
-       }
-     }
-   }
 
    @Override
    public int compareTo(TreeNode node) {

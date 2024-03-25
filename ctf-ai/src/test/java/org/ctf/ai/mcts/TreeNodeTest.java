@@ -2,6 +2,7 @@ package org.ctf.ai.mcts;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.ctf.ai.TestValues;
+import org.ctf.shared.ai.AI_Tools;
 import org.ctf.shared.state.Team;
 import org.junit.jupiter.api.Test;
 
@@ -33,9 +34,9 @@ class TreeNodeTest {
   @Test
   void testGetUCT() {
     TreeNode parent = new TreeNode(null, TestValues.getTestState(), new int[] {3,3});
-    TreeNode child1 = parent.clone(parent.toNextTeam(parent.copyGameState()));
+    TreeNode child1 = parent.clone(AI_Tools.toNextTeam(parent.copyGameState()));
     child1.wins = new int[] {2,1};
-    TreeNode child2 = parent.clone(parent.toNextTeam(parent.copyGameState()));
+    TreeNode child2 = parent.clone(AI_Tools.toNextTeam(parent.copyGameState()));
     child2.wins = new int[] {1,2};
     
     assertEquals(3, child1.getNK());
@@ -54,27 +55,6 @@ class TreeNodeTest {
   @Test
   void testCopyGameState() {
     fail("Not yet implemented");
-  }
-
-  @Test
-  void testToNextTeam() {
-    TreeNode tn = new TreeNode(null, TestValues.getEmptyTestState(), null);
-    tn.gameState.setCurrentTeam(0);
-    Team[] teams = new Team[5];
-    for(int i=0; i<5; i++)
-      teams[i] = null;
-    teams[3] = new Team();
-    tn.gameState.setTeams(teams);
-    
-    TreeNode.toNextTeam(tn.gameState);
-
-    assertEquals(tn.gameState.getTeams()[tn.gameState.getCurrentTeam()].getClass(), Team.class);
-    tn.gameState.getTeams()[3] = null;
-    tn.gameState.getTeams()[1] = new Team();
-    
-    TreeNode.toNextTeam(tn.gameState);
-
-    assertEquals(tn.gameState.getTeams()[tn.gameState.getCurrentTeam()].getClass(), Team.class);
   }
 
   @Test

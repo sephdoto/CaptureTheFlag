@@ -265,17 +265,16 @@ public class MCTS_TestDouble {
    * 		   0 - Integer.MAX_VALUE winner team id
    */
   int isTerminal(TreeNode node) {
-    ArrayList<Integer> teamsLeft = new ArrayList<Integer>();
-    removeTeamCheck(node.gameState);
+    int teamsLeft = 0;
     for(int i=0; i<node.gameState.getTeams().length; i++) {
       if(node.gameState.getTeams()[i] != null) {
-        teamsLeft.add(i);
+        teamsLeft++;
       }
     }
-    
-    for(int i=0; i<teamsLeft.size() && teamsLeft.size() > 1; i++) {
+
+    for(int i=node.gameState.getCurrentTeam(); teamsLeft > 1; i = AI_Tools.toNextTeam(node.gameState).getCurrentTeam()) {
       boolean canMove = false;
-      for(int j=0; !canMove && j<node.gameState.getTeams()[teamsLeft.get(i)].getPieces().length; j++) {
+      for(int j=0; !canMove && j<node.gameState.getTeams()[i].getPieces().length; j++) {
         //only if a move can be made no exception is thrown
         try {
           RandomAI.pickMoveComplex(node.gameState);
@@ -285,13 +284,16 @@ public class MCTS_TestDouble {
       if(canMove) {
         return -1;
       } else if (!canMove){
-        AI_Tools.removeTeam(node.gameState, teamsLeft.get(i));
-        teamsLeft.remove(i--);
+        AI_Tools.removeTeam(node.gameState, i);
+        teamsLeft--;
       }
     }
 
-    if(teamsLeft.size() <= 1)
-      return teamsLeft.get(0);
+    if(teamsLeft <= 1) {
+      for(Team team : node.gameState.getTeams())
+        if(team != null)
+          return Integer.parseInt(team.getId());
+    }
     return -1;
   }
 
@@ -451,7 +453,7 @@ public class MCTS_TestDouble {
       picked.setPosition(move.getNewPosition());
     }
     gameState.setLastMove(move);
-    TreeNode.toNextTeam(gameState);
+    AI_Tools.toNextTeam(gameState);
   }
 
 
@@ -464,8 +466,16 @@ public class MCTS_TestDouble {
     sb.append("Piece " + move.getPieceId() + " moves to " + move.getNewPosition()[0] + "," + move.getNewPosition()[1]);
     sb.append("\nNodes expanded: " + expansionCounter +", simulations till the end: " + simulationCounter + ", heuristic used: " + heuristicCounter);
     sb.append("\nBest children:");
+    //if not all children are expanded they cannot be sorted.
+    try {
     Arrays.sort(root.children);
-    for(int i=0; i<(root.children.length > 5 ? 5 : root.children.length); i++) {
+    } catch(NullPointerException npe) {};
+    int n = 5;
+    for(int i=0; i<(root.children.length > n ? n : root.children.length); i++) {
+      if (root.children[i] == null) {
+        n += 1;
+        continue;
+      }
       Move rootMove = root.children[i].gameState.getLastMove();
       sb.append("\n   " + rootMove.getPieceId() + " to [" + rootMove.getNewPosition()[0] + "," + rootMove.getNewPosition()[1] + "]"
       + " winning chance: " + (root.children[i].getV() * 100) + "% with " + root.children[i].getNK() + " nodes" + ", uct: " + root.children[i].getUCT(Constants.C) + " wins 0 " + root.children[i].wins[0] + ", wins 1 " + root.children[i].wins[1]);

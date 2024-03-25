@@ -20,6 +20,28 @@ import com.google.gson.reflect.TypeToken;
  * @author sistumpf
  */
 class AI_ToolsTest {
+  
+
+  @Test
+  void testToNextTeam() {
+    GameState gameState = new GameState();
+    gameState.setCurrentTeam(0);
+    Team[] teams = new Team[5];
+    for(int i=0; i<5; i++)
+      teams[i] = null;
+    teams[3] = new Team();
+    gameState.setTeams(teams);
+    
+    AI_Tools.toNextTeam(gameState);
+
+    assertEquals(gameState.getTeams()[gameState.getCurrentTeam()].getClass(), Team.class);
+    gameState.getTeams()[3] = null;
+    gameState.getTeams()[1] = new Team();
+    
+    AI_Tools.toNextTeam(gameState);
+
+    assertEquals(gameState.getTeams()[gameState.getCurrentTeam()].getClass(), Team.class);
+  }
 
   @Test
   void testGetPossibleMoves() {

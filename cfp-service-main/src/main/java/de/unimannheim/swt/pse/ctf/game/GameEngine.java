@@ -15,6 +15,7 @@ import de.unimannheim.swt.pse.ctf.game.state.Team;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -182,7 +183,8 @@ public class GameEngine implements Game {
   }
 
   /**
-   * @author sistumpf Checks whether a move is valid based on the current game state.
+   * Checks whether a move is valid based on the current game state.
+   * @author sistumpf 
    * @param move {@link Move}
    * @return true if move is valid based on current game state, false otherwise
    */
@@ -211,7 +213,7 @@ public class GameEngine implements Game {
   /**
    * Returns the remaining time in seconds.
    *
-   * @author sistumpf
+   * @author sistumpf, rsyed
    * @return -1 if no total game time limit set, 0 if over, > 0 if seconds remain
    */
   @Override
@@ -255,6 +257,7 @@ public class GameEngine implements Game {
 
   /**
    * Here a move, if valid, updates the grid, a pieces position, a teams flags and the time.
+   * The currentTeam also gets changed here (with afterMoveCleanUp())
    *
    * @author sistumpf
    * @param move {@link Move}
@@ -296,7 +299,6 @@ public class GameEngine implements Game {
       picked.setPosition(move.getNewPosition());
     }
 
-    gameState.setCurrentTeam((gameState.getCurrentTeam() + 1) % gameState.getTeams().length);
     gameState.setLastMove(move);
 
     // Update Time
@@ -317,8 +319,12 @@ public class GameEngine implements Game {
     // Update Time
     if (this.moveTimeLimitedGame) {
       this.lastMoveTime = LocalDateTime.now();
-      gameOverCheck();
     }
+
+    AI_Tools.toNextTeam(gameState);
+    gameOverCheck();
+    if(gameState.getTeams()[gameState.getCurrentTeam()] == null)
+      AI_Tools.toNextTeam(gameState);
   }
 
   /**
@@ -353,6 +359,7 @@ public class GameEngine implements Game {
    * The {@link GameEngine#isGameOver()} method only returns the {@link GameEngine#isGameOver}
    * value, so this method implements the game over checks. It updates the isGameOver {@link
    * GameEngine#isGameOver} value accordingly.
+   * TODO needs further tests
    *
    * @author sistumpf
    */
@@ -360,22 +367,76 @@ public class GameEngine implements Game {
     if (getRemainingGameTimeInSeconds() == 0) { // Time Limited Game Check
       this.isGameOver = true;
       //TODO Calculate the winner of a time limited game
+      
     } else {
-      for (Team team : gameState.getTeams()) {
-        if (team.getFlags() < 1) {
-          this.isGameOver = true;
-          break;
-        } else if (team.getPieces().length == 0) {
+      ArrayList<Integer> teamsLeft = new ArrayList<Integer>();
+      for(int i=0; i<gameState.getTeams().length; i++) {
+        if(gameState.getTeams()[i] != null) {
+          teamsLeft.add(i);
+        }
+      }
+      
+      for (int i=0; i<teamsLeft.size(); i++) {
+        if (teamsLeft.size() == 1) {
           this.isGameOver = true;
           break;
         }
+        Team team = gameState.getTeams()[teamsLeft.get(i)];
+        if (team.getFlags() < 1) {
+          AI_Tools.removeTeam(gameState, i--);
+          teamsLeft.remove(i--);
+        } else if (team.getPieces().length == 0) {
+          AI_Tools.removeTeam(gameState, i--);
+          teamsLeft.remove(i--);
+        }
       }
+
+      if(gameState.getTeams()[gameState.getCurrentTeam()] == null)
+        AI_Tools.toNextTeam(gameState);
+      removeNoMoveTeams(gameState);
+      if(gameState.getTeams()[gameState.getCurrentTeam()] == null)
+        AI_Tools.toNextTeam(gameState);
     }
     if (this.isGameOver) {
       this.endDate =
           Date.from(
               LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()); // Sets game end time
     }
+  }
+
+  /**
+   * This method checks if the current team got moves left, if thats not the case the team get removed.
+   * After a team got removed the next team gets checked, until only 1 team is left or a team got moves.
+   * TODO currently just tested in MCTS, no guarantee that it works
+   * @author sistumpf
+   * @param gameState
+   */
+  void removeNoMoveTeams(GameState gameState) {
+    int teamsLeft = 0;
+    for(int i=0; i<gameState.getTeams().length; i++) {
+      if(gameState.getTeams()[i] != null) {
+        teamsLeft++;
+      }
+    }
+
+    for(int i=gameState.getCurrentTeam(); teamsLeft > 1; i = AI_Tools.toNextTeam(gameState).getCurrentTeam()) {
+      boolean canMove = false;
+      for(int j=0; !canMove && j<gameState.getTeams()[i].getPieces().length; j++) {
+        //if there are possible moves 
+        if(AI_Tools.getPossibleMoves(gameState, gameState.getTeams()[i].getPieces()[j].getId()).size() > 0 ) {
+          canMove = true;
+        }
+      }
+      if(canMove) {
+        return ;
+      } else if (!canMove){
+        AI_Tools.removeTeam(gameState, i);
+        teamsLeft--;
+      }
+    }
+
+    if(teamsLeft <= 1)
+      isGameOver = true;
   }
 
   /**
@@ -395,14 +456,21 @@ public class GameEngine implements Game {
   }
 
   /**
-   * Get winner(s) (if any)
+   * If the game is over a String Array containing all winner IDs is returned.
+   * This method relies on the fact that loser teams get set to null in the gameState.teams Array.
    *
+   * @author sistumpf
    * @return {@link Team#getId()} if there is a winner
    */
   @Override
   public String[] getWinner() {
-    // TODO Auto-generated method stub
-    return null;
+    ArrayList<String> winners = new ArrayList<String>();
+    if(this.isGameOver)
+      for(Team team : this.gameState.getTeams())
+        if(team != null)
+          winners.add(team.getId());
+    
+    return (String[]) winners.toArray();
   }
 
   /**

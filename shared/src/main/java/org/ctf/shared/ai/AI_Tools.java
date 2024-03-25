@@ -17,6 +17,20 @@ import org.ctf.shared.state.data.map.ShapeType;
  */
 public class AI_Tools {
   /**
+   * Switches a GameState current team to the next valid (not null) team.
+   * @param gameState
+   * @return altered gameState
+   */
+  public static GameState toNextTeam(GameState gameState) {
+    for(int i=(gameState.getCurrentTeam()+1) % gameState.getTeams().length; ;i = (i + 1) % gameState.getTeams().length) {
+      if(gameState.getTeams()[i] != null) {
+        gameState.setCurrentTeam(i);
+        return gameState;
+      }
+    }
+  }
+  
+  /**
    * Removes a certain team from the GameState.
    * team is the place of the team in the GameState.getTeams Array.
    * @param gameState
@@ -31,7 +45,7 @@ public class AI_Tools {
   
   /**
    * Returns a valid position on which a Piece can safely respawn.
-   *
+   * TODO test if this really works
    * @param gameState to access the grid and generate pseudo random numbers
    * @param basePos the position of the base of the Piece that gets respawned
    * @return valid position to respawn a piece on, null shouldn't be returned (compiler needs it).

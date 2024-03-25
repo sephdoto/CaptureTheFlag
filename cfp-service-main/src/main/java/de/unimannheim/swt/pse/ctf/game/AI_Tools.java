@@ -18,6 +18,20 @@ import de.unimannheim.swt.pse.ctf.game.state.Piece;
  */
 public class AI_Tools {
   /**
+   * Switches a GameState current team to the next valid (not null) team.
+   * @param gameState
+   * @return altered gameState
+   */
+  public static GameState toNextTeam(GameState gameState) {
+    for(int i=(gameState.getCurrentTeam()+1) % gameState.getTeams().length; ;i = (i + 1) % gameState.getTeams().length) {
+      if(gameState.getTeams()[i] != null) {
+        gameState.setCurrentTeam(i);
+        return gameState;
+      }
+    }
+  }
+  
+  /**
    * Removes a certain team from the GameState.
    * team is the place of the team in the GameState.getTeams Array.
    * @param gameState
