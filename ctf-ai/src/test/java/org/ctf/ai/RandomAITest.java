@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.ctf.ai.random.RandomAI;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.state.GameState;
@@ -28,6 +29,7 @@ class RandomAITest {
    * 
    * test 1, move to a free field
    */
+  @SuppressWarnings("deprecation")
   @Test
   void testPickMoveSimple_knightMovement() {
     GameState gameState = TestValues.getEmptyTestState();					//get an empty gameState that only contains two teams and their bases
@@ -57,6 +59,7 @@ class RandomAITest {
   /**
    * test 2, capture a weaker piece
    */
+  @SuppressWarnings("deprecation")
   @Test
   void testPickMoveSimple_knightCapture() {    
     GameState gameState = TestValues.getEmptyTestState();                    //get an empty gameState that only contains two teams and their bases
@@ -86,6 +89,7 @@ class RandomAITest {
   /**
    * test 3, move queen to a free field
    */
+  @SuppressWarnings("deprecation")
   @Test
   void testPickMoveSimple_queenMovement() {
     GameState gameState = TestValues.getEmptyTestState();                  //get an empty gameState that only contains two teams and their bases

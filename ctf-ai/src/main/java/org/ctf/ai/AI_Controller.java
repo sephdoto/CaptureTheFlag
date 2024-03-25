@@ -1,7 +1,7 @@
 package org.ctf.ai;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import org.ctf.ai.random.RandomAI;
 import org.ctf.client.tools.JSON_Tools;
 import org.ctf.client.tools.JSON_Tools.MapNotFoundException;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
@@ -19,6 +19,7 @@ import org.ctf.shared.state.data.map.MapTemplate;
  */
 public class AI_Controller {
 
+  @SuppressWarnings("deprecation")
   public static Move getNextMove(GameState gameState, AI ai)
       throws NoMovesLeftException, InvalidShapeException {
     switch (ai) {

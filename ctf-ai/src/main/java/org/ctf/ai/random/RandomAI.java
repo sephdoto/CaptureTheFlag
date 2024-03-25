@@ -1,4 +1,4 @@
-package org.ctf.ai;
+package org.ctf.ai.random;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +25,7 @@ public class RandomAI extends AI_Tools {
    * @return a valid random Move
    * @throws InvalidShapeException
    */
+  @Deprecated
   public static Move pickMoveSimple(GameState gameState) throws InvalidShapeException {
     Move move = new Move();
 

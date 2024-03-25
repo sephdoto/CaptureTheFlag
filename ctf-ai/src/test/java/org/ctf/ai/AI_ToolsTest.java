@@ -1,5 +1,6 @@
 package org.ctf.ai;
 
+import org.ctf.ai.random.RandomAI;
 import org.ctf.shared.ai.AI_Tools;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.state.GameState;
