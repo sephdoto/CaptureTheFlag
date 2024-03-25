@@ -191,7 +191,7 @@ public class GameEngine implements Game {
   @Override
   public boolean isValidMove(Move move) {
     if (isStarted()) {
-      return AI_Tools.getPossibleMoves(this.gameState, move.getPieceId()).stream()
+      return EngineTools.getPossibleMoves(this.gameState, move.getPieceId()).stream()
           .anyMatch(i -> i[0] == move.getNewPosition()[0] && i[1] == move.getNewPosition()[1]);
     }
     return false;
@@ -291,7 +291,7 @@ public class GameEngine implements Game {
       gameState.getTeams()[occupantTeam].setFlags(
           gameState.getTeams()[occupantTeam].getFlags() - 1);
       picked.setPosition(
-          AI_Tools.respawnPiecePosition(
+          EngineTools.respawnPiecePosition(
               gameState, gameState.getTeams()[gameState.getCurrentTeam()].getBase()));
       gameState.getGrid()[picked.getPosition()[0]][picked.getPosition()[1]] = picked.getId();
     } else {
@@ -321,10 +321,10 @@ public class GameEngine implements Game {
       this.lastMoveTime = LocalDateTime.now();
     }
 
-    AI_Tools.toNextTeam(gameState);
+    EngineTools.toNextTeam(gameState);
     gameOverCheck();
     if(gameState.getTeams()[gameState.getCurrentTeam()] == null)
-      AI_Tools.toNextTeam(gameState);
+      EngineTools.toNextTeam(gameState);
   }
 
   /**
@@ -383,19 +383,19 @@ public class GameEngine implements Game {
         }
         Team team = gameState.getTeams()[teamsLeft.get(i)];
         if (team.getFlags() < 1) {
-          AI_Tools.removeTeam(gameState, i--);
+          EngineTools.removeTeam(gameState, i--);
           teamsLeft.remove(i--);
         } else if (team.getPieces().length == 0) {
-          AI_Tools.removeTeam(gameState, i--);
+          EngineTools.removeTeam(gameState, i--);
           teamsLeft.remove(i--);
         }
       }
 
       if(gameState.getTeams()[gameState.getCurrentTeam()] == null)
-        AI_Tools.toNextTeam(gameState);
+        EngineTools.toNextTeam(gameState);
       removeNoMoveTeams(gameState);
       if(gameState.getTeams()[gameState.getCurrentTeam()] == null)
-        AI_Tools.toNextTeam(gameState);
+        EngineTools.toNextTeam(gameState);
     }
     if (this.isGameOver) {
       this.endDate =
@@ -419,18 +419,18 @@ public class GameEngine implements Game {
       }
     }
 
-    for(int i=gameState.getCurrentTeam(); teamsLeft > 1; i = AI_Tools.toNextTeam(gameState).getCurrentTeam()) {
+    for(int i=gameState.getCurrentTeam(); teamsLeft > 1; i = EngineTools.toNextTeam(gameState).getCurrentTeam()) {
       boolean canMove = false;
       for(int j=0; !canMove && j<gameState.getTeams()[i].getPieces().length; j++) {
         //if there are possible moves 
-        if(AI_Tools.getPossibleMoves(gameState, gameState.getTeams()[i].getPieces()[j].getId()).size() > 0 ) {
+        if(EngineTools.getPossibleMoves(gameState, gameState.getTeams()[i].getPieces()[j].getId()).size() > 0 ) {
           canMove = true;
         }
       }
       if(canMove) {
         return ;
       } else if (!canMove){
-        AI_Tools.removeTeam(gameState, i);
+        EngineTools.removeTeam(gameState, i);
         teamsLeft--;
       }
     }
@@ -570,7 +570,7 @@ public class GameEngine implements Game {
    */
   private void turnTimeLimitedChecks() {
     if (getRemainingMoveTimeInSeconds() < 0) {
-      AI_Tools.toNextTeam(gameState);
+      EngineTools.toNextTeam(gameState);
     }
   }
 
