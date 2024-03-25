@@ -11,8 +11,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.ctf.ai.RandomAI;
 import org.ctf.shared.ai.AI_Tools;
-import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
-import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
@@ -50,7 +48,7 @@ public class MCTS {
    */
   public Move getMove(int milis, double C){
     long time = System.currentTimeMillis();
-    
+
     while(System.currentTimeMillis() - time < milis){
       //Schritte des UCT abarbeiten
       TreeNode selected = selectAndExpand(root, C);
@@ -75,7 +73,7 @@ public class MCTS {
    * @return the node to simulate on
    */
   TreeNode selectAndExpand(TreeNode node, double C){
-    while(isTerminal(node) == -1) {
+    while(isTerminal(node) == -1) {      
       if(!isFullyExpanded(node)){
         expansionCounter.incrementAndGet();
         return expand(node);
@@ -107,9 +105,9 @@ public class MCTS {
 
   int[] multiSimulate(TreeNode simulateOn) { 
     int[] winners = new int[simulateOn.gameState.getTeams().length];
-    
+
     try {
-     // Create a list of Callable tasks for parallel execution
+      // Create a list of Callable tasks for parallel execution
       List<Callable<int[]>> tasks = new ArrayList<>();
       for (int i = 0; i < Constants.numThreads; i++) {
         tasks.add(() -> {
@@ -121,10 +119,10 @@ public class MCTS {
       List<Future<int[]>> futures = executorService.invokeAll(tasks);
       for(int i=0; i<futures.size(); i++) {
         try {
-        int[] wins = futures.get(i).get();
-        for(int j=0; j<wins.length; j++) {
+          int[] wins = futures.get(i).get();
+          for(int j=0; j<wins.length; j++) {
             winners[j] += wins[j];
-        }
+          }
         } catch(Exception e) {}
       }
 
@@ -134,7 +132,7 @@ public class MCTS {
 
     return winners;
   }
-  
+
 
   /**
    * Simulates a game from a specific node to finish (or a maximum step value of Constants.MAX_STEPS simulation),
@@ -145,11 +143,16 @@ public class MCTS {
    *         default case is a heuristic. if it returns value > 0, player A is winning
    */
   int[] simulate(TreeNode simulateOn){      
-    simulateOn = simulateOn.clone(simulateOn.copyGameState());
     int isTerminal = isTerminal(simulateOn);
     int[] winners = new int[this.teams];
     int count = Constants.MAX_STEPS;
-    
+    if(isTerminal >= 0) {
+      winners[isTerminal] += count;
+      return winners;
+    }
+
+    simulateOn = simulateOn.clone(simulateOn.copyGameState());
+
     for(;count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn)) {
       oneMove(simulateOn, simulateOn);
       removeTeamCheck(simulateOn.gameState);
@@ -160,9 +163,9 @@ public class MCTS {
     } else {
       simulationCounter.incrementAndGet();
       //TODO: count zum Testen durch isTerminal ersetzen
-      winners[isTerminal] += 1;
+      winners[isTerminal] += count;
     }
-    
+
     return winners;
   }
 
@@ -175,13 +178,16 @@ public class MCTS {
   int terminalHeuristic(TreeNode node) {
     Team[] teams = node.gameState.getTeams();
     int[] points = new int[teams.length];
-    
+
     for(int i=0; i<teams.length; i++) {
+      if(teams[i] == null)
+        continue;
+
       for(Piece p : teams[i].getPieces()) {
         points[i] += p.getDescription().getAttackPower() * Constants.attackPowerMultiplier;
         points[i] += 1 * Constants.pieceMultiplier;
         for(int j=0; j<teams.length; j++) {
-          if(j == i) {
+          if(j == i || teams[j] == null) {
             continue;
           }
           //reward being close to enemy base
@@ -195,7 +201,7 @@ public class MCTS {
           points[i] += 8 * Constants.shapeReachMultiplier;
         }
       }
-      
+
       /*for(int j=0; j<teams.length; j++) {
         if(j == i)
           continue;
@@ -205,7 +211,7 @@ public class MCTS {
               + Math.pow(teams[i].getBase()[0]-ep.getPosition()[0], 2))) * Constants.distanceBaseMultiplier * 10;
         }  
       }*/
-      
+
       points[i] += teams[i].getFlags() * Constants.flagMultiplier;
     }
 
@@ -213,7 +219,7 @@ public class MCTS {
     for(int i=0; i<points.length; i++)
       if(points[i] > points[max])
         max = i;
-    
+
     return max;
   }
 
@@ -243,7 +249,6 @@ public class MCTS {
       }
       child = child.parent;
     }
-
   }
 
 
@@ -255,28 +260,33 @@ public class MCTS {
    * 		   0 - Integer.MAX_VALUE winner team id
    */
   int isTerminal(TreeNode node) {
+    ArrayList<Integer> teamsLeft = new ArrayList<Integer>();
+    removeTeamCheck(node.gameState);
     for(int i=0; i<node.gameState.getTeams().length; i++) {
-      if(node.gameState.getTeams().length == 1)
-        return Integer.parseInt(node.gameState.getTeams()[0].getId());
-      
-      int currentTeam = (node.gameState.getCurrentTeam() + i) % node.gameState.getTeams().length;
+      if(node.gameState.getTeams()[i] != null) {
+        teamsLeft.add(i);
+      }
+    }
+
+    for(int i=0; i<teamsLeft.size() && teamsLeft.size() > 1; i++) {
       boolean canMove = false;
-      for(int j=0; !canMove && j<node.gameState.getTeams()[node.gameState.getCurrentTeam()].getPieces().length; j++) {
+      for(int j=0; !canMove && j<node.gameState.getTeams()[teamsLeft.get(i)].getPieces().length; j++) {
         //only if a move can be made no exception is thrown
         try {
           RandomAI.pickMoveComplex(node.gameState);
           canMove = true;
-        } catch (NoMovesLeftException e) {} 
-        catch (InvalidShapeException e) {}
+        } catch (Exception e) {} 
       }
       if(canMove) {
         return -1;
-      } else {
-        AI_Tools.removeTeam(node.gameState, currentTeam);
-        i = -1;
+      } else if (!canMove){
+        AI_Tools.removeTeam(node.gameState, teamsLeft.get(i));
+        teamsLeft.remove(i--);
       }
     }
-      
+
+    if(teamsLeft.size() <= 1)
+      return teamsLeft.get(0);
     return -1;
   }
 
@@ -334,17 +344,15 @@ public class MCTS {
 
   /**
    * Simulates one move and returns a new node containing the new state.
-   * also adds the new node to the parent nodes children, its place in the Array
-   * is the move made to get from the parent to the child (= field %6)
-   * @param parent node
-   * @param the move in form of the selected element in the parents array
+   * @param alter node, this nodes GameState is altered
+   * @param original node, the move made gets removed from it
    * @return a child node containing the simulation result
    */
   void oneMove(TreeNode alter, TreeNode original) {
     alterGameState(alter.gameState, getAndRemoveMoveHeuristic(original));
     alter.initPossibleMovesAndChildren();
   }   
-  
+
   @SuppressWarnings("unlikely-arg-type")
   Move getAndRemoveMoveHeuristic(TreeNode parent) {
     for(String key : parent.possibleMoves.keySet()) {
@@ -362,14 +370,14 @@ public class MCTS {
         }
       }
     }
-    
+
     return getAndRemoveMoveRandom(parent);
   }
-  
+
   Move getAndRemoveMoveRandom(TreeNode parent){
     String key = parent.possibleMoves.keySet().toArray()[rand.nextInt(parent.possibleMoves.keySet().size())].toString();
     int randomMove = rand.nextInt(parent.possibleMoves.get(key).size());
-    
+
     return createMoveDeleteIndex(parent, key, randomMove);
   }
 
@@ -377,7 +385,7 @@ public class MCTS {
     Move move = new Move();
     move.setPieceId(key);
     move.setNewPosition(parent.possibleMoves.get(key).get(index));
-    
+
     parent.possibleMoves.get(key).remove(index);
     if(parent.possibleMoves.get(key).size() <= 0) {
       parent.possibleMoves.remove(key);
@@ -385,16 +393,18 @@ public class MCTS {
 
     return move;
   }
-  
+
   /**
    * This method checks if a team got no more flags or no more pieces.
    * @param gameState
    */
   void removeTeamCheck(GameState gameState) {
-    for(int i=0; i<gameState.getTeams().length && gameState.getTeams().length > 1; i++) {
+    for(int i=0; i<gameState.getTeams().length; i++) {
+      if(gameState.getTeams()[i] == null)
+        continue;
       if(gameState.getTeams()[i].getFlags() == 0 ||
           gameState.getTeams()[i].getPieces().length == 0) {
-        AI_Tools.removeTeam(gameState, i);
+        AI_Tools.removeTeam(gameState, i--);
       }
     }
   }
@@ -431,9 +441,8 @@ public class MCTS {
       gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
       picked.setPosition(move.getNewPosition());
     }
-
-    gameState.setCurrentTeam((gameState.getCurrentTeam() + 1) % gameState.getTeams().length);
     gameState.setLastMove(move);
+    TreeNode.toNextTeam(gameState);
   }
 
 
@@ -450,7 +459,7 @@ public class MCTS {
     for(int i=0; i<(root.children.length > 5 ? 5 : root.children.length); i++) {
       Move rootMove = root.children[i].gameState.getLastMove();
       sb.append("\n   " + rootMove.getPieceId() + " to [" + rootMove.getNewPosition()[0] + "," + rootMove.getNewPosition()[1] + "]"
-      + " winning chance: " + (root.children[i].getV() * 100) + "% with " + root.children[i].getNK() + " nodes" + ", uct: " + root.children[i].getUCT(Constants.C) + " wins 0 " + root.children[i].wins[0] + ", wins 1 " + root.children[i].wins[1]);
+          + " winning chance: " + (root.children[i].getV() * 100) + "% with " + root.children[i].getNK() + " nodes" + ", uct: " + root.children[i].getUCT(Constants.C) + " wins 0 " + root.children[i].wins[0] + ", wins 1 " + root.children[i].wins[1]);
     }
     return sb.toString();
   }

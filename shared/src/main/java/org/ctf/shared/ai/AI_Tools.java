@@ -8,7 +8,6 @@ import java.util.stream.Stream;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
-import org.ctf.shared.state.Team;
 import org.ctf.shared.state.data.map.Directions;
 import org.ctf.shared.state.data.map.ShapeType;
 
@@ -27,17 +26,8 @@ public class AI_Tools {
     gameState.getGrid()[gameState.getTeams()[team].getBase()[0]][gameState.getTeams()[team].getBase()[1]] = "";
     for(Piece p : gameState.getTeams()[team].getPieces())
       gameState.getGrid()[p.getPosition()[0]][p.getPosition()[1]] = "";
-    
-    Team[] teams = new Team[gameState.getTeams().length -1];
-    for(int j=0; j<gameState.getTeams().length; j++) {
-      if(j < team) {
-        teams[j] = gameState.getTeams()[j];
-      } else if (j > team) {
-        teams[j-1] = gameState.getTeams()[j];
-      }
+    gameState.getTeams()[team] = null;
     }
-    gameState.setTeams(teams);
-  }
   
   /**
    * Returns a valid position on which a Piece can safely respawn.
@@ -124,7 +114,12 @@ public class AI_Tools {
       HashMap<Integer, Integer> dirMap = AI_Tools.createDirectionMap(gameState, piece);
       for (Integer direction : dirMap.keySet()) {
         for (int reach = dirMap.get(direction); reach > 0; reach--) {
-          Move move = AI_Tools.checkMoveValidity(gameState, piece, direction, reach);
+          Move move = new Move();
+          try {
+          move = AI_Tools.checkMoveValidity(gameState, piece, direction, reach);
+          } catch(Exception e) {
+            System.out.println(2);
+          }
           if (move != null) possibleMoves.add(move.getNewPosition());
         }
       }

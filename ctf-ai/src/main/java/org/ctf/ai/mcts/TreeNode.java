@@ -79,6 +79,8 @@ public class TreeNode implements Comparable<TreeNode> {
      newState.setLastMove(gameState.getLastMove());
      Team[] teams = new Team[gameState.getTeams().length];
      for(int i=0; i<teams.length; i++) {
+       if(gameState.getTeams()[i] == null)
+         continue;
        teams[i] = new Team();
        teams[i].setBase(gameState.getTeams()[i].getBase());
        teams[i].setFlags(gameState.getTeams()[i].getFlags());
@@ -101,9 +103,13 @@ public class TreeNode implements Comparable<TreeNode> {
      return newState;
    }
    
-   public GameState toNextTeam(GameState gameState) {
-     gameState.setCurrentTeam((gameState.getCurrentTeam() +1) % gameState.getTeams().length);
-     return gameState;
+   public static GameState toNextTeam(GameState gameState) {
+     for(int i=(gameState.getCurrentTeam()+1) % gameState.getTeams().length; ;i = (i + 1) % gameState.getTeams().length) {
+       if(gameState.getTeams()[i] != null) {
+         gameState.setCurrentTeam(i);
+         return gameState;
+       }
+     }
    }
 
    @Override
