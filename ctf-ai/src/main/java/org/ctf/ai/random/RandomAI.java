@@ -3,7 +3,7 @@ package org.ctf.ai.random;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import org.ctf.shared.ai.AI_Tools;
+import org.ctf.ai.AI_Tools;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
