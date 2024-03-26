@@ -143,6 +143,7 @@ public class MCTS_TestDouble {
    *         default case is a heuristic. if it returns value > 0, player A is winning
    */
   int[] simulate(TreeNode simulateOn){      
+    simulationCounter.incrementAndGet();
     int isTerminal = isTerminal(simulateOn);
     int[] winners = new int[this.teams];
     int count = AI_Constants.MAX_STEPS;
@@ -150,27 +151,22 @@ public class MCTS_TestDouble {
       winners[isTerminal] += count;
       return winners;
     }
-    
+
     simulateOn = simulateOn.clone(simulateOn.copyGameState());
-    
+
     for(;count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn)) {
-      try {
       oneMove(simulateOn, simulateOn);
-      } catch(Exception e) {
-        isTerminal(simulateOn);
-        System.out.println("error");
-      }
       removeTeamCheck(simulateOn.gameState);
     }
-    if(isTerminal < 0) {
+    if(isTerminal < 0) {  
+      simulationCounter.decrementAndGet();
       heuristicCounter.incrementAndGet();
       winners[terminalHeuristic(simulateOn)] += 1;
     } else {
-      simulationCounter.incrementAndGet();
       //TODO: count zum Testen durch isTerminal ersetzen
       winners[isTerminal] += count;
     }
-    
+
     return winners;
   }
 

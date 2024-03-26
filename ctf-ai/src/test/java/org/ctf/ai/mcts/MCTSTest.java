@@ -264,9 +264,9 @@ class MCTSTest {
    * this only works if simulations and heuristics are both valued as 1 in MCTS.simulate
    */
   void testMultiSimulate() {
-    long time = System.currentTimeMillis();
+    long time = System.nanoTime();
     int[] winners = mcts.multiSimulate(mcts.root);
-    System.out.println("time for multiSim: " + (System.currentTimeMillis() - time));
+    System.out.println("time for multiSim: " + (System.nanoTime() - time)/1000);
 
 //    assertEquals(Arrays.stream(winners).sum(), Constants.numThreads);
     assertTrue((winners[0] > 0 || winners[1] > 0) && winners[0] != winners[1]);
@@ -274,9 +274,9 @@ class MCTSTest {
 
   @Test
   void testSimulate() {
-    long time = System.currentTimeMillis();
+    long time = System.nanoTime();
     int[] winners = mcts.simulate(mcts.root);
-    System.out.println("time for sim: " + (System.currentTimeMillis() - time));
+    System.out.println("time for sim: " + (System.nanoTime() - time)/1000);
 
     assertTrue((winners[0] > 0 || winners[1] > 0) && winners[0] != winners[1]);
   }

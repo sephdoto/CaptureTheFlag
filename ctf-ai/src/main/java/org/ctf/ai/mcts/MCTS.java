@@ -2,6 +2,7 @@ package org.ctf.ai.mcts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
@@ -108,7 +109,7 @@ public class MCTS {
 
     try {
       // Create a list of Callable tasks for parallel execution
-      List<Callable<int[]>> tasks = new ArrayList<>();
+      List<Callable<int[]>> tasks = new LinkedList<>();
       for (int i = 0; i < AI_Constants.numThreads; i++) {
         tasks.add(() -> {
           return simulate(simulateOn);
@@ -143,6 +144,7 @@ public class MCTS {
    *         default case is a heuristic. if it returns value > 0, player A is winning
    */
   int[] simulate(TreeNode simulateOn){      
+    simulationCounter.incrementAndGet();
     int isTerminal = isTerminal(simulateOn);
     int[] winners = new int[this.teams];
     int count = AI_Constants.MAX_STEPS;
@@ -157,11 +159,11 @@ public class MCTS {
       oneMove(simulateOn, simulateOn);
       removeTeamCheck(simulateOn.gameState);
     }
-    if(isTerminal < 0) {
+    if(isTerminal < 0) {  
+      simulationCounter.decrementAndGet();
       heuristicCounter.incrementAndGet();
       winners[terminalHeuristic(simulateOn)] += 1;
     } else {
-      simulationCounter.incrementAndGet();
       //TODO: count zum Testen durch isTerminal ersetzen
       winners[isTerminal] += count;
     }
