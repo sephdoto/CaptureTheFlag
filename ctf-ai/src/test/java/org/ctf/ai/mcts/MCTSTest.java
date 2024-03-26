@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import org.ctf.ai.TestValues;
 import org.ctf.shared.ai.AI_Tools;
-import org.ctf.shared.constants.Constants;
+import org.ctf.ai.AI_Constants;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
@@ -36,7 +36,7 @@ class MCTSTest {
     while(mcts.isTerminal(mcts.root) == -1) {
       mcts = new MCTS_TestDouble(mcts.root.clone((mcts.root.gameState)));
 
-      Move move = mcts.getMove(timeForMove, Constants.C);
+      Move move = mcts.getMove(timeForMove, AI_Constants.C);
       ++mctsTillEnd;      
       TreeNode tn = mcts.root;
       mcts.alterGameState(tn.gameState, move);
@@ -53,7 +53,7 @@ class MCTSTest {
       tn = tn.clone((tn.gameState));
 
       MCTS mcts2 = new MCTS(tn);
-      move = mcts2.getMove(timeForMove, Constants.C);
+      move = mcts2.getMove(timeForMove, AI_Constants.C);
       ++mctsTillEnd;      
       tn = mcts2.root;
       mcts2.alterGameState(tn.gameState, move);
@@ -94,7 +94,7 @@ class MCTSTest {
       MCTS mcts = new MCTS(MCTSTest.mcts.root.clone(MCTSTest.mcts.root.copyGameState()));
       mcts.root.wins = new int[] {0,0};
       try {
-        mcts.getMove(timeInMilis, Constants.C);
+        mcts.getMove(timeInMilis, AI_Constants.C);
       } catch(NullPointerException npe) {crashes++;}
       expansions += mcts.expansionCounter.get();
       wins[0] += mcts.root.wins[0];
@@ -168,7 +168,7 @@ class MCTSTest {
     int mctsTillEnd = 0;
     while(mcts.isTerminal(mcts.root) == -1) {
 
-      Move move = mcts.getMove(1000, Constants.C);
+      Move move = mcts.getMove(1000, AI_Constants.C);
       ++mctsTillEnd;      
       TreeNode tn = mcts.root;
       mcts.alterGameState(tn.gameState, move);
@@ -269,6 +269,7 @@ class MCTSTest {
     System.out.println("time for multiSim: " + (System.currentTimeMillis() - time));
 
 //    assertEquals(Arrays.stream(winners).sum(), Constants.numThreads);
+    assertTrue((winners[0] > 0 || winners[1] > 0) && winners[0] != winners[1]);
   }
 
   @Test
@@ -277,7 +278,7 @@ class MCTSTest {
     int[] winners = mcts.simulate(mcts.root);
     System.out.println("time for sim: " + (System.currentTimeMillis() - time));
 
-    assertEquals(Arrays.stream(winners).sum(), 1);
+    assertTrue((winners[0] > 0 || winners[1] > 0) && winners[0] != winners[1]);
   }
 
   @Test

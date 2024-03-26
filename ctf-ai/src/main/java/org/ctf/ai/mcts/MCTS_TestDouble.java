@@ -11,7 +11,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.ctf.ai.random.RandomAI;
 import org.ctf.shared.ai.AI_Tools;
-import org.ctf.shared.constants.Constants;
+import org.ctf.ai.AI_Constants;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
 import org.ctf.shared.state.GameState;
@@ -35,7 +35,7 @@ public class MCTS_TestDouble {
     expansionCounter = new AtomicInteger();
     this.teams = root.gameState.getTeams().length;
     this.maxDistance = (int)Math.round(Math.sqrt(Math.pow(root.gameState.getGrid().length, 2) + Math.pow(root.gameState.getGrid()[0].length, 2)));
-    this.executorService  = Executors.newFixedThreadPool(Constants.numThreads);
+    this.executorService  = Executors.newFixedThreadPool(AI_Constants.numThreads);
   }
 
 
@@ -109,7 +109,7 @@ public class MCTS_TestDouble {
     try {
      // Create a list of Callable tasks for parallel execution
       List<Callable<int[]>> tasks = new ArrayList<>();
-      for (int i = 0; i < Constants.numThreads; i++) {
+      for (int i = 0; i < AI_Constants.numThreads; i++) {
         tasks.add(() -> {
           return simulate(simulateOn);
         });
@@ -145,7 +145,7 @@ public class MCTS_TestDouble {
   int[] simulate(TreeNode simulateOn){      
     int isTerminal = isTerminal(simulateOn);
     int[] winners = new int[this.teams];
-    int count = Constants.MAX_STEPS;
+    int count = AI_Constants.MAX_STEPS;
     if(isTerminal >= 0) {
       winners[isTerminal] += count;
       return winners;
@@ -189,21 +189,21 @@ public class MCTS_TestDouble {
         continue;
       
       for(Piece p : teams[i].getPieces()) {
-        points[i] += p.getDescription().getAttackPower() * Constants.attackPowerMultiplier;
-        points[i] += 1 * Constants.pieceMultiplier;
+        points[i] += p.getDescription().getAttackPower() * AI_Constants.attackPowerMultiplier;
+        points[i] += 1 * AI_Constants.pieceMultiplier;
         for(int j=0; j<teams.length; j++) {
           if(j == i || teams[j] == null) {
             continue;
           }
           //reward being close to enemy base
-          points[i] += (this.maxDistance - distanceToBase(teams[j].getBase(), p.getPosition())) * Constants.distanceBaseMultiplier;
+          points[i] += (this.maxDistance - distanceToBase(teams[j].getBase(), p.getPosition())) * AI_Constants.distanceBaseMultiplier;
         }
 
         if(p.getDescription().getMovement().getDirections() != null) {
           for(int dir=0; dir<8; dir++)
-            points[i] += AI_Tools.getReach(p.getDescription().getMovement().getDirections(), dir) * Constants.directionMultiplier;
+            points[i] += AI_Tools.getReach(p.getDescription().getMovement().getDirections(), dir) * AI_Constants.directionMultiplier;
         } else {
-          points[i] += 8 * Constants.shapeReachMultiplier;
+          points[i] += 8 * AI_Constants.shapeReachMultiplier;
         }
       }
       
@@ -217,7 +217,7 @@ public class MCTS_TestDouble {
         }  
       }*/
       
-      points[i] += teams[i].getFlags() * Constants.flagMultiplier;
+      points[i] += teams[i].getFlags() * AI_Constants.flagMultiplier;
     }
 
     int max = 0;
@@ -478,7 +478,7 @@ public class MCTS_TestDouble {
       }
       Move rootMove = root.children[i].gameState.getLastMove();
       sb.append("\n   " + rootMove.getPieceId() + " to [" + rootMove.getNewPosition()[0] + "," + rootMove.getNewPosition()[1] + "]"
-      + " winning chance: " + (root.children[i].getV() * 100) + "% with " + root.children[i].getNK() + " nodes" + ", uct: " + root.children[i].getUCT(Constants.C) + " wins 0 " + root.children[i].wins[0] + ", wins 1 " + root.children[i].wins[1]);
+      + " winning chance: " + (root.children[i].getV() * 100) + "% with " + root.children[i].getNK() + " nodes" + ", uct: " + root.children[i].getUCT(AI_Constants.C) + " wins 0 " + root.children[i].wins[0] + ", wins 1 " + root.children[i].wins[1]);
     }
     return sb.toString();
   }
