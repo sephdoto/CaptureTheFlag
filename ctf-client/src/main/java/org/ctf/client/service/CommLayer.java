@@ -30,7 +30,7 @@ import org.ctf.shared.state.data.map.MapTemplate;
 
 /**
  * A lightweight Java based Communication Layer which can be used to make calls to and get data from
- * the REST Api Server
+ * the REST Api Server. Translates returned HTTP codes into exceptions.
  *
  * @author rsyed
  * @return Layer Object

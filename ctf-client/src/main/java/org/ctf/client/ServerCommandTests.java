@@ -161,8 +161,8 @@ public class ServerCommandTests {
         GameSessionRequest request = new GameSessionRequest();
         request.setTemplate(test);
 
-    TestClient client = new TestClient();
-    client.connect("localhost", "8888", test);
+    JavaClient client = new JavaClient();
+   /*  client.connect("localhost", "8888", test); */
     //System.out.println(client.getSessionID());
 
     client.joinGame("team1");
@@ -171,9 +171,9 @@ public class ServerCommandTests {
     //System.out.println(client.getSecretID());
     // client.joinGame("team3");
     // System.out.println(client.getSecretID());
-    client.refreshSession();
+ /*    client.refreshSession();
     GameState gs = client.getState();
-    System.out.println(gson.toJson(gs));
+    System.out.println(gson.toJson(gs)); */
   }
 
   public static void testConnection() {
@@ -292,7 +292,7 @@ public class ServerCommandTests {
         GameSessionRequest request = new GameSessionRequest();
         request.setTemplate(test);
 
-    DataHandler client = new TestClient();
+   /*  JavaClient client = new JavaClient();
     client.connect("localhost", "9999", test);
     //System.out.println(client.getSessionID());
 
@@ -306,7 +306,7 @@ public class ServerCommandTests {
     //GameState  gs = client.getState();
    // System.out.println(gson.toJson(gs));
     
-    ServerCommandTests st = new ServerCommandTests();
+    ServerCommandTests st = new ServerCommandTests(); */
 
     Thread t =
         new Thread() {

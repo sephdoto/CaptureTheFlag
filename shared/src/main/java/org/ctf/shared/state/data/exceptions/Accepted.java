@@ -14,4 +14,8 @@ public class Accepted extends RuntimeException {
     public Accepted(int message){
         super(Integer.toString(message));
     }
+
+    public Accepted() {
+        //TODO Auto-generated constructor stub
+    }
 }
