@@ -67,11 +67,39 @@ public class JavaClient implements GameClientInterface {
     this.comm = new CommLayer();
   }
 
+  /**
+   * Additional constructor to set the IP and port on object creation
+   *
+   * @param IP
+   * @param port
+   */
+  public JavaClient(String IP, String port) {
+    this();
+    setServer(IP, port);
+  }
+  
+  /**
+   * Method to set the server which this this object communicates with
+   *
+   * @param teamName
+   * @throws SessionNotFound
+   * @throws NoMoreTeamSlots
+   * @throws UnknownError
+   */
   public void setServer(String IP, String port) {
     this.currentServer = "http://" + IP + ":" + port + "/api/gamesession";
     this.shortURL = "http://" + IP + ":" + port + "/api/gamesession";
   }
-
+ 
+  /**
+   * Requests the server specified in the current object to create a GameSession using the map in the
+   * MapTemplate parameter. Throws exceptions on acception and incase errors occour
+   *
+   * @param map
+   * @throws UnknownError (500)
+   * @throws URLError (404)
+   * @throws Accepted (200)
+   */
   public void createGame(MapTemplate map) {
     gameSessionResponseParser(createGameCaller(map));
   }
@@ -109,19 +137,24 @@ public class JavaClient implements GameClientInterface {
     getSessionFromServer();
   }
 
-  // Refreshes the WHOLE STATE
+   /**
+   * Requests a refresh of the GameState from the server. Parses the data and makes it available for consumption
+   * Throws exceptions listed incase of acceptance or errors.
+   * Functions as a REFRESH COMMAND for GAMESTATE
+   * @throws Accepted
+   * @throws SessionNotFound
+   * @throws UnknownError
+   * @throws URLError (404)
+   */
   @Override
   public void getStateFromServer() {
     gameStateParser(gameStateCaller());
   }
 
-    /**
+  /**
    * Requests the server to return the current state of the session and parses it
    * Throws exceptions depending on what happens.
-   * Functions as a refresh command for current session
-   *
-   * @param URL
-   * @return GameSessionResponse
+   * Functions as a REFRESH command for SESSION INFO
    * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws UnknownError (500)
