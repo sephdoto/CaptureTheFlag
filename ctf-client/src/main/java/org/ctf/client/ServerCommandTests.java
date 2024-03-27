@@ -6,9 +6,9 @@ import com.google.gson.GsonBuilder;
 import org.ctf.client.controller.HTTPServicer;
 import org.ctf.client.controller.cfpClientController;
 import org.ctf.client.controller.ctfHTTPClient;
+import org.ctf.client.data.dto.GameSessionRequest;
+import org.ctf.client.data.dto.GameSessionResponse;
 import org.ctf.client.service.CommLayer;
-import org.ctf.client.state.data.wrappers.GameSessionRequest;
-import org.ctf.client.state.data.wrappers.GameSessionResponse;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 
@@ -27,16 +27,8 @@ public class ServerCommandTests {
   public static void main(String[] args) {
 
     // Uncomment to do invidivual tests
-   // testConnection();
-    //testStart();
-    String move = "p:1_n";
-    String[] split = move.split("[:._n]");
-    for(String a: split){
-      System.out.println(a);
-    }
-    int moveTeam = Integer.parseInt( "p:2_n".split(":")[1].split("_")[0]);
-    System.out.println(moveTeam);
-
+    //testConnection();
+    testStart();
     // testConnectionTimedGameMode();
     // testMalformedConnection();
     // testConnectionTimedMoveMode();
@@ -48,7 +40,7 @@ public class ServerCommandTests {
   public static void testStart() {
     String jsonPayload =
         """
-        {
+          {
             "gridSize": [10, 10],
             "teams": 2,
             "flags": 1,
@@ -152,20 +144,23 @@ public class ServerCommandTests {
             ],
             "placement": "symmetrical",
             "totalTimeLimitInSeconds": -1,
-            "moveTimeLimitInSeconds": 3
-          }
+            "moveTimeLimitInSeconds": -1
+          }          
         """;
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
         GameSessionRequest request = new GameSessionRequest();
         request.setTemplate(test);
+        CommLayer comm = new CommLayer();
+        GameSessionResponse gsResponse = comm.createGameSession("http://localhost:8888/api/gamesession", test);
+        comm.deleteCurrentSession("http://localhost:8888/api/gamesession/" + gsResponse.getId());
 
-    JavaClient client = new JavaClient();
-   /*  client.connect("localhost", "8888", test); */
+   // JavaClient client = new JavaClient("localhost", "8888");
+    //client.createGame(test);
     //System.out.println(client.getSessionID());
 
-    client.joinGame("team1");
+    //client.joinGame("team1");
     //System.out.println(client.getSecretID());
     //client.joinGame("team2");
     //System.out.println(client.getSecretID());

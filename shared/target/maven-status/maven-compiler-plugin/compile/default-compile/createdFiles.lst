@@ -11,7 +11,6 @@ org\ctf\shared\state\data\exceptions\ForbiddenMove.class
 org\ctf\shared\state\data\map\PlacementType.class
 org\ctf\shared\state\data\exceptions\ApiError$ApiErrorBuilder.class
 org\ctf\shared\state\Team.class
-org\ctf\shared\constants\Constants$AI.class
 org\ctf\shared\state\GameState.class
 org\ctf\shared\ai\AI_Tools$NoMovesLeftException.class
 org\ctf\shared\state\data\exceptions\InvalidMove.class

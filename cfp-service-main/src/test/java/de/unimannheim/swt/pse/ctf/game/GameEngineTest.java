@@ -58,10 +58,10 @@ class GameEngineTest {
     assertEquals(-1, gameEngine.getRemainingMoveTimeInSeconds());
   }
 
-  @Test
+/*   @Test
   void testGetRemainingTeamSlots() {
     fail("Not yet implemented");
-  }
+  } */
 
   /**
    * It should not take more than 1ms to start a gameEngine, so this test should be valid

@@ -10,12 +10,12 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
-import org.ctf.client.state.data.wrappers.GameSessionRequest;
-import org.ctf.client.state.data.wrappers.GameSessionResponse;
-import org.ctf.client.state.data.wrappers.GiveupRequest;
-import org.ctf.client.state.data.wrappers.JoinGameRequest;
-import org.ctf.client.state.data.wrappers.JoinGameResponse;
-import org.ctf.client.state.data.wrappers.MoveRequest;
+import org.ctf.client.data.dto.GameSessionRequest;
+import org.ctf.client.data.dto.GameSessionResponse;
+import org.ctf.client.data.dto.GiveupRequest;
+import org.ctf.client.data.dto.JoinGameRequest;
+import org.ctf.client.data.dto.JoinGameResponse;
+import org.ctf.client.data.dto.MoveRequest;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.exceptions.Accepted;
@@ -380,8 +380,6 @@ public class CommLayer implements CommLayerInterface {
       HttpRequest request =
           HttpRequest.newBuilder()
               .uri(new URI(URL))
-              
-              .header("Content-Type", "application/json")
               .DELETE()
               .build();
       ret = HttpClient.newHttpClient().send(request, BodyHandlers.ofString());

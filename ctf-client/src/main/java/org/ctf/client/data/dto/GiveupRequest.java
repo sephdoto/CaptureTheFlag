@@ -1,4 +1,4 @@
-package org.ctf.client.state.data.wrappers;
+package org.ctf.client.data.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

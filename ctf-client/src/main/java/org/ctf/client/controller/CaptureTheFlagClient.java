@@ -1,11 +1,11 @@
 package org.ctf.client.controller;
 
-import org.ctf.client.state.data.wrappers.GameSessionRequest;
-import org.ctf.client.state.data.wrappers.GameSessionResponse;
-import org.ctf.client.state.data.wrappers.GiveupRequest;
-import org.ctf.client.state.data.wrappers.JoinGameRequest;
-import org.ctf.client.state.data.wrappers.JoinGameResponse;
-import org.ctf.client.state.data.wrappers.MoveRequest;
+import org.ctf.client.data.dto.GameSessionRequest;
+import org.ctf.client.data.dto.GameSessionResponse;
+import org.ctf.client.data.dto.GiveupRequest;
+import org.ctf.client.data.dto.JoinGameRequest;
+import org.ctf.client.data.dto.JoinGameResponse;
+import org.ctf.client.data.dto.MoveRequest;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.exceptions.Accepted;

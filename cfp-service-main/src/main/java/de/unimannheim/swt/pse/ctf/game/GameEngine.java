@@ -465,12 +465,14 @@ public class GameEngine implements Game {
   @Override
   public String[] getWinner() {
     ArrayList<String> winners = new ArrayList<String>();
-    if(this.isGameOver)
-      for(Team team : this.gameState.getTeams())
-        if(team != null)
+    if(this.isGameOver){
+      for(Team team : this.gameState.getTeams()){
+        if(team != null){
           winners.add(team.getId());
-    
-    return (String[]) winners.toArray();
+        }
+      }
+    }
+    return winners.toArray(new String[winners.size()]);
   }
 
   /**

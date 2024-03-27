@@ -1,7 +1,7 @@
 package org.ctf.client.service;
 
-import org.ctf.client.state.data.wrappers.GameSessionResponse;
-import org.ctf.client.state.data.wrappers.JoinGameResponse;
+import org.ctf.client.data.dto.GameSessionResponse;
+import org.ctf.client.data.dto.JoinGameResponse;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.exceptions.Accepted;

@@ -1,4 +1,4 @@
-POST http://localhost:9999/api-client/ HTTP/1.1
+POST http://localhost:8888/api/gamesession HTTP/1.1
 content-type: application/json
 
 {

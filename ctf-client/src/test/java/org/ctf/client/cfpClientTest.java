@@ -3,8 +3,8 @@ package org.ctf.client;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.ctf.client.state.data.wrappers.GameSessionRequest;
-import org.ctf.client.state.data.wrappers.GameSessionResponse;
+import org.ctf.client.data.dto.GameSessionRequest;
+import org.ctf.client.data.dto.GameSessionResponse;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.junit.jupiter.api.Test;
 
