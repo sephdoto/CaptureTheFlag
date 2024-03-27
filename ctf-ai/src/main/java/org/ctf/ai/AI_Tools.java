@@ -16,6 +16,7 @@ import org.ctf.shared.state.data.map.ShapeType;
  *     Moves.
  */
 public class AI_Tools {
+  static Random random = new Random();
   
   /**
    * Returns the previous teams index in the team array.
@@ -82,7 +83,7 @@ public class AI_Tools {
         if (positionOutOfBounds(gameState.getGrid(), newPos)) continue;
 
         if (emptyField(gameState.getGrid(), newPos)) {
-          for (int i = 1, random = seededRandom(gameState.getGrid(), i, 8, 0); ;
+          for (int i = 1, random = seededRandom(gameState.getGrid(), i, xTransforms.length, 0); ;
               i++, random = seededRandom(gameState.getGrid(), i, xTransforms.length, 0)) {
             x = basePos[1] + xTransforms[random];
             y = basePos[0] + yTransforms[random];
@@ -154,7 +155,8 @@ public class AI_Tools {
     StringBuilder sb = new StringBuilder();
     Stream.of(grid).forEach(s -> Stream.of(s).forEach(ss -> sb.append(ss)));
     int seed = sb.append(modifier).toString().hashCode();
-    return new Random(seed).nextInt(upperBound - lowerBound) + lowerBound;
+    random.setSeed(seed);
+    return random.nextInt(upperBound - lowerBound) + lowerBound;
   }
   
   /**

@@ -82,7 +82,7 @@ public class AI_Tools {
         if (positionOutOfBounds(gameState.getGrid(), newPos)) continue;
 
         if (emptyField(gameState.getGrid(), newPos)) {
-          for (int i = 1, random = seededRandom(gameState.getGrid(), i, 8, 0); ;
+          for (int i = 1, random = seededRandom(gameState.getGrid(), i, xTransforms.length, 0); ;
               i++, random = seededRandom(gameState.getGrid(), i, xTransforms.length, 0)) {
             x = basePos[1] + xTransforms[random];
             y = basePos[0] + yTransforms[random];
