@@ -84,11 +84,11 @@ class MCTSTest {
   void testPerformance() throws InterruptedException {
     long expansions = 0;
     int count = 0;
-    int timeInMilis = 5000;
+    int timeInMilis = 10;
     int[] wins = new int[] {0,0};
     int crashes = 0;
 
-    for(;count<2; count++) {
+    for(;count<1000; count++) {
 
       //      MCTS_TestDouble mcts = new MCTS_TestDouble(MCTSTest.mcts.root.clone(MCTSTest.mcts.root.copyGameState()));
       MCTS mcts = new MCTS(MCTSTest.mcts.root.clone(MCTSTest.mcts.root.copyGameState()));

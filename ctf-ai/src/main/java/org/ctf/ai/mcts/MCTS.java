@@ -149,7 +149,8 @@ public class MCTS {
     int[] winners = new int[this.teams];
     int count = AI_Constants.MAX_STEPS;
     if(isTerminal >= 0) {
-      winners[isTerminal] += count;
+//      winners[isTerminal] += count;
+      winners[isTerminal] += 1;
       return winners;
     }
 
