@@ -47,7 +47,7 @@ class AI_ToolsTest {
   void testGetPossibleMoves() {
     GameState gameState = getTestState();
     String pieceId = gameState.getTeams()[1].getPieces()[1].getId();
-    ArrayList<int[]> moves = AI_Tools.getPossibleMoves(gameState, pieceId);
+    ArrayList<int[]> moves = AI_Tools.getPossibleMoves(gameState, pieceId, new ArrayList<int[]>());
 
     ArrayList<int[]> actuallyValidMoves = new ArrayList<int[]>();
     actuallyValidMoves.add(new int[] {6,3});
@@ -58,7 +58,7 @@ class AI_ToolsTest {
     
     gameState.getGrid()[6][3] = "b";
     gameState.getGrid()[8][3] = "b";
-    moves = AI_Tools.getPossibleMoves(gameState, pieceId);
+    moves = AI_Tools.getPossibleMoves(gameState, pieceId, new ArrayList<int[]>());
     actuallyValidMoves.clear();
     
     assertArrayEquals(moves.toArray(), actuallyValidMoves.toArray());
@@ -68,23 +68,76 @@ class AI_ToolsTest {
   void testRespawnPiecePosition() {
     GameState gameState = getTestState();
     int[] basePos = new int[] {2,4};
+    gameState.getGrid()[0][0] = "";
+    gameState.getGrid()[2][4] = "b:0";
     gameState.getGrid()[1][3] = "b";
     gameState.getGrid()[3][3] = "b";
     gameState.getGrid()[3][5] = "b";                                    //1 free field in direct contact to 2,4: 3,4
     int[] pos = AI_Tools.respawnPiecePosition(gameState, basePos);
     assertArrayEquals(new int[] {3,4}, pos);
-    
 
     gameState.getGrid()[3][4] = "b";                                    //block last free field, distance from base must be +1
     pos = AI_Tools.respawnPiecePosition(gameState, basePos);
-    assertArrayEquals(new int[] {4,6}, pos);                            //randomly chosen field: 4,4. Should stay the same every time (with this gameState)
+    assertArrayEquals(new int[] {0,6}, pos);                            //randomly chosen field: 4,4. Should stay the same every time (with this gameState)
     
     gameState.getGrid()[0][0] = "b";                                    //alter gameState so the seeded random chooses another field, even though 4,4 is free to be occupied
     pos = AI_Tools.respawnPiecePosition(gameState, basePos);
-    assertArrayEquals(new int[] {4,4}, pos);                            //randomly chosen field: 0,4. Should stay the same every time (with this gameState)
+    assertArrayEquals(new int[] {0,5}, pos);                            //randomly chosen field: 0,4. Should stay the same every time (with this gameState)
+    
+    for(int i= 0; i<gameState.getGrid().length; i++) {                  //place a block onto every free position on the grid
+      for(int j=0; j<gameState.getGrid().length; j++) {
+        if(gameState.getGrid()[i][j] == "") {
+          gameState.getGrid()[i][j] = "b";
+        }
+      }
+    }
+    
+    for(int i= 0; i<gameState.getGrid().length; i++) {
+      for(int j=0; j<gameState.getGrid().length; j++) {
+        if(gameState.getGrid()[i][j].equals("b")) {
+          gameState.getGrid()[i][j] = "";
+          pos = AI_Tools.respawnPiecePosition(gameState, basePos);
+          assertArrayEquals(new int[] {i,j}, pos);                       //goes through all the blocks, removes one, tests if the position would be respawned on, places the block back. repeats for all blocks.
+          gameState.getGrid()[i][j] = "b"; 
+        }
+      }
+    }
+  }
+  
+  void printGrid(GameState state) {
+    for(int i= 0; i<state.getGrid().length; i++) {
+      for(int j=0; j<state.getGrid().length; j++) {
+        String s = state.getGrid()[i][j];
+        System.out.print(s.equals("") ? "x " : s + " ");
+      }
+      System.out.println();
+    }
+    System.out.println("\n\n");
   }
 
-
+  @Test
+  void testXTransformations() {
+    int[] dist1 = new int[] {-1, 0, 1, 1, 1, 0, -1, -1};
+    int[] dist2 = new int[] {-2, -1, 0, 1, 2, 2, 2, 2, 2, 1, 0, -1, -2, -2, -2, -2};
+    int[] dist3 = new int[] {-3, -2, -1, 0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 1, 0, -1, -2, -3, -3, -3, -3, -3, -3};
+    int[] dist4 = new int[] {-4, -3, -2, -1, 0, 1, 2, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 2, 1, 0, -1, -2, -3, -4, -4, -4, -4, -4, -4, -4, -4};
+    assertArrayEquals(dist1, AI_Tools.fillXTransformations(new int[8], 1));
+    assertArrayEquals(dist2, AI_Tools.fillXTransformations(new int[16], 2));
+    assertArrayEquals(dist3, AI_Tools.fillXTransformations(new int[24], 3));
+    assertArrayEquals(dist4, AI_Tools.fillXTransformations(new int[32], 4));
+  }
+  
+  @Test
+  void testYTransformations() {
+    int[] dist1 = new int[] {-1, -1, -1, 0, 1, 1, 1, 0};
+    int[] dist2 = new int[] {-2, -2, -2, -2, -2, -1, 0, 1, 2, 2, 2, 2, 2, 1, 0, -1};
+    int[] dist3 = new int[] {-3, -3, -3, -3, -3, -3, -3, -2, -1, 0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 1, 0, -1, -2};
+    int[] dist4 = new int[] {-4, -4, -4, -4, -4, -4, -4, -4, -4, -3, -2, -1, 0, 1, 2, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 2, 1, 0, -1, -2, -3};
+    assertArrayEquals(dist1, AI_Tools.fillYTransformations(new int[8], 1));
+    assertArrayEquals(dist2, AI_Tools.fillYTransformations(new int[16], 2));
+    assertArrayEquals(dist3, AI_Tools.fillYTransformations(new int[24], 3));
+    assertArrayEquals(dist4, AI_Tools.fillYTransformations(new int[32], 4));
+  }
 
   /**
    * Creates a test GameState from the example Map.

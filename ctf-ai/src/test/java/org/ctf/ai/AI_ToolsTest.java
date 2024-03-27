@@ -60,7 +60,7 @@ public class AI_ToolsTest {
 		
 		ArrayList<int[]> aiToolsShapeMoves = new ArrayList<int[]>();
 		try {
-			 aiToolsShapeMoves = AI_Tools.getShapeMoves(gameState, knight);
+			 aiToolsShapeMoves = AI_Tools.getShapeMoves(gameState, knight, new ArrayList<int[]>());
 		} catch (InvalidShapeException e) {
 			fail("All shapes are valid");
 		}
@@ -77,11 +77,11 @@ public class AI_ToolsTest {
 		Piece picked = gameState.getTeams()[1].getPieces()[1];					//rook on 7,3
 		dirMap.put(2, 2);														//the rook can move 2 fields up
 		dirMap.put(3, 2);														//the rook can move 2 fields down
-		assertEquals(dirMap, AI_Tools.createDirectionMap(gameState, picked));
+		assertEquals(dirMap, AI_Tools.createDirectionMap(gameState, picked, new HashMap<Integer,Integer>()));
 		
 		gameState.getGrid()[6][4] = "b";										//completely enclosing the rook on 7,4
 		picked = gameState.getTeams()[1].getPieces()[2];						//rook on 7,4
-		assertEquals(new HashMap<Integer, Integer>(), AI_Tools.createDirectionMap(gameState, picked));
+		assertEquals(new HashMap<Integer, Integer>(), AI_Tools.createDirectionMap(gameState, picked, new HashMap<Integer,Integer>()));
 	}
 	
 	@Test

@@ -140,18 +140,15 @@ public class GameEngine implements Game {
    * A team has to option to give up a game (i.e., losing the game as a result). Assume that a team
    * can only give up if it is its move (turn).
    *
+   * @author sistumpf
    * @param teamId Team ID
    */
   @Override
   public void giveUp(String teamId) {
-    Team[] teamBlock = getCurrentGameState().getTeams();
-    int currentTeam = getCurrentGameState().getCurrentTeam() - 1;
-
-    if (teamBlock[currentTeam].getId().equals(teamId)) {
-      // TODO CODE TO DELETE WHATS LEFT OF THE TEAM and give up
-    }
-
-    // TODO WHEN GAME ENDS YOU HAVE TO SET THE DATE THE GAME ENDED
+    EngineTools.removeTeam(gameState, Integer.valueOf(teamId));
+    if(gameState.getTeams()[gameState.getCurrentTeam()] == null)
+      EngineTools.toNextTeam(gameState);
+    this.gameOverCheck();
   }
 
   /**

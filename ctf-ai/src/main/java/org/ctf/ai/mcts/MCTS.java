@@ -165,7 +165,6 @@ public class MCTS {
       heuristicCounter.incrementAndGet();
       winners[terminalHeuristic(simulateOn)] += 1;
     } else {
-      //TODO: count zum Testen durch isTerminal ersetzen
       winners[isTerminal] += count;
     }
 

@@ -28,13 +28,13 @@ class MCTSTest {
   void bestMctsAlgorithm() {
     gameState = TestValues.getTestState();
     TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
-    MCTS_TestDouble mcts = new MCTS_TestDouble(parent);
+    MCTS mcts = new MCTS(parent);
 
     int mctsTillEnd = 0;
     int timeForMove = 50;
 
     while(mcts.isTerminal(mcts.root) == -1) {
-      mcts = new MCTS_TestDouble(mcts.root.clone((mcts.root.gameState)));
+      mcts = new MCTS(mcts.root.clone((mcts.root.gameState)));
 
       Move move = mcts.getMove(timeForMove, AI_Constants.C);
       ++mctsTillEnd;      
@@ -52,7 +52,7 @@ class MCTSTest {
 
       tn = tn.clone((tn.gameState));
 
-      MCTS mcts2 = new MCTS(tn);
+      MCTS_TestDouble mcts2 = new MCTS_TestDouble(tn);
       move = mcts2.getMove(timeForMove, AI_Constants.C);
       ++mctsTillEnd;      
       tn = mcts2.root;
@@ -64,7 +64,7 @@ class MCTSTest {
 
       clearNodeParentAndChildren(tn);
 
-      mcts = new MCTS_TestDouble(tn);
+      mcts = new MCTS(tn);
     }
         System.out.println("\n\nWinner is... " + (mctsTillEnd%2!=0 ? "MCTS_TestDouble " : "MCTS"));
   }
@@ -84,12 +84,12 @@ class MCTSTest {
   void testPerformance() throws InterruptedException {
     double expansions = 0;
     int count = 0;
-    int timeInMilis = 1000;
+    int timeInMilis = 100;
     int simulations = 0;
     int heuristics = 0;
     int crashes = 0;
 
-    for(;count<10; count++) {
+    for(;count<100; count++) {
 
       //      MCTS_TestDouble mcts = new MCTS_TestDouble(MCTSTest.mcts.root.clone(MCTSTest.mcts.root.copyGameState()));
       MCTS mcts = new MCTS(MCTSTest.mcts.root.clone(MCTSTest.mcts.root.copyGameState()));
@@ -140,14 +140,14 @@ class MCTSTest {
     TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
     mcts = new MCTS(parent);
 
-    System.out.println("parent Grid:");
-    parent.printGrid();
+//    System.out.println("parent Grid:");
+//    parent.printGrid();
 
     Move move = mcts.getMove(100, Math.sqrt(2));
 
-    System.out.println(mcts.printResults(move));
+//    System.out.println(mcts.printResults(move));
     mcts.alterGameState(mcts.root.gameState, move);
-    mcts.root.printGrid();
+//    mcts.root.printGrid();
 
     assertEquals(1., mcts.root.children[0].getV());
     //    assertEquals(move.getNewPosition()[0], 0);

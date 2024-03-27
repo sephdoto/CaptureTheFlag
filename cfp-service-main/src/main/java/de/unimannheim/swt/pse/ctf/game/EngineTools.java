@@ -39,34 +39,34 @@ public class EngineTools extends AI_Tools {
     gameState.getTeams()[team] = null;
   }
   
+
   /**
    * Returns a valid position on which a Piece can safely respawn.
-   *
+   * TODO test if this really works
    * @param gameState to access the grid and generate pseudo random numbers
    * @param basePos the position of the base of the Piece that gets respawned
    * @return valid position to respawn a piece on, null shouldn't be returned (compiler needs it).
    */
   public static int[] respawnPiecePosition(GameState gameState, int[] basePos) {
-    int[] xTransforms = {-1, -1, -1, 0, 1, 1, 1, 0};
-    int[] yTransforms = {-1, 0, 1, 1, 1, 0, -1, -1};
+    int[] xTransforms;
+    int[] yTransforms;
 
     for (int distance = 1; distance < gameState.getGrid().length; distance++) {
+      xTransforms = fillXTransformations(new int[distance * 8], distance);
+      yTransforms = fillYTransformations(new int[distance * 8], distance);
+      
+      
       for (int clockHand = 0; clockHand < distance * 8; clockHand++) {
-        int x = basePos[1] + xTransforms[clockHand] * distance;
-        int y = basePos[0] + yTransforms[clockHand] * distance;
+        int x = basePos[1] + xTransforms[clockHand];
+        int y = basePos[0] + yTransforms[clockHand];
         int[] newPos = new int[] {y, x};
         if (positionOutOfBounds(gameState.getGrid(), newPos)) continue;
 
         if (emptyField(gameState.getGrid(), newPos)) {
-          for (int i = 1,
-                  j = -1,
-                  randX = seededRandom(gameState.getGrid(), i, 8, 0),
-                  randY = seededRandom(gameState.getGrid(), j, 8, 0);
-              ;
-              i++, j--, randX = seededRandom(gameState.getGrid(), i, 8, 0),
-                  randY = seededRandom(gameState.getGrid(), j, 8, 0)) {
-            x = basePos[1] + xTransforms[randX] * distance;
-            y = basePos[0] + yTransforms[randY] * distance;
+          for (int i = 1, random = seededRandom(gameState.getGrid(), i, 8, 0); ;
+              i++, random = seededRandom(gameState.getGrid(), i, xTransforms.length, 0)) {
+            x = basePos[1] + xTransforms[random];
+            y = basePos[0] + yTransforms[random];
             newPos = new int[] {y, x};
             if (positionOutOfBounds(gameState.getGrid(), newPos)) continue;
             if (emptyField(gameState.getGrid(), newPos)) return newPos;

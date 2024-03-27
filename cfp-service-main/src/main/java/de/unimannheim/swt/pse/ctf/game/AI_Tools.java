@@ -18,6 +18,50 @@ import de.unimannheim.swt.pse.ctf.game.state.Piece;
  */
 class AI_Tools {
   /**
+   * This method is needed to respawn a piece, it adds all positions in a certain radius around the base to an Array.
+   * @param xTrans
+   * @param distance
+   * @return Array containing Transformations to use on the base position
+   */
+  public static int[] fillXTransformations(int[] xTrans, int distance){
+    int side = -1;
+    for(int i=0; i<distance*8; i++) {
+      if(i< 1+ distance*2)
+        xTrans[i] = ++side - distance;
+      else if(i< (distance*8)/2)
+        xTrans[i] = distance;
+      else if(i< (distance*8) - (2 * (distance-1)) - 1)
+        xTrans[i] = side-- - distance;
+      else  
+        xTrans[i] = -1*distance;
+    }
+    
+    return xTrans;
+  }
+
+  /**
+   * This method is needed to respawn a piece, it adds all positions in a certain radius around the base to an Array.
+   * @param yTrans
+   * @param distance
+   * @return Array containing Transformations to use on the base position
+   */
+  public static int[] fillYTransformations(int[] yTrans, int distance){
+    int side = 0;
+    for(int i=0; i<distance*8; i++) {
+      if(i< 1+ distance*2)
+        yTrans[i] = -1*distance;
+      else if(i< (distance*8)/2)
+        yTrans[i] = ++side - distance;
+      else if(i< (distance*8) - (2 * (distance-1)) - 1)
+        yTrans[i] = distance;
+      else
+        yTrans[i] = side-- - distance;
+    }
+    
+    return yTrans;
+  }
+
+  /**
    * This method should be used instead of Math.random() to generate deterministic positive pseudo
    * random values. Changing modifier changes the resulting output for the same seed.
    *

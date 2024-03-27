@@ -67,26 +67,25 @@ public class AI_Tools {
    * @return valid position to respawn a piece on, null shouldn't be returned (compiler needs it).
    */
   public static int[] respawnPiecePosition(GameState gameState, int[] basePos) {
-    int[] xTransforms = {-1, -1, -1, 0, 1, 1, 1, 0};
-    int[] yTransforms = {-1, 0, 1, 1, 1, 0, -1, -1};
+    int[] xTransforms;
+    int[] yTransforms;
 
     for (int distance = 1; distance < gameState.getGrid().length; distance++) {
+      xTransforms = fillXTransformations(new int[distance * 8], distance);
+      yTransforms = fillYTransformations(new int[distance * 8], distance);
+      
+      
       for (int clockHand = 0; clockHand < distance * 8; clockHand++) {
-        int x = basePos[1] + xTransforms[clockHand] * distance;
-        int y = basePos[0] + yTransforms[clockHand] * distance;
+        int x = basePos[1] + xTransforms[clockHand];
+        int y = basePos[0] + yTransforms[clockHand];
         int[] newPos = new int[] {y, x};
         if (positionOutOfBounds(gameState.getGrid(), newPos)) continue;
 
         if (emptyField(gameState.getGrid(), newPos)) {
-          for (int i = 1,
-              j = -1,
-              randX = seededRandom(gameState.getGrid(), i, 8, 0),
-              randY = seededRandom(gameState.getGrid(), j, 8, 0);
-              ;
-              i++, j--, randX = seededRandom(gameState.getGrid(), i, 8, 0),
-                  randY = seededRandom(gameState.getGrid(), j, 8, 0)) {
-            x = basePos[1] + xTransforms[randX] * distance;
-            y = basePos[0] + yTransforms[randY] * distance;
+          for (int i = 1, random = seededRandom(gameState.getGrid(), i, 8, 0); ;
+              i++, random = seededRandom(gameState.getGrid(), i, xTransforms.length, 0)) {
+            x = basePos[1] + xTransforms[random];
+            y = basePos[0] + yTransforms[random];
             newPos = new int[] {y, x};
             if (positionOutOfBounds(gameState.getGrid(), newPos)) continue;
             if (emptyField(gameState.getGrid(), newPos)) return newPos;
@@ -97,6 +96,50 @@ public class AI_Tools {
     return null;
   }
 
+  /**
+   * This method is needed to respawn a piece, it adds all positions in a certain radius around the base to an Array.
+   * @param xTrans
+   * @param distance
+   * @return Array containing Transformations to use on the base position
+   */
+  public static int[] fillXTransformations(int[] xTrans, int distance){
+    int side = -1;
+    for(int i=0; i<distance*8; i++) {
+      if(i< 1+ distance*2)
+        xTrans[i] = ++side - distance;
+      else if(i< (distance*8)/2)
+        xTrans[i] = distance;
+      else if(i< (distance*8) - (2 * (distance-1)) - 1)
+        xTrans[i] = side-- - distance;
+      else  
+        xTrans[i] = -1*distance;
+    }
+    
+    return xTrans;
+  }
+
+  /**
+   * This method is needed to respawn a piece, it adds all positions in a certain radius around the base to an Array.
+   * @param yTrans
+   * @param distance
+   * @return Array containing Transformations to use on the base position
+   */
+  public static int[] fillYTransformations(int[] yTrans, int distance){
+    int side = 0;
+    for(int i=0; i<distance*8; i++) {
+      if(i< 1+ distance*2)
+        yTrans[i] = -1*distance;
+      else if(i< (distance*8)/2)
+        yTrans[i] = ++side - distance;
+      else if(i< (distance*8) - (2 * (distance-1)) - 1)
+        yTrans[i] = distance;
+      else
+        yTrans[i] = side-- - distance;
+    }
+    
+    return yTrans;
+  }
+  
   /**
    * This method should be used instead of Math.random() to generate deterministic positive pseudo
    * random values. Changing modifier changes the resulting output for the same seed.
@@ -113,7 +156,7 @@ public class AI_Tools {
     int seed = sb.append(modifier).toString().hashCode();
     return new Random(seed).nextInt(upperBound - lowerBound) + lowerBound;
   }
-
+  
   /**
    * Given a Piece and a GameState containing the Piece, an ArrayList with all valid locations the
    * Piece can walk on is returned. The ArrayList contains int[2] values, representing a (y,x)
@@ -123,7 +166,9 @@ public class AI_Tools {
    * @param String pieceID
    * @return ArrayList<int[]> that contains all valid positions a piece could move to
    */
-  public static ArrayList<int[]> getPossibleMoves(GameState gameState, String pieceID) {
+  public static ArrayList<int[]> getPossibleMoves(GameState gameState, String pieceID, ArrayList<int[]> possibleMoves) {
+    possibleMoves.clear();
+    HashMap<Integer, Integer> dirMap = new HashMap<Integer, Integer>();
     Piece piece =
         Arrays.stream(
             gameState.getTeams()[Integer.parseInt(pieceID.split(":")[1].split("_")[0])]
@@ -131,17 +176,16 @@ public class AI_Tools {
         .filter(p -> p.getId().equals(pieceID))
         .findFirst()
         .get();
-    ArrayList<int[]> possibleMoves = new ArrayList<int[]>();
 
     if (piece.getDescription().getMovement().getDirections() == null) {
       try {
-        possibleMoves = getShapeMoves(gameState, piece);
+        getShapeMoves(gameState, piece, possibleMoves);
       } catch (InvalidShapeException e) {
         e.printStackTrace();
       }
 
     } else {
-      HashMap<Integer, Integer> dirMap = AI_Tools.createDirectionMap(gameState, piece);
+      dirMap = AI_Tools.createDirectionMap(gameState, piece, dirMap);
       for (Integer direction : dirMap.keySet()) {
         for (int reach = dirMap.get(direction); reach > 0; reach--) {
           Move move = new Move();
@@ -179,9 +223,9 @@ public class AI_Tools {
    * @return ArrayList containing all valid moves
    * @throws InvalidShapeException if the Shape is not yet implemented here
    */
-  public static ArrayList<int[]> getShapeMoves(GameState gameState, Piece piece)
+  public static ArrayList<int[]> getShapeMoves(GameState gameState, Piece piece, ArrayList<int[]> positions )
       throws InvalidShapeException {
-    ArrayList<int[]> positions = new ArrayList<int[]>();
+    positions.clear();
     int[] xTransforms;
     int[] yTransforms;
     int[] direction;
@@ -230,8 +274,8 @@ public class AI_Tools {
    * @param picked
    * @return HashMap<Integer,Integer>
    */
-  public static HashMap<Integer, Integer> createDirectionMap(GameState gameState, Piece picked) {
-    HashMap<Integer, Integer> dirMap = new HashMap<Integer, Integer>();
+  public static HashMap<Integer, Integer> createDirectionMap(GameState gameState, Piece picked, HashMap<Integer, Integer> dirMap) {
+    dirMap.clear();
     for (int i = 0; i < 8; i++) {
       int reach = getReach(picked.getDescription().getMovement().getDirections(), i);
       if (reach > 0) {

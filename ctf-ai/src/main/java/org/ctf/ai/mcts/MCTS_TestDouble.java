@@ -2,6 +2,7 @@ package org.ctf.ai.mcts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
@@ -9,8 +10,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.ctf.ai.AI_Tools;
 import org.ctf.ai.random.RandomAI;
-import org.ctf.shared.ai.AI_Tools;
 import org.ctf.ai.AI_Constants;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
@@ -48,7 +49,7 @@ public class MCTS_TestDouble {
    */
   public Move getMove(int milis, double C){
     long time = System.currentTimeMillis();
-    
+
     while(System.currentTimeMillis() - time < milis){
       //Schritte des UCT abarbeiten
       TreeNode selected = selectAndExpand(root, C);
@@ -105,10 +106,10 @@ public class MCTS_TestDouble {
 
   int[] multiSimulate(TreeNode simulateOn) { 
     int[] winners = new int[simulateOn.gameState.getTeams().length];
-    
+
     try {
-     // Create a list of Callable tasks for parallel execution
-      List<Callable<int[]>> tasks = new ArrayList<>();
+      // Create a list of Callable tasks for parallel execution
+      List<Callable<int[]>> tasks = new LinkedList<>();
       for (int i = 0; i < AI_Constants.numThreads; i++) {
         tasks.add(() -> {
           return simulate(simulateOn);
@@ -119,10 +120,10 @@ public class MCTS_TestDouble {
       List<Future<int[]>> futures = executorService.invokeAll(tasks);
       for(int i=0; i<futures.size(); i++) {
         try {
-        int[] wins = futures.get(i).get();
-        for(int j=0; j<wins.length; j++) {
+          int[] wins = futures.get(i).get();
+          for(int j=0; j<wins.length; j++) {
             winners[j] += wins[j];
-        }
+          }
         } catch(Exception e) {}
       }
 
@@ -132,7 +133,7 @@ public class MCTS_TestDouble {
 
     return winners;
   }
-  
+
 
   /**
    * Simulates a game from a specific node to finish (or a maximum step value of Constants.MAX_STEPS simulation),
@@ -148,7 +149,8 @@ public class MCTS_TestDouble {
     int[] winners = new int[this.teams];
     int count = AI_Constants.MAX_STEPS;
     if(isTerminal >= 0) {
-      winners[isTerminal] += count;
+//      winners[isTerminal] += count;
+      winners[isTerminal] += 1;
       return winners;
     }
 
@@ -179,11 +181,11 @@ public class MCTS_TestDouble {
   int terminalHeuristic(TreeNode node) {
     Team[] teams = node.gameState.getTeams();
     int[] points = new int[teams.length];
-    
+
     for(int i=0; i<teams.length; i++) {
       if(teams[i] == null)
         continue;
-      
+
       for(Piece p : teams[i].getPieces()) {
         points[i] += p.getDescription().getAttackPower() * AI_Constants.attackPowerMultiplier;
         points[i] += 1 * AI_Constants.pieceMultiplier;
@@ -202,7 +204,7 @@ public class MCTS_TestDouble {
           points[i] += 8 * AI_Constants.shapeReachMultiplier;
         }
       }
-      
+
       /*for(int j=0; j<teams.length; j++) {
         if(j == i)
           continue;
@@ -212,7 +214,7 @@ public class MCTS_TestDouble {
               + Math.pow(teams[i].getBase()[0]-ep.getPosition()[0], 2))) * Constants.distanceBaseMultiplier * 10;
         }  
       }*/
-      
+
       points[i] += teams[i].getFlags() * AI_Constants.flagMultiplier;
     }
 
@@ -220,7 +222,7 @@ public class MCTS_TestDouble {
     for(int i=0; i<points.length; i++)
       if(points[i] > points[max])
         max = i;
-    
+
     return max;
   }
 
@@ -353,13 +355,9 @@ public class MCTS_TestDouble {
    */
   void oneMove(TreeNode alter, TreeNode original) {
     alterGameState(alter.gameState, getAndRemoveMoveHeuristic(original));
-    try {
     alter.initPossibleMovesAndChildren();
-    } catch(Exception e) {
-      System.out.println("error0");
-    }
-    }   
-  
+  }   
+
   @SuppressWarnings("unlikely-arg-type")
   Move getAndRemoveMoveHeuristic(TreeNode parent) {
     for(String key : parent.possibleMoves.keySet()) {
@@ -377,14 +375,14 @@ public class MCTS_TestDouble {
         }
       }
     }
-    
+
     return getAndRemoveMoveRandom(parent);
   }
-  
+
   Move getAndRemoveMoveRandom(TreeNode parent){
     String key = parent.possibleMoves.keySet().toArray()[rand.nextInt(parent.possibleMoves.keySet().size())].toString();
     int randomMove = rand.nextInt(parent.possibleMoves.get(key).size());
-    
+
     return createMoveDeleteIndex(parent, key, randomMove);
   }
 
@@ -392,7 +390,7 @@ public class MCTS_TestDouble {
     Move move = new Move();
     move.setPieceId(key);
     move.setNewPosition(parent.possibleMoves.get(key).get(index));
-    
+
     parent.possibleMoves.get(key).remove(index);
     if(parent.possibleMoves.get(key).size() <= 0) {
       parent.possibleMoves.remove(key);
@@ -400,7 +398,7 @@ public class MCTS_TestDouble {
 
     return move;
   }
-  
+
   /**
    * This method checks if a team got no more flags or no more pieces.
    * @param gameState
@@ -474,7 +472,7 @@ public class MCTS_TestDouble {
       }
       Move rootMove = root.children[i].gameState.getLastMove();
       sb.append("\n   " + rootMove.getPieceId() + " to [" + rootMove.getNewPosition()[0] + "," + rootMove.getNewPosition()[1] + "]"
-      + " winning chance: " + (root.children[i].getV() * 100) + "% with " + root.children[i].getNK() + " nodes" + ", uct: " + root.children[i].getUCT(AI_Constants.C) + " wins 0 " + root.children[i].wins[0] + ", wins 1 " + root.children[i].wins[1]);
+          + " winning chance: " + (root.children[i].getV() * 100) + "% with " + root.children[i].getNK() + " nodes" + ", uct: " + root.children[i].getUCT(AI_Constants.C) + " wins 0 " + root.children[i].wins[0] + ", wins 1 " + root.children[i].wins[1]);
     }
     return sb.toString();
   }
