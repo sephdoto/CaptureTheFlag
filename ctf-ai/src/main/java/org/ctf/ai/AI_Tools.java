@@ -16,6 +16,22 @@ import org.ctf.shared.state.data.map.ShapeType;
  *     Moves.
  */
 public class AI_Tools {
+  
+  /**
+   * Returns the previous teams index in the team array.
+   * @param gameState
+   * @return previous teams index
+   */
+  public static int getPreviousTeam(GameState gameState) {
+    for(int i=(gameState.getCurrentTeam()-1) % gameState.getTeams().length; ;i = (i - 1) % gameState.getTeams().length) {
+      i = i<0? -1*i : i;
+      if(gameState.getTeams()[i] != null) {
+        return i;
+      }
+    }
+
+  }
+  
   /**
    * Switches a GameState current team to the next valid (not null) team.
    * @param gameState

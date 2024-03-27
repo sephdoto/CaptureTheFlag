@@ -44,12 +44,13 @@ public class TreeNode implements Comparable<TreeNode> {
    }
 
    /** 
-    * returns V value for UCT depending on the player.
-    * The V value represents the average wins the current team got with this node.
+    * Returns the average wins for the team which move lead to this node.
+    * 
     * @return V value for UCT
     */
    public double getV() {
-     return wins[gameState.getCurrentTeam()] / (double)getNK();
+     int team = AI_Tools.getPreviousTeam(gameState);
+     return wins[team] / (double)getNK();
    }
 
    /**

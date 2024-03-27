@@ -26,16 +26,17 @@ class TreeNodeTest {
     TreeNode child = new TreeNode(parent, TestValues.getTestState(), new int[] {0,10});
     child.gameState.setCurrentTeam(0);
     
-    assertEquals((float)10/100., Math.round(parent.getV()*100)/100.);
-    assertEquals(0, child.getV());
+    assertEquals((float)90/100., Math.round(parent.getV()*100)/100.);
+    assertEquals(1, child.getV());
     
     child.gameState.setCurrentTeam(1);
-    assertEquals(1, child.getV());
+    assertEquals(0, child.getV());
   }
 
   @Test
   void testGetUCT() {
     TreeNode parent = new TreeNode(null, TestValues.getTestState(), new int[] {3,3});
+    parent.gameState.setCurrentTeam(0);
     TreeNode child1 = parent.clone(AI_Tools.toNextTeam(parent.copyGameState()));
     child1.wins = new int[] {2,1};
     TreeNode child2 = parent.clone(AI_Tools.toNextTeam(parent.copyGameState()));
@@ -79,10 +80,10 @@ class TreeNodeTest {
     assertTrue(parent.compareTo(child1) == 0);
   
     child1.wins = new int[] {3,4};
-    assertTrue(parent.compareTo(child1) < 0);
+    assertTrue(parent.compareTo(child1) > 0);
   
     child1.wins = new int[] {5,3};
-    assertTrue(parent.compareTo(child1) > 0);
+    assertTrue(parent.compareTo(child1) < 0);
     
     child1.wins = new int[] {3,3};
     assertTrue(parent.compareTo(child1) == 0);

@@ -82,13 +82,14 @@ class MCTSTest {
 
   @Test
   void testPerformance() throws InterruptedException {
-    long expansions = 0;
+    double expansions = 0;
     int count = 0;
-    int timeInMilis = 10;
-    int[] wins = new int[] {0,0};
+    int timeInMilis = 1000;
+    int simulations = 0;
+    int heuristics = 0;
     int crashes = 0;
 
-    for(;count<1000; count++) {
+    for(;count<10; count++) {
 
       //      MCTS_TestDouble mcts = new MCTS_TestDouble(MCTSTest.mcts.root.clone(MCTSTest.mcts.root.copyGameState()));
       MCTS mcts = new MCTS(MCTSTest.mcts.root.clone(MCTSTest.mcts.root.copyGameState()));
@@ -97,14 +98,15 @@ class MCTSTest {
         mcts.getMove(timeInMilis, AI_Constants.C);
       } catch(NullPointerException npe) {crashes++;}
       expansions += mcts.expansionCounter.get();
-      wins[0] += mcts.root.wins[0];
-      wins[1] += mcts.root.wins[1];
+      simulations += mcts.simulationCounter.get();
+      heuristics += mcts.heuristicCounter.get();
     }
-    wins[0] /= count;
-    wins[1] /= count;
+    simulations /= count;
+    heuristics /= count;
+    expansions = ((Math.round(((double)expansions/count)*1000))/1000.);
 
-    System.out.println(count + " simulations with " + timeInMilis + " ms, average expansions/run: " + ((Math.round(((double)expansions/count)*1000))/1000.)
-        + ",\tavg. wins: [" + wins[0] + ", " + wins[1] + "]" + "\nResults computed with " + crashes + " crashes");
+    System.out.println(count + " simulations with " + timeInMilis + " ms, average expansions/run: " + expansions
+        + ",\nsimulations till the end: " + simulations + ", heuristic used: " + heuristics + "\nResults computed with " + crashes + " crashes");
   }
 
   @Test
@@ -147,7 +149,7 @@ class MCTSTest {
     mcts.alterGameState(mcts.root.gameState, move);
     mcts.root.printGrid();
 
-    assertEquals(mcts.root.children[0].getV(), 1.);
+    assertEquals(1., mcts.root.children[0].getV());
     //    assertEquals(move.getNewPosition()[0], 0);
     //    assertEquals(move.getNewPosition()[1], 0);
   }
