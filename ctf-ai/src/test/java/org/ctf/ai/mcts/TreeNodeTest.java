@@ -1,8 +1,10 @@
 package org.ctf.ai.mcts;
 
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.Arrays;
 import org.ctf.ai.TestValues;
-import org.ctf.shared.ai.AI_Tools;
+import org.ctf.ai.AI_Tools;
+import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Team;
 import org.junit.jupiter.api.Test;
 
@@ -48,18 +50,42 @@ class TreeNodeTest {
   }
 
   @Test
-  void testCloneGameState() {
-    fail("Not yet implemented");
+  void testClone() {
+    TreeNode parent = new TreeNode(null, TestValues.getTestState(), null);
+    
+    TreeNode clone = parent.clone(parent.copyGameState());
+    
+    assertNotEquals(clone.wins, parent.wins);
+    assertNotEquals(clone.gameState, parent.gameState);
+    assertNotEquals(clone.possibleMoves, parent.possibleMoves);
   }
 
   @Test
   void testCopyGameState() {
-    fail("Not yet implemented");
+    TreeNode parent = new TreeNode(null, TestValues.getTestState(), null);
+    GameState copy = parent.copyGameState();
+    
+    assertNotEquals(parent.gameState, copy);
+    assertArrayEquals(parent.gameState.getTeams()[0].getPieces()[0].getPosition(), copy.getTeams()[0].getPieces()[0].getPosition());
+    parent.gameState.getTeams()[0].getPieces()[0].setPosition(new int[] {100,100});
+    assertFalse(Arrays.equals(parent.gameState.getTeams()[0].getPieces()[0].getPosition(), copy.getTeams()[0].getPieces()[0].getPosition()));
   }
 
   @Test
   void testCompareTo() {
-    fail("Not yet implemented");
+    TreeNode parent = new TreeNode(null, TestValues.getTestState(), new int[] {3,3});
+    TreeNode child1 = parent.clone(AI_Tools.toNextTeam(parent.copyGameState()));
+    
+    assertTrue(parent.compareTo(child1) == 0);
+  
+    child1.wins = new int[] {3,4};
+    assertTrue(parent.compareTo(child1) < 0);
+  
+    child1.wins = new int[] {5,3};
+    assertTrue(parent.compareTo(child1) > 0);
+    
+    child1.wins = new int[] {3,3};
+    assertTrue(parent.compareTo(child1) == 0);
   }
 
 }

@@ -44,14 +44,12 @@ public class TreeNode implements Comparable<TreeNode> {
    }
 
    /** 
-    * returns V value for UCT depending on the player,
-    * due to the creation of children the player is stored as a boolean attribute of this class.
+    * returns V value for UCT depending on the player.
+    * The V value represents the average wins the current team got with this node.
     * @return V value for UCT
     */
    public double getV() {
-     int team = (gameState.getCurrentTeam()-1) % gameState.getTeams().length;
-     team = team >= 0 ? team : team*-1;
-     return wins[team] / (double)getNK();
+     return wins[gameState.getCurrentTeam()] / (double)getNK();
    }
 
    /**
