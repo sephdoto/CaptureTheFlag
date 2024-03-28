@@ -178,7 +178,9 @@ public class CommLayer implements CommLayerInterface {
 
     int returnedCode = postResponse.statusCode();
 
-    if (returnedCode == 403) {
+    if (returnedCode == 200) {
+      throw new Accepted();
+    }else if (returnedCode == 403) {
       throw new ForbiddenMove();
     } else if (returnedCode == 404) {
       throw new SessionNotFound();

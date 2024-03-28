@@ -18,7 +18,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import javafx.scene.paint.Color;
 
@@ -34,7 +37,7 @@ public class GameEngine implements Game {
   private MapTemplate currentTemplate; // Saves a copy of the template
 
   private int remainingTeamSlots;
-
+  private Map<String, Integer> teamIDtoInteger;
   private boolean isGameOver;
 
   // Blocks for branches in game mode
@@ -58,26 +61,26 @@ public class GameEngine implements Game {
   public GameState create(MapTemplate template) {
     this.currentTemplate = template; // Saves a copy of the initial template
 
-    GameState imposterState = new GameState();
-    imposterState.setTeams(new Team[template.getTeams()]);
+    this.gameState = new GameState();
+    this.gameState.setTeams(new Team[template.getTeams()]);
     String[][] grid = new String[template.getGridSize()[0]][template.getGridSize()[1]];
     for (int i = 0; i < grid.length; i++) {
       for (int j = 0; j < grid[i].length; j++) {
         grid[i][j] = "";
       }
     }
-    imposterState.setGrid(grid);
+    this.gameState.setGrid(grid);
 
     // initializing teams
     Team[] teams = new Team[template.getTeams()];
     for (int i = 0; i < teams.length; i++) {
       teams[i] = BoardSetUp.initializeTeam(i, template);
     }
-    imposterState.setTeams(teams);
+    this.gameState.setTeams(teams);
 
-    BoardSetUp.initPieces(imposterState, template);
+    BoardSetUp.initPieces(this.gameState, template);
     // placing the pieces and blocks
-    BoardSetUp.initGrid(imposterState, template);
+    BoardSetUp.initGrid(this.gameState, template);
 
     this.remainingTeamSlots = template.getTeams() - 1;
     // Setting Flags
@@ -87,10 +90,9 @@ public class GameEngine implements Game {
     setAltGameModes(template);
 
     // END OF CODE BLOCK FOR BRANCHES
-
+    this.teamIDtoInteger = Collections.synchronizedMap(new HashMap<>());
     // Setting State
-    this.gameState = imposterState;
-    return imposterState;
+    return gameState;
   }
 
   /**
@@ -145,9 +147,9 @@ public class GameEngine implements Game {
    */
   @Override
   public void giveUp(String teamId) {
-    EngineTools.removeTeam(gameState, Integer.valueOf(teamId));
-    if(gameState.getTeams()[gameState.getCurrentTeam()] == null)
-      EngineTools.toNextTeam(gameState);
+    EngineTools.removeTeam(gameState, Integer.valueOf(teamIDtoInteger.get(teamId)));
+    //Logic for switching Current Team
+    if (gameState.getTeams()[gameState.getCurrentTeam()] == null) EngineTools.toNextTeam(gameState);
     this.gameOverCheck();
   }
 
@@ -181,7 +183,8 @@ public class GameEngine implements Game {
 
   /**
    * Checks whether a move is valid based on the current game state.
-   * @author sistumpf 
+   *
+   * @author sistumpf
    * @param move {@link Move}
    * @return true if move is valid based on current game state, false otherwise
    */
@@ -253,8 +256,8 @@ public class GameEngine implements Game {
   }
 
   /**
-   * Here a move, if valid, updates the grid, a pieces position, a teams flags and the time.
-   * The currentTeam also gets changed here (with afterMoveCleanUp())
+   * Here a move, if valid, updates the grid, a pieces position, a teams flags and the time. The
+   * currentTeam also gets changed here (with afterMoveCleanUp())
    *
    * @author sistumpf
    * @param move {@link Move}
@@ -320,8 +323,7 @@ public class GameEngine implements Game {
 
     EngineTools.toNextTeam(gameState);
     gameOverCheck();
-    if(gameState.getTeams()[gameState.getCurrentTeam()] == null)
-      EngineTools.toNextTeam(gameState);
+    if (gameState.getTeams()[gameState.getCurrentTeam()] == null) EngineTools.toNextTeam(gameState);
   }
 
   /**
@@ -355,25 +357,24 @@ public class GameEngine implements Game {
   /**
    * The {@link GameEngine#isGameOver()} method only returns the {@link GameEngine#isGameOver}
    * value, so this method implements the game over checks. It updates the isGameOver {@link
-   * GameEngine#isGameOver} value accordingly.
-   * TODO needs further tests
+   * GameEngine#isGameOver} value accordingly. TODO needs further tests
    *
    * @author sistumpf
    */
   public void gameOverCheck() {
     if (getRemainingGameTimeInSeconds() == 0) { // Time Limited Game Check
       this.isGameOver = true;
-      //TODO Calculate the winner of a time limited game
-      
+      // TODO Calculate the winner of a time limited game
+
     } else {
       ArrayList<Integer> teamsLeft = new ArrayList<Integer>();
-      for(int i=0; i<gameState.getTeams().length; i++) {
-        if(gameState.getTeams()[i] != null) {
+      for (int i = 0; i < gameState.getTeams().length; i++) {
+        if (gameState.getTeams()[i] != null) {
           teamsLeft.add(i);
         }
       }
-      
-      for (int i=0; i<teamsLeft.size(); i++) {
+
+      for (int i = 0; i < teamsLeft.size(); i++) {
         if (teamsLeft.size() == 1) {
           this.isGameOver = true;
           break;
@@ -388,10 +389,10 @@ public class GameEngine implements Game {
         }
       }
 
-      if(gameState.getTeams()[gameState.getCurrentTeam()] == null)
+      if (gameState.getTeams()[gameState.getCurrentTeam()] == null)
         EngineTools.toNextTeam(gameState);
       removeNoMoveTeams(gameState);
-      if(gameState.getTeams()[gameState.getCurrentTeam()] == null)
+      if (gameState.getTeams()[gameState.getCurrentTeam()] == null)
         EngineTools.toNextTeam(gameState);
     }
     if (this.isGameOver) {
@@ -402,38 +403,42 @@ public class GameEngine implements Game {
   }
 
   /**
-   * This method checks if the current team got moves left, if thats not the case the team get removed.
-   * After a team got removed the next team gets checked, until only 1 team is left or a team got moves.
-   * TODO currently just tested in MCTS, no guarantee that it works
+   * This method checks if the current team got moves left, if thats not the case the team get
+   * removed. After a team got removed the next team gets checked, until only 1 team is left or a
+   * team got moves. TODO currently just tested in MCTS, no guarantee that it works
+   *
    * @author sistumpf
    * @param gameState
    */
   void removeNoMoveTeams(GameState gameState) {
     int teamsLeft = 0;
-    for(int i=0; i<gameState.getTeams().length; i++) {
-      if(gameState.getTeams()[i] != null) {
+    for (int i = 0; i < gameState.getTeams().length; i++) {
+      if (gameState.getTeams()[i] != null) {
         teamsLeft++;
       }
     }
 
-    for(int i=gameState.getCurrentTeam(); teamsLeft > 1; i = EngineTools.toNextTeam(gameState).getCurrentTeam()) {
+    for (int i = gameState.getCurrentTeam();
+        teamsLeft > 1;
+        i = EngineTools.toNextTeam(gameState).getCurrentTeam()) {
       boolean canMove = false;
-      for(int j=0; !canMove && j<gameState.getTeams()[i].getPieces().length; j++) {
-        //if there are possible moves 
-        if(EngineTools.getPossibleMoves(gameState, gameState.getTeams()[i].getPieces()[j].getId()).size() > 0 ) {
+      for (int j = 0; !canMove && j < gameState.getTeams()[i].getPieces().length; j++) {
+        // if there are possible moves
+        if (EngineTools.getPossibleMoves(gameState, gameState.getTeams()[i].getPieces()[j].getId())
+                .size()
+            > 0) {
           canMove = true;
         }
       }
-      if(canMove) {
-        return ;
-      } else if (!canMove){
+      if (canMove) {
+        return;
+      } else if (!canMove) {
         EngineTools.removeTeam(gameState, i);
         teamsLeft--;
       }
     }
 
-    if(teamsLeft <= 1)
-      isGameOver = true;
+    if (teamsLeft <= 1) isGameOver = true;
   }
 
   /**
@@ -453,8 +458,8 @@ public class GameEngine implements Game {
   }
 
   /**
-   * If the game is over a String Array containing all winner IDs is returned.
-   * This method relies on the fact that loser teams get set to null in the gameState.teams Array.
+   * If the game is over a String Array containing all winner IDs is returned. This method relies on
+   * the fact that loser teams get set to null in the gameState.teams Array.
    *
    * @author sistumpf
    * @return {@link Team#getId()} if there is a winner
@@ -462,9 +467,9 @@ public class GameEngine implements Game {
   @Override
   public String[] getWinner() {
     ArrayList<String> winners = new ArrayList<String>();
-    if(this.isGameOver){
-      for(Team team : this.gameState.getTeams()){
-        if(team != null){
+    if (this.isGameOver) {
+      for (Team team : this.gameState.getTeams()) {
+        if (team != null) {
           winners.add(team.getId());
         }
       }
@@ -508,6 +513,7 @@ public class GameEngine implements Game {
    * @param int position to add it in
    */
   private Team addTeam(String teamID, int pos) {
+    this.teamIDtoInteger.put(teamID,pos);
     Team[] team = gameState.getTeams();
     team[pos].setId(teamID);
     team[pos].setColor(getRandColor());

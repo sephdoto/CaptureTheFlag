@@ -509,12 +509,12 @@ public class ServerCommandTests {
     System.out.println(gson.toJson(gameState));
     System.out.println(gameState.getCurrentTeam());
 
-    if (gameState.getCurrentTeam() == 1) {
-      System.out.println("USING TEAM 1");
-      comm.giveUp(idURL, jsResponse.getTeamId(), jsResponse.getTeamSecret());
-    }
     if (gameState.getCurrentTeam() == 0) {
       System.out.println("USING TEAM 0");
+      comm.giveUp(idURL, jsResponse.getTeamId(), jsResponse.getTeamSecret());
+    }
+    if (gameState.getCurrentTeam() == 1) {
+      System.out.println("USING TEAM 1");
       comm.giveUp(idURL, jsResponse2.getTeamId(), jsResponse2.getTeamSecret());
     }
   }

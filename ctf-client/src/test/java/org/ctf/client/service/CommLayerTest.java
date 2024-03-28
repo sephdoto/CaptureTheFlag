@@ -38,37 +38,6 @@ public class CommLayerTest {
   void testGetCurrentSessionState() {}
 
   @Test
-  void testGiveUp() {
-    MapTemplate template = createGameTemplate();
-
-    GameSessionResponse gameSessionResponse =
-        comm.createGameSession("http://localhost:8888/api/gamesession", template);
-    String idURL = "http://localhost:8888/api/gamesession/" + gameSessionResponse.getId();
-    JoinGameResponse jsResponse = comm.joinGame(idURL, "TestTeam1");
-
-    JoinGameResponse jsResponse2 = comm.joinGame(idURL, "TestTeam2");
-    GameState gameState = comm.getCurrentGameState(idURL);
-    
-    if (gameState.getCurrentTeam() == 0) {
-      Throwable throwable =
-          assertThrows(
-              Accepted.class,
-              () -> {
-                comm.giveUp(idURL, jsResponse.getTeamId(), jsResponse.getTeamSecret());
-              });
-      assertEquals(Accepted.class, throwable.getClass());
-    } else if (gameState.getCurrentTeam() == 1) {
-      Throwable throwable2 =
-          assertThrows(
-            UnknownError.class,
-              () -> {
-                comm.giveUp(idURL, jsResponse2.getTeamId(), jsResponse2.getTeamSecret());
-              });
-      assertEquals(UnknownError.class, throwable2.getClass());
-    }
-  }
-
-  @Test
   void testJoinGame() {
     MapTemplate template = createGameTemplate();
 
@@ -109,6 +78,38 @@ public class CommLayerTest {
             });
     assertEquals(Accepted.class, throwable.getClass());
   }
+
+  @Test
+  void testGiveUp() {
+    MapTemplate template = createGameTemplate();
+
+    GameSessionResponse gameSessionResponse =
+        comm.createGameSession("http://localhost:8888/api/gamesession", template);
+    String idURL = "http://localhost:8888/api/gamesession/" + gameSessionResponse.getId();
+    JoinGameResponse jsResponse = comm.joinGame(idURL, "TestTeam1");
+
+    JoinGameResponse jsResponse2 = comm.joinGame(idURL, "TestTeam2");
+    GameState gameState = comm.getCurrentGameState(idURL);
+
+    if (gameState.getCurrentTeam() == 0) {
+      Throwable throwable =
+          assertThrows(
+              Accepted.class,
+              () -> {
+                comm.giveUp(idURL, jsResponse.getTeamId(), jsResponse.getTeamSecret());
+              });
+      assertEquals(Accepted.class, throwable.getClass());
+    }
+    if (gameState.getCurrentTeam() == 1) {
+      Throwable throwable2 =
+          assertThrows(
+            Accepted.class,
+              () -> {
+                comm.giveUp(idURL, jsResponse2.getTeamId(), jsResponse2.getTeamSecret());
+              });
+      assertEquals(Accepted.class, throwable2.getClass());
+  }
+}
 
   @Test
   void testDeleteCurrentSession() {
