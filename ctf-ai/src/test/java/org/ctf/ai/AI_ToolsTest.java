@@ -60,7 +60,7 @@ public class AI_ToolsTest {
 		
 		ArrayList<int[]> aiToolsShapeMoves = new ArrayList<int[]>();
 		try {
-			 aiToolsShapeMoves = AI_Tools.getShapeMoves(gameState, knight, new ArrayList<int[]>(), new StringBuilder());
+			 aiToolsShapeMoves = AI_Tools.getShapeMoves(gameState, knight, new ArrayList<int[]>());
 		} catch (InvalidShapeException e) {
 			fail("All shapes are valid");
 		}
@@ -77,11 +77,11 @@ public class AI_ToolsTest {
 		Piece picked = gameState.getTeams()[1].getPieces()[1];					            //rook on 7,3
 		dirMap.add(new int[] {2, 2});														//the rook can move 2 fields up
 		dirMap.add(new int[] {3, 2});														//the rook can move 2 fields down
-		assertArrayEquals(dirMap.toArray(), AI_Tools.createDirectionMap(gameState, picked, new ArrayList<int[]>(), new StringBuilder()).toArray());
+		assertArrayEquals(dirMap.toArray(), AI_Tools.createDirectionMap(gameState, picked, new ArrayList<int[]>()).toArray());
 		
 		gameState.getGrid()[6][4] = "b";										            //completely enclosing the rook on 7,4
 		picked = gameState.getTeams()[1].getPieces()[2];						            //rook on 7,4
-		assertEquals(new ArrayList<int[]>(), AI_Tools.createDirectionMap(gameState, picked, new ArrayList<int[]>(), new StringBuilder()));
+		assertEquals(new ArrayList<int[]>(), AI_Tools.createDirectionMap(gameState, picked, new ArrayList<int[]>()));
 	}
 	
 	@Test
@@ -90,7 +90,7 @@ public class AI_ToolsTest {
 		ArrayList<int[]> dirMap = new ArrayList<int[]>();
 		dirMap.add(new int[] {2,5});										//rook can only move to one field ()
 		int[] onlyPosition = new int[] {6,3};								//the only possible Position is 6,3
-		int[] newPosition = RandomAI.getDirectionMove(dirMap, rook, gameState, new StringBuilder()).getNewPosition();
+		int[] newPosition = RandomAI.getDirectionMove(dirMap, rook, gameState).getNewPosition();
 
 		assertArrayEquals(onlyPosition, newPosition);
 	}
@@ -103,14 +103,14 @@ public class AI_ToolsTest {
 	void testValidDirection() {
 		Piece rook = gameState.getTeams()[1].getPieces()[1];				//rook on 7,3
 
-		assertFalse(RandomAI.validDirection(gameState, rook, 0, new StringBuilder()));			//a piece on the left doesn't allow the movement to the left
-		assertFalse(RandomAI.validDirection(gameState, rook, 1, new StringBuilder()));			//a piece on the right doesn't allow the movement to the right
-		assertTrue(RandomAI.validDirection(gameState, rook, 2, new StringBuilder()));			//there's a free position above, this direction is accessible
-		assertTrue(RandomAI.validDirection(gameState, rook, 3, new StringBuilder()));			//there's a free position below, this direction is accessible
-		assertTrue(RandomAI.validDirection(gameState, rook, 4, new StringBuilder()));			//there's a free position above-left, this direction is accessible
-		assertTrue(RandomAI.validDirection(gameState, rook, 5, new StringBuilder()));			//there's a free position above-right, this direction is accessible
-		assertTrue(RandomAI.validDirection(gameState, rook, 6, new StringBuilder()));			//there's a free position below-left, this direction is accessible
-		assertFalse(RandomAI.validDirection(gameState, rook, 7, new StringBuilder()));			//there's a piece below-right, this direction is not accessible
+		assertFalse(RandomAI.validDirection(gameState, rook, 0));			//a piece on the left doesn't allow the movement to the left
+		assertFalse(RandomAI.validDirection(gameState, rook, 1));			//a piece on the right doesn't allow the movement to the right
+		assertTrue(RandomAI.validDirection(gameState, rook, 2));			//there's a free position above, this direction is accessible
+		assertTrue(RandomAI.validDirection(gameState, rook, 3));			//there's a free position below, this direction is accessible
+		assertTrue(RandomAI.validDirection(gameState, rook, 4));			//there's a free position above-left, this direction is accessible
+		assertTrue(RandomAI.validDirection(gameState, rook, 5));			//there's a free position above-right, this direction is accessible
+		assertTrue(RandomAI.validDirection(gameState, rook, 6));			//there's a free position below-left, this direction is accessible
+		assertFalse(RandomAI.validDirection(gameState, rook, 7));			//there's a piece below-right, this direction is not accessible
 	}
 
 	/**
@@ -122,14 +122,14 @@ public class AI_ToolsTest {
 		Piece rook = gameState.getTeams()[1].getPieces()[1];				//rook on 7,3
 		Piece rook2 = gameState.getTeams()[1].getPieces()[3];				//rook on 7,5
 
-		assertNull(RandomAI.checkMoveValidity(gameState, rook, 0, 2, new StringBuilder()));		//rook cannot walk over another same team rook
-		assertNull(RandomAI.checkMoveValidity(gameState, rook, 1, 1, new StringBuilder()));		//rook cannot walk onto another same team rook
-		assertNotNull(RandomAI.checkMoveValidity(gameState, rook, 2, 1, new StringBuilder()));	//rook can walk on the empty space above
-		assertNull(RandomAI.checkMoveValidity(gameState, rook, 2, 3, new StringBuilder()));		//rook cannot jump over the block above
-		assertNotNull(RandomAI.checkMoveValidity(gameState, rook, 3, 1, new StringBuilder()));	//rook can walk on the empty space below
-		assertNotNull(RandomAI.checkMoveValidity(gameState, rook, 6, 1, new StringBuilder()));	//piece could go to the empty field below-left
-		assertNull(RandomAI.checkMoveValidity(gameState, rook2, 4, 4, new StringBuilder()));		//piece could not walk over a block to the empty field above-left 3,1
-		assertNull(RandomAI.checkMoveValidity(gameState, rook2, 4, 0, new StringBuilder()));		//piece could not walk onto its own position
+		assertNull(RandomAI.checkMoveValidity(gameState, rook, 0, 2));		//rook cannot walk over another same team rook
+		assertNull(RandomAI.checkMoveValidity(gameState, rook, 1, 1));		//rook cannot walk onto another same team rook
+		assertNotNull(RandomAI.checkMoveValidity(gameState, rook, 2, 1));	//rook can walk on the empty space above
+		assertNull(RandomAI.checkMoveValidity(gameState, rook, 2, 3));		//rook cannot jump over the block above
+		assertNotNull(RandomAI.checkMoveValidity(gameState, rook, 3, 1));	//rook can walk on the empty space below
+		assertNotNull(RandomAI.checkMoveValidity(gameState, rook, 6, 1));	//piece could go to the empty field below-left
+		assertNull(RandomAI.checkMoveValidity(gameState, rook2, 4, 4));		//piece could not walk over a block to the empty field above-left 3,1
+		assertNull(RandomAI.checkMoveValidity(gameState, rook2, 4, 0));//piece could not walk onto its own position
 	}
 
 	@Test
@@ -143,8 +143,8 @@ public class AI_ToolsTest {
 	
 	@Test
 	void testOtherTeamsBase() {
-	  assertTrue(AI_Tools.otherTeamsBase(gameState.getGrid(), new int[] {0,0}, gameState.getTeams()[1].getPieces()[0], new StringBuilder()));
-      assertFalse(AI_Tools.otherTeamsBase(gameState.getGrid(), new int[] {0,0}, gameState.getTeams()[0].getPieces()[0], new StringBuilder()));
+	  assertTrue(AI_Tools.otherTeamsBase(gameState.getGrid(), new int[] {0,0}, gameState.getTeams()[1].getPieces()[0]));
+      assertFalse(AI_Tools.otherTeamsBase(gameState.getGrid(), new int[] {0,0}, gameState.getTeams()[0].getPieces()[0]));
 	}
 
 	@Test
@@ -167,19 +167,19 @@ public class AI_ToolsTest {
 		Piece weakPiece = new Piece();
 		weakPiece.setDescription(TestValues.getTestTemplate().getPieces()[0]);
 
-		assertTrue(RandomAI.validPos(new int[] {3,3}, gameState.getTeams()[0].getPieces()[0], gameState, new StringBuilder()));		//valid empty position
-		assertFalse(RandomAI.validPos(new int[] {-1,0}, gameState.getTeams()[0].getPieces()[0], gameState, new StringBuilder()));	//out of bounds 1
-		assertFalse(RandomAI.validPos(new int[] {10,0}, gameState.getTeams()[0].getPieces()[0], gameState, new StringBuilder()));	//out of bounds 2
-		assertTrue(RandomAI.validPos(new int[] {2,2}, gameState.getTeams()[0].getPieces()[0], gameState, new StringBuilder()));		//rook team1 captures another rook from team0
-		assertFalse(RandomAI.validPos(new int[] {2,2}, weakPiece, gameState, new StringBuilder()));									//weak Pawn cannot capture a stronger rook from team0
-		assertFalse(RandomAI.validPos(new int[] {7,2}, gameState.getTeams()[0].getPieces()[0], gameState, new StringBuilder()));		//rook team1 cannot capture a team1 piece
-		assertFalse(RandomAI.validPos(new int[] {5,3}, gameState.getTeams()[0].getPieces()[0], gameState, new StringBuilder()));		//5,3 is occupied by a block
+		assertTrue(RandomAI.validPos(new int[] {3,3}, gameState.getTeams()[0].getPieces()[0], gameState));		//valid empty position
+		assertFalse(RandomAI.validPos(new int[] {-1,0}, gameState.getTeams()[0].getPieces()[0], gameState));	//out of bounds 1
+		assertFalse(RandomAI.validPos(new int[] {10,0}, gameState.getTeams()[0].getPieces()[0], gameState));	//out of bounds 2
+		assertTrue(RandomAI.validPos(new int[] {2,2}, gameState.getTeams()[0].getPieces()[0], gameState));		//rook team1 captures another rook from team0
+		assertFalse(RandomAI.validPos(new int[] {2,2}, weakPiece, gameState));									//weak Pawn cannot capture a stronger rook from team0
+		assertFalse(RandomAI.validPos(new int[] {7,2}, gameState.getTeams()[0].getPieces()[0], gameState));		//rook team1 cannot capture a team1 piece
+		assertFalse(RandomAI.validPos(new int[] {5,3}, gameState.getTeams()[0].getPieces()[0], gameState));		//5,3 is occupied by a block
 		gameState.setCurrentTeam(0);
-		assertTrue(RandomAI.validPos(new int[] {9,9}, gameState.getTeams()[0].getPieces()[0], gameState, new StringBuilder()));		//it is possible to walk on an opponents base
+		assertTrue(RandomAI.validPos(new int[] {9,9}, gameState.getTeams()[0].getPieces()[0], gameState));		//it is possible to walk on an opponents base
 		gameState.setCurrentTeam(1);
-		assertTrue(RandomAI.validPos(new int[] {0,0}, gameState.getTeams()[1].getPieces()[0], gameState, new StringBuilder()));		//it is possible to walk on an opponents base
+		assertTrue(RandomAI.validPos(new int[] {0,0}, gameState.getTeams()[1].getPieces()[0], gameState));		//it is possible to walk on an opponents base
         gameState.setCurrentTeam(0);
-        assertFalse(RandomAI.validPos(new int[] {0,0}, gameState.getTeams()[0].getPieces()[0], gameState, new StringBuilder()));      //it is not possible to walk on the own base
+        assertFalse(RandomAI.validPos(new int[] {0,0}, gameState.getTeams()[0].getPieces()[0], gameState));      //it is not possible to walk on the own base
 	}
 
 	@Test

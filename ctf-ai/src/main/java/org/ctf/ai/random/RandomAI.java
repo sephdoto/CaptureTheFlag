@@ -34,9 +34,9 @@ public class RandomAI extends AI_Tools {
       if(picked.getDescription().getMovement().getDirections() != null) {
         int randomDirection = (int)(Math.random()*8);
         int reach = (int)(Math.random() * getReach(picked.getDescription().getMovement().getDirections(), randomDirection));
-        move = checkMoveValidity(gameState, picked, randomDirection, reach, new StringBuilder());
+        move = checkMoveValidity(gameState, picked, randomDirection, reach);
       } else {
-        move = getRandomShapeMove(getShapeMoves(gameState, picked, new ArrayList<int[]>(), new StringBuilder()), picked.getId());
+        move = getRandomShapeMove(getShapeMoves(gameState, picked, new ArrayList<int[]>()), picked.getId());
       }
     } while (move == null);
     return move;
@@ -58,22 +58,21 @@ public class RandomAI extends AI_Tools {
     ArrayList<int[]> dirMap = new ArrayList<int[]>();
     ArrayList<int[]> shapeMoves = new ArrayList<int[]>();
     Move move = new Move();
-    StringBuilder sb = new StringBuilder();
 
     while(piecesCurrentTeam.size() > 0) {		
       int random = (int)(Math.random() * piecesCurrentTeam.size());
       Piece picked = piecesCurrentTeam.get(random);
 
       if(picked.getDescription().getMovement().getDirections() != null) {		//move if Directions
-        dirMap = createDirectionMap(gameState, picked, dirMap, sb);
+        dirMap = createDirectionMap(gameState, picked, dirMap);
         if(dirMap.size() > 0) {
-          return getDirectionMove(dirMap, picked, gameState, sb);
+          return getDirectionMove(dirMap, picked, gameState);
         } else {
         	piecesCurrentTeam.remove(random);
           continue;
         }
       } else {																	//Move if Shape
-    	shapeMoves = getShapeMoves(gameState, picked, shapeMoves, sb);
+    	shapeMoves = getShapeMoves(gameState, picked, shapeMoves);
         if(shapeMoves.size() > 0) {
           return getRandomShapeMove(shapeMoves, picked.getId());
         } else {

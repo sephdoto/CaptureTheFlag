@@ -96,7 +96,7 @@ public class MCTS {
     for(int i=0; i<parent.children.length; i++) {
       if(parent.children[i] == null) {
         TreeNode child = parent.clone(parent.copyGameState());
-        oneMove(child, parent, new StringBuilder());
+        oneMove(child, parent);
         parent.children[i] = child;
         return child;
       }
@@ -153,12 +153,11 @@ public class MCTS {
       return winners;
     }
     
-    StringBuilder sb = new StringBuilder();
 
     simulateOn = simulateOn.clone(simulateOn.copyGameState());
 
     for(;count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn)) {
-      oneMove(simulateOn, simulateOn, sb);
+      oneMove(simulateOn, simulateOn);
       removeTeamCheck(simulateOn.gameState);
     }
     if(isTerminal < 0) {  
@@ -353,23 +352,23 @@ public class MCTS {
    * @param original node, the move made gets removed from it
    * @return a child node containing the simulation result
    */
-  void oneMove(TreeNode alter, TreeNode original, StringBuilder sb) {
-    alterGameState(alter.gameState, getAndRemoveMoveHeuristic(original, sb));
+  void oneMove(TreeNode alter, TreeNode original) {
+    alterGameState(alter.gameState, getAndRemoveMoveHeuristic(original));
     alter.initPossibleMovesAndChildren();
   }   
 
-  Move getAndRemoveMoveHeuristic(TreeNode parent, StringBuilder sb) {
+  Move getAndRemoveMoveHeuristic(TreeNode parent) {
     for(Piece piece : parent.possibleMoves.keySet()) {
 //      Piece picked = Arrays.asList(parent.gameState.getTeams()[parent.gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(key)).findFirst().get();
       for(int i=0; i<parent.possibleMoves.get(piece).size(); i++) {
         int[] pos = parent.possibleMoves.get(piece).get(i);
         if(parent.gameState.getGrid()[pos[0]][pos[1]].contains("b:") && 
-            !AI_Tools.occupiedBySameTeam(parent.gameState, pos, sb)) {
+            !AI_Tools.occupiedBySameTeam(parent.gameState, pos)) {
           return createMoveDeleteIndex(parent, piece, i);
         }
         if(parent.gameState.getGrid()[pos[0]][pos[1]].contains("p:")&& 
-            !AI_Tools.occupiedBySameTeam(parent.gameState, pos, sb)) {
-          if(AI_Tools.validPos(pos, piece, parent.gameState, sb))
+            !AI_Tools.occupiedBySameTeam(parent.gameState, pos)) {
+          if(AI_Tools.validPos(pos, piece, parent.gameState))
             return createMoveDeleteIndex(parent, piece, i);
         }
       }

@@ -26,7 +26,7 @@ public class TreeNode implements Comparable<TreeNode> {
     this.possibleMoves = new IdentityHashMap<Piece, ArrayList<int[]>>();
     int children = 0;
     for(Piece p : gameState.getTeams()[gameState.getCurrentTeam()].getPieces()) {
-      ArrayList<int[]> movesPieceP = AI_Tools.getPossibleMoves(gameState, p, new ArrayList<int[]>(), new StringBuilder());
+      ArrayList<int[]> movesPieceP = AI_Tools.getPossibleMoves(gameState, p, new ArrayList<int[]>());
       if(movesPieceP.size() > 0) {
         possibleMoves.put(p, movesPieceP);
         children += possibleMoves.get(p).size();

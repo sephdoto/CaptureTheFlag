@@ -166,26 +166,26 @@ public class AI_Tools {
    * @param String pieceID
    * @return ArrayList<int[]> that contains all valid positions a piece could move to
    */
-  public static ArrayList<int[]> getPossibleMoves(GameState gameState, Piece piece, ArrayList<int[]> possibleMoves, StringBuilder sb) {
+  public static ArrayList<int[]> getPossibleMoves(GameState gameState, Piece piece, ArrayList<int[]> possibleMoves) {
     possibleMoves.clear();
     ArrayList<int[]> dirMap = new ArrayList<int[]>();
     if (piece.getDescription().getMovement().getDirections() == null) {
       try {
-        getShapeMoves(gameState, piece, possibleMoves, sb);
+        getShapeMoves(gameState, piece, possibleMoves);
       } catch (InvalidShapeException e) {
         e.printStackTrace();
       }
 
     } else {
-      dirMap = AI_Tools.createDirectionMap(gameState, piece, dirMap, sb);
+      dirMap = AI_Tools.createDirectionMap(gameState, piece, dirMap);
       for (int[] entry : dirMap) {
         for (int reach = entry[1]; reach > 0; reach--) {
           Move move = new Move();
           try {
-            move = AI_Tools.checkMoveValidity(gameState, piece, entry[0], reach, sb);
+            move = AI_Tools.checkMoveValidity(gameState, piece, entry[0], reach);
           } catch(Exception e) {
             System.out.println(2);
-            move = AI_Tools.checkMoveValidity(gameState, piece, entry[0], reach, sb);
+            move = AI_Tools.checkMoveValidity(gameState, piece, entry[0], reach);
           }
           if (move != null) possibleMoves.add(move.getNewPosition());
         }
@@ -216,7 +216,7 @@ public class AI_Tools {
    * @return ArrayList containing all valid moves
    * @throws InvalidShapeException if the Shape is not yet implemented here
    */
-  public static ArrayList<int[]> getShapeMoves(GameState gameState, Piece piece, ArrayList<int[]> positions, StringBuilder sb)
+  public static ArrayList<int[]> getShapeMoves(GameState gameState, Piece piece, ArrayList<int[]> positions)
       throws InvalidShapeException {
     positions.clear();
     int[] xTransforms;
@@ -240,7 +240,7 @@ public class AI_Tools {
           new int[] {
               piece.getPosition()[0] + yTransforms[i], piece.getPosition()[1] + xTransforms[i]
       };
-      if (validPos(newPos, piece, gameState, sb)) {
+      if (validPos(newPos, piece, gameState)) {
         if (i >= direction.length) {
           positions.add(newPos);
         } else if (sightLine(
@@ -267,12 +267,12 @@ public class AI_Tools {
    * @param picked
    * @return ArrayList<int[direction,reach]>
    */
-  public static ArrayList<int[]> createDirectionMap(GameState gameState, Piece picked, ArrayList<int[]> dirMap, StringBuilder sb) {
+  public static ArrayList<int[]> createDirectionMap(GameState gameState, Piece picked, ArrayList<int[]> dirMap) {
     dirMap.clear();
     for (int i = 0; i < 8; i++) {
       int reach = getReach(picked.getDescription().getMovement().getDirections(), i);
       if (reach > 0) {
-        if (validDirection(gameState, picked, i, sb)) {
+        if (validDirection(gameState, picked, i)) {
           dirMap.add(new int[] {i, reach});
         } else {
           continue;
@@ -296,13 +296,13 @@ public class AI_Tools {
    * @param gameState
    * @return a valid move
    */
-  public static Move getDirectionMove(ArrayList<int[]> dirMap, Piece piece, GameState gameState, StringBuilder sb) {
+  public static Move getDirectionMove(ArrayList<int[]> dirMap, Piece piece, GameState gameState) {
     int randomDir = (int) (dirMap.size() * Math.random());
     int reach;
 
     while (true) {
       reach = (int) (Math.random() * dirMap.get(randomDir)[1] + 1);
-      Move newPos = checkMoveValidity(gameState, piece, dirMap.get(randomDir)[0], reach, sb);
+      Move newPos = checkMoveValidity(gameState, piece, dirMap.get(randomDir)[0], reach);
       if (newPos != null) return newPos;
         dirMap.get(randomDir)[1] =  reach - 1;
       continue;
@@ -318,8 +318,8 @@ public class AI_Tools {
    * @param direction
    * @return false if there are no possible moves in this direction, true otherwise.
    */
-  public static boolean validDirection(GameState gameState, Piece piece, int direction, StringBuilder sb) {
-    return checkMoveValidity(gameState, piece, direction, 1, sb) != null;
+  public static boolean validDirection(GameState gameState, Piece piece, int direction) {
+    return checkMoveValidity(gameState, piece, direction, 1) != null;
   }
 
   /**
@@ -334,11 +334,11 @@ public class AI_Tools {
    * @return a Move instance with the piece and its new position
    * @return null if the piece can't occupy the position or the position is not in the grid
    */
-  public static Move checkMoveValidity(GameState gameState, Piece piece, int direction, int reach, StringBuilder sb) {
+  public static Move checkMoveValidity(GameState gameState, Piece piece, int direction, int reach) {
     int[] pos = new int[] {piece.getPosition()[0], piece.getPosition()[1]};
     updatePos(pos, direction, reach);
 
-    if (!validPos(pos, piece, gameState, sb)) {
+    if (!validPos(pos, piece, gameState)) {
       return null;
     } else if (!sightLine(gameState, new int[] {pos[0], pos[1]}, direction, reach)) {
       return null;
@@ -432,14 +432,14 @@ public class AI_Tools {
    * @param gameState
    * @return true if the position can be occupied.
    */
-  public static boolean validPos(int[] pos, Piece piece, GameState gameState, StringBuilder sb) {
+  public static boolean validPos(int[] pos, Piece piece, GameState gameState) {
     // checks if the position can be occupied
     if (positionOutOfBounds(gameState.getGrid(), pos)) return false;
     if (emptyField(gameState.getGrid(), pos)) return true;
     if (occupiedByBlock(gameState.getGrid(), pos)) return false;
-    if (occupiedBySameTeam(gameState, pos, sb)) return false;
-    if (otherTeamsBase(gameState.getGrid(), pos, piece, sb)) return true;
-    if (occupiedByWeakerOpponent(gameState, pos, piece, sb)) return true;
+    if (occupiedBySameTeam(gameState, pos)) return false;
+    if (otherTeamsBase(gameState.getGrid(), pos, piece)) return true;
+    if (occupiedByWeakerOpponent(gameState, pos, piece)) return true;
 
     // if opponent is stronger or something unforeseen happens
     return false;
@@ -485,8 +485,8 @@ public class AI_Tools {
    * @param pos
    * @return true if the position is occupied by a Piece of the same Team
    */
-  public static boolean occupiedBySameTeam(GameState gameState, int[] pos, StringBuilder sb) {
-    return gameState.getCurrentTeam() == getOccupantTeam(gameState.getGrid(), pos, sb);
+  public static boolean occupiedBySameTeam(GameState gameState, int[] pos) {
+    return gameState.getCurrentTeam() == getOccupantTeam(gameState.getGrid(), pos);
   }
 
   /**
@@ -498,10 +498,10 @@ public class AI_Tools {
    * @param picked
    * @return true if the position is occupied by a weaker opponent that can be captured
    */
-  public static boolean occupiedByWeakerOpponent(GameState gameState, int[] pos, Piece picked, StringBuilder sb) {
+  public static boolean occupiedByWeakerOpponent(GameState gameState, int[] pos, Piece picked) {
     for (Piece p :
       gameState
-      .getTeams()[getOccupantTeam(gameState.getGrid(), pos, sb)]
+      .getTeams()[getOccupantTeam(gameState.getGrid(), pos)]
           .getPieces()) {
       if (p.getId().equals(gameState.getGrid()[pos[0]][pos[1]])) {
         if (p.getDescription().getAttackPower() <= picked.getDescription().getAttackPower()) {
@@ -522,9 +522,9 @@ public class AI_Tools {
    * @param picked
    * @return true if the position is occupied by another teams base and a flag can be captured
    */
-  public static boolean otherTeamsBase(String[][] grid, int[] pos, Piece picked, StringBuilder sb) {
+  public static boolean otherTeamsBase(String[][] grid, int[] pos, Piece picked) {
     if (grid[pos[0]][pos[1]].contains("b:")) {
-      if(Integer.parseInt(picked.getTeamId()) != getOccupantTeam(grid, pos, sb))
+      if(Integer.parseInt(picked.getTeamId()) != getOccupantTeam(grid, pos))
         return true;
     }
     return false;
@@ -537,11 +537,12 @@ public class AI_Tools {
    * @param pos
    * @return
    */
-  public static int getOccupantTeam(String[][] grid, int[] pos, StringBuilder sb) {
-    sb = sb.delete(0, sb.length()).append(grid[pos[0]][pos[1]]);
+  public static int getOccupantTeam(String[][] grid, int[] pos) {
+    StringBuilder sb = new StringBuilder().append(grid[pos[0]][pos[1]]);
     int indexUnderscore = sb.indexOf("_");
     return Integer.parseInt(sb.substring(sb.indexOf(":")+1, indexUnderscore == -1 ? sb.length() : indexUnderscore));
-  }
+  } 
+
 
   /**
    * Returns a pieces maximum reach into a certain direction. Assumes the direction is valid,

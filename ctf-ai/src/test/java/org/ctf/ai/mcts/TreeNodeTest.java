@@ -5,7 +5,6 @@ import java.util.Arrays;
 import org.ctf.ai.TestValues;
 import org.ctf.ai.AI_Tools;
 import org.ctf.shared.state.GameState;
-import org.ctf.shared.state.Team;
 import org.junit.jupiter.api.Test;
 
 class TreeNodeTest {
