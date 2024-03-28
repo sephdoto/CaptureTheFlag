@@ -2,7 +2,6 @@ package org.ctf.ai.random;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import org.ctf.ai.AI_Tools;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
@@ -35,9 +34,9 @@ public class RandomAI extends AI_Tools {
       if(picked.getDescription().getMovement().getDirections() != null) {
         int randomDirection = (int)(Math.random()*8);
         int reach = (int)(Math.random() * getReach(picked.getDescription().getMovement().getDirections(), randomDirection));
-        move = checkMoveValidity(gameState, picked, randomDirection, reach);
+        move = checkMoveValidity(gameState, picked, randomDirection, reach, new StringBuilder());
       } else {
-        move = getRandomShapeMove(getShapeMoves(gameState, picked, new ArrayList<int[]>()), picked.getId());
+        move = getRandomShapeMove(getShapeMoves(gameState, picked, new ArrayList<int[]>(), new StringBuilder()), picked.getId());
       }
     } while (move == null);
     return move;
@@ -59,21 +58,22 @@ public class RandomAI extends AI_Tools {
     ArrayList<int[]> dirMap = new ArrayList<int[]>();
     ArrayList<int[]> shapeMoves = new ArrayList<int[]>();
     Move move = new Move();
+    StringBuilder sb = new StringBuilder();
 
     while(piecesCurrentTeam.size() > 0) {		
       int random = (int)(Math.random() * piecesCurrentTeam.size());
       Piece picked = piecesCurrentTeam.get(random);
 
       if(picked.getDescription().getMovement().getDirections() != null) {		//move if Directions
-        dirMap = createDirectionMap(gameState, picked, dirMap);
+        dirMap = createDirectionMap(gameState, picked, dirMap, sb);
         if(dirMap.size() > 0) {
-          return getDirectionMove(dirMap, picked, gameState);
+          return getDirectionMove(dirMap, picked, gameState, sb);
         } else {
         	piecesCurrentTeam.remove(random);
           continue;
         }
       } else {																	//Move if Shape
-    	shapeMoves = getShapeMoves(gameState, picked, shapeMoves);
+    	shapeMoves = getShapeMoves(gameState, picked, shapeMoves, sb);
         if(shapeMoves.size() > 0) {
           return getRandomShapeMove(shapeMoves, picked.getId());
         } else {
