@@ -323,6 +323,8 @@ public class CommLayer implements CommLayerInterface {
       throw new SessionNotFound();
     } else if (returnedCode == 500) {
       throw new UnknownError();
+    } else if (returnedCode == 200) {
+      throw new Accepted();
     }
     return returnedState;
   }
