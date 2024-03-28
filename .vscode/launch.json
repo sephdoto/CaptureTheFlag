@@ -43,7 +43,7 @@
             "type": "java",
             "name": "CtfApplication",
             "request": "launch",
-            "mainClass": "CtfApplication",
+            "mainClass": "de.unimannheim.swt.pse.ctf.CtfApplication",
             "projectName": "ctf"
         },
         {

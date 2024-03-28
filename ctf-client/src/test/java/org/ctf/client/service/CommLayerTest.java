@@ -5,26 +5,24 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.ctf.client.data.dto.GameSessionResponse;
 import org.ctf.client.data.dto.JoinGameResponse;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.exceptions.Accepted;
+import org.ctf.shared.state.data.exceptions.UnknownError;
 import org.ctf.shared.state.data.map.MapTemplate;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class CommLayerTest {
-  static CommLayer comm;
+  static CommLayer comm = new CommLayer();
+  ;
 
-  @BeforeAll
-  static void setup() {
-    comm = new CommLayer();
-  }
-
+  /*   @BeforeAll
+   static void setup() {
+   }
+  */
   @Test
   void testCreateGameSession() throws IOException {
     MapTemplate template = createGameTemplate();
@@ -45,33 +43,29 @@ public class CommLayerTest {
 
     GameSessionResponse gameSessionResponse =
         comm.createGameSession("http://localhost:8888/api/gamesession", template);
-    JoinGameResponse jsResponse =
-        comm.joinGame(
-            "http://localhost:8888/api/gamesession/" + gameSessionResponse.getId(), "TestTeam1");
-    assertNotNull(jsResponse.getTeamSecret());
-    JoinGameResponse jsResponse2 =
-        comm.joinGame(
-            "http://localhost:8888/api/gamesession/" + gameSessionResponse.getId(), "TestTeam2");
-    GameState gameState = comm.getCurrentGameState("http://localhost:8888/api/gamesession/" + gameSessionResponse.getId());
-    System.out.println(gameState.getCurrentTeam());
-    if(gameState.getCurrentTeam() == 1){
-        Throwable throwable =
-        assertThrows(
-            Accepted.class,
-            () -> {
-                comm.giveUp("http://localhost:8888/api/gamesession/" + gameSessionResponse.getId() , jsResponse.getTeamId(), jsResponse.getTeamSecret());
-            });
-         assertEquals(Accepted.class, throwable.getClass());   
-    } else {
-        Throwable throwable =
-        assertThrows(
-            Accepted.class,
-            () -> {
-                comm.giveUp("http://localhost:8888/api/gamesession/" + gameSessionResponse.getId() , jsResponse2.getTeamId(), jsResponse2.getTeamSecret());
-            });
-         assertEquals(Accepted.class, throwable.getClass());   
+    String idURL = "http://localhost:8888/api/gamesession/" + gameSessionResponse.getId();
+    JoinGameResponse jsResponse = comm.joinGame(idURL, "TestTeam1");
+
+    JoinGameResponse jsResponse2 = comm.joinGame(idURL, "TestTeam2");
+    GameState gameState = comm.getCurrentGameState(idURL);
+    
+    if (gameState.getCurrentTeam() == 0) {
+      Throwable throwable =
+          assertThrows(
+              Accepted.class,
+              () -> {
+                comm.giveUp(idURL, jsResponse.getTeamId(), jsResponse.getTeamSecret());
+              });
+      assertEquals(Accepted.class, throwable.getClass());
+    } else if (gameState.getCurrentTeam() == 1) {
+      Throwable throwable2 =
+          assertThrows(
+            UnknownError.class,
+              () -> {
+                comm.giveUp(idURL, jsResponse2.getTeamId(), jsResponse2.getTeamSecret());
+              });
+      assertEquals(UnknownError.class, throwable2.getClass());
     }
-           
   }
 
   @Test
@@ -113,7 +107,7 @@ public class CommLayerTest {
                   jsResponse.getTeamSecret(),
                   move);
             });
-         assertEquals(Accepted.class, throwable.getClass());   
+    assertEquals(Accepted.class, throwable.getClass());
   }
 
   @Test

@@ -5,11 +5,14 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
+import java.net.http.HttpClient.Redirect;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
-
+import java.time.Duration;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.ctf.client.data.dto.GameSessionRequest;
 import org.ctf.client.data.dto.GameSessionResponse;
 import org.ctf.client.data.dto.GiveupRequest;
@@ -39,6 +42,10 @@ public class CommLayer implements CommLayerInterface {
 
   // Data Blocks for the Layer
   private Gson gson; // Gson object to convert classes to Json
+  private ExecutorService executor;
+  private HttpClient client;
+  private HttpRequest request;
+  private HttpResponse<String> ret;
 
   /**
    * Creates a Layer Object which can then be used to communicate with the Server The URL and the
@@ -46,6 +53,13 @@ public class CommLayer implements CommLayerInterface {
    */
   public CommLayer() {
     gson = new Gson();
+    executor = Executors.newSingleThreadExecutor();
+    client =
+        HttpClient.newBuilder()
+            .followRedirects(Redirect.ALWAYS)
+            .connectTimeout(Duration.ofSeconds(5))
+            .executor(executor)
+            .build();
   }
 
   /**
@@ -164,9 +178,7 @@ public class CommLayer implements CommLayerInterface {
 
     int returnedCode = postResponse.statusCode();
 
-    if (returnedCode == 200) {
-      throw new Accepted(200);
-    } else if (returnedCode == 403) {
+    if (returnedCode == 403) {
       throw new ForbiddenMove();
     } else if (returnedCode == 404) {
       throw new SessionNotFound();
@@ -210,14 +222,14 @@ public class CommLayer implements CommLayerInterface {
 
     int returnedCode = postResponse.statusCode();
     if (returnedCode == 200) {
-      throw new Accepted(200);
+      throw new Accepted();
     } else if (returnedCode == 403) {
       throw new ForbiddenMove();
     } else if (returnedCode == 404) {
       throw new SessionNotFound();
     } else if (returnedCode == 410) {
       throw new GameOver();
-    } else {
+    } else if (returnedCode == 500) {
       throw new UnknownError();
     }
   }
@@ -246,7 +258,6 @@ public class CommLayer implements CommLayerInterface {
 
     GameSessionResponse gameSessionResponse =
         gson.fromJson(getResponse.body(), GameSessionResponse.class);
-
     int returnedCode = getResponse.statusCode();
 
     if (returnedCode == 404) {
@@ -254,7 +265,6 @@ public class CommLayer implements CommLayerInterface {
     } else if (returnedCode == 500) {
       throw new UnknownError();
     }
-
     return gameSessionResponse;
   }
 
@@ -277,9 +287,7 @@ public class CommLayer implements CommLayerInterface {
     } catch (URLError e) {
       throw new URLError("Check URL");
     }
-
     int returnedCode = deleteResponse.statusCode();
-
     if (returnedCode == 404) {
       throw new SessionNotFound();
     } else if (returnedCode == 500) {
@@ -308,9 +316,7 @@ public class CommLayer implements CommLayerInterface {
     }
 
     GameState returnedState = gson.fromJson(getResponse.body(), GameState.class);
-
     int returnedCode = getResponse.statusCode();
-
     if (returnedCode == 404) {
       throw new SessionNotFound();
     } else if (returnedCode == 500) {
@@ -328,16 +334,14 @@ public class CommLayer implements CommLayerInterface {
    * @throws URLError
    */
   private HttpResponse<String> POSTRequest(String URL, String jsonPayload) {
-
-    HttpResponse<String> ret = null;
     try {
-      HttpRequest request =
+      request =
           HttpRequest.newBuilder()
               .uri(new URI(URL))
               .header("Content-Type", "application/json")
               .POST(BodyPublishers.ofString(jsonPayload))
               .build();
-      ret = HttpClient.newHttpClient().send(request, BodyHandlers.ofString());
+      ret = client.send(request, BodyHandlers.ofString());
     } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
       throw new URLError("Check URL");
     }
@@ -352,15 +356,14 @@ public class CommLayer implements CommLayerInterface {
    * @throws URLError
    */
   private HttpResponse<String> GETRequest(String URL) {
-    HttpResponse<String> ret = null;
     try {
-      HttpRequest request =
+      request =
           HttpRequest.newBuilder()
               .uri(new URI(URL))
               .header("Content-Type", "application/json")
               .GET()
               .build();
-      ret = HttpClient.newHttpClient().send(request, BodyHandlers.ofString());
+      ret = client.send(request, BodyHandlers.ofString());
     } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
       throw new URLError("Check URL");
     }
@@ -375,14 +378,9 @@ public class CommLayer implements CommLayerInterface {
    * @throws URLError
    */
   private HttpResponse<String> DELETERequest(String URL) {
-    HttpResponse<String> ret = null;
     try {
-      HttpRequest request =
-          HttpRequest.newBuilder()
-              .uri(new URI(URL))
-              .DELETE()
-              .build();
-      ret = HttpClient.newHttpClient().send(request, BodyHandlers.ofString());
+      request = HttpRequest.newBuilder().uri(new URI(URL)).DELETE().build();
+      ret = client.send(request, BodyHandlers.ofString());
     } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
       throw new URLError("Check URL");
     }

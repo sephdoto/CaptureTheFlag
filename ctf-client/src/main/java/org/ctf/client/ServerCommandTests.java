@@ -2,12 +2,9 @@ package org.ctf.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import org.ctf.client.controller.HTTPServicer;
-import org.ctf.client.controller.cfpClientController;
-import org.ctf.client.controller.ctfHTTPClient;
 import org.ctf.client.data.dto.GameSessionRequest;
 import org.ctf.client.data.dto.GameSessionResponse;
+import org.ctf.client.data.dto.JoinGameResponse;
 import org.ctf.client.service.CommLayer;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
@@ -27,8 +24,9 @@ public class ServerCommandTests {
   public static void main(String[] args) {
 
     // Uncomment to do invidivual tests
-    //testConnection();
-    testStart();
+    // testConnection();
+    // testStart();
+    joinTest();
     // testConnectionTimedGameMode();
     // testMalformedConnection();
     // testConnectionTimedMoveMode();
@@ -145,28 +143,29 @@ public class ServerCommandTests {
             "placement": "symmetrical",
             "totalTimeLimitInSeconds": -1,
             "moveTimeLimitInSeconds": -1
-          }          
+          }
         """;
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
-        GameSessionRequest request = new GameSessionRequest();
-        request.setTemplate(test);
-        CommLayer comm = new CommLayer();
-        GameSessionResponse gsResponse = comm.createGameSession("http://localhost:8888/api/gamesession", test);
-        comm.deleteCurrentSession("http://localhost:8888/api/gamesession/" + gsResponse.getId());
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
+    GameSessionRequest request = new GameSessionRequest();
+    request.setTemplate(test);
+    CommLayer comm = new CommLayer();
+    GameSessionResponse gsResponse =
+        comm.createGameSession("http://localhost:8888/api/gamesession", test);
+    comm.deleteCurrentSession("http://localhost:8888/api/gamesession/" + gsResponse.getId());
 
-   // JavaClient client = new JavaClient("localhost", "8888");
-    //client.createGame(test);
-    //System.out.println(client.getSessionID());
+    // JavaClient client = new JavaClient("localhost", "8888");
+    // client.createGame(test);
+    // System.out.println(client.getSessionID());
 
-    //client.joinGame("team1");
-    //System.out.println(client.getSecretID());
-    //client.joinGame("team2");
-    //System.out.println(client.getSecretID());
+    // client.joinGame("team1");
+    // System.out.println(client.getSecretID());
+    // client.joinGame("team2");
+    // System.out.println(client.getSecretID());
     // client.joinGame("team3");
     // System.out.println(client.getSecretID());
- /*    client.refreshSession();
+    /*    client.refreshSession();
     GameState gs = client.getState();
     System.out.println(gson.toJson(gs)); */
   }
@@ -282,33 +281,33 @@ public class ServerCommandTests {
           }
         """;
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
-        GameSessionRequest request = new GameSessionRequest();
-        request.setTemplate(test);
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
+    GameSessionRequest request = new GameSessionRequest();
+    request.setTemplate(test);
 
-   /*  JavaClient client = new JavaClient();
-    client.connect("localhost", "9999", test);
-    //System.out.println(client.getSessionID());
+    /*  JavaClient client = new JavaClient();
+     client.connect("localhost", "9999", test);
+     //System.out.println(client.getSessionID());
 
-    client.joinGame("team1");
-    //System.out.println(client.getSecretID());
-    client.joinGame("team2");
-    //System.out.println(client.getSecretID());
-    // client.joinGame("team3");
-    // System.out.println(client.getSecretID());
-    client.refreshSession();
-    //GameState  gs = client.getState();
-   // System.out.println(gson.toJson(gs));
-    
-    ServerCommandTests st = new ServerCommandTests(); */
+     client.joinGame("team1");
+     //System.out.println(client.getSecretID());
+     client.joinGame("team2");
+     //System.out.println(client.getSecretID());
+     // client.joinGame("team3");
+     // System.out.println(client.getSecretID());
+     client.refreshSession();
+     //GameState  gs = client.getState();
+    // System.out.println(gson.toJson(gs));
+
+     ServerCommandTests st = new ServerCommandTests(); */
 
     Thread t =
         new Thread() {
           public void run() {
             long start1 = System.currentTimeMillis();
             for (int i = 0; i < 10000; i++) {
-              //st.setState(client.getState());
+              // st.setState(client.getState());
               // System.out.println(gson.toJson(gs));
             }
             long end1 = System.currentTimeMillis();
@@ -322,7 +321,7 @@ public class ServerCommandTests {
           public void run() {
             long start2 = System.currentTimeMillis();
             for (int i = 0; i < 10000; i++) {
-              //st.setState(client.getState());
+              // st.setState(client.getState());
               // System.out.println(gson.toJson(gs));
             }
             long end2 = System.currentTimeMillis();
@@ -336,7 +335,7 @@ public class ServerCommandTests {
           public void run() {
             long start1 = System.currentTimeMillis();
             for (int i = 0; i < 10000; i++) {
-             // st.setState(client.getState());
+              // st.setState(client.getState());
               // System.out.println(gson.toJson(gs));
             }
             long end1 = System.currentTimeMillis();
@@ -350,7 +349,7 @@ public class ServerCommandTests {
           public void run() {
             long start1 = System.currentTimeMillis();
             for (int i = 0; i < 10000; i++) {
-              //st.setState(client.getState());
+              // st.setState(client.getState());
               // System.out.println(gson.toJson(gs));
             }
             long end1 = System.currentTimeMillis();
@@ -380,5 +379,143 @@ public class ServerCommandTests {
 
     // System.out.println(client.gameOver);
 
+  }
+
+  public static void joinTest() {
+
+    String jsonPayload =
+        """
+          {
+            "gridSize": [10, 10],
+            "teams": 2,
+            "flags": 1,
+            "blocks": 0,
+            "pieces": [
+              {
+                "type": "Pawn",
+                "attackPower": 1,
+                "count": 10,
+                "movement": {
+                  "directions": {
+                    "left": 0,
+                    "right": 0,
+                    "up": 1,
+                    "down": 0,
+                    "upLeft": 1,
+                    "upRight": 1,
+                    "downLeft": 0,
+                    "downRight": 0
+                  }
+                }
+              },
+              {
+                "type": "Rook",
+                "attackPower": 5,
+                "count": 2,
+                "movement": {
+                  "directions": {
+                    "left": 2,
+                    "right": 2,
+                    "up": 2,
+                    "down": 2,
+                    "upLeft": 0,
+                    "upRight": 0,
+                    "downLeft": 0,
+                    "downRight": 0
+                  }
+                }
+              },
+              {
+                "type": "Knight",
+                "attackPower": 3,
+                "count": 2,
+                "movement": {
+                  "shape": {
+                    "type": "lshape"
+                  }
+                }
+              },
+              {
+                "type": "Bishop",
+                "attackPower": 3,
+                "count": 2,
+                "movement": {
+                  "directions": {
+                    "left": 0,
+                    "right": 0,
+                    "up": 0,
+                    "down": 0,
+                    "upLeft": 2,
+                    "upRight": 2,
+                    "downLeft": 2,
+                    "downRight": 2
+                  }
+                }
+              },
+              {
+                "type": "Queen",
+                "attackPower": 5,
+                "count": 1,
+                "movement": {
+                  "directions": {
+                    "left": 2,
+                    "right": 2,
+                    "up": 2,
+                    "down": 2,
+                    "upLeft": 2,
+                    "upRight": 2,
+                    "downLeft": 2,
+                    "downRight": 2
+                  }
+                }
+              },
+              {
+                "type": "King",
+                "attackPower": 1,
+                "count": 1,
+                "movement": {
+                  "directions": {
+                    "left": 1,
+                    "right": 1,
+                    "up": 1,
+                    "down": 1,
+                    "upLeft": 1,
+                    "upRight": 1,
+                    "downLeft": 1,
+                    "downRight": 1
+                  }
+                }
+              }
+            ],
+            "placement": "symmetrical",
+            "totalTimeLimitInSeconds": -1,
+            "moveTimeLimitInSeconds": -1
+          }
+        """;
+
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
+    CommLayer comm = new CommLayer();
+    GameSessionResponse gameSessionResponse =
+        comm.createGameSession("http://localhost:8888/api/gamesession", test);
+    String idURL = "http://localhost:8888/api/gamesession/" + gameSessionResponse.getId();
+    JoinGameResponse jsResponse = comm.joinGame(idURL, "TestTeam1");
+    System.out.println(gson.toJson(jsResponse));
+    JoinGameResponse jsResponse2 = comm.joinGame(idURL, "TestTeam2");
+    System.out.println(gson.toJson(jsResponse2));
+    GameState gameState =
+        comm.getCurrentGameState(
+            "http://localhost:8888/api/gamesession/" + gameSessionResponse.getId());
+    System.out.println(gson.toJson(gameState));
+    System.out.println(gameState.getCurrentTeam());
+
+    if (gameState.getCurrentTeam() == 1) {
+      System.out.println("USING TEAM 1");
+      comm.giveUp(idURL, jsResponse.getTeamId(), jsResponse.getTeamSecret());
+    }
+    if (gameState.getCurrentTeam() == 0) {
+      System.out.println("USING TEAM 0");
+      comm.giveUp(idURL, jsResponse2.getTeamId(), jsResponse2.getTeamSecret());
+    }
   }
 }
