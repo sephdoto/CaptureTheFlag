@@ -116,8 +116,7 @@ public class JavaClient implements GameClientInterface {
   @Override
   public void joinGame(String teamName) {
     joinGameParser(joinGameCaller(teamName));
-    getStateFromServer();
-    getSessionFromServer();
+    
   }
 
   /**
@@ -179,8 +178,6 @@ public class JavaClient implements GameClientInterface {
   @Override
   public void deleteSession() {
     comm.deleteCurrentSession(currentServer);
-    getStateFromServer();
-    getSessionFromServer();
   }
 
    /**
@@ -197,8 +194,6 @@ public class JavaClient implements GameClientInterface {
   @Override
   public void giveUp() {
     comm.giveUp(currentServer, teamID, teamSecret);
-    getStateFromServer();
-    getSessionFromServer();
   }
 
 /**
@@ -213,8 +208,6 @@ public class JavaClient implements GameClientInterface {
     this.currentServer = "http://" + IP + ":" + port + "/api/gamesession";
     this.currentServer = shortURL + "/" + gameSessionID;
     joinGame(teamName);
-    getStateFromServer();
-    getSessionFromServer();
   }
 
   // HELPER METHODS
@@ -274,15 +267,8 @@ public class JavaClient implements GameClientInterface {
   }
 
   private void joinGameParser(JoinGameResponse joinGameResponse) {
-
-    // TODO
-    // You get a confirmation of the Session ID which you joined the team with
-    // Maybe use this for a check if you joined the right session
-    joinGameResponse.getGameSessionId();
-    // END
     this.teamID = joinGameResponse.getTeamId();
     this.teamSecret = joinGameResponse.getTeamSecret();
-
     try {
       this.teamColor = joinGameResponse.getTeamColor();
     } catch (NullPointerException e) {
@@ -309,7 +295,7 @@ public class JavaClient implements GameClientInterface {
   }
 
   private GameState gameStateCaller() {
-    return comm.getCurrentGameState(currentServer + "/" + currentGameSessionID + "/");
+    return comm.getCurrentGameState(currentServer);
   }
 
   private void gameStateParser(GameState gameState) {

@@ -2,6 +2,9 @@ package org.ctf.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.ctf.client.data.dto.GameSessionRequest;
 import org.ctf.client.data.dto.GameSessionResponse;
 import org.ctf.client.data.dto.JoinGameResponse;
@@ -494,28 +497,17 @@ public class ServerCommandTests {
         """;
 
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
+    MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     CommLayer comm = new CommLayer();
-    GameSessionResponse gameSessionResponse =
-        comm.createGameSession("http://localhost:8888/api/gamesession", test);
-    String idURL = "http://localhost:8888/api/gamesession/" + gameSessionResponse.getId();
-    JoinGameResponse jsResponse = comm.joinGame(idURL, "TestTeam1");
-    System.out.println(gson.toJson(jsResponse));
-    JoinGameResponse jsResponse2 = comm.joinGame(idURL, "TestTeam2");
-    System.out.println(gson.toJson(jsResponse2));
-    GameState gameState =
-        comm.getCurrentGameState(
-            "http://localhost:8888/api/gamesession/" + gameSessionResponse.getId());
-    System.out.println(gson.toJson(gameState));
-    System.out.println(gameState.getCurrentTeam());
+    JavaClient javaClient = new JavaClient("localhost", "8888");
+    JavaClient javaClient2 = new JavaClient("localhost", "8888");
 
-    if (gameState.getCurrentTeam() == 0) {
-      System.out.println("USING TEAM 0");
-      comm.giveUp(idURL, jsResponse.getTeamId(), jsResponse.getTeamSecret());
-    }
-    if (gameState.getCurrentTeam() == 1) {
-      System.out.println("USING TEAM 1");
-      comm.giveUp(idURL, jsResponse2.getTeamId(), jsResponse2.getTeamSecret());
-    }
+    javaClient.createGame(template);
+    javaClient.joinGame("Raffay1");
+   //javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "Raffay2");
+
+    javaClient.getStateFromServer();
+    System.out.println(gson.toJson(javaClient.getGrid()));
+
   }
 }

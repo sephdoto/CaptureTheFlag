@@ -71,7 +71,6 @@ public class CommLayer implements CommLayerInterface {
    * @returns GameSessionResponse
    * @throws UnknownError (500)
    * @throws URLError (404)
-   * @throws Accepted (200)
    */
   @Override
   public GameSessionResponse createGameSession(String URL, MapTemplate map) {
@@ -128,7 +127,7 @@ public class CommLayer implements CommLayerInterface {
     } catch (URLError e) {
       throw new URLError("Check URL");
     }
-
+    JoinGameResponse joinGameResponse = gson.fromJson(postResponse.body(), JoinGameResponse.class);
     int returnedCode = postResponse.statusCode();
 
     if (returnedCode == 404) {
@@ -139,7 +138,7 @@ public class CommLayer implements CommLayerInterface {
       throw new UnknownError();
     }
 
-    return gson.fromJson(postResponse.body(), JoinGameResponse.class);
+    return joinGameResponse;
   }
 
   /**

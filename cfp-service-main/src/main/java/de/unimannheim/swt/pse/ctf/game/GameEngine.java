@@ -204,9 +204,6 @@ public class GameEngine implements Game {
    */
   @Override
   public GameState getCurrentGameState() {
-    // TODO Maybe use this as a updater method
-    gameOverCheck();
-    turnTimeLimitedChecks();
     return gameState;
   }
 
