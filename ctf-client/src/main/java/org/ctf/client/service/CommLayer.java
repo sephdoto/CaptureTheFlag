@@ -36,7 +36,7 @@ import org.ctf.shared.state.data.map.MapTemplate;
  * the REST Api Server. Translates returned HTTP codes into exceptions.
  *
  * @author rsyed
- * @return Layer Object
+ * @return Layer Object which performs the role of a Service
  */
 public class CommLayer implements CommLayerInterface {
 
@@ -48,8 +48,7 @@ public class CommLayer implements CommLayerInterface {
   private HttpResponse<String> ret;
 
   /**
-   * Creates a Layer Object which can then be used to communicate with the Server The URL and the
-   * port the layer binds to are given on object creation. Example URL http://localhost:8080
+   * Creates a Layer Object which can then be used to communicate with the Server 
    */
   public CommLayer() {
     gson = new Gson();
@@ -66,7 +65,7 @@ public class CommLayer implements CommLayerInterface {
    * Requests the server specified in the URL parameter to create a GameSession using the map in the
    * MapTemplate parameter. Returns the server reponse as well as HTTP status codes thrown as
    * exceptions
-   *
+   * Example URL "http://localhost:9999/api/gamesession"
    * @param URL
    * @param map
    * @returns GameSessionResponse
@@ -100,7 +99,7 @@ public class CommLayer implements CommLayerInterface {
       throw new UnknownError();
     } else if (returnedCode == 404) {
       throw new URLError("URL Error");
-    }
+    } 
     return gameSessionResponse;
   }
 
@@ -108,7 +107,7 @@ public class CommLayer implements CommLayerInterface {
    * Makes a request to the server, specified in the URL, to join the game using the specified
    * teamName. Returns the server reponse as well as HTTP status codes thrown as exceptions
    *
-   * @param URL
+   * @param URL "http://localhost:9999/api/gamesession/{sessionID}"
    * @param teamName
    * @return JoinGameResponse
    * @throws SessionNotFound (404)
@@ -130,8 +129,6 @@ public class CommLayer implements CommLayerInterface {
       throw new URLError("Check URL");
     }
 
-    JoinGameResponse joinGameResponse = gson.fromJson(postResponse.body(), JoinGameResponse.class);
-
     int returnedCode = postResponse.statusCode();
 
     if (returnedCode == 404) {
@@ -142,14 +139,14 @@ public class CommLayer implements CommLayerInterface {
       throw new UnknownError();
     }
 
-    return joinGameResponse;
+    return gson.fromJson(postResponse.body(), JoinGameResponse.class);
   }
 
   /**
    * Method makes a move request to the API using the input parameters. Returns the server reponse
    * as well as HTTP status codes thrown as exceptions
    *
-   * @param URL
+   * @param URL "http://localhost:9999/api/gamesession/{sessionID}"
    * @param teamID
    * @param teamSecret
    * @param move
@@ -267,6 +264,7 @@ public class CommLayer implements CommLayerInterface {
     } else if (returnedCode == 500) {
       throw new UnknownError();
     }
+
     return gameSessionResponse;
   }
 
@@ -294,6 +292,8 @@ public class CommLayer implements CommLayerInterface {
       throw new SessionNotFound();
     } else if (returnedCode == 500) {
       throw new UnknownError();
+    } else if (returnedCode == 200) {
+      throw new Accepted();
     }
   }
 
@@ -323,9 +323,7 @@ public class CommLayer implements CommLayerInterface {
       throw new SessionNotFound();
     } else if (returnedCode == 500) {
       throw new UnknownError();
-    } else if (returnedCode == 200) {
-      throw new Accepted();
-    }
+    } 
     return returnedState;
   }
 

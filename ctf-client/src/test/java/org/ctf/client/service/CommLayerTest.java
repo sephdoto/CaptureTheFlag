@@ -30,7 +30,7 @@ public class CommLayerTest {
   }
 
   @Test
-  void testCreateGameSession() throws IOException {
+  void testCreateGameSession() {
     MapTemplate template = createGameTemplate();
     GameSessionResponse gameSessionResponse =
         comm.createGameSession("http://localhost:9999/api/gamesession", template);
@@ -45,31 +45,17 @@ public class CommLayerTest {
     String idURL = "http://localhost:9999/api/gamesession/" + gameSessionResponse.getId();
     JoinGameResponse jsResponse = comm.joinGame(idURL, "TestTeam1");
     JoinGameResponse jsResponse2 = comm.joinGame(idURL, "TestTeam2");
-    Throwable throwable =
-        assertThrows(
-            Accepted.class,
-            () -> {
-              comm.getCurrentGameState(idURL);
-            });
-    assertEquals(Accepted.class, throwable.getClass());
+    assertNotNull(comm.getCurrentGameState(idURL));
   }
 
   @Test
   void testGetCurrentSessionState() {
-
     MapTemplate template = createGameTemplate();
     GameSessionResponse gameSessionResponse =
         comm.createGameSession("http://localhost:9999/api/gamesession", template);
     String idURL = "http://localhost:9999/api/gamesession/" + gameSessionResponse.getId();
-    JoinGameResponse jsResponse = comm.joinGame(idURL, "TestTeam1");
-    JoinGameResponse jsResponse2 = comm.joinGame(idURL, "TestTeam2");
-    Throwable throwable =
-        assertThrows(
-            Accepted.class,
-            () -> {
-              comm.getCurrentGameState(idURL);
-            });
-    assertEquals(Accepted.class, throwable.getClass());
+    
+    assertNotNull(comm.getCurrentSessionState(idURL));
   }
 
   @Test
@@ -155,8 +141,13 @@ public class CommLayerTest {
     MapTemplate template = createGameTemplate();
     GameSessionResponse gameSessionResponse =
         comm.createGameSession("http://localhost:9999/api/gamesession", template);
-    comm.deleteCurrentSession(
-        "http://localhost:9999/api/gamesession/" + gameSessionResponse.getId());
+          Throwable throwable2 =
+        assertThrows(
+            Accepted.class,
+            () -> {
+              comm.deleteCurrentSession("http://localhost:9999/api/gamesession/" + gameSessionResponse.getId());
+            });
+    assertEquals(Accepted.class, throwable2.getClass());
   }
 
   private MapTemplate createGameTemplate() {
