@@ -2,7 +2,7 @@ package org.ctf.ai.mcts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import org.ctf.ai.AI_Tools;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
@@ -11,7 +11,7 @@ import org.ctf.shared.state.Team;
 public class TreeNode implements Comparable<TreeNode> {
   TreeNode parent;
   TreeNode[] children;
-  HashMap<String, ArrayList<int[]>> possibleMoves;
+  IdentityHashMap<Piece, ArrayList<int[]>> possibleMoves;
   GameState gameState;
   int[] wins;
 
@@ -23,13 +23,13 @@ public class TreeNode implements Comparable<TreeNode> {
   }
   
   public void initPossibleMovesAndChildren() {
-    this.possibleMoves = new HashMap<String, ArrayList<int[]>>();
+    this.possibleMoves = new IdentityHashMap<Piece, ArrayList<int[]>>();
     int children = 0;
     for(Piece p : gameState.getTeams()[gameState.getCurrentTeam()].getPieces()) {
-      ArrayList<int[]> movesPieceP = AI_Tools.getPossibleMoves(gameState, p.getId(), new ArrayList<int[]>());
+      ArrayList<int[]> movesPieceP = AI_Tools.getPossibleMoves(gameState, p, new ArrayList<int[]>());
       if(movesPieceP.size() > 0) {
-        possibleMoves.put(p.getId(), movesPieceP);
-        children += possibleMoves.get(p.getId()).size();
+        possibleMoves.put(p, movesPieceP);
+        children += possibleMoves.get(p).size();
       }
     }
 
@@ -93,7 +93,7 @@ public class TreeNode implements Comparable<TreeNode> {
          pieces[j].setPosition(new int[] {gameState.getTeams()[i].getPieces()[j].getPosition()[0],gameState.getTeams()[i].getPieces()[j].getPosition()[1]});
        }
        teams[i].setPieces(pieces);
-     }    	  
+     }        
      newState.setTeams(teams);
      String[][] newGrid = new String[gameState.getGrid().length][gameState.getGrid()[0].length];
      for(int i=0; i<gameState.getGrid().length; i++)

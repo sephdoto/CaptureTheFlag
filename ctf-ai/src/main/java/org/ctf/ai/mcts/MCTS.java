@@ -149,8 +149,7 @@ public class MCTS {
     int[] winners = new int[this.teams];
     int count = AI_Constants.MAX_STEPS;
     if(isTerminal >= 0) {
-//      winners[isTerminal] += count;
-      winners[isTerminal] += 1;
+      winners[isTerminal] += count;
       return winners;
     }
 
@@ -259,7 +258,7 @@ public class MCTS {
    * 
    * @param a node to check if it is terminal
    * @return -1 if the game is not in a terminal state
-   * 		   0 - Integer.MAX_VALUE winner team id
+   *           0 - Integer.MAX_VALUE winner team id
    */
   int isTerminal(TreeNode node) {
     int teamsLeft = 0;
@@ -359,18 +358,18 @@ public class MCTS {
 
   @SuppressWarnings("unlikely-arg-type")
   Move getAndRemoveMoveHeuristic(TreeNode parent) {
-    for(String key : parent.possibleMoves.keySet()) {
-      Piece picked = Arrays.asList(parent.gameState.getTeams()[parent.gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(key)).findFirst().get();
-      for(int i=0; i<parent.possibleMoves.get(key).size(); i++) {
-        int[] pos = parent.possibleMoves.get(key).get(i);
+    for(Piece piece : parent.possibleMoves.keySet()) {
+//      Piece picked = Arrays.asList(parent.gameState.getTeams()[parent.gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(key)).findFirst().get();
+      for(int i=0; i<parent.possibleMoves.get(piece).size(); i++) {
+        int[] pos = parent.possibleMoves.get(piece).get(i);
         if(parent.gameState.getGrid()[pos[0]][pos[1]].contains("b:") && 
             !parent.gameState.getGrid()[pos[0]][pos[1]].split("b:")[1].equals(parent.gameState.getCurrentTeam())) {
-          return createMoveDeleteIndex(parent, key, i);
+          return createMoveDeleteIndex(parent, piece, i);
         }
         if(parent.gameState.getGrid()[pos[0]][pos[1]].contains("p:")&& 
             !parent.gameState.getGrid()[pos[0]][pos[1]].split("p:")[1].split("_")[0].equals(parent.gameState.getCurrentTeam())) {
-          if(AI_Tools.validPos(pos, picked, parent.gameState))
-            return createMoveDeleteIndex(parent, key, i);
+          if(AI_Tools.validPos(pos, piece, parent.gameState))
+            return createMoveDeleteIndex(parent, piece, i);
         }
       }
     }
@@ -379,15 +378,15 @@ public class MCTS {
   }
 
   Move getAndRemoveMoveRandom(TreeNode parent){
-    String key = parent.possibleMoves.keySet().toArray()[rand.nextInt(parent.possibleMoves.keySet().size())].toString();
+    Piece key = (Piece)parent.possibleMoves.keySet().toArray()[rand.nextInt(parent.possibleMoves.keySet().size())];
     int randomMove = rand.nextInt(parent.possibleMoves.get(key).size());
 
     return createMoveDeleteIndex(parent, key, randomMove);
   }
 
-  Move createMoveDeleteIndex(TreeNode parent, String key, int index) {
+  Move createMoveDeleteIndex(TreeNode parent, Piece key, int index) {
     Move move = new Move();
-    move.setPieceId(key);
+    move.setPieceId(key.getId());
     move.setNewPosition(parent.possibleMoves.get(key).get(index));
 
     parent.possibleMoves.get(key).remove(index);

@@ -56,7 +56,7 @@ public class RandomAI extends AI_Tools {
    */
   public static Move pickMoveComplex(GameState gameState) throws NoMovesLeftException, InvalidShapeException {
     ArrayList<Piece> piecesCurrentTeam = new ArrayList<Piece>(Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()));
-    HashMap<Integer,Integer> dirMap = new HashMap<Integer,Integer>();
+    ArrayList<int[]> dirMap = new ArrayList<int[]>();
     ArrayList<int[]> shapeMoves = new ArrayList<int[]>();
     Move move = new Move();
 

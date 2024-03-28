@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.ctf.ai.AI_Tools;
+import org.ctf.shared.ai.AI_Tools;
 import org.ctf.ai.random.RandomAI;
 import org.ctf.ai.AI_Constants;
 import org.ctf.shared.state.Move;
@@ -53,7 +53,7 @@ public class MCTS_TestDouble {
     while(System.currentTimeMillis() - time < milis){
       //Schritte des UCT abarbeiten
       TreeNode selected = selectAndExpand(root, C);
-      backpropagate(selected, simulate(selected));
+      backpropagate(selected, multiSimulate(selected));
     }
 
     TreeNode bestChild = getRootBest(root);
@@ -360,18 +360,18 @@ public class MCTS_TestDouble {
 
   @SuppressWarnings("unlikely-arg-type")
   Move getAndRemoveMoveHeuristic(TreeNode parent) {
-    for(String key : parent.possibleMoves.keySet()) {
-      Piece picked = Arrays.asList(parent.gameState.getTeams()[parent.gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(key)).findFirst().get();
-      for(int i=0; i<parent.possibleMoves.get(key).size(); i++) {
-        int[] pos = parent.possibleMoves.get(key).get(i);
+    for(Piece piece : parent.possibleMoves.keySet()) {
+//      Piece picked = Arrays.asList(parent.gameState.getTeams()[parent.gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(key)).findFirst().get();
+      for(int i=0; i<parent.possibleMoves.get(piece).size(); i++) {
+        int[] pos = parent.possibleMoves.get(piece).get(i);
         if(parent.gameState.getGrid()[pos[0]][pos[1]].contains("b:") && 
             !parent.gameState.getGrid()[pos[0]][pos[1]].split("b:")[1].equals(parent.gameState.getCurrentTeam())) {
-          return createMoveDeleteIndex(parent, key, i);
+          return createMoveDeleteIndex(parent, piece, i);
         }
         if(parent.gameState.getGrid()[pos[0]][pos[1]].contains("p:")&& 
             !parent.gameState.getGrid()[pos[0]][pos[1]].split("p:")[1].split("_")[0].equals(parent.gameState.getCurrentTeam())) {
-          if(AI_Tools.validPos(pos, picked, parent.gameState))
-            return createMoveDeleteIndex(parent, key, i);
+          if(AI_Tools.validPos(pos, piece, parent.gameState))
+            return createMoveDeleteIndex(parent, piece, i);
         }
       }
     }
@@ -380,15 +380,15 @@ public class MCTS_TestDouble {
   }
 
   Move getAndRemoveMoveRandom(TreeNode parent){
-    String key = parent.possibleMoves.keySet().toArray()[rand.nextInt(parent.possibleMoves.keySet().size())].toString();
+    Piece key = (Piece)parent.possibleMoves.keySet().toArray()[rand.nextInt(parent.possibleMoves.keySet().size())];
     int randomMove = rand.nextInt(parent.possibleMoves.get(key).size());
 
     return createMoveDeleteIndex(parent, key, randomMove);
   }
 
-  Move createMoveDeleteIndex(TreeNode parent, String key, int index) {
+  Move createMoveDeleteIndex(TreeNode parent, Piece key, int index) {
     Move move = new Move();
-    move.setPieceId(key);
+    move.setPieceId(key.getId());
     move.setNewPosition(parent.possibleMoves.get(key).get(index));
 
     parent.possibleMoves.get(key).remove(index);

@@ -73,23 +73,23 @@ public class AI_ToolsTest {
 
 	@Test
 	void testCreateDirectionMap() {
-		HashMap<Integer, Integer> dirMap = new HashMap<Integer, Integer>();
-		Piece picked = gameState.getTeams()[1].getPieces()[1];					//rook on 7,3
-		dirMap.put(2, 2);														//the rook can move 2 fields up
-		dirMap.put(3, 2);														//the rook can move 2 fields down
-		assertEquals(dirMap, AI_Tools.createDirectionMap(gameState, picked, new HashMap<Integer,Integer>()));
+		ArrayList<int[]> dirMap = new ArrayList<int[]>();
+		Piece picked = gameState.getTeams()[1].getPieces()[1];					            //rook on 7,3
+		dirMap.add(new int[] {2, 2});														//the rook can move 2 fields up
+		dirMap.add(new int[] {3, 2});														//the rook can move 2 fields down
+		assertArrayEquals(dirMap.toArray(), AI_Tools.createDirectionMap(gameState, picked, new ArrayList<int[]>()).toArray());
 		
-		gameState.getGrid()[6][4] = "b";										//completely enclosing the rook on 7,4
-		picked = gameState.getTeams()[1].getPieces()[2];						//rook on 7,4
-		assertEquals(new HashMap<Integer, Integer>(), AI_Tools.createDirectionMap(gameState, picked, new HashMap<Integer,Integer>()));
+		gameState.getGrid()[6][4] = "b";										            //completely enclosing the rook on 7,4
+		picked = gameState.getTeams()[1].getPieces()[2];						            //rook on 7,4
+		assertEquals(new ArrayList<int[]>(), AI_Tools.createDirectionMap(gameState, picked, new ArrayList<int[]>()));
 	}
 	
 	@Test
 	void testGetDirectionMove() {
 		Piece rook = gameState.getTeams()[1].getPieces()[1];				//rook on 7,3
-		HashMap<Integer, Integer> dirMap = new HashMap<Integer, Integer>();
-		dirMap.put(2,5);													//rook can only move to one field ()
-		int[] onlyPosition = new int[]{6,3};								//the only possible Position is 6,3
+		ArrayList<int[]> dirMap = new ArrayList<int[]>();
+		dirMap.add(new int[] {2,5});										//rook can only move to one field ()
+		int[] onlyPosition = new int[] {6,3};								//the only possible Position is 6,3
 		int[] newPosition = RandomAI.getDirectionMove(dirMap, rook, gameState).getNewPosition();
 
 		assertArrayEquals(onlyPosition, newPosition);
@@ -140,6 +140,12 @@ public class AI_ToolsTest {
 		assertFalse(RandomAI.sightLine(gameState, new int[]{5,5}, 0, 100)); //newPos is not on the grid, outOfBounds
 		assertFalse(RandomAI.sightLine(gameState, new int[]{1,1}, 4, 6));   //there is an enemy Piece blocking the line of sight
 	}
+	
+	@Test
+	void testOtherTeamsBase() {
+	  assertTrue(AI_Tools.otherTeamsBase(gameState.getGrid(), new int[] {0,0}, gameState.getTeams()[1].getPieces()[0]));
+      assertFalse(AI_Tools.otherTeamsBase(gameState.getGrid(), new int[] {0,0}, gameState.getTeams()[0].getPieces()[0]));
+	}
 
 	@Test
 	void testUpdatePos() {
@@ -168,8 +174,12 @@ public class AI_ToolsTest {
 		assertFalse(RandomAI.validPos(new int[] {2,2}, weakPiece, gameState));									//weak Pawn cannot capture a stronger rook from team0
 		assertFalse(RandomAI.validPos(new int[] {7,2}, gameState.getTeams()[0].getPieces()[0], gameState));		//rook team1 cannot capture a team1 piece
 		assertFalse(RandomAI.validPos(new int[] {5,3}, gameState.getTeams()[0].getPieces()[0], gameState));		//5,3 is occupied by a block
-		assertFalse(RandomAI.validPos(new int[] {9,9}, gameState.getTeams()[0].getPieces()[0], gameState));		//it is not possible to walk on the own base
-		assertTrue(RandomAI.validPos(new int[] {0,0}, gameState.getTeams()[0].getPieces()[0], gameState));		//it is possible to walk on an opponents base
+		gameState.setCurrentTeam(0);
+		assertTrue(RandomAI.validPos(new int[] {9,9}, gameState.getTeams()[0].getPieces()[0], gameState));		//it is possible to walk on an opponents base
+		gameState.setCurrentTeam(1);
+		assertTrue(RandomAI.validPos(new int[] {0,0}, gameState.getTeams()[1].getPieces()[0], gameState));		//it is possible to walk on an opponents base
+        gameState.setCurrentTeam(0);
+        assertFalse(RandomAI.validPos(new int[] {0,0}, gameState.getTeams()[0].getPieces()[0], gameState));      //it is not possible to walk on the own base
 	}
 
 	@Test
