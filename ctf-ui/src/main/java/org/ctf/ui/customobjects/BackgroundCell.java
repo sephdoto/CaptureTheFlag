@@ -1,5 +1,8 @@
 package org.ctf.ui.customobjects;
 
+import org.ctf.ui.Game;
+import org.ctf.ui.TestGameState;
+
 import javafx.beans.binding.Bindings;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -26,6 +29,7 @@ public class BackgroundCell extends Region {
 	    String name;
 	    public Circle rc;
 	    public boolean active;
+	    public Game game;
 	    
 	    public BackgroundCell(int x, int y){
 	    	
@@ -45,6 +49,8 @@ public class BackgroundCell extends Region {
 	    		public void handle(MouseEvent e) {
 	    			if(active) {
 	    				rc.setFill(Color.RED);
+	    				int[] xk = {x,y};
+	    				game.makeMove(xk);
 	    				
 	    			}
 	    		}

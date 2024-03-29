@@ -6,6 +6,8 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.unimannheim.swt.pse.ctf.game.state.GameState;
+import de.unimannheim.swt.pse.ctf.game.state.Team;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
@@ -103,15 +105,17 @@ public class CreateGameScreen  {
 
 	public static void initCreateGameScreen(Stage stage) {
 		s = stage;
-		maps.putMap("exmaple", exm);
-		maps.putMap("example2", exm2);
-		maps.putMap("exm3", exm3);
+		initializeMaps();
 		v = new VBox();
 		HBox headerBox = createHeaderBox();
 		center = new HBox();
 		center.setStyle("-fx-background-color:white");
 		VBox right = createRightSide();
-		gm = createInitLeftSidPane(exm);
+		GameState g1 = new GameState();
+		g1.setGrid(exm);
+		Team[] x = new Team[2];
+		g1.setTeams(x);
+		gm = createInitLeftSidPane(g1);
 		center.prefWidthProperty().bind(stage.widthProperty().multiply(0.7));
 		center.getChildren().addAll(gm, right);
 		v.getChildren().add(headerBox);
@@ -121,6 +125,25 @@ public class CreateGameScreen  {
 		stage.setMinWidth(900);
 		stage.setScene(scene);
 		stage.show();
+	}
+	
+	private static void initializeMaps() {
+		GameState g1 = new GameState();
+		g1.setGrid(exm);
+		Team[] x = new Team[2];
+		g1.setTeams(x);
+		GameState g2 = new GameState();
+		g2.setGrid(exm2);
+		Team[] y = new Team[2];
+		g2.setTeams(y);
+		GameState g3 = new GameState();
+		g3.setGrid(exm3);
+		Team[] z = new Team[2];
+		g3.setTeams(z);
+		maps.putMap("exmaple", g1);
+		maps.putMap("example2", g2);
+		maps.putMap("exm3", g3);
+		
 	}
 
 	private static VBox createRightSide() {
@@ -178,8 +201,8 @@ public class CreateGameScreen  {
 	}
 	
 	private static GamePane createLeftSidPane(String name) {
-		String[][] map = maps.getMap(name);
-		gm = new GamePane(map);
+		GameState state = maps.getMap(name);
+		gm = new GamePane(state);
 		gm.prefWidthProperty().bind(s.widthProperty().multiply(0.7));
 		gm.prefHeightProperty().bind(s.heightProperty());
 		return gm;
@@ -195,7 +218,7 @@ public class CreateGameScreen  {
 			center.getChildren().addAll(p,rightVBox);
 		});
 	}
-	private static GamePane createInitLeftSidPane(String[][] name) {
+	private static GamePane createInitLeftSidPane(GameState name) {
 		GamePane gm = new GamePane(name);
 		gm.prefWidthProperty().bind(s.widthProperty().multiply(0.7));
 		gm.prefHeightProperty().bind(s.heightProperty());

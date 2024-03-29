@@ -2,6 +2,7 @@ package org.ctf.ui;
 
 
 
+import org.ctf.ui.customobjects.BackgroundCell;
 import org.ctf.ui.customobjects.CostumFigurePain;
 
 import javafx.geometry.Insets;
@@ -32,10 +33,7 @@ public class PlayGameScreen {
 		gm = pane;
 		s = stage;
 		game = new Game(gm);
-		for(CostumFigurePain cm : gm.allFigures) {
-			cm.game = game;
-		}
-		
+		gm.setGame(game);
 		v = new VBox();
 		center = new HBox();
 		center.setStyle("-fx-background-color:white");
