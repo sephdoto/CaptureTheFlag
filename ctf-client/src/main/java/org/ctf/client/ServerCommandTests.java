@@ -25,7 +25,8 @@ public class ServerCommandTests {
     // Uncomment to do invidivual tests
     // testConnection();
     // testStart();
-    joinTest();
+     joinTest();
+   // getStateTests();
     // testConnectionTimedGameMode();
     // testMalformedConnection();
     // testConnectionTimedMoveMode();
@@ -498,50 +499,155 @@ public class ServerCommandTests {
     CommLayer comm = new CommLayer();
     JavaClient javaClient = new JavaClient("localhost", "8888");
     JavaClient javaClient2 = new JavaClient("localhost", "8888");
-    try {
-      javaClient.createGame(template);
-    } catch (Exception e) {
-      // TODO: handle exception
-    }
-
+    
+    javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
-    try {
-      javaClient.getStateFromServer();
-    } catch (Exception e) {
-      // TODO: handle exception
-    }
-    System.out.println(gson.toJson(javaClient.getGrid()));
-    Move move = new Move();
-    if (javaClient.getCurrentTeamTurn() == 1) {
-      try {
-        move.setPieceId("p:1_18");
-        move.setNewPosition(new int[] {7, 1});
-        javaClient2.makeMove(move);
-      } catch (Exception e) {
-        System.out.println("team1 made a move");
-        e.printStackTrace();
-      }
-    } else if (javaClient.getCurrentTeamTurn() == 0) {
-      try {
-        move.setPieceId("p:0_11");
-        move.setNewPosition(new int[] {3, 0});
-        javaClient.makeMove(move);
-      } catch (Exception e) {
-        System.out.println("team0 made a move");
-        e.printStackTrace();
-      }
-      try {
+        "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
         javaClient.getStateFromServer();
         javaClient2.getStateFromServer();
-      } catch (Exception e) {
-        System.out.println("both Clients updated");
-        e.printStackTrace();
-      }
-    }
+    Move move = new Move();
+    move.setPieceId("p:0_2");
+    move.setNewPosition(new int[] {0, 1});
+    //javaClient2.makeMove(move);
+      /*       move.setPieceId("p:1_2");
+        move.setNewPosition(new int[] {9, 8});
+        javaClient.makeMove(move); */
+    
+
+      
+        
+ 
+    javaClient.getStateFromServer();
+    javaClient2.getStateFromServer();
     System.out.println(gson.toJson(javaClient.getGrid()));
     System.out.println(gson.toJson(javaClient.getLastMove()));
     System.out.println(gson.toJson(javaClient2.getLastMove()));
+ /*    for(int i = 0; i < 100; i++){
+      System.out.println( (int) (Math.random() * 2) );
+    } */
+  }
+
+  public static void getStateTests() {
+
+    String jsonPayload =
+        """
+          {
+            "gridSize": [10, 10],
+            "teams": 2,
+            "flags": 1,
+            "blocks": 0,
+            "pieces": [
+              {
+                "type": "Pawn",
+                "attackPower": 1,
+                "count": 10,
+                "movement": {
+                  "directions": {
+                    "left": 0,
+                    "right": 0,
+                    "up": 1,
+                    "down": 0,
+                    "upLeft": 1,
+                    "upRight": 1,
+                    "downLeft": 0,
+                    "downRight": 0
+                  }
+                }
+              },
+              {
+                "type": "Rook",
+                "attackPower": 5,
+                "count": 2,
+                "movement": {
+                  "directions": {
+                    "left": 2,
+                    "right": 2,
+                    "up": 2,
+                    "down": 2,
+                    "upLeft": 0,
+                    "upRight": 0,
+                    "downLeft": 0,
+                    "downRight": 0
+                  }
+                }
+              },
+              {
+                "type": "Knight",
+                "attackPower": 3,
+                "count": 2,
+                "movement": {
+                  "shape": {
+                    "type": "lshape"
+                  }
+                }
+              },
+              {
+                "type": "Bishop",
+                "attackPower": 3,
+                "count": 2,
+                "movement": {
+                  "directions": {
+                    "left": 0,
+                    "right": 0,
+                    "up": 0,
+                    "down": 0,
+                    "upLeft": 2,
+                    "upRight": 2,
+                    "downLeft": 2,
+                    "downRight": 2
+                  }
+                }
+              },
+              {
+                "type": "Queen",
+                "attackPower": 5,
+                "count": 1,
+                "movement": {
+                  "directions": {
+                    "left": 2,
+                    "right": 2,
+                    "up": 2,
+                    "down": 2,
+                    "upLeft": 2,
+                    "upRight": 2,
+                    "downLeft": 2,
+                    "downRight": 2
+                  }
+                }
+              },
+              {
+                "type": "King",
+                "attackPower": 1,
+                "count": 1,
+                "movement": {
+                  "directions": {
+                    "left": 1,
+                    "right": 1,
+                    "up": 1,
+                    "down": 1,
+                    "upLeft": 1,
+                    "upRight": 1,
+                    "downLeft": 1,
+                    "downRight": 1
+                  }
+                }
+              }
+            ],
+            "placement": "symmetrical",
+            "totalTimeLimitInSeconds": -1,
+            "moveTimeLimitInSeconds": -1
+          }
+        """;
+
+    Gson gson = new Gson();
+    MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
+    JavaClient javaClient = new JavaClient("localhost", "8888");
+    JavaClient javaClient2 = new JavaClient("localhost", "8888");
+    javaClient.createGame(template);
+    javaClient.joinGame("Se[j1]");
+    javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "nasd");
+    javaClient.getStateFromServer();
   }
 }
+

@@ -71,11 +71,9 @@ public class CommLayer implements CommLayerInterface {
    * @throws URLError (404)
    */
   @Override
-  public GameSessionResponse createGameSession(String URL, MapTemplate map) {
+  public GameSessionResponse createGameSession(String URL,  GameSessionRequest gsr) {
     final HttpRequest request;
     HttpResponse<String> response;
-    GameSessionRequest gsr = new GameSessionRequest();
-    gsr.setTemplate(map);
     try {
       request =
           HttpRequest.newBuilder()
@@ -158,14 +156,10 @@ public class CommLayer implements CommLayerInterface {
    * @throws URLError (404)
    */
   @Override
-  public void makeMove(String URL, String teamID, String teamSecret, Move move) {
+  public void makeMove(String URL, MoveRequest moveReq) {
     final HttpRequest request;
     HttpResponse<String> response;
-    MoveRequest moveReq = new MoveRequest();
-    moveReq.setTeamId(teamID);
-    moveReq.setTeamSecret(teamSecret);
-    moveReq.setPieceId(move.getPieceId());
-    moveReq.setNewPosition(move.getNewPosition());
+  
     try {
       request =
           HttpRequest.newBuilder()

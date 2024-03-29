@@ -482,26 +482,28 @@ public class GameEngine implements Game {
    * @author rsyed
    */
   private void startGame() {
-    gameState.setCurrentTeam(
-        (int) (Math.random() * currentTemplate.getTeams())); // Sets the starting team randomly
-    this.startedDate =
-        Date.from(
-            LocalDateTime.now()
-                .atZone(ZoneId.systemDefault())
-                .toInstant()); // Sets the TimeStamp for when the game started
-    if (this.timeLimitedGame) {
-      this.gameEndsAt =
-          LocalDateTime.now()
-              .plusSeconds(
-                  currentTemplate
-                      .getTotalTimeLimitInSeconds()); // Sets the TimeStamp for when the game should
-      // end
-    }
-    if (this.moveTimeLimitedGame) {
-      this.lastMoveTime = LocalDateTime.now();
-      this.nextMoveTime = lastMoveTime.plusSeconds(currentTemplate.getMoveTimeLimitInSeconds());
-    }
-  }
+    gameState.setCurrentTeam(0);
+//TODO Fix the problem with randomly selecting a starting team
+    //    gameState.setCurrentTeam(
+    //        (int) (Math.random() * currentTemplate.getTeams())); // Sets the starting team randomly
+        this.startedDate =
+            Date.from(
+                LocalDateTime.now()
+                    .atZone(ZoneId.systemDefault())
+                    .toInstant()); // Sets the TimeStamp for when the game started
+        if (this.timeLimitedGame) {
+          this.gameEndsAt =
+              LocalDateTime.now()
+                  .plusSeconds(
+                      currentTemplate
+                          .getTotalTimeLimitInSeconds()); // Sets the TimeStamp for when the game should
+          // end
+        }
+        if (this.moveTimeLimitedGame) {
+          this.lastMoveTime = LocalDateTime.now();
+          this.nextMoveTime = lastMoveTime.plusSeconds(currentTemplate.getMoveTimeLimitInSeconds());
+        }
+      }
 
   /**
    * Helper method to add a team to the gameState. It takes in a String which it uses to create a
