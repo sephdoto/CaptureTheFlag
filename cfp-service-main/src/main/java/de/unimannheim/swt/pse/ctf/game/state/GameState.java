@@ -68,7 +68,6 @@ public class GameState {
     }
 
     public void setLastMove(Move lastMove) {
-        System.out.println("lastMOve Called");
         this.lastMove = lastMove;
     }
 }
