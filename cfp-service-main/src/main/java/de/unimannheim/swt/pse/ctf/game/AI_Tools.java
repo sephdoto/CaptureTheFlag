@@ -129,21 +129,21 @@ class AI_Tools {
   }
 
   /**
-   * Creates a key-value map where a direction is the key and a value is the pieces maximum reach
-   * into that direction. This map only applies for the Piece picked. The reach value is directly
+   * Creates an ArrayList containing all a pieces valid directions and its maximum reach into that direction in int[direction, reach] pairs.
+   * This map only applies for the Piece picked. The reach value is directly
    * from MapTemplate, this method only checks if the positions adjacent to a piece are occupied.
    *
    * @param gameState
    * @param picked
-   * @return HashMap<Integer,Integer>
+   * @return ArrayList<int[direction,reach]>
    */
-  public static HashMap<Integer, Integer> createDirectionMap(GameState gameState, Piece picked) {
-    HashMap<Integer, Integer> dirMap = new HashMap<Integer, Integer>();
+  public static ArrayList<int[]> createDirectionMap(GameState gameState, Piece picked) {
+    ArrayList<int[]> dirMap = new ArrayList<int[]>();
     for (int i = 0; i < 8; i++) {
       int reach = getReach(picked.getDescription().getMovement().getDirections(), i);
       if (reach > 0) {
         if (validDirection(gameState, picked, i)) {
-          dirMap.put(i, reach);
+          dirMap.add(new int[] {i, reach});
         } else {
           continue;
         }
@@ -208,12 +208,11 @@ class AI_Tools {
    * @return false if any obstacle is in between or the target position is not on the grid
    */
   public static boolean sightLine(GameState gameState, int[] newPos, int direction, int reach) {
-    String[][] grid = gameState.getGrid();
     --reach;
     for (; reach > 0; reach--) {
       newPos = updatePos(newPos, direction, -1);
       try {
-        if (grid[newPos[0]][newPos[1]].equals("")) {
+        if (gameState.getGrid()[newPos[0]][newPos[1]].equals("")) {
           continue;
         } else {
           return false;
@@ -330,8 +329,7 @@ class AI_Tools {
    * @return true if the position is occupied by a Piece of the same Team
    */
   public static boolean occupiedBySameTeam(GameState gameState, int[] pos) {
-    return gameState.getCurrentTeam()
-        == Integer.parseInt(gameState.getGrid()[pos[0]][pos[1]].split(":")[1].split("_")[0]);
+    return gameState.getCurrentTeam() == getOccupantTeam(gameState.getGrid(), pos);
   }
 
   /**
@@ -345,10 +343,9 @@ class AI_Tools {
    */
   public static boolean occupiedByWeakerOpponent(GameState gameState, int[] pos, Piece picked) {
     for (Piece p :
-        gameState
-            .getTeams()[
-            Integer.parseInt(gameState.getGrid()[pos[0]][pos[1]].split(":")[1].split("_")[0])]
-            .getPieces()) {
+      gameState
+      .getTeams()[getOccupantTeam(gameState.getGrid(), pos)]
+          .getPieces()) {
       if (p.getId().equals(gameState.getGrid()[pos[0]][pos[1]])) {
         if (p.getDescription().getAttackPower() <= picked.getDescription().getAttackPower()) {
           return true;
@@ -370,12 +367,24 @@ class AI_Tools {
    */
   public static boolean otherTeamsBase(String[][] grid, int[] pos, Piece picked) {
     if (grid[pos[0]][pos[1]].contains("b:")) {
-      if (!grid[pos[0]][pos[1]].split("b:")[1].equals(picked.getId())) {
+      if(Integer.parseInt(picked.getTeamId()) != getOccupantTeam(grid, pos))
         return true;
-      }
     }
     return false;
   }
+  
+  /**
+   * This method returns an occupants (piece/base) team.
+   * It splits it Id and parses the enclosed TeamId to Integer.
+   * @param gameState
+   * @param pos
+   * @return
+   */
+  public static int getOccupantTeam(String[][] grid, int[] pos) {
+    StringBuilder sb = new StringBuilder().append(grid[pos[0]][pos[1]]);
+    int indexUnderscore = sb.indexOf("_");
+    return Integer.parseInt(sb.substring(sb.indexOf(":")+1, indexUnderscore == -1 ? sb.length() : indexUnderscore));
+  } 
 
   /**
    * Returns a pieces maximum reach into a certain direction. Assumes the direction is valid,

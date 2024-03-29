@@ -111,7 +111,7 @@ public class TestValues {
 		lastMove.setPieceId(null);
 
 		GameState testState = new GameState();
-		testState.setCurrentTeam(1);
+		testState.setCurrentTeam(0);
 		String[][] example = new String[][] {
 			{"b:0","","","","","","","","",""},
 			{"","","","",pieces1[0].getId(),pieces1[1].getId(),"","","",""},

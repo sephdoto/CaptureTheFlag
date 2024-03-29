@@ -348,7 +348,7 @@ public class GameEngine implements Game {
    */
   private boolean isTurn(Move move) {
     int moveTeamIdentifier = Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0]);
-    return (moveTeamIdentifier == gameState.getCurrentTeam() - 1);
+    return (moveTeamIdentifier == gameState.getCurrentTeam());
   }
 
   /**

@@ -125,6 +125,8 @@ class GameEngineTest {
    */
   @Test
   void testIsValidMove() {
+    gameEngine = new GameEngine(EngineTools.toNextTeam(TestValues.getTestState()), TestValues.getTestTemplate(), false, true, new Date(System.currentTimeMillis() + 10000000));
+  
     Piece rook = gameEngine.getCurrentGameState().getTeams()[1].getPieces()[1];			//rook on 7,3
     Piece rook2 = gameEngine.getCurrentGameState().getTeams()[1].getPieces()[3];		//rook on 7,5
     Move move1 = new Move();
@@ -174,9 +176,11 @@ class GameEngineTest {
     assertFalse(gameEngine.isGameOver());                                        //the game is still going
     
     gameEngine.makeMove(capture);                                               //move locked in!
-
+    
     Piece proudAttacker = gameEngine.getCurrentGameState().getTeams()[0].getPieces()[4];
-    assertArrayEquals(new int[] {3,5}, proudAttacker.getPosition());            //our attacker got respawned, due to pseudo random he will always be on 3,5 (if the grid stays the same)
-    assertTrue(gameEngine.isGameOver());                                        //after the last flag got captured the game is over.   
+    assertArrayEquals(new int[] {3,4}, proudAttacker.getPosition());            //our attacker got respawned, due to pseudo random he will always be on 3,5 (if the grid stays the same)
+    assertTrue(gameEngine.isGameOver());                                        //after the last flag got captured the game is over.  
+    
+    assertEquals(capture, gameEngine.getCurrentGameState().getLastMove());
   }
 }

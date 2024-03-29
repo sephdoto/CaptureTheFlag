@@ -95,23 +95,24 @@ public class EngineTools extends AI_Tools {
             .findFirst()
             .get();
     ArrayList<int[]> possibleMoves = new ArrayList<int[]>();
-
+    ArrayList<int[]> dirMap = new ArrayList<int[]>();
     if (piece.getDescription().getMovement().getDirections() == null) {
       try {
-        possibleMoves = getShapeMoves(gameState, piece);
+        getShapeMoves(gameState, piece);
       } catch (InvalidShapeException e) {
         e.printStackTrace();
       }
 
     } else {
-      HashMap<Integer, Integer> dirMap = AI_Tools.createDirectionMap(gameState, piece);
-      for (Integer direction : dirMap.keySet()) {
-        for (int reach = dirMap.get(direction); reach > 0; reach--) {
+      dirMap = AI_Tools.createDirectionMap(gameState, piece);
+      for (int[] entry : dirMap) {
+        for (int reach = entry[1]; reach > 0; reach--) {
           Move move = new Move();
           try {
-          move = AI_Tools.checkMoveValidity(gameState, piece, direction, reach);
+            move = AI_Tools.checkMoveValidity(gameState, piece, entry[0], reach);
           } catch(Exception e) {
             System.out.println(2);
+            move = AI_Tools.checkMoveValidity(gameState, piece, entry[0], reach);
           }
           if (move != null) possibleMoves.add(move.getNewPosition());
         }
