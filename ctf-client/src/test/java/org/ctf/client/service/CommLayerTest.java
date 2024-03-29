@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
+import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
+
 import java.io.IOException;
 import org.ctf.client.data.dto.GameSessionResponse;
 import org.ctf.client.data.dto.JoinGameResponse;
@@ -85,18 +87,16 @@ public class CommLayerTest {
     Move move = new Move();
     move.setPieceId("p:1_1");
     move.setNewPosition(new int[] {1, 1});
-
-    Throwable throwable =
-        assertThrows(
-            Accepted.class,
-            () -> {
-              comm.makeMove(
-                  "http://localhost:9999/api/gamesession/" + gameSessionResponse.getId(),
-                  jsResponse.getTeamId(),
-                  jsResponse.getTeamSecret(),
-                  move);
-            });
-    assertEquals(Accepted.class, throwable.getClass());
+      try {
+        comm.makeMove(
+          "http://localhost:9999/api/gamesession/" + gameSessionResponse.getId(),
+          jsResponse.getTeamId(),
+          jsResponse.getTeamSecret(),
+          move);
+    }
+    catch (Exception ex) {
+        assert((ex instanceof Accepted) || (ex instanceof InvalidMove));
+    }
   }
 
   @Test

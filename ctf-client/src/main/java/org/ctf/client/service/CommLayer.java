@@ -262,7 +262,7 @@ public class CommLayer implements CommLayerInterface {
       throw new SessionNotFound();
     } else if (returnedCode == 500) {
       throw new UnknownError();
-    }
+    } 
 
     return gameSessionResponse;
   }

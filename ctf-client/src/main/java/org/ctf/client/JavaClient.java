@@ -133,8 +133,8 @@ public class JavaClient implements GameClientInterface {
   @Override
   public void makeMove(Move move) {
     makeMoverCaller(currentServer, teamID, teamSecret, move);
-    getStateFromServer();
-    getSessionFromServer();
+    /* getStateFromServer();
+    getSessionFromServer(); */
   }
 
    /**
@@ -148,7 +148,7 @@ public class JavaClient implements GameClientInterface {
    */
   @Override
   public void getStateFromServer() {
-    gameStateParser(gameStateCaller());
+    gameStateHelper();
   }
 
   /**
@@ -248,6 +248,7 @@ public class JavaClient implements GameClientInterface {
     } catch (NullPointerException e) {
       System.out.println("There are no winners");
     }
+    throw new Accepted();
   }
 
   private JoinGameResponse joinGameCaller(String teamName) {
@@ -280,25 +281,24 @@ public class JavaClient implements GameClientInterface {
     try {
       comm.makeMove(currentServer, teamID, teamSecret, move);
     } catch (Accepted e) {
-      System.out.println("We Gucci");
+      throw new Accepted();
     } catch (SessionNotFound e) {
-      System.out.println("SessionID is wrong / Server is not there");
+      throw new SessionNotFound();
     } catch (ForbiddenMove e) {
-      System.out.println("Not turn/secret is borked");
+      throw new ForbiddenMove();
     } catch (InvalidMove e) {
-      System.out.println("Canne make this move mate");
+      throw new InvalidMove();
     } catch (GameOver e) {
-      System.out.println("Games Ova");
+      throw new GameOver();
     } catch (UnknownError e) {
-      System.out.println("Something wong");
+      throw new UnknownError();
     }
   }
 
-  private GameState gameStateCaller() {
-    return comm.getCurrentGameState(currentServer);
-  }
+  private void gameStateHelper() {
+    GameState gameState = new GameState();
+    gameState = comm.getCurrentGameState(currentServer);
 
-  private void gameStateParser(GameState gameState) {
     this.grid = gameState.getGrid();
     this.currentTeamTurn = gameState.getCurrentTeam();
     this.lastMove = gameState.getLastMove();
@@ -376,9 +376,5 @@ public class JavaClient implements GameClientInterface {
 
   public boolean isGameOver() {
     return gameOver;
-  }
-
-  public String[] getWinner() {
-    return winners;
   }
 }

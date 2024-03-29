@@ -7,9 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.ctf.client.data.dto.GameSessionRequest;
 import org.ctf.client.data.dto.GameSessionResponse;
-import org.ctf.client.data.dto.JoinGameResponse;
 import org.ctf.client.service.CommLayer;
-import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.map.MapTemplate;
 
 /** Tests for the layer and the responses it gives out. */
@@ -499,15 +498,35 @@ public class ServerCommandTests {
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     CommLayer comm = new CommLayer();
-    JavaClient javaClient = new JavaClient("localhost", "8888");
-    JavaClient javaClient2 = new JavaClient("localhost", "8888");
-
+   JavaClient  javaClient = new JavaClient("localhost", "8888");
+   JavaClient  javaClient2 = new JavaClient("localhost", "8888");
+   try {
     javaClient.createGame(template);
-    javaClient.joinGame("Raffay1");
-   //javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "Raffay2");
+   } catch (Exception e) {
+    // TODO: handle exception
+   }
+  
+    javaClient.joinGame("Team1");
+    javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
+    Move move = new Move();
+    try {
+      if(javaClient.getCurrentTeamTurn() == 1){
+        javaClient.giveUp();
+      } else {
+        javaClient2.giveUp();
+      }
+    } catch (Exception e) {
+      // TODO: handle exception
+    }
+   
+    try {
+      javaClient.getSessionFromServer();
+     } catch (Exception e) {
+      // TODO: handle exception
+     }
+    
+    System.out.println(gson.toJson(javaClient.getEndDate()));
 
-    javaClient.getStateFromServer();
-    System.out.println(gson.toJson(javaClient.getGrid()));
 
   }
 }
