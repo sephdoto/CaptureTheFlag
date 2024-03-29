@@ -426,7 +426,7 @@ public class MCTS {
     gameState.getGrid()[oldPos[0]][oldPos[1]] = "";
 
     if (occupant.contains("p:")) {
-      int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
+      int occupantTeam = AI_Tools.getOccupantTeam(gameState.getGrid(), move.getNewPosition());
       gameState.getTeams()[occupantTeam].setPieces(
           Arrays.asList(gameState.getTeams()[occupantTeam].getPieces()).stream()
           .filter(p -> !p.getId().equals(occupant))
@@ -435,7 +435,7 @@ public class MCTS {
       picked.setPosition(move.getNewPosition());
     } 
     else if (occupant.contains("b:")) {
-      int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
+      int occupantTeam = AI_Tools.getOccupantTeam(gameState.getGrid(), move.getNewPosition());
       gameState.getTeams()[occupantTeam].setFlags(gameState.getTeams()[occupantTeam].getFlags() -1);
       picked.setPosition(AI_Tools.respawnPiecePosition(gameState, gameState.getTeams()[gameState.getCurrentTeam()].getBase()));
       gameState.getGrid()[picked.getPosition()[0]][picked.getPosition()[1]] = picked.getId();

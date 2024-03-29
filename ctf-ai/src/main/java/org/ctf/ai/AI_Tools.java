@@ -60,7 +60,6 @@ public class AI_Tools {
 
   /**
    * Returns a valid position on which a Piece can safely respawn.
-   * TODO test if this really works
    * @param gameState to access the grid and generate pseudo random numbers
    * @param basePos the position of the base of the Piece that gets respawned
    * @return valid position to respawn a piece on, null shouldn't be returned (compiler needs it).
@@ -538,9 +537,9 @@ public class AI_Tools {
    * @return
    */
   public static int getOccupantTeam(String[][] grid, int[] pos) {
-    StringBuilder sb = new StringBuilder().append(grid[pos[0]][pos[1]]);
-    int indexUnderscore = sb.indexOf("_");
-    return Integer.parseInt(sb.substring(sb.indexOf(":")+1, indexUnderscore == -1 ? sb.length() : indexUnderscore));
+    int start = grid[pos[0]][pos[1]].indexOf(":") + 1, indexUnderscore = grid[pos[0]][pos[1]].indexOf("_", start);
+    return Integer.parseInt(
+        grid[pos[0]][pos[1]], start, indexUnderscore == -1? grid[pos[0]][pos[1]].length(): indexUnderscore, 10);
   } 
 
 
