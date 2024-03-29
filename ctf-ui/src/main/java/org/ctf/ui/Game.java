@@ -21,7 +21,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
-public class Game extends Thread {
+public class Game   {
 	public CostumFigurePain currentPlayer;
 	GameState state;
 	int currentTeam;
@@ -37,7 +37,6 @@ public class Game extends Thread {
 			  {"p:2_3", "p:2_4", "p:2_5", "p:2_6", "p:2_8", "p:2_9", "p:2_10", "p:2_13"}
 			};
 	
-	Team[] teams;
 	
 	HashMap<String, CostumFigurePain> team1;
 	HashMap<String, CostumFigurePain> team2;
@@ -48,10 +47,9 @@ public class Game extends Thread {
 		cb.setTeamActive(1);
 	}
 	
-	public void run() {
-		
-	}
-	public  void makeGrid() {
+	
+	public  void makeGrid(GameState s) {
+		state = s;
 		cb.setGameState(state);
 		cb.fillGridPane2();
 		cb.setTeamActive(2);
@@ -62,7 +60,7 @@ public class Game extends Thread {
 	public Move makeMove(int[] newPos) {
 		Move move = new Move();
 		move.setNewPosition(newPos);
-		state = new GameState();
+		this.state = new GameState();
 		state.setGrid(exm3);
 		this.makeGrid();
 		return move;
