@@ -149,7 +149,7 @@ public class GameEngine implements Game {
   public void giveUp(String teamId) {
     EngineTools.removeTeam(gameState, Integer.valueOf(teamIDtoInteger.get(teamId)));
     //Logic for switching Current Team
-    if (gameState.getTeams()[gameState.getCurrentTeam()] == null) EngineTools.toNextTeam(gameState);
+    if (gameState.getTeams()[gameState.getCurrentTeam()] == null) gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
     this.gameOverCheck();
   }
 
@@ -204,6 +204,12 @@ public class GameEngine implements Game {
    */
   @Override
   public GameState getCurrentGameState() {
+//    turnTimeLimitedChecks();
+    
+    gameOverCheck();
+    if(gameState.getTeams()[gameState.getCurrentTeam()] == null)
+      gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
+    
     return gameState;
   }
 
@@ -318,9 +324,9 @@ public class GameEngine implements Game {
       this.lastMoveTime = LocalDateTime.now();
     }
 
-    EngineTools.toNextTeam(gameState);
+    gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
     gameOverCheck();
-    if (gameState.getTeams()[gameState.getCurrentTeam()] == null) EngineTools.toNextTeam(gameState);
+    if (gameState.getTeams()[gameState.getCurrentTeam()] == null) gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
   }
 
   /**
@@ -386,11 +392,7 @@ public class GameEngine implements Game {
         }
       }
 
-      if (gameState.getTeams()[gameState.getCurrentTeam()] == null)
-        EngineTools.toNextTeam(gameState);
       removeNoMoveTeams(gameState);
-      if (gameState.getTeams()[gameState.getCurrentTeam()] == null)
-        EngineTools.toNextTeam(gameState);
     }
     if (this.isGameOver) {
       this.endDate =
@@ -417,7 +419,7 @@ public class GameEngine implements Game {
 
     for (int i = gameState.getCurrentTeam();
         teamsLeft > 1;
-        i = EngineTools.toNextTeam(gameState).getCurrentTeam()) {
+        i = EngineTools.getNextTeam(gameState)) {
       boolean canMove = false;
       for (int j = 0; !canMove && j < gameState.getTeams()[i].getPieces().length; j++) {
         // if there are possible moves
@@ -572,7 +574,7 @@ public class GameEngine implements Game {
    */
   private void turnTimeLimitedChecks() {
     if (getRemainingMoveTimeInSeconds() < 0) {
-      EngineTools.toNextTeam(gameState);
+      gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
     }
   }
 

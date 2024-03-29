@@ -125,7 +125,9 @@ class GameEngineTest {
    */
   @Test
   void testIsValidMove() {
-    gameEngine = new GameEngine(EngineTools.toNextTeam(TestValues.getTestState()), TestValues.getTestTemplate(), false, true, new Date(System.currentTimeMillis() + 10000000));
+    GameState state = TestValues.getTestState();
+    state.setCurrentTeam(EngineTools.getNextTeam(state));
+    gameEngine = new GameEngine(state, TestValues.getTestTemplate(), false, true, new Date(System.currentTimeMillis() + 10000000));
   
     Piece rook = gameEngine.getCurrentGameState().getTeams()[1].getPieces()[1];			//rook on 7,3
     Piece rook2 = gameEngine.getCurrentGameState().getTeams()[1].getPieces()[3];		//rook on 7,5
@@ -182,5 +184,6 @@ class GameEngineTest {
     assertTrue(gameEngine.isGameOver());                                        //after the last flag got captured the game is over.  
     
     assertEquals(capture, gameEngine.getCurrentGameState().getLastMove());
+    assertEquals(0, gameEngine.getCurrentGameState().getCurrentTeam());         //Team 1 is gameOver and got removed, technically it's team 0s turn
   }
 }

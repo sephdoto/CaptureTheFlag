@@ -13,15 +13,14 @@ import de.unimannheim.swt.pse.ctf.game.state.Piece;
  */
 public class EngineTools extends AI_Tools {
   /**
-   * Switches a GameState current team to the next valid (not null) team.
+   * Returns a GameStates next valid (not null) team.
    * @param gameState
-   * @return altered gameState
+   * @return next Team != null
    */
-  public static GameState toNextTeam(GameState gameState) {
+  public static int getNextTeam(GameState gameState) {
     for(int i=(gameState.getCurrentTeam()+1) % gameState.getTeams().length; ;i = (i + 1) % gameState.getTeams().length) {
       if(gameState.getTeams()[i] != null) {
-        gameState.setCurrentTeam(i);
-        return gameState;
+        return i;
       }
     }
   }

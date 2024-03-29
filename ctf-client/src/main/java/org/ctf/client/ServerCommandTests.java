@@ -3,8 +3,6 @@ package org.ctf.client;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import org.ctf.client.data.dto.GameSessionRequest;
 import org.ctf.client.data.dto.GameSessionResponse;
 import org.ctf.client.service.CommLayer;
