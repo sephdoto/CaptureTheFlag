@@ -178,8 +178,7 @@ public class JavaClientTest {
     assertNotNull(javaClient.getGrid());
   }
 
-  // TODO FIX THIS BUG WITH THE LASTMOVE BEING NULL. This shit is ServerSided
-  // @Test
+   @Test
   void testGetLastMove() {
     Throwable throwable =
         assertThrows(
@@ -194,16 +193,16 @@ public class JavaClientTest {
     Move move = new Move();
     if (javaClient.getCurrentTeamTurn() == 1) {
       try {
-        move.setPieceId("p:1_1");
-        move.setNewPosition(new int[] {1, 1});
+        move.setPieceId("p:1_2");
+        move.setNewPosition(new int[] {9, 8});
         javaClient.makeMove(move);
       } catch (Exception e) {
         System.out.println("Made move");
       }
     } else {
       try {
-        move.setPieceId("p:0_1");
-        move.setNewPosition(new int[] {9, 1});
+        move.setPieceId("p:0_2");
+        move.setNewPosition(new int[] {0, 1});
         javaClient2.makeMove(move);
       } catch (Exception e) {
         System.out.println("Made move");
