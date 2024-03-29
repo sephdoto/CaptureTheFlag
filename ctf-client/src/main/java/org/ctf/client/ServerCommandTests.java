@@ -2,7 +2,6 @@ package org.ctf.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import org.ctf.client.data.dto.GameSessionRequest;
 import org.ctf.client.data.dto.GameSessionResponse;
 import org.ctf.client.service.CommLayer;
@@ -493,38 +492,56 @@ public class ServerCommandTests {
           }
         """;
 
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    Gson gson2 = new GsonBuilder().setPrettyPrinting().create();
+    Gson gson = new Gson();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     CommLayer comm = new CommLayer();
-   JavaClient  javaClient = new JavaClient("localhost", "8888");
-   JavaClient  javaClient2 = new JavaClient("localhost", "8888");
-   try {
-    javaClient.createGame(template);
-   } catch (Exception e) {
-    // TODO: handle exception
-   }
-  
-    javaClient.joinGame("Team1");
-    javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
-    Move move = new Move();
+    JavaClient javaClient = new JavaClient("localhost", "8888");
+    JavaClient javaClient2 = new JavaClient("localhost", "8888");
     try {
-      if(javaClient.getCurrentTeamTurn() == 1){
-        javaClient.giveUp();
-      } else {
-        javaClient2.giveUp();
-      }
+      javaClient.createGame(template);
     } catch (Exception e) {
       // TODO: handle exception
     }
-   
+
+    javaClient.joinGame("Team1");
+    javaClient2.joinExistingGame(
+        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
     try {
-      javaClient.getSessionFromServer();
-     } catch (Exception e) {
+      javaClient.getStateFromServer();
+    } catch (Exception e) {
       // TODO: handle exception
-     }
-    
-    System.out.println(gson.toJson(javaClient.getEndDate()));
-
-
+    }
+    System.out.println(gson.toJson(javaClient.getGrid()));
+    Move move = new Move();
+    if (javaClient.getCurrentTeamTurn() == 1) {
+      try {
+        move.setPieceId("p:1_18");
+        move.setNewPosition(new int[] {7, 1});
+        javaClient2.makeMove(move);
+      } catch (Exception e) {
+        System.out.println("team1 made a move");
+        e.printStackTrace();
+      }
+    } else if (javaClient.getCurrentTeamTurn() == 0) {
+      try {
+        move.setPieceId("p:0_11");
+        move.setNewPosition(new int[] {3, 0});
+        javaClient.makeMove(move);
+      } catch (Exception e) {
+        System.out.println("team0 made a move");
+        e.printStackTrace();
+      }
+      try {
+        javaClient.getStateFromServer();
+        javaClient2.getStateFromServer();
+      } catch (Exception e) {
+        System.out.println("both Clients updated");
+        e.printStackTrace();
+      }
+    }
+    System.out.println(gson.toJson(javaClient.getGrid()));
+    System.out.println(gson.toJson(javaClient.getLastMove()));
+    System.out.println(gson.toJson(javaClient2.getLastMove()));
   }
 }

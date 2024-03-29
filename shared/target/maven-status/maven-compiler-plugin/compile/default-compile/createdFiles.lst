@@ -1,4 +1,3 @@
-org\ctf\GlobalControllerExceptionHandler.class
 org\ctf\shared\state\data\map\Shape.class
 org\ctf\shared\constants\Constants.class
 org\ctf\shared\ai\AI_Tools.class

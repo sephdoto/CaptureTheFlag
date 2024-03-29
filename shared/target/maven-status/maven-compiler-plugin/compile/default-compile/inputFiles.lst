@@ -16,7 +16,6 @@ F:\VS Code Repo\cfp14\shared\src\main\java\org\ctf\shared\state\data\exceptions\
 F:\VS Code Repo\cfp14\shared\src\main\java\org\ctf\shared\state\data\map\Movement.java
 F:\VS Code Repo\cfp14\shared\src\main\java\org\ctf\shared\state\Piece.java
 F:\VS Code Repo\cfp14\shared\src\main\java\org\ctf\shared\state\data\exceptions\ForbiddenMove.java
-F:\VS Code Repo\cfp14\shared\src\main\java\org\ctf\GlobalControllerExceptionHandler.java
 F:\VS Code Repo\cfp14\shared\src\main\java\org\ctf\shared\state\data\exceptions\NoMoreTeamSlots.java
 F:\VS Code Repo\cfp14\shared\src\main\java\org\ctf\shared\state\data\exceptions\ApiError.java
 F:\VS Code Repo\cfp14\shared\src\main\java\org\ctf\shared\state\Team.java

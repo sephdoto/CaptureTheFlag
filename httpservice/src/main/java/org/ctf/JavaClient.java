@@ -2,11 +2,12 @@ package org.ctf.client;
 
 import com.google.gson.Gson;
 import java.util.Date;
-
-import org.ctf.client.data.dto.GameSession;
-import org.ctf.client.data.dto.GameSessionResponse;
-import org.ctf.client.data.dto.JoinGameResponse;
-import org.ctf.client.service.CommLayer;
+import org.ctf.controller.HTTPClientController;
+import org.ctf.model.GameSession;
+import org.ctf.model.GameSessionRequest;
+import org.ctf.model.GameSessionResponse;
+import org.ctf.model.JoinGameRequest;
+import org.ctf.model.JoinGameResponse;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
@@ -25,7 +26,7 @@ import org.ctf.shared.state.data.map.MapTemplate;
  *
  * @author rsyed
  */
-public class JavaClient implements GameClientInterface {
+public class JavaClient {
 
   // Main DataStore block
   private volatile GameState currentState;
@@ -35,7 +36,7 @@ public class JavaClient implements GameClientInterface {
   private Team[] teams;
 
   private Gson gson; // Gson object for conversions incase needed
-  private CommLayer comm; // Layer instance which is used for communication
+  private HTTPClientController comm; // Layer instance which is used for communication
 
   // Block for Server Info
   private String currentServer; // Creates URL with Session ID for use later
@@ -61,38 +62,16 @@ public class JavaClient implements GameClientInterface {
   public boolean gameOver;
 
   /** Constructor which inits some objects on creation */
-  public JavaClient() {
+  public JavaClient(HTTPClientController controller) {
     this.gson = new Gson(); // creates a gson Object on creation to conserve memory
     this.currentState = new GameState();
     this.currentSession = new GameSession();
-    this.comm = new CommLayer();
+    this.comm = controller;
   }
 
   /**
-   * Additional constructor to set the IP and port on object creation
-   *
-   * @param IP
-   * @param port
-   */
-  public JavaClient(String IP, String port) {
-    this();
-    setServer(IP, port);
-  }
-  
-  /**
-   * Method to set the server which this this object communicates with
-   *
-   * @param IP
-   * @param port
-   */
-  public void setServer(String IP, String port) {
-    this.currentServer = "http://" + IP + ":" + port + "/api/gamesession";
-    this.shortURL = "http://" + IP + ":" + port + "/api/gamesession";
-  }
- 
-  /**
-   * Requests the server specified in the current object to create a GameSession using the map in the
-   * MapTemplate parameter. Throws exceptions on acception and incase errors occour
+   * Requests the server specified in the current object to create a GameSession using the map in
+   * the MapTemplate parameter. Throws exceptions on acception and incase errors occour
    *
    * @param map
    * @throws UnknownError (500)
@@ -111,10 +90,8 @@ public class JavaClient implements GameClientInterface {
    * @throws NoMoreTeamSlots
    * @throws UnknownError
    */
-  @Override
   public void joinGame(String teamName) {
     joinGameParser(joinGameCaller(teamName));
-    
   }
 
   /**
@@ -128,59 +105,55 @@ public class JavaClient implements GameClientInterface {
    * @throws GameOver (410)
    * @throws UnknownError (500)
    */
-  @Override
   public void makeMove(Move move) {
     makeMoverCaller(currentServer, teamID, teamSecret, move);
     /* getStateFromServer();
     getSessionFromServer(); */
   }
 
-   /**
-   * Requests a refresh of the GameState from the server. Parses the data and makes it available for consumption
-   * Throws exceptions listed incase of acceptance or errors.
-   * Functions as a REFRESH COMMAND for GAMESTATE
+  /**
+   * Requests a refresh of the GameState from the server. Parses the data and makes it available for
+   * consumption Throws exceptions listed incase of acceptance or errors. Functions as a REFRESH
+   * COMMAND for GAMESTATE
+   *
    * @throws Accepted
    * @throws SessionNotFound
    * @throws UnknownError
    * @throws URLError (404)
    */
-  @Override
   public void getStateFromServer() {
     gameStateHelper();
   }
 
   /**
-   * Requests the server to return the current state of the session and parses it
-   * Throws exceptions depending on what happens.
-   * Functions as a REFRESH command for SESSION INFO
-   * @throws Accepted (200)
-   * @throws SessionNotFound (404)
-   * @throws UnknownError (500)
-   * @throws URLError (404)
-   */
-  // Refreshes the session
-  @Override
-  public void getSessionFromServer() {
-    gameSessionResponseParser(gameSessionCaller());
-  }
-
-  /**
-   * Requests the server to delete the current session. Returns the
-   * server reponse which are HTTP status codes thrown as exceptions.
+   * Requests the server to return the current state of the session and parses it Throws exceptions
+   * depending on what happens. Functions as a REFRESH command for SESSION INFO
    *
    * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws UnknownError (500)
    * @throws URLError (404)
    */
-  @Override
+  // Refreshes the session
+  public void getSessionFromServer() {
+    gameSessionResponseParser(gameSessionCaller());
+  }
+
+  /**
+   * Requests the server to delete the current session. Returns the server reponse which are HTTP
+   * status codes thrown as exceptions.
+   *
+   * @throws Accepted (200)
+   * @throws SessionNotFound (404)
+   * @throws UnknownError (500)
+   * @throws URLError (404)
+   */
   public void deleteSession() {
     comm.deleteCurrentSession(currentServer);
   }
 
-   /**
-   * Used to send a give up request to the current session.
-   * Throws exceptions depending on errors
+  /**
+   * Used to send a give up request to the current session. Throws exceptions depending on errors
    *
    * @throws Accepted (200)
    * @throws SessionNotFound (404)
@@ -189,18 +162,17 @@ public class JavaClient implements GameClientInterface {
    * @throws UnknownError (500)
    * @throws URLError (404)
    */
-  @Override
   public void giveUp() {
     comm.giveUp(currentServer, teamID, teamSecret);
   }
 
-/**
+  /**
    * Changes the sessionID which this client object is pointing to. Functions as a join game command
-   * 
-   *  @param IP
-   *  @param port
-   *  @param gameSessionID
-   *  @param teamName
+   *
+   * @param IP
+   * @param port
+   * @param gameSessionID
+   * @param teamName
    */
   public void joinExistingGame(String IP, String port, String gameSessionID, String teamName) {
     this.currentServer = "http://" + IP + ":" + port + "/api/gamesession";
@@ -209,51 +181,58 @@ public class JavaClient implements GameClientInterface {
   }
 
   // HELPER METHODS
-
+  /*
+   * @param map
+   * @throws UnknownError (500)
+   * @throws URLError (404)
+   */
   private GameSessionResponse createGameCaller(MapTemplate map) {
-    gameResponse = new GameSessionResponse();
     try {
-      gameResponse = comm.createGameSession(currentServer, map);
+      return comm.createGameSession(new GameSessionRequest(map));
     } catch (URLError e) {
       System.out.println("Something wrong with the server. Try to fix using setServer");
     } catch (UnknownError e) {
       System.out.println("Something is wrong with the server");
     }
-
-    return gameResponse;
   }
 
   private void gameSessionResponseParser(GameSessionResponse gameSessionResponse) {
-    this.currentGameSessionID = gameSessionResponse.getId();
+    this.currentGameSessionID = gameSessionResponse.id();
     this.currentServer = shortURL + "/" + currentGameSessionID;
     try {
-      this.startDate = gameSessionResponse.getGameStarted();
+      this.startDate = gameSessionResponse.gameStarted();
     } catch (NullPointerException e) {
       System.out.println("Game hasnt started yet");
     }
     try {
-      this.endDate = gameSessionResponse.getGameEnded();
+      this.endDate = gameSessionResponse.gameEnded();
     } catch (NullPointerException e) {
       System.out.println("Game hasnt ended yet");
     }
     try {
-      this.gameOver = gameSessionResponse.isGameOver();
+      this.gameOver = gameSessionResponse.gameOver();
     } catch (NullPointerException e) {
       System.out.println("Game hasnt ended yet");
     }
     try {
-      this.winners = gameSessionResponse.getWinner();
+      this.winners = gameSessionResponse.winner();
     } catch (NullPointerException e) {
       System.out.println("There are no winners");
     }
     throw new Accepted();
   }
 
+ /**
+   * Method joins the requested game session
+   *
+   * @param teamName
+   * @throws SessionNotFound
+   * @throws NoMoreTeamSlots
+   * @throws UnknownError
+   */
   private JoinGameResponse joinGameCaller(String teamName) {
-    JoinGameResponse response = new JoinGameResponse();
-
     try {
-      response = comm.joinGame(currentServer, teamName);
+      return comm.joinGameSession(getCurrentGameSessionID(),new JoinGameRequest(teamName));
     } catch (SessionNotFound e) {
       System.out.println("SessionID is wrong / Server is not there");
     } catch (NoMoreTeamSlots e) {
@@ -261,8 +240,6 @@ public class JavaClient implements GameClientInterface {
     } catch (UnknownError e) {
       System.out.println("Something wong");
     }
-
-    return response;
   }
 
   private void joinGameParser(JoinGameResponse joinGameResponse) {
