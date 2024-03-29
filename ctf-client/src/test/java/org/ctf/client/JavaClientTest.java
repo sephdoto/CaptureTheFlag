@@ -2,6 +2,7 @@ package org.ctf.client;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -12,6 +13,8 @@ import java.io.IOException;
 import org.ctf.client.service.CommLayer;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.exceptions.Accepted;
+import org.ctf.shared.state.data.exceptions.SessionNotFound;
+import org.ctf.shared.state.data.exceptions.URLError;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,92 +48,55 @@ public class JavaClientTest {
 
   @Test
   void testCreateGame() {
-    Throwable throwable =
-        assertThrows(
-            Accepted.class,
-            () -> {
-              javaClient.createGame(template);
-            });
-    assertEquals(Accepted.class, throwable.getClass());
-
+    try {
+      javaClient.createGame(template);
+    } catch (Exception e) {
+      assertNotEquals(SessionNotFound.class, e.getClass());
+      assertNotEquals(UnknownError.class, e.getClass());
+      assertNotEquals(URLError.class, e.getClass());   
+  }
     assertNotNull(javaClient.getCurrentGameSessionID());
   }
 
   @Test
   void testDeleteSession() {
-    Throwable throwable1 =
-        assertThrows(
-            Accepted.class,
-            () -> {
-              javaClient.createGame(template);
-            });
-    assertEquals(Accepted.class, throwable1.getClass());
-    Throwable throwable =
-        assertThrows(
-            Accepted.class,
-            () -> {
-              javaClient.deleteSession();
-            });
-    assertEquals(Accepted.class, throwable.getClass());
+    javaClient.createGame(template);  
+    try {
+      javaClient.deleteSession();
+    } catch (Exception e) {
+      assertNotEquals(SessionNotFound.class, e.getClass());
+      assertNotEquals(UnknownError.class, e.getClass());
+      assertNotEquals(URLError.class, e.getClass());   
   }
+}
 
   @Test
   void testGetCurrentGameSessionID() {
-    Throwable throwable =
-        assertThrows(
-            Accepted.class,
-            () -> {
-              javaClient.createGame(template);
-            });
-    assertEquals(Accepted.class, throwable.getClass());
+    javaClient.createGame(template);  
     assertNotNull(javaClient.getCurrentGameSessionID());
   }
 
   @Test
   void testGetCurrentServer() {
-    Throwable throwable =
-        assertThrows(
-            Accepted.class,
-            () -> {
-              javaClient.createGame(template);
-            });
-    assertEquals(Accepted.class, throwable.getClass());
+    javaClient.createGame(template);  
     assertNotNull(javaClient.getCurrentServer());
   }
 
   @Test
   void testGetCurrentSession() {
-    Throwable throwable =
-        assertThrows(
-            Accepted.class,
-            () -> {
-              javaClient.createGame(template);
-            });
-    assertEquals(Accepted.class, throwable.getClass());
+    javaClient.createGame(template);  
     assertNotNull(javaClient.getCurrentSession());
   }
 
   @Test
   void testGetCurrentState() {
-    Throwable throwable =
-        assertThrows(
-            Accepted.class,
-            () -> {
-              javaClient.createGame(template);
-            });
-    assertEquals(Accepted.class, throwable.getClass());
+     javaClient.createGame(template);  
     assertNotNull(javaClient.getCurrentState());
   }
 
   @Test
   void testGetCurrentTeamTurn() {
-    Throwable throwable =
-        assertThrows(
-            Accepted.class,
-            () -> {
-              javaClient.createGame(template);
-            });
-    assertEquals(Accepted.class, throwable.getClass());
+    javaClient.createGame(template);  
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
         "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
@@ -139,15 +105,10 @@ public class JavaClientTest {
 
   @Test
   void testGetEndDate() {
-    try {
-      javaClient.createGame(template);
-    } catch (Exception e) {
-      System.out.println("Accepted");
-    } finally {
+    javaClient.createGame(template);  
       javaClient.joinGame("Team1");
       javaClient2.joinExistingGame(
           "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
-    }
     try {
       if (javaClient.getCurrentTeamTurn() == 1) {
         javaClient.giveUp();
@@ -167,43 +128,30 @@ public class JavaClientTest {
 
   @Test
   void testGetGrid() {
-    Throwable throwable =
-        assertThrows(
-            Accepted.class,
-            () -> {
-              javaClient.createGame(template);
-            });
-    assertEquals(Accepted.class, throwable.getClass());
+    javaClient.createGame(template);
     javaClient.getStateFromServer();
     assertNotNull(javaClient.getGrid());
   }
 
-  // TODO FIX THIS BUG WITH THE LASTMOVE BEING NULL. This shit is ServerSided
-  // @Test
+  @Test
   void testGetLastMove() {
-    Throwable throwable =
-        assertThrows(
-            Accepted.class,
-            () -> {
-              javaClient.createGame(template);
-            });
-    assertEquals(Accepted.class, throwable.getClass());
+    javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
         "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
     Move move = new Move();
     if (javaClient.getCurrentTeamTurn() == 1) {
       try {
-        move.setPieceId("p:1_1");
-        move.setNewPosition(new int[] {1, 1});
+        move.setPieceId("p:1_2");
+        move.setNewPosition(new int[] {9, 8});
         javaClient.makeMove(move);
       } catch (Exception e) {
         System.out.println("Made move");
       }
     } else {
       try {
-        move.setPieceId("p:0_1");
-        move.setNewPosition(new int[] {9, 1});
+        move.setPieceId("p:0_2");
+        move.setNewPosition(new int[] {0, 1});
         javaClient2.makeMove(move);
       } catch (Exception e) {
         System.out.println("Made move");
@@ -212,8 +160,8 @@ public class JavaClientTest {
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
     assertNotNull(javaClient.getLastMove());
+    assertNotNull(javaClient2.getLastMove());
   }
-
   @Test
   void testGetSessionFromServer() {
     Throwable throwable =

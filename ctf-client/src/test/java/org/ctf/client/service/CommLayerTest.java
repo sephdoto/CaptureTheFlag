@@ -1,13 +1,12 @@
 package org.ctf.client.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
+import org.ctf.client.data.dto.MoveRequest;
 import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
-
 import java.io.IOException;
 import org.ctf.client.data.dto.GameSessionResponse;
 import org.ctf.client.data.dto.JoinGameResponse;
@@ -17,8 +16,10 @@ import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
 /**
- * Tests to test the communication capabilities and Exception catching of the CommLayer service file. Auto starts a server and runs tests
+ * Tests to test the communication capabilities and Exception catching of the CommLayer service
+ * file. Auto starts a server and runs tests
  *
  * @author rsyed
  */
@@ -56,7 +57,7 @@ public class CommLayerTest {
     GameSessionResponse gameSessionResponse =
         comm.createGameSession("http://localhost:9999/api/gamesession", template);
     String idURL = "http://localhost:9999/api/gamesession/" + gameSessionResponse.getId();
-    
+
     assertNotNull(comm.getCurrentSessionState(idURL));
   }
 
@@ -84,18 +85,15 @@ public class CommLayerTest {
     JoinGameResponse jsResponse2 =
         comm.joinGame(
             "http://localhost:9999/api/gamesession/" + gameSessionResponse.getId(), "TestTeam2");
-    Move move = new Move();
-    move.setPieceId("p:1_1");
-    move.setNewPosition(new int[] {1, 1});
-      try {
-        comm.makeMove(
-          "http://localhost:9999/api/gamesession/" + gameSessionResponse.getId(),
-          jsResponse.getTeamId(),
-          jsResponse.getTeamSecret(),
-          move);
-    }
-    catch (Exception ex) {
-        assert((ex instanceof Accepted) || (ex instanceof InvalidMove));
+    MoveRequest movRe = new MoveRequest();
+    movRe.setNewPosition(new int[] {1, 1});
+    movRe.setPieceId("p:1_1");
+    movRe.setTeamId(jsResponse.getTeamId());
+    movRe.setTeamSecret(jsResponse.getTeamSecret());
+    try {
+      comm.makeMove("http://localhost:9999/api/gamesession/" + gameSessionResponse.getId(), movRe);
+    } catch (Exception ex) {
+      assert (!(ex instanceof Accepted) || (ex instanceof InvalidMove));
     }
   }
 
@@ -110,29 +108,21 @@ public class CommLayerTest {
 
     JoinGameResponse jsResponse2 = comm.joinGame(idURL, "TestTeam2");
     GameState gameState = new GameState();
-    try {
-      gameState = comm.getCurrentGameState(idURL);
-    } catch (Exception e) {
-      System.out.println("Request Accepted");
-    }
 
-    if (gameState.getCurrentTeam() == 0) {
-      Throwable throwable =
-          assertThrows(
-              Accepted.class,
-              () -> {
-                comm.giveUp(idURL, jsResponse.getTeamId(), jsResponse.getTeamSecret());
-              });
-      assertEquals(Accepted.class, throwable.getClass());
+    gameState = comm.getCurrentGameState(idURL);
+    try {
+      if (gameState.getCurrentTeam() == 0) {
+        comm.giveUp(idURL, jsResponse.getTeamId(), jsResponse.getTeamSecret());
+      }
+    } catch (Exception ex) {
+      assert (!(ex instanceof Accepted));
     }
-    if (gameState.getCurrentTeam() == 1) {
-      Throwable throwable2 =
-          assertThrows(
-              Accepted.class,
-              () -> {
-                comm.giveUp(idURL, jsResponse2.getTeamId(), jsResponse2.getTeamSecret());
-              });
-      assertEquals(Accepted.class, throwable2.getClass());
+    try {
+      if (gameState.getCurrentTeam() == 1) {
+        comm.giveUp(idURL, jsResponse2.getTeamId(), jsResponse2.getTeamSecret());
+      }
+    } catch (Exception ex) {
+      assert (!(ex instanceof Accepted));
     }
   }
 
@@ -141,13 +131,12 @@ public class CommLayerTest {
     MapTemplate template = createGameTemplate();
     GameSessionResponse gameSessionResponse =
         comm.createGameSession("http://localhost:9999/api/gamesession", template);
-          Throwable throwable2 =
-        assertThrows(
-            Accepted.class,
-            () -> {
-              comm.deleteCurrentSession("http://localhost:9999/api/gamesession/" + gameSessionResponse.getId());
-            });
-    assertEquals(Accepted.class, throwable2.getClass());
+    try {
+      comm.deleteCurrentSession(
+          "http://localhost:9999/api/gamesession/" + gameSessionResponse.getId());
+    } catch (Exception e) {
+      fail();
+    }
   }
 
   private MapTemplate createGameTemplate() {

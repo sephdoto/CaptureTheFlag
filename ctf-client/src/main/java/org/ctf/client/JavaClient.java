@@ -3,10 +3,12 @@ package org.ctf.client;
 import com.google.gson.Gson;
 import java.util.Date;
 
+import org.ctf.client.data.dto.GameSession;
+import org.ctf.client.data.dto.GameSessionRequest;
 import org.ctf.client.data.dto.GameSessionResponse;
 import org.ctf.client.data.dto.JoinGameResponse;
+import org.ctf.client.data.dto.MoveRequest;
 import org.ctf.client.service.CommLayer;
-import org.ctf.client.tools.GameSession;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
@@ -82,10 +84,8 @@ public class JavaClient implements GameClientInterface {
   /**
    * Method to set the server which this this object communicates with
    *
-   * @param teamName
-   * @throws SessionNotFound
-   * @throws NoMoreTeamSlots
-   * @throws UnknownError
+   * @param IP
+   * @param port
    */
   public void setServer(String IP, String port) {
     this.currentServer = "http://" + IP + ":" + port + "/api/gamesession";
@@ -99,7 +99,6 @@ public class JavaClient implements GameClientInterface {
    * @param map
    * @throws UnknownError (500)
    * @throws URLError (404)
-   * @throws Accepted (200)
    */
   public void createGame(MapTemplate map) {
     gameSessionResponseParser(createGameCaller(map));
@@ -123,7 +122,6 @@ public class JavaClient implements GameClientInterface {
    * Method makes a move in the game
    *
    * @param Move
-   * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws ForbiddenMove (403)
    * @throws InvalidMove (409)
@@ -133,15 +131,12 @@ public class JavaClient implements GameClientInterface {
   @Override
   public void makeMove(Move move) {
     makeMoverCaller(currentServer, teamID, teamSecret, move);
-    /* getStateFromServer();
-    getSessionFromServer(); */
   }
 
    /**
    * Requests a refresh of the GameState from the server. Parses the data and makes it available for consumption
    * Throws exceptions listed incase of acceptance or errors.
    * Functions as a REFRESH COMMAND for GAMESTATE
-   * @throws Accepted
    * @throws SessionNotFound
    * @throws UnknownError
    * @throws URLError (404)
@@ -155,7 +150,6 @@ public class JavaClient implements GameClientInterface {
    * Requests the server to return the current state of the session and parses it
    * Throws exceptions depending on what happens.
    * Functions as a REFRESH command for SESSION INFO
-   * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws UnknownError (500)
    * @throws URLError (404)
@@ -170,7 +164,6 @@ public class JavaClient implements GameClientInterface {
    * Requests the server to delete the current session. Returns the
    * server reponse which are HTTP status codes thrown as exceptions.
    *
-   * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws UnknownError (500)
    * @throws URLError (404)
@@ -184,7 +177,6 @@ public class JavaClient implements GameClientInterface {
    * Used to send a give up request to the current session.
    * Throws exceptions depending on errors
    *
-   * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws ForbiddenMove (403)
    * @throws GameOver (410)
@@ -214,8 +206,10 @@ public class JavaClient implements GameClientInterface {
 
   private GameSessionResponse createGameCaller(MapTemplate map) {
     gameResponse = new GameSessionResponse();
+    GameSessionRequest gsr = new GameSessionRequest();
+    gsr.setTemplate(map);
     try {
-      gameResponse = comm.createGameSession(currentServer, map);
+      gameResponse = comm.createGameSession(currentServer, gsr);
     } catch (URLError e) {
       System.out.println("Something wrong with the server. Try to fix using setServer");
     } catch (UnknownError e) {
@@ -248,7 +242,6 @@ public class JavaClient implements GameClientInterface {
     } catch (NullPointerException e) {
       System.out.println("There are no winners");
     }
-    throw new Accepted();
   }
 
   private JoinGameResponse joinGameCaller(String teamName) {
@@ -279,7 +272,12 @@ public class JavaClient implements GameClientInterface {
 
   private void makeMoverCaller(String currentServer, String teamID, String teamSecret, Move move) {
     try {
-      comm.makeMove(currentServer, teamID, teamSecret, move);
+        MoveRequest moveReq = new MoveRequest();
+      moveReq.setTeamId(teamID);
+      moveReq.setTeamSecret(teamSecret);
+      moveReq.setPieceId(move.getPieceId());
+      moveReq.setNewPosition(move.getNewPosition());
+      comm.makeMove(currentServer, moveReq);
     } catch (Accepted e) {
       throw new Accepted();
     } catch (SessionNotFound e) {
@@ -296,9 +294,7 @@ public class JavaClient implements GameClientInterface {
   }
 
   private void gameStateHelper() {
-    GameState gameState = new GameState();
-    gameState = comm.getCurrentGameState(currentServer);
-
+    GameState gameState = comm.getCurrentGameState(currentServer);
     this.grid = gameState.getGrid();
     this.currentTeamTurn = gameState.getCurrentTeam();
     this.lastMove = gameState.getLastMove();

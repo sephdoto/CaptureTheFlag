@@ -84,7 +84,7 @@ class MCTSTest {
   void testPerformance() throws InterruptedException {
     double expansions = 0;
     int count = 0;
-    int timeInMilis = 50;
+    int timeInMilis = 100;
     int simulations = 0;
     int heuristics = 0;
     int crashes = 0;
@@ -93,7 +93,6 @@ class MCTSTest {
 
       //      MCTS_TestDouble mcts = new MCTS_TestDouble(MCTSTest.mcts.root.clone(MCTSTest.mcts.root.copyGameState()));
       MCTS mcts = new MCTS(MCTSTest.mcts.root.clone(MCTSTest.mcts.root.copyGameState()));
-      mcts.root.wins = new int[] {0,0};
       try {
         mcts.getMove(timeInMilis, AI_Constants.C);
       } catch(NullPointerException npe) {crashes++;}

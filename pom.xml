@@ -87,6 +87,7 @@
     <module>ctf-client</module>
     <module>shared</module>
     <module>cfp-service-main</module>
+    <module>httpservice</module>
   </modules>
 
   <build>

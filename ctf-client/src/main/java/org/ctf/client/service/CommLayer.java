@@ -47,9 +47,7 @@ public class CommLayer implements CommLayerInterface {
   private HttpRequest request;
   private HttpResponse<String> ret;
 
-  /**
-   * Creates a Layer Object which can then be used to communicate with the Server 
-   */
+  /** Creates a Layer Object which can then be used to communicate with the Server */
   public CommLayer() {
     gson = new Gson();
     executor = Executors.newSingleThreadExecutor();
@@ -64,8 +62,8 @@ public class CommLayer implements CommLayerInterface {
   /**
    * Requests the server specified in the URL parameter to create a GameSession using the map in the
    * MapTemplate parameter. Returns the server reponse as well as HTTP status codes thrown as
-   * exceptions
-   * Example URL "http://localhost:9999/api/gamesession"
+   * exceptions Example URL "http://localhost:9999/api/gamesession"
+   *
    * @param URL
    * @param map
    * @returns GameSessionResponse
@@ -73,33 +71,29 @@ public class CommLayer implements CommLayerInterface {
    * @throws URLError (404)
    */
   @Override
-  public GameSessionResponse createGameSession(String URL, MapTemplate map) {
-    GameSessionRequest gsr = new GameSessionRequest();
-    gsr.setTemplate(map);
-
-    String jsonPayload = gson.toJson(gsr);
-
-    // Performs the POST request
-    HttpResponse<String> serverResponse;
+  public GameSessionResponse createGameSession(String URL,  GameSessionRequest gsr) {
+    final HttpRequest request;
+    HttpResponse<String> response;
     try {
-      serverResponse = POSTRequest(URL, jsonPayload);
-    } catch (URLError e) {
-      throw new URLError("Check input URL");
+      request =
+          HttpRequest.newBuilder()
+              .uri(new URI(URL))
+              .header("Content-Type", "application/json")
+              .POST(BodyPublishers.ofString(gson.toJson(gsr)))
+              .build();
+      response = client.send(request, BodyHandlers.ofString());
+    } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
+      throw new URLError("Check URL");
+    }
+    if (response.statusCode() != 200) {
+      if (response.statusCode() == 404) {
+        throw new UnknownError();
+      } else if (response.statusCode() == 500) {
+        throw new URLError("URL Error");
+      }
     }
 
-    // Parses Server Response to expected class
-    GameSessionResponse gameSessionResponse =
-        gson.fromJson(serverResponse.body(), GameSessionResponse.class);
-
-    // Saves the code of the server response
-    int returnedCode = serverResponse.statusCode();
-
-    if (returnedCode == 500) {
-      throw new UnknownError();
-    } else if (returnedCode == 404) {
-      throw new URLError("URL Error");
-    } 
-    return gameSessionResponse;
+    return gson.fromJson(response.body(), GameSessionResponse.class);
   }
 
   /**
@@ -109,6 +103,7 @@ public class CommLayer implements CommLayerInterface {
    * @param URL "http://localhost:9999/api/gamesession/{sessionID}"
    * @param teamName
    * @return JoinGameResponse
+   * @throws URISyntaxException
    * @throws SessionNotFound (404)
    * @throws NoMoreTeamSlots (429)
    * @throws UnknownError (500)
@@ -117,28 +112,31 @@ public class CommLayer implements CommLayerInterface {
    */
   @Override
   public JoinGameResponse joinGame(String URL, String teamName) {
-
+    final HttpRequest request;
+    HttpResponse<String> response;
     JoinGameRequest joinGameRequest = new JoinGameRequest();
     joinGameRequest.setTeamId(teamName);
-
-    HttpResponse<String> postResponse;
     try {
-      postResponse = POSTRequest(URL + "/join", gson.toJson(joinGameRequest));
-    } catch (URLError e) {
+      request =
+          HttpRequest.newBuilder()
+              .uri(new URI(URL + "/join"))
+              .header("Content-Type", "application/json")
+              .POST(BodyPublishers.ofString(gson.toJson(joinGameRequest)))
+              .build();
+      response = client.send(request, BodyHandlers.ofString());
+    } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
       throw new URLError("Check URL");
     }
-    JoinGameResponse joinGameResponse = gson.fromJson(postResponse.body(), JoinGameResponse.class);
-    int returnedCode = postResponse.statusCode();
-
-    if (returnedCode == 404) {
-      throw new SessionNotFound();
-    } else if (returnedCode == 429) {
-      throw new NoMoreTeamSlots();
-    } else if (returnedCode == 500) {
-      throw new UnknownError();
+    if (response.statusCode() != 200) {
+      if (response.statusCode() == 404) {
+        throw new SessionNotFound();
+      } else if (response.statusCode() == 429) {
+        throw new NoMoreTeamSlots();
+      } else if (response.statusCode() == 500) {
+        throw new UnknownError();
+      }
     }
-
-    return joinGameResponse;
+    return gson.fromJson(response.body(), JoinGameResponse.class);
   }
 
   /**
@@ -158,34 +156,33 @@ public class CommLayer implements CommLayerInterface {
    * @throws URLError (404)
    */
   @Override
-  public void makeMove(String URL, String teamID, String teamSecret, Move move) {
-    MoveRequest moveReq = new MoveRequest();
-    moveReq.setTeamId(teamID);
-    moveReq.setTeamSecret(teamSecret);
-    moveReq.setPieceId(move.getPieceId());
-    moveReq.setNewPosition(move.getNewPosition());
-
-    HttpResponse<String> postResponse;
+  public void makeMove(String URL, MoveRequest moveReq) {
+    final HttpRequest request;
+    HttpResponse<String> response;
+  
     try {
-      postResponse = POSTRequest(URL + "/move", gson.toJson(moveReq));
-    } catch (URLError e) {
+      request =
+          HttpRequest.newBuilder()
+              .uri(new URI(URL + "/move"))
+              .header("Content-Type", "application/json")
+              .POST(BodyPublishers.ofString(gson.toJson(moveReq)))
+              .build();
+      response = client.send(request, BodyHandlers.ofString());
+    } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
       throw new URLError("Check URL");
     }
-
-    int returnedCode = postResponse.statusCode();
-
-    if (returnedCode == 200) {
-      throw new Accepted();
-    }else if (returnedCode == 403) {
-      throw new ForbiddenMove();
-    } else if (returnedCode == 404) {
-      throw new SessionNotFound();
-    } else if (returnedCode == 409) {
-      throw new InvalidMove();
-    } else if (returnedCode == 410) {
-      throw new GameOver();
-    } else if (returnedCode == 500) {
-      throw new UnknownError();
+    if (response.statusCode() != 200) {
+      if (response.statusCode() == 403) {
+        throw new ForbiddenMove();
+      } else if (response.statusCode() == 404) {
+        throw new SessionNotFound();
+      } else if (response.statusCode() == 409) {
+        throw new InvalidMove();
+      } else if (response.statusCode() == 410) {
+        throw new GameOver();
+      } else if (response.statusCode() == 500) {
+        throw new UnknownError();
+      }
     }
   }
 
@@ -198,37 +195,40 @@ public class CommLayer implements CommLayerInterface {
    * @param teamID
    * @param teamSecret
    * @throws Accepted (200)
-   * @throws SessionNotFound (404)
    * @throws ForbiddenMove (403)
+   * @throws SessionNotFound (404)
    * @throws GameOver (410)
    * @throws UnknownError (500)
    * @throws URLError (404)
    */
   @Override
   public void giveUp(String URL, String teamID, String teamSecret) {
-
+    final HttpRequest request;
+    HttpResponse<String> response;
     GiveupRequest giveUpRequest = new GiveupRequest();
     giveUpRequest.setTeamId(teamID);
     giveUpRequest.setTeamSecret(teamSecret);
-
-    HttpResponse<String> postResponse;
     try {
-      postResponse = POSTRequest(URL + "/giveup", gson.toJson(giveUpRequest));
-    } catch (URLError e) {
+      request =
+          HttpRequest.newBuilder()
+              .uri(new URI(URL + "/giveup"))
+              .header("Content-Type", "application/json")
+              .POST(BodyPublishers.ofString(gson.toJson(giveUpRequest)))
+              .build();
+      response = client.send(request, BodyHandlers.ofString());
+    } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
       throw new URLError("Check URL");
     }
-
-    int returnedCode = postResponse.statusCode();
-    if (returnedCode == 200) {
-      throw new Accepted();
-    } else if (returnedCode == 403) {
-      throw new ForbiddenMove();
-    } else if (returnedCode == 404) {
-      throw new SessionNotFound();
-    } else if (returnedCode == 410) {
-      throw new GameOver();
-    } else if (returnedCode == 500) {
-      throw new UnknownError();
+    if (response.statusCode() != 200) {
+      if (response.statusCode() == 403) {
+        throw new ForbiddenMove();
+      } else if (response.statusCode() == 404) {
+        throw new SessionNotFound();
+      } else if (response.statusCode() == 410) {
+        throw new GameOver();
+      } else if (response.statusCode() == 500) {
+        throw new UnknownError();
+      }
     }
   }
 
@@ -246,25 +246,29 @@ public class CommLayer implements CommLayerInterface {
    */
   @Override
   public GameSessionResponse getCurrentSessionState(String URL) {
-
-    HttpResponse<String> getResponse;
+    final HttpRequest request;
+    HttpResponse<String> response;
     try {
-      getResponse = GETRequest(URL);
-    } catch (URLError e) {
+      request =
+          HttpRequest.newBuilder()
+              .uri(new URI(URL))
+              .header("Content-Type", "application/json")
+              .GET()
+              .build();
+      response = client.send(request, BodyHandlers.ofString());
+    } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
       throw new URLError("Check URL");
     }
 
-    GameSessionResponse gameSessionResponse =
-        gson.fromJson(getResponse.body(), GameSessionResponse.class);
-    int returnedCode = getResponse.statusCode();
+    if (response.statusCode() != 200) {
+      if (response.statusCode() == 404) {
+        throw new SessionNotFound();
+      } else if (response.statusCode() == 500) {
+        throw new UnknownError();
+      }
+    }
 
-    if (returnedCode == 404) {
-      throw new SessionNotFound();
-    } else if (returnedCode == 500) {
-      throw new UnknownError();
-    } 
-
-    return gameSessionResponse;
+    return gson.fromJson(response.body(), GameSessionResponse.class);
   }
 
   /**
@@ -279,20 +283,21 @@ public class CommLayer implements CommLayerInterface {
    */
   @Override
   public void deleteCurrentSession(String URL) {
-
-    HttpResponse<String> deleteResponse;
+    final HttpRequest request;
+    HttpResponse<String> response;
     try {
-      deleteResponse = DELETERequest(URL);
-    } catch (URLError e) {
+      request = HttpRequest.newBuilder().uri(new URI(URL)).DELETE().build();
+      response = client.send(request, BodyHandlers.ofString());
+    } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
       throw new URLError("Check URL");
     }
-    int returnedCode = deleteResponse.statusCode();
-    if (returnedCode == 404) {
-      throw new SessionNotFound();
-    } else if (returnedCode == 500) {
-      throw new UnknownError();
-    } else if (returnedCode == 200) {
-      throw new Accepted();
+
+    if (response.statusCode() != 200) {
+      if (response.statusCode() == 404) {
+        throw new SessionNotFound();
+      } else if (response.statusCode() == 500) {
+        throw new UnknownError();
+      }
     }
   }
 
@@ -309,44 +314,60 @@ public class CommLayer implements CommLayerInterface {
    */
   @Override
   public GameState getCurrentGameState(String URL) {
-    HttpResponse<String> getResponse;
+    final HttpRequest request;
+    HttpResponse<String> response;
     try {
-      getResponse = GETRequest(URL + "/state");
-    } catch (URLError e) {
+      request =
+          HttpRequest.newBuilder()
+              .uri(new URI(URL + "/state"))
+              .header("Content-Type", "application/json")
+              .GET()
+              .build();
+      response = client.send(request, BodyHandlers.ofString());
+    } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
       throw new URLError("Check URL");
     }
 
-    GameState returnedState = gson.fromJson(getResponse.body(), GameState.class);
-    int returnedCode = getResponse.statusCode();
-    if (returnedCode == 404) {
-      throw new SessionNotFound();
-    } else if (returnedCode == 500) {
-      throw new UnknownError();
-    } 
-    return returnedState;
+    if (response.statusCode() != 200) {
+      if (response.statusCode() == 404) {
+        throw new SessionNotFound();
+      } else if (response.statusCode() == 500) {
+        throw new UnknownError();
+      }
+    }
+
+    return gson.fromJson(response.body(), GameState.class);
   }
 
-  /**
+  /*
    * Helper method to perform a POST HTTP Request
-   *
    * @param URL
    * @param jsonPayload String Representation of a json
    * @return HttpResponse<String>
    * @throws URLError
    */
-  private HttpResponse<String> POSTRequest(String URL, String jsonPayload) {
+  @Deprecated
+  private GameSessionResponse createGameSessionRequester(String URL, String jsonPayload) {
+    HttpResponse<String> response;
     try {
-      request =
+      final HttpRequest request =
           HttpRequest.newBuilder()
               .uri(new URI(URL))
               .header("Content-Type", "application/json")
               .POST(BodyPublishers.ofString(jsonPayload))
               .build();
-      ret = client.send(request, BodyHandlers.ofString());
+      response = client.send(request, BodyHandlers.ofString());
     } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
       throw new URLError("Check URL");
     }
-    return ret;
+    if (response.statusCode() != 200) {
+      if (response.statusCode() == 500) {
+        throw new UnknownError();
+      } else if (response.statusCode() == 404) {
+        throw new URLError("URL Error");
+      }
+    }
+    return gson.fromJson(response.body(), GameSessionResponse.class);
   }
 
   /**
@@ -356,7 +377,9 @@ public class CommLayer implements CommLayerInterface {
    * @return HttpResponse<String>
    * @throws URLError
    */
-  private HttpResponse<String> GETRequest(String URL) {
+  @Deprecated
+  private HttpResponse<String> GETRequest(String URL)
+      throws URISyntaxException, IOException, InterruptedException {
     try {
       request =
           HttpRequest.newBuilder()
@@ -378,7 +401,9 @@ public class CommLayer implements CommLayerInterface {
    * @return HttpResponse<String>
    * @throws URLError
    */
-  private HttpResponse<String> DELETERequest(String URL) {
+  @Deprecated
+  private HttpResponse<String> DELETERequest(String URL)
+      throws URISyntaxException, IOException, InterruptedException {
     try {
       request = HttpRequest.newBuilder().uri(new URI(URL)).DELETE().build();
       ret = client.send(request, BodyHandlers.ofString());

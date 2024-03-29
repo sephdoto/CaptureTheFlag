@@ -1,0 +1,15 @@
+org\ctf\model\Movement.class
+org\ctf\model\GameSessionRequest.class
+org\ctf\model\MapTemplate.class
+org\ctf\model\GameSessionResponse.class
+org\ctf\model\GameSession.class
+org\ctf\model\GiveUpRequest.class
+org\ctf\model\Directions.class
+org\ctf\model\JoinGameRequest.class
+org\ctf\model\MoveRequest.class
+org\ctf\model\JoinGameResponse.class
+org\ctf\model\Shape.class
+org\ctf\controller\HTTPClientController.class
+org\ctf\model\ShapeType.class
+org\ctf\CtfClientApplication.class
+org\ctf\controller\cfpServiceClient.class

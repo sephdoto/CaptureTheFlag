@@ -1,7 +1,12 @@
 package org.ctf.client.service;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+import org.ctf.client.data.dto.GameSessionRequest;
 import org.ctf.client.data.dto.GameSessionResponse;
 import org.ctf.client.data.dto.JoinGameResponse;
+import org.ctf.client.data.dto.MoveRequest;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.exceptions.Accepted;
@@ -33,7 +38,7 @@ public interface CommLayerInterface {
      * @throws URLError
      * @throws Accepted
      */
-    GameSessionResponse createGameSession(String URL, MapTemplate map);
+    public GameSessionResponse createGameSession(String URL,  GameSessionRequest gsr);
 
     /**
      * Joins a Game Session if object is connected to a game session
@@ -56,7 +61,7 @@ public interface CommLayerInterface {
      * @throws UnknownError
      * @throws Accepted
      */
-    JoinGameResponse joinGame(String URL, String teamName);
+    JoinGameResponse joinGame(String URL, String teamName) throws URISyntaxException, IOException, InterruptedException;
 
     /**
      * Makes a move on the board if object is connected to a game session and a game
@@ -81,7 +86,7 @@ public interface CommLayerInterface {
      * @throws GameOver
      * @throws UnknownError
      */
-    void makeMove(String URL, String teamID, String teamSecret, Move move);
+    void makeMove(String URL, MoveRequest moveReq);
 
     /**
      * Gives up in Game Session if object is connected to a game session and a game

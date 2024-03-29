@@ -8,6 +8,13 @@
             "type": "java",
             "name": "CtfClientApplication",
             "request": "launch",
+            "mainClass": "org.ctf.CtfClientApplication",
+            "projectName": "httpservice"
+        },
+        {
+            "type": "java",
+            "name": "CtfClientApplication",
+            "request": "launch",
             "mainClass": "org.ctf.client.service.CtfClientApplication",
             "projectName": "ctf-client"
         },
