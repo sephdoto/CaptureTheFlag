@@ -81,9 +81,12 @@ public class GameEngine implements Game {
     BoardSetUp.placeBases(this.gameState, template);
     
     // placing the pieces and blocks
+   
+    BoardSetUp.initPieces(this.gameState, template); 
+    
     BoardSetUp.initGrid(this.gameState, template);
     
-    BoardSetUp.initPieces(this.gameState, template);
+    BoardSetUp.placeBlocks(template, grid, template.getBlocks());
     
     
 

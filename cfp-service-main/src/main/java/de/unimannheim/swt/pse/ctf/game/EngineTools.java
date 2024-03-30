@@ -6,6 +6,7 @@ import java.util.HashMap;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Move;
 import de.unimannheim.swt.pse.ctf.game.state.Piece;
+import de.unimannheim.swt.pse.ctf.game.state.Team;
 
 /**
  * This class contains usefull methods for GameEngine to clean it up.
