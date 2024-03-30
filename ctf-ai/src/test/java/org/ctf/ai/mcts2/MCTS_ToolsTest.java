@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import org.ctf.ai.TestValues;
 import org.ctf.ai.AI_Tools.InvalidShapeException;
+import org.ctf.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
@@ -18,6 +19,24 @@ class MCTS_ToolsTest {
   @BeforeEach
   void setUp() {
       gameState = TestValues.getTestState();
+  }
+  
+  @Test
+  void testPickMoveComplex() {
+    try {
+      MCTS_Tools.pickMoveComplex(gameState, new Grid(gameState));
+    } catch (NoMovesLeftException e) {
+      fail("there should be moves left");
+    } catch (InvalidShapeException e) {e.printStackTrace();}
+    
+    gameState = TestValues.getEmptyTestState();
+    boolean noMoves = false;
+    try {
+      MCTS_Tools.pickMoveComplex(gameState, new Grid(gameState));
+    } catch (NoMovesLeftException e) {
+      noMoves = true;
+    } catch (InvalidShapeException e) {e.printStackTrace();}
+    assertTrue(noMoves);
   }
   
   @Test

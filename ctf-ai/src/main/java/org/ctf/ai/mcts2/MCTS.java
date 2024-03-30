@@ -51,7 +51,7 @@ public class MCTS {
     while(System.currentTimeMillis() - time < milis){
       //Schritte des UCT abarbeiten
       TreeNode selected = selectAndExpand(root, C);
-      backpropagate(selected, multiSimulate(selected));
+      backpropagate(selected, simulate(selected));
     }
 
     TreeNode bestChild = getRootBest(root);
@@ -421,9 +421,8 @@ public class MCTS {
   void alterGameStateAndGrid(GameState gameState, Grid grid, Move move) {
     GridObjectContainer occupant = grid.getPosition(move.getNewPosition()[1], move.getNewPosition()[0]);
     Piece picked = Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(move.getPieceId())).findFirst().get();
-    int[] oldPos = picked.getPosition();
 
-    grid.setPosition(null, oldPos[1], oldPos[0]);
+    grid.setPosition(null, picked.getPosition()[1], picked.getPosition()[0]);
     if(occupant == null) {
       grid.setPosition(new GridObjectContainer(GridObjects.piece, gameState.getCurrentTeam(), picked), move.getNewPosition()[1], move.getNewPosition()[0]);
       picked.setPosition(move.getNewPosition());
@@ -437,7 +436,7 @@ public class MCTS {
     } else {
       gameState.getTeams()[occupant.getTeamId()].setFlags(gameState.getTeams()[occupant.getTeamId()].getFlags() -1);
       picked.setPosition(MCTS_Tools.respawnPiecePosition(grid, gameState.getTeams()[gameState.getCurrentTeam()].getBase()));
-      grid.setPosition(new GridObjectContainer(GridObjects.piece, gameState.getCurrentTeam(), picked), move.getNewPosition()[1], move.getNewPosition()[0]);
+      grid.setPosition(new GridObjectContainer(GridObjects.piece, gameState.getCurrentTeam(), picked), picked.getPosition()[1], picked.getPosition()[0]);
     }
     gameState.setLastMove(move);
     MCTS_Tools.toNextTeam(gameState);

@@ -38,12 +38,12 @@ class MCTSTest {
   void testPerformance() throws InterruptedException {
     double expansions = 0;
     int count = 0;
-    int timeInMilis = 10000;
+    int timeInMilis = 100;
     int simulations = 0;
     int heuristics = 0;
     int crashes = 0;
 
-    for(;count<1; count++) {
+    for(;count<100; count++) {
       MCTS mcts = new MCTS(this.mcts.root.clone(TestValues.getTestState()));
       try {
         mcts.getMove(timeInMilis, AI_Constants.C);
@@ -58,6 +58,61 @@ class MCTSTest {
 
     System.out.println(count + " simulations with " + timeInMilis + " ms, average expansions/run: " + expansions
         + ",\nsimulations till the end: " + simulations + ", heuristic used: " + heuristics + "\nResults computed with " + crashes + " crashes");
+  }
+  
+  @Test
+  void testMctsWorks() throws InterruptedException {
+    int randomTillEnd = 0;
+    while(mcts.isTerminal(mcts.root) == -1) {
+      randomTillEnd++;
+      mcts.oneMove(mcts.root, mcts.root);
+      mcts.root.printGrid();
+      System.out.println("\nlastmove: " + mcts.root.gameState.getLastMove().getPieceId() + " to " +
+          mcts.root.gameState.getLastMove().getNewPosition()[0] + " " + mcts.root.gameState.getLastMove().getNewPosition()[1] + "\n\n");
+      mcts.removeTeamCheck(mcts.root.gameState, mcts.root.grid);
+    }
+
+    gameState = TestValues.getTestState();
+    TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
+    mcts = new MCTS(parent);
+
+    int mctsTillEnd = 0;
+    while(mcts.isTerminal(mcts.root) == -1) {
+
+      Move move = mcts.getMove(1000, AI_Constants.C);
+      ++mctsTillEnd;      
+      TreeNode tn = mcts.root;
+      mcts.alterGameStateAndGrid(tn.gameState, tn.grid, move);
+
+      mcts.removeTeamCheck(mcts.root.gameState, mcts.root.grid);
+            System.out.println("\nROUND: " + mctsTillEnd + "\n" + mcts.printResults(tn.gameState.getLastMove()) + "\n");
+            tn.printGrid();
+
+      if(mcts.isTerminal(tn) != -1)
+        break;
+
+      tn = tn.clone(tn.copyGameState());
+      mcts.oneMove(tn, tn);
+      ++mctsTillEnd;
+
+      mcts.removeTeamCheck(mcts.root.gameState, mcts.root.grid);
+            System.out.println("\nROUND: " + mctsTillEnd + "\nRandom: Piece " + tn.gameState.getLastMove().getPieceId() + " to " 
+            + tn.gameState.getLastMove().getNewPosition()[0] + "," + tn.gameState.getLastMove().getNewPosition()[1] + "\n");
+            tn.printGrid();
+
+      for(int i=0; i<tn.parent.children.length; i++) {
+        tn.parent.children[i] = null;
+      }
+      tn.parent = null;
+      for(int i = 0; i<tn.children.length; i++)
+        tn.children[i] = null;
+      tn.wins = new int[] {0,0};
+
+
+      mcts = new MCTS(tn);
+    }
+    System.out.println("\"testMctsWorks\": random steps till end: " + randomTillEnd + ", mcts steps till end: " + mctsTillEnd);
+    assertTrue(mctsTillEnd < randomTillEnd);
   }
 
   @Test
@@ -257,7 +312,7 @@ class MCTSTest {
 
     int piecesTeam0new = root.gameState.getTeams()[0].getPieces().length;
 
-    assertNotEquals(piecesTeam0, piecesTeam0new);                                                   //a piece got captured, the Pieces Array got smaller
+      assertNotEquals(piecesTeam0, piecesTeam0new);                                                   //a piece got captured, the Pieces Array got smaller
   }
   /**
    * This method tests if a piece can capture a flag.
@@ -430,5 +485,8 @@ class MCTSTest {
     mcts.alterGameStateAndGrid(altered, node.grid, move);
 
     assertNotEquals(node.gameState.getCurrentTeam(), altered.getCurrentTeam());
+    
+    GameState test = TestValues.getEmptyTestState();
+    
   }
 }

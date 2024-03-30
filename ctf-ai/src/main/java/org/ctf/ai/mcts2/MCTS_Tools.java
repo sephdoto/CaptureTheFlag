@@ -593,8 +593,9 @@ public class MCTS_Tools {
     while (true) {
       reach = (int) (Math.random() * dirMap.get(randomDir)[1] + 1);
       Move newPos = checkMoveValidity(gameState, grid, piece, dirMap.get(randomDir)[0], reach);
-      if (newPos != null) return newPos;
-        dirMap.get(randomDir)[1] =  reach - 1;
+      if (newPos != null) 
+        return newPos;
+      dirMap.get(randomDir)[1] =  reach - 1;
       continue;
     }
   }
