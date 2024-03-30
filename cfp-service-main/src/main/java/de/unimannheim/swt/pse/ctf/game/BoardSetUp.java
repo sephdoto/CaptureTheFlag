@@ -39,12 +39,8 @@ public class BoardSetUp {
     team.setId(Integer.toString(teamID));
     team.setColor(GameEngine.getRandColor());
 
-    // TODO die Bases müssen anders gesetzt werden.
-    if (teamID == 0) {
-      team.setBase(new int[] {0, 0});
-    } else if (teamID == 1) {
-      team.setBase(new int[] {template.getGridSize()[1] - 1, template.getGridSize()[0] - 1});
-    }
+    // TODO die Bases müssen woanders gesetzt werden.
+    
 
     team.setFlags(template.getFlags());
 
@@ -172,6 +168,21 @@ public class BoardSetUp {
         column--;
       }
     }
+  }
+  
+  /**
+   * This is a helper method to place the bases in the create method
+   * @author yannicksiebenhaar
+   */
+  
+  static void placeBases(GameState gs, MapTemplate mt) {
+	  for(int i = 0; i < mt.getTeams(); i++) {
+		  if (i == 0) {
+			  gs.getTeams()[i].setBase(new int[] {mt.getGridSize()[0]/4,mt.getGridSize()[1]/2});
+		    } else if (i == 1) {
+		      gs.getTeams()[i].setBase(new int[] {mt.getGridSize()[0] - 1 - mt.getGridSize()[0]/4,mt.getGridSize()[1]/2});
+		    }   
+	  }
   }
 
   /**

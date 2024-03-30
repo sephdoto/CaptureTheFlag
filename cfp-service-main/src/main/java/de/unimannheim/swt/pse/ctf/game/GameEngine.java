@@ -77,10 +77,15 @@ public class GameEngine implements Game {
       teams[i] = BoardSetUp.initializeTeam(i, template);
     }
     this.gameState.setTeams(teams);
-
-    BoardSetUp.initPieces(this.gameState, template);
+    
+    BoardSetUp.placeBases(this.gameState, template);
+    
     // placing the pieces and blocks
     BoardSetUp.initGrid(this.gameState, template);
+    
+    BoardSetUp.initPieces(this.gameState, template);
+    
+    
 
     this.remainingTeamSlots = template.getTeams() - 1;
     // Setting Flags
@@ -605,7 +610,7 @@ public class GameEngine implements Game {
     test.create(testMap);
     test.addTeam("seph", 1);
     // test.addTeam("seph2", 1);
-    System.out.println(test.isStarted());
+    //System.out.println(test.isStarted());
     System.out.println(test.isGameOver());
     int[] futuresquare = {2, 0};
     Move testmove = new Move();
@@ -617,7 +622,7 @@ public class GameEngine implements Game {
     // System.out.println(test.gameState.getTeams()[1].getColor().toString());
 
     Move move = new Move();
-    move.setPieceId(test.getCurrentGameState().getTeams()[0].getPieces()[0].getId());
+    //move.setPieceId(test.getCurrentGameState().getTeams()[0].getPieces()[0].getId());
     //	System.out.println(test.getCurrentGameState().getTeams()[1].getBase()[0]);
     //    	test.makeMove(move);
     // System.out.println(((int)(Math.random()*test.currentTemplate.getTeams())));
