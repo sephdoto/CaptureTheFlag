@@ -77,12 +77,12 @@ class AI_ToolsTest {
     assertArrayEquals(new int[] {3,4}, pos);
 
     gameState.getGrid()[3][4] = "b";                                    //block last free field, distance from base must be +1
-    pos = AI_Tools.respawnPiecePosition(gameState, basePos);
-    assertArrayEquals(new int[] {0,6}, pos);                            //randomly chosen field: 4,4. Should stay the same every time (with this gameState)
-    
+    pos = AI_Tools.respawnPiecePosition(gameState, basePos); 
+    assertArrayEquals(new int[] {4,5}, pos);                            //randomly chosen field: 4,5. Should stay the same every time (with this gameState)
+   
     gameState.getGrid()[0][0] = "b";                                    //alter gameState so the seeded random chooses another field, even though 4,4 is free to be occupied
     pos = AI_Tools.respawnPiecePosition(gameState, basePos);
-    assertArrayEquals(new int[] {0,5}, pos);                            //randomly chosen field: 0,4. Should stay the same every time (with this gameState)
+    assertArrayEquals(new int[] {3,6}, pos);                            //randomly chosen field: 3,6. Should stay the same every time (with this gameState)
     
     for(int i= 0; i<gameState.getGrid().length; i++) {                  //place a block onto every free position on the grid
       for(int j=0; j<gameState.getGrid().length; j++) {

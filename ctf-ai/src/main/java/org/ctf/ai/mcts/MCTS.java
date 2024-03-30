@@ -359,17 +359,15 @@ public class MCTS {
 
   Move getAndRemoveMoveHeuristic(TreeNode parent) {
     for(Piece piece : parent.possibleMoves.keySet()) {
-//      Piece picked = Arrays.asList(parent.gameState.getTeams()[parent.gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(key)).findFirst().get();
       for(int i=0; i<parent.possibleMoves.get(piece).size(); i++) {
         int[] pos = parent.possibleMoves.get(piece).get(i);
-        if(parent.gameState.getGrid()[pos[0]][pos[1]].contains("b:") && 
-            !AI_Tools.occupiedBySameTeam(parent.gameState, pos)) {
+        if(AI_Tools.emptyField(parent.gameState.getGrid(), pos))
+          continue;
+        if(AI_Tools.otherTeamsBase(parent.gameState.getGrid(), pos, piece)) {
           return createMoveDeleteIndex(parent, piece, i);
         }
-        if(parent.gameState.getGrid()[pos[0]][pos[1]].contains("p:")&& 
-            !AI_Tools.occupiedBySameTeam(parent.gameState, pos)) {
-          if(AI_Tools.validPos(pos, piece, parent.gameState))
-            return createMoveDeleteIndex(parent, piece, i);
+        if(AI_Tools.occupiedByWeakerOpponent(parent.gameState, pos, piece)) {
+          return createMoveDeleteIndex(parent, piece, i);
         }
       }
     }
@@ -418,7 +416,7 @@ public class MCTS {
    * @param gameState
    * @param move
    */
-  void alterGameState(GameState gameState, Move move) {
+  public void alterGameState(GameState gameState, Move move) {
     String occupant = gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]];
     Piece picked = Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(move.getPieceId())).findFirst().get();
     int[] oldPos = picked.getPosition();
