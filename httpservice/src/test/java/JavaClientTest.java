@@ -149,8 +149,8 @@ public class JavaClientTest {
 
     Gson gson = new Gson();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
-   JavaClient javaClient = new JavaClient(new HTTPClientController(new cfpServiceClient() {
-       }));
+
+ JavaClient javaClient = new JavaClient(new HTTPClientController(new cfpServiceClient()));
               javaClient.createGame(template);
 
     assertNotNull(javaClient.getCurrentGameSessionID());

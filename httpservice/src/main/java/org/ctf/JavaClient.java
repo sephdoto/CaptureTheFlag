@@ -1,4 +1,4 @@
-package org.ctf.client;
+package org.ctf;
 
 import com.google.gson.Gson;
 import java.util.Date;
@@ -6,8 +6,10 @@ import org.ctf.controller.HTTPClientController;
 import org.ctf.model.GameSession;
 import org.ctf.model.GameSessionRequest;
 import org.ctf.model.GameSessionResponse;
+import org.ctf.model.GiveUpRequest;
 import org.ctf.model.JoinGameRequest;
 import org.ctf.model.JoinGameResponse;
+import org.ctf.model.MoveRequest;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
@@ -149,7 +151,7 @@ public class JavaClient {
    * @throws URLError (404)
    */
   public void deleteSession() {
-    comm.deleteCurrentSession(currentServer);
+    comm.deleteSession(currentServer);
   }
 
   /**
@@ -163,7 +165,7 @@ public class JavaClient {
    * @throws URLError (404)
    */
   public void giveUp() {
-    comm.giveUp(currentServer, teamID, teamSecret);
+    comm.giveUp(currentServer,  new GiveUpRequest(teamID, teamSecret));
   }
 
   /**
@@ -243,10 +245,10 @@ public class JavaClient {
   }
 
   private void joinGameParser(JoinGameResponse joinGameResponse) {
-    this.teamID = joinGameResponse.getTeamId();
-    this.teamSecret = joinGameResponse.getTeamSecret();
+    this.teamID = joinGameResponse.teamId();
+    this.teamSecret = joinGameResponse.teamSecret();
     try {
-      this.teamColor = joinGameResponse.getTeamColor();
+      this.teamColor = joinGameResponse.teamColor();
     } catch (NullPointerException e) {
       System.out.println("No Team color has been set");
     }
@@ -254,7 +256,7 @@ public class JavaClient {
 
   private void makeMoverCaller(String currentServer, String teamID, String teamSecret, Move move) {
     try {
-      comm.makeMove(currentServer, teamID, teamSecret, move);
+      comm.move(currentServer, new MoveRequest(teamID, teamSecret, move.getPieceId(), move.getNewPosition()));
     } catch (Accepted e) {
       throw new Accepted();
     } catch (SessionNotFound e) {
@@ -271,8 +273,7 @@ public class JavaClient {
   }
 
   private void gameStateHelper() {
-    GameState gameState = new GameState();
-    gameState = comm.getCurrentGameState(currentServer);
+    GameState gameState = comm.getState(currentServer);
 
     this.grid = gameState.getGrid();
     this.currentTeamTurn = gameState.getCurrentTeam();
@@ -281,9 +282,9 @@ public class JavaClient {
   }
 
   private GameSessionResponse gameSessionCaller() {
-    GameSessionResponse gameSessionResponse = new GameSessionResponse();
+    GameSessionResponse gameSessionResponse;
     try {
-      gameSessionResponse = comm.getCurrentSessionState(currentServer);
+      gameSessionResponse = comm.getSession(currentServer);
     } catch (SessionNotFound e) {
       throw new SessionNotFound();
     } catch (UnknownError e) {

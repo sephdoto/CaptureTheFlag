@@ -5,13 +5,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
-import org.ctf.client.data.dto.MoveRequest;
 import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
 import java.io.IOException;
+import org.ctf.client.data.dto.GameSessionRequest;
 import org.ctf.client.data.dto.GameSessionResponse;
 import org.ctf.client.data.dto.JoinGameResponse;
+import org.ctf.client.data.dto.MoveRequest;
 import org.ctf.shared.state.GameState;
-import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.junit.jupiter.api.BeforeAll;
@@ -35,16 +35,20 @@ public class CommLayerTest {
   @Test
   void testCreateGameSession() {
     MapTemplate template = createGameTemplate();
+    GameSessionRequest gSessionRequest = new GameSessionRequest();
+    gSessionRequest.setTemplate(template);
     GameSessionResponse gameSessionResponse =
-        comm.createGameSession("http://localhost:9999/api/gamesession", template);
+        comm.createGameSession("http://localhost:9999/api/gamesession", gSessionRequest);
     assertNotNull(gameSessionResponse.getId());
   }
 
   @Test
   void testGetCurrentGameState() {
     MapTemplate template = createGameTemplate();
+    GameSessionRequest gSessionRequest = new GameSessionRequest();
+    gSessionRequest.setTemplate(template);
     GameSessionResponse gameSessionResponse =
-        comm.createGameSession("http://localhost:9999/api/gamesession", template);
+        comm.createGameSession("http://localhost:9999/api/gamesession", gSessionRequest);
     String idURL = "http://localhost:9999/api/gamesession/" + gameSessionResponse.getId();
     JoinGameResponse jsResponse = comm.joinGame(idURL, "TestTeam1");
     JoinGameResponse jsResponse2 = comm.joinGame(idURL, "TestTeam2");
@@ -54,8 +58,10 @@ public class CommLayerTest {
   @Test
   void testGetCurrentSessionState() {
     MapTemplate template = createGameTemplate();
+    GameSessionRequest gSessionRequest = new GameSessionRequest();
+    gSessionRequest.setTemplate(template);
     GameSessionResponse gameSessionResponse =
-        comm.createGameSession("http://localhost:9999/api/gamesession", template);
+        comm.createGameSession("http://localhost:9999/api/gamesession", gSessionRequest);
     String idURL = "http://localhost:9999/api/gamesession/" + gameSessionResponse.getId();
 
     assertNotNull(comm.getCurrentSessionState(idURL));
@@ -64,9 +70,11 @@ public class CommLayerTest {
   @Test
   void testJoinGame() {
     MapTemplate template = createGameTemplate();
+    GameSessionRequest gSessionRequest = new GameSessionRequest();
+    gSessionRequest.setTemplate(template);
 
     GameSessionResponse gameSessionResponse =
-        comm.createGameSession("http://localhost:9999/api/gamesession", template);
+        comm.createGameSession("http://localhost:9999/api/gamesession", gSessionRequest);
     String idURL = "http://localhost:9999/api/gamesession/" + gameSessionResponse.getId();
     JoinGameResponse jsResponse = comm.joinGame(idURL, "TestTeam1");
     assertNotNull(jsResponse.getTeamSecret());
@@ -75,9 +83,11 @@ public class CommLayerTest {
   @Test
   void testMakeMove() {
     MapTemplate template = createGameTemplate();
+    GameSessionRequest gSessionRequest = new GameSessionRequest();
+    gSessionRequest.setTemplate(template);
 
     GameSessionResponse gameSessionResponse =
-        comm.createGameSession("http://localhost:9999/api/gamesession", template);
+        comm.createGameSession("http://localhost:9999/api/gamesession", gSessionRequest);
     JoinGameResponse jsResponse =
         comm.joinGame(
             "http://localhost:9999/api/gamesession/" + gameSessionResponse.getId(), "TestTeam1");
@@ -100,9 +110,11 @@ public class CommLayerTest {
   @Test
   void testGiveUp() {
     MapTemplate template = createGameTemplate();
+    GameSessionRequest gSessionRequest = new GameSessionRequest();
+    gSessionRequest.setTemplate(template);
 
     GameSessionResponse gameSessionResponse =
-        comm.createGameSession("http://localhost:9999/api/gamesession", template);
+        comm.createGameSession("http://localhost:9999/api/gamesession", gSessionRequest);
     String idURL = "http://localhost:9999/api/gamesession/" + gameSessionResponse.getId();
     JoinGameResponse jsResponse = comm.joinGame(idURL, "TestTeam1");
 
@@ -129,8 +141,11 @@ public class CommLayerTest {
   @Test
   void testDeleteCurrentSession() {
     MapTemplate template = createGameTemplate();
+    GameSessionRequest gSessionRequest = new GameSessionRequest();
+    gSessionRequest.setTemplate(template);
+
     GameSessionResponse gameSessionResponse =
-        comm.createGameSession("http://localhost:9999/api/gamesession", template);
+        comm.createGameSession("http://localhost:9999/api/gamesession", gSessionRequest);
     try {
       comm.deleteCurrentSession(
           "http://localhost:9999/api/gamesession/" + gameSessionResponse.getId());
