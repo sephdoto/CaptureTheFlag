@@ -1,5 +1,7 @@
 package org.ctf.ui.customobjects;
 
+import javax.swing.undo.StateEdit;
+
 import org.ctf.ui.Game;
 import org.ctf.ui.TestGameState;
 
@@ -23,6 +25,7 @@ import javafx.scene.shape.Rectangle;
  * This Class represents a cell of the GridPane, which can be accessed by its x,y coordinates
  * On this BackGroundCell figures can be placed
  */
+@Deprecated
 public class BackgroundCell extends Pane {
 	public int x,y;
 	    public boolean occupied;
@@ -71,7 +74,7 @@ public class BackgroundCell extends Pane {
 	    	rc.layoutXProperty().bind(Bindings.subtract(widthProperty().divide(2), rc.widthProperty().divide(2)));
 	    	rc.layoutYProperty().bind(Bindings.subtract(widthProperty().divide(2), rc.heightProperty().divide(2)));
 	    	getChildren().add(rc);
-	    	figure.setParent(this);
+	    	//figure.setParente(this);
 	    }
 	    public void addBlock(BlockRepV3 block) {
 	    	occupied = true;
@@ -89,9 +92,9 @@ public class BackgroundCell extends Pane {
 			rc.radiusProperty().bind(Bindings.divide(widthProperty(), 5));
 			rc.centerXProperty().bind(widthProperty().divide(2));
 			rc.centerYProperty().bind(widthProperty().divide(2));
-			
-
 		}
+	    
+	    
 	    
 	    
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.ctf.ui.customobjects.BackgroundCell;
+import org.ctf.ui.customobjects.BackgroundCellV2;
 import org.ctf.ui.customobjects.CostumFigurePain;
 
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
@@ -44,16 +45,17 @@ public class Game   {
 	public Game(GamePane pane) {
 		cb = pane;
 		currentPlayer = null;
-		cb.setTeamActive(1);
+		cb.setTeamActive(1,true);
 	}
 	
 	
 	public  void makeGrid(GameState s) {
-		state = s;
-		currentTeam = s.getCurrentTeam();
-		cb.setGameState(state);
-		cb.fillGridPane2();
-		cb.setTeamActive(2);
+//		state = s;
+//		currentTeam = s.getCurrentTeam();
+//		cb.setGameState(state);
+//		cb.fillGridPane2();
+		cb.setTeamActive(1, false);
+		cb.setTeamActive(2,true);
 		cb.setGame(this);
 		
 	}
@@ -61,9 +63,9 @@ public class Game   {
 	public Move makeMove(int[] newPos) {
 		Move move = new Move();
 		move.setNewPosition(newPos);
-		this.state = new GameState();
-		state.setGrid(exm3);
-		this.makeGrid(state);
+		cb.moveFigure(newPos[0],newPos[1],currentPlayer);
+		cb.setTeamActive(1, false);
+		cb.setTeamActive(2,true);
 		return move;
 	}
 	
@@ -79,7 +81,7 @@ public class Game   {
 		if (currentPlayer.posY == 3) {
 			z = 4;
 		}
-		for (BackgroundCell c : cb.cells.values()) {
+		for (BackgroundCellV2 c : cb.cells.values()) {
 			if (c.x == 2 && c.y == z) {
 				c.rc.setEffect(glow);
 				c.rc.setFill(Color.LIGHTBLUE);

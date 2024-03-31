@@ -45,6 +45,7 @@ public class PlayGameScreen {
 		center.setStyle("-fx-background-color:white");
 		VBox right = createRightSide();
 		gm = pane;
+		//gm.moveFigure(5,);
 		//center.prefWidthProperty().bind(stage.widthProperty().multiply(0.8));
 		center.getChildren().addAll(gm, right);
 		v.getChildren().add(center);

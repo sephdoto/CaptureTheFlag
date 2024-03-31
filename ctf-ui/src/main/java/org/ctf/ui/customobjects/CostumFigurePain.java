@@ -23,7 +23,7 @@ public class CostumFigurePain extends Pane {
 	public String name; //id
 	Image bImage;
 	ImageView vw;
-	BackgroundCell parent;
+	BackgroundCellV2 parent;
 	public int posX;
 	public int posY;
 	boolean active;
@@ -92,7 +92,7 @@ public class CostumFigurePain extends Pane {
 	}
 	
 
-	public void setParent(BackgroundCell parent) {
+	public void setParente(BackgroundCellV2 parent) {
 		this.parent = parent;
 		this.posX = parent.x;
 		this.posY = parent.y;

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import javax.management.BadAttributeValueExpException;
 
 import org.ctf.ui.customobjects.BackgroundCell;
+import org.ctf.ui.customobjects.BackgroundCellV2;
 import org.ctf.ui.customobjects.BlockRepV3;
 import org.ctf.ui.customobjects.CostumFigurePain;
 import org.ctf.ui.customobjects.DameRep;
@@ -50,7 +51,7 @@ public class GamePane extends HBox {
 	HashMap<String, CostumFigurePain> team2 = new HashMap<String, CostumFigurePain>();
 	ArrayList<CostumFigurePain> allFigures = new ArrayList<CostumFigurePain>();
 	//ArrayList<BackgroundCell> cells = new ArrayList<BackgroundCell>();
-	HashMap<Integer, BackgroundCell> cells = new HashMap<Integer, BackgroundCell>();
+	HashMap<Integer, BackgroundCellV2> cells = new HashMap<Integer, BackgroundCellV2>();
 	 GridPane gridPane;
 	
 	
@@ -121,8 +122,8 @@ public class GamePane extends HBox {
 //			}
 //		});
 //	}
-	public void moveFigure(int x) {
-		cells.get(x).addBlock(new BlockRepV3());
+	public void moveFigure(int x, int y, CostumFigurePain cuPain) {
+		cells.get(generateKey(x, y)).addFigure(cuPain);
 		
 	}
 	
@@ -135,7 +136,7 @@ public class GamePane extends HBox {
 		for(CostumFigurePain cm : allFigures) {
 			cm.game = game;
 		}
-		for(BackgroundCell cl: cells.values()) {
+		for(BackgroundCellV2 cl: cells.values()) {
 			cl.game = game;
 		}
 	}
@@ -159,7 +160,7 @@ public class GamePane extends HBox {
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
 				String objectRep = map[i][j];
-				BackgroundCell child = new BackgroundCell(i, j);
+				BackgroundCellV2 child = new BackgroundCellV2(i, j);
 				cells.put(generateKey(i, j),child);
 				
 				if (objectRep.startsWith("p:1")) {
@@ -209,7 +210,7 @@ public class GamePane extends HBox {
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
 				String objectRep = map[i][j];
-				BackgroundCell child = new BackgroundCell(i, j);
+				BackgroundCellV2 child = new BackgroundCellV2(i, j);
 				cells.put(generateKey(i, j),child);
 				if (objectRep.startsWith("p")) {
 					char teamNc = objectRep.charAt(2);
@@ -236,13 +237,26 @@ public class GamePane extends HBox {
 		vBox.getChildren().add(gridPane);
 	}
 	
-	public void setTeamActive(int i){
+	public void setTeamActive(int i, boolean active){
 		HashMap<String, CostumFigurePain> currentTeam = teams.get(i-1);
 		for(CostumFigurePain p: currentTeam.values()) {
-			p.setActive();
+			if(active) {
+				p.setActive();
+			} else {
+				p.setUnactive();
+			}
 			System.out.println("ich bin aktiv");
 		}
 	}
+//	public void setTeamActive2(int i) {
+//		for(CostumFigurePain p: allFigures) {
+//			if(p.team = i) {
+//				p.setActive();
+//			}else {
+//				p.setUnactive();
+//			}
+//		}
+//	}
 	
 	
 	
