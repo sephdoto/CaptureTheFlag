@@ -179,7 +179,7 @@ public class EngineTools extends AI_Tools {
 		  }
 		  else if(teamID == 1) {
 			  do {
-				  newY = (int) (Math.random() * newGs.getGrid().length/2 * 2);
+				  newY = (int) (Math.random() * newGs.getGrid().length/2 + newGs.getGrid().length/2 );
 				  newX = (int) (Math.random() * newGs.getGrid()[0].length);
 				  } while(!grid[newY][newX].equals(""));
 		  }

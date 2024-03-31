@@ -106,15 +106,17 @@ public class BoardSetUp {
   }
 
   /**
-   * DUMMY TODO implement this method
+   * this method uses a standard hillclimbing algorithm to find a piece placement with the most possible moves in total for each team 
    *
-   * @param teams
-   * @param grid
-   * @return
+   * @author yannicksiebenhaar
+   * @param GameState 
+   * 
    */
   static void placePiecesSpaced(GameState gameState) {
 	
 	placePiecesSymmetrical(gameState);
+	
+	
 	
 	for (Team team : gameState.getTeams()) {
 	      //grid[team.getBase()[0]][team.getBase()[1]] = "b:" + team.getId(); //Moved to InitPieces so the pieces will be placed around the base
@@ -122,19 +124,24 @@ public class BoardSetUp {
 	        gameState.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = piece.getId();
 	      }
 	    }
-	for(Team t : gameState.getTeams()) {
-		GameState current = gameState;
-		while(true) {
-				LinkedList<GameState> neighbors = EngineTools.getNeighbors(current, Integer.decode(t.getId()), null);
-				System.out.println(neighbors);
-				GameState bestNeighbor = EngineTools.getBestState(neighbors, Integer.decode(t.getId()));
-				if(EngineTools.valueOf(current,  Integer.decode(t.getId())) > EngineTools.valueOf(bestNeighbor, Integer.decode(t.getId()))) {
-					gameState.setGrid(current.getGrid());
-					gameState.getTeams()[Integer.decode(t.getId())].setPieces(current.getTeams()[Integer.decode(t.getId())].getPieces());
-					break;
-				}
-				else current = bestNeighbor;
-		}
+	GameState ultimate = gameState;
+	for(int i = 0; i < 10; i++) {
+		for(Team t : gameState.getTeams()) {
+			GameState current = gameState;
+			while(true) {
+					LinkedList<GameState> neighbors = EngineTools.getNeighbors(current, Integer.decode(t.getId()), null);
+					System.out.println(neighbors);
+					GameState bestNeighbor = EngineTools.getBestState(neighbors, Integer.decode(t.getId()));
+					if(EngineTools.valueOf(current,  Integer.decode(t.getId())) > EngineTools.valueOf(bestNeighbor, Integer.decode(t.getId()))) {
+						if(EngineTools.valueOf(ultimate,Integer.decode(t.getId())) < EngineTools.valueOf(current,  Integer.decode(t.getId()))){
+							gameState.setGrid(current.getGrid());
+							gameState.getTeams()[Integer.decode(t.getId())].setPieces(current.getTeams()[Integer.decode(t.getId())].getPieces());
+						}
+						break;
+					}
+					else current = bestNeighbor;
+			}
+		}	
 	}
 	
   }
