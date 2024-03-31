@@ -45,6 +45,6 @@ class TreeNodeTest {
     for(; mcts.isTerminal(node) == -1; ) {
       mcts.oneMove(node, node, true);
       node.printGrids();
-    } 
+    }
   }
 }

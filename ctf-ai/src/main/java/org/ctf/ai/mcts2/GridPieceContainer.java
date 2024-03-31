@@ -1,28 +1,28 @@
 package org.ctf.ai.mcts2;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import org.ctf.shared.state.Piece;
 
 public class GridPieceContainer {
-  ArrayList<Piece> pieces;
+  HashSet<Piece> pieces;
   
   public GridPieceContainer() {
-    this.pieces = new ArrayList<Piece>();
+    this.pieces = new HashSet<Piece>();
   }
-  public GridPieceContainer(ArrayList<Piece> pieces) {
+  public GridPieceContainer(HashSet<Piece> pieces) {
     this.pieces = pieces;
   }
   
   public GridPieceContainer clone() {
-    ArrayList<Piece> pieces = new ArrayList<Piece>();
+    HashSet<Piece> pieces = new HashSet<Piece>();
     pieces.addAll(this.pieces);
     return new GridPieceContainer(pieces);
   }
   
-  public ArrayList<Piece> getPieces() {
+  public HashSet<Piece> getPieces() {
     return pieces;
   }
-  public void setPieces(ArrayList<Piece> pieces) {
+  public void setPieces(HashSet<Piece> pieces) {
     this.pieces = pieces;
   }
 }

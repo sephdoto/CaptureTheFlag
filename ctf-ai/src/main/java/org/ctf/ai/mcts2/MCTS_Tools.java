@@ -2,6 +2,7 @@ package org.ctf.ai.mcts2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.stream.Stream;
 import org.ctf.ai.AI_Tools.InvalidShapeException;
@@ -19,8 +20,7 @@ import org.ctf.shared.state.data.map.ShapeType;
 public class MCTS_Tools {
   static Random random = new Random();
 
-  public static void putNeighbouringPieces(ArrayList<Piece> pieceList, Grid grid, Piece center) {
-    pieceList.add(center);
+  public static void putNeighbouringPieces(HashSet<Piece> pieceList, Grid grid, Piece center) {
     try {
       pieceList.addAll(grid.getPieceVisionGrid()[center.getPosition()[0]][center.getPosition()[1]].getPieces());
     } catch (NullPointerException npe) { /* if only the piece itself is on a position this gets thrown */ };

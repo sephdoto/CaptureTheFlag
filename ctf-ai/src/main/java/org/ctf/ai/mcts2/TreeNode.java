@@ -2,6 +2,7 @@ package org.ctf.ai.mcts2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
@@ -66,13 +67,11 @@ public class TreeNode implements Comparable<TreeNode> {
    * It should only be used for simulating.
    * @param pieces
    */
-  public void updatePossibleMovesAndChildren(ArrayList<Piece> pieces) {
+  public void updateGrids(HashSet<Piece> pieces) {
     for(Piece p : pieces) {
       removeFromGrids(p);
-      ArrayList<int[]> positions = new ArrayList<int[]>();
-      ArrayList<int[]> impossibleMoves = getIMpossibleMoves(p, positions);
-      positions.addAll(impossibleMoves);
-      addToPieceVisions(p, positions);
+      ArrayList<int[]> impossibleMoves = getIMpossibleMoves(p);
+      addToPieceVisions(p, impossibleMoves);
       this.grid.setPosition(new GridObjectContainer(p), p.getPosition()[1], p.getPosition()[0]);
     }
   }
@@ -85,17 +84,15 @@ public class TreeNode implements Comparable<TreeNode> {
     this.grid.pieceVisions.put(p, positions);
   }
   void removeFromGrids(Piece piece) {
-    this.possibleMoves.remove(piece);
     for(int[] pos : this.grid.pieceVisions.get(piece)) {
       this.grid.getPieceVisionGrid()[pos[0]][pos[1]].getPieces().remove(piece);
     }
     this.grid.pieceVisions.remove(piece);
   }
-  ArrayList<int[]> getIMpossibleMoves(Piece piece, ArrayList<int[]> possibleMoves){
-    ArrayList<int[]> impossibleMoves = MCTS_Tools.getPossibleMovesWithPieceVision(gameState, grid, piece, possibleMoves);
-    if(possibleMoves.size() > 0) {
-      this.possibleMoves.put(piece, possibleMoves);
-    }
+  ArrayList<int[]> getIMpossibleMoves(Piece piece){
+    ArrayList<int[]> impossibleMoves = new ArrayList<int[]>();
+    if(grid.getPosition(piece.getPosition()[1], piece.getPosition()[0]).getPiece().equals(piece))
+      impossibleMoves.addAll(MCTS_Tools.getPossibleMovesWithPieceVision(gameState, grid, piece, impossibleMoves));
     return impossibleMoves;
   }
 

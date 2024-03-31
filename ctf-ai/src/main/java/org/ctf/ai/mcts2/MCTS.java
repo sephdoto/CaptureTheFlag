@@ -2,6 +2,7 @@ package org.ctf.ai.mcts2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -363,17 +364,21 @@ public class MCTS {
   void oneMove(TreeNode alter, TreeNode original, boolean simulate) {
     if(simulate) {
       Move move = getAndRemoveMoveHeuristicFromGrid(original);
-      alter.printGrids();
-      ArrayList<Piece> updateThese = new ArrayList<Piece>();
+      HashSet<Piece> updateThese = new HashSet<Piece>();
+      Piece center = null;
       try{
-      updateThese.add(alter.grid.getPieceVisionGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]].getPieces().stream().filter(p -> p.getId().equals(move.getPieceId())).findFirst().get());
+        center = alter.grid.getPieceVisionGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]].getPieces().stream().filter(p -> p.getId().equals(move.getPieceId())).findFirst().get();
       } catch(Exception e) {
-        System.out.println();
+        System.out.println("error");
       }
-      MCTS_Tools.putNeighbouringPieces(updateThese, alter.grid, updateThese.get(0)); // TODO testen ob man hier  statt updateThese get 0 das piece aus move holen muss.
+      updateThese.add(center);
+      
+      MCTS_Tools.putNeighbouringPieces(updateThese, alter.grid, center); // TODO testen ob man hier  statt updateThese get 0 das piece aus move holen muss.
       alterGameStateAndGrid(alter.gameState, alter.grid, move);
-      MCTS_Tools.putNeighbouringPieces(updateThese, alter.grid, updateThese.get(0));
-      alter.updatePossibleMovesAndChildren(updateThese);
+      if(isTerminal(alter) != -1)
+        System.out.println(222222);
+      MCTS_Tools.putNeighbouringPieces(updateThese, alter.grid, center);
+      alter.updateGrids(updateThese);
     } else {
       alterGameStateAndGrid(alter.gameState, alter.grid, getAndRemoveMoveHeuristic(original));
       alter.initPossibleMovesAndChildren();

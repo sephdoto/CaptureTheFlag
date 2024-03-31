@@ -2,6 +2,7 @@ package org.ctf.ai.mcts2;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import org.ctf.ai.TestValues;
 import org.ctf.ai.AI_Tools.InvalidShapeException;
 import org.ctf.ai.AI_Tools.NoMovesLeftException;
@@ -23,10 +24,10 @@ class MCTS_ToolsTest {
   
   @Test
   void testPutNeighbouringPieces() {
-    ArrayList<Piece> updateThese = new ArrayList<Piece>();
+    HashSet<Piece> updateThese = new HashSet<Piece>();
     MCTS mcts = new MCTS(new TreeNode(null, gameState, null));
     MCTS_Tools.putNeighbouringPieces(updateThese, mcts.root.grid, mcts.root.gameState.getTeams()[0].getPieces()[2]);
-    ArrayList<Piece> trueNeighbours = new ArrayList<Piece>();
+    HashSet<Piece> trueNeighbours = new HashSet<Piece>();
     trueNeighbours.add(mcts.root.gameState.getTeams()[0].getPieces()[3]);
     assertTrue(trueNeighbours.equals(updateThese));
   }
