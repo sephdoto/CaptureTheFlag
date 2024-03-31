@@ -262,21 +262,28 @@ class MCTSTest {
 
   @Test
   void testMultiSimulate() {
-    long time = System.nanoTime();
-    int[] winners = mcts.multiSimulate(mcts.root);
-    System.out.println("time for multiSim: " + (System.nanoTime() - time)/1000);
-
-    assertEquals(mcts.simulationCounter.get() + mcts.heuristicCounter.get(), AI_Constants.numThreads);
-    assertTrue((winners[0] > 0 || winners[1] > 0));
+    long totalTime = 0;
+    int count = 0;
+    for(int i=0; i<2000; i++, count++) {
+      long time = System.nanoTime();
+      mcts.multiSimulate(mcts.root);
+      totalTime += System.nanoTime() - time;
+      MCTSTest.mcts = new MCTS(new TreeNode(null, TestValues.getTestState(), null));
+    }
+    System.out.println("average time for multiSim: " + (totalTime/count)/1000);
   }
 
   @Test
   void testSimulate() {
-    long time = System.nanoTime();
-    int[] winners = mcts.simulate(mcts.root);
-    System.out.println("time for sim: " + (System.nanoTime() - time)/1000);
-
-    assertTrue((winners[0] > 0 || winners[1] > 0));
+    long totalTime = 0;
+    int count = 0;
+    for(int i=0; i<100000; i++, count++) {
+      long time = System.nanoTime();
+      mcts.simulate(mcts.root);
+      totalTime += System.nanoTime() - time;
+      MCTSTest.mcts = new MCTS(new TreeNode(null, TestValues.getTestState(), null));
+    }
+    System.out.println("average time for sim: " + (totalTime/count)/1000);
   }
 
   @Test

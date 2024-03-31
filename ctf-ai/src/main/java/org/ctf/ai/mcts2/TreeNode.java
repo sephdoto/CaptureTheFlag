@@ -16,14 +16,17 @@ public class TreeNode implements Comparable<TreeNode> {
   int[] wins;
 
   public TreeNode(TreeNode parent, GameState gameState, Grid grid, int[] wins) {
+    this.possibleMoves = new IdentityHashMap<Piece, ArrayList<int[]>>();
     this.parent = parent;
     this.gameState = gameState;
     this.grid = grid;
     this.wins = wins != null ? wins : new int[gameState.getTeams().length];
-    initPossibleMovesAndChildren();
+    if(grid.getPieceVisions().keySet().size() == 0)
+      initPossibleMovesAndChildren();
   }
   
   public TreeNode(TreeNode parent, GameState gameState, int[] wins) {
+    this.possibleMoves = new IdentityHashMap<Piece, ArrayList<int[]>>();
     this.parent = parent;
     this.gameState = gameState;
     this.grid = new Grid(gameState);
@@ -32,17 +35,68 @@ public class TreeNode implements Comparable<TreeNode> {
   }
   
   public void initPossibleMovesAndChildren() {
-    this.possibleMoves = new IdentityHashMap<Piece, ArrayList<int[]>>();
+    possibleMoves.clear();
     int children = 0;
+    IdentityHashMap<Piece, ArrayList<int[]>> impossibleMoves = new IdentityHashMap<Piece, ArrayList<int[]>>();
     for(Piece p : gameState.getTeams()[gameState.getCurrentTeam()].getPieces()) {
-      ArrayList<int[]> movesPieceP = MCTS_Tools.getPossibleMoves(gameState, grid, p, new ArrayList<int[]>());
+      ArrayList<int[]> movesPieceP = new ArrayList<int[]>();
+      impossibleMoves.put(p, MCTS_Tools.getPossibleMovesWithPieceVision(gameState, grid, p, movesPieceP));
       if(movesPieceP.size() > 0) {
         possibleMoves.put(p, movesPieceP);
         children += possibleMoves.get(p).size();
       }
-    }
+    }  
 
+    int start = gameState.getCurrentTeam();
+    for(MCTS_Tools.toNextTeam(gameState); gameState.getCurrentTeam() != start; MCTS_Tools.toNextTeam(gameState)) {
+      for(Piece p : gameState.getTeams()[gameState.getCurrentTeam()].getPieces()) {
+        ArrayList<int[]> movesTeamI = new ArrayList<int[]>();
+        impossibleMoves.put(p, MCTS_Tools.getPossibleMovesWithPieceVision(gameState, grid, p, movesTeamI));
+        impossibleMoves.get(p).addAll(movesTeamI);
+      }
+    }
+    
+    this.grid = new Grid(grid.getGrid(), possibleMoves, impossibleMoves);
     this.children = new TreeNode[children];
+  }
+  
+  /**
+   * This Method only updates a certain amount of pieces from possibleMoves, making it more
+   * efficient for simulating only one node till the end.
+   * It should only be used for simulating.
+   * @param pieces
+   */
+  public void updatePossibleMovesAndChildren(ArrayList<Piece> pieces) {
+    for(Piece p : pieces) {
+      removeFromGrids(p);
+      ArrayList<int[]> positions = new ArrayList<int[]>();
+      ArrayList<int[]> impossibleMoves = getIMpossibleMoves(p, positions);
+      positions.addAll(impossibleMoves);
+      addToPieceVisions(p, positions);
+      this.grid.setPosition(new GridObjectContainer(p), p.getPosition()[1], p.getPosition()[0]);
+    }
+  }
+  void addToPieceVisions(Piece p, ArrayList<int[]> positions){
+    for(int[] pos : positions) {
+      if(this.grid.getPieceVisionGrid()[pos[0]][pos[1]] == null)
+        this.grid.getPieceVisionGrid()[pos[0]][pos[1]] = new GridPieceContainer();
+      this.grid.getPieceVisionGrid()[pos[0]][pos[1]].getPieces().add(p);
+    }
+    this.grid.pieceVisions.put(p, positions);
+  }
+  void removeFromGrids(Piece piece) {
+    this.possibleMoves.remove(piece);
+    for(int[] pos : this.grid.pieceVisions.get(piece)) {
+      this.grid.getPieceVisionGrid()[pos[0]][pos[1]].getPieces().remove(piece);
+    }
+    this.grid.pieceVisions.remove(piece);
+  }
+  ArrayList<int[]> getIMpossibleMoves(Piece piece, ArrayList<int[]> possibleMoves){
+    ArrayList<int[]> impossibleMoves = MCTS_Tools.getPossibleMovesWithPieceVision(gameState, grid, piece, possibleMoves);
+    if(possibleMoves.size() > 0) {
+      this.possibleMoves.put(piece, possibleMoves);
+    }
+    return impossibleMoves;
   }
 
   /** 
@@ -117,18 +171,37 @@ public class TreeNode implements Comparable<TreeNode> {
     * TODO needs to be implemented
     */
    public void printMe(String s) {
-     printGrid();
+     printGrids();
    }
 
    /**
-    * prints the grid
+    * prints the grids
     */
-   public void printGrid() {
-     for(GridObjectContainer[] s : this.grid.getGrid()) {
-       for(GridObjectContainer ss : s) {
-         System.out.print((ss == null ? "x" : ss.toString()) + " ");
+   void printGrids() {
+     System.out.println("\n");
+     for(int i=0; i<grid.getGrid().length; i++) {
+       for(int j=0; j<grid.getGrid()[0].length; j++) {
+         if(grid.getPieceVisionGrid()[i][j] == null)
+           System.out.print(". ");
+         else
+           System.out.print(grid.getPieceVisionGrid()[i][j].getPieces().size() == 0 ? ". " : grid.getPieceVisionGrid()[i][j].getPieces().size() + " ");
        }
-       System.out.println();
+       System.out.print("\t");
+       for(int j=0; j<grid.getGrid()[0].length; j++) {
+         if(grid.getGrid()[i][j] == null)
+           System.out.print(". ");
+         else
+           System.out.print(grid.getGrid()[i][j].getObject().ordinal() + " ");
+       }
+       System.out.print("\t");
+       for(int j=0; j<grid.getGrid()[0].length; j++) {
+         if(grid.getGrid()[i][j] == null)
+           System.out.print(". ");
+         else
+           System.out.print(grid.getGrid()[i][j].toString() + " ");
+       }
+      System.out.println(); 
      }
+     
    }
 }

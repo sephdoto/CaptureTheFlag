@@ -19,6 +19,13 @@ import org.ctf.shared.state.data.map.ShapeType;
 public class MCTS_Tools {
   static Random random = new Random();
 
+  public static void putNeighbouringPieces(ArrayList<Piece> pieceList, Grid grid, Piece center) {
+    pieceList.add(center);
+    try {
+      pieceList.addAll(grid.getPieceVisionGrid()[center.getPosition()[0]][center.getPosition()[1]].getPieces());
+    } catch (NullPointerException npe) { /* if only the piece itself is on a position this gets thrown */ };
+  }
+  
   /**
    * Returns a valid position on which a Piece can safely respawn.
    * @param gameState to access the grid and generate pseudo random numbers
@@ -146,6 +153,19 @@ public class MCTS_Tools {
   }
 
   /**
+   * Returns the next teams index in the team array.
+   * @param gameState
+   * @return altered gameState
+   */
+  public static int getNextTeam(GameState gameState) {
+    for(int i=(gameState.getCurrentTeam()+1) % gameState.getTeams().length; ;i = (i + 1) % gameState.getTeams().length) {
+      if(gameState.getTeams()[i] != null) {
+        return i;
+      }
+    }
+  }
+  
+  /**
    * Removes a certain team from the GameState.
    * team is the place of the team in the GameState.getTeams Array.
    * @param gameState
@@ -159,6 +179,145 @@ public class MCTS_Tools {
       //TODO ich weiß nicht ob der garbage collector das team löscht oder ich den array erst leeren muss. Später schauen.
     }
     gameState.getTeams()[team] = null;
+  }
+  
+  /**
+   * Given a Piece and a GameState containing the Piece, a given ArrayList is altered to contain all valid locations the
+   * Piece can walk on. The ArrayList contains int[2] values, representing a (y,x) location on the grid.
+   * This method returns the first sightline violations for a piece (if it's caused by another piece), so
+   * the PieceVision Grid can be correctly initialized.
+   *
+   * @param GameState gameState
+   * @param String pieceID
+   * @return ArrayList<int[]> that contains all first sightline violations could move to but they are occupied by another piece.
+   */
+  public static ArrayList<int[]> getPossibleMovesWithPieceVision(GameState gameState, Grid grid, Piece piece, ArrayList<int[]> possibleMoves) {
+    possibleMoves.clear();
+    ArrayList<int[]> pieceInSightP = new ArrayList<int[]>();
+    ArrayList<int[]> dirMap = new ArrayList<int[]>();
+    if (piece.getDescription().getMovement().getDirections() == null) {
+      try {
+        pieceInSightP.addAll(getShapeMovesWithPieceVision(gameState, grid, piece, possibleMoves));
+      } catch (InvalidShapeException e) {
+        e.printStackTrace();
+      }
+
+    } else {
+      dirMap = createDirectionMapWithPieceVision(gameState, grid, piece, dirMap);
+      for (int[] entry : dirMap) {
+        for (int reach = entry[1]; reach > 0; reach--) {
+          Move move = new Move();
+          move = checkMoveValidity(gameState, grid, piece, entry[0], reach);
+          if (move != null) {
+            possibleMoves.add(move.getNewPosition());
+          } else {
+            int[] newPos = updatePos(piece.getPosition().clone(), entry[0], reach);
+            if(!positionOutOfBounds(grid, newPos) && 
+                sightLine(gameState, grid, newPos.clone(), entry[0], reach) &&
+                occupiedByPiece(grid, newPos)){
+                pieceInSightP.add(newPos);
+            }
+          }
+        }
+      }
+    }
+    return pieceInSightP;
+  }
+  /**
+   * Creates an ArrayList containing all a pieces valid directions and its maximum reach into that direction in int[direction, reach] pairs.
+   * This map only applies for the Piece picked. The reach value is directly
+   * from MapTemplate, this method only checks if the positions adjacent to a piece are occupied.
+   *
+   * @param gameState
+   * @param picked
+   * @return ArrayList<int[direction,reach]>
+   */
+  public static ArrayList<int[]> createDirectionMapWithPieceVision(GameState gameState, Grid grid, Piece picked, ArrayList<int[]> dirMap) {
+    dirMap.clear();
+    for (int i = 0; i < 8; i++) {
+      int reach = getReach(picked.getDescription().getMovement().getDirections(), i);
+      if (reach > 0) {
+        int[] pos = updatePos(picked.getPosition().clone(), i, 1);
+        if(positionOutOfBounds(grid, pos))
+          continue;
+        if(
+            emptyField(grid, pos) ||
+            occupiedByPiece(grid, pos) ||
+            otherTeamsBase(grid, pos, picked.getPosition())){
+          dirMap.add(new int[] {i,reach});
+        } else {
+          continue;
+        }
+      }
+    }
+    return dirMap;
+  }
+  /**
+   * Alters an ArrayList with all valid Moves a piece with shape movement can do.
+   * Returns an ArrayList with the first sightline violations, if they are caused by another Piece.
+   * @param gameState
+   * @param piece
+   * @return ArrayList containing all valid moves
+   * @throws InvalidShapeException if the Shape is not yet implemented here
+   */
+  public static ArrayList<int[]> getShapeMovesWithPieceVision(GameState gameState, Grid grid, Piece piece, ArrayList<int[]> positions)
+      throws InvalidShapeException {
+
+    ArrayList<int[]> pieceInSightP = new ArrayList<int[]>();
+    positions.clear();
+    int[] xTransforms;
+    int[] yTransforms;
+    int[] direction;
+
+    if (piece.getDescription().getMovement().getShape().getType() == ShapeType.lshape) {
+      // transforms go left-down-right-up, first 12 outer layer, then inner layer
+      xTransforms =
+          new int[] {-2, -2, -2, -1, 0, 1, 2, 2, 2, 1, 0, -1, /*inner layer*/ -1, 0, 1, 0};
+      yTransforms =
+          new int[] {-1, 0, 1, 2, 2, 2, 1, 0, -1, -2, -2, -2, /*inner layer*/ 0, 1, 0, -1};
+      direction = new int[] {0, 0, 0, 3, 3, 3, 1, 1, 1, 2, 2, 2};
+    } else {
+      throw new InvalidShapeException(
+          piece.getDescription().getMovement().getShape().getType().toString());
+    }
+
+    for (int i = 0; i < xTransforms.length; i++) {
+      int[] newPos =
+          new int[] {
+              piece.getPosition()[0] + yTransforms[i], piece.getPosition()[1] + xTransforms[i]
+          };
+            
+      if (validPos(newPos, piece, gameState, grid)) {
+        if (i >= direction.length) {
+          positions.add(newPos);
+        } else if (sightLine(
+            gameState,
+            grid,
+            new int[] {
+                piece.getPosition()[0] + yTransforms[(1 + (i / 3) * 3)],
+                piece.getPosition()[1] + xTransforms[(1 + (i / 3) * 3)]
+            },
+            direction[i],
+            2)) {
+          positions.add(newPos);
+        }
+      } else if (!positionOutOfBounds(grid, newPos) && occupiedByPiece(grid, newPos)) { // TODO NEU EINGEFÜGT; TESTEN!
+        if (i >= direction.length) {
+          pieceInSightP.add(newPos);
+        } else if (sightLine(
+            gameState,
+            grid,
+            new int[] {
+                piece.getPosition()[0] + yTransforms[(1 + (i / 3) * 3)],
+                piece.getPosition()[1] + xTransforms[(1 + (i / 3) * 3)]
+            },
+            direction[i],
+            2)) {
+          pieceInSightP.add(newPos);
+        }
+      }
+    }
+    return pieceInSightP;
   }
   
   /**
@@ -466,6 +625,17 @@ public class MCTS_Tools {
    */
   public static boolean occupiedByBlock(Grid grid, int[] pos) {
     return grid.getPosition(pos[1], pos[0]).getObject() == GridObjects.block;
+  }
+  
+  /**
+   * Checks if a position on the grid contains a piece.
+   *
+   * @param grid
+   * @param pos
+   * @return true if the position is occupied by a piece
+   */
+  public static boolean occupiedByPiece(Grid grid, int[] pos) {
+    return grid.getPosition(pos[1], pos[0]).getObject() == GridObjects.piece;
   }
 
   /**

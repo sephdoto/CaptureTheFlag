@@ -1,26 +1,52 @@
 package org.ctf.ai.mcts2;
 
+import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.Piece;
 
 /**
  * This class replaces the "dumb" String[][] Grid with a smart GridObjectContainer Grid.
  */
 public class Grid {
   GridObjectContainer[][] grid;
-  
-  public Grid(GridObjectContainer[][] grid) {
+  GridPieceContainer[][] pieceVisionGrid;
+  IdentityHashMap<Piece, ArrayList<int[]>> pieceVisions;
+
+  public Grid(GridObjectContainer[][] grid, GridPieceContainer[][] pieceVisionGrid, IdentityHashMap<Piece, ArrayList<int[]>> pieceVisions) {
     this.grid = grid;
+    this.pieceVisionGrid = pieceVisionGrid;
+    this.pieceVisions = pieceVisions;
+  }
+
+  public Grid(GridObjectContainer[][] grid, IdentityHashMap<Piece, ArrayList<int[]>> ... moves ) {
+    this.grid = grid;
+    this.pieceVisions = new IdentityHashMap<Piece, ArrayList<int[]>>();
+    this.pieceVisionGrid = new GridPieceContainer[grid.length][grid[0].length];
+    for(IdentityHashMap<Piece, ArrayList<int[]>> possibleMoves : moves) {
+      for(Piece p : possibleMoves.keySet()) {
+        for(int[] pos : possibleMoves.get(p)) {
+          if(this.pieceVisionGrid[pos[0]][pos[1]] == null)
+            this.pieceVisionGrid[pos[0]][pos[1]] = new GridPieceContainer();
+          this.pieceVisionGrid[pos[0]][pos[1]].getPieces().add(p);
+          if(this.pieceVisions.get(p) == null)
+            this.pieceVisions.put(p, new ArrayList<int[]>());
+          this.pieceVisions.get(p).add(pos);
+        }
+      }
+    }
   }
   
   public Grid(GameState gameState) {
-    this.grid = new GridObjectContainer[gameState.getGrid().length][];
+    this.grid = new GridObjectContainer[gameState.getGrid().length][gameState.getGrid()[0].length];
     for(int y=0; y<this.grid.length; y++) {
-      this.grid[y] = new GridObjectContainer[gameState.getGrid()[y].length];
       for(int x=0; x<gameState.getGrid()[y].length; x++) {
         if(!gameState.getGrid()[y][x].equals(""))
           this.grid[y][x] = new GridObjectContainer(gameState, x, y);
       }
     }
+    this.pieceVisionGrid = new GridPieceContainer[grid.length][grid[0].length];
+    this.pieceVisions = new IdentityHashMap<Piece, ArrayList<int[]>>();
   }
 
   /**
@@ -28,15 +54,50 @@ public class Grid {
    */
   @Override
   public Grid clone(){
-    GridObjectContainer[][] clone = new GridObjectContainer[this.grid.length][];
+    GridObjectContainer[][] clone = new GridObjectContainer[this.grid.length][this.grid[0].length];
     for(int y=0; y<this.grid.length; y++) {
-      clone[y] = new GridObjectContainer[this.grid[y].length];
       for(int x=0; x<this.grid[y].length; x++) {
         if(this.grid[y][x] != null)
           clone[y][x] = this.grid[y][x].clone();
       }
     }
-    return new Grid(clone);
+    GridPieceContainer[][] cloneVision = new GridPieceContainer[grid.length][grid[0].length];
+    for(int y=0; y<this.pieceVisionGrid.length; y++) {
+      for(int x=0; x<this.pieceVisionGrid[y].length; x++) {
+        if(this.pieceVisionGrid[y][x] != null) {
+
+          cloneVision[y][x] = this.pieceVisionGrid[y][x].clone();
+        }
+      }
+    }
+
+    IdentityHashMap<Piece, ArrayList<int[]>> clonePieceVisions = new IdentityHashMap<Piece, ArrayList<int[]>>();
+    for(Piece key : this.pieceVisions.keySet()) {
+      ArrayList<int[]> list = new ArrayList<int[]>();
+      for(int[] pos : this.pieceVisions.get(key)) {
+        list.add(pos);
+      }   
+      clonePieceVisions.put(key, list);
+    }
+    
+    return new Grid(clone, cloneVision, clonePieceVisions);
+  }
+  
+  
+  public IdentityHashMap<Piece, ArrayList<int[]>> getPieceVisions() {
+    return pieceVisions;
+  }
+
+  public void setPieceVisions(IdentityHashMap<Piece, ArrayList<int[]>> pieceVisions) {
+    this.pieceVisions = pieceVisions;
+  }
+
+  public GridPieceContainer[][] getPieceVisionGrid() {
+    return pieceVisionGrid;
+  }
+
+  public void setPieceVisionGrid(GridPieceContainer[][] pieceVisionGrid) {
+    this.pieceVisionGrid = pieceVisionGrid;
   }
   
   public GridObjectContainer getPosition(int x, int y) {

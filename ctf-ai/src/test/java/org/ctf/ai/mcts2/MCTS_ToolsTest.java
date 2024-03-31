@@ -22,6 +22,24 @@ class MCTS_ToolsTest {
   }
   
   @Test
+  void testPutNeighbouringPieces() {
+    ArrayList<Piece> updateThese = new ArrayList<Piece>();
+    MCTS mcts = new MCTS(new TreeNode(null, gameState, null));
+    MCTS_Tools.putNeighbouringPieces(updateThese, mcts.root.grid, mcts.root.gameState.getTeams()[0].getPieces()[2]);
+    ArrayList<Piece> trueNeighbours = new ArrayList<Piece>();
+    trueNeighbours.add(mcts.root.gameState.getTeams()[0].getPieces()[3]);
+    assertTrue(trueNeighbours.equals(updateThese));
+  }
+  
+  /*@Test
+  void testPossibleMovesWithPieceVision() {
+    GameState gameState = TestValues.getEmptyTestState();
+    gameState.getTeams()[0].
+    TreeNode node = new TreeNode(null, gameState, null);
+    
+  }*/
+  
+  @Test
   void testPickMoveComplex() {
     try {
       MCTS_Tools.pickMoveComplex(gameState, new Grid(gameState));

@@ -11,6 +11,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.ctf.ai.AI_Constants;
+import org.ctf.ai.AI_Tools.InvalidShapeException;
+import org.ctf.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
 import org.ctf.shared.state.GameState;
@@ -94,7 +96,7 @@ public class MCTS {
     for(int i=0; i<parent.children.length; i++) {
       if(parent.children[i] == null) {
         TreeNode child = parent.clone(parent.copyGameState());
-        oneMove(child, parent);
+        oneMove(child, parent, false);
         parent.children[i] = child;
         return child;
       }
@@ -102,6 +104,11 @@ public class MCTS {
     return null;
   }
 
+  /**
+   * Simulates a certain amount of simulations simultaneously.
+   * @param simulateOn
+   * @return an array containing a number of wins for the team at position teamId
+   */
   int[] multiSimulate(TreeNode simulateOn) { 
     int[] winners = new int[simulateOn.gameState.getTeams().length];
 
@@ -137,9 +144,7 @@ public class MCTS {
    * Simulates a game from a specific node to finish (or a maximum step value of Constants.MAX_STEPS simulation),
    * First checks if a node is in a terminal state, if thats the case the simulation ends and the result is returned
    * @param the node from which a game is going to be simulated
-   * @return true if player A wins the simulation (either by getting more beans or player B having no moves left), 
-   *         false if player B wins the simulation (either by getting more beans or player A having no moves left)
-   *         default case is a heuristic. if it returns value > 0, player A is winning
+   * @return an array containing a number of wins for the team at position teamId
    */
   int[] simulate(TreeNode simulateOn){      
     simulationCounter.incrementAndGet();
@@ -155,7 +160,7 @@ public class MCTS {
     simulateOn = simulateOn.clone(simulateOn.copyGameState());
 
     for(;count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn)) {
-      oneMove(simulateOn, simulateOn);
+      oneMove(simulateOn, simulateOn, true);
       removeTeamCheck(simulateOn.gameState, simulateOn.grid);
     }
     if(isTerminal < 0) {  
@@ -261,6 +266,7 @@ public class MCTS {
    */
   int isTerminal(TreeNode node) {
     int teamsLeft = 0;
+    removeTeamCheck(node.gameState, node.grid);
     for(int i=0; i<node.gameState.getTeams().length; i++) {
       if(node.gameState.getTeams()[i] != null) {
         teamsLeft++;
@@ -270,6 +276,8 @@ public class MCTS {
     for(int i=node.gameState.getCurrentTeam(); teamsLeft > 1; i = MCTS_Tools.toNextTeam(node.gameState).getCurrentTeam()) {
       boolean canMove = false;
       for(int j=0; !canMove && j<node.gameState.getTeams()[i].getPieces().length; j++) {
+        if(node.gameState.getTeams()[i].getFlags() < 1)
+          continue;
         //only if a move can be made no exception is thrown
         try {
           //TODO RANDOM AI AN GRID ANPASSEN!
@@ -349,13 +357,77 @@ public class MCTS {
    * Simulates one move and returns a new node containing the new state.
    * @param alter node, this nodes GameState is altered
    * @param original node, the move made gets removed from it
+   * @param if this is a simulation or expansion. If it's a simulation there are optimizations in TreeNode.
    * @return a child node containing the simulation result
    */
-  void oneMove(TreeNode alter, TreeNode original) {
-    alterGameStateAndGrid(alter.gameState, alter.grid, getAndRemoveMoveHeuristic(original));
-    alter.initPossibleMovesAndChildren();
+  void oneMove(TreeNode alter, TreeNode original, boolean simulate) {
+    if(simulate) {
+      Move move = getAndRemoveMoveHeuristicFromGrid(original);
+      alter.printGrids();
+      ArrayList<Piece> updateThese = new ArrayList<Piece>();
+      try{
+      updateThese.add(alter.grid.getPieceVisionGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]].getPieces().stream().filter(p -> p.getId().equals(move.getPieceId())).findFirst().get());
+      } catch(Exception e) {
+        System.out.println();
+      }
+      MCTS_Tools.putNeighbouringPieces(updateThese, alter.grid, updateThese.get(0)); // TODO testen ob man hier  statt updateThese get 0 das piece aus move holen muss.
+      alterGameStateAndGrid(alter.gameState, alter.grid, move);
+      MCTS_Tools.putNeighbouringPieces(updateThese, alter.grid, updateThese.get(0));
+      alter.updatePossibleMovesAndChildren(updateThese);
+    } else {
+      alterGameStateAndGrid(alter.gameState, alter.grid, getAndRemoveMoveHeuristic(original));
+      alter.initPossibleMovesAndChildren();
+    }
   }   
 
+  Move getAndRemoveMoveHeuristicFromGrid(TreeNode parent) {
+    for(Piece piece : parent.grid.pieceVisions.keySet()) {
+      try {
+      if(parent.grid.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]].getTeamId() != parent.gameState.getCurrentTeam())
+        continue;
+      } catch(Exception e) {
+        System.out.println(piece.getPosition()[0] + " " + piece.getPosition()[1]+ " " + parent.gameState.getCurrentTeam() );
+      }
+      for(int i=0; i<parent.grid.getPieceVisions().get(piece).size(); i++) {
+        int[] pos = parent.grid.getPieceVisions().get(piece).get(i);
+        if(MCTS_Tools.emptyField(parent.grid, pos)) {
+          continue;
+        }
+        if(MCTS_Tools.otherTeamsBase(parent.grid, pos, piece.getPosition())) {
+          Move move = new Move();
+          move.setNewPosition(pos);
+          move.setPieceId(piece.getId());
+          return move;
+        }
+        if(!MCTS_Tools.occupiedBySameTeam(parent.gameState, parent.grid, pos)
+            && MCTS_Tools.occupiedByWeakerOpponent(parent.grid.getPosition(pos[1], pos[0]).getPiece(), piece)) {
+          Move move = new Move();
+          move.setNewPosition(pos);
+          move.setPieceId(piece.getId());
+          return move;
+        }
+      }
+    }
+    return getRandomFromGrid(parent);
+  }
+  
+  Move getRandomFromGrid(TreeNode parent){
+    Move move = null;
+    
+    try {
+      move = MCTS_Tools.pickMoveComplex(parent.gameState, parent.grid);
+    } catch (NoMovesLeftException e) {
+      e.printStackTrace();
+    } catch (InvalidShapeException e) {
+      e.printStackTrace();
+    }
+    
+    return move;
+  }
+
+  
+  
+  
   Move getAndRemoveMoveHeuristic(TreeNode parent) {
     for(Piece piece : parent.possibleMoves.keySet()) {
       for(int i=0; i<parent.possibleMoves.get(piece).size(); i++) {
@@ -420,8 +492,12 @@ public class MCTS {
   //TODO statt Move move ein Piece : new Position ding übergeben. würde alles verschnellern
   void alterGameStateAndGrid(GameState gameState, Grid grid, Move move) {
     GridObjectContainer occupant = grid.getPosition(move.getNewPosition()[1], move.getNewPosition()[0]);
-    Piece picked = Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(move.getPieceId())).findFirst().get();
-
+    Piece picked = null;
+    try {
+    picked = Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(move.getPieceId())).findFirst().get();
+    } catch (Exception e) {
+      System.out.println(2);
+    }
     grid.setPosition(null, picked.getPosition()[1], picked.getPosition()[0]);
     if(occupant == null) {
       grid.setPosition(new GridObjectContainer(GridObjects.piece, gameState.getCurrentTeam(), picked), move.getNewPosition()[1], move.getNewPosition()[0]);
