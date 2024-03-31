@@ -53,7 +53,7 @@ public class MCTS {
     while(System.currentTimeMillis() - time < milis){
       //Schritte des UCT abarbeiten
       TreeNode selected = selectAndExpand(root, C);
-      backpropagate(selected, multiSimulate(selected));
+      backpropagate(selected, simulate(selected));
     }
 
     TreeNode bestChild = getRootBest(root);

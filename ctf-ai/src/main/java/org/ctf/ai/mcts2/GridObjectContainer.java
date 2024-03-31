@@ -55,6 +55,13 @@ public class GridObjectContainer {
               .get();
     }
   }
+
+  public GridObjectContainer(Piece piece) {
+      this.object = GridObjects.piece;
+      this.teamId =  Integer.parseInt(piece.getTeamId());
+      this.piece = piece;
+  }
+  
   
   @Override
   public GridObjectContainer clone() {
