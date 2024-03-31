@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
-
+import java.util.Random;
+import java.util.stream.Stream;
 import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Move;
@@ -42,6 +43,22 @@ public class EngineTools extends AI_Tools {
     gameState.getTeams()[team] = null;
   }
   
+  /**
+   * This method should be used instead of Math.random() to generate deterministic positive pseudo
+   * random values. Changing modifier changes the resulting output for the same seed.
+   *
+   * @param grid, used as a base to generate a random seed
+   * @param modifier, to get different random values with the same seed
+   * @param upperBound, upper bound for returned random values, upperBound = 3 -> values 0 to 2
+   * @param lowerBound, like upperBound but on the lower end and included in the return value
+   * @return pseudo random value
+   */
+  public static int seededRandom(String[][] grid, int modifier, int upperBound, int lowerBound) {
+    StringBuilder sb = new StringBuilder();
+    Stream.of(grid).forEach(s -> Stream.of(s).forEach(ss -> sb.append(ss)));
+    int seed = sb.append(modifier).toString().hashCode();
+    return new Random(seed).nextInt(upperBound - lowerBound) + lowerBound;
+  }
 
   /**
    * Returns a valid position on which a Piece can safely respawn.
