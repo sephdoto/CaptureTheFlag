@@ -4,7 +4,10 @@ package org.ctf.ui;
 
 import org.ctf.ui.customobjects.BackgroundCell;
 import org.ctf.ui.customobjects.CostumFigurePain;
+import org.ctf.ui.customobjects.Timer;
 
+import configs.Dialogs;
+import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -34,7 +37,10 @@ public class PlayGameScreen {
 		s = stage;
 		game = new Game(gm);
 		gm.setGame(game);
+		Dialogs.showConfirmationDialog("Start Game", "Willst du das wirklich tun");
 		v = new VBox();
+		HBox headerBox = createHeaderBox();
+		v.getChildren().add(headerBox);
 		center = new HBox();
 		center.setStyle("-fx-background-color:white");
 		VBox right = createRightSide();
@@ -47,6 +53,15 @@ public class PlayGameScreen {
 		stage.setMinWidth(900);
 		stage.setScene(scene);
 		stage.show();
+	}
+	
+	private static HBox createHeaderBox() {
+		HBox headerBox = new HBox(30);
+		headerBox.setPadding(new Insets(0, 0, 0, 20));
+		headerBox.setStyle("-fx-background-color: violet");
+		Timer timer  = new Timer(0,0,0);
+		headerBox.getChildren().add(timer);
+		return headerBox;
 	}
 
 	private static VBox createRightSide() {

@@ -50,6 +50,7 @@ public class Game   {
 	
 	public  void makeGrid(GameState s) {
 		state = s;
+		currentTeam = s.getCurrentTeam();
 		cb.setGameState(state);
 		cb.fillGridPane2();
 		cb.setTeamActive(2);
@@ -60,9 +61,9 @@ public class Game   {
 	public Move makeMove(int[] newPos) {
 		Move move = new Move();
 		move.setNewPosition(newPos);
-//		this.state = new GameState();
-//		state.setGrid(exm3);
-//		this.makeGrid();
+		this.state = new GameState();
+		state.setGrid(exm3);
+		this.makeGrid(state);
 		return move;
 	}
 	

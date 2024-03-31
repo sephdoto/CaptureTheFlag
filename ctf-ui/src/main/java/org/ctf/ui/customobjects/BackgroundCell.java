@@ -23,7 +23,7 @@ import javafx.scene.shape.Rectangle;
  * This Class represents a cell of the GridPane, which can be accessed by its x,y coordinates
  * On this BackGroundCell figures can be placed
  */
-public class BackgroundCell extends Region {
+public class BackgroundCell extends Pane {
 	public int x,y;
 	    public boolean occupied;
 	    String name;

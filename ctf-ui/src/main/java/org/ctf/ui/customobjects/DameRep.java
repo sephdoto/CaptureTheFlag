@@ -7,8 +7,8 @@ import javafx.scene.layout.Pane;
 public class DameRep extends CostumFigurePain {
 	public DameRep(String name) {
 		super( name);
-		super.bImage = new Image(getClass().getResourceAsStream("flagRed.png"));
-		super.setImage();
+		Image g = new Image(getClass().getResourceAsStream("flagRed.png"));
+		super.setImage(g);
 	}
 	
 	@Override

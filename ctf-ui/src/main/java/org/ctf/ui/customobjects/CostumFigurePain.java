@@ -7,6 +7,7 @@ import org.ctf.ui.Game;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -61,11 +62,12 @@ public class CostumFigurePain extends Pane {
 	 */
 	public void showShadow() {
 		DropShadow borderGlow = new DropShadow();
-        borderGlow.setColor(Color.BLACK);
+        borderGlow.setColor(Color.RED);
         borderGlow.setOffsetX(0f);
         borderGlow.setOffsetY(0f);
         vw.setEffect(borderGlow);
 	}
+	
 	
 	public void performMouseClick() {
 		if(game.currentPlayer != null) {
@@ -81,7 +83,8 @@ public class CostumFigurePain extends Pane {
 	}
 	
 	
-	public void setImage() {
+	public void setImage(Image image) {
+		this.bImage = image;
 		this.vw = new ImageView(bImage);
 		vw.fitWidthProperty().bind(this.widthProperty());
 		vw.fitHeightProperty().bind(this.heightProperty());
