@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "EntryPoint",
+            "request": "launch",
+            "mainClass": "org.ctf.ui.EntryPoint",
+            "projectName": "ctf-ui"
+        },
+        {
+            "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "org.ctf.ui.App",
+            "projectName": "ctf-ui"
+        },
+        {
+            "type": "java",
             "name": "CtfClientApplication",
             "request": "launch",
             "mainClass": "org.ctf.CtfClientApplication",

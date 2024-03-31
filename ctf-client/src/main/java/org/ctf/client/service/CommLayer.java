@@ -20,8 +20,6 @@ import org.ctf.client.data.dto.JoinGameRequest;
 import org.ctf.client.data.dto.JoinGameResponse;
 import org.ctf.client.data.dto.MoveRequest;
 import org.ctf.shared.state.GameState;
-import org.ctf.shared.state.Move;
-import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.exceptions.ForbiddenMove;
 import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
@@ -29,7 +27,6 @@ import org.ctf.shared.state.data.exceptions.NoMoreTeamSlots;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.shared.state.data.exceptions.URLError;
 import org.ctf.shared.state.data.exceptions.UnknownError;
-import org.ctf.shared.state.data.map.MapTemplate;
 
 /**
  * A lightweight Java based Communication Layer which can be used to make calls to and get data from
@@ -71,7 +68,7 @@ public class CommLayer implements CommLayerInterface {
    * @throws URLError (404)
    */
   @Override
-  public GameSessionResponse createGameSession(String URL,  GameSessionRequest gsr) {
+  public GameSessionResponse createGameSession(String URL, GameSessionRequest gsr) {
     final HttpRequest request;
     HttpResponse<String> response;
     try {
@@ -107,7 +104,6 @@ public class CommLayer implements CommLayerInterface {
    * @throws SessionNotFound (404)
    * @throws NoMoreTeamSlots (429)
    * @throws UnknownError (500)
-   * @throws Accepted (200)
    * @throws URLError (404)
    */
   @Override
@@ -147,7 +143,6 @@ public class CommLayer implements CommLayerInterface {
    * @param teamID
    * @param teamSecret
    * @param move
-   * @throws Accepted (200)
    * @throws ForbiddenMove (403)
    * @throws SessionNotFound (404)
    * @throws InvalidMove (409)
@@ -159,7 +154,7 @@ public class CommLayer implements CommLayerInterface {
   public void makeMove(String URL, MoveRequest moveReq) {
     final HttpRequest request;
     HttpResponse<String> response;
-  
+
     try {
       request =
           HttpRequest.newBuilder()
@@ -194,7 +189,6 @@ public class CommLayer implements CommLayerInterface {
    * @param URL
    * @param teamID
    * @param teamSecret
-   * @throws Accepted (200)
    * @throws ForbiddenMove (403)
    * @throws SessionNotFound (404)
    * @throws GameOver (410)
@@ -239,7 +233,6 @@ public class CommLayer implements CommLayerInterface {
    *
    * @param URL
    * @return GameSessionResponse
-   * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws UnknownError (500)
    * @throws URLError (404)
@@ -276,7 +269,6 @@ public class CommLayer implements CommLayerInterface {
    * server reponse which are HTTP status codes thrown as exceptions.
    *
    * @param URL
-   * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws UnknownError (500)
    * @throws URLError (404)
@@ -307,7 +299,6 @@ public class CommLayer implements CommLayerInterface {
    *
    * @param URL
    * @return GameState
-   * @throws Accepted
    * @throws SessionNotFound
    * @throws UnknownError
    * @throws URLError (404)

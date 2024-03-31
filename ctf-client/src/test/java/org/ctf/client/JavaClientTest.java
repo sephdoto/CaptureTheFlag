@@ -53,50 +53,50 @@ public class JavaClientTest {
     } catch (Exception e) {
       assertNotEquals(SessionNotFound.class, e.getClass());
       assertNotEquals(UnknownError.class, e.getClass());
-      assertNotEquals(URLError.class, e.getClass());   
-  }
+      assertNotEquals(URLError.class, e.getClass());
+    }
     assertNotNull(javaClient.getCurrentGameSessionID());
   }
 
   @Test
   void testDeleteSession() {
-    javaClient.createGame(template);  
+    javaClient.createGame(template);
     try {
       javaClient.deleteSession();
     } catch (Exception e) {
       assertNotEquals(SessionNotFound.class, e.getClass());
       assertNotEquals(UnknownError.class, e.getClass());
-      assertNotEquals(URLError.class, e.getClass());   
+      assertNotEquals(URLError.class, e.getClass());
+    }
   }
-}
 
   @Test
   void testGetCurrentGameSessionID() {
-    javaClient.createGame(template);  
+    javaClient.createGame(template);
     assertNotNull(javaClient.getCurrentGameSessionID());
   }
 
   @Test
   void testGetCurrentServer() {
-    javaClient.createGame(template);  
+    javaClient.createGame(template);
     assertNotNull(javaClient.getCurrentServer());
   }
 
   @Test
   void testGetCurrentSession() {
-    javaClient.createGame(template);  
+    javaClient.createGame(template);
     assertNotNull(javaClient.getCurrentSession());
   }
 
   @Test
   void testGetCurrentState() {
-     javaClient.createGame(template);  
+    javaClient.createGame(template);
     assertNotNull(javaClient.getCurrentState());
   }
 
   @Test
   void testGetCurrentTeamTurn() {
-    javaClient.createGame(template);  
+    javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
         "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
@@ -105,10 +105,10 @@ public class JavaClientTest {
 
   @Test
   void testGetEndDate() {
-    javaClient.createGame(template);  
-      javaClient.joinGame("Team1");
-      javaClient2.joinExistingGame(
-          "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
+    javaClient.createGame(template);
+    javaClient.joinGame("Team1");
+    javaClient2.joinExistingGame(
+        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
     try {
       if (javaClient.getCurrentTeamTurn() == 1) {
         javaClient.giveUp();
@@ -129,7 +129,11 @@ public class JavaClientTest {
   @Test
   void testGetGrid() {
     javaClient.createGame(template);
+    javaClient.joinGame("Team1");
+    javaClient2.joinExistingGame(
+        "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
     javaClient.getStateFromServer();
+    javaClient2.getStateFromServer();
     assertNotNull(javaClient.getGrid());
   }
 
@@ -162,22 +166,20 @@ public class JavaClientTest {
     assertNotNull(javaClient.getLastMove());
     assertNotNull(javaClient2.getLastMove());
   }
+
   @Test
   void testGetSessionFromServer() {
-    Throwable throwable =
-        assertThrows(
-            Accepted.class,
-            () -> {
-              javaClient.createGame(template);
-            });
-    assertEquals(Accepted.class, throwable.getClass());
-    Throwable throwable1 =
-        assertThrows(
-            Accepted.class,
-            () -> {
-              javaClient.getSessionFromServer();
-            });
-    assertEquals(Accepted.class, throwable1.getClass());
+    javaClient.joinGame("Team1");
+    javaClient2.joinExistingGame(
+        "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
+    try {
+      javaClient.getSessionFromServer();
+      javaClient2.getSessionFromServer();
+    } catch (Exception e) {
+      assertNotEquals(SessionNotFound.class, e.getClass());
+      assertNotEquals(UnknownError.class, e.getClass());
+      assertNotEquals(URLError.class, e.getClass());
+    }
   }
 
   @Test
@@ -262,13 +264,8 @@ public class JavaClientTest {
 
   @Test
   void testGetTeams() {
-    Throwable throwable =
-        assertThrows(
-            Accepted.class,
-            () -> {
-              javaClient.createGame(template);
-            });
-    assertEquals(Accepted.class, throwable.getClass());
+
+    javaClient.createGame(template);
     javaClient.getStateFromServer();
     assertNotNull(javaClient.getTeams());
   }

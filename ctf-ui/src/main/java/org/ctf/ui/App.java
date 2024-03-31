@@ -40,6 +40,11 @@ public class App extends Application {
 			mainStage.setScene(startScene);
 			startTransition.stop();
 		});
+		lockscreen.setOnMousePressed(e -> {
+			mainStage.setScene(startScene);
+			startTransition.stop();
+		});
+		stage.setTitle("Capture The Flag Team 14");
 		stage.setScene(lockscreen);
 		stage.show();
 	}
