@@ -63,8 +63,8 @@ public class BackgroundCellV2 extends Pane {
 	
 	public void createBase() {
     	StackPane base = new StackPane();
-    	base.prefWidthProperty().bind(Bindings.divide(widthProperty(), 2.5));
-    	base.prefHeightProperty().bind(Bindings.divide(heightProperty(), 2.5));
+    	base.prefWidthProperty().bind(Bindings.divide(widthProperty(), 2));
+    	base.prefHeightProperty().bind(Bindings.divide(heightProperty(), 2));
     	base.layoutXProperty().bind(Bindings.subtract(widthProperty().divide(2), base.widthProperty().divide(2)));
     	base.layoutYProperty().bind(Bindings.subtract(widthProperty().divide(2), base.heightProperty().divide(2)));
     	base.setOnMouseClicked(new EventHandler<MouseEvent>() {

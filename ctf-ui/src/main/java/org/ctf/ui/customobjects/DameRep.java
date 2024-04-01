@@ -4,6 +4,7 @@ import javafx.beans.binding.Bindings;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
+@Deprecated
 public class DameRep extends CostumFigurePain {
 	public DameRep(String name) {
 		super( name);

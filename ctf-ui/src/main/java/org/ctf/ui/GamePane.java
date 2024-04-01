@@ -12,6 +12,7 @@ import org.ctf.ui.customobjects.CostumFigurePain;
 import org.ctf.ui.customobjects.DameRep;
 
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
+import de.unimannheim.swt.pse.ctf.game.state.Piece;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.event.EventHandler;
@@ -32,6 +33,7 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import test.TestPieceCreator;
 
 /**
  * @author mkrakows
@@ -216,7 +218,7 @@ public class GamePane extends HBox {
 					char teamNc = objectRep.charAt(2);
 					int teamN = Character.getNumericValue(teamNc);
 					System.out.println("Team: " + teamN);
-					DameRep d2 = new DameRep(objectRep);
+					CostumFigurePain d2 = new CostumFigurePain(TestPieceCreator.createTestPice());
 					teams.get(teamN-1).put(objectRep, d2);
 					allFigures.add(d2);
 					child.addFigure(d2);

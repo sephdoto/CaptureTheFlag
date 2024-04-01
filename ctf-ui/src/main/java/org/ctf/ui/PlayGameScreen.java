@@ -59,7 +59,7 @@ public class PlayGameScreen {
 	private static HBox createHeaderBox() {
 		HBox headerBox = new HBox(30);
 		headerBox.setPadding(new Insets(0, 0, 0, 20));
-		headerBox.setStyle("-fx-background-color: violet");
+		headerBox.setStyle("-fx-background-color: white");
 		Timer timer  = new Timer(0,0,0);
 		headerBox.getChildren().add(timer);
 		return headerBox;
@@ -70,7 +70,7 @@ public class PlayGameScreen {
 		right.setStyle("-fx-background-color: lightblue");
 		right.setAlignment(Pos.TOP_CENTER);
 		right.setPadding(new Insets(20));
-		right.prefWidthProperty().bind(s.widthProperty().multiply(0.2));
+		right.prefWidthProperty().bind(s.widthProperty().multiply(0.3));
 		//right.addListner()
 		//VBox topRight = new VBox(20);
 		Label ls = new Label("Description");

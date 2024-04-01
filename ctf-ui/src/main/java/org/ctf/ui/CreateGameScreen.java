@@ -6,6 +6,7 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
+import configs.ImageLoader;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Team;
 import javafx.application.Application;
@@ -104,6 +105,7 @@ public class CreateGameScreen  {
 	static VBox rightVBox;
 
 	public static void initCreateGameScreen(Stage stage) {
+		ImageLoader.loadImages();
 		s = stage;
 		initializeMaps();
 		v = new VBox();

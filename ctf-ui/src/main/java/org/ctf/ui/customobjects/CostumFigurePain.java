@@ -4,6 +4,8 @@ package org.ctf.ui.customobjects;
 
 import org.ctf.ui.Game;
 
+import configs.ImageLoader;
+import de.unimannheim.swt.pse.ctf.game.state.Piece;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.effect.DropShadow;
@@ -21,6 +23,9 @@ import javafx.scene.paint.Color;
 public class CostumFigurePain extends Pane {
 	public Game game;
 	public String name; //id
+	String teamID;
+	Piece piece;
+	String type;
 	Image bImage;
 	ImageView vw;
 	BackgroundCellV2 parent;
@@ -41,12 +46,14 @@ public class CostumFigurePain extends Pane {
 	 * @param game: A figure always knows the game it is playing in (Access to Game has to be guaranteed when a figure is chosen with 
 	 * a MouseClick)
 	 */
-	public CostumFigurePain( String name) {
-	this.name = name;
+	public CostumFigurePain(Piece piece) {
+	this.piece = piece;
+	type = piece.getDescription().getType();
+	this.teamID = piece.getTeamId();
+	this.name = piece.getId();
+	this.setImage();
 	this.active = false;
 	this.setOnMouseClicked(new EventHandler<MouseEvent>() {
-		
-		@Override
 		public void handle(MouseEvent e) {
 			if(active) {
 				performMouseClick();
@@ -76,15 +83,18 @@ public class CostumFigurePain extends Pane {
 	showShadow();
 	game.setCurrent(CostumFigurePain.this);
 	game.showPossibleMoves();
+	
 	}
+	
+	
 	
 	public void disableShadow() {
 		vw.setEffect(null);
 	}
 	
 	
-	public void setImage(Image image) {
-		this.bImage = image;
+	public void setImage() {
+		this.bImage = ImageLoader.getImageByName(type);
 		this.vw = new ImageView(bImage);
 		vw.fitWidthProperty().bind(this.widthProperty());
 		vw.fitHeightProperty().bind(this.heightProperty());

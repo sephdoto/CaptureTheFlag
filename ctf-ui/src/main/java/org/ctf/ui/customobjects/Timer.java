@@ -4,6 +4,7 @@ package org.ctf.ui.customobjects;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -14,6 +15,7 @@ public class Timer extends Text {
    
 
     public Timer(int hour, int minute, int second) {
+    	this.setFont(Font.font(30));
         this.hour = hour;
         this.minute = minute;
         this.second = second;
