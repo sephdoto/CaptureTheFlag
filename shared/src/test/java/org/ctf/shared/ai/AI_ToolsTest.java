@@ -176,7 +176,7 @@ class AI_ToolsTest {
       pieces2[i].setId("p:1_" + (i + 1));
       if (i < 6) pieces2[i].setPosition(new int[] {7, 2 + i});
       else pieces2[i].setPosition(new int[] {8, i - 2});
-      pieces2[i].setTeamId(team1.getId());
+      pieces2[i].setTeamId(team2.getId());
     }
     team2.setPieces(pieces2);
 
