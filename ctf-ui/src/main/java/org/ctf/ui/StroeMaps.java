@@ -1,26 +1,55 @@
 package org.ctf.ui;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
-import de.unimannheim.swt.pse.ctf.game.state.GameState;
+import org.ctf.shared.ai.AI_Tools;
+import org.ctf.shared.state.GameState;
+
+import test.CreateTextGameStates;
 /**
  * @mkrakows
  * This class is used to Store Maps which are uniqly identified by their name
  */
 public  class StroeMaps {
 	public static HashMap<String, GameState> maps = new HashMap<String, GameState>();
+	public static Set<String> mapNames;
 	
 	
-	public void putMap(String name,GameState state) {
+	public static void putMap(String name,GameState state) {
 		maps.put(name, state);
 	}
 	
-	public Set<String> getValues() {
+	public static Set<String> getValues() {
 		return maps.keySet();
 	}
 	
-	public GameState getMap(String key){
+	public static GameState getMap(String key){
 		return maps.get(key);
+	}
+	
+	public static String getRandomMapName() {
+//		mapNames = maps.keySet();
+//		int size = mapNames.size();
+//		int random = new Random().nextInt(size);
+//		int i=0;
+//		for(String s: mapNames) {
+//			if(i == random ) {
+//				return s;
+//			}
+//			i++;
+//		}
+		return "p1";
+		
+	}
+	
+	public static void initDefaultMaps() {
+		putMap("p1", CreateTextGameStates.getTestState());
+		putMap("p2", CreateTextGameStates.getTestState());
+		putMap("p3", CreateTextGameStates.getTestState());
+
+		
 	}
 }

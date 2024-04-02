@@ -6,13 +6,13 @@ import org.ctf.shared.state.Team;
 public class CreateTestTeam {
 	
 	
-	public static Team createTestTeam1( String color) {
+	public static Team createTestTeam1(String color) {
 		Piece[] pieces = new Piece[8];
 		Team team = new Team();
 		team.setColor(color);
 		for(int i=0;i<8;i++) {
 			int[] pos = {0,i};
-			Piece p = TestPieceCreator.createTestPice("1", pos,String.valueOf(i));
+			Piece p = TestPieceCreator.createTestPice("0", pos, "p:0_" + String.valueOf(i));
 			pieces[i] = p;
 		}
 		team.setPieces(pieces);
@@ -25,7 +25,7 @@ public class CreateTestTeam {
 		team.setColor(color);
 		for(int i=0;i<8;i++) {
 			int[] pos = {7,i};
-			Piece p = TestPieceCreator.createTestPice("2", pos,String.valueOf(i+8));
+			Piece p = TestPieceCreator.createTestPice("1", pos,"p:1_" + String.valueOf(i+8));
 			pieces[i] = p;
 		}
 		team.setPieces(pieces);

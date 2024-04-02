@@ -4,23 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.ctf.shared.ai.AI_Tools;
-import org.ctf.ui.customobjects.BackgroundCell;
+
 import org.ctf.ui.customobjects.BackgroundCellV2;
 import org.ctf.ui.customobjects.CostumFigurePain;
 
-import de.unimannheim.swt.pse.ctf.game.state.GameState;
-import de.unimannheim.swt.pse.ctf.game.state.Move;
-import de.unimannheim.swt.pse.ctf.game.state.Team;
-//import de.unimannheim.swt.pse.ctf.game.state.GameState;
-//import de.unimannheim.swt.pse.ctf.game.state.Move;
-//import de.unimannheim.swt.pse.ctf.game.state.Team;
+import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.Move;
 import javafx.scene.effect.Glow;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
 public class Game   {
@@ -35,9 +25,13 @@ public class Game   {
 	HashMap<String, CostumFigurePain> team2;
 
 	public Game(GamePane pane) {
+		possibleMoves = new ArrayList<int[]>();
+		this.state = pane.state;
 		cb = pane;
 		currentPlayer = null;
-		cb.setTeamActive(1,true);
+		currentTeam = "0";
+		
+		setCurrentTeamActiveTeamactive();
 	}
 	
 	
@@ -46,8 +40,8 @@ public class Game   {
 //		currentTeam = s.getCurrentTeam();
 //		cb.setGameState(state);
 //		cb.fillGridPane2();
-		cb.setTeamActive(1, false);
-		cb.setTeamActive(2,true);
+		//cb.setTeamActive(1, false);
+		//cb.setTeamActive(2,true);
 		cb.setGame(this);
 		
 	}
@@ -69,6 +63,7 @@ public class Game   {
 		currentPlayer.disableShadow();
 		currentPlayer = null;
 		for(BackgroundCellV2 c: cb.cells.values()) {
+			c.rc.setFill(Color.WHITE);
 			c.active = false;
 		}
 		for(CostumFigurePain cf: cb.allFigures) {
@@ -88,27 +83,34 @@ public class Game   {
 	public void showPossibleMoves() {
 		Glow glow = new Glow();
 		glow.setLevel(0.2);
-		this.possibleMoves = AI_Tools.getPossibleMoves(null, null, possibleMoves);
-		int z = -1;
-		if (currentPlayer.posY == 2) {
-			z = 3;
-		}
-		if (currentPlayer.posY == 3) {
-			z = 4;
+		String pieceName = currentPlayer.getPiece().getId();
+		System.out.println(pieceName);
+		this.possibleMoves = AI_Tools.getPossibleMoves(state,pieceName,possibleMoves);
+		
+//		int z = -1;
+//		if (currentPlayer.posY == 2) {
+//			z = 3;
+//		}
+//		if (currentPlayer.posY == 3) {
+//			z = 4;
+//		}
+		for(BackgroundCellV2 c: cb.cells.values()) {
+				c.rc.setFill(Color.WHITE);
+				c.active = false;
 		}
 		for (BackgroundCellV2 c : cb.cells.values()) {
-			if (c.x == 2 && c.y == z) {
-				c.rc.setEffect(glow);
-				c.rc.setFill(Color.LIGHTBLUE);
-				c.active = true;
-			} else {
-				if (!c.occupied) {
-					c.rc.setFill(Color.WHITE);
-					c.active = false;
+			for(int[] pos: possibleMoves) {
+				if (c.x == pos[0] && c.y == pos[1]) {
+					System.out.println(" " + pos[0] +", " + pos[1]);
+					c.rc.setEffect(glow);
+					c.rc.setFill(Color.LIGHTBLUE);
+					c.active = true;
 				}
 			}
 		}
 	}
+	
+	
 	
 //	public Move createMoveforClient(int[] newPos) {
 //		Move move = new Move();

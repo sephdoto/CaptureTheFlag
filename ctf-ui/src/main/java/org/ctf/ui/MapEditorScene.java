@@ -9,7 +9,7 @@ import org.ctf.shared.state.data.map.Movement;
 import org.ctf.shared.state.data.map.PieceDescription;
 
 
-import de.unimannheim.swt.pse.ctf.game.state.Move;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;

@@ -3,37 +3,29 @@ package org.ctf.ui;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.management.BadAttributeValueExpException;
-
-import org.ctf.ui.customobjects.BackgroundCell;
+import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.Piece;
+import org.ctf.shared.state.Team;
 import org.ctf.ui.customobjects.BackgroundCellV2;
 import org.ctf.ui.customobjects.BlockRepV3;
 import org.ctf.ui.customobjects.CostumFigurePain;
-import org.ctf.ui.customobjects.DameRep;
 
-import de.unimannheim.swt.pse.ctf.game.state.GameState;
-import de.unimannheim.swt.pse.ctf.game.state.Piece;
+
+
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
-import javafx.event.EventHandler;
-import javafx.event.EventTarget;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.control.Control;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import test.TestPieceCreator;
+
 
 /**
  * @author mkrakows
@@ -44,33 +36,24 @@ public class GamePane extends HBox {
 	
 	String[][] map;
 	GameState state;
+	Team[] teams;
 	int rows;
 	int cols;
 	final VBox vBox;
 	int anzTeams;
-	ArrayList<HashMap<String, CostumFigurePain>> teams;
-	HashMap<String, CostumFigurePain> team1 = new HashMap<String, CostumFigurePain>();
-	HashMap<String, CostumFigurePain> team2 = new HashMap<String, CostumFigurePain>();
 	ArrayList<CostumFigurePain> allFigures = new ArrayList<CostumFigurePain>();
-	//ArrayList<BackgroundCell> cells = new ArrayList<BackgroundCell>();
 	HashMap<Integer, BackgroundCellV2> cells = new HashMap<Integer, BackgroundCellV2>();
 	 GridPane gridPane;
-	
 	
 	public GamePane(GameState state) {
 		this.state = state;
 		this.map = state.getGrid();
-		teams = new ArrayList<HashMap<String,CostumFigurePain>>();
-		anzTeams = state.getTeams().length;
-		for(int i=0; i<anzTeams;i++) {
-			teams.add(i, new HashMap<String, CostumFigurePain>());
-		}
 		rows = map.length;
 		cols = map[0].length;
 		vBox = new VBox();
 		vBox.alignmentProperty().set(Pos.CENTER);
-		alignmentProperty().set(Pos.BOTTOM_CENTER);
-		paddingProperty().set(new Insets(10));
+		alignmentProperty().set(Pos.CENTER);
+		paddingProperty().set(new Insets(20));
 		 gridPane = new GridPane();
 
 		//gridPane.setGridLinesVisible(true);
@@ -88,42 +71,21 @@ public class GamePane extends HBox {
 			final ColumnConstraints columnConstraints = new ColumnConstraints(Control.USE_PREF_SIZE,
 					Control.USE_COMPUTED_SIZE, Double.MAX_VALUE);
 			columnConstraints.setHgrow(Priority.SOMETIMES);
-			// columnConstraints.setHalignment(HPos.CENTER);
 			gridPane.getColumnConstraints().add(columnConstraints);
 		}
 		for (int j = 0; j < rows; j++) {
 			final RowConstraints rowConstraints = new RowConstraints(Control.USE_PREF_SIZE, Control.USE_COMPUTED_SIZE,
 					Double.MAX_VALUE);
 			rowConstraints.setVgrow(Priority.SOMETIMES);
-			rowConstraints.setValignment(VPos.CENTER);
 			gridPane.getRowConstraints().add(rowConstraints);
 		}
-		//this.addMouseListener(gridPane);
-		this.fillGridPane2();
-		
-
+		this.fillGrid();
 		getChildren().add(vBox);
-
 		HBox.setHgrow(this, Priority.ALWAYS);
 
 	}
 
-//	public void addMouseListener(GridPane gridPane) {
-//		gridPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
-//
-//			@Override
-//			public void handle(MouseEvent e) {
-//				EventTarget target = e.getTarget();
-//				if(target.toString().equals("Square")) {
-//					System.out.println("Square");
-//				} 
-////				if (target.toString().equals("Queen")) {
-////					System.out.println("Queen");
-////				}
-//				
-//			}
-//		});
-//	}
+
 	public void moveFigure(int x, int y, CostumFigurePain cuPain) {
 		cells.get(generateKey(x, y)).addFigure(cuPain);
 		
@@ -137,10 +99,10 @@ public class GamePane extends HBox {
 	//Setzt das Game für alle Zellen und Figuren
 	public void setGame(Game game) {
 		for(CostumFigurePain cm : allFigures) {
-			cm.game = game;
+			cm.setGame(game); 
 		}
 		for(BackgroundCellV2 cl: cells.values()) {
-			cl.game = game;
+			cl.setGame(game);
 		}
 	}
 	
@@ -148,109 +110,40 @@ public class GamePane extends HBox {
 		this.state = state;
 		this.map = state.getGrid();
 	}
-	public void fillGridPane() {
-		for(int i=0;i<anzTeams;i++ ) {
-			if(!teams.get(i).isEmpty()) {
-				teams.get(i).clear();
-			}
-		}
-		if(!cells.isEmpty()) {
-			cells.clear();
-		}
-		if(!vBox.getChildren().isEmpty()) {
-			vBox.getChildren().clear();
-		}
+	
+	public void fillGrid() {
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
-				String objectRep = map[i][j];
 				BackgroundCellV2 child = new BackgroundCellV2(i, j);
 				cells.put(generateKey(i, j),child);
-				
-				if (objectRep.startsWith("p:1")) {
-					DameRep d1 = new DameRep(objectRep);
-					//team1.put(objectRep, d1);
-					
-					allFigures.add(d1);
-					child.addFigure(d1);					
-				} else if (objectRep.startsWith("p:2")) {
-					
-					DameRep d2 = new DameRep(objectRep);
-					team2.put(objectRep, d2);
-					allFigures.add(d2);
-					child.addFigure(d2);
-					
-				} else if (objectRep.equals("b")) {
+				String objectOnMap = map[i][j];
+				if(objectOnMap.equals("b")) {
 					child.addBlock(new BlockRepV3());
-				} else if (objectRep.startsWith("b:1")) {
-
-				} else {
-					// child = new BackgroundCell(i, j);
+				} else if (objectOnMap.startsWith("b:1")) {
+					//Add base of team 1 here
+				}else if (objectOnMap.startsWith("b:2")) {
+					//Add base of team 2 here
 				}
 				GridPane.setRowIndex(child, i);
 				GridPane.setColumnIndex(child, j);
 				gridPane.getChildren().add(child);
-				
+			}
+		}
+		teams = state.getTeams();
+		for(int i=0;i<teams.length;i++) {
+			Piece[] pieces = teams[i].getPieces();
+			for(Piece piece: pieces) {
+				CostumFigurePain pieceRep = new CostumFigurePain(piece);
+				allFigures.add(pieceRep);
+				int x = piece.getPosition()[0];
+				int y = piece.getPosition()[1];
+				cells.get(generateKey(x, y)).addFigure(pieceRep);
 			}
 		}
 		vBox.getChildren().add(gridPane);
 	}
 	
-	public void fillGridPane2() {
-		for(int i=0;i<anzTeams;i++ ) {
-			if(!teams.get(i).isEmpty()) {
-				teams.get(i).clear();
-			}
-		}
-		if(!allFigures.isEmpty()) {
-			allFigures.clear();
-		}
-		if(!cells.isEmpty()) {
-			cells.clear();
-		}
-		if(!vBox.getChildren().isEmpty()) {
-			vBox.getChildren().clear();
-		}
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++) {
-				String objectRep = map[i][j];
-				BackgroundCellV2 child = new BackgroundCellV2(i, j);
-				cells.put(generateKey(i, j),child);
-				if (objectRep.startsWith("p")) {
-					char teamNc = objectRep.charAt(2);
-					int teamN = Character.getNumericValue(teamNc);
-					System.out.println("Team: " + teamN);
-					CostumFigurePain d2 = new CostumFigurePain(TestPieceCreator.createTestPice());
-					teams.get(teamN-1).put(objectRep, d2);
-					allFigures.add(d2);
-					child.addFigure(d2);
-					
-				} else if (objectRep.equals("b")) {
-					child.addBlock(new BlockRepV3());
-				} else if (objectRep.startsWith("b:1")) {
 
-				} else {
-					// child = new BackgroundCell(i, j);
-				}
-				GridPane.setRowIndex(child, i);
-				GridPane.setColumnIndex(child, j);
-				gridPane.getChildren().add(child);
-				
-			}
-		}
-		vBox.getChildren().add(gridPane);
-	}
-	
-	public void setTeamActive(int i, boolean active){
-		HashMap<String, CostumFigurePain> currentTeam = teams.get(i-1);
-		for(CostumFigurePain p: currentTeam.values()) {
-			if(active) {
-				p.setActive();
-			} else {
-				p.setUnactive();
-			}
-			System.out.println("ich bin aktiv");
-		}
-	}
 
 	
 	

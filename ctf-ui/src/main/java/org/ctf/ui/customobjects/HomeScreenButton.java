@@ -18,7 +18,7 @@ import javafx.scene.text.Text;
 
 /**
  * @author mkrakows
- * This class represents a custom button which is showing an animation when hove
+ * This class represents a custom button which is showing an animation when hovering over it
  */
 public class HomeScreenButton extends StackPane {
 	Runnable action;

@@ -1,6 +1,6 @@
 package org.ctf.ui;
 
-import de.unimannheim.swt.pse.ctf.game.state.GameState;
+
 
 public class PullGameStateThreads extends Thread {
 
@@ -11,10 +11,10 @@ public class PullGameStateThreads extends Thread {
 	public void run() {
 		while (active) {
 			// GameState x = Client.requestGameState
-			GameState xy = new GameState();
-			if (xy.getCurrentTeam() != game.currentTeam) {
-				game.makeGrid(xy);
-			}
+			//GameState xy = new GameState();
+//			if (xy.getCurrentTeam() != game.currentTeam) {
+//				game.makeGrid(xy);
+//			}
 			try {
 				Thread.sleep(millis);
 			} catch (InterruptedException e) {

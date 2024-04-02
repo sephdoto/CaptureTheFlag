@@ -6,33 +6,44 @@ import org.ctf.ui.Game;
 import org.ctf.ui.PlayGameScreen;
 
 import configs.ImageLoader;
+
+import java.util.ArrayList;
+
+import org.ctf.shared.ai.AI_Tools;
 import org.ctf.shared.state.Piece;
 import javafx.event.EventHandler;
-import javafx.event.EventTarget;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import test.CreateTextGameStates;
 
 /**
  * @mkrakows
- * This class represents a general representation of a game figure that is represented by an image
+ * This class contains a visual Representation of a Piece
  */
 public class CostumFigurePain extends Pane {
-	public Game game;
-	public String name; //id
+	Game game;
+	public Game getGame() {
+		return game;
+	}
+
+	public void setGame(Game game) {
+		this.game = game;
+	}
+
 	String teamID;
 	Piece piece;
 	String type;
 	Image bImage;
 	ImageView vw;
-	public int posX;
-	public int posY;
+	int posX;	
+	int posY;
 	boolean active;
 	public BackgroundCellV2 parent;
+	ArrayList<int[]> possibleMoves;
 	
 	/**
 	 * @author mkrakows
@@ -48,10 +59,15 @@ public class CostumFigurePain extends Pane {
 	 * a MouseClick)
 	 */
 	public CostumFigurePain(Piece piece) {
+		possibleMoves = new ArrayList<int[]>();
+		System.out.println("id " + piece.getId());
+		System.out.println("team: " + piece.getTeamId());
+		AI_Tools.getPossibleMoves(CreateTextGameStates.getTestState(), piece.getId(), possibleMoves);
+		//System.out.println(possibleMoves.size());
 	this.piece = piece;
-	type = piece.getDescription().getType();
+	this.type = piece.getDescription().getType();
+
 	this.teamID = piece.getTeamId();
-	this.name = piece.getId();
 	this.setImage();
 	this.active = false;
 	this.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -131,23 +147,15 @@ public class CostumFigurePain extends Pane {
 		this.active = false;
 	}
 	
-	
-	
-	
-	
+	public Piece getPiece() {
+		return piece;
+	}
+
 	public String getTeamID() {
 		return teamID;
 	}
 
-	public void setTeamID(String teamID) {
-		this.teamID = teamID;
-	}
-
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return name;
-	}
+	
 	
 	
 }
