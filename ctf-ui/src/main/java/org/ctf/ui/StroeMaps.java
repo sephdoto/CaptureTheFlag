@@ -8,7 +8,7 @@ import de.unimannheim.swt.pse.ctf.game.state.GameState;
  * @mkrakows
  * This class is used to Store Maps which are uniqly identified by their name
  */
-public  class StoreMapArrays {
+public  class StroeMaps {
 	public static HashMap<String, GameState> maps = new HashMap<String, GameState>();
 	
 	

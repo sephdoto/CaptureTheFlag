@@ -3,6 +3,7 @@ package org.ctf.ui;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.ctf.shared.ai.AI_Tools;
 import org.ctf.ui.customobjects.BackgroundCell;
 import org.ctf.ui.customobjects.BackgroundCellV2;
 import org.ctf.ui.customobjects.CostumFigurePain;
@@ -25,20 +26,11 @@ import javafx.scene.paint.Color;
 public class Game   {
 	public CostumFigurePain currentPlayer;
 	GameState state;
-	int currentTeam;
+	String currentTeam;
 	public GamePane cb;
-	static String[][] exm3 = {
-			  {"", "p:1_2", "p:1_3", "p:1_4", "p:1_5", "p:1_6", "p:1_7", "p:1_8"},
-			  {"", "p:1_1", "", "", "", "", "", ""},
-			  {"", "", "", "", "", "", "", ""},
-			  {"", "", "", "b", "", "", "", ""},
-			  {"", "", "b", "", "", "", "", ""},
-			  {"", "", "", "", "b", "", "", ""},
-			  {"", "", "", "", "", "", "", ""},
-			  {"p:2_3", "p:2_4", "p:2_5", "p:2_6", "p:2_8", "p:2_9", "p:2_10", "p:2_13"}
-			};
 	
 	
+	ArrayList<int[]> possibleMoves;
 	HashMap<String, CostumFigurePain> team1;
 	HashMap<String, CostumFigurePain> team2;
 
@@ -61,19 +53,42 @@ public class Game   {
 	}
 	//hier wird Move Objekt an Client gesendet
 	public Move makeMove(int[] newPos) {
+		//currentPlayer.parent.occupied = false;
 		Move move = new Move();
 		move.setNewPosition(newPos);
 		cb.moveFigure(newPos[0],newPos[1],currentPlayer);
-		cb.setTeamActive(1, false);
-		cb.setTeamActive(2,true);
+		resetStateAfterMoveRequest();
+//		cb.setTeamActive(1, false);
+//		cb.setTeamActive(2,true);
 		return move;
 	}
 	
 	
 
+	public void resetStateAfterMoveRequest() {
+		currentPlayer.disableShadow();
+		currentPlayer = null;
+		for(BackgroundCellV2 c: cb.cells.values()) {
+			c.active = false;
+		}
+		for(CostumFigurePain cf: cb.allFigures) {
+			cf.setUnactive();
+		}
+	}
+	
+	public void setCurrentTeamActiveTeamactive() {
+		for(CostumFigurePain c: cb.allFigures) {
+			if(c.getTeamID().equals(currentTeam)) {
+				c.setActive();
+			}
+		}
+	}
+	
+	
 	public void showPossibleMoves() {
 		Glow glow = new Glow();
 		glow.setLevel(0.2);
+		this.possibleMoves = AI_Tools.getPossibleMoves(null, null, possibleMoves);
 		int z = -1;
 		if (currentPlayer.posY == 2) {
 			z = 3;

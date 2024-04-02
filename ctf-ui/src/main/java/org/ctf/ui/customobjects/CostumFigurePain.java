@@ -3,9 +3,10 @@ package org.ctf.ui.customobjects;
 
 
 import org.ctf.ui.Game;
+import org.ctf.ui.PlayGameScreen;
 
 import configs.ImageLoader;
-import de.unimannheim.swt.pse.ctf.game.state.Piece;
+import org.ctf.shared.state.Piece;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.effect.DropShadow;
@@ -28,10 +29,10 @@ public class CostumFigurePain extends Pane {
 	String type;
 	Image bImage;
 	ImageView vw;
-	BackgroundCellV2 parent;
 	public int posX;
 	public int posY;
 	boolean active;
+	public BackgroundCellV2 parent;
 	
 	/**
 	 * @author mkrakows
@@ -81,12 +82,20 @@ public class CostumFigurePain extends Pane {
 			game.currentPlayer.disableShadow();				}
 	System.out.println("Hallo: " + posX + ", " + posY);
 	showShadow();
+	showPieceInformation();
 	game.setCurrent(CostumFigurePain.this);
 	game.showPossibleMoves();
 	
 	}
 	
-	
+	public void showPieceInformation() {
+		PlayGameScreen.setIdLabelText("id: " + piece.getId());
+		PlayGameScreen.setTypeLabelText("type: "+ piece.getDescription().getType());
+		PlayGameScreen.setAttackPowLabelText("attack power: " + piece.getDescription().getAttackPower());
+		PlayGameScreen.setCountLabelText("count: " + piece.getDescription().getCount());
+		PlayGameScreen.setTeamLabelText("team: " + piece.getTeamId());
+		
+	}
 	
 	public void disableShadow() {
 		vw.setEffect(null);
@@ -108,6 +117,12 @@ public class CostumFigurePain extends Pane {
 		this.posY = parent.y;
 	}
 	
+	//Mehtode sollte automatisch aufgerufen werden wenn Piece bewegt wird
+	public void updatePos() {
+		this.posX = piece.getPosition()[0];
+		this.posY = piece.getPosition()[1];
+	}
+	
 	public void setActive() {
 		this.active = true;
 	}
@@ -118,6 +133,16 @@ public class CostumFigurePain extends Pane {
 	
 	
 	
+	
+	
+	public String getTeamID() {
+		return teamID;
+	}
+
+	public void setTeamID(String teamID) {
+		this.teamID = teamID;
+	}
+
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub

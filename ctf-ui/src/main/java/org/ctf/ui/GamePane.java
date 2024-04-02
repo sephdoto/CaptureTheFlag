@@ -134,6 +134,7 @@ public class GamePane extends HBox {
 		return x* 31 + y;
 	}
 	
+	//Setzt das Game für alle Zellen und Figuren
 	public void setGame(Game game) {
 		for(CostumFigurePain cm : allFigures) {
 			cm.game = game;
@@ -250,15 +251,7 @@ public class GamePane extends HBox {
 			System.out.println("ich bin aktiv");
 		}
 	}
-//	public void setTeamActive2(int i) {
-//		for(CostumFigurePain p: allFigures) {
-//			if(p.team = i) {
-//				p.setActive();
-//			}else {
-//				p.setUnactive();
-//			}
-//		}
-//	}
+
 	
 	
 	
