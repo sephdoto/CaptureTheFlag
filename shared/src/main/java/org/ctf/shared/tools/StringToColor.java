@@ -1,4 +1,4 @@
-package org.ctf.client.tools;
+package org.ctf.shared.tools;
 
 import java.awt.Color;
 

@@ -1,4 +1,4 @@
-package org.ctf.client.tools;
+package org.ctf.shared.tools;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.File;
@@ -6,10 +6,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import org.ctf.client.tools.JSON_Tools.IncompleteMapTemplateException;
-import org.ctf.client.tools.JSON_Tools.MapNotFoundException;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.data.map.MapTemplate;
+import org.ctf.shared.tools.JSON_Tools;
+import org.ctf.shared.tools.JSON_Tools.IncompleteMapTemplateException;
+import org.ctf.shared.tools.JSON_Tools.MapNotFoundException;
 
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.Gson;

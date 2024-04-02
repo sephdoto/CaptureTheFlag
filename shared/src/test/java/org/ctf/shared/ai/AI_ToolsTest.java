@@ -1,4 +1,4 @@
-package org.ctf.ai;
+package org.ctf.shared.ai;
 
 import static org.junit.jupiter.api.Assertions.*;
 

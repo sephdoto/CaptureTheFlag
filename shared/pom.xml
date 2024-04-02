@@ -11,4 +11,17 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>shared-module</name>
     <description>shared library containing common files</description>
+      <dependencies>
+    <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.json/json -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20240205</version>
+        </dependency>
+          </dependencies>
 </project>

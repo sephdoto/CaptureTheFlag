@@ -1,4 +1,4 @@
-package org.ctf.client.tools;
+package org.ctf.shared.tools;
 
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.data.map.Directions;

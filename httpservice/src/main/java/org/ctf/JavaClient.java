@@ -196,6 +196,7 @@ public class JavaClient {
     } catch (UnknownError e) {
       System.out.println("Something is wrong with the server");
     }
+    return gameResponse;
   }
 
   private void gameSessionResponseParser(GameSessionResponse gameSessionResponse) {
@@ -233,8 +234,9 @@ public class JavaClient {
    * @throws UnknownError
    */
   private JoinGameResponse joinGameCaller(String teamName) {
+    JoinGameResponse response = null;
     try {
-      return comm.joinGameSession(getCurrentGameSessionID(),new JoinGameRequest(teamName));
+      response = comm.joinGameSession(getCurrentGameSessionID(),new JoinGameRequest(teamName));
     } catch (SessionNotFound e) {
       System.out.println("SessionID is wrong / Server is not there");
     } catch (NoMoreTeamSlots e) {
@@ -242,6 +244,7 @@ public class JavaClient {
     } catch (UnknownError e) {
       System.out.println("Something wong");
     }
+    return response;
   }
 
   private void joinGameParser(JoinGameResponse joinGameResponse) {
