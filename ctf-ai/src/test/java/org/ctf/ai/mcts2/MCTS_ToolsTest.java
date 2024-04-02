@@ -26,19 +26,33 @@ class MCTS_ToolsTest {
   void testPutNeighbouringPieces() {
     HashSet<Piece> updateThese = new HashSet<Piece>();
     MCTS mcts = new MCTS(new TreeNode(null, gameState, null));
-    MCTS_Tools.putNeighbouringPieces(updateThese, mcts.root.grid, mcts.root.gameState.getTeams()[0].getPieces()[2]);
+    MCTS_Tools.putNeighbouringPieces(updateThese, mcts.root.grid, mcts.root.gameState.getTeams()[0].getPieces()[2].getPosition());
     HashSet<Piece> trueNeighbours = new HashSet<Piece>();
     trueNeighbours.add(mcts.root.gameState.getTeams()[0].getPieces()[3]);
     assertTrue(trueNeighbours.equals(updateThese));
   }
   
-  /*@Test
+  @Test
   void testPossibleMovesWithPieceVision() {
-    GameState gameState = TestValues.getEmptyTestState();
-    gameState.getTeams()[0].
-    TreeNode node = new TreeNode(null, gameState, null);
+    TreeNode node = new TreeNode(null, TestValues.getTestState(), null);
+    Piece piece = node.gameState.getTeams()[1].getPieces()[1];                          //Piece at position 7,3; only position it can walk to is above, 6,3.
+    ArrayList<int[]> possibleMoves = new ArrayList<int[]>();
+    ArrayList<int[]> impossibleMoves = new ArrayList<int[]>();
+    impossibleMoves = MCTS_Tools.getPossibleMovesWithPieceVision(node.gameState, node.grid, piece, possibleMoves);
     
-  }*/
+    ArrayList<int[]> musterPossibleMoves = new ArrayList<int[]>();
+    musterPossibleMoves.add(new int[] {6,3});
+    musterPossibleMoves.add(new int[] {9,3});
+    musterPossibleMoves.add(new int[] {8,3});
+    ArrayList<int[]> musterImpossibleMoves = new ArrayList<int[]>();
+    musterImpossibleMoves.add(new int[] {7,2});
+    musterImpossibleMoves.add(new int[] {7,4});
+    
+    for(int i=0; i<possibleMoves.size(); i++)
+      assertArrayEquals(musterPossibleMoves.get(i), possibleMoves.get(i));
+    for(int i=0; i<impossibleMoves.size(); i++)
+      assertArrayEquals(musterImpossibleMoves.get(i), impossibleMoves.get(i));
+    }
   
   @Test
   void testPickMoveComplex() {
@@ -165,11 +179,11 @@ class MCTS_ToolsTest {
       Move move1 = new Move();
       ArrayList<int[]> moveList = new ArrayList<int[]>();
       move1.setNewPosition(null);
-      move1.setPieceId(null);
+      move1.setPieceId("");
       moveList.add(move1.getNewPosition());
 
       assertEquals(move1.getNewPosition(), MCTS_Tools.getRandomShapeMove(moveList, null).getNewPosition());
-      assertEquals(move1.getPieceId(), MCTS_Tools.getRandomShapeMove(moveList, null).getPieceId());
+      assertEquals(move1.getPieceId(), MCTS_Tools.getRandomShapeMove(moveList, null).toMove().getPieceId());
   }
 
   @Test

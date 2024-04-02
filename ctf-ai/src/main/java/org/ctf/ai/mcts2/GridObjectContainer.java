@@ -82,6 +82,16 @@ public class GridObjectContainer {
     }
   }
   
+  public boolean equals(GridObjectContainer compare) {
+    if(this.object != compare.object)
+      return false;
+    if(!this.piece.getId().equals(compare.getPiece().getId()))
+      return false;
+    if(this.teamId != compare.teamId)
+      return false;
+    return true;
+  }
+  
   public GridObjects getObject() {
     return object;
   }

@@ -19,6 +19,18 @@ public class GridPieceContainer {
     return new GridPieceContainer(pieces);
   }
   
+  public boolean equals(GridPieceContainer compare) {
+    for(Piece piece : this.pieces) {
+      boolean contains = false;
+      for(Piece cPiece : compare.getPieces())
+        if(piece.getId().equals(cPiece.getId()))
+          contains = true;
+      if(!contains)
+        return false;
+    }
+    return true;
+  }
+  
   public HashSet<Piece> getPieces() {
     return pieces;
   }

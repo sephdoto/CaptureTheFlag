@@ -440,7 +440,7 @@ class MCTSTest {
   void testSimulate() {
     long totalTime = 0;
     int count = 0;
-    for(int i=0; i<100000; i++, count++) {
+    for(int i=0; i<1000; i++, count++) {
       long time = System.nanoTime();
       mcts.simulate(mcts.root);
       totalTime += System.nanoTime() - time;

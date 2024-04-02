@@ -16,11 +16,29 @@ public class TreeNode implements Comparable<TreeNode> {
   Grid grid;
   int[] wins;
 
+  /**
+   * Creates a new TreeNode with given Parameters
+   * @param parent
+   * @param gameState
+   * @param grid : the nodes grid containing the current piece positions. pieceVisions and pieceVisionGrid are getting generated from it
+   * @param wins
+   */
   public TreeNode(TreeNode parent, GameState gameState, Grid grid, int[] wins) {
     this.possibleMoves = new IdentityHashMap<Piece, ArrayList<int[]>>();
     this.parent = parent;
     this.gameState = gameState;
-    this.grid = grid;
+
+    IdentityHashMap<Piece, ArrayList<int[]>> impossibleMoves = new IdentityHashMap<Piece, ArrayList<int[]>>();
+    int start = gameState.getCurrentTeam();
+    for(MCTS_Tools.toNextTeam(gameState); gameState.getCurrentTeam() != start; MCTS_Tools.toNextTeam(gameState)) {
+      for(Piece p : gameState.getTeams()[gameState.getCurrentTeam()].getPieces()) {
+        ArrayList<int[]> movesTeamI = new ArrayList<int[]>();
+        impossibleMoves.put(p, MCTS_Tools.getPossibleMovesWithPieceVision(gameState, grid, p, movesTeamI));
+        impossibleMoves.get(p).addAll(movesTeamI);
+      }
+    }
+    this.grid = new Grid(grid.grid, impossibleMoves);
+    
     this.wins = wins != null ? wins : new int[gameState.getTeams().length];
     if(grid.getPieceVisions().keySet().size() == 0)
       initPossibleMovesAndChildren();
@@ -69,11 +87,15 @@ public class TreeNode implements Comparable<TreeNode> {
    */
   public void updateGrids(HashSet<Piece> pieces) {
     for(Piece p : pieces) {
-      removeFromGrids(p);
-      ArrayList<int[]> impossibleMoves = getIMpossibleMoves(p);
-      addToPieceVisions(p, impossibleMoves);
-      this.grid.setPosition(new GridObjectContainer(p), p.getPosition()[1], p.getPosition()[0]);
-    }
+//      if(grid.pieceVisions.get(p) != null) { 
+        removeFromGrids(p);
+//        if(grid.getGrid()[p.getPosition()[0]][p.getPosition()[1]].getPiece().equals(p)) {
+          ArrayList<int[]> impossibleMoves = getIMpossibleMoves(p);
+          addToPieceVisions(p, impossibleMoves);
+//          this.grid.setPosition(new GridObjectContainer(p), p.getPosition()[1], p.getPosition()[0]);
+        }
+//      }
+//    }
   }
   void addToPieceVisions(Piece p, ArrayList<int[]> positions){
     for(int[] pos : positions) {
@@ -81,7 +103,8 @@ public class TreeNode implements Comparable<TreeNode> {
         this.grid.getPieceVisionGrid()[pos[0]][pos[1]] = new GridPieceContainer();
       this.grid.getPieceVisionGrid()[pos[0]][pos[1]].getPieces().add(p);
     }
-    this.grid.pieceVisions.put(p, positions);
+    if(positions.size() > 0)
+      this.grid.pieceVisions.put(p, positions);
   }
   void removeFromGrids(Piece piece) {
     for(int[] pos : this.grid.pieceVisions.get(piece)) {
@@ -91,7 +114,7 @@ public class TreeNode implements Comparable<TreeNode> {
   }
   ArrayList<int[]> getIMpossibleMoves(Piece piece){
     ArrayList<int[]> impossibleMoves = new ArrayList<int[]>();
-    if(grid.getPosition(piece.getPosition()[1], piece.getPosition()[0]).getPiece().equals(piece))
+    if(grid.getPosition(piece.getPosition()[1], piece.getPosition()[0]).getPiece().getId().equals(piece.getId()))
       impossibleMoves.addAll(MCTS_Tools.getPossibleMovesWithPieceVision(gameState, grid, piece, impossibleMoves));
     return impossibleMoves;
   }
@@ -175,7 +198,6 @@ public class TreeNode implements Comparable<TreeNode> {
     * prints the grids
     */
    void printGrids() {
-     System.out.println("\n");
      for(int i=0; i<grid.getGrid().length; i++) {
        for(int j=0; j<grid.getGrid()[0].length; j++) {
          if(grid.getPieceVisionGrid()[i][j] == null)
@@ -199,6 +221,6 @@ public class TreeNode implements Comparable<TreeNode> {
        }
       System.out.println(); 
      }
-     
+   System.out.println("\n");
    }
 }

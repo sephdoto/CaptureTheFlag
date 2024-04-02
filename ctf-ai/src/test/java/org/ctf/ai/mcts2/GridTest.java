@@ -7,7 +7,14 @@ import org.ctf.shared.state.Piece;
 import org.junit.jupiter.api.Test;
 
 class GridTest {
-
+  @Test
+  void testEquals() {
+    TreeNode node = new TreeNode(null, TestValues.getTestState(), null);
+    TreeNode clone = node.clone(node.copyGameState());
+    assertTrue(node.grid.equals(node.grid));
+    assertTrue(node.grid.equals(clone.grid));
+  }
+  
   @Test
   void testInitAndClone() {
     GameState testState = TestValues.getTestState();

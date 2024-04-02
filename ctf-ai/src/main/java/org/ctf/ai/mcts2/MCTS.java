@@ -362,22 +362,20 @@ public class MCTS {
    * @return a child node containing the simulation result
    */
   void oneMove(TreeNode alter, TreeNode original, boolean simulate) {
+    if(isTerminal(alter) != -1)
+      System.out.println("node was terminal but got simulated");
+//    simulate = false;
     if(simulate) {
-      Move move = getAndRemoveMoveHeuristicFromGrid(original);
+      ReferenceMove move = getAndRemoveMoveHeuristicFromGrid(original);
       HashSet<Piece> updateThese = new HashSet<Piece>();
-      Piece center = null;
-      try{
-        center = alter.grid.getPieceVisionGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]].getPieces().stream().filter(p -> p.getId().equals(move.getPieceId())).findFirst().get();
-      } catch(Exception e) {
-        System.out.println("error");
-      }
+      Piece center = move.getPiece();
+      int[] oldPos = center.getPosition();
+      alterGameStateAndGrid(alter.gameState, alter.grid, move.toMove());
+//      System.out.println(move.getPiece().getId() + " moves to " + move.getNewPosition()[0] + " " + move.getNewPosition()[1]);
+//      alter.printGrids();
       updateThese.add(center);
-      
-      MCTS_Tools.putNeighbouringPieces(updateThese, alter.grid, center); // TODO testen ob man hier  statt updateThese get 0 das piece aus move holen muss.
-      alterGameStateAndGrid(alter.gameState, alter.grid, move);
-      if(isTerminal(alter) != -1)
-        System.out.println(222222);
-      MCTS_Tools.putNeighbouringPieces(updateThese, alter.grid, center);
+      MCTS_Tools.putNeighbouringPieces(updateThese, alter.grid, oldPos);
+      MCTS_Tools.putNeighbouringPieces(updateThese, alter.grid, center.getPosition());
       alter.updateGrids(updateThese);
     } else {
       alterGameStateAndGrid(alter.gameState, alter.grid, getAndRemoveMoveHeuristic(original));
@@ -385,39 +383,33 @@ public class MCTS {
     }
   }   
 
-  Move getAndRemoveMoveHeuristicFromGrid(TreeNode parent) {
-    for(Piece piece : parent.grid.pieceVisions.keySet()) {
-      try {
-      if(parent.grid.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]].getTeamId() != parent.gameState.getCurrentTeam())
-        continue;
-      } catch(Exception e) {
-        System.out.println(piece.getPosition()[0] + " " + piece.getPosition()[1]+ " " + parent.gameState.getCurrentTeam() );
-      }
+  ReferenceMove getAndRemoveMoveHeuristicFromGrid(TreeNode parent) {
+    for(Piece piece : parent.gameState.getTeams()[parent.gameState.getCurrentTeam()].getPieces()) {
+//      try {
+//      if(parent.grid.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]].getTeamId() != parent.gameState.getCurrentTeam())
+//        continue;
+//      } catch(Exception e) {
+//        System.out.println("piece on position not found: " + piece.getPosition()[0] + "." + piece.getPosition()[1]);
+//      }
       for(int i=0; i<parent.grid.getPieceVisions().get(piece).size(); i++) {
         int[] pos = parent.grid.getPieceVisions().get(piece).get(i);
         if(MCTS_Tools.emptyField(parent.grid, pos)) {
           continue;
         }
         if(MCTS_Tools.otherTeamsBase(parent.grid, pos, piece.getPosition())) {
-          Move move = new Move();
-          move.setNewPosition(pos);
-          move.setPieceId(piece.getId());
-          return move;
+          return new ReferenceMove(piece, pos);
         }
         if(!MCTS_Tools.occupiedBySameTeam(parent.gameState, parent.grid, pos)
             && MCTS_Tools.occupiedByWeakerOpponent(parent.grid.getPosition(pos[1], pos[0]).getPiece(), piece)) {
-          Move move = new Move();
-          move.setNewPosition(pos);
-          move.setPieceId(piece.getId());
-          return move;
+          return new ReferenceMove(piece, pos);
         }
       }
     }
     return getRandomFromGrid(parent);
   }
   
-  Move getRandomFromGrid(TreeNode parent){
-    Move move = null;
+  ReferenceMove getRandomFromGrid(TreeNode parent){
+    ReferenceMove move = null;
     
     try {
       move = MCTS_Tools.pickMoveComplex(parent.gameState, parent.grid);
@@ -453,7 +445,12 @@ public class MCTS {
   }
 
   Move getAndRemoveMoveRandom(TreeNode parent){
-    Piece key = (Piece)parent.possibleMoves.keySet().toArray()[rand.nextInt(parent.possibleMoves.keySet().size())];
+    Piece key = null;
+    try {
+    key = (Piece)parent.possibleMoves.keySet().toArray()[rand.nextInt(parent.possibleMoves.keySet().size())];
+    } catch (Exception e) {
+      System.out.println("fehler bei random");
+    }
     int randomMove = rand.nextInt(parent.possibleMoves.get(key).size());
 
     return createMoveDeleteIndex(parent, key, randomMove);
@@ -501,7 +498,7 @@ public class MCTS {
     try {
     picked = Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(move.getPieceId())).findFirst().get();
     } catch (Exception e) {
-      System.out.println(2);
+      System.out.println("piece " + move.getPieceId() + " was not present in gameState");
     }
     grid.setPosition(null, picked.getPosition()[1], picked.getPosition()[0]);
     if(occupant == null) {

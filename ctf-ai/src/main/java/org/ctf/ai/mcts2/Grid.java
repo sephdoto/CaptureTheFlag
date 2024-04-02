@@ -1,6 +1,7 @@
 package org.ctf.ai.mcts2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.IdentityHashMap;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
@@ -50,7 +51,7 @@ public class Grid {
   }
 
   /**
-   * Deep clones a Grid
+   * Deep clones a Grid but not the piecevision or piecevisiongrid.
    */
   @Override
   public Grid clone(){
@@ -61,7 +62,7 @@ public class Grid {
           clone[y][x] = this.grid[y][x].clone();
       }
     }
-    GridPieceContainer[][] cloneVision = new GridPieceContainer[grid.length][grid[0].length];
+    /*GridPieceContainer[][] cloneVision = new GridPieceContainer[grid.length][grid[0].length];
     for(int y=0; y<this.pieceVisionGrid.length; y++) {
       for(int x=0; x<this.pieceVisionGrid[y].length; x++) {
         if(this.pieceVisionGrid[y][x] != null) {
@@ -78,11 +79,50 @@ public class Grid {
         list.add(pos);
       }   
       clonePieceVisions.put(key, list);
-    }
+    }*/
     
-    return new Grid(clone, cloneVision, clonePieceVisions);
+    return new Grid(clone, new IdentityHashMap<Piece, ArrayList<int[]>>(), new IdentityHashMap<Piece, ArrayList<int[]>>());
   }
   
+  public boolean equals(Grid compare) {
+    for(int y=0; y<this.grid.length; y++) {
+      for(int x=0; x<this.grid[y].length; x++) {
+        if(this.grid[y][x] == null)
+          if(compare.grid[y][x] == null)
+            continue;
+          else
+            return false;
+        if(this.pieceVisionGrid[y][x] == null)
+          if(compare.pieceVisionGrid[y][x] == null)
+            continue;
+          else
+            return false;
+        if(!this.grid[y][x].equals(compare.grid[y][x]))
+          return false;
+        if(!this.pieceVisionGrid[y][x].equals(compare.pieceVisionGrid[y][x]))
+          return false;
+      }
+    }
+    if(this.pieceVisions.keySet().size() != compare.pieceVisions.size())
+      return false;
+    for(Piece p : this.pieceVisions.keySet()) {
+      boolean contains = false;
+      for(Piece comP : compare.getPieceVisions().keySet())
+        if(p.getId().equals(comP.getId())) {
+          contains = true;
+          if(this.pieceVisions.get(p).size() != compare.pieceVisions.get(comP).size())
+            return false;
+          for(int i=0; i<this.pieceVisions.get(p).size(); i++) {
+            if(!Arrays.equals(this.pieceVisions.get(p).get(i), compare.pieceVisions.get(comP).get(i)))
+                return false;
+          }
+        }
+      if(!contains)
+        return false;
+    }
+    
+    return true;
+  }
   
   public IdentityHashMap<Piece, ArrayList<int[]>> getPieceVisions() {
     return pieceVisions;

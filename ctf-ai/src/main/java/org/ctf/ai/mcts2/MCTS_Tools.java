@@ -20,9 +20,9 @@ import org.ctf.shared.state.data.map.ShapeType;
 public class MCTS_Tools {
   static Random random = new Random();
 
-  public static void putNeighbouringPieces(HashSet<Piece> pieceList, Grid grid, Piece center) {
+  public static void putNeighbouringPieces(HashSet<Piece> pieceList, Grid grid, int[] center) {
     try {
-      pieceList.addAll(grid.getPieceVisionGrid()[center.getPosition()[0]][center.getPosition()[1]].getPieces());
+      pieceList.addAll(grid.getPieceVisionGrid()[center[0]][center[1]].getPieces());
     } catch (NullPointerException npe) { /* if only the piece itself is on a position this gets thrown */ };
   }
   
@@ -176,6 +176,9 @@ public class MCTS_Tools {
     for(int i=0; i<gameState.getTeams()[team].getPieces().length; i++) {
       Piece p = gameState.getTeams()[team].getPieces()[i];
       grid.setPosition(null, p.getPosition()[1], p.getPosition()[0]);
+      for(int[] pos : grid.pieceVisions.get(p))
+        grid.pieceVisionGrid[pos[0]][pos[1]].pieces.remove(p);
+      grid.pieceVisions.remove(p);
       //TODO ich weiß nicht ob der garbage collector das team löscht oder ich den array erst leeren muss. Später schauen.
     }
     gameState.getTeams()[team] = null;
@@ -693,11 +696,10 @@ public class MCTS_Tools {
    * @throws NoMovesLeftException
    * @throws InvalidShapeException 
    */
-  public static Move pickMoveComplex(GameState gameState, Grid grid) throws NoMovesLeftException, InvalidShapeException {
+  public static ReferenceMove pickMoveComplex(GameState gameState, Grid grid) throws NoMovesLeftException, InvalidShapeException {
     ArrayList<Piece> piecesCurrentTeam = new ArrayList<Piece>(Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()));
     ArrayList<int[]> dirMap = new ArrayList<int[]>();
     ArrayList<int[]> shapeMoves = new ArrayList<int[]>();
-    Move move = new Move();
 
     while(piecesCurrentTeam.size() > 0) {       
       int random = (int)(Math.random() * piecesCurrentTeam.size());
@@ -714,7 +716,7 @@ public class MCTS_Tools {
       } else {                                                                  //Move if Shape
         shapeMoves = getShapeMoves(gameState, grid, picked, shapeMoves);
         if(shapeMoves.size() > 0) {
-          return getRandomShapeMove(shapeMoves, picked.getId());
+          return getRandomShapeMove(shapeMoves, picked);
         } else {
             piecesCurrentTeam.remove(random);
           continue;
@@ -725,7 +727,7 @@ public class MCTS_Tools {
     if(piecesCurrentTeam.size() == 0)
       throw new NoMovesLeftException(gameState.getTeams()[gameState.getCurrentTeam()].getId());
 
-    return move;
+    return null;
   }
   
   /**
@@ -735,11 +737,8 @@ public class MCTS_Tools {
    * @param pieceId
    * @return randomly picked move
    */
-  public static Move getRandomShapeMove(ArrayList<int[]> positionArrayList, String pieceId) {
-    Move move = new Move();
-    move.setPieceId(pieceId);
-    move.setNewPosition(positionArrayList.get((int) (positionArrayList.size() * Math.random())));
-    return move;
+  public static ReferenceMove getRandomShapeMove(ArrayList<int[]> positionArrayList, Piece piece) {
+    return new ReferenceMove(piece, positionArrayList.get((int) (positionArrayList.size() * Math.random())));
   }
   
   /**
@@ -756,7 +755,7 @@ public class MCTS_Tools {
    * @param gameState
    * @return a valid move
    */
-  public static Move getDirectionMove(ArrayList<int[]> dirMap, Piece piece, GameState gameState, Grid grid) {
+  public static ReferenceMove getDirectionMove(ArrayList<int[]> dirMap, Piece piece, GameState gameState, Grid grid) {
     int randomDir = (int) (dirMap.size() * Math.random());
     int reach;
 
@@ -764,7 +763,7 @@ public class MCTS_Tools {
       reach = (int) (Math.random() * dirMap.get(randomDir)[1] + 1);
       Move newPos = checkMoveValidity(gameState, grid, piece, dirMap.get(randomDir)[0], reach);
       if (newPos != null) 
-        return newPos;
+        return new ReferenceMove(piece, newPos.getNewPosition());
       dirMap.get(randomDir)[1] =  reach - 1;
       continue;
     }
