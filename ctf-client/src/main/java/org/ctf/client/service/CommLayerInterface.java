@@ -61,7 +61,7 @@ public interface CommLayerInterface {
      * @throws UnknownError
      * @throws Accepted
      */
-    JoinGameResponse joinGame(String URL, String teamName) throws URISyntaxException, IOException, InterruptedException;
+    JoinGameResponse joinGame(String URL, String teamName);
 
     /**
      * Makes a move on the board if object is connected to a game session and a game

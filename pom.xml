@@ -10,7 +10,7 @@
     <relativePath/>
     <!-- lookup parent from repository -->
   </parent>
-  
+
   <groupId>org.ctf</groupId>
   <artifactId>cfp14</artifactId>
   <version>0.1.0</version>
@@ -87,7 +87,6 @@
     <module>ctf-client</module>
     <module>shared</module>
     <module>cfp-service-main</module>
-    <module>httpservice</module>
   </modules>
 
   <build>

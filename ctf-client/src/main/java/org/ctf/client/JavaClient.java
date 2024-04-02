@@ -37,6 +37,7 @@ public class JavaClient implements GameClientInterface {
   private Team[] teams;
 
   private Gson gson; // Gson object for conversions incase needed
+  //Two CommLayers Available CommLayer and RestClientLayer
   private CommLayer comm; // Layer instance which is used for communication
 
   // Block for Server Info

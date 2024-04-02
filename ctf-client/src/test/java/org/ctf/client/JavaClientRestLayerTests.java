@@ -1,26 +1,23 @@
-import static org.junit.jupiter.api.Assertions.assertEquals;
+package org.ctf.client;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import de.unimannheim.swt.pse.ctf.CtfApplication;
 import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
 import java.io.IOException;
-
-import org.ctf.JavaClient;
-import org.ctf.controller.HTTPClientController;
-import org.ctf.controller.cfpServiceClient;
+import org.ctf.client.service.RestClientLayer;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.exceptions.Accepted;
+import org.ctf.shared.state.data.exceptions.SessionNotFound;
+import org.ctf.shared.state.data.exceptions.URLError;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Tests to test the communication capabilities and Exception catching of the CommLayer service
@@ -28,9 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author rsyed
  */
-public class JavaClientTest {
+public class JavaClientRestLayerTests {
 
-  static CommLayer comm = new CommLayer();
+  static RestClientLayer comm = new RestClientLayer();
   static JavaClient javaClient;
   static JavaClient javaClient2;
   final MapTemplate template = createGameTemplate();
@@ -323,6 +320,16 @@ public class JavaClientTest {
       javaClient.makeMove(move);
     } catch (Exception ex) {
       assert ((ex instanceof Accepted) || (ex instanceof InvalidMove));
+    }
+  }
+
+  @Test
+  void testSetServer() {
+    try {
+      javaClient.setServer("localhost", "9999");
+      javaClient.createGame(template);
+    } catch (Exception ex) {
+      fail();
     }
   }
 
