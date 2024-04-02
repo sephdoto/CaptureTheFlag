@@ -1,4 +1,4 @@
-package org.ctf.client.data.dto;
+package org.ctf.shared.state.dto;
 
 import org.ctf.shared.state.data.map.MapTemplate;
 

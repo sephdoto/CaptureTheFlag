@@ -2,11 +2,12 @@ package org.ctf.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.ctf.client.data.dto.GameSessionRequest;
-import org.ctf.client.data.dto.GameSessionResponse;
+
 import org.ctf.client.service.CommLayer;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.map.MapTemplate;
+import org.ctf.shared.state.dto.GameSessionRequest;
+import org.ctf.shared.state.dto.GameSessionResponse;
 
 /** Tests for the layer and the responses it gives out. */
 public class ServerCommandTests {
@@ -33,141 +34,6 @@ public class ServerCommandTests {
 
     // join();
     // joinNDelete();
-  }
-
-  public static void testStart() {
-    String jsonPayload =
-        """
-          {
-            "gridSize": [10, 10],
-            "teams": 2,
-            "flags": 1,
-            "blocks": 0,
-            "pieces": [
-              {
-                "type": "Pawn",
-                "attackPower": 1,
-                "count": 10,
-                "movement": {
-                  "directions": {
-                    "left": 0,
-                    "right": 0,
-                    "up": 1,
-                    "down": 0,
-                    "upLeft": 1,
-                    "upRight": 1,
-                    "downLeft": 0,
-                    "downRight": 0
-                  }
-                }
-              },
-              {
-                "type": "Rook",
-                "attackPower": 5,
-                "count": 2,
-                "movement": {
-                  "directions": {
-                    "left": 2,
-                    "right": 2,
-                    "up": 2,
-                    "down": 2,
-                    "upLeft": 0,
-                    "upRight": 0,
-                    "downLeft": 0,
-                    "downRight": 0
-                  }
-                }
-              },
-              {
-                "type": "Knight",
-                "attackPower": 3,
-                "count": 2,
-                "movement": {
-                  "shape": {
-                    "type": "lshape"
-                  }
-                }
-              },
-              {
-                "type": "Bishop",
-                "attackPower": 3,
-                "count": 2,
-                "movement": {
-                  "directions": {
-                    "left": 0,
-                    "right": 0,
-                    "up": 0,
-                    "down": 0,
-                    "upLeft": 2,
-                    "upRight": 2,
-                    "downLeft": 2,
-                    "downRight": 2
-                  }
-                }
-              },
-              {
-                "type": "Queen",
-                "attackPower": 5,
-                "count": 1,
-                "movement": {
-                  "directions": {
-                    "left": 2,
-                    "right": 2,
-                    "up": 2,
-                    "down": 2,
-                    "upLeft": 2,
-                    "upRight": 2,
-                    "downLeft": 2,
-                    "downRight": 2
-                  }
-                }
-              },
-              {
-                "type": "King",
-                "attackPower": 1,
-                "count": 1,
-                "movement": {
-                  "directions": {
-                    "left": 1,
-                    "right": 1,
-                    "up": 1,
-                    "down": 1,
-                    "upLeft": 1,
-                    "upRight": 1,
-                    "downLeft": 1,
-                    "downRight": 1
-                  }
-                }
-              }
-            ],
-            "placement": "symmetrical",
-            "totalTimeLimitInSeconds": -1,
-            "moveTimeLimitInSeconds": -1
-          }
-        """;
-
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
-    GameSessionRequest request = new GameSessionRequest();
-    request.setTemplate(test);
-    CommLayer comm = new CommLayer();
-    GameSessionResponse gsResponse =
-        comm.createGameSession("http://localhost:8888/api/gamesession", test);
-    comm.deleteCurrentSession("http://localhost:8888/api/gamesession/" + gsResponse.getId());
-
-    // JavaClient client = new JavaClient("localhost", "8888");
-    // client.createGame(test);
-    // System.out.println(client.getSessionID());
-
-    // client.joinGame("team1");
-    // System.out.println(client.getSecretID());
-    // client.joinGame("team2");
-    // System.out.println(client.getSecretID());
-    // client.joinGame("team3");
-    // System.out.println(client.getSecretID());
-    /*    client.refreshSession();
-    GameState gs = client.getState();
-    System.out.println(gson.toJson(gs)); */
   }
 
   public static void testConnection() {
@@ -650,4 +516,3 @@ public class ServerCommandTests {
     javaClient.getStateFromServer();
   }
 }
-

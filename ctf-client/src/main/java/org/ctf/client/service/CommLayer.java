@@ -13,12 +13,7 @@ import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.ctf.client.data.dto.GameSessionRequest;
-import org.ctf.client.data.dto.GameSessionResponse;
-import org.ctf.client.data.dto.GiveupRequest;
-import org.ctf.client.data.dto.JoinGameRequest;
-import org.ctf.client.data.dto.JoinGameResponse;
-import org.ctf.client.data.dto.MoveRequest;
+
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.exceptions.ForbiddenMove;
 import org.ctf.shared.state.data.exceptions.GameOver;
@@ -27,6 +22,12 @@ import org.ctf.shared.state.data.exceptions.NoMoreTeamSlots;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.shared.state.data.exceptions.URLError;
 import org.ctf.shared.state.data.exceptions.UnknownError;
+import org.ctf.shared.state.dto.GameSessionRequest;
+import org.ctf.shared.state.dto.GameSessionResponse;
+import org.ctf.shared.state.dto.GiveupRequest;
+import org.ctf.shared.state.dto.JoinGameRequest;
+import org.ctf.shared.state.dto.JoinGameResponse;
+import org.ctf.shared.state.dto.MoveRequest;
 
 /**
  * A lightweight Java based Communication Layer which can be used to make calls to and get data from

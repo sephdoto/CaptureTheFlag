@@ -1,11 +1,15 @@
-package org.ctf.client.data.dto;
-
-import java.util.Date;
+package org.ctf.shared.state.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public class GameSession {
-     @Schema(
+import java.util.Date;
+
+/**
+ * This class is used to represent the state of a game session.
+ */
+public class GameSessionResponse {
+
+    @Schema(
             description = "unique game session identifier"
     )
     private String id;

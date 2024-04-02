@@ -7,13 +7,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
 import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
 import java.io.IOException;
-import org.ctf.client.data.dto.GameSessionRequest;
-import org.ctf.client.data.dto.GameSessionResponse;
-import org.ctf.client.data.dto.JoinGameResponse;
-import org.ctf.client.data.dto.MoveRequest;
+
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.map.MapTemplate;
+import org.ctf.shared.state.dto.GameSessionRequest;
+import org.ctf.shared.state.dto.GameSessionResponse;
+import org.ctf.shared.state.dto.JoinGameResponse;
+import org.ctf.shared.state.dto.MoveRequest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

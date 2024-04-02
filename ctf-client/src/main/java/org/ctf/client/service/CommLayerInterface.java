@@ -3,10 +3,6 @@ package org.ctf.client.service;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import org.ctf.client.data.dto.GameSessionRequest;
-import org.ctf.client.data.dto.GameSessionResponse;
-import org.ctf.client.data.dto.JoinGameResponse;
-import org.ctf.client.data.dto.MoveRequest;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.exceptions.Accepted;
@@ -18,6 +14,10 @@ import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.shared.state.data.exceptions.URLError;
 import org.ctf.shared.state.data.exceptions.UnknownError;
 import org.ctf.shared.state.data.map.MapTemplate;
+import org.ctf.shared.state.dto.GameSessionRequest;
+import org.ctf.shared.state.dto.GameSessionResponse;
+import org.ctf.shared.state.dto.JoinGameResponse;
+import org.ctf.shared.state.dto.MoveRequest;
 
 public interface CommLayerInterface {
 

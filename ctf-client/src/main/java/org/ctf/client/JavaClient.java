@@ -3,11 +3,6 @@ package org.ctf.client;
 import com.google.gson.Gson;
 import java.util.Date;
 
-import org.ctf.client.data.dto.GameSession;
-import org.ctf.client.data.dto.GameSessionRequest;
-import org.ctf.client.data.dto.GameSessionResponse;
-import org.ctf.client.data.dto.JoinGameResponse;
-import org.ctf.client.data.dto.MoveRequest;
 import org.ctf.client.service.CommLayer;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
@@ -20,6 +15,11 @@ import org.ctf.shared.state.data.exceptions.NoMoreTeamSlots;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.shared.state.data.exceptions.URLError;
 import org.ctf.shared.state.data.map.MapTemplate;
+import org.ctf.shared.state.dto.GameSession;
+import org.ctf.shared.state.dto.GameSessionRequest;
+import org.ctf.shared.state.dto.GameSessionResponse;
+import org.ctf.shared.state.dto.JoinGameResponse;
+import org.ctf.shared.state.dto.MoveRequest;
 
 /**
  * Base Client file which is going to use the Translation Layer to talk to the game server Has

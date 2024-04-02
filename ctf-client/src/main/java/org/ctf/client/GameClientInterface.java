@@ -1,10 +1,10 @@
 package org.ctf.client;
 
-import org.ctf.client.data.dto.GameSessionResponse;
-import org.ctf.client.data.dto.JoinGameResponse;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.map.MapTemplate;
+import org.ctf.shared.state.dto.GameSessionResponse;
+import org.ctf.shared.state.dto.JoinGameResponse;
 
 /**
  * This is the contract the client HAS to fulfill. How it fulfills it is upto the Client
