@@ -6,6 +6,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.Alert.AlertType;
 
 public class Dialogs {
 	
@@ -60,5 +61,25 @@ public class Dialogs {
 
 	    Optional<ButtonType> result = alert.showAndWait();
 	    return result.isPresent() && result.get() == yesButton;
+	  }
+	public static void showErrorDialog(String title, String message) {
+	    Alert alert = new Alert(AlertType.ERROR);
+	    alert.setTitle(title);
+	    alert.setHeaderText(null);
+	    alert.setContentText(message);
+
+	    // Set styles directly in JavaFX
+	    DialogPane dialogPane = alert.getDialogPane();
+	    dialogPane.setStyle("-fx-background-color: linear-gradient(to top, #ffffff, #f2f2f2);"
+	        + " -fx-border-color: #bbb;"
+	        + " -fx-border-width: 1;"
+	        + " -fx-border-style: solid;");
+	    dialogPane.lookup(".label").setStyle("-fx-font-size: 14;"
+	        + " -fx-font-weight: bold;"
+	        + " -fx-text-fill: #444;");
+
+	    Button okButton = (Button) dialogPane.lookupButton(ButtonType.OK);
+	    applyButtonStyle(okButton);
+	    alert.showAndWait();
 	  }
 }

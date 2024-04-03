@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.ctf.shared.state.GameState;
 
+import configs.Dialogs;
 import configs.ImageLoader;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -71,22 +72,28 @@ public class CreateGameScreen  {
 		stage.setMinHeight(500);
 		stage.setMinWidth(900);
 		stage.setScene(scene);
+		stage.setFullScreen(true);
 		stage.show();
 	}
 	
 
 	private static VBox createRightSide() {
-		VBox right = new VBox(20);
+		
+		VBox right = new VBox(s.heightProperty().divide(5).doubleValue());
 		right.setStyle("-fx-background-color: lightblue");
 		right.setAlignment(Pos.TOP_CENTER);
 		right.setPadding(new Insets(20));
 		right.prefWidthProperty().bind(s.widthProperty().multiply(0.3));
+		VBox topV = new VBox(20);
+		topV.setAlignment(Pos.TOP_CENTER);
+		//topV.setPadding(new Insets(20));
 		Label ls = new Label("Choose Map");
 		styleDiscriptionLabel(ls, right);
 		ChoiceBox<String> chooseMapBox = createChoiceBox(right);
 		performChoiceBoxAction(chooseMapBox, ls);
 		VBox createGameButtonBox = createCreateGameButtons(right);
-		right.getChildren().addAll(ls,chooseMapBox,createGameButtonBox);
+		topV.getChildren().addAll(ls,chooseMapBox);
+		right.getChildren().addAll(topV,createGameButtonBox);
 		rightVBox = right;
 		return right;
 	}
@@ -96,14 +103,17 @@ public class CreateGameScreen  {
 		createGameButtonBox.setStyle("-fx-border-color: black; -fx-border-width: 2px;" + "-fx-background-color: white;"
 				+ "-fx-background-radius: 20px; -fx-border-radius: 20px;" + "-fx-alignment: top-center;");
 		Button startButton = new Button("Start Game");
-		VBox.setMargin(startButton, new Insets(90,0,0,0));
+		VBox.setMargin(startButton, new Insets(70,0,0,0));
+		createGameButtonBox.setPadding(new Insets(20));
 		startButton.prefWidthProperty().bind(parent.widthProperty().multiply(0.7));
 		startButton.prefHeightProperty().bind(parent.heightProperty().multiply(0.1));
+		Dialogs.applyButtonStyle(startButton);
 		startButton.setOnAction(event ->{
 			PlayGameScreen.initPlayGameScreen(s, state);
 		});
 		Button backButton = new Button("back");
-		VBox.setMargin(backButton, new Insets(100,0,0,0));
+		Dialogs.applyButtonStyle(backButton);
+		VBox.setMargin(backButton, new Insets(10,0,0,0));
 		backButton.prefWidthProperty().bind(parent.widthProperty().multiply(0.5));
 		backButton.prefHeightProperty().bind(parent.heightProperty().multiply(0.05));
 		backButton.setOnAction(e -> {
