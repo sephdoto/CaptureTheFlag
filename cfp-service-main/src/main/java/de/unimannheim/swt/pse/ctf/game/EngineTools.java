@@ -145,75 +145,51 @@ public class EngineTools extends AI_Tools {
    * Helper method for spaced placement
    * @author yannicksiebenhaar
    */
-  public static LinkedList<GameState> getNeighbors(GameState gs, int teamID, int[] startEnd){
-	  
-	  LinkedList<GameState> result = new LinkedList<GameState>();
-	  
-	  for(int i = 0; i < gs.getTeams()[teamID].getPieces().length; i++) {
-		  GameState newGs = new GameState();
-		  Team[] teams = new Team[gs.getTeams().length];
-		  int c = 0;
-		  for(Team t : gs.getTeams()) {
-			  Team newTeam = new Team();
-			  newTeam.setId(t.getId());
-			  Piece[] newPieces = new Piece[t.getPieces().length];
-			  int j = 0;
-			  for(Piece piece : t.getPieces()) {
-				  Piece newPiece = new Piece();
-				  newPiece.setId(piece.getId());
-				  newPiece.setPosition(piece.getPosition());
-				  newPiece.setTeamId(piece.getTeamId());
-				  newPiece.setDescription(piece.getDescription());
-				  newPieces[j] = newPiece;
-				  
-				  j++;
-			  }
-			  newTeam.setPieces(newPieces);
-			  teams[c++] = newTeam;
-		  }
-		  newGs.setTeams(teams);
-		  String[][] grid = new String[gs.getGrid().length][gs.getGrid()[0].length];
-		  int x = 0;
-		  int y = 0;
-		  for( String[] yAxis : gs.getGrid()) {
-			  y = 0;
-			  for(String value : yAxis) {
-				 
-				  grid[x][y] = value; 
-				  y++;
-			  }
-			  x++;
-		  }
-		  
-		  newGs.setCurrentTeam(gs.getCurrentTeam());
-		  int newY = 0;
-		  int newX = 0;
-		  if(teamID == 0) {
-			  do {
-				  newY = (int) (Math.random() * newGs.getGrid().length/2);
-				  newX = (int) (Math.random() * newGs.getGrid()[0].length);
-			  	  } while(!grid[newY][newX].equals(""));
-		  }
-		  else if(teamID == 1) {
-			  do {
-				  newY = (int) (Math.random() * newGs.getGrid().length/2 + newGs.getGrid().length/2 );
-				  newX = (int) (Math.random() * newGs.getGrid()[0].length);
-				  } while(!grid[newY][newX].equals(""));
-		  }
-		  System.out.println(newY); //TODO why no 0
-		  grid[newGs.getTeams()[teamID].getPieces()[i].getPosition()[0]][newGs.getTeams()[teamID].getPieces()[i].getPosition()[1]] = "";
-		  newGs.getTeams()[teamID].getPieces()[i].setPosition(new int[] {newY, newX});
-		  newGs.setGrid(grid);
-		  result.add(newGs);
-		  
-		  for (Team team : newGs.getTeams()) {
-		      //grid[team.getBase()[0]][team.getBase()[1]] = "b:" + team.getId(); //Moved to InitPieces so the pieces will be placed around the base
-		      for (Piece piece : team.getPieces()) {
-		        grid[piece.getPosition()[0]][piece.getPosition()[1]] = piece.getId();
-		      }
-		    }
-	  }
-	  return result;
+  public static LinkedList<GameState> getNeighbors(GameState gs, int teamID, int[] startEnd) {
+
+    LinkedList<GameState> result = new LinkedList<GameState>();
+
+    for (int i = 0; i < gs.getTeams()[teamID].getPieces().length; i++) {
+
+      int newY = 0;
+      int newX = 0;
+      if (teamID == 0) {
+        for (int y = 0; y < gs.getGrid().length / 2; y++) {
+          for (int x = 0; x < gs.getGrid()[y].length; x++) {
+
+            if (gs.getGrid()[y][x].equals("")) {
+              GameState newGs = deepCopyGameState(gs);
+              newGs.getGrid()[newGs.getTeams()[teamID].getPieces()[i]
+                  .getPosition()[0]][newGs.getTeams()[teamID].getPieces()[i].getPosition()[1]] = "";
+              newGs.getTeams()[teamID].getPieces()[i].setPosition(new int[] {y, x});
+              newGs.getGrid()[newGs.getTeams()[teamID].getPieces()[i]
+                  .getPosition()[0]][newGs.getTeams()[teamID].getPieces()[i].getPosition()[1]] =
+                      newGs.getTeams()[teamID].getPieces()[i].getId();
+              newGs.setGrid(newGs.getGrid());
+              result.add(newGs);
+            }
+          }
+        }
+      } else if (teamID == 1) {
+        for (int y = gs.getGrid().length / 2; y < gs.getGrid().length; y++) {
+          for (int x = 0; x < gs.getGrid()[y].length; x++) {
+
+            if (gs.getGrid()[y][x].equals("")) {
+              GameState newGs = deepCopyGameState(gs);
+              newGs.getGrid()[newGs.getTeams()[teamID].getPieces()[i]
+                  .getPosition()[0]][newGs.getTeams()[teamID].getPieces()[i].getPosition()[1]] = "";
+              newGs.getTeams()[teamID].getPieces()[i].setPosition(new int[] {y, x});
+              newGs.getGrid()[newGs.getTeams()[teamID].getPieces()[i]
+                  .getPosition()[0]][newGs.getTeams()[teamID].getPieces()[i].getPosition()[1]] =
+                      newGs.getTeams()[teamID].getPieces()[i].getId();
+              newGs.setGrid(newGs.getGrid());
+              result.add(newGs);
+            }
+          }
+        }
+      }
+    }
+    return result;
   }
   /**
    * helper for the spaced placement
@@ -221,21 +197,70 @@ public class EngineTools extends AI_Tools {
    * @return
    */
   public static int valueOf(GameState gs, int teamID) {
-	  int result = 0;
-	  for(Piece p : gs.getTeams()[teamID].getPieces()) {
-		  result += getPossibleMoves(gs, p.getId()).size();
-	  }
-	  return result;
+    int result = 0;
+    for (Piece p : gs.getTeams()[teamID].getPieces()) {
+      result += getPossibleMoves(gs, p.getId()).size();
+    }
+    return result;
   }
   
+  /**
+   * helper for the spaced placement
+   * @author yannicksiebenhaar
+   * @return
+   */
   public static GameState getBestState(LinkedList<GameState> list, int teamID) {
-	  GameState current = list.getFirst();
-	  for( GameState gs : list) {
-		  if(valueOf(gs, teamID) > valueOf(current, teamID)) {
-			  current = gs;
-		  }
-	  }
-	  return current;
+    GameState current = list.getFirst();
+    for (GameState gs : list) {
+      if (valueOf(gs, teamID) > valueOf(current, teamID)) {
+        current = gs;
+      }
+    }
+    return current;
   }
   
+  /**
+   * helper for the spaced placement
+   * @author yannicksiebenhaar
+   * @return
+   */
+  public static GameState deepCopyGameState(GameState gs) {
+    GameState newGs = new GameState();
+    Team[] teams = new Team[gs.getTeams().length];
+    int c = 0;
+    for (Team t : gs.getTeams()) {
+      Team newTeam = new Team();
+      newTeam.setId(t.getId());
+      Piece[] newPieces = new Piece[t.getPieces().length];
+      int j = 0;
+      for (Piece piece : t.getPieces()) {
+        Piece newPiece = new Piece();
+        newPiece.setId(piece.getId());
+        newPiece.setPosition(piece.getPosition());
+        newPiece.setTeamId(piece.getTeamId());
+        newPiece.setDescription(piece.getDescription());
+        newPieces[j] = newPiece;
+        j++;
+      }
+      newTeam.setPieces(newPieces);
+      teams[c++] = newTeam;
+    }
+    newGs.setTeams(teams);
+    String[][] grid = new String[gs.getGrid().length][gs.getGrid()[0].length];
+    int x = 0;
+    int y = 0;
+    for (String[] yAxis : gs.getGrid()) {
+      y = 0;
+      for (String value : yAxis) {
+
+        grid[x][y] = value;
+        y++;
+      }
+      x++;
+    }
+    newGs.setGrid(grid);
+    newGs.setCurrentTeam(gs.getCurrentTeam());
+    return newGs;
+  }
+
 }

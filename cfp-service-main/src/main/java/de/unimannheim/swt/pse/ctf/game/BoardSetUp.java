@@ -113,37 +113,33 @@ public class BoardSetUp {
    * 
    */
   static void placePiecesSpaced(GameState gameState) {
-	
-	placePiecesSymmetrical(gameState);
-	
-	
-	
-	for (Team team : gameState.getTeams()) {
-	      //grid[team.getBase()[0]][team.getBase()[1]] = "b:" + team.getId(); //Moved to InitPieces so the pieces will be placed around the base
-	      for (Piece piece : team.getPieces()) {
-	        gameState.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = piece.getId();
-	      }
-	    }
-	GameState ultimate = gameState;
-	for(int i = 0; i < 10; i++) {
-		for(Team t : gameState.getTeams()) {
-			GameState current = gameState;
-			while(true) {
-					LinkedList<GameState> neighbors = EngineTools.getNeighbors(current, Integer.decode(t.getId()), null);
-					System.out.println(neighbors);
-					GameState bestNeighbor = EngineTools.getBestState(neighbors, Integer.decode(t.getId()));
-					if(EngineTools.valueOf(current,  Integer.decode(t.getId())) > EngineTools.valueOf(bestNeighbor, Integer.decode(t.getId()))) {
-						if(EngineTools.valueOf(ultimate,Integer.decode(t.getId())) < EngineTools.valueOf(current,  Integer.decode(t.getId()))){
-							gameState.setGrid(current.getGrid());
-							gameState.getTeams()[Integer.decode(t.getId())].setPieces(current.getTeams()[Integer.decode(t.getId())].getPieces());
-						}
-						break;
-					}
-					else current = bestNeighbor;
-			}
-		}	
-	}
-	
+
+    randomPlacement(gameState);
+
+    for (Team team : gameState.getTeams()) {
+      for (Piece piece : team.getPieces()) {
+        gameState.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = piece.getId();
+      }
+    }
+    GameState ultimate = gameState;
+    for (Team t : gameState.getTeams()) {
+      GameState current = gameState;
+      while (true) {
+        LinkedList<GameState> neighbors =
+            EngineTools.getNeighbors(current, Integer.decode(t.getId()), null);
+        System.out.println(neighbors);
+        GameState bestNeighbor = EngineTools.getBestState(neighbors, Integer.decode(t.getId()));
+        if (EngineTools.valueOf(current, Integer.decode(t.getId())) >= EngineTools
+            .valueOf(bestNeighbor, Integer.decode(t.getId()))) {
+          gameState.setGrid(current.getGrid());
+          gameState.getTeams()[Integer.decode(t.getId())]
+              .setPieces(current.getTeams()[Integer.decode(t.getId())].getPieces());
+
+          break;
+        } else
+          current = bestNeighbor;
+      }
+    }
   }
 
   /**
@@ -154,6 +150,49 @@ public class BoardSetUp {
    * @return
    */
   static void placePiecesDefensive(GameState gameState) {
+    return;
+  }
+  
+  /**
+   * DUMMY TODO implement this method
+   *
+   * @param teams
+   * @param grid
+   * @return
+   */
+  static void randomPlacement(GameState gs) {
+    for (Team t : gs.getTeams()) {
+      if (t.getId().equals("0")) {
+        for (Piece p : t.getPieces()) {
+          int newY = 0;
+          int newX = 0;
+          int m = 0;
+          do {
+          newY = EngineTools.seededRandom(gs.getGrid(), m++, (gs.getGrid().length / 2) -1, 0);
+          newX = EngineTools.seededRandom(gs.getGrid(), 1-m++, gs.getGrid()[0].length, 0);
+          } while(!gs.getGrid()[newY][newX].equals(""));
+          p.setPosition(new int[] {newY, newX});
+          gs.getGrid()[newY][newX] = p.getId();
+        }
+
+      } else if (t.getId().equals("1")) {
+        for (Piece p : t.getPieces()) {
+          
+          int newY = 0;
+          int newX = 0;
+          int m = 0;
+          do {
+          newY = EngineTools.seededRandom(gs.getGrid(), m++, gs.getGrid().length,
+              1 + (gs.getGrid().length / 2));
+          newX = EngineTools.seededRandom(gs.getGrid(), 1-m++, gs.getGrid().length, 0);
+          } while(!gs.getGrid()[newY][newX].equals(""));
+          p.setPosition(new int[] {newY, newX});
+          gs.getGrid()[newY][newX] = p.getId();
+        }
+
+      }
+
+    }
     return;
   }
 
@@ -170,13 +209,14 @@ public class BoardSetUp {
     int row = 1;
     int column = 1;
     for (int i = 0; i < gameState.getTeams()[0].getPieces().length; i++) {
-      if (column == gameState.getGrid()[0].length-1) {
+      if (column == gameState.getGrid()[0].length - 1) {
         row++;
         column = 1;
-        if(gameState.getTeams()[0].getPieces().length - i < gameState.getGrid()[0].length - 2) {
-      	  column =  (gameState.getGrid()[0].length/2)- (gameState.getTeams()[0].getPieces().length - i)/2;
-        } 
-        
+        if (gameState.getTeams()[0].getPieces().length - i < gameState.getGrid()[0].length - 2) {
+          column = (gameState.getGrid()[0].length / 2)
+              - (gameState.getTeams()[0].getPieces().length - i) / 2;
+        }
+
       }
     
       
