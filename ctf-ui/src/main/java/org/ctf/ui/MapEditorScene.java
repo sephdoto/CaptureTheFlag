@@ -7,8 +7,7 @@ import org.ctf.shared.state.data.map.Directions;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.data.map.Movement;
 import org.ctf.shared.state.data.map.PieceDescription;
-
-
+import org.ctf.shared.state.data.map.PlacementType;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -46,9 +45,10 @@ public class MapEditorScene extends Scene {
 	private Movement tmpMovement = new Movement();
 	private ComboBox<String> pieceComboBox;
 	private HashMap<String, PieceDescription> customPieces = new HashMap<String, PieceDescription>();
-	
+
 	public MapEditorScene() {
-		super(new VBox(),1000,500);
+		super(new VBox(), 1000, 500);
+		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
 		initializeTemplate();
 		options = new Parent[3];
 		options[0] = createMapChooser();
@@ -56,6 +56,7 @@ public class MapEditorScene extends Scene {
 		options[2] = createFigureCustomizer();
 		this.createLayout();
 	}
+
 	private void createLayout() {
 		VBox root = (VBox) this.getRoot();
 		root.setStyle("-fx-background-color: black;" + "-fx-padding: 25px;" + "-fx-spacing: 50px;"
@@ -68,17 +69,9 @@ public class MapEditorScene extends Scene {
 		sep.setAlignment(Pos.CENTER);
 		sep.setStyle("-fx-spacing: 100px;");
 		root.getChildren().add(sep);
-		// sep.getChildren().add(new Button("Test1"));
-//		
-
-		// chooser.getChildren().add(new Button("Test2"));
 		left = new StackPane();
 		left.setStyle("-fx-border-color: rgba(255,255,255,1); -fx-border-width: 2px;" + "-fx-background-color: black;"
 				+ "-fx-background-radius: 20px; -fx-border-radius: 20px;" + "-fx-alignment: top-center;");
-		// left.setPrefSize(2000, 2000);
-//		left.setMinWidth(150);
-//		left.setMinHeight(350);
-
 		left.getChildren().add(options[0]);
 
 		VBox leftroot = new VBox();
@@ -97,7 +90,7 @@ public class MapEditorScene extends Scene {
 		sep.getChildren().add(CreateMapGrid());
 
 	}
-	
+
 	private VBox createMapChooser() {
 		VBox controlBox = new VBox();
 		controlBox.setAlignment(Pos.CENTER);
@@ -181,55 +174,42 @@ public class MapEditorScene extends Scene {
 		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 500, 60);
 		Spinner<Integer> spinner7 = new Spinner<>(valueFactory);
 		spinner7.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
-			tmpTemplate.setTotalTimeLimitInSeconds(newValue*60);
+			tmpTemplate.setTotalTimeLimitInSeconds(newValue * 60);
 		});
 		controlgrid.add(spinner7, 3, 2);
 
 		Label placementlabel = new Label("Placement");
 		placementlabel.getStyleClass().add("custom-label");
 		controlgrid.add(placementlabel, 2, 3);
-		ObservableList<String> options = FXCollections.observableArrayList("Symmetric", "Wide Open", "Defensive");
+		ObservableList<String> options = FXCollections.observableArrayList("Symmetric", "Spaced Open", "Defensive");
+		ComboBox<String> placementBox = new ComboBox<>(options);
+		placementBox.prefWidthProperty().bind(spinner7.widthProperty());
+		placementBox.setValue("Symmetric");
+		controlgrid.add(placementBox, 3, 3);
 
-		// Erstellen der ComboBox und Hinzufügen der Optionen
-		ComboBox<String> comboBox = new ComboBox<>(options);
-		comboBox.prefWidthProperty().bind(spinner7.widthProperty());
-		comboBox.setValue("Symmetric");
-		controlgrid.add(comboBox, 3, 3);
-		
-		comboBox.setOnAction(e -> {
-			//tmpTemplate.setPosition(comboBox.getValue());
-			System.out.println(tmpTemplate);
+		placementBox.setOnAction(e -> {
+			switch (placementBox.getValue()) {
+			case "Symmetrical":
+				tmpTemplate.setPlacement(PlacementType.symmetrical);
+				break;
+			case "Spaced Out":
+				tmpTemplate.setPlacement(PlacementType.spaced_out);
+				break;
+			case "Defensive":
+				tmpTemplate.setPlacement(PlacementType.defensive);
+				break;
+			default:
+
+			}
+
 		});
-		
-//		Button update = new Button("Update Map");
-//		update.prefWidthProperty().bind(spinner7.widthProperty());
-//		controlgrid.add(update, 3, 3);
 
 		return controlBox;
 	}
-	
-	private HBox createFigurChooser() {
 
+	private HBox createFigurChooser() {
 		HBox controlBox = new HBox();
 		controlBox.setAlignment(Pos.CENTER);
-
-		// controlBox.setStyle("-fx-padding: 25px;");
-		// controlBox.setStyle("-fx-spacing: 25px;-fx-padding: 25px;");
-//		HBox h1 = new HBox();
-//		h1.setAlignment(Pos.CENTER_LEFT);
-//		Text t1 = new Text("Bauer");
-//		t1.setFill(Color.WHITE);
-//		h1.getChildren().add(t1);
-//		h1.getChildren().add(new Button("Test1"));
-//		controlBox.getChildren().add(h1);
-//
-//		HBox h2 = new HBox();
-//		h2.setAlignment(Pos.CENTER_LEFT);
-//		Text t2 = new Text("Bauerbauer");
-//		t2.setFill(Color.WHITE);
-//		h2.getChildren().add(t2);
-//		h2.getChildren().add(new Button("Test2"));
-//		controlBox.getChildren().add(h2);
 		VBox names1 = new VBox();
 		names1.setStyle("-fx-spacing: 20px; -fx-padding: 10px;");
 
@@ -313,7 +293,7 @@ public class MapEditorScene extends Scene {
 		controlBox.getChildren().add(choose2);
 		return controlBox;
 	}
-	
+
 	private VBox createFigureCustomizer() {
 		VBox controlBox = new VBox();
 		controlBox.setAlignment(Pos.CENTER);
@@ -323,10 +303,6 @@ public class MapEditorScene extends Scene {
 		controlgrid.setHgap(25);
 		controlgrid.setVgap(20);
 		controlBox.getChildren().add(controlgrid);
-
-//		Label header1 = new Label("General");
-//		header1.getStyleClass().add("custom-label");
-//		controlBox.getChildren().add(header1);
 
 		Label namelabel = new Label("Name");
 		namelabel.getStyleClass().add("custom-label");
@@ -377,7 +353,8 @@ public class MapEditorScene extends Scene {
 
 		controlgrid.add(comboBox2, 3, 1);
 
-		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, tmpMovement.getDirections().getLeft());
+		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100,
+				tmpMovement.getDirections().getLeft());
 		Spinner<Integer> direcSpinner = new Spinner<>(valueFactory);
 		controlgrid.add(direcSpinner, 3, 2);
 
@@ -464,7 +441,7 @@ public class MapEditorScene extends Scene {
 
 		return controlBox;
 	}
-	
+
 	private void initializeTemplate() {
 		feld = new String[5][5];
 		for (int row = 0; row < 5; row++) {
@@ -479,18 +456,18 @@ public class MapEditorScene extends Scene {
 		this.tmpMovement.setDirections(new Directions());
 		this.createExamplePieces();
 		ArrayList<PieceDescription> usedPieces = new ArrayList<PieceDescription>();
-		for(String type : customPieces.keySet()) {
-			if(customPieces.get(type).getCount()>0) {
+		for (String type : customPieces.keySet()) {
+			if (customPieces.get(type).getCount() > 0) {
 				usedPieces.add(customPieces.get(type));
 			}
 		}
-		int[] gridsize = {10,10};
+		int[] gridsize = { 10, 10 };
 		this.tmpTemplate.setGridSize(gridsize);
-		
+
 		PieceDescription[] result = usedPieces.toArray(new PieceDescription[usedPieces.size()]);
 		tmpTemplate.setPieces(result);
 	}
-	
+
 	private void createExamplePieces() {
 		Movement bm = new Movement();
 		Directions directions = new Directions();
@@ -503,6 +480,7 @@ public class MapEditorScene extends Scene {
 		bauer.setCount(5);
 		this.customPieces.put("Bauer", bauer);
 	}
+
 	public Directions genrateMovementCopy() {
 		Directions result = new Directions();
 		result.setLeft(this.tmpMovement.getDirections().getLeft());
@@ -515,7 +493,7 @@ public class MapEditorScene extends Scene {
 		result.setDownRight(this.tmpMovement.getDirections().getDownRight());
 		return result;
 	}
-	
+
 	private MenuButton createMenuButton() {
 		MenuButton mb = new MenuButton("Edit Map");
 		mb.getStyleClass().add("custom-menu-button");
@@ -541,7 +519,7 @@ public class MapEditorScene extends Scene {
 		});
 		return mb;
 	}
-	
+
 	private Button createExit() {
 		Button exit = new Button("LEAVE");
 		exit.setPrefSize(100, 25);
@@ -559,6 +537,7 @@ public class MapEditorScene extends Scene {
 		exit.setFont(Font.font("System", FontWeight.BOLD, 14));
 		return exit;
 	}
+
 	private Button createSubmit() {
 		Button exit = new Button("SUBMIT");
 		exit.setPrefSize(100, 25);
@@ -576,6 +555,7 @@ public class MapEditorScene extends Scene {
 		exit.setFont(Font.font("System", FontWeight.BOLD, 14));
 		return exit;
 	}
+
 	private GridPane CreateMapGrid() {
 		GridPane gridPane = new GridPane();
 		for (int row = 0; row < 5; row++) {

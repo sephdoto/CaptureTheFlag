@@ -1,0 +1,40 @@
+.custom-label {
+    -fx-font-size: 16px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-family: "Century Gothic", sans-serif;
+    
+}
+.custom-menu-button {
+    -fx-background-color: black; 
+    -fx-text-fill: red; 
+    -fx-font-weight: bold; 
+    -fx-border-color: white;
+   
+    
+}
+
+.custom-menu-button:hover {
+    -fx-background-color: #252424; 
+}
+.custom-menu-button .label {
+    -fx-text-fill: white; 
+    -fx-font-family: "Century Gothic", sans-serif;
+}
+.custom-menu-button .menu-item .label {
+    -fx-text-fill: black; 
+}
+.custom-combo-box {
+   -fx-background-color: black; 
+   -fx-text-fill: white; 
+   -fx-border-color: white; 
+   -fx-border-width: 1.0px;
+    
+    }
+    .custom-combo-box .list-cell {
+    -fx-text-fill: white; 
+    -fx-font-family: "Century Gothic", sans-serif;
+}
+.custom-combo-box .list-view .list-cell {
+    -fx-text-fill: black; 
+}
