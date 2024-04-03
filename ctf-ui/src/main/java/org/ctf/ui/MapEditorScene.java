@@ -53,6 +53,7 @@ public class MapEditorScene extends Scene {
 	private ComboBox<String> pieceComboBox;
 	private HashMap<String, PieceDescription> customPieces = new HashMap<String, PieceDescription>();
 	private HomeSceneController hsc;
+	private boolean spinnerchange = false;
 
 	public MapEditorScene(HomeSceneController hsc) {
 		super(new VBox(), 1000, 500);
@@ -262,7 +263,7 @@ public class MapEditorScene extends Scene {
 		Spinner<Integer> bauerSpinner = new Spinner<>(valueFactory);
 		bauerSpinner.setPrefWidth(100);
 		bauerSpinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
-			updateCount("Pawn", newValue);
+			betterUpdateCount("Pawn", newValue);
 		});
 		// bauerSpinner.prefHeightProperty().bind(t1.heightProperty());
 		choose1.getChildren().add(bauerSpinner);
@@ -271,7 +272,7 @@ public class MapEditorScene extends Scene {
 		Spinner<Integer> springerSpinner = new Spinner<>(valueFactory);
 		springerSpinner.setPrefWidth(100);
 		springerSpinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
-			updateCount("Knight", newValue);
+			betterUpdateCount("Knight", newValue);
 		});
 		// springerSpinner.prefHeightProperty().bind(t1.heightProperty());
 		choose1.getChildren().add(springerSpinner);
@@ -280,7 +281,7 @@ public class MapEditorScene extends Scene {
 		Spinner<Integer> dameSpinner = new Spinner<>(valueFactory);
 		dameSpinner.setPrefWidth(100);
 		dameSpinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
-			updateCount("Queen", newValue);
+			betterUpdateCount("Queen", newValue);
 		});
 		// dameSpinner.prefHeightProperty().bind(t1.heightProperty());
 		choose1.getChildren().add(dameSpinner);
@@ -301,7 +302,7 @@ public class MapEditorScene extends Scene {
 		Spinner<Integer> laufSpinner = new Spinner<>(valueFactory);
 		laufSpinner.setPrefWidth(100);
 		laufSpinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
-			updateCount("Bishop", newValue);
+			betterUpdateCount("Bishop", newValue);
 		});
 		choose2.getChildren().add(laufSpinner);
 
@@ -309,7 +310,7 @@ public class MapEditorScene extends Scene {
 		Spinner<Integer> turmSpinner = new Spinner<>(valueFactory);
 		turmSpinner.setPrefWidth(100);
 		turmSpinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
-			updateCount("Rook", newValue);
+			betterUpdateCount("Rook", newValue);
 		});
 		choose2.getChildren().add(turmSpinner);
 
@@ -326,11 +327,18 @@ public class MapEditorScene extends Scene {
 		pieceComboBox.getStyleClass().add("custom-combo-box");
 		pieceComboBox.setValue("Custom1");
 		pieceComboBox.setOnAction(e -> {
+			spinnerchange = true;
 			int customcount = customPieces.get(pieceComboBox.getValue()).getCount();
 			customSpinner.getValueFactory().setValue(customcount);
+
 		});
 		customSpinner.getValueFactory().valueProperty().addListener((obs, old, newv) -> {
-			customPieces.get(pieceComboBox.getValue()).setCount(newv);
+			// customPieces.get(pieceComboBox.getValue()).setCount(newv);
+			if (!spinnerchange) {
+				betterUpdateCount(pieceComboBox.getValue(), newv);
+			} else {
+				spinnerchange = false;
+			}
 		});
 
 		names2.getChildren().add(pieceComboBox);
@@ -657,7 +665,7 @@ public class MapEditorScene extends Scene {
 			return customPieces.get(name).getCount();
 		}
 	}
-
+	@Deprecated
 	private void updateCount(String s, int value) {
 		customPieces.get(s).setCount(value);
 		if (value == 0) {
@@ -687,15 +695,29 @@ public class MapEditorScene extends Scene {
 				return;
 			}
 		}
-		
+
 		int updatedlength = tmpTemplate.getPieces().length + 1;
 		PieceDescription[] updatedPieces = new PieceDescription[updatedlength];
 		for (int i = 0; i < tmpTemplate.getPieces().length; i++) {
 			updatedPieces[i] = tmpTemplate.getPieces()[i];
-			}
-		updatedPieces[updatedlength-1] = customPieces.get(s);
-		tmpTemplate.setPieces(updatedPieces);
 		}
-		
-	
+		updatedPieces[updatedlength - 1] = customPieces.get(s);
+		tmpTemplate.setPieces(updatedPieces);
+	}
+
+	public void betterUpdateCount(String s, int value) {
+		customPieces.get(s).setCount(value);
+		int number = (int) customPieces.values().stream().filter(p -> p.getCount() > 0).count();
+		PieceDescription[] updated = new PieceDescription[number];
+		int i = 0;
+		for (PieceDescription p : customPieces.values()) {
+			if (p.getCount() > 0) {
+				updated[i] = p;
+				i++;
+			}
+		}
+		tmpTemplate.setPieces(updated);
+
+	}
+
 }
