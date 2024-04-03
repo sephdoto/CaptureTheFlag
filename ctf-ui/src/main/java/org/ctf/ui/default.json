@@ -101,6 +101,6 @@
     }
   ],
   "placement": "symmetrical",
-  "totalTimeLimitInSeconds": -1,
-  "moveTimeLimitInSeconds": -1
+  "totalTimeLimitInSeconds": 3660,
+  "moveTimeLimitInSeconds": 65
 }

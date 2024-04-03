@@ -3,7 +3,10 @@ package org.ctf.ui;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import org.ctf.shared.state.data.map.Directions;
 import org.ctf.shared.state.data.map.MapTemplate;
@@ -50,10 +53,10 @@ public class MapEditorScene extends Scene {
 	private ComboBox<String> pieceComboBox;
 	private HashMap<String, PieceDescription> customPieces = new HashMap<String, PieceDescription>();
 	private HomeSceneController hsc;
-	
+
 	public MapEditorScene(HomeSceneController hsc) {
 		super(new VBox(), 1000, 500);
-		this.hsc = hsc;  
+		this.hsc = hsc;
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
 		File defaultMap = new File("src" + File.separator + "main" + File.separator + "java" + File.separator + "org"
 				+ File.separator + "ctf" + File.separator + "ui" + File.separator + "default.json");
@@ -64,7 +67,9 @@ public class MapEditorScene extends Scene {
 			// e.printStackTrace();
 			System.out.println("fail");
 		}
+
 		initializeTemplate();
+		initializePieces();
 		printTemplate();
 		options = new Parent[3];
 		options[0] = createMapChooser();
@@ -178,7 +183,8 @@ public class MapEditorScene extends Scene {
 		Label time1label = new Label("Thinking Time \n in seconds");
 		time1label.getStyleClass().add("custom-label");
 		controlgrid.add(time1label, 2, 1);
-		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 500, 60);
+		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 500,
+				tmpTemplate.getMoveTimeLimitInSeconds());
 		Spinner<Integer> spinner6 = new Spinner<>(valueFactory);
 		spinner6.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
 			tmpTemplate.setMoveTimeLimitInSeconds(newValue);
@@ -188,7 +194,8 @@ public class MapEditorScene extends Scene {
 		Label time2label = new Label("Gametime \n in Minutes");
 		time2label.getStyleClass().add("custom-label");
 		controlgrid.add(time2label, 2, 2);
-		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 500, 60);
+		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 500,
+				tmpTemplate.getTotalTimeLimitInSeconds() / 60);
 		Spinner<Integer> spinner7 = new Spinner<>(valueFactory);
 		spinner7.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
 			tmpTemplate.setTotalTimeLimitInSeconds(newValue * 60);
@@ -209,7 +216,8 @@ public class MapEditorScene extends Scene {
 			placementBox.setValue("Spaced Out");
 			break;
 		case defensive:
-			placementBox.setValue("Defenisve");;
+			placementBox.setValue("Defenisve");
+			;
 			break;
 		default:
 		}
@@ -237,56 +245,72 @@ public class MapEditorScene extends Scene {
 		VBox names1 = new VBox();
 		names1.setStyle("-fx-spacing: 20px; -fx-padding: 10px;");
 
-		Label t1 = new Label("Bauer");
+		Label t1 = new Label("Pawn");
 		t1.getStyleClass().add("custom-label");
 		names1.getChildren().add(t1);
-		Label t2 = new Label("Springer");
+		Label t2 = new Label("Knight");
 		t2.getStyleClass().add("custom-label");
 		names1.getChildren().add(t2);
-		Label dameL = new Label("Dame");
+		Label dameL = new Label("Queen");
 		dameL.getStyleClass().add("custom-label");
 		names1.getChildren().add(dameL);
 
 		VBox choose1 = new VBox();
 		choose1.setStyle("-fx-spacing: 15px; -fx-padding: 10px;");
-		SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 10);
+		SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100,
+				initialValue("Pawn"));
 		Spinner<Integer> bauerSpinner = new Spinner<>(valueFactory);
 		bauerSpinner.setPrefWidth(100);
+		bauerSpinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
+			updateCount("Pawn", newValue);
+		});
 		// bauerSpinner.prefHeightProperty().bind(t1.heightProperty());
 		choose1.getChildren().add(bauerSpinner);
 
-		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 2);
+		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, initialValue("Knight"));
 		Spinner<Integer> springerSpinner = new Spinner<>(valueFactory);
 		springerSpinner.setPrefWidth(100);
+		springerSpinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
+			updateCount("Knight", newValue);
+		});
 		// springerSpinner.prefHeightProperty().bind(t1.heightProperty());
 		choose1.getChildren().add(springerSpinner);
 
-		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 1);
+		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, initialValue("Queen"));
 		Spinner<Integer> dameSpinner = new Spinner<>(valueFactory);
 		dameSpinner.setPrefWidth(100);
+		dameSpinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
+			updateCount("Queen", newValue);
+		});
 		// dameSpinner.prefHeightProperty().bind(t1.heightProperty());
 		choose1.getChildren().add(dameSpinner);
 
 		VBox names2 = new VBox();
 		names2.setStyle("-fx-spacing: 20px; -fx-padding: 10px;");
-		Label t3 = new Label("Laeufer");
+		Label t3 = new Label("Bishop");
 		t3.getStyleClass().add("custom-label");
 		names2.getChildren().add(t3);
-		Label t4 = new Label("Turm");
+		Label t4 = new Label("Rook");
 		t4.getStyleClass().add("custom-label");
 		names2.getChildren().add(t4);
 
 		VBox choose2 = new VBox();
 		choose2.setStyle("-fx-spacing: 15px; -fx-padding: 10px;");
 
-		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 3);
+		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, initialValue("Bishop"));
 		Spinner<Integer> laufSpinner = new Spinner<>(valueFactory);
 		laufSpinner.setPrefWidth(100);
+		laufSpinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
+			updateCount("Bishop", newValue);
+		});
 		choose2.getChildren().add(laufSpinner);
 
-		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 2);
+		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, initialValue("Rook"));
 		Spinner<Integer> turmSpinner = new Spinner<>(valueFactory);
 		turmSpinner.setPrefWidth(100);
+		turmSpinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
+			updateCount("Rook", newValue);
+		});
 		choose2.getChildren().add(turmSpinner);
 
 		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 2);
@@ -608,14 +632,70 @@ public class MapEditorScene extends Scene {
 		return gridPane;
 
 	}
-	
+
 	public void printTemplate() {
 		StringBuffer buf = new StringBuffer();
-		for(PieceDescription p: tmpTemplate.getPieces()) {
-			buf.append(p.getType()+" "+p.getCount()+"\n");
+		for (PieceDescription p : tmpTemplate.getPieces()) {
+			buf.append(p.getType() + " " + p.getCount() + "\n");
 		}
-		System.out.println("Grid:"+ tmpTemplate.getGridSize()[0]+" "+ tmpTemplate.getGridSize()[1]+"\n"
-				+"Teams/Flags/Blocks"+ tmpTemplate.getTeams()+tmpTemplate.getFlags()+tmpTemplate.getBlocks()+"\n"
-				+"placement"+tmpTemplate.getPlacement().toString()+"\n"+buf.toString());
+		System.out.println("Grid:" + tmpTemplate.getGridSize()[0] + " " + tmpTemplate.getGridSize()[1] + "\n"
+				+ "Teams/Flags/Blocks" + tmpTemplate.getTeams() + tmpTemplate.getFlags() + tmpTemplate.getBlocks()
+				+ "\n" + "placement" + tmpTemplate.getPlacement().toString() + "\n" + "thinktime "
+				+ tmpTemplate.getMoveTimeLimitInSeconds() + buf.toString());
 	}
+
+	private void initializePieces() {
+		for (PieceDescription piece : tmpTemplate.getPieces()) {
+			customPieces.put(piece.getType(), piece);
+		}
+	}
+
+	private int initialValue(String name) {
+		if (!customPieces.containsKey(name)) {
+			return 0;
+		} else {
+			return customPieces.get(name).getCount();
+		}
+	}
+
+	private void updateCount(String s, int value) {
+		customPieces.get(s).setCount(value);
+		if (value == 0) {
+			int updatedlength = tmpTemplate.getPieces().length - 1;
+			PieceDescription[] updatedPieces = new PieceDescription[updatedlength];
+			int next = 0;
+			for (int i = 0; i < tmpTemplate.getPieces().length; i++) {
+				if (!tmpTemplate.getPieces()[i].getType().equals(s)) {
+					updatedPieces[next] = tmpTemplate.getPieces()[i];
+					next++;
+				}
+			}
+			tmpTemplate.setPieces(updatedPieces);
+			for (PieceDescription p : tmpTemplate.getPieces()) {
+				if (p == null) {
+					System.out.println("leer");
+				} else {
+					System.out.println(p.getType());
+				}
+			}
+			return;
+		}
+
+		for (PieceDescription piece : tmpTemplate.getPieces()) {
+			if (piece.getType().equals(s)) {
+				piece.setCount(value);
+				return;
+			}
+		}
+		
+		int updatedlength = tmpTemplate.getPieces().length + 1;
+		PieceDescription[] updatedPieces = new PieceDescription[updatedlength];
+		for (int i = 0; i < tmpTemplate.getPieces().length; i++) {
+			updatedPieces[i] = tmpTemplate.getPieces()[i];
+			}
+		updatedPieces[updatedlength-1] = customPieces.get(s);
+		tmpTemplate.setPieces(updatedPieces);
+		}
+		
+	
 }
