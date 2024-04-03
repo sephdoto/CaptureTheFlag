@@ -12,12 +12,13 @@ import javafx.scene.shape.Circle;
 
 public class BackgroundCellV2 extends Pane {
 	public int x, y;
-	public boolean occupied;
+	boolean occupied;
 	String name;
 	public Circle rc;
 	public boolean active;
 	public Game game;
 	StackPane base;
+	CostumFigurePain child;
 
 	public BackgroundCellV2(int x, int y) {
 		this.setStyle("-fx-background-color: white;" + "-fx-border-color: black; " + "-fx-border-width: 1.5px ");
@@ -39,8 +40,8 @@ public class BackgroundCellV2 extends Pane {
 
 	public void addFigure(CostumFigurePain figure) {
 		occupied = true;
-		CostumFigurePain rc = figure;
-		base.getChildren().add(rc);
+		child = figure;
+		base.getChildren().add(child);
 		figure.setParente(this);
 	}
 
@@ -83,15 +84,27 @@ public class BackgroundCellV2 extends Pane {
 
 	public void performClickOnCell() {
 		if (active) {
-			rc.setFill(Color.RED);
+			//rc.setFill(Color.RED);
 			int[] xk = { x, y };
-			game.makeMove(xk);
+			game.makeMoveRequest(xk);
 
 		}
 	}
 
 	public void setActive() {
 		this.active = true;
+	}
+	
+	public boolean isOccupied() {
+		return occupied;
+	}
+	public void removeFigure() {
+		occupied = false;
+		this.child = null;
+	}
+	
+	public CostumFigurePain getChild() {
+		return child;
 	}
 
 	public void setUActive() {

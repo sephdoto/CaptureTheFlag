@@ -2,34 +2,18 @@ package configs;
 
 import java.util.Optional;
 
+import org.ctf.ui.CreateGameScreen;
+
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
+import test.CreateTextGameStates;
 import javafx.scene.control.Alert.AlertType;
 
 public class Dialogs {
 	
-	 private static final String NORMAL_BUTTON_STYLE = "-fx-background-color:"
-		      + " linear-gradient(#5a5c5e, #3e3f41);"
-		      + " -fx-background-radius: 20; -fx-border-radius: 20;"
-		      + " -fx-text-fill: #FFFFFF";
-
-		  private static final String HOVER_BUTTON_STYLE =
-		      "-fx-background-color: linear-gradient(#6a6c6e, #4e4f51);"
-		          + " -fx-background-radius: 20; -fx-border-radius: 20;"
-		          + "-fx-text-fill: #FFFFFF";
-
-		  public static void applyButtonStyle(Button button) {
-		    button.setStyle(NORMAL_BUTTON_STYLE);
-		    button.hoverProperty().addListener((observable, oldValue, newValue) -> {
-		      if (newValue) {
-		        button.setStyle(HOVER_BUTTON_STYLE);
-		      } else {
-		        button.setStyle(NORMAL_BUTTON_STYLE);
-		      }
-		    });
-		  }
+	 
 	public static boolean showConfirmationDialog(String title, String message) {
 	    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 	    alert.setTitle(title);
@@ -56,12 +40,15 @@ public class Dialogs {
 	    Button noButtonNode = (Button) dialogPane.lookupButton(noButton);
 
 	    for (Button button : new Button[]{yesButtonNode, noButtonNode}) {
-	      applyButtonStyle(button);
+	      CreateGameScreen.applyButtonStyle(button);
 	    }
 
 	    Optional<ButtonType> result = alert.showAndWait();
 	    return result.isPresent() && result.get() == yesButton;
 	  }
+	
+	
+	
 	public static void showErrorDialog(String title, String message) {
 	    Alert alert = new Alert(AlertType.ERROR);
 	    alert.setTitle(title);
@@ -79,7 +66,7 @@ public class Dialogs {
 	        + " -fx-text-fill: #444;");
 
 	    Button okButton = (Button) dialogPane.lookupButton(ButtonType.OK);
-	    applyButtonStyle(okButton);
+	    CreateGameScreen.applyButtonStyle(okButton);
 	    alert.showAndWait();
 	  }
 }

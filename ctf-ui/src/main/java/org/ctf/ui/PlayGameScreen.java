@@ -38,10 +38,8 @@ public class PlayGameScreen {
 	public static void initPlayGameScreen(Stage stage, GameState state) {
 		s = stage;
 		gm = createLeftSidPane(state);
-		
 		game = new Game(gm);
 		gm.setGame(game);
-		Dialogs.showConfirmationDialog("Start Game", "Willst du das wirklich tun");
 		v = new VBox();
 		//HBox headerBox = createHeaderBox();
 		//v.getChildren().add(headerBox);
@@ -62,7 +60,7 @@ public class PlayGameScreen {
 		return gm;
 	}
 
-	private static HBox createHeaderBox() {
+	private static HBox createTimerBox() {
 		HBox headerBox = new HBox(30);
 		headerBox.setAlignment(Pos.CENTER);
 		headerBox.setPadding(new Insets(0, 0, 0, 20));
@@ -73,10 +71,18 @@ public class PlayGameScreen {
 		return headerBox;
 	}
 	
+	
+	
 	private static VBox createRightSide() {
-		VBox rightParent = new VBox();
-		HBox headerBox = createHeaderBox();
-		rightParent.setPadding(new Insets(30));
+		VBox boss = new VBox();
+		boss.setStyle("-fx-background-color: lightblue");
+		HBox menuBox = new HBox();
+		String message = "Do you really want to leave the game?";
+		menuBox.getChildren().add(CreateGameScreen.createBackButtonMenuBar("Leave Game", message));
+		menuBox.setAlignment(Pos.TOP_RIGHT);
+		VBox rightParent = new VBox(30);
+		HBox headerBox = createTimerBox();
+		rightParent.setPadding(new Insets(30, 30, 30, 30));
 		rightParent.setAlignment(Pos.TOP_CENTER);
 		rightParent.prefWidthProperty().bind(s.widthProperty().multiply(0.3));
 		rightParent.prefHeightProperty().bind(s.heightProperty().divide(2));
@@ -87,14 +93,14 @@ public class PlayGameScreen {
 		right.setPadding(new Insets(20));
 		right.prefWidthProperty().bind(s.widthProperty().divide(2));
 		right.prefHeightProperty().bind(s.heightProperty().divide(2));
-		Label ls = new Label("Description");
+		Label ls = new Label("Selected Piece:");
 		styleLabel2(ls, right);
 		VBox desBox = createDiscriptionBox();
-		
 		right.getChildren().addAll(ls, desBox);
 		rightParent.getChildren().addAll(headerBox,right);
-		rightVBox = rightParent;
-		return rightParent;
+		boss.getChildren().addAll(menuBox, rightParent);
+		rightVBox = boss;
+		return boss;
 	}
 
 	public static void styleLabel(Label ls, VBox top) {

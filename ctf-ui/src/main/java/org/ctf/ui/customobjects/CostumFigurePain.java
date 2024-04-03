@@ -5,19 +5,23 @@ package org.ctf.ui.customobjects;
 import org.ctf.ui.Game;
 import org.ctf.ui.PlayGameScreen;
 
+
 import configs.ImageLoader;
 
 import java.util.ArrayList;
 
-import org.ctf.shared.ai.AI_Tools;
+
 import org.ctf.shared.state.Piece;
 import javafx.event.EventHandler;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.util.Duration;
 import test.CreateTextGameStates;
 
 /**
@@ -25,15 +29,9 @@ import test.CreateTextGameStates;
  * This class contains a visual Representation of a Piece
  */
 public class CostumFigurePain extends Pane {
+	//Achtung: DIe Position von dem Piece, das zu einem Costumfigurepain gehört kann abweichen von der Position
+	//des CostumFigurePain, da das Piece sich während des Spiels bew
 	Game game;
-	public Game getGame() {
-		return game;
-	}
-
-	public void setGame(Game game) {
-		this.game = game;
-	}
-
 	String teamID;
 	Piece piece;
 	String type;
@@ -42,7 +40,9 @@ public class CostumFigurePain extends Pane {
 	int posX;	
 	int posY;
 	boolean active;
-	public BackgroundCellV2 parent;
+	BackgroundCellV2 parent;
+	
+
 	ArrayList<int[]> possibleMoves;
 	
 	/**
@@ -59,17 +59,12 @@ public class CostumFigurePain extends Pane {
 	 * a MouseClick)
 	 */
 	public CostumFigurePain(Piece piece) {
-		possibleMoves = new ArrayList<int[]>();
-		System.out.println("id " + piece.getId());
-		System.out.println("team: " + piece.getTeamId());
-		AI_Tools.getPossibleMoves(CreateTextGameStates.getTestState(), piece.getId(), possibleMoves);
-		//System.out.println(possibleMoves.size());
 	this.piece = piece;
 	this.type = piece.getDescription().getType();
-
 	this.teamID = piece.getTeamId();
 	this.setImage();
 	this.active = false;
+	showPieceInformationWhenHovering();
 	this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 		public void handle(MouseEvent e) {
 			if(active) {
@@ -94,23 +89,36 @@ public class CostumFigurePain extends Pane {
 	
 	
 	public void performMouseClick() {
-		if(game.currentPlayer != null) {
-			game.currentPlayer.disableShadow();				}
+		if(game.getCurrent() != null) {
+			game.getCurrent().disableShadow();				}
 	System.out.println("Hallo: " + posX + ", " + posY);
 	showShadow();
-	showPieceInformation();
+	showPieceInformationWhenClicked();
 	game.setCurrent(CostumFigurePain.this);
 	game.showPossibleMoves();
 	
 	}
 	
-	public void showPieceInformation() {
+	public void showPieceInformationWhenClicked() {
 		PlayGameScreen.setIdLabelText("id: " + piece.getId());
 		PlayGameScreen.setTypeLabelText("type: "+ piece.getDescription().getType());
 		PlayGameScreen.setAttackPowLabelText("attack power: " + piece.getDescription().getAttackPower());
 		PlayGameScreen.setCountLabelText("count: " + piece.getDescription().getCount());
 		PlayGameScreen.setTeamLabelText("team: " + piece.getTeamId());
-		
+	}
+	
+	public void showPieceInformationWhenHovering() {
+		String pieceInfos = "type: " + piece.getDescription().getType() + "\n" +
+							"attack power: " +  piece.getDescription().getAttackPower() + "\n" +
+							"count: " + piece.getDescription().getCount();
+		Tooltip tooltip = new Tooltip(pieceInfos);
+		Duration delay = new Duration(1);
+		tooltip.setShowDelay(delay);
+		Duration displayTime = new Duration(10000);
+		tooltip.setShowDuration(displayTime);
+		tooltip.setFont(new Font(15));
+		this.setPickOnBounds(true);
+		Tooltip.install(this, tooltip);
 	}
 	
 	public void disableShadow() {
@@ -133,10 +141,12 @@ public class CostumFigurePain extends Pane {
 		this.posY = parent.y;
 	}
 	
-	//Mehtode sollte automatisch aufgerufen werden wenn Piece bewegt wird
-	public void updatePos() {
-		this.posX = piece.getPosition()[0];
-		this.posY = piece.getPosition()[1];
+	//Mehtode wird in der jetzigen implementierung nicht benötigt
+	public void updatePos(int x1, int y1) {
+		this.posX = x1;
+		this.posY = y1;
+		int[] pos = {x1,y1};
+		piece.setPosition(pos);
 	}
 	
 	public void setActive() {
@@ -153,6 +163,22 @@ public class CostumFigurePain extends Pane {
 
 	public String getTeamID() {
 		return teamID;
+	}
+	
+	public BackgroundCellV2 getParentCell() {
+		return parent;
+	}
+
+	public void setParent(BackgroundCellV2 parent) {
+		this.parent = parent;
+	}
+	
+	public Game getGame() {
+		return game;
+	}
+
+	public void setGame(Game game) {
+		this.game = game;
 	}
 
 	

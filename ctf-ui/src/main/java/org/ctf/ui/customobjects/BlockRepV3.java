@@ -10,7 +10,7 @@ public class BlockRepV3 extends Region {
 		rc = new Rectangle();
 		rc.setFill(Color.BLACK);
 		rc.setStroke(Color.BLACK);
-		rc.setStrokeWidth(6);
+		rc.setStrokeWidth(1);
 		getChildren().add(rc);
 	}
 	protected void layoutChildren() {

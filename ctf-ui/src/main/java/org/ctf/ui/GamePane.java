@@ -35,13 +35,14 @@ import javafx.scene.layout.VBox;
 public class GamePane extends HBox {
 	
 	String[][] map;
-	GameState state;
+	final GameState state;
 	Team[] teams;
 	int rows;
 	int cols;
 	final VBox vBox;
 	int anzTeams;
-	ArrayList<CostumFigurePain> allFigures = new ArrayList<CostumFigurePain>();
+	//ArrayList<CostumFigurePain> allFigures = new ArrayList<CostumFigurePain>();
+	HashMap<String, CostumFigurePain> figures = new HashMap<String, CostumFigurePain>();
 	HashMap<Integer, BackgroundCellV2> cells = new HashMap<Integer, BackgroundCellV2>();
 	 GridPane gridPane;
 	
@@ -86,9 +87,11 @@ public class GamePane extends HBox {
 	}
 
 
-	public void moveFigure(int x, int y, CostumFigurePain cuPain) {
-		cells.get(generateKey(x, y)).addFigure(cuPain);
-		
+	public void moveFigure(int x, int y, CostumFigurePain mover) {
+		mover.getParentCell().removeFigure();
+		//mover.updatePos(x, y);
+		BackgroundCellV2 newField = cells.get(generateKey(x, y));
+		newField.addFigure(mover);
 	}
 	
 	
@@ -98,7 +101,7 @@ public class GamePane extends HBox {
 	
 	//Setzt das Game für alle Zellen und Figuren
 	public void setGame(Game game) {
-		for(CostumFigurePain cm : allFigures) {
+		for(CostumFigurePain cm : figures.values()) {
 			cm.setGame(game); 
 		}
 		for(BackgroundCellV2 cl: cells.values()) {
@@ -106,11 +109,26 @@ public class GamePane extends HBox {
 		}
 	}
 	
-	public void setGameState(GameState state) {
-		this.state = state;
-		this.map = state.getGrid();
+	public HashMap<String, CostumFigurePain> getFigures() {
+		return figures;
 	}
-	
+
+
+	public void setFigures(HashMap<String, CostumFigurePain> figures) {
+		this.figures = figures;
+	}
+
+
+	public HashMap<Integer, BackgroundCellV2> getCells() {
+		return cells;
+	}
+
+
+	public void setCells(HashMap<Integer, BackgroundCellV2> cells) {
+		this.cells = cells;
+	}
+
+
 	public void fillGrid() {
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
@@ -134,7 +152,8 @@ public class GamePane extends HBox {
 			Piece[] pieces = teams[i].getPieces();
 			for(Piece piece: pieces) {
 				CostumFigurePain pieceRep = new CostumFigurePain(piece);
-				allFigures.add(pieceRep);
+				figures.put(piece.getId(), pieceRep);
+				//allFigures.add(pieceRep);
 				int x = piece.getPosition()[0];
 				int y = piece.getPosition()[1];
 				cells.get(generateKey(x, y)).addFigure(pieceRep);

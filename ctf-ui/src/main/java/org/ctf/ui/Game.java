@@ -13,121 +13,113 @@ import org.ctf.shared.state.Move;
 import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
 
-public class Game   {
-	public CostumFigurePain currentPlayer;
-	GameState state;
-	String currentTeam;
-	public GamePane cb;
-	
-	
-	ArrayList<int[]> possibleMoves;
-	HashMap<String, CostumFigurePain> team1;
-	HashMap<String, CostumFigurePain> team2;
+public class Game {
+	static CostumFigurePain currentPlayer;
+	static GameState state;
+	static String currentTeam;
+	static GamePane cb;
+	static ArrayList<int[]> possibleMoves;
+	Move lastMove;
 
+	// Das GamePane wird einmal geladen und anhand von neuen GameStates verändert
 	public Game(GamePane pane) {
 		possibleMoves = new ArrayList<int[]>();
-		this.state = pane.state;
+		state = pane.state;
 		cb = pane;
 		currentPlayer = null;
 		currentTeam = "0";
-		
+
 		setCurrentTeamActiveTeamactive();
 	}
+
 	
 	
-	public  void makeGrid(GameState s) {
+	public void makeGrid(GameState s) {
 //		state = s;
 //		currentTeam = s.getCurrentTeam();
 //		cb.setGameState(state);
 //		cb.fillGridPane2();
-		//cb.setTeamActive(1, false);
-		//cb.setTeamActive(2,true);
+		// cb.setTeamActive(1, false);
+		// cb.setTeamActive(2,true);
 		cb.setGame(this);
+
+	}
+
+		//Ohne Konstruktor und Lastmove einfach von dr Klasse
+	public void perfomMove(Move m) {
+		lastMove = m;
+		int x = lastMove.getNewPosition()[0];
+		int y= lastMove.getNewPosition()[1];
+		CostumFigurePain mover = cb.getFigures().get(lastMove.getPieceId());
+		cb.moveFigure(x, y, mover);
+		
 		
 	}
-	//hier wird Move Objekt an Client gesendet
-	public Move makeMove(int[] newPos) {
-		//currentPlayer.parent.occupied = false;
+
+	// hier wird Move Objekt an Client gesendet
+	public  Move makeMoveRequest(int[] newPos) {
+		// currentPlayer.getParentCell().setOccupied(false);
 		Move move = new Move();
+		move.setPieceId(currentPlayer.getPiece().getId());
 		move.setNewPosition(newPos);
-		cb.moveFigure(newPos[0],newPos[1],currentPlayer);
+		cb.moveFigure(newPos[0], newPos[1], currentPlayer);
 		resetStateAfterMoveRequest();
-//		cb.setTeamActive(1, false);
-//		cb.setTeamActive(2,true);
 		return move;
 	}
-	
-	
 
-	public void resetStateAfterMoveRequest() {
+	public static void resetStateAfterMoveRequest() {
 		currentPlayer.disableShadow();
 		currentPlayer = null;
-		for(BackgroundCellV2 c: cb.cells.values()) {
+		for (BackgroundCellV2 c : cb.getCells().values()) {
 			c.rc.setFill(Color.WHITE);
 			c.active = false;
 		}
-		for(CostumFigurePain cf: cb.allFigures) {
+		for (CostumFigurePain cf : cb.getFigures().values()) {
 			cf.setUnactive();
 		}
 	}
-	
+
 	public void setCurrentTeamActiveTeamactive() {
-		for(CostumFigurePain c: cb.allFigures) {
-			if(c.getTeamID().equals(currentTeam)) {
+		for (CostumFigurePain c : cb.getFigures().values()) {
+			if (c.getTeamID().equals(currentTeam)) {
 				c.setActive();
 			}
 		}
 	}
-	
-	
+
 	public void showPossibleMoves() {
 		Glow glow = new Glow();
 		glow.setLevel(0.2);
 		String pieceName = currentPlayer.getPiece().getId();
-		System.out.println(pieceName);
-		this.possibleMoves = AI_Tools.getPossibleMoves(state,pieceName,possibleMoves);
-		
-//		int z = -1;
-//		if (currentPlayer.posY == 2) {
-//			z = 3;
-//		}
-//		if (currentPlayer.posY == 3) {
-//			z = 4;
-//		}
-		for(BackgroundCellV2 c: cb.cells.values()) {
-				c.rc.setFill(Color.WHITE);
-				c.active = false;
+		possibleMoves = AI_Tools.getPossibleMoves(state, pieceName, possibleMoves);
+		for (BackgroundCellV2 c : cb.getCells().values()) {
+			c.rc.setFill(Color.WHITE);
+			c.active = false;
 		}
-		for (BackgroundCellV2 c : cb.cells.values()) {
-			for(int[] pos: possibleMoves) {
+		for (BackgroundCellV2 c : cb.getCells().values()) {
+			for (int[] pos : possibleMoves) {
 				if (c.x == pos[0] && c.y == pos[1]) {
-					System.out.println(" " + pos[0] +", " + pos[1]);
+					System.out.println(" " + pos[0] + ", " + pos[1]);
+					if(!c.isOccupied()) {
+					
 					c.rc.setEffect(glow);
 					c.rc.setFill(Color.LIGHTBLUE);
 					c.active = true;
+					} else if (c.isOccupied()) {
+						//System.out.println("Diese Zelle " + pos[0] + ", " + pos[1]);
+					}
 				}
+
 			}
 		}
 	}
-	
-	
-	
-//	public Move createMoveforClient(int[] newPos) {
-//		Move move = new Move();
-//		move.setNewPosition(newPos);
-//		move.setPieceId(currentPlayer.name);
-//		//TeamSecret?
-//		//CommLayer.makeMoveRequest()
-//		return move;
-//		
-//	}
 
 	public CostumFigurePain getCurrent() {
 		return currentPlayer;
 	}
 
 	public void setCurrent(CostumFigurePain current) {
-		this.currentPlayer = current;
+		currentPlayer = current;
 	}
 
 }
