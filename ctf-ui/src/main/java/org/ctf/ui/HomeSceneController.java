@@ -56,6 +56,6 @@ public class HomeSceneController {
   }
   
   public void switchToMapEditorScene (Stage stage) {
-	  stage.setScene(new MapEditorScene());
+	  stage.setScene(new MapEditorScene(this));
   }
 }

@@ -49,9 +49,11 @@ public class MapEditorScene extends Scene {
 	private Movement tmpMovement = new Movement();
 	private ComboBox<String> pieceComboBox;
 	private HashMap<String, PieceDescription> customPieces = new HashMap<String, PieceDescription>();
-
-	public MapEditorScene() {
+	private HomeSceneController hsc;
+	
+	public MapEditorScene(HomeSceneController hsc) {
 		super(new VBox(), 1000, 500);
+		this.hsc = hsc;  
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
 		File defaultMap = new File("src" + File.separator + "main" + File.separator + "java" + File.separator + "org"
 				+ File.separator + "ctf" + File.separator + "ui" + File.separator + "default.json");
@@ -63,7 +65,7 @@ public class MapEditorScene extends Scene {
 			System.out.println("fail");
 		}
 		initializeTemplate();
-		System.out.println(tmpTemplate.getPieces().length);
+		printTemplate();
 		options = new Parent[3];
 		options[0] = createMapChooser();
 		options[1] = createFigurChooser();
@@ -133,7 +135,7 @@ public class MapEditorScene extends Scene {
 		Label collabel = new Label("Collums");
 		collabel.getStyleClass().add("custom-label");
 		controlgrid.add(collabel, 0, 1);
-		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 10);
+		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, tmpTemplate.getGridSize()[1]);
 		Spinner<Integer> spinner2 = new Spinner<>(valueFactory);
 		spinner2.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
 			int[] newField = new int[2];
@@ -146,7 +148,7 @@ public class MapEditorScene extends Scene {
 		Label teamslabel = new Label("Teams");
 		teamslabel.getStyleClass().add("custom-label");
 		controlgrid.add(teamslabel, 0, 2);
-		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 2);
+		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, tmpTemplate.getTeams());
 		Spinner<Integer> spinner3 = new Spinner<>(valueFactory);
 		spinner3.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
 			tmpTemplate.setTeams(newValue);
@@ -156,7 +158,7 @@ public class MapEditorScene extends Scene {
 		Label flagslabel = new Label("Flags");
 		flagslabel.getStyleClass().add("custom-label");
 		controlgrid.add(flagslabel, 0, 3);
-		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 1);
+		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, tmpTemplate.getFlags());
 		Spinner<Integer> spinner4 = new Spinner<>(valueFactory);
 		spinner4.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
 			tmpTemplate.setFlags(newValue);
@@ -166,7 +168,7 @@ public class MapEditorScene extends Scene {
 		Label blockslabel = new Label("Blocks");
 		blockslabel.getStyleClass().add("custom-label");
 		controlgrid.add(blockslabel, 2, 0);
-		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 1);
+		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, tmpTemplate.getBlocks());
 		Spinner<Integer> spinner5 = new Spinner<>(valueFactory);
 		spinner5.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
 			tmpTemplate.setBlocks(newValue);
@@ -196,12 +198,22 @@ public class MapEditorScene extends Scene {
 		Label placementlabel = new Label("Placement");
 		placementlabel.getStyleClass().add("custom-label");
 		controlgrid.add(placementlabel, 2, 3);
-		ObservableList<String> options = FXCollections.observableArrayList("Symmetric", "Spaced Open", "Defensive");
+		ObservableList<String> options = FXCollections.observableArrayList("Symmetric", "Spaced Out", "Defensive");
 		ComboBox<String> placementBox = new ComboBox<>(options);
 		placementBox.prefWidthProperty().bind(spinner7.widthProperty());
-		placementBox.setValue("Symmetric");
+		switch (tmpTemplate.getPlacement()) {
+		case symmetrical:
+			placementBox.setValue("Symmetric");
+			break;
+		case spaced_out:
+			placementBox.setValue("Spaced Out");
+			break;
+		case defensive:
+			placementBox.setValue("Defenisve");;
+			break;
+		default:
+		}
 		controlgrid.add(placementBox, 3, 3);
-
 		placementBox.setOnAction(e -> {
 			switch (placementBox.getValue()) {
 			case "Symmetrical":
@@ -214,11 +226,8 @@ public class MapEditorScene extends Scene {
 				tmpTemplate.setPlacement(PlacementType.defensive);
 				break;
 			default:
-
 			}
-
 		});
-
 		return controlBox;
 	}
 
@@ -548,27 +557,27 @@ public class MapEditorScene extends Scene {
 			exit.setStyle("-fx-text-fill: white;" + "-fx-background-color: rgba(0,0,0,0.4);"
 					+ "-fx-border-color: #FFCCE5; -fx-border-width: 2px;");
 		});
-		exit.setOnAction(e -> System.out.println("Test"));
+		exit.setOnAction(e -> this.hsc.switchtoHomeScreen(e));
 		exit.setFont(Font.font("System", FontWeight.BOLD, 14));
 		return exit;
 	}
 
 	private Button createSubmit() {
-		Button exit = new Button("SUBMIT");
-		exit.setPrefSize(100, 25);
-		exit.setStyle("-fx-text-fill: white;" + "-fx-background-color: rgba(0,0,0,0.4);"
+		Button submit = new Button("SUBMIT");
+		submit.setPrefSize(100, 25);
+		submit.setStyle("-fx-text-fill: white;" + "-fx-background-color: rgba(0,0,0,0.4);"
 				+ "-fx-border-color: white; -fx-border-width: 2px;");
-		exit.setOnMouseEntered(e -> {
-			exit.setStyle("-fx-text-fill: white;" + "-fx-background-color: rgba(0,0,0,0.4);"
+		submit.setOnMouseEntered(e -> {
+			submit.setStyle("-fx-text-fill: white;" + "-fx-background-color: rgba(0,0,0,0.4);"
 					+ "-fx-border-color: green; -fx-border-width: 2px;");
 		});
-		exit.setOnMouseExited(e -> {
-			exit.setStyle("-fx-text-fill: white;" + "-fx-background-color: rgba(0,0,0,0.4);"
+		submit.setOnMouseExited(e -> {
+			submit.setStyle("-fx-text-fill: white;" + "-fx-background-color: rgba(0,0,0,0.4);"
 					+ "-fx-border-color: #FFCCE5; -fx-border-width: 2px;");
 		});
-		exit.setOnAction(e -> System.out.println("Test"));
-		exit.setFont(Font.font("System", FontWeight.BOLD, 14));
-		return exit;
+		submit.setOnAction(e -> printTemplate());
+		submit.setFont(Font.font("System", FontWeight.BOLD, 14));
+		return submit;
 	}
 
 	private GridPane CreateMapGrid() {
@@ -598,5 +607,15 @@ public class MapEditorScene extends Scene {
 		}
 		return gridPane;
 
+	}
+	
+	public void printTemplate() {
+		StringBuffer buf = new StringBuffer();
+		for(PieceDescription p: tmpTemplate.getPieces()) {
+			buf.append(p.getType()+" "+p.getCount()+"\n");
+		}
+		System.out.println("Grid:"+ tmpTemplate.getGridSize()[0]+" "+ tmpTemplate.getGridSize()[1]+"\n"
+				+"Teams/Flags/Blocks"+ tmpTemplate.getTeams()+tmpTemplate.getFlags()+tmpTemplate.getBlocks()+"\n"
+				+"placement"+tmpTemplate.getPlacement().toString()+"\n"+buf.toString());
 	}
 }
