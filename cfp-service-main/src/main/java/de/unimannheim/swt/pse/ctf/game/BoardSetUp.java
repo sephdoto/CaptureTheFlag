@@ -151,54 +151,63 @@ public class BoardSetUp {
    * @return
    */
   static void placePiecesDefensive(GameState gs) {
-    
+      //TODO position out of bounds einfuegen 
+      //TODO issues when pieces are already on the defensive ring by accident 
     placePiecesSpaced(gs);
     for (int i = 0; i < gs.getTeams().length; i++) {
       LinkedList<Piece> pieces = EngineTools.getStrongest(gs.getTeams()[i].getPieces());
       if(gs.getGrid()[gs.getTeams()[i].getBase()[0]-1][gs.getTeams()[i].getBase()[1]-1].equals("")) {
         Piece piece = pieces.pop();
+        gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = "";
         piece.setPosition(new int[] {gs.getTeams()[i].getBase()[0]-1, gs.getTeams()[i].getBase()[1]-1});
         gs.getGrid()[gs.getTeams()[i].getBase()[0]-1][gs.getTeams()[i].getBase()[1]-1] = piece.getId();
       }
       
       if(gs.getGrid()[gs.getTeams()[i].getBase()[0]-1][gs.getTeams()[i].getBase()[1]].equals("")) {
         Piece piece = pieces.pop();
+        gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = "";
         piece.setPosition(new int[] {gs.getTeams()[i].getBase()[0]-1, gs.getTeams()[i].getBase()[1]});
         gs.getGrid()[gs.getTeams()[i].getBase()[0]-1][gs.getTeams()[i].getBase()[1]] = piece.getId();
       }
       
       if(gs.getGrid()[gs.getTeams()[i].getBase()[0]-1][gs.getTeams()[i].getBase()[1]+1].equals("")) {
         Piece piece = pieces.pop();
+        gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = "";
         piece.setPosition(new int[] {gs.getTeams()[i].getBase()[0]-1, gs.getTeams()[i].getBase()[1]+1});
         gs.getGrid()[gs.getTeams()[i].getBase()[0]-1][gs.getTeams()[i].getBase()[1]+1] = piece.getId();
       }
       
       if(gs.getGrid()[gs.getTeams()[i].getBase()[0]][gs.getTeams()[i].getBase()[1]-1].equals("")) {
         Piece piece = pieces.pop();
+        gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = "";
         piece.setPosition(new int[] {gs.getTeams()[i].getBase()[0], gs.getTeams()[i].getBase()[1]-1});
         gs.getGrid()[gs.getTeams()[i].getBase()[0]][gs.getTeams()[i].getBase()[1]-1] = piece.getId();
       }
       
       if(gs.getGrid()[gs.getTeams()[i].getBase()[0]][gs.getTeams()[i].getBase()[1]+1].equals("")) {
         Piece piece = pieces.pop();
+        gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = "";
         piece.setPosition(new int[] {gs.getTeams()[i].getBase()[0], gs.getTeams()[i].getBase()[1]+1});
         gs.getGrid()[gs.getTeams()[i].getBase()[0]][gs.getTeams()[i].getBase()[1]+1] = piece.getId();
       }
       
       if(gs.getGrid()[gs.getTeams()[i].getBase()[0]+1][gs.getTeams()[i].getBase()[1]-1].equals("")) {
         Piece piece = pieces.pop();
+        gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = "";
         piece.setPosition(new int[] {gs.getTeams()[i].getBase()[0]+1, gs.getTeams()[i].getBase()[1]-1});
         gs.getGrid()[gs.getTeams()[i].getBase()[0]+1][gs.getTeams()[i].getBase()[1]-1] = piece.getId();
       }
       
       if(gs.getGrid()[gs.getTeams()[i].getBase()[0]+1][gs.getTeams()[i].getBase()[1]].equals("")) {
         Piece piece = pieces.pop();
+        gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = "";
         piece.setPosition(new int[] {gs.getTeams()[i].getBase()[0]+1, gs.getTeams()[i].getBase()[1]});
         gs.getGrid()[gs.getTeams()[i].getBase()[0]+1][gs.getTeams()[i].getBase()[1]] = piece.getId();
       }
       
       if(gs.getGrid()[gs.getTeams()[i].getBase()[0]+1][gs.getTeams()[i].getBase()[1]+1].equals("")) {
         Piece piece = pieces.pop();
+        gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = "";
         piece.setPosition(new int[] {gs.getTeams()[i].getBase()[0]+1, gs.getTeams()[i].getBase()[1]+1});
         gs.getGrid()[gs.getTeams()[i].getBase()[0]+1][gs.getTeams()[i].getBase()[1]+1] = piece.getId();
       }
@@ -260,41 +269,45 @@ public class BoardSetUp {
   static void placePiecesSymmetrical(GameState gameState) {
     // TODO more than two teams
     // putting the pieces on the board (team1)
-    int row = 1;
+    int row = gameState.getTeams()[0].getBase()[0]-1;
     int column = 1;
+    boolean lastRound = false;
     for (int i = 0; i < gameState.getTeams()[0].getPieces().length; i++) {
       if (column == gameState.getGrid()[0].length - 1) {
         row++;
         column = 1;
-        if (gameState.getTeams()[0].getPieces().length - i < gameState.getGrid()[0].length - 2) {
-          column = (gameState.getGrid()[0].length / 2)
-              - (gameState.getTeams()[0].getPieces().length - i) / 2;
-        }
-
       }
-    
       
+      if (gameState.getTeams()[0].getPieces().length - i < gameState.getGrid()[0].length - 2 && !lastRound) {
+        lastRound = true;
+        column = (gameState.getGrid()[0].length / 2)
+            - (gameState.getTeams()[0].getPieces().length - i) / 2;
+      }
+
       if (!gameState.getGrid()[row][column].equals("")) {
         column++;
         i--;
       } else {
         Piece piece = gameState.getTeams()[0].getPieces()[i];
         piece.setPosition(new int[] {row, column});
-        //gameState.getGrid()[row][column] = piece.getId();
+        // gameState.getGrid()[row][column] = piece.getId();
         column++;
       }
     }
 
     // putting pieces on the board (team2)
-    row = gameState.getGrid().length - 2;
+    row = gameState.getTeams()[1].getBase()[0]+1;
     column = 1;
+    lastRound = false;
     for (int i = 0; i < gameState.getTeams()[1].getPieces().length; i++) {
-      if (column == gameState.getGrid()[1].length-1) {
+      if (column == gameState.getGrid()[1].length - 1) {
         row--;
         column = 1;
-        if(gameState.getTeams()[0].getPieces().length - i < gameState.getGrid()[1].length - 2) {
-        	  column =  (gameState.getGrid()[0].length/2)- (gameState.getTeams()[1].getPieces().length - i)/2;
-          } 
+      }
+      if (gameState.getTeams()[0].getPieces().length - i < gameState.getGrid()[1].length - 2 && !lastRound) {
+        lastRound = true;
+        column = (gameState.getGrid()[0].length / 2)
+            - (gameState.getTeams()[1].getPieces().length - i) / 2;
       }
       if (!gameState.getGrid()[row][column].equals("")) {
         column++;
@@ -302,12 +315,12 @@ public class BoardSetUp {
       } else {
         Piece piece = gameState.getTeams()[1].getPieces()[i];
         piece.setPosition(new int[] {row, column});
-        //gameState.getGrid()[row][column] = piece.getId();
+        // gameState.getGrid()[row][column] = piece.getId();
         column++;
       }
     }
   }
-  
+
   /**
    * This is a helper method to place the bases in the create method
    * @author yannicksiebenhaar
