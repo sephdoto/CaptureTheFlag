@@ -9,6 +9,8 @@ import de.unimannheim.swt.pse.ctf.game.state.Team;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -121,7 +123,6 @@ public class BoardSetUp {
         gameState.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = piece.getId();
       }
     }
-    GameState ultimate = gameState;
     for (Team t : gameState.getTeams()) {
       GameState current = gameState;
       while (true) {
@@ -149,7 +150,60 @@ public class BoardSetUp {
    * @param grid
    * @return
    */
-  static void placePiecesDefensive(GameState gameState) {
+  static void placePiecesDefensive(GameState gs) {
+    
+    placePiecesSpaced(gs);
+    for (int i = 0; i < gs.getTeams().length; i++) {
+      LinkedList<Piece> pieces = EngineTools.getStrongest(gs.getTeams()[i].getPieces());
+      if(gs.getGrid()[gs.getTeams()[i].getBase()[0]-1][gs.getTeams()[i].getBase()[1]-1].equals("")) {
+        Piece piece = pieces.pop();
+        piece.setPosition(new int[] {gs.getTeams()[i].getBase()[0]-1, gs.getTeams()[i].getBase()[1]-1});
+        gs.getGrid()[gs.getTeams()[i].getBase()[0]-1][gs.getTeams()[i].getBase()[1]-1] = piece.getId();
+      }
+      
+      if(gs.getGrid()[gs.getTeams()[i].getBase()[0]-1][gs.getTeams()[i].getBase()[1]].equals("")) {
+        Piece piece = pieces.pop();
+        piece.setPosition(new int[] {gs.getTeams()[i].getBase()[0]-1, gs.getTeams()[i].getBase()[1]});
+        gs.getGrid()[gs.getTeams()[i].getBase()[0]-1][gs.getTeams()[i].getBase()[1]] = piece.getId();
+      }
+      
+      if(gs.getGrid()[gs.getTeams()[i].getBase()[0]-1][gs.getTeams()[i].getBase()[1]+1].equals("")) {
+        Piece piece = pieces.pop();
+        piece.setPosition(new int[] {gs.getTeams()[i].getBase()[0]-1, gs.getTeams()[i].getBase()[1]+1});
+        gs.getGrid()[gs.getTeams()[i].getBase()[0]-1][gs.getTeams()[i].getBase()[1]+1] = piece.getId();
+      }
+      
+      if(gs.getGrid()[gs.getTeams()[i].getBase()[0]][gs.getTeams()[i].getBase()[1]-1].equals("")) {
+        Piece piece = pieces.pop();
+        piece.setPosition(new int[] {gs.getTeams()[i].getBase()[0], gs.getTeams()[i].getBase()[1]-1});
+        gs.getGrid()[gs.getTeams()[i].getBase()[0]][gs.getTeams()[i].getBase()[1]-1] = piece.getId();
+      }
+      
+      if(gs.getGrid()[gs.getTeams()[i].getBase()[0]][gs.getTeams()[i].getBase()[1]+1].equals("")) {
+        Piece piece = pieces.pop();
+        piece.setPosition(new int[] {gs.getTeams()[i].getBase()[0], gs.getTeams()[i].getBase()[1]+1});
+        gs.getGrid()[gs.getTeams()[i].getBase()[0]][gs.getTeams()[i].getBase()[1]+1] = piece.getId();
+      }
+      
+      if(gs.getGrid()[gs.getTeams()[i].getBase()[0]+1][gs.getTeams()[i].getBase()[1]-1].equals("")) {
+        Piece piece = pieces.pop();
+        piece.setPosition(new int[] {gs.getTeams()[i].getBase()[0]+1, gs.getTeams()[i].getBase()[1]-1});
+        gs.getGrid()[gs.getTeams()[i].getBase()[0]+1][gs.getTeams()[i].getBase()[1]-1] = piece.getId();
+      }
+      
+      if(gs.getGrid()[gs.getTeams()[i].getBase()[0]+1][gs.getTeams()[i].getBase()[1]].equals("")) {
+        Piece piece = pieces.pop();
+        piece.setPosition(new int[] {gs.getTeams()[i].getBase()[0]+1, gs.getTeams()[i].getBase()[1]});
+        gs.getGrid()[gs.getTeams()[i].getBase()[0]+1][gs.getTeams()[i].getBase()[1]] = piece.getId();
+      }
+      
+      if(gs.getGrid()[gs.getTeams()[i].getBase()[0]+1][gs.getTeams()[i].getBase()[1]+1].equals("")) {
+        Piece piece = pieces.pop();
+        piece.setPosition(new int[] {gs.getTeams()[i].getBase()[0]+1, gs.getTeams()[i].getBase()[1]+1});
+        gs.getGrid()[gs.getTeams()[i].getBase()[0]+1][gs.getTeams()[i].getBase()[1]+1] = piece.getId();
+      }
+    }
+    
     return;
   }
   

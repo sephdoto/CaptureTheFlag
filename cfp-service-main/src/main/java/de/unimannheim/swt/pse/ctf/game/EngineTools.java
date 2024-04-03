@@ -2,6 +2,8 @@ package de.unimannheim.swt.pse.ctf.game;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
@@ -150,10 +152,8 @@ public class EngineTools extends AI_Tools {
     LinkedList<GameState> result = new LinkedList<GameState>();
 
     for (int i = 0; i < gs.getTeams()[teamID].getPieces().length; i++) {
-
-      int newY = 0;
-      int newX = 0;
       if (teamID == 0) {
+        gs.setCurrentTeam(teamID);
         for (int y = 0; y < gs.getGrid().length / 2; y++) {
           for (int x = 0; x < gs.getGrid()[y].length; x++) {
 
@@ -171,6 +171,7 @@ public class EngineTools extends AI_Tools {
           }
         }
       } else if (teamID == 1) {
+        gs.setCurrentTeam(teamID);
         for (int y = gs.getGrid().length / 2; y < gs.getGrid().length; y++) {
           for (int x = 0; x < gs.getGrid()[y].length; x++) {
 
@@ -262,5 +263,33 @@ public class EngineTools extends AI_Tools {
     newGs.setCurrentTeam(gs.getCurrentTeam());
     return newGs;
   }
+  
+  /**
+   * helper for the spaced placement
+   * @author yannicksiebenhaar
+   * @return
+   */
+  public static LinkedList<Piece> getStrongest(Piece[] pieces) {
+    LinkedList<Piece> list = new LinkedList<Piece>();
+    
+    for(Piece p : pieces) {
+      list.add(p);
+    }
+    Collections.sort(list, new EngineTools().new StrengthComparator());
+    
+    return list;
+    
+  }
+  
+  
+  class StrengthComparator implements Comparator <Piece>{
+    
+    @Override
+    public int compare(Piece a, Piece b) {
+        if(a.getDescription().getAttackPower() > b.getDescription().getAttackPower()) return -1;
+        else if(a.getDescription().getAttackPower() < b.getDescription().getAttackPower()) return 1;
+        else return 0;      
+    }
+}
 
 }
