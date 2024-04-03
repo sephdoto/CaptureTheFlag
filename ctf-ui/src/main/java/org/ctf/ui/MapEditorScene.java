@@ -1,5 +1,7 @@
 package org.ctf.ui;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,6 +10,8 @@ import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.data.map.Movement;
 import org.ctf.shared.state.data.map.PieceDescription;
 import org.ctf.shared.state.data.map.PlacementType;
+import org.ctf.shared.tools.JSON_Tools;
+import org.ctf.shared.tools.JSON_Tools.IncompleteMapTemplateException;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -40,7 +44,7 @@ public class MapEditorScene extends Scene {
 	private String[][] feld;
 	private Parent[] options;
 	private StackPane left;
-	private MapTemplate tmpTemplate = new MapTemplate();
+	private MapTemplate tmpTemplate;
 	private PieceDescription tmpdescription = new PieceDescription();
 	private Movement tmpMovement = new Movement();
 	private ComboBox<String> pieceComboBox;
@@ -49,7 +53,17 @@ public class MapEditorScene extends Scene {
 	public MapEditorScene() {
 		super(new VBox(), 1000, 500);
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
+		File defaultMap = new File("src" + File.separator + "main" + File.separator + "java" + File.separator + "org"
+				+ File.separator + "ctf" + File.separator + "ui" + File.separator + "default.json");
+		try {
+			tmpTemplate = JSON_Tools.readMapTemplate(defaultMap);
+		} catch (IncompleteMapTemplateException | IOException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+			System.out.println("fail");
+		}
 		initializeTemplate();
+		System.out.println(tmpTemplate.getPieces().length);
 		options = new Parent[3];
 		options[0] = createMapChooser();
 		options[1] = createFigurChooser();
@@ -104,7 +118,8 @@ public class MapEditorScene extends Scene {
 		Label rowlabel = new Label("Rows");
 		rowlabel.getStyleClass().add("custom-label");
 		controlgrid.add(rowlabel, 0, 0);
-		SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 10);
+		SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100,
+				tmpTemplate.getGridSize()[0]);
 		Spinner<Integer> spinner = new Spinner<>(valueFactory);
 		spinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
 			int[] newField = new int[2];
@@ -461,11 +476,11 @@ public class MapEditorScene extends Scene {
 				usedPieces.add(customPieces.get(type));
 			}
 		}
-		int[] gridsize = { 10, 10 };
-		this.tmpTemplate.setGridSize(gridsize);
-
-		PieceDescription[] result = usedPieces.toArray(new PieceDescription[usedPieces.size()]);
-		tmpTemplate.setPieces(result);
+//		int[] gridsize = { 10, 10 };
+//		this.tmpTemplate.setGridSize(gridsize);
+//
+//		PieceDescription[] result = usedPieces.toArray(new PieceDescription[usedPieces.size()]);
+//		tmpTemplate.setPieces(result);
 	}
 
 	private void createExamplePieces() {
