@@ -301,8 +301,7 @@ public class EngineTools extends AI_Tools {
     ObjectMapper mapper = new ObjectMapper();
 		GameState re = new GameState();
 		try {
-			String jsonInString = mapper.writeValueAsString(gs);
-			re = mapper.readValue(jsonInString, GameState.class);
+			re = mapper.readValue(mapper.writeValueAsString(gs), GameState.class);
 		} catch (JsonGenerationException e) {
 			System.out.println("Error in deepCopyGameState JSON Method");
 		} catch (JsonMappingException e) {
