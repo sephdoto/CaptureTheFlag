@@ -62,7 +62,7 @@ public class GameEngine implements Game {
   /**
    * Creates a game session with the corresponding Map passed onto as the Template
    *
-   * @author everyone lol
+   * @author rsyed & ysiebenh & sistumpf
    * @param template
    * @return GameState
    */

@@ -15,14 +15,19 @@ import java.util.LinkedList;
 import java.util.Random;
 import org.ctf.shared.state.data.exceptions.TooManyPiecesException;
 
+/**
+ * This Class stores all static helper methods for the {@link GameEngine#create(MapTemplate) create} method 
+ *
+ * @author rsyed & ysiebenh & sistumpf
+ */
 public class BoardSetUp {
 
   /**
-   * This is a helper method to initialize the teams in create
+   * Helper method to initialize the teams
    *
    * @author ysiebenh
-   * @param int teamID
-   * @return Team thats initialized
+   * @param int teamID, MapTemplate template
+   * @return initialized team 
    */
   static Team initializeTeam(int teamID, MapTemplate template) {
     
@@ -39,29 +44,28 @@ public class BoardSetUp {
       }
     }
 
-    // initializing team
+    // initializing the team
     Team team = new Team();
     team.setId(Integer.toString(teamID));
     team.setColor(GameEngine.getRandColor());
     team.setFlags(template.getFlags());
 
-    Piece[] pieces = new Piece[indPieces.size()]; // putting the pieces in an array
+    Piece[] pieces = new Piece[indPieces.size()];
     int iterator = 0;
     for (Piece p : indPieces) {
       pieces[iterator++] = p;
     }
     team.setPieces(pieces);
-
     return team;
   }
 
   /**
-   * This method decides what method to call for placing pieces.
+   * Decides what method to call for placing pieces.
    *
    * @author sistumpf
-   * @param gameState
-   * @param template
-   * @throws Exception 
+   * @param GameState gameState
+   * @param MapTemplate template
+   * @throws TooManyPiecesException  
    */
   static void initPieces(GameState gameState, MapTemplate template) throws TooManyPiecesException {
     
@@ -112,16 +116,15 @@ public class BoardSetUp {
   }
 
   /**
-   * this method uses a standard hillclimbing algorithm to find a piece placement with the most possible moves in total for each team 
+   * Places the Pieces on the Board using a standard hill-climbing algorithm to ensure that every
+   * piece has the maximum amount of possible moves
    *
-   * @author yannicksiebenhaar
-   * @param GameState 
+   * @author ysiebenh
+   * @param GameState gameState 
    * 
    */
   static void placePiecesSpaced(GameState gameState) {
-
     randomPlacement(gameState);
-
     for (Team team : gameState.getTeams()) {
       for (Piece piece : team.getPieces()) {
         gameState.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = piece.getId();
@@ -148,15 +151,18 @@ public class BoardSetUp {
   }
 
   /**
-   * DUMMY TODO implement this method
+   * Places the Pieces on the Board by sorting them from strongest to weakest, then placing the
+   * strongest pieces around the base and placing the rest via the
+   * {@link BoardSetUp#placePiecesSpaced(GameState) placePiecesSpaced} method
    *
-   * @param teams
-   * @param grid
-   * @return
+   * @author ysiebenh
+   * @param GameState gameState
+   * 
    */
   static void placePiecesDefensive(GameState gs) {
       //TODO position out of bounds einfuegen 
       //TODO issues when pieces are already on the defensive ring by accident 
+      //TODO maybe use a loop or something 
     placePiecesSpaced(gs);
     for (int i = 0; i < gs.getTeams().length; i++) {
       LinkedList<Piece> pieces = EngineTools.getStrongest(gs.getTeams()[i].getPieces());
@@ -221,13 +227,13 @@ public class BoardSetUp {
   }
   
   /**
-   * DUMMY TODO implement this method
-   *
-   * @param teams
-   * @param grid
-   * @return
+   * Places the pieces randomly on the board using the
+   * {@link EngineTools#seededRandom(String[][], int, int, int) seededRandom} method
+   * 
+   * @author ysiebenh
+   * @param GameState gameState
    */
-  static void randomPlacement(GameState gs) {
+  private static void randomPlacement(GameState gs) {
     for (Team t : gs.getTeams()) {
       if (t.getId().equals("0")) {
         for (Piece p : t.getPieces()) {
@@ -256,19 +262,16 @@ public class BoardSetUp {
           p.setPosition(new int[] {newY, newX});
           gs.getGrid()[newY][newX] = p.getId();
         }
-
       }
-
     }
     return;
   }
 
   /**
-   * This is a helper method to place the pieces on the board in the create method
+   * Places the pieces on the Board symmetrically around the base in a way that is pleasing to the eye
    *
    * @author ysiebenh
-   * @param Team[] teams to be placed, String[][] grid upon which they are supposed to be placed
-   * @return String[][] the finished board
+   * @param GameState gameState
    */
   static void placePiecesSymmetrical(GameState gameState) {
     // TODO more than two teams
@@ -335,8 +338,10 @@ public class BoardSetUp {
   }
 
   /**
-   * This is a helper method to place the bases in the create method
-   * @author yannicksiebenhaar
+   * Assigns positions to the Bases (does not update the grid)
+   *
+   * @author ysiebenh
+   * @param GameState gameState, MapTemplate template
    */
   
   static void placeBases(GameState gs, MapTemplate mt) {
