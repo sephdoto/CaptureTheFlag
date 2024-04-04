@@ -308,6 +308,13 @@ public class MapEditorScene extends Scene {
 				spinnerchange = false;
 				return;
 			}
+			if(newValue==0) {
+				if(tmpTemplate.getPieces().length==1) {
+					spinnerchange = true;
+					bauerSpinner.getValueFactory().setValue(old);
+					System.out.println("Mindestens eine Figur noetig");
+				}
+			}
 			betterUpdateCount("Pawn", newValue);
 			if (!TemplateChecker.checkTemplate(tmpTemplate)) {
 				betterUpdateCount("Pawn", old);
@@ -326,6 +333,13 @@ public class MapEditorScene extends Scene {
 			if (spinnerchange) {
 				spinnerchange = false;
 				return;
+			}
+			if(newValue==0) {
+				if(tmpTemplate.getPieces().length==1) {
+					spinnerchange = true;
+					springerSpinner.getValueFactory().setValue(old);
+					System.out.println("Mindestens eine Figur noetig");
+				}
 			}
 			betterUpdateCount("Knight", newValue);
 			if (!TemplateChecker.checkTemplate(tmpTemplate)) {
@@ -346,6 +360,13 @@ public class MapEditorScene extends Scene {
 			if (spinnerchange) {
 				spinnerchange = false;
 				return;
+			}
+			if(newValue==0) {
+				if(tmpTemplate.getPieces().length==1) {
+					spinnerchange = true;
+					dameSpinner.getValueFactory().setValue(old);
+					System.out.println("Mindestens eine Figur noetig");
+				}
 			}
 			betterUpdateCount("Queen", newValue);
 			if (!TemplateChecker.checkTemplate(tmpTemplate)) {
@@ -379,6 +400,13 @@ public class MapEditorScene extends Scene {
 				spinnerchange = false;
 				return;
 			}
+			if(newValue==0) {
+				if(tmpTemplate.getPieces().length==1) {
+					spinnerchange = true;
+					laufSpinner.getValueFactory().setValue(old);
+					System.out.println("Mindestens eine Figur noetig");
+				}
+			}
 			betterUpdateCount("Bishop", newValue);
 			if (!TemplateChecker.checkTemplate(tmpTemplate)) {
 				betterUpdateCount("Bishop", old);
@@ -397,6 +425,13 @@ public class MapEditorScene extends Scene {
 			if (spinnerchange) {
 				spinnerchange = false;
 				return;
+			}
+			if(newValue==0) {
+				if(tmpTemplate.getPieces().length==1) {
+					spinnerchange = true;
+					turmSpinner.getValueFactory().setValue(old);
+					System.out.println("Mindestens eine Figur noetig");
+				}
 			}
 			betterUpdateCount("Rook", newValue);
 			if (!TemplateChecker.checkTemplate(tmpTemplate)) {
@@ -443,7 +478,13 @@ public class MapEditorScene extends Scene {
 				spinnerchange = false;
 				return;
 			}
-
+			if(newv==0) {
+				if(tmpTemplate.getPieces().length==1) {
+					spinnerchange = true;
+					customSpinner.getValueFactory().setValue(old);
+					System.out.println("Mindestens eine Figur noetig");
+				}
+			}
 			betterUpdateCount(pieceComboBox.getValue(), newv);
 			if (!TemplateChecker.checkTemplate(tmpTemplate)) {
 				betterUpdateCount(pieceComboBox.getValue(), old);

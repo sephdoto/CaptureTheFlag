@@ -81,24 +81,7 @@
           "downRight": 2
         }
       }
-    },
-    {
-      "type": "King",
-      "attackPower": 1,
-      "count": 1,
-      "movement": {
-        "directions": {
-          "left": 1,
-          "right": 1,
-          "up": 1,
-          "down": 1,
-          "upLeft": 1,
-          "upRight": 1,
-          "downLeft": 1,
-          "downRight": 1
-        }
-      }
-    }
+    }   
   ],
   "placement": "symmetrical",
   "totalTimeLimitInSeconds": 3660,

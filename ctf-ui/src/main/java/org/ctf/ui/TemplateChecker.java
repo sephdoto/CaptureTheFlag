@@ -15,4 +15,11 @@ public class TemplateChecker {
 		}
 		return true;
 	}
+	
+	public static boolean checkEnoughPieces(MapTemplate template) {
+		if(template.getPieces().length==0) {
+			return false;
+		}
+		return true;
+	}
 }
