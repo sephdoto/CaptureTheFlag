@@ -8,8 +8,16 @@ import org.ctf.shared.ai.AI_Tools;
 import org.ctf.ui.customobjects.BackgroundCellV2;
 import org.ctf.ui.customobjects.CostumFigurePain;
 
+import configs.Dialogs;
+import configs.GameMode;
+
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
+import org.ctf.shared.state.data.exceptions.ForbiddenMove;
+import org.ctf.shared.state.data.exceptions.GameOver;
+import org.ctf.shared.state.data.exceptions.InvalidMove;
+import org.ctf.shared.state.data.exceptions.SessionNotFound;
+
 import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.RadialGradient;
@@ -24,10 +32,12 @@ public class Game {
 	static String currentTeam;
 	static Move lastMove;
 	static String myTeam;
+	static GameMode mode;
+	
 
 	
 	
-	public static void initializeGame(GamePane pane) {
+	public static void initializeGame(GamePane pane, GameMode mode) {
 		possibleMoves = new ArrayList<int[]>();
 		state = pane.state;
 		cb = pane;
@@ -43,8 +53,13 @@ public class Game {
 		int y= lastMove.getNewPosition()[1];
 		CostumFigurePain mover = cb.getFigures().get(lastMove.getPieceId());
 		cb.moveFigure(x, y, mover);
-		
-		
+		if(mode == GameMode.OneDevice) {
+			setCurrentTeamActiveTeamactive();
+		}else {
+			if(currentTeam.equals(myTeam)) {
+				setCurrentTeamActiveTeamactive();
+			}
+		}
 	}
 
 	// hier wird Move Objekt an Client gesendet
@@ -54,10 +69,28 @@ public class Game {
 		move.setPieceId(currentPlayer.getPiece().getId());
 		move.setNewPosition(newPos);
 		cb.moveFigure(newPos[0], newPos[1], currentPlayer);
+		try {
+		//JavaClient.makeMoveRequest(move)
+		}
+		catch (SessionNotFound e) {
+			Dialogs.showErrorDialog("Session not found", e.getMessage());
+		}
+		catch (ForbiddenMove e) {
+			Dialogs.showErrorDialog("Forbidden Move", e.getMessage());
+		}
+		catch (InvalidMove e) {
+			Dialogs.showErrorDialog("Invalid Move", e.getMessage());
+		}
+		catch (GameOver e) {
+			Dialogs.showErrorDialog("Game Over", e.getMessage());
+		}
+		catch (UnknownError e) {
+			Dialogs.showErrorDialog("Unknown Error", e.getMessage());
+		}
 		resetStateAfterMoveRequest();
-		
 	}
 
+	
 	public static void resetStateAfterMoveRequest() {
 		currentPlayer.disableShadow();
 		currentPlayer = null;

@@ -11,6 +11,7 @@ import java.util.List;
 import org.ctf.shared.state.GameState;
 
 import configs.Dialogs;
+import configs.GameMode;
 import configs.ImageLoader;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -108,9 +109,9 @@ public class CreateGameScreen  {
 		VBox createGameButtonBox = new VBox(20);
 		createGameButtonBox.setStyle("-fx-border-color: black; -fx-border-width: 2px;" + "-fx-background-color: white;"
 				+ "-fx-background-radius: 20px; -fx-border-radius: 20px;" + "-fx-alignment: top-center;");
-		Button startOnlineGame = createStartButton("Start Online Game", parent);
-		Button startAiGame = createStartButton("Start Offline Game", parent);
-		Button startSingleDeviceGame = createStartButton("Play Against Ai", parent);
+		Button startOnlineGame = createStartButton("Start Online Game", parent, GameMode.Online);
+		Button startAiGame = createStartButton("Start Offline Game", parent, GameMode.OneDevice);
+		Button startSingleDeviceGame = createStartButton("Play Against Ai", parent, GameMode.Online);
 		createGameButtonBox.setPadding(new Insets(20));
 		createGameButtonBox.getChildren().addAll(startOnlineGame,startSingleDeviceGame,startAiGame);
 		return createGameButtonBox;
@@ -128,13 +129,13 @@ public class CreateGameScreen  {
 		return backButton;
 	}
 	
-	private static Button createStartButton(String text, VBox parent) {
+	private static Button createStartButton(String text, VBox parent, GameMode mode) {
 		Button startButton = new Button(text);
 		startButton.prefWidthProperty().bind(parent.widthProperty().multiply(0.7));
 		startButton.prefHeightProperty().bind(parent.heightProperty().multiply(0.1));
 		applyButtonStyle(startButton);
 		startButton.setOnAction(event ->{
-			PlayGameScreen.initPlayGameScreen(s, state);
+			PlayGameScreen.initPlayGameScreen(s, state, mode);
 		});
 		return startButton;
 	}

@@ -5,6 +5,7 @@ import org.ctf.ui.customobjects.Timer;
 import org.ctf.ui.customobjects.Timer2;
 
 import configs.Dialogs;
+import configs.GameMode;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -36,12 +37,12 @@ public class PlayGameScreen {
 	static Label mapName;
 	static VBox rightVBox;
 
-	public static void initPlayGameScreen(Stage stage, GameState state) {
+	public static void initPlayGameScreen(Stage stage, GameState state, GameMode mode) {
 		s = stage;
 		gm = createLeftSidPane(state);
 		DropShadow shadow = new DropShadow(50, Color.GRAY);
         gm.setEffect(shadow);
-		Game.initializeGame(gm);
+		Game.initializeGame(gm,mode);
 		//gm.setGame(game);
 		v = new VBox();
 		//HBox headerBox = createHeaderBox();
