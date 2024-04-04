@@ -98,15 +98,17 @@ public class MapEditorScene extends Scene {
 		MenuButton mb = createMenuButton();
 		MenuButton mmb = createMapMenuButton();
 		HBox menuBox = new HBox();
+		menuBox.setAlignment(Pos.CENTER);
+		menuBox.setStyle("-fx-spacing: 20px;");
 		menuBox.getChildren().add(mb);
 		menuBox.getChildren().add(mmb);
+		menuBox.getChildren().add(createSubmit());
+		menuBox.getChildren().add(createExit());
 		// mb.setStyle("-fx-border-color: transparent;");
 		// leftroot.getChildren().add(mb);
 		// leftroot.getChildren().add(test);
 		leftroot.getChildren().add(menuBox);
 		leftroot.getChildren().add(left);
-		leftroot.getChildren().add(createSubmit());
-		leftroot.getChildren().add(createExit());
 		leftroot.setStyle("-fx-spacing: 20px;");
 		leftroot.setAlignment(Pos.CENTER);
 
@@ -561,6 +563,7 @@ public class MapEditorScene extends Scene {
 
 	private MenuButton createMenuButton() {
 		MenuButton mb = new MenuButton("Edit Map");
+		mb.setPrefSize(130, 30);
 		mb.getStyleClass().add("custom-menu-button");
 		MenuItem mapMenuItem = new MenuItem("Edit Map");
 		MenuItem figureMenuItem = new MenuItem("Add Pieces");
@@ -587,7 +590,9 @@ public class MapEditorScene extends Scene {
 	
 	private MenuButton createMapMenuButton() {
 		MenuButton mb = new MenuButton("Load Map");
+		mb.setPrefSize(130, 30);
 		mb.getStyleClass().add("custom-menu-button");
+		
 		MenuItem default1Item = new MenuItem("Map One");
 		MenuItem default2Item = new MenuItem("Map Two");
 		
