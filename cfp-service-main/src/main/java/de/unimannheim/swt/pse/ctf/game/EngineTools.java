@@ -16,7 +16,7 @@ import de.unimannheim.swt.pse.ctf.game.state.Team;
 
 /**
  * This class contains useful methods for the GameEngine.
- * @author sistumpf
+ * @author sistumpf & ysiebenh
  */
 public class EngineTools extends AI_Tools {
   /**
@@ -144,10 +144,75 @@ public class EngineTools extends AI_Tools {
   }
   
   /**
-   * Helper method for spaced placement
-   * @author yannicksiebenhaar
+   * Creates x and y boundaries for all teams
+   * 
+   * @author ysiebenh
+   * @returns an Integer array which stores the upper and lower x and y boundaries for each team
+   *          (format: int[teamID][{lowerY,UpperY,lowerX,upperX, orientation(south = 0; north = 1}]
    */
-  public static LinkedList<GameState> getNeighbors(GameState gs, int teamID, int[] startEnd) {
+  static int[][] cutUpGrid(GameState gs) {
+    int[][] teams = null;
+    if(gs.getTeams().length == 2) {
+      teams = new int[2][5];
+      teams[0][0] = 0;
+      teams[0][1] = gs.getGrid().length/2;
+      teams[0][2] = 0;
+      teams[0][3] = gs.getGrid()[0].length;
+      teams[0][4] = 0;
+      teams[1][0] = gs.getGrid().length/2;
+      teams[1][1] = gs.getGrid().length;
+      teams[1][2] = 0;
+      teams[1][3] = gs.getGrid()[0].length;
+      teams[1][4] = 1;
+      
+    } else if(gs.getTeams().length == 3 || gs.getTeams().length == 4){
+      teams = new int[4][5];
+      
+      teams[0][0] = 0;
+      teams[0][1] = gs.getGrid().length/2;
+      teams[0][2] = 0;
+      teams[0][3] = gs.getGrid()[0].length/2;
+      teams[0][4] = 0;
+      
+      teams[1][0] = 0;
+      teams[1][1] = gs.getGrid().length/2;
+      teams[1][2] = gs.getGrid()[0].length/2;
+      teams[1][3] = gs.getGrid()[0].length;
+      teams[1][4] = 0;
+      
+      teams[2][0] = gs.getGrid().length/2;
+      teams[2][1] = gs.getGrid().length;
+      teams[2][2] = 0;
+      teams[2][3] = gs.getGrid()[0].length/2;
+      teams[2][4] = 1;
+      
+      teams[3][0] = gs.getGrid().length/2;
+      teams[3][1] = gs.getGrid().length;
+      teams[3][2] = gs.getGrid()[0].length/2;
+      teams[3][3] = gs.getGrid()[0].length;
+      teams[3][4] = 1;
+      
+      
+    } else if(gs.getTeams().length == 5 || gs.getTeams().length == 6){
+      
+    } else if(gs.getTeams().length == 7 || gs.getTeams().length == 8){
+      
+    }
+
+    return teams;
+  }
+  
+  
+  // ******************************
+  // Helper methods for the hillclimbing in the spaced_out placement 
+  // ******************************
+
+  
+  /**
+   * Helper method for spaced placement
+   * @author ysiebenh
+   */
+  static LinkedList<GameState> getNeighbors(GameState gs, int teamID, int[] startEnd) {
 
     LinkedList<GameState> result = new LinkedList<GameState>();
 
@@ -194,10 +259,10 @@ public class EngineTools extends AI_Tools {
   }
   /**
    * helper for the spaced placement
-   * @author yannicksiebenhaar
+   * @author ysiebenh
    * @return
    */
-  public static int valueOf(GameState gs, int teamID) {
+  static int valueOf(GameState gs, int teamID) {
     int result = 0;
     for (Piece p : gs.getTeams()[teamID].getPieces()) {
       result += getPossibleMoves(gs, p.getId()).size();
@@ -207,10 +272,10 @@ public class EngineTools extends AI_Tools {
   
   /**
    * helper for the spaced placement
-   * @author yannicksiebenhaar
+   * @author ysiebenh
    * @return
    */
-  public static GameState getBestState(LinkedList<GameState> list, int teamID) {
+  static GameState getBestState(LinkedList<GameState> list, int teamID) {
     GameState current = list.getFirst();
     for (GameState gs : list) {
       if (valueOf(gs, teamID) > valueOf(current, teamID)) {
@@ -221,11 +286,11 @@ public class EngineTools extends AI_Tools {
   }
   
   /**
-   * helper for the spaced placement
+   * Deep Copies a GameState (hopefully)
    * @author yannicksiebenhaar
    * @return
    */
-  public static GameState deepCopyGameState(GameState gs) {
+  static GameState deepCopyGameState(GameState gs) {
     GameState newGs = new GameState();
     Team[] teams = new Team[gs.getTeams().length];
     int c = 0;
@@ -265,11 +330,11 @@ public class EngineTools extends AI_Tools {
   }
   
   /**
-   * helper for the spaced placement
-   * @author yannicksiebenhaar
+   * Returns a List of the Pieces sorted by Strength 
+   * @author ysiebenh
    * @return
    */
-  public static LinkedList<Piece> getStrongest(Piece[] pieces) {
+  static LinkedList<Piece> getStrongest(Piece[] pieces) {
     LinkedList<Piece> list = new LinkedList<Piece>();
     
     for(Piece p : pieces) {
@@ -283,11 +348,10 @@ public class EngineTools extends AI_Tools {
   
   
   /**
-   * helper 
-   * @author yannicksiebenhaar
-   * @return
+   * Updates the positions of the pieces based on their position in the Team Object  
+   * @author ysiebenh
    */
-  public static void updateGrid(GameState gs) {
+  static void updateGrid(GameState gs) {
     for (Team team : gs.getTeams()) {
       //grid[team.getBase()[0]][team.getBase()[1]] = "b:" + team.getId(); //Moved to InitPieces so the pieces will be placed around the base
       for (Piece piece : team.getPieces()) {

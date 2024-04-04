@@ -225,12 +225,12 @@ public class GameEngine implements Game {
    */
   @Override
   public GameState getCurrentGameState() {
-//    turnTimeLimitedChecks();
-    
+    // turnTimeLimitedChecks();
+
     gameOverCheck();
-    if(gameState.getTeams()[gameState.getCurrentTeam()] == null)
+    if (gameState.getTeams()[gameState.getCurrentTeam()] == null)
       gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
-    
+
     return gameState;
   }
 

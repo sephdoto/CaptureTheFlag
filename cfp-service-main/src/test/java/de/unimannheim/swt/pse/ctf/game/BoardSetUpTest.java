@@ -59,15 +59,16 @@ class BoardSetUpTest {
         try {
           BoardSetUp.initPieces(gs, templates[o]);
         } catch (TooManyPiecesException e) {
-          System.out.println("too many pieces");
-          System.out.println("-----------------------------------");
+          //System.out.println("too many pieces");
+          //System.out.println("-----------------------------------");
           continue;
         }
+        
 
         EngineTools.updateGrid(gs);
 
-        printGrid(gs.getGrid());
-        System.out.println("-----------------------------------");
+        //printGrid(gs.getGrid());
+        //System.out.println("-----------------------------------");
       }
     }
     
@@ -78,6 +79,7 @@ class BoardSetUpTest {
     @Test
     void testInitGrid() {
       fail("not yet implimented");
+
     }
     
     /**
@@ -86,7 +88,34 @@ class BoardSetUpTest {
      */
     @Test
     void testPlaceBases() {
-      fail("not yet implimented");
+
+      MapTemplate[] templates = TestValues.getDummyTeplates();
+
+      for (int o = 0; o < templates.length; o++) {
+        GameState gs = new GameState();
+        Team[] teams = new Team[templates[o].getTeams()];
+
+        String[][] grid = new String[templates[o].getGridSize()[0]][templates[o].getGridSize()[1]];
+        for (int i = 0; i < grid.length; i++) {
+          for (int j = 0; j < grid[i].length; j++) {
+            grid[i][j] = "";
+          }
+        }
+        gs.setGrid(grid);
+
+        for (int i = 0; i < templates[o].getTeams(); i++) {
+          teams[i] = BoardSetUp.initializeTeam(i, templates[o]);
+        }
+        gs.setTeams(teams);
+        BoardSetUp.placeBases(gs, templates[o]);
+        
+        EngineTools.updateGrid(gs);
+
+        printGrid(gs.getGrid());
+        System.out.println("-----------------------------------");
+      }
+     
+
     }
 
   /**

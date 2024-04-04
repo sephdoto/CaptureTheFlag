@@ -276,21 +276,22 @@ public class BoardSetUp {
   static void placePiecesSymmetrical(GameState gameState) {
     // TODO more than two teams
     // putting the pieces on the board (team1)
-    int row = gameState.getTeams()[0].getBase()[0]-1;
-    int column = 1;
+    int row = gameState.getTeams()[0].getBase()[0]-1; //0 = i
+    int column = 1; //something 
     boolean lastRound = false;
+    int[][] boundaries = EngineTools.cutUpGrid(gameState);
     
-    if (gameState.getTeams()[0].getPieces().length < gameState.getGrid()[0].length - 2) lastRound = true;
+    if (gameState.getTeams()[0].getPieces().length < gameState.getGrid()[0].length - 2) lastRound = true; //0 = i
     
-    for (int i = 0; i < gameState.getTeams()[0].getPieces().length; i++) {
+    for (int j = 0; j < gameState.getTeams()[0].getPieces().length; j++) { //0 = i
       if (column == gameState.getGrid()[0].length - 1 || lastRound) {
         row++;
         column = 1;
 
-        if (gameState.getTeams()[0].getPieces().length - i < gameState.getGrid()[0].length - 2) {
+        if (gameState.getTeams()[0].getPieces().length - j < gameState.getGrid()[0].length - 2) {
           lastRound = true;
           column = (gameState.getGrid()[0].length / 2)
-              - (gameState.getTeams()[0].getPieces().length - i) / 2;
+              - (gameState.getTeams()[0].getPieces().length - j) / 2;
           lastRound = false;
         }
       }
@@ -298,9 +299,9 @@ public class BoardSetUp {
 
       if (!gameState.getGrid()[row][column].equals("")) {
         column++;
-        i--;
+        j--;
       } else {
-        Piece piece = gameState.getTeams()[0].getPieces()[i];
+        Piece piece = gameState.getTeams()[0].getPieces()[j];
         piece.setPosition(new int[] {row, column});
         // gameState.getGrid()[row][column] = piece.getId();
         column++;
@@ -338,24 +339,33 @@ public class BoardSetUp {
   }
 
   /**
-   * Assigns positions to the Bases (does not update the grid)
+   * Assigns positions to the Bases
    *
    * @author ysiebenh
    * @param GameState gameState, MapTemplate template
    */
   
   static void placeBases(GameState gs, MapTemplate mt) {
-	  int teams = mt.getTeams();
-	  if(teams%2 != 0) teams++;
-	  int height = mt.getGridSize()[0]/(teams*2);
-	  int width = mt.getGridSize()[1]/teams;
-	  for(int i = 0; i < mt.getTeams(); i++) {
-		  if (i == 0) {
-			  gs.getTeams()[i].setBase(new int[] {height,mt.getGridSize()[1]/2});
-		    } else if (i == 1) {
-		      gs.getTeams()[i].setBase(new int[] {mt.getGridSize()[0] - 1 - mt.getGridSize()[0]/4,mt.getGridSize()[1]/2});
-		    }   
-	  }
+    int teams = mt.getTeams();
+    int[][] boundaries = EngineTools.cutUpGrid(gs);
+    if (teams % 2 != 0) {
+      teams++;
+    }
+  
+    for (int i = 0; i < mt.getTeams(); i++) {
+      if (boundaries[i][4] == 0) {
+        gs.getTeams()[i]
+            .setBase(new int[] {boundaries[i][1] / 2, (boundaries[i][3] - boundaries[i][2]) / 2 + boundaries[i][2]});
+        gs.getGrid()[gs.getTeams()[i].getBase()[0]][gs.getTeams()[i].getBase()[1]] =
+            "b:" + gs.getTeams()[i].getId();
+      } else if (boundaries[i][4] == 1) {
+        gs.getTeams()[i]
+            .setBase(new int[] {(boundaries[i][1] - boundaries[i][0]) / 2 + (boundaries[i][0]),
+                (boundaries[i][3] - boundaries[i][2]) / 2+ boundaries[i][2]});
+        gs.getGrid()[gs.getTeams()[i].getBase()[0]][gs.getTeams()[i].getBase()[1]] =
+            "b:" + gs.getTeams()[i].getId();
+      }
+    }
   }
 
   /**
