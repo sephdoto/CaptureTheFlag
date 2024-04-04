@@ -29,7 +29,7 @@ public class BoardSetUp {
    * @param int teamID, MapTemplate template
    * @return initialized team 
    */
-  static Team initializeTeam(int teamID, MapTemplate template) {
+  public static Team initializeTeam(int teamID, MapTemplate template) {
     
     // Creating the Pieces for the team
     int count = 1;
@@ -407,5 +407,53 @@ public class BoardSetUp {
   static int seededRandom(MapTemplate mt, int modifier, int upperBound) {
     int seed = (new Gson().toJson(mt) + String.valueOf(modifier)).hashCode();
     return new Random(seed).nextInt(upperBound);
+  }
+
+  /**
+   * This method should be used instead of Math.random() to generate deterministic positive pseudo
+   * random values. Changing modifier changes the resulting output for the same seed.
+   *
+   * @author rsyed
+   * @param GameState the object to to operations on
+   * @param MapTemplate to read data from
+   * @return GameState initialized with 
+   */
+  static GameState makeGridandTeams(GameState gs, MapTemplate template) {
+    gs.setGrid(initGrid(template.getGridSize()[0], template.getGridSize()[1]));          //INIT Size and make the board
+    gs.setTeams(initTeams(template));
+    return gs;
+  }
+
+  /**
+   * Helper Method for initing the Grid with Empty spaces
+   *
+   * @author rsyed
+   * @param int x 
+   * @param int y 
+   * @return String[][] with empty boxes
+   */
+ private static String[][] initGrid(int x, int y) {
+    String[][] grid = new String[x][y];
+    for (int i = 0; i < grid.length; i++) {
+      for (int j = 0; j < grid[i].length; j++) {
+        grid[i][j] = "";
+      }
+    }
+    return grid;
+  }
+
+   /**
+   * Helper Method for initing Teams
+   *
+   * @author rsyed
+   * @param template Uses it to read data
+   * @return Team[] with empty boxes
+   */
+  private static Team[] initTeams(MapTemplate template){
+    Team[] teams = new Team[template.getTeams()];
+    for (int i = 0; i < teams.length; i++) {
+      teams[i] = initializeTeam(i, template);
+    }
+    return teams;
   }
 }

@@ -71,30 +71,16 @@ public class GameEngine implements Game {
     this.currentTemplate = template; // Saves a copy of the initial template
 
     this.gameState = new GameState();
-    //this.gameState.setTeams(new Team[template.getTeams()]); I think this is no longer needed (@yannicksiebenhaar)
-    String[][] grid = new String[template.getGridSize()[0]][template.getGridSize()[1]];
-    for (int i = 0; i < grid.length; i++) {
-      for (int j = 0; j < grid[i].length; j++) {
-        grid[i][j] = "";
-      }
-    }
-    this.gameState.setGrid(grid);
-
-    // initializing teams
-    Team[] teams = new Team[template.getTeams()];
-    for (int i = 0; i < teams.length; i++) {
-      teams[i] = BoardSetUp.initializeTeam(i, template);
-    }
-    this.gameState.setTeams(teams);
-    
+    //Inits Grid and Teams with pieces
+    BoardSetUp.makeGridandTeams(this.gameState, template);
     BoardSetUp.placeBases(this.gameState, template);
     
     // placing the pieces and blocks
    
     try {
       BoardSetUp.initPieces(this.gameState, template);
-    } catch (TooManyPiecesException e) {
-      System.out.print("too many pieces, make the board bigger :(");
+    } catch (TooManyPiecesException e) {  //If too many pieces. Catches the exception and throws UnknownError at the client.
+      throw new UnknownError();
     } 
     
     BoardSetUp.initGrid(this.gameState, template);

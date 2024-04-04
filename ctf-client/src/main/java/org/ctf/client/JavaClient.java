@@ -300,6 +300,7 @@ public class JavaClient implements GameClientInterface {
     this.currentTeamTurn = gameState.getCurrentTeam();
     this.lastMove = gameState.getLastMove();
     this.teams = gameState.getTeams();
+    this.currentState = gameState;
   }
 
   private GameSessionResponse gameSessionCaller() {

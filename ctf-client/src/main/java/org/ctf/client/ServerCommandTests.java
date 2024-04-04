@@ -1,10 +1,17 @@
 package org.ctf.client;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.IOException;
+
 import org.ctf.client.service.CommLayer;
+import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
+import org.ctf.shared.state.Team;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.dto.GameSessionRequest;
 import org.ctf.shared.state.dto.GameSessionResponse;
@@ -26,7 +33,9 @@ public class ServerCommandTests {
     // Uncomment to do invidivual tests
     // testConnection();
     // testStart();
-     joinTest();
+    // joinTest();
+    // copierCheck();
+     arrayTest();
    // getStateTests();
     // testConnectionTimedGameMode();
     // testMalformedConnection();
@@ -514,5 +523,165 @@ public class ServerCommandTests {
     javaClient.joinGame("Se[j1]");
     javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "nasd");
     javaClient.getStateFromServer();
+  }
+
+  public static void copierCheck(){
+    String jsonPayload =
+        """
+          {
+            "gridSize": [10, 10],
+            "teams": 2,
+            "flags": 1,
+            "blocks": 0,
+            "pieces": [
+              {
+                "type": "Pawn",
+                "attackPower": 1,
+                "count": 10,
+                "movement": {
+                  "directions": {
+                    "left": 0,
+                    "right": 0,
+                    "up": 1,
+                    "down": 0,
+                    "upLeft": 1,
+                    "upRight": 1,
+                    "downLeft": 0,
+                    "downRight": 0
+                  }
+                }
+              },
+              {
+                "type": "Rook",
+                "attackPower": 5,
+                "count": 2,
+                "movement": {
+                  "directions": {
+                    "left": 2,
+                    "right": 2,
+                    "up": 2,
+                    "down": 2,
+                    "upLeft": 0,
+                    "upRight": 0,
+                    "downLeft": 0,
+                    "downRight": 0
+                  }
+                }
+              },
+              {
+                "type": "Knight",
+                "attackPower": 3,
+                "count": 2,
+                "movement": {
+                  "shape": {
+                    "type": "lshape"
+                  }
+                }
+              },
+              {
+                "type": "Bishop",
+                "attackPower": 3,
+                "count": 2,
+                "movement": {
+                  "directions": {
+                    "left": 0,
+                    "right": 0,
+                    "up": 0,
+                    "down": 0,
+                    "upLeft": 2,
+                    "upRight": 2,
+                    "downLeft": 2,
+                    "downRight": 2
+                  }
+                }
+              },
+              {
+                "type": "Queen",
+                "attackPower": 5,
+                "count": 1,
+                "movement": {
+                  "directions": {
+                    "left": 2,
+                    "right": 2,
+                    "up": 2,
+                    "down": 2,
+                    "upLeft": 2,
+                    "upRight": 2,
+                    "downLeft": 2,
+                    "downRight": 2
+                  }
+                }
+              },
+              {
+                "type": "King",
+                "attackPower": 1,
+                "count": 1,
+                "movement": {
+                  "directions": {
+                    "left": 1,
+                    "right": 1,
+                    "up": 1,
+                    "down": 1,
+                    "upLeft": 1,
+                    "upRight": 1,
+                    "downLeft": 1,
+                    "downRight": 1
+                  }
+                }
+              }
+            ],
+            "placement": "symmetrical",
+            "totalTimeLimitInSeconds": -1,
+            "moveTimeLimitInSeconds": -1
+          }
+        """;
+
+    Gson gson2 = new GsonBuilder().setPrettyPrinting().create();
+    Gson gson = new Gson();
+    MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
+    CommLayer comm = new CommLayer();
+    JavaClient javaClient = new JavaClient("localhost", "8888");
+    JavaClient javaClient2 = new JavaClient("localhost", "8888");
+    
+    javaClient.createGame(template);
+    javaClient.joinGame("Team1");
+    javaClient2.joinExistingGame(
+        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
+        javaClient.getStateFromServer();
+        javaClient2.getStateFromServer();
+    Move move = new Move();
+    move.setPieceId("p:0_2");
+    move.setNewPosition(new int[] {0, 1});
+
+    javaClient.getStateFromServer();
+    javaClient2.getStateFromServer();
+
+    GameState state1 = javaClient.getCurrentState();
+    System.out.println("GSON " + gson.toJson(state1));
+
+    ObjectMapper mapper = new ObjectMapper();
+		GameState re = new GameState();
+		try {
+			String asJson = mapper.writeValueAsString(state1);
+      System.out.println("As JSON " + asJson);
+		} catch (JsonGenerationException e) {
+			System.out.println("Error in deepCopyGameState JSON Method");
+		} catch (JsonMappingException e) {
+			System.out.println("Error in deepCopyGameState JSON Method");
+		} catch (IOException e) {
+			System.out.println("Error in deepCopyGameState JSON Method");
+		}
+  }
+
+  public static void arrayTest(){
+    Team[] teams = new Team[3];
+    for (int i = 0; i < teams.length; i++) {
+      teams[i] = new Team();
+      teams[i].setId(Integer.toString(i));
+    }
+   
+    for(Team t : teams){
+      System.out.println(t.getId());
+    }
   }
 }
