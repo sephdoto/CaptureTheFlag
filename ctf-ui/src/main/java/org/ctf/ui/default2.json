@@ -1,13 +1,13 @@
 {
-  "gridSize": [25, 25],
-  "teams": 2,
-  "flags": 1,
-  "blocks": 0,
+  "gridSize": [12, 12],
+  "teams": 3,
+  "flags": 2,
+  "blocks": 5,
   "pieces": [
     {
       "type": "Pawn",
       "attackPower": 1,
-      "count": 12,
+      "count": 10,
       "movement": {
         "directions": {
           "left": 0,
@@ -101,6 +101,6 @@
     }
   ],
   "placement": "symmetrical",
-  "totalTimeLimitInSeconds": 3660,
-  "moveTimeLimitInSeconds": 65
+  "totalTimeLimitInSeconds": 3600,
+  "moveTimeLimitInSeconds": 30
 }

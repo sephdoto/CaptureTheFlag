@@ -64,8 +64,6 @@ public class MapEditorScene extends Scene {
 		try {
 			tmpTemplate = JSON_Tools.readMapTemplate(defaultMap);
 		} catch (IncompleteMapTemplateException | IOException e) {
-			// TODO Auto-generated catch block
-			// e.printStackTrace();
 			System.out.println("fail");
 		}
 
@@ -98,10 +96,14 @@ public class MapEditorScene extends Scene {
 
 		VBox leftroot = new VBox();
 		MenuButton mb = createMenuButton();
+		MenuButton mmb = createMapMenuButton();
+		HBox menuBox = new HBox();
+		menuBox.getChildren().add(mb);
+		menuBox.getChildren().add(mmb);
 		// mb.setStyle("-fx-border-color: transparent;");
 		// leftroot.getChildren().add(mb);
 		// leftroot.getChildren().add(test);
-		leftroot.getChildren().add(mb);
+		leftroot.getChildren().add(menuBox);
 		leftroot.getChildren().add(left);
 		leftroot.getChildren().add(createSubmit());
 		leftroot.getChildren().add(createExit());
@@ -326,6 +328,13 @@ public class MapEditorScene extends Scene {
 		// comboBox.prefWidthProperty().bind(turmSpinner.widthProperty());
 		pieceComboBox.getStyleClass().add("custom-combo-box");
 		pieceComboBox.setValue("Custom1");
+		String[] names = {"Pawn", "Knight", "Queen","Bishop","Rook"};
+		ArrayList<String> defaultPieces = new ArrayList<String>(Arrays.asList(names));
+		for(String type : customPieces.keySet()) {
+			if(!defaultPieces.contains(type)) {
+				pieceComboBox.getItems().add(type);
+			}
+		}
 		pieceComboBox.setOnAction(e -> {
 			spinnerchange = true;
 			int customcount = customPieces.get(pieceComboBox.getValue()).getCount();
@@ -575,6 +584,45 @@ public class MapEditorScene extends Scene {
 		});
 		return mb;
 	}
+	
+	private MenuButton createMapMenuButton() {
+		MenuButton mb = new MenuButton("Load Map");
+		mb.getStyleClass().add("custom-menu-button");
+		MenuItem default1Item = new MenuItem("Map One");
+		MenuItem default2Item = new MenuItem("Map Two");
+		
+		mb.getItems().addAll(default1Item, default2Item);
+		default1Item.setOnAction(event -> {
+			File defaultMap = new File("src" + File.separator + "main" + File.separator + "java" + File.separator + "org"
+					+ File.separator + "ctf" + File.separator + "ui" + File.separator + "default.json");
+			try {
+				tmpTemplate = JSON_Tools.readMapTemplate(defaultMap);
+			} catch (IncompleteMapTemplateException | IOException e) {
+				System.out.println("fail");
+			}
+			initializePieces();
+			options[0] = createMapChooser();
+			options[1] = createFigurChooser();
+			left.getChildren().clear();
+			left.getChildren().add(options[0]);
+		});
+		default2Item.setOnAction(event -> {
+			File defaultMap = new File("src" + File.separator + "main" + File.separator + "java" + File.separator + "org"
+					+ File.separator + "ctf" + File.separator + "ui" + File.separator + "default2.json");
+			try {
+				tmpTemplate = JSON_Tools.readMapTemplate(defaultMap);
+			} catch (IncompleteMapTemplateException | IOException e) {
+				System.out.println("fail");
+			}
+			initializePieces();
+			options[0] = createMapChooser();
+			options[1] = createFigurChooser();
+			left.getChildren().clear();
+			left.getChildren().add(options[0]);
+		});
+		
+		return mb;
+	}
 
 	private Button createExit() {
 		Button exit = new Button("LEAVE");
@@ -653,9 +701,18 @@ public class MapEditorScene extends Scene {
 	}
 
 	private void initializePieces() {
+		ArrayList<String> usedTypes = new ArrayList<String>();
 		for (PieceDescription piece : tmpTemplate.getPieces()) {
 			customPieces.put(piece.getType(), piece);
+			usedTypes.add(piece.getType());
 		}
+		for(PieceDescription piece: customPieces.values()) {
+			if(!usedTypes.contains(piece.getType())) {
+				piece.setCount(0);
+			}
+		}
+		
+		
 	}
 
 	private int initialValue(String name) {
