@@ -54,6 +54,7 @@ public class MapEditorScene extends Scene {
 	private HashMap<String, PieceDescription> customPieces = new HashMap<String, PieceDescription>();
 	private HomeSceneController hsc;
 	private boolean spinnerchange = false;
+	private boolean boxchange = false;
 
 	public MapEditorScene(HomeSceneController hsc) {
 		super(new VBox(), 1000, 500);
@@ -130,14 +131,21 @@ public class MapEditorScene extends Scene {
 		Label rowlabel = new Label("Rows");
 		rowlabel.getStyleClass().add("custom-label");
 		controlgrid.add(rowlabel, 0, 0);
-		SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100,
+		SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100,
 				tmpTemplate.getGridSize()[0]);
 		Spinner<Integer> spinner = new Spinner<>(valueFactory);
 		spinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
-			int[] newField = new int[2];
-			newField[0] = newValue;
-			newField[1] = tmpTemplate.getGridSize()[1];
-			tmpTemplate.setGridSize(newField);
+			if (spinnerchange) {
+				spinnerchange = false;
+				return;
+			}
+			tmpTemplate.getGridSize()[0] = newValue;
+			if (!TemplateChecker.checkTemplate(tmpTemplate)) {
+				tmpTemplate.getGridSize()[0] = old;
+				spinnerchange = true;
+				spinner.getValueFactory().setValue(old);
+				System.out.println("Zu wenig Platz");
+			}
 		});
 
 		controlgrid.add(spinner, 1, 0);
@@ -145,13 +153,20 @@ public class MapEditorScene extends Scene {
 		Label collabel = new Label("Collums");
 		collabel.getStyleClass().add("custom-label");
 		controlgrid.add(collabel, 0, 1);
-		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, tmpTemplate.getGridSize()[1]);
+		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, tmpTemplate.getGridSize()[1]);
 		Spinner<Integer> spinner2 = new Spinner<>(valueFactory);
 		spinner2.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
-			int[] newField = new int[2];
-			newField[0] = tmpTemplate.getGridSize()[0];
-			newField[1] = newValue;
-			tmpTemplate.setGridSize(newField);
+			if (spinnerchange) {
+				spinnerchange = false;
+				return;
+			}
+			tmpTemplate.getGridSize()[1] = newValue;
+			if (!TemplateChecker.checkTemplate(tmpTemplate)) {
+				tmpTemplate.getGridSize()[1] = old;
+				spinnerchange = true;
+				spinner2.getValueFactory().setValue(old);
+				System.out.println("Zu wenig Platz");
+			}
 		});
 		controlgrid.add(spinner2, 1, 1);
 
@@ -161,14 +176,25 @@ public class MapEditorScene extends Scene {
 		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, tmpTemplate.getTeams());
 		Spinner<Integer> spinner3 = new Spinner<>(valueFactory);
 		spinner3.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
+			if (spinnerchange) {
+				spinnerchange = false;
+				return;
+			}
 			tmpTemplate.setTeams(newValue);
+			if (!TemplateChecker.checkTemplate(tmpTemplate)) {
+				tmpTemplate.setTeams(old);
+				spinnerchange = true;
+				spinner3.getValueFactory().setValue(old);
+				System.out.println("Zu wenig Platz für " + newValue + " Teams");
+			}
 		});
+
 		controlgrid.add(spinner3, 1, 2);
 
 		Label flagslabel = new Label("Flags");
 		flagslabel.getStyleClass().add("custom-label");
 		controlgrid.add(flagslabel, 0, 3);
-		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, tmpTemplate.getFlags());
+		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, tmpTemplate.getFlags());
 		Spinner<Integer> spinner4 = new Spinner<>(valueFactory);
 		spinner4.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
 			tmpTemplate.setFlags(newValue);
@@ -181,8 +207,19 @@ public class MapEditorScene extends Scene {
 		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, tmpTemplate.getBlocks());
 		Spinner<Integer> spinner5 = new Spinner<>(valueFactory);
 		spinner5.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
+			if (spinnerchange) {
+				spinnerchange = false;
+				return;
+			}
 			tmpTemplate.setBlocks(newValue);
+			if (!TemplateChecker.checkTemplate(tmpTemplate)) {
+				tmpTemplate.setBlocks(old);
+				spinnerchange = true;
+				spinner5.getValueFactory().setValue(old);
+				System.out.println("Zu wenig Platz für " + newValue + " Blocks");
+			}
 		});
+
 		controlgrid.add(spinner5, 3, 0);
 
 		Label time1label = new Label("Thinking Time \n in seconds");
@@ -267,7 +304,17 @@ public class MapEditorScene extends Scene {
 		Spinner<Integer> bauerSpinner = new Spinner<>(valueFactory);
 		bauerSpinner.setPrefWidth(100);
 		bauerSpinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
+			if (spinnerchange) {
+				spinnerchange = false;
+				return;
+			}
 			betterUpdateCount("Pawn", newValue);
+			if (!TemplateChecker.checkTemplate(tmpTemplate)) {
+				betterUpdateCount("Pawn", old);
+				spinnerchange = true;
+				bauerSpinner.getValueFactory().setValue(old);
+				System.out.println("Nicht genug Platz fuer " + newValue + " Bauern je Team");
+			}
 		});
 		// bauerSpinner.prefHeightProperty().bind(t1.heightProperty());
 		choose1.getChildren().add(bauerSpinner);
@@ -276,7 +323,18 @@ public class MapEditorScene extends Scene {
 		Spinner<Integer> springerSpinner = new Spinner<>(valueFactory);
 		springerSpinner.setPrefWidth(100);
 		springerSpinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
+			if (spinnerchange) {
+				spinnerchange = false;
+				return;
+			}
 			betterUpdateCount("Knight", newValue);
+			if (!TemplateChecker.checkTemplate(tmpTemplate)) {
+				betterUpdateCount("Knight", old);
+				spinnerchange = true;
+				springerSpinner.getValueFactory().setValue(old);
+				System.out.println("Nicht genug Platz fuer " + newValue + " Springer je Team");
+			}
+
 		});
 		// springerSpinner.prefHeightProperty().bind(t1.heightProperty());
 		choose1.getChildren().add(springerSpinner);
@@ -285,7 +343,18 @@ public class MapEditorScene extends Scene {
 		Spinner<Integer> dameSpinner = new Spinner<>(valueFactory);
 		dameSpinner.setPrefWidth(100);
 		dameSpinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
+			if (spinnerchange) {
+				spinnerchange = false;
+				return;
+			}
 			betterUpdateCount("Queen", newValue);
+			if (!TemplateChecker.checkTemplate(tmpTemplate)) {
+				betterUpdateCount("Queen", old);
+				spinnerchange = true;
+				dameSpinner.getValueFactory().setValue(old);
+				System.out.println("Nicht genug Platz fuer " + newValue + " Damen je Team");
+			}
+
 		});
 		// dameSpinner.prefHeightProperty().bind(t1.heightProperty());
 		choose1.getChildren().add(dameSpinner);
@@ -306,7 +375,18 @@ public class MapEditorScene extends Scene {
 		Spinner<Integer> laufSpinner = new Spinner<>(valueFactory);
 		laufSpinner.setPrefWidth(100);
 		laufSpinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
+			if (spinnerchange) {
+				spinnerchange = false;
+				return;
+			}
 			betterUpdateCount("Bishop", newValue);
+			if (!TemplateChecker.checkTemplate(tmpTemplate)) {
+				betterUpdateCount("Bishop", old);
+				spinnerchange = true;
+				laufSpinner.getValueFactory().setValue(old);
+				System.out.println("Nicht genug Platz fuer " + newValue + " Lauefer je Team");
+			}
+
 		});
 		choose2.getChildren().add(laufSpinner);
 
@@ -314,7 +394,18 @@ public class MapEditorScene extends Scene {
 		Spinner<Integer> turmSpinner = new Spinner<>(valueFactory);
 		turmSpinner.setPrefWidth(100);
 		turmSpinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
+			if (spinnerchange) {
+				spinnerchange = false;
+				return;
+			}
 			betterUpdateCount("Rook", newValue);
+			if (!TemplateChecker.checkTemplate(tmpTemplate)) {
+				betterUpdateCount("Rook", newValue);
+				spinnerchange = true;
+				turmSpinner.getValueFactory().setValue(old);
+				System.out.println("Nicht genug Platz fuer " + newValue + " Tuerme je Team");
+			}
+
 		});
 		choose2.getChildren().add(turmSpinner);
 
@@ -330,25 +421,35 @@ public class MapEditorScene extends Scene {
 		// comboBox.prefWidthProperty().bind(turmSpinner.widthProperty());
 		pieceComboBox.getStyleClass().add("custom-combo-box");
 		pieceComboBox.setValue("Custom1");
-		String[] names = {"Pawn", "Knight", "Queen","Bishop","Rook"};
+		String[] names = { "Pawn", "Knight", "Queen", "Bishop", "Rook" };
 		ArrayList<String> defaultPieces = new ArrayList<String>(Arrays.asList(names));
-		for(String type : customPieces.keySet()) {
-			if(!defaultPieces.contains(type)) {
+		for (String type : customPieces.keySet()) {
+			if (!defaultPieces.contains(type)) {
 				pieceComboBox.getItems().add(type);
 			}
 		}
 		pieceComboBox.setOnAction(e -> {
-			spinnerchange = true;
+			boxchange = true;
 			int customcount = customPieces.get(pieceComboBox.getValue()).getCount();
 			customSpinner.getValueFactory().setValue(customcount);
 
 		});
 		customSpinner.getValueFactory().valueProperty().addListener((obs, old, newv) -> {
-			// customPieces.get(pieceComboBox.getValue()).setCount(newv);
-			if (!spinnerchange) {
-				betterUpdateCount(pieceComboBox.getValue(), newv);
-			} else {
+			if (boxchange) {
+				boxchange = false;
+				return;
+			}
+			if (spinnerchange) {
 				spinnerchange = false;
+				return;
+			}
+
+			betterUpdateCount(pieceComboBox.getValue(), newv);
+			if (!TemplateChecker.checkTemplate(tmpTemplate)) {
+				betterUpdateCount(pieceComboBox.getValue(), old);
+				spinnerchange = true;
+				customSpinner.getValueFactory().setValue(old);
+				System.out.println("Nicht genug Platz fuer " + newv + " " + pieceComboBox.getValue() + " je Team");
 			}
 		});
 
@@ -587,19 +688,19 @@ public class MapEditorScene extends Scene {
 		});
 		return mb;
 	}
-	
+
 	private MenuButton createMapMenuButton() {
 		MenuButton mb = new MenuButton("Load Map");
 		mb.setPrefSize(130, 30);
 		mb.getStyleClass().add("custom-menu-button");
-		
+
 		MenuItem default1Item = new MenuItem("Map One");
 		MenuItem default2Item = new MenuItem("Map Two");
-		
+
 		mb.getItems().addAll(default1Item, default2Item);
 		default1Item.setOnAction(event -> {
-			File defaultMap = new File("src" + File.separator + "main" + File.separator + "java" + File.separator + "org"
-					+ File.separator + "ctf" + File.separator + "ui" + File.separator + "default.json");
+			File defaultMap = new File("src" + File.separator + "main" + File.separator + "java" + File.separator
+					+ "org" + File.separator + "ctf" + File.separator + "ui" + File.separator + "default.json");
 			try {
 				tmpTemplate = JSON_Tools.readMapTemplate(defaultMap);
 			} catch (IncompleteMapTemplateException | IOException e) {
@@ -612,8 +713,8 @@ public class MapEditorScene extends Scene {
 			left.getChildren().add(options[0]);
 		});
 		default2Item.setOnAction(event -> {
-			File defaultMap = new File("src" + File.separator + "main" + File.separator + "java" + File.separator + "org"
-					+ File.separator + "ctf" + File.separator + "ui" + File.separator + "default2.json");
+			File defaultMap = new File("src" + File.separator + "main" + File.separator + "java" + File.separator
+					+ "org" + File.separator + "ctf" + File.separator + "ui" + File.separator + "default2.json");
 			try {
 				tmpTemplate = JSON_Tools.readMapTemplate(defaultMap);
 			} catch (IncompleteMapTemplateException | IOException e) {
@@ -625,7 +726,7 @@ public class MapEditorScene extends Scene {
 			left.getChildren().clear();
 			left.getChildren().add(options[0]);
 		});
-		
+
 		return mb;
 	}
 
@@ -711,13 +812,12 @@ public class MapEditorScene extends Scene {
 			customPieces.put(piece.getType(), piece);
 			usedTypes.add(piece.getType());
 		}
-		for(PieceDescription piece: customPieces.values()) {
-			if(!usedTypes.contains(piece.getType())) {
+		for (PieceDescription piece : customPieces.values()) {
+			if (!usedTypes.contains(piece.getType())) {
 				piece.setCount(0);
 			}
 		}
-		
-		
+
 	}
 
 	private int initialValue(String name) {
@@ -727,6 +827,7 @@ public class MapEditorScene extends Scene {
 			return customPieces.get(name).getCount();
 		}
 	}
+
 	@Deprecated
 	private void updateCount(String s, int value) {
 		customPieces.get(s).setCount(value);
@@ -767,8 +868,8 @@ public class MapEditorScene extends Scene {
 		tmpTemplate.setPieces(updatedPieces);
 	}
 
-	public void betterUpdateCount(String s, int value) {
-		customPieces.get(s).setCount(value);
+	public void betterUpdateCount(String s, int newValue) {
+		customPieces.get(s).setCount(newValue);
 		int number = (int) customPieces.values().stream().filter(p -> p.getCount() > 0).count();
 		PieceDescription[] updated = new PieceDescription[number];
 		int i = 0;
