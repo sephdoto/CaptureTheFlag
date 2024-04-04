@@ -15,7 +15,7 @@ import de.unimannheim.swt.pse.ctf.game.state.Piece;
 import de.unimannheim.swt.pse.ctf.game.state.Team;
 
 /**
- * This class contains usefull methods for GameEngine to clean it up.
+ * This class contains useful methods for the GameEngine.
  * @author sistumpf
  */
 public class EngineTools extends AI_Tools {
@@ -282,16 +282,6 @@ public class EngineTools extends AI_Tools {
   }
   
   
-  class StrengthComparator implements Comparator <Piece>{
-    
-    @Override
-    public int compare(Piece a, Piece b) {
-        if(a.getDescription().getAttackPower() > b.getDescription().getAttackPower()) return -1;
-        else if(a.getDescription().getAttackPower() < b.getDescription().getAttackPower()) return 1;
-        else return 0;      
-    }
-}
-  
   /**
    * helper 
    * @author yannicksiebenhaar
@@ -305,5 +295,20 @@ public class EngineTools extends AI_Tools {
       }
     }
   }
+  
+  // ******************************
+  // Inner Classes
+  // ******************************
+
+  class StrengthComparator implements Comparator <Piece>{
+    
+    @Override
+    public int compare(Piece a, Piece b) {
+        if(a.getDescription().getAttackPower() > b.getDescription().getAttackPower()) return -1;
+        else if(a.getDescription().getAttackPower() < b.getDescription().getAttackPower()) return 1;
+        else return 0;      
+    }
+}
+
 
 }

@@ -32,6 +32,10 @@ import javafx.scene.paint.Color;
  * @author rsyed & ysiebenh & sistumpf
  */
 public class GameEngine implements Game {
+  
+  // **************************************************
+  // Fields
+  // **************************************************
 
   private GameState gameState; // MAIN Data Store for GameEngine
 
@@ -51,6 +55,10 @@ public class GameEngine implements Game {
   private LocalDateTime lastMoveTime;
   private LocalDateTime nextMoveTime;
 
+  // **************************************************
+  // Public Methods
+  // **************************************************
+  
   /**
    * Creates a game session with the corresponding Map passed onto as the Template
    *
@@ -63,7 +71,7 @@ public class GameEngine implements Game {
     this.currentTemplate = template; // Saves a copy of the initial template
 
     this.gameState = new GameState();
-    //this.gameState.setTeams(new Team[template.getTeams()]);
+    //this.gameState.setTeams(new Team[template.getTeams()]); I think this is no longer needed (@yannicksiebenhaar)
     String[][] grid = new String[template.getGridSize()[0]][template.getGridSize()[1]];
     for (int i = 0; i < grid.length; i++) {
       for (int j = 0; j < grid[i].length; j++) {
@@ -86,8 +94,7 @@ public class GameEngine implements Game {
     try {
       BoardSetUp.initPieces(this.gameState, template);
     } catch (TooManyPiecesException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      System.out.print("too many pieces, make the board bigger :(");
     } 
     
     BoardSetUp.initGrid(this.gameState, template);
@@ -326,51 +333,7 @@ public class GameEngine implements Game {
 
     afterMoveCleanup();
   }
-
-  /**
-   * Call this after making a move. Timer gets updated, gameOverChecks are made.
-   *
-   * @author sistumpf, rsyed
-   */
-  private void afterMoveCleanup() {
-    // Update Time
-    if (this.moveTimeLimitedGame) {
-      this.lastMoveTime = LocalDateTime.now();
-    }
-
-    gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
-    gameOverCheck();
-    if (gameState.getTeams()[gameState.getCurrentTeam()] == null) gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
-  }
-
-  /**
-   * Call this before making a move.
-   *
-   * @param move
-   * @return false if the move is invalid, either because it is the wrong player, the move itself is
-   *     invalid or the game is already over.
-   */
-  private boolean movePreconditionsMet(Move move) {
-    if (isGameOver() || !isTurn(move)) {
-      return false;
-    } else if (!isValidMove(move)) {
-      throw new InvalidMove();
-    }
-    return true;
-  }
-
-  /**
-   * Helper method to perform a turn check. So that players cannot make out of turn moves.
-   *
-   * @author rsyed
-   * @param move To extract the team from the piece being moved
-   * @return boolean
-   */
-  private boolean isTurn(Move move) {
-    int moveTeamIdentifier = Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0]);
-    return (moveTeamIdentifier == gameState.getCurrentTeam());
-  }
-
+  
   /**
    * The {@link GameEngine#isGameOver()} method only returns the {@link GameEngine#isGameOver}
    * value, so this method implements the game over checks. It updates the isGameOver {@link
@@ -414,7 +377,94 @@ public class GameEngine implements Game {
               LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()); // Sets game end time
     }
   }
+  
 
+  /**
+   * If the game is over a String Array containing all winner IDs is returned. This method relies on
+   * the fact that loser teams get set to null in the gameState.teams Array.
+   *
+   * @author sistumpf
+   * @return {@link Team#getId()} if there is a winner
+   */
+  @Override
+  public String[] getWinner() {
+    ArrayList<String> winners = new ArrayList<String>();
+    if (this.isGameOver) {
+      for (Team team : this.gameState.getTeams()) {
+        if (team != null) {
+          winners.add(team.getId());
+        }
+      }
+    }
+    return winners.toArray(new String[winners.size()]);
+  }
+
+  /**
+   * @return Start {@link Date} of game
+   */
+  @Override
+  public Date getStartedDate() {
+    return startedDate;
+  }
+
+  /**
+   * @return End date of game
+   */
+  @Override
+  public Date getEndDate() {
+    return this.endDate;
+  }
+
+  // **************************************************
+  // Private Methods
+  // **************************************************
+
+  /**
+   * Call this after making a move. Timer gets updated, gameOverChecks are made.
+   *
+   * @author sistumpf, rsyed
+   */
+  private void afterMoveCleanup() {
+    // Update Time
+    if (this.moveTimeLimitedGame) {
+      this.lastMoveTime = LocalDateTime.now();
+    }
+
+    gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
+    gameOverCheck();
+    if (gameState.getTeams()[gameState.getCurrentTeam()] == null)
+      gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
+  }
+
+  /**
+   * Call this before making a move.
+   *
+   * @param move
+   * @return false if the move is invalid, either because it is the wrong player, the move itself is
+   *         invalid or the game is already over.
+   */
+  private boolean movePreconditionsMet(Move move) {
+    if (isGameOver() || !isTurn(move)) {
+      return false;
+    } else if (!isValidMove(move)) {
+      throw new InvalidMove();
+    }
+    return true;
+  }
+
+  /**
+   * Helper method to perform a turn check. So that players cannot make out of turn moves.
+   *
+   * @author rsyed
+   * @param move To extract the team from the piece being moved
+   * @return boolean
+   */
+  private boolean isTurn(Move move) {
+    int moveTeamIdentifier = Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0]);
+    return (moveTeamIdentifier == gameState.getCurrentTeam());
+  }
+
+  
   /**
    * This method checks if the current team got moves left, if thats not the case the team get
    * removed. After a team got removed the next team gets checked, until only 1 team is left or a
@@ -455,69 +505,29 @@ public class GameEngine implements Game {
   }
 
   /**
-   * @return Start {@link Date} of game
-   */
-  @Override
-  public Date getStartedDate() {
-    return startedDate;
-  }
-
-  /**
-   * @return End date of game
-   */
-  @Override
-  public Date getEndDate() {
-    return this.endDate;
-  }
-
-  /**
-   * If the game is over a String Array containing all winner IDs is returned. This method relies on
-   * the fact that loser teams get set to null in the gameState.teams Array.
-   *
-   * @author sistumpf
-   * @return {@link Team#getId()} if there is a winner
-   */
-  @Override
-  public String[] getWinner() {
-    ArrayList<String> winners = new ArrayList<String>();
-    if (this.isGameOver) {
-      for (Team team : this.gameState.getTeams()) {
-        if (team != null) {
-          winners.add(team.getId());
-        }
-      }
-    }
-    return winners.toArray(new String[winners.size()]);
-  }
-
-  /**
    * Helper method to Start the game
    *
    * @author rsyed
    */
   private void startGame() {
     gameState.setCurrentTeam(0);
-//TODO Fix the problem with randomly selecting a starting team
-    //    gameState.setCurrentTeam(
-    //        (int) (Math.random() * currentTemplate.getTeams())); // Sets the starting team randomly
-        this.startedDate =
-            Date.from(
-                LocalDateTime.now()
-                    .atZone(ZoneId.systemDefault())
-                    .toInstant()); // Sets the TimeStamp for when the game started
-        if (this.timeLimitedGame) {
-          this.gameEndsAt =
-              LocalDateTime.now()
-                  .plusSeconds(
-                      currentTemplate
-                          .getTotalTimeLimitInSeconds()); // Sets the TimeStamp for when the game should
-          // end
-        }
-        if (this.moveTimeLimitedGame) {
-          this.lastMoveTime = LocalDateTime.now();
-          this.nextMoveTime = lastMoveTime.plusSeconds(currentTemplate.getMoveTimeLimitInSeconds());
-        }
-      }
+    // TODO Fix the problem with randomly selecting a starting team
+    // gameState.setCurrentTeam(
+    // (int) (Math.random() * currentTemplate.getTeams())); // Sets the starting team randomly
+
+    // Sets the TimeStamp for when the game started
+    if (this.timeLimitedGame) {
+      this.startedDate = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
+
+      // Sets the TimeStamp for when the game should end
+      this.gameEndsAt =
+          LocalDateTime.now().plusSeconds(currentTemplate.getTotalTimeLimitInSeconds());
+    }
+    if (this.moveTimeLimitedGame) {
+      this.lastMoveTime = LocalDateTime.now();
+      this.nextMoveTime = lastMoveTime.plusSeconds(currentTemplate.getMoveTimeLimitInSeconds());
+    }
+  }
 
   /**
    * Helper method to add a team to the gameState. It takes in a String which it uses to create a
@@ -552,25 +562,6 @@ public class GameEngine implements Game {
   }
 
   /**
-   * Helper method to visualize the board
-   *
-   * @author ysiebenh
-   */
-  private void printState() {
-    for (String[] x : this.gameState.getGrid()) {
-      for (String y : x) {
-        int l = y.length();
-        System.out.print("|" + y);
-        for(int i = l; i < 6; i++) {
-          System.out.print(" ");
-        }
-        System.out.print("|");
-      }
-      System.out.println("\n--------------------------------------------------------------------------------");
-    }
-  }
-
-  /**
    * Helper method to set flags for Alternate Game modes
    *
    * @author rsyed
@@ -598,52 +589,10 @@ public class GameEngine implements Game {
       gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
     }
   }
-
-  public static void main(String[] args) {
-
-    GameEngine test = new GameEngine();
-    MapTemplate testMap = new MapTemplate();
-    PieceDescription[] pieces = new PieceDescription[1];
-    pieces[0] = new PieceDescription();
-    pieces[0].setAttackPower(5);
-    pieces[0].setCount(10);
-    // pieces[1] = new PieceDescription();
-    // pieces[1].setAttackPower(1);
-    // pieces[1].setCount(3);
-    testMap.setGridSize(new int[] {10, 10});
-    testMap.setTeams(2);
-    testMap.setBlocks(0);
-    testMap.setPieces(pieces);
-
-    String mapString =
-        "{\"gridSize\":[15,15],\"teams\":2,\"flags\":1,\"pieces\":[{\"type\":\"Pawn\",\"attackPower\":1,\"count\":1,\"movement\":{\"directions\":{\"left\":0,\"right\":0,\"up\":1,\"down\":0,\"upLeft\":1,\"upRight\":1,\"downLeft\":0,\"downRight\":0}}},{\"type\":\"Rook\",\"attackPower\":5,\"count\":2,\"movement\":{\"directions\":{\"left\":2,\"right\":2,\"up\":2,\"down\":2,\"upLeft\":0,\"upRight\":0,\"downLeft\":0,\"downRight\":0}}},{\"type\":\"Knight\",\"attackPower\":3,\"count\":2,\"movement\":{\"shape\":{\"type\":\"lshape\"}}},{\"type\":\"Bishop\",\"attackPower\":3,\"count\":2,\"movement\":{\"directions\":{\"left\":0,\"right\":0,\"up\":0,\"down\":0,\"upLeft\":2,\"upRight\":2,\"downLeft\":2,\"downRight\":2}}},{\"type\":\"Queen\",\"attackPower\":5,\"count\":1,\"movement\":{\"directions\":{\"left\":2,\"right\":2,\"up\":2,\"down\":2,\"upLeft\":2,\"upRight\":2,\"downLeft\":2,\"downRight\":2}}},{\"type\":\"King\",\"attackPower\":1,\"count\":1,\"movement\":{\"directions\":{\"left\":1,\"right\":1,\"up\":1,\"down\":1,\"upLeft\":1,\"upRight\":1,\"downLeft\":1,\"downRight\":1}}}],\"blocks\":10,\"placement\":\"symmetrical\",\"totalTimeLimitInSeconds\":-1,\"moveTimeLimitInSeconds\":3}\r\n";
-    Gson gson = new Gson();
-    new TypeToken<>() {}.getType();
-    testMap = gson.fromJson(mapString, MapTemplate.class);
-
-    test.create(testMap);
-    test.addTeam("seph", 1);
-    // test.addTeam("seph2", 1);
-    //System.out.println(test.isStarted());
-    System.out.println(test.isGameOver());
-    int[] futuresquare = {2, 0};
-    Move testmove = new Move();
-    testmove.setNewPosition(futuresquare);
-    testmove.setPieceId("p:1_1");
-    // test.makeMove(testmove);
-    test.printState();
-    // System.out.println(test.gameState.getTeams()[0].getColor().toString());
-    // System.out.println(test.gameState.getTeams()[1].getColor().toString());
-
-    Move move = new Move();
-    //move.setPieceId(test.getCurrentGameState().getTeams()[0].getPieces()[0].getId());
-    //	System.out.println(test.getCurrentGameState().getTeams()[1].getBase()[0]);
-    //    	test.makeMove(move);
-    // System.out.println(((int)(Math.random()*test.currentTemplate.getTeams())));
-    // System.out.println(((int)(Math.random()*test.currentTemplate.getTeams())));
-    // System.out.println(((int)(Math.random()*test.currentTemplate.getTeams())));
-    // System.out.println(test.getRemainingMoveTimeInSeconds());
-  }
+  
+  // **************************************************
+  // Simons Special Methods 
+  // **************************************************
 
   /**
    * TODO Test Konstruktor von Simon Kann entfernt werden wenn das Generieren von GameStates
