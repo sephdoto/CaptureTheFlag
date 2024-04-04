@@ -291,5 +291,19 @@ public class EngineTools extends AI_Tools {
         else return 0;      
     }
 }
+  
+  /**
+   * helper 
+   * @author yannicksiebenhaar
+   * @return
+   */
+  public static void updateGrid(GameState gs) {
+    for (Team team : gs.getTeams()) {
+      //grid[team.getBase()[0]][team.getBase()[1]] = "b:" + team.getId(); //Moved to InitPieces so the pieces will be placed around the base
+      for (Piece piece : team.getPieces()) {
+        gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = piece.getId();
+      }
+    }
+  }
 
 }

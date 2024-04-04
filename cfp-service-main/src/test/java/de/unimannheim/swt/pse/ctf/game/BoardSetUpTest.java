@@ -1,15 +1,93 @@
 package de.unimannheim.swt.pse.ctf.game;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+import org.ctf.shared.state.data.exceptions.TooManyPiecesException;
 import org.junit.jupiter.api.Test;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
+import de.unimannheim.swt.pse.ctf.game.state.GameState;
+import de.unimannheim.swt.pse.ctf.game.state.Team;
 
 class BoardSetUpTest {
+  
+    /**
+     * @author yannicksiebenhaar
+     * 
+     */
+    @Test
+    void testInitializeTeam() {
+      MapTemplate template = TestValues.getTestTemplate();
+      Team team = BoardSetUp.initializeTeam(0, template);
+      assertNotNull(team.getPieces());
+      assertNotNull(team.getBase());
+      assertNotNull(team.getClass());
+      assertNotNull(team.getColor());
+      assertEquals(team.getFlags(),template.getFlags());
+      assertNotNull(team.getId());     
+    }
+    
+    /**
+     * @author yannicksiebenhaar
+     * 
+     */
+    @Test
+    void testInitPieces() {
+      
+      MapTemplate[] templates = TestValues.getDummyTeplates();
+      
+      for (int o = 0; o < templates.length; o++) {
+        GameState gs = new GameState();
+        Team[] teams = new Team[templates[o].getTeams()];
+
+        String[][] grid = new String[templates[o].getGridSize()[0]][templates[o].getGridSize()[1]];
+        for (int i = 0; i < grid.length; i++) {
+          for (int j = 0; j < grid[i].length; j++) {
+            grid[i][j] = "";
+          }
+        }
+        gs.setGrid(grid);
+
+        for (int i = 0; i < templates[o].getTeams(); i++) {
+          teams[i] = BoardSetUp.initializeTeam(i, templates[o]);
+        }
+        gs.setTeams(teams);
+        BoardSetUp.placeBases(gs, templates[o]);
+
+        try {
+          BoardSetUp.initPieces(gs, templates[o]);
+        } catch (TooManyPiecesException e) {
+          System.out.println("too many pieces");
+          System.out.println("-----------------------------------");
+          continue;
+        }
+
+        EngineTools.updateGrid(gs);
+
+        printGrid(gs.getGrid());
+        System.out.println("-----------------------------------");
+      }
+    }
+    
+    /**
+     * @author yannicksiebenhaar
+     * 
+     */
+    @Test
+    void testInitGrid() {
+      fail("not yet implimented");
+    }
+    
+    /**
+     * @author yannicksiebenhaar
+     * 
+     */
+    @Test
+    void testPlaceBases() {
+      fail("not yet implimented");
+    }
 
   /**
    * @author sistumpf

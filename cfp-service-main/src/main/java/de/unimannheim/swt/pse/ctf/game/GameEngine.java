@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import org.ctf.shared.state.data.exceptions.TooManyPiecesException;
 import javafx.scene.paint.Color;
 
 /**
@@ -62,7 +63,7 @@ public class GameEngine implements Game {
     this.currentTemplate = template; // Saves a copy of the initial template
 
     this.gameState = new GameState();
-    this.gameState.setTeams(new Team[template.getTeams()]);
+    //this.gameState.setTeams(new Team[template.getTeams()]);
     String[][] grid = new String[template.getGridSize()[0]][template.getGridSize()[1]];
     for (int i = 0; i < grid.length; i++) {
       for (int j = 0; j < grid[i].length; j++) {
@@ -82,7 +83,12 @@ public class GameEngine implements Game {
     
     // placing the pieces and blocks
    
-    BoardSetUp.initPieces(this.gameState, template); 
+    try {
+      BoardSetUp.initPieces(this.gameState, template);
+    } catch (TooManyPiecesException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } 
     
     BoardSetUp.initGrid(this.gameState, template);
     

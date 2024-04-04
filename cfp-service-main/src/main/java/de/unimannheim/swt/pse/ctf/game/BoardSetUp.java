@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
+import org.ctf.shared.state.data.exceptions.TooManyPiecesException;
 
 public class BoardSetUp {
 
@@ -24,7 +25,7 @@ public class BoardSetUp {
    * @return Team thats initialized
    */
   static Team initializeTeam(int teamID, MapTemplate template) {
-    // TODO different placement types
+    
     // Creating the Pieces for the team
     int count = 1;
     LinkedList<Piece> indPieces = new LinkedList<Piece>();
@@ -42,10 +43,6 @@ public class BoardSetUp {
     Team team = new Team();
     team.setId(Integer.toString(teamID));
     team.setColor(GameEngine.getRandColor());
-
-    // TODO die Bases müssen woanders gesetzt werden.
-    
-
     team.setFlags(template.getFlags());
 
     Piece[] pieces = new Piece[indPieces.size()]; // putting the pieces in an array
@@ -64,8 +61,15 @@ public class BoardSetUp {
    * @author sistumpf
    * @param gameState
    * @param template
+   * @throws Exception 
    */
-  static void initPieces(GameState gameState, MapTemplate template) {
+  static void initPieces(GameState gameState, MapTemplate template) throws TooManyPiecesException {
+    
+    if (gameState.getTeams()[0].getPieces().length > (gameState.getGrid().length / 2)
+        * (gameState.getGrid()[0].length - 2)) {
+        throw new TooManyPiecesException("Too many Pieces! Make the board bigger! :)");
+      }
+    
 	  for (Team team : gameState.getTeams()) {
 	      gameState.getGrid()[team.getBase()[0]][team.getBase()[1]] = "b:" + team.getId();
 	  }
@@ -272,17 +276,22 @@ public class BoardSetUp {
     int row = gameState.getTeams()[0].getBase()[0]-1;
     int column = 1;
     boolean lastRound = false;
+    
+    if (gameState.getTeams()[0].getPieces().length < gameState.getGrid()[0].length - 2) lastRound = true;
+    
     for (int i = 0; i < gameState.getTeams()[0].getPieces().length; i++) {
-      if (column == gameState.getGrid()[0].length - 1) {
+      if (column == gameState.getGrid()[0].length - 1 || lastRound) {
         row++;
         column = 1;
+
+        if (gameState.getTeams()[0].getPieces().length - i < gameState.getGrid()[0].length - 2) {
+          lastRound = true;
+          column = (gameState.getGrid()[0].length / 2)
+              - (gameState.getTeams()[0].getPieces().length - i) / 2;
+          lastRound = false;
+        }
       }
       
-      if (gameState.getTeams()[0].getPieces().length - i < gameState.getGrid()[0].length - 2 && !lastRound) {
-        lastRound = true;
-        column = (gameState.getGrid()[0].length / 2)
-            - (gameState.getTeams()[0].getPieces().length - i) / 2;
-      }
 
       if (!gameState.getGrid()[row][column].equals("")) {
         column++;
@@ -299,16 +308,20 @@ public class BoardSetUp {
     row = gameState.getTeams()[1].getBase()[0]+1;
     column = 1;
     lastRound = false;
+    if (gameState.getTeams()[0].getPieces().length < gameState.getGrid()[0].length - 2) lastRound = true;
+
     for (int i = 0; i < gameState.getTeams()[1].getPieces().length; i++) {
-      if (column == gameState.getGrid()[1].length - 1) {
+      if (column == gameState.getGrid()[1].length - 1 || lastRound) {
         row--;
         column = 1;
+        if (gameState.getTeams()[0].getPieces().length - i < gameState.getGrid()[1].length - 2) {
+          lastRound = true;
+          column = (gameState.getGrid()[0].length / 2)
+              - (gameState.getTeams()[1].getPieces().length - i) / 2;
+          lastRound = false;
+        }
       }
-      if (gameState.getTeams()[0].getPieces().length - i < gameState.getGrid()[1].length - 2 && !lastRound) {
-        lastRound = true;
-        column = (gameState.getGrid()[0].length / 2)
-            - (gameState.getTeams()[1].getPieces().length - i) / 2;
-      }
+      
       if (!gameState.getGrid()[row][column].equals("")) {
         column++;
         i--;
