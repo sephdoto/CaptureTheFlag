@@ -31,7 +31,7 @@ import test.CreateTextGameStates;
 public class CostumFigurePain extends Pane {
 	//Achtung: DIe Position von dem Piece, das zu einem Costumfigurepain gehört kann abweichen von der Position
 	//des CostumFigurePain, da das Piece sich während des Spiels bew
-	Game game;
+	//Game game;
 	String teamID;
 	Piece piece;
 	String type;
@@ -81,7 +81,7 @@ public class CostumFigurePain extends Pane {
 	 */
 	public void showShadow() {
 		DropShadow borderGlow = new DropShadow();
-        borderGlow.setColor(Color.RED);
+        borderGlow.setColor(Color.BLACK);
         borderGlow.setOffsetX(0f);
         borderGlow.setOffsetY(0f);
         vw.setEffect(borderGlow);
@@ -89,13 +89,13 @@ public class CostumFigurePain extends Pane {
 	
 	
 	public void performMouseClick() {
-		if(game.getCurrent() != null) {
-			game.getCurrent().disableShadow();				}
+		if(Game.getCurrent() != null) {
+			Game.getCurrent().disableShadow();				}
 	System.out.println("Hallo: " + posX + ", " + posY);
 	showShadow();
 	showPieceInformationWhenClicked();
-	game.setCurrent(CostumFigurePain.this);
-	game.showPossibleMoves();
+	Game.setCurrent(CostumFigurePain.this);
+	Game.showPossibleMoves();
 	
 	}
 	
@@ -173,13 +173,13 @@ public class CostumFigurePain extends Pane {
 		this.parent = parent;
 	}
 	
-	public Game getGame() {
-		return game;
-	}
-
-	public void setGame(Game game) {
-		this.game = game;
-	}
+//	public Game getGame() {
+//		return game;
+//	}
+//
+//	public void setGame(Game game) {
+//		this.game = game;
+//	}
 
 	
 	

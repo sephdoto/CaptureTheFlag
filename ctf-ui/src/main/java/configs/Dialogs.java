@@ -8,7 +8,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
-import test.CreateTextGameStates;
 import javafx.scene.control.Alert.AlertType;
 
 public class Dialogs {

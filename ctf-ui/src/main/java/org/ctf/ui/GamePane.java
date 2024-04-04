@@ -100,14 +100,14 @@ public class GamePane extends HBox {
 	}
 	
 	//Setzt das Game für alle Zellen und Figuren
-	public void setGame(Game game) {
-		for(CostumFigurePain cm : figures.values()) {
-			cm.setGame(game); 
-		}
-		for(BackgroundCellV2 cl: cells.values()) {
-			cl.setGame(game);
-		}
-	}
+//	public void setGame(Game game) {
+//		for(CostumFigurePain cm : figures.values()) {
+//			cm.setGame(game); 
+//		}
+//		for(BackgroundCellV2 cl: cells.values()) {
+//			cl.setGame(game);
+//		}
+//	}
 	
 	public HashMap<String, CostumFigurePain> getFigures() {
 		return figures;

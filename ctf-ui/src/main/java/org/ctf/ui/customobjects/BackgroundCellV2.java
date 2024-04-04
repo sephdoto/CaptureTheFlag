@@ -16,7 +16,7 @@ public class BackgroundCellV2 extends Pane {
 	String name;
 	public Circle rc;
 	public boolean active;
-	public Game game;
+	//public Game game;
 	StackPane base;
 	CostumFigurePain child;
 
@@ -31,7 +31,7 @@ public class BackgroundCellV2 extends Pane {
 
 	public void createCircle() {
 		rc = new Circle();
-		rc.radiusProperty().bind(Bindings.divide(widthProperty(), 5));
+		rc.radiusProperty().bind(Bindings.divide(widthProperty(), 6));
 		rc.centerXProperty().bind(widthProperty().divide(2));
 		rc.centerYProperty().bind(widthProperty().divide(2));
 		rc.setFill(Color.WHITE);
@@ -43,7 +43,10 @@ public class BackgroundCellV2 extends Pane {
 		child = figure;
 		base.getChildren().add(child);
 		figure.setParente(this);
+		
+		
 	}
+	
 
 	public void addBlock(BlockRepV3 block) {
 		occupied = true;
@@ -52,13 +55,13 @@ public class BackgroundCellV2 extends Pane {
 		base.getChildren().add(blocki);
 	}
 
-	public Game getGame() {
-		return game;
-	}
-
-	public void setGame(Game game) {
-		this.game = game;
-	}
+//	public Game getGame() {
+//		return game;
+//	}
+//
+//	public void setGame(Game game) {
+//		this.game = game;
+//	}
 
 	public int[] getPosition() {
 		int[] s = { x, y };
@@ -86,7 +89,7 @@ public class BackgroundCellV2 extends Pane {
 		if (active) {
 			//rc.setFill(Color.RED);
 			int[] xk = { x, y };
-			game.makeMoveRequest(xk);
+			Game.makeMoveRequest(xk);
 
 		}
 	}

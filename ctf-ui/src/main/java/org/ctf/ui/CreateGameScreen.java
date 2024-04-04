@@ -26,6 +26,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.cell.ChoiceBoxListCell;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.BorderPane;
 
 import javafx.scene.layout.GridPane;
@@ -61,7 +62,7 @@ public class CreateGameScreen  {
 		topContainerVBox = new VBox();
 		HBox headerBox = createHeaderBox();
 		center = new HBox();
-		center.setStyle("-fx-background-color:white");
+		center.setStyle("-fx-background-color:beige");
 		VBox right = createRightSide();
 		chooseDefaultMap();
 		center.prefWidthProperty().bind(stage.widthProperty().multiply(0.7));
@@ -169,7 +170,7 @@ public class CreateGameScreen  {
 		//headerBox.setStyle("-fx-background-color: lightblue");
 		HBox h1 = new HBox();
 		h1.prefWidthProperty().bind(headerBox.widthProperty().multiply(0.7011));
-		h1.setStyle("-fx-background-color: white");
+		h1.setStyle("-fx-background-color: beige");
 		h1.setAlignment(Pos.CENTER);
 		HBox h2 = new HBox();
 		h2.prefWidthProperty().bind(headerBox.widthProperty().multiply(0.3));

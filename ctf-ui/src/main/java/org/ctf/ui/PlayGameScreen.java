@@ -9,6 +9,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -38,13 +39,15 @@ public class PlayGameScreen {
 	public static void initPlayGameScreen(Stage stage, GameState state) {
 		s = stage;
 		gm = createLeftSidPane(state);
-		game = new Game(gm);
-		gm.setGame(game);
+		DropShadow shadow = new DropShadow(50, Color.GRAY);
+        gm.setEffect(shadow);
+		Game.initializeGame(gm);
+		//gm.setGame(game);
 		v = new VBox();
 		//HBox headerBox = createHeaderBox();
 		//v.getChildren().add(headerBox);
 		center = new HBox();
-		center.setStyle("-fx-background-color:white");
+		center.setStyle("-fx-background-color:beige");
 		VBox right = createRightSide();
 		center.getChildren().addAll(gm, right);
 		v.getChildren().add(center);

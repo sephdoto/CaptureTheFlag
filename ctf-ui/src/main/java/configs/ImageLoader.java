@@ -9,17 +9,17 @@ import javafx.scene.image.Image;
 
 public class ImageLoader {
 
-	private static final String WORRIOR = "WarriorV1.JPG";
+	private static final String WORRIOR = "RealWarrior.png";
 	private static HashMap<String, Image> images;
 
 	/**
-	 * Loads the images and initializes the HashMap with the image resources. THis
+	 * Loads the images and initializes the HashMap with the image resources. This
 	 * method should be called when a new Game is created or joined
 	 */
 	public static void loadImages() {
 		images = new HashMap<>();
-		Image logInImage = initImage(WORRIOR);
-		images.put("WarriorV1", logInImage);
+		Image WorriorImage = initImage(WORRIOR);
+		images.put("WarriorV1", WorriorImage);
 	}
 
 	/**
