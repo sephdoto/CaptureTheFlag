@@ -16,6 +16,7 @@ import org.ctf.shared.state.data.map.PlacementType;
 import org.ctf.shared.tools.JSON_Tools;
 import org.ctf.shared.tools.JSON_Tools.IncompleteMapTemplateException;
 
+import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -42,6 +43,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 public class MapEditorScene extends Scene {
 	private String[][] feld;
@@ -55,6 +57,7 @@ public class MapEditorScene extends Scene {
 	private HomeSceneController hsc;
 	private boolean spinnerchange = false;
 	private boolean boxchange = false;
+	private Text text = new Text("");
 
 	public MapEditorScene(HomeSceneController hsc) {
 		super(new VBox(), 1000, 500);
@@ -112,7 +115,10 @@ public class MapEditorScene extends Scene {
 		leftroot.getChildren().add(left);
 		leftroot.setStyle("-fx-spacing: 20px;");
 		leftroot.setAlignment(Pos.CENTER);
-
+		
+		leftroot.getChildren().add(text);
+		text.setStyle("-fx-fill: rgba(255, 255, 255, 1);");
+		
 		sep.getChildren().add(leftroot);
 		sep.getChildren().add(CreateMapGrid());
 
@@ -580,6 +586,8 @@ public class MapEditorScene extends Scene {
 			result.setAttackPower(strengthSpinner.getValueFactory().getValue());
 			customPieces.put(result.getType(), result);
 			pieceComboBox.getItems().add(result.getType());
+			this.inform(result.getType()+" was added to custom Pieces.");
+			
 		});
 
 		comboBox2.setOnAction(e -> {
@@ -922,6 +930,18 @@ public class MapEditorScene extends Scene {
 		}
 		tmpTemplate.setPieces(updated);
 
+	}
+	private void inform(String s) {
+		text.setText(s);
+		FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), text);
+        fadeTransition.setDelay(Duration.seconds(1));
+		fadeTransition.setFromValue(1.0); 
+        fadeTransition.setToValue(0.0);
+        fadeTransition.setOnFinished(event -> {
+        	text.setText("");
+        	text.setOpacity(1);     	
+        });
+        fadeTransition.play();
 	}
 
 }
