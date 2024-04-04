@@ -1,5 +1,6 @@
 package de.unimannheim.swt.pse.ctf.game;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -8,6 +9,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.stream.Stream;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Move;
@@ -287,11 +293,32 @@ public class EngineTools extends AI_Tools {
   }
   
   /**
+   * helper for the spaced placement
+   * @author rsyed
+   * @return
+   */
+  public static GameState deepCopyGameState(GameState gs) {
+    ObjectMapper mapper = new ObjectMapper();
+		GameState re = new GameState();
+		try {
+			String jsonInString = mapper.writeValueAsString(gs);
+			re = mapper.readValue(jsonInString, GameState.class);
+		} catch (JsonGenerationException e) {
+			System.out.println("Error in deepCopyGameState JSON Method");
+		} catch (JsonMappingException e) {
+			System.out.println("Error in deepCopyGameState JSON Method");
+		} catch (IOException e) {
+			System.out.println("Error in deepCopyGameState JSON Method");
+		}
+    return re;
+  }
+
+  /**
    * Deep Copies a GameState (hopefully)
    * @author yannicksiebenhaar
    * @return
    */
-  static GameState deepCopyGameState(GameState gs) {
+  static GameState deepCopyGameStateOld(GameState gs) {
     GameState newGs = new GameState();
     Team[] teams = new Team[gs.getTeams().length];
     int c = 0;
