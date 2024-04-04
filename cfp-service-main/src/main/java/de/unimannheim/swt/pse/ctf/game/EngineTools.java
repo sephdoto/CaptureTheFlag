@@ -151,6 +151,7 @@ public class EngineTools extends AI_Tools {
    *          (format: int[teamID][{lowerY,UpperY,lowerX,upperX, orientation(south = 0; north = 1}]
    */
   static int[][] cutUpGrid(GameState gs) {
+    //TODO add more than four players
     int[][] teams = null;
     if(gs.getTeams().length == 2) {
       teams = new int[2][5];
@@ -204,7 +205,7 @@ public class EngineTools extends AI_Tools {
   
   
   // ******************************
-  // Helper methods for the hillclimbing in the spaced_out placement 
+  // Helper methods for the hill-climbing in the spaced_out placement 
   // ******************************
 
   
