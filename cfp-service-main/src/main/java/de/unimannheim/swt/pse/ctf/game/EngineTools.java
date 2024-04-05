@@ -150,14 +150,15 @@ public class EngineTools extends AI_Tools {
   }
   
   /**
-   * Creates x and y boundaries for all teams
+   * Creates x and y boundaries for all teams 
+   * !If we want to change the layout of the teams on the map, we should do it here!
    * 
    * @author ysiebenh
    * @returns an Integer array which stores the upper and lower x and y boundaries for each team
    *          (format: int[teamID][{lowerY,UpperY,lowerX,upperX, orientation(south = 0; north = 1}]
    */
   static int[][] cutUpGrid(GameState gs) {
-    //TODO add more than four players
+    // TODO add more than four players
     int[][] teams = null;
     if(gs.getTeams().length == 2) {
       teams = new int[2][5];

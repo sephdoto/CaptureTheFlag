@@ -12,7 +12,7 @@ import java.util.Random;
 import org.ctf.shared.state.data.exceptions.TooManyPiecesException;
 
 /**
- * This Class stores all static helper methods for the {@link GameEngine#create(MapTemplate) create}
+ * Stores all static helper methods for the {@link GameEngine#create(MapTemplate) create}
  * method
  *
  * @author rsyed & ysiebenh & sistumpf
@@ -157,13 +157,14 @@ public class BoardSetUp {
       for (int y = -1; y <= 1; y++) {
         for (int x = -1; x <= 1; x++) {
           Piece toDelete = null;
-          for(Piece p : pieces) {
-            if(p.getPosition()[0] == gs.getTeams()[i].getBase()[0] + y && p.getPosition()[1] == gs.getTeams()[i].getBase()[1] + x) {
+          for (Piece p : pieces) {
+            if (p.getPosition()[0] == gs.getTeams()[i].getBase()[0] + y
+                && p.getPosition()[1] == gs.getTeams()[i].getBase()[1] + x) {
               toDelete = p;;
             }
           }
           pieces.remove(toDelete);
-          
+
           if (gs.getGrid()[gs.getTeams()[i].getBase()[0] + y][gs.getTeams()[i].getBase()[1] + x]
               .equals("")) {
             Piece piece = pieces.pop();
@@ -216,49 +217,46 @@ public class BoardSetUp {
    * @param GameState gameState
    */
   static void placePiecesSymmetrical(GameState gs) {
-    // TODO more than two teams
-    // putting the pieces on the board (team1)
     int[][] boundaries = EngineTools.cutUpGrid(gs);
-    for(int t = 0; t < gs.getTeams().length; t++) {
-    int row;
-    
-    // checking the orientation and then putting the starting point 'under' the base
-    if(boundaries[t][4] == 0) {
-      row = gs.getTeams()[t].getBase()[0] - 1; // 0 = i
-    }
-    else {
-      row = gs.getTeams()[t].getBase()[0] + 1;;
-    }
-    
-    int column = boundaries[t][2] + 1; // something
-    boolean lastRound = false;
-   
-    if (gs.getTeams()[t].getPieces().length < gs.getGrid()[0].length - 2) {
-      lastRound = true; // 0 = i
-    }
+    for (int t = 0; t < gs.getTeams().length; t++) {
+      int row;
 
-    for (int j = 0; j < gs.getTeams()[0].getPieces().length; j++) { // 0 = i
-      if (column == boundaries[t][3] - 1 || lastRound) {
-        lastRound = false;
-        row = (boundaries[t][4] == 0) ? row + 1 : row - 1;
-        column = boundaries[t][2] + 1;
+      // checking the orientation and then putting the starting point 'under' the base
+      if (boundaries[t][4] == 0) {
+        row = gs.getTeams()[t].getBase()[0] - 1;
+      } else {
+        row = gs.getTeams()[t].getBase()[0] + 1;;
+      }
 
-        if (gs.getTeams()[t].getPieces().length - j < (boundaries[t][3]-boundaries[t][2])/2) {
-          column =
-              (boundaries[t][3]-boundaries[t][2])/2 - (gs.getTeams()[t].getPieces().length - j) / 2 + boundaries[t][2];
+      int column = boundaries[t][2] + 1;
+      boolean lastRound = false;
+
+      if (gs.getTeams()[t].getPieces().length < gs.getGrid()[0].length - 2) {
+        lastRound = true;
+      }
+
+      for (int j = 0; j < gs.getTeams()[0].getPieces().length; j++) {
+        if (column == boundaries[t][3] - 1 || lastRound) {
+          lastRound = false;
+          row = (boundaries[t][4] == 0) ? row + 1 : row - 1;
+          column = boundaries[t][2] + 1;
+
+          if (gs.getTeams()[t].getPieces().length - j < (boundaries[t][3] - boundaries[t][2]) / 2) {
+            column = (boundaries[t][3] - boundaries[t][2]) / 2
+                - (gs.getTeams()[t].getPieces().length - j) / 2 + boundaries[t][2];
+          }
+        }
+
+        if (!gs.getGrid()[row][column].equals("")) {
+          column++;
+          j--;
+        } else {
+          Piece piece = gs.getTeams()[t].getPieces()[j];
+          piece.setPosition(new int[] {row, column});
+          gs.getGrid()[row][column] = piece.getId();
+          column++;
         }
       }
-
-      if (!gs.getGrid()[row][column].equals("")) {
-        column++;
-        j--;
-      } else {
-        Piece piece = gs.getTeams()[t].getPieces()[j];
-        piece.setPosition(new int[] {row, column});
-        gs.getGrid()[row][column] = piece.getId();
-        column++;
-      }
-    }
     }
   }
 
@@ -337,8 +335,7 @@ public class BoardSetUp {
   }
 
   /**
-   * This method should be used instead of Math.random() to generate deterministic positive pseudo
-   * random values. Changing modifier changes the resulting output for the same seed.
+   * Helper method to initialize the grid and teams 
    *
    * @author rsyed
    * @param GameState the object to to operations on
@@ -354,7 +351,7 @@ public class BoardSetUp {
   }
 
   /**
-   * Helper Method for initing the Grid with Empty spaces
+   * Helper Method for initializing the Grid with Empty spaces
    *
    * @author rsyed
    * @param int x
@@ -372,7 +369,7 @@ public class BoardSetUp {
   }
 
   /**
-   * Helper Method for initing Teams
+   * Helper Method for initializing Teams
    *
    * @author rsyed
    * @param template Uses it to read data
