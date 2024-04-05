@@ -120,17 +120,15 @@ public class BoardSetUp {
    */
   static void placePiecesSpaced(GameState gameState) {
     randomPlacement(gameState);
-    for (Team team : gameState.getTeams()) {
-      for (Piece piece : team.getPieces()) {
-        gameState.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = piece.getId();
-      }
-    }
+    EngineTools.updateGrid(gameState);
     for (Team t : gameState.getTeams()) {
       GameState current = gameState;
       while (true) {
         LinkedList<GameState> neighbors =
             EngineTools.getNeighbors(current, Integer.decode(t.getId()), null);
-        System.out.println(neighbors);
+        if(neighbors.size() == 0) {
+          break;
+        }
         GameState bestNeighbor = EngineTools.getBestState(neighbors, Integer.decode(t.getId()));
         if (EngineTools.valueOf(current, Integer.decode(t.getId()))
             >= EngineTools.valueOf(bestNeighbor, Integer.decode(t.getId()))) {
@@ -145,98 +143,39 @@ public class BoardSetUp {
   }
 
   /**
-   * Places the Pieces on the Board by sorting them from strongest to weakest, then placing the
-   * strongest pieces around the base and placing the rest via the {@link
-   * BoardSetUp#placePiecesSpaced(GameState) placePiecesSpaced} method
+   * Places the Pieces on the Board by placing the strongest pieces around the base and placing the
+   * rest via the {@link BoardSetUp#placePiecesSpaced(GameState) placePiecesSpaced} method
    *
    * @author ysiebenh
    * @param GameState gameState
    */
   static void placePiecesDefensive(GameState gs) {
-    // TODO position out of bounds einfuegen
+    // TODO implements position out of bounds 
     // TODO issues when pieces are already on the defensive ring by accident
     // TODO maybe use a loop or something
     placePiecesSpaced(gs);
     for (int i = 0; i < gs.getTeams().length; i++) {
       LinkedList<Piece> pieces = EngineTools.getStrongest(gs.getTeams()[i].getPieces());
-      if (gs.getGrid()[gs.getTeams()[i].getBase()[0] - 1][gs.getTeams()[i].getBase()[1] - 1].equals(
-          "")) {
-        Piece piece = pieces.pop();
-        gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = "";
-        piece.setPosition(
-            new int[] {gs.getTeams()[i].getBase()[0] - 1, gs.getTeams()[i].getBase()[1] - 1});
-        gs.getGrid()[gs.getTeams()[i].getBase()[0] - 1][gs.getTeams()[i].getBase()[1] - 1] =
-            piece.getId();
-      }
-
-      if (gs.getGrid()[gs.getTeams()[i].getBase()[0] - 1][gs.getTeams()[i].getBase()[1]].equals(
-          "")) {
-        Piece piece = pieces.pop();
-        gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = "";
-        piece.setPosition(
-            new int[] {gs.getTeams()[i].getBase()[0] - 1, gs.getTeams()[i].getBase()[1]});
-        gs.getGrid()[gs.getTeams()[i].getBase()[0] - 1][gs.getTeams()[i].getBase()[1]] =
-            piece.getId();
-      }
-
-      if (gs.getGrid()[gs.getTeams()[i].getBase()[0] - 1][gs.getTeams()[i].getBase()[1] + 1].equals(
-          "")) {
-        Piece piece = pieces.pop();
-        gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = "";
-        piece.setPosition(
-            new int[] {gs.getTeams()[i].getBase()[0] - 1, gs.getTeams()[i].getBase()[1] + 1});
-        gs.getGrid()[gs.getTeams()[i].getBase()[0] - 1][gs.getTeams()[i].getBase()[1] + 1] =
-            piece.getId();
-      }
-
-      if (gs.getGrid()[gs.getTeams()[i].getBase()[0]][gs.getTeams()[i].getBase()[1] - 1].equals(
-          "")) {
-        Piece piece = pieces.pop();
-        gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = "";
-        piece.setPosition(
-            new int[] {gs.getTeams()[i].getBase()[0], gs.getTeams()[i].getBase()[1] - 1});
-        gs.getGrid()[gs.getTeams()[i].getBase()[0]][gs.getTeams()[i].getBase()[1] - 1] =
-            piece.getId();
-      }
-
-      if (gs.getGrid()[gs.getTeams()[i].getBase()[0]][gs.getTeams()[i].getBase()[1] + 1].equals(
-          "")) {
-        Piece piece = pieces.pop();
-        gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = "";
-        piece.setPosition(
-            new int[] {gs.getTeams()[i].getBase()[0], gs.getTeams()[i].getBase()[1] + 1});
-        gs.getGrid()[gs.getTeams()[i].getBase()[0]][gs.getTeams()[i].getBase()[1] + 1] =
-            piece.getId();
-      }
-
-      if (gs.getGrid()[gs.getTeams()[i].getBase()[0] + 1][gs.getTeams()[i].getBase()[1] - 1].equals(
-          "")) {
-        Piece piece = pieces.pop();
-        gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = "";
-        piece.setPosition(
-            new int[] {gs.getTeams()[i].getBase()[0] + 1, gs.getTeams()[i].getBase()[1] - 1});
-        gs.getGrid()[gs.getTeams()[i].getBase()[0] + 1][gs.getTeams()[i].getBase()[1] - 1] =
-            piece.getId();
-      }
-
-      if (gs.getGrid()[gs.getTeams()[i].getBase()[0] + 1][gs.getTeams()[i].getBase()[1]].equals(
-          "")) {
-        Piece piece = pieces.pop();
-        gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = "";
-        piece.setPosition(
-            new int[] {gs.getTeams()[i].getBase()[0] + 1, gs.getTeams()[i].getBase()[1]});
-        gs.getGrid()[gs.getTeams()[i].getBase()[0] + 1][gs.getTeams()[i].getBase()[1]] =
-            piece.getId();
-      }
-
-      if (gs.getGrid()[gs.getTeams()[i].getBase()[0] + 1][gs.getTeams()[i].getBase()[1] + 1].equals(
-          "")) {
-        Piece piece = pieces.pop();
-        gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = "";
-        piece.setPosition(
-            new int[] {gs.getTeams()[i].getBase()[0] + 1, gs.getTeams()[i].getBase()[1] + 1});
-        gs.getGrid()[gs.getTeams()[i].getBase()[0] + 1][gs.getTeams()[i].getBase()[1] + 1] =
-            piece.getId();
+      for (int y = -1; y <= 1; y++) {
+        for (int x = -1; x <= 1; x++) {
+          Piece toDelete = null;
+          for(Piece p : pieces) {
+            if(p.getPosition()[0] == gs.getTeams()[i].getBase()[0] + y && p.getPosition()[1] == gs.getTeams()[i].getBase()[1] + x) {
+              toDelete = p;;
+            }
+          }
+          pieces.remove(toDelete);
+          
+          if (gs.getGrid()[gs.getTeams()[i].getBase()[0] + y][gs.getTeams()[i].getBase()[1] + x]
+              .equals("")) {
+            Piece piece = pieces.pop();
+            gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = "";
+            piece.setPosition(
+                new int[] {gs.getTeams()[i].getBase()[0] + y, gs.getTeams()[i].getBase()[1] + x});
+            gs.getGrid()[gs.getTeams()[i].getBase()[0] + y][gs.getTeams()[i].getBase()[1] + x] =
+                piece.getId();
+          }
+        }
       }
     }
 
@@ -272,9 +211,8 @@ public class BoardSetUp {
           int newX = 0;
           int m = 0;
           do {
-            newY =
-                EngineTools.seededRandom(
-                    gs.getGrid(), m++, gs.getGrid().length, 1 + (gs.getGrid().length / 2));
+            newY = EngineTools.seededRandom(gs.getGrid(), m++, gs.getGrid().length,
+                1 + (gs.getGrid().length / 2));
             newX = EngineTools.seededRandom(gs.getGrid(), 1 - m++, gs.getGrid().length, 0);
           } while (!gs.getGrid()[newY][newX].equals(""));
           p.setPosition(new int[] {newY, newX});

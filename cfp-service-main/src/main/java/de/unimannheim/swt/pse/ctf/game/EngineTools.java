@@ -230,7 +230,7 @@ public class EngineTools extends AI_Tools {
           for (int x = 0; x < gs.getGrid()[y].length; x++) {
 
             if (gs.getGrid()[y][x].equals("")) {
-              GameState newGs = deepCopyGameState(gs);
+              GameState newGs = deepCopyGameStateOld(gs);
               newGs.getGrid()[newGs.getTeams()[teamID].getPieces()[i]
                   .getPosition()[0]][newGs.getTeams()[teamID].getPieces()[i].getPosition()[1]] = "";
               newGs.getTeams()[teamID].getPieces()[i].setPosition(new int[] {y, x});
@@ -248,7 +248,7 @@ public class EngineTools extends AI_Tools {
           for (int x = 0; x < gs.getGrid()[y].length; x++) {
 
             if (gs.getGrid()[y][x].equals("")) {
-              GameState newGs = deepCopyGameState(gs);
+              GameState newGs = deepCopyGameStateOld(gs);
               newGs.getGrid()[newGs.getTeams()[teamID].getPieces()[i]
                   .getPosition()[0]][newGs.getTeams()[teamID].getPieces()[i].getPosition()[1]] = "";
               newGs.getTeams()[teamID].getPieces()[i].setPosition(new int[] {y, x});
@@ -314,7 +314,7 @@ public class EngineTools extends AI_Tools {
 
   /**
    * Deep Copies a GameState (hopefully)
-   * @author yannicksiebenhaar
+   * @author ysiebenh
    * @return
    */
   static GameState deepCopyGameStateOld(GameState gs) {
@@ -380,7 +380,6 @@ public class EngineTools extends AI_Tools {
    */
   static void updateGrid(GameState gs) {
     for (Team team : gs.getTeams()) {
-      //grid[team.getBase()[0]][team.getBase()[1]] = "b:" + team.getId(); //Moved to InitPieces so the pieces will be placed around the base
       for (Piece piece : team.getPieces()) {
         gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = piece.getId();
       }

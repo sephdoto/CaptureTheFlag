@@ -22,6 +22,7 @@ class GameEngineTest {
 
   @Test
   void testCreate() {
+    gameEngine.create(TestValues.getTestTemplate());
     fail("Not yet implemented");
   }
 

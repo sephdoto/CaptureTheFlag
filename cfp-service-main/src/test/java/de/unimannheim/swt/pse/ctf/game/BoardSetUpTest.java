@@ -67,8 +67,8 @@ class BoardSetUpTest {
 
         EngineTools.updateGrid(gs);
 
-        //printGrid(gs.getGrid());
-        //System.out.println("-----------------------------------");
+        printGrid(gs.getGrid());
+        System.out.println("-----------------------------------");
       }
     }
     
