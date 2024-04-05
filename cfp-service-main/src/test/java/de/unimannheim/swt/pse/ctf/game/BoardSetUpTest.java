@@ -14,7 +14,7 @@ import de.unimannheim.swt.pse.ctf.game.state.Team;
 class BoardSetUpTest {
   
     /**
-     * @author yannicksiebenhaar
+     * @author ysiebenh
      * 
      */
     @Test
@@ -30,7 +30,7 @@ class BoardSetUpTest {
     }
     
     /**
-     * @author yannicksiebenhaar
+     * @author ysiebenh
      * 
      */
     @Test
@@ -73,7 +73,7 @@ class BoardSetUpTest {
     }
     
     /**
-     * @author yannicksiebenhaar
+     * @author ysiebenh
      * 
      */
     @Test
@@ -83,8 +83,7 @@ class BoardSetUpTest {
     }
     
     /**
-     * @author yannicksiebenhaar
-     * 
+     * @author ysiebenh
      */
     @Test
     void testPlaceBases() {
@@ -113,8 +112,11 @@ class BoardSetUpTest {
 
         printGrid(gs.getGrid());
         System.out.println("-----------------------------------");
-      }
-     
+        assertEquals(gs.getGrid()[gs.getTeams()[0].getBase()[0]][gs.getTeams()[0].getBase()[1]],"b:" + gs.getTeams()[0].getId() );
+        assertEquals(gs.getGrid()[gs.getTeams()[1].getBase()[0]][gs.getTeams()[1].getBase()[1]],"b:" + gs.getTeams()[1].getId() );
+        }
+      
+   
 
     }
 
