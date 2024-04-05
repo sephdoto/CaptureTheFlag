@@ -217,47 +217,28 @@ public class EngineTools extends AI_Tools {
   
   /**
    * Helper method for spaced placement
+   * 
    * @author ysiebenh
    */
   static LinkedList<GameState> getNeighbors(GameState gs, int teamID, int[] startEnd) {
 
     LinkedList<GameState> result = new LinkedList<GameState>();
-
+    int[][] boundaries = EngineTools.cutUpGrid(gs);
     for (int i = 0; i < gs.getTeams()[teamID].getPieces().length; i++) {
-      if (teamID == 0) {
-        gs.setCurrentTeam(teamID);
-        for (int y = 0; y < gs.getGrid().length / 2; y++) {
-          for (int x = 0; x < gs.getGrid()[y].length; x++) {
+      gs.setCurrentTeam(teamID);
+      for (int y = boundaries[teamID][0]; y < boundaries[teamID][1]; y++) {
+        for (int x = boundaries[teamID][2]; x < boundaries[teamID][3]; x++) {
 
-            if (gs.getGrid()[y][x].equals("")) {
-              GameState newGs = deepCopyGameStateOld(gs);
-              newGs.getGrid()[newGs.getTeams()[teamID].getPieces()[i]
-                  .getPosition()[0]][newGs.getTeams()[teamID].getPieces()[i].getPosition()[1]] = "";
-              newGs.getTeams()[teamID].getPieces()[i].setPosition(new int[] {y, x});
-              newGs.getGrid()[newGs.getTeams()[teamID].getPieces()[i]
-                  .getPosition()[0]][newGs.getTeams()[teamID].getPieces()[i].getPosition()[1]] =
-                      newGs.getTeams()[teamID].getPieces()[i].getId();
-              newGs.setGrid(newGs.getGrid());
-              result.add(newGs);
-            }
-          }
-        }
-      } else if (teamID == 1) {
-        gs.setCurrentTeam(teamID);
-        for (int y = gs.getGrid().length / 2; y < gs.getGrid().length; y++) {
-          for (int x = 0; x < gs.getGrid()[y].length; x++) {
-
-            if (gs.getGrid()[y][x].equals("")) {
-              GameState newGs = deepCopyGameStateOld(gs);
-              newGs.getGrid()[newGs.getTeams()[teamID].getPieces()[i]
-                  .getPosition()[0]][newGs.getTeams()[teamID].getPieces()[i].getPosition()[1]] = "";
-              newGs.getTeams()[teamID].getPieces()[i].setPosition(new int[] {y, x});
-              newGs.getGrid()[newGs.getTeams()[teamID].getPieces()[i]
-                  .getPosition()[0]][newGs.getTeams()[teamID].getPieces()[i].getPosition()[1]] =
-                      newGs.getTeams()[teamID].getPieces()[i].getId();
-              newGs.setGrid(newGs.getGrid());
-              result.add(newGs);
-            }
+          if (gs.getGrid()[y][x].equals("")) {
+            GameState newGs = deepCopyGameStateOld(gs);
+            newGs.getGrid()[newGs.getTeams()[teamID].getPieces()[i]
+                .getPosition()[0]][newGs.getTeams()[teamID].getPieces()[i].getPosition()[1]] = "";
+            newGs.getTeams()[teamID].getPieces()[i].setPosition(new int[] {y, x});
+            newGs.getGrid()[newGs.getTeams()[teamID].getPieces()[i]
+                .getPosition()[0]][newGs.getTeams()[teamID].getPieces()[i].getPosition()[1]] =
+                    newGs.getTeams()[teamID].getPieces()[i].getId();
+            newGs.setGrid(newGs.getGrid());
+            result.add(newGs);
           }
         }
       }

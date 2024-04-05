@@ -181,7 +181,7 @@ public class BoardSetUp {
   }
 
   /**
-   * Places the pieces randomly on the board using the
+   * Places the pieces on the board randomly using the
    * {@link EngineTools#seededRandom(String[][], int, int, int) seededRandom} method
    *
    * @author ysiebenh
@@ -191,7 +191,6 @@ public class BoardSetUp {
     int i = 0;
     int[][] boundaries = EngineTools.cutUpGrid(gs);
     for (Team t : gs.getTeams()) {
-      // if (t.getId().equals("0")) {
       for (Piece p : t.getPieces()) {
         int newY = 0;
         int newX = 0;
@@ -216,71 +215,50 @@ public class BoardSetUp {
    * @author ysiebenh
    * @param GameState gameState
    */
-  static void placePiecesSymmetrical(GameState gameState) {
+  static void placePiecesSymmetrical(GameState gs) {
     // TODO more than two teams
     // putting the pieces on the board (team1)
-    int row = gameState.getTeams()[0].getBase()[0] - 1; // 0 = i
-    int column = 1; // something
+    int[][] boundaries = EngineTools.cutUpGrid(gs);
+    for(int t = 0; t < gs.getTeams().length; t++) {
+    int row;
+    
+    // checking the orientation and then putting the starting point 'under' the base
+    if(boundaries[t][4] == 0) {
+      row = gs.getTeams()[t].getBase()[0] - 1; // 0 = i
+    }
+    else {
+      row = gs.getTeams()[t].getBase()[0] + 1;;
+    }
+    
+    int column = boundaries[t][2] + 1; // something
     boolean lastRound = false;
-    int[][] boundaries = EngineTools.cutUpGrid(gameState);
-
-    if (gameState.getTeams()[0].getPieces().length < gameState.getGrid()[0].length - 2)
+   
+    if (gs.getTeams()[t].getPieces().length < gs.getGrid()[0].length - 2) {
       lastRound = true; // 0 = i
+    }
 
-    for (int j = 0; j < gameState.getTeams()[0].getPieces().length; j++) { // 0 = i
-      if (column == gameState.getGrid()[0].length - 1 || lastRound) {
-        row++;
-        column = 1;
+    for (int j = 0; j < gs.getTeams()[0].getPieces().length; j++) { // 0 = i
+      if (column == boundaries[t][3] - 1 || lastRound) {
+        lastRound = false;
+        row = (boundaries[t][4] == 0) ? row + 1 : row - 1;
+        column = boundaries[t][2] + 1;
 
-        if (gameState.getTeams()[0].getPieces().length - j < gameState.getGrid()[0].length - 2) {
-          lastRound = true;
+        if (gs.getTeams()[t].getPieces().length - j < (boundaries[t][3]-boundaries[t][2])/2) {
           column =
-              (gameState.getGrid()[0].length / 2)
-                  - (gameState.getTeams()[0].getPieces().length - j) / 2;
-          lastRound = false;
+              (boundaries[t][3]-boundaries[t][2])/2 - (gs.getTeams()[t].getPieces().length - j) / 2 + boundaries[t][2];
         }
       }
 
-      if (!gameState.getGrid()[row][column].equals("")) {
+      if (!gs.getGrid()[row][column].equals("")) {
         column++;
         j--;
       } else {
-        Piece piece = gameState.getTeams()[0].getPieces()[j];
+        Piece piece = gs.getTeams()[t].getPieces()[j];
         piece.setPosition(new int[] {row, column});
-        // gameState.getGrid()[row][column] = piece.getId();
+        gs.getGrid()[row][column] = piece.getId();
         column++;
       }
     }
-
-    // putting pieces on the board (team2)
-    row = gameState.getTeams()[1].getBase()[0] + 1;
-    column = 1;
-    lastRound = false;
-    if (gameState.getTeams()[0].getPieces().length < gameState.getGrid()[0].length - 2)
-      lastRound = true;
-
-    for (int i = 0; i < gameState.getTeams()[1].getPieces().length; i++) {
-      if (column == gameState.getGrid()[1].length - 1 || lastRound) {
-        row--;
-        column = 1;
-        if (gameState.getTeams()[0].getPieces().length - i < gameState.getGrid()[1].length - 2) {
-          lastRound = true;
-          column =
-              (gameState.getGrid()[0].length / 2)
-                  - (gameState.getTeams()[1].getPieces().length - i) / 2;
-          lastRound = false;
-        }
-      }
-
-      if (!gameState.getGrid()[row][column].equals("")) {
-        column++;
-        i--;
-      } else {
-        Piece piece = gameState.getTeams()[1].getPieces()[i];
-        piece.setPosition(new int[] {row, column});
-        // gameState.getGrid()[row][column] = piece.getId();
-        column++;
-      }
     }
   }
 
