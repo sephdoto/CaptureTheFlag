@@ -151,8 +151,6 @@ public class BoardSetUp {
    */
   static void placePiecesDefensive(GameState gs) {
     // TODO implements position out of bounds 
-    // TODO issues when pieces are already on the defensive ring by accident
-    // TODO maybe use a loop or something
     placePiecesSpaced(gs);
     for (int i = 0; i < gs.getTeams().length; i++) {
       LinkedList<Piece> pieces = EngineTools.getStrongest(gs.getTeams()[i].getPieces());
@@ -183,44 +181,32 @@ public class BoardSetUp {
   }
 
   /**
-   * Places the pieces randomly on the board using the {@link EngineTools#seededRandom(String[][],
-   * int, int, int) seededRandom} method
+   * Places the pieces randomly on the board using the
+   * {@link EngineTools#seededRandom(String[][], int, int, int) seededRandom} method
    *
    * @author ysiebenh
    * @param GameState gameState
    */
   private static void randomPlacement(GameState gs) {
+    int i = 0;
+    int[][] boundaries = EngineTools.cutUpGrid(gs);
     for (Team t : gs.getTeams()) {
-      if (t.getId().equals("0")) {
-        for (Piece p : t.getPieces()) {
-          int newY = 0;
-          int newX = 0;
-          int m = 0;
-          do {
-            newY = EngineTools.seededRandom(gs.getGrid(), m++, (gs.getGrid().length / 2) - 1, 0);
-            newX = EngineTools.seededRandom(gs.getGrid(), 1 - m++, gs.getGrid()[0].length, 0);
-          } while (!gs.getGrid()[newY][newX].equals(""));
-          p.setPosition(new int[] {newY, newX});
-          gs.getGrid()[newY][newX] = p.getId();
-        }
+      // if (t.getId().equals("0")) {
+      for (Piece p : t.getPieces()) {
+        int newY = 0;
+        int newX = 0;
+        int m = 0;
+        do {
+          newY = EngineTools.seededRandom(gs.getGrid(), m++, boundaries[i][1], boundaries[i][0]);
+          newX =
+              EngineTools.seededRandom(gs.getGrid(), 1 - m++, boundaries[i][3], boundaries[i][2]);
+        } while (!gs.getGrid()[newY][newX].equals(""));
+        p.setPosition(new int[] {newY, newX});
+        gs.getGrid()[newY][newX] = p.getId();
 
-      } else if (t.getId().equals("1")) {
-        for (Piece p : t.getPieces()) {
-
-          int newY = 0;
-          int newX = 0;
-          int m = 0;
-          do {
-            newY = EngineTools.seededRandom(gs.getGrid(), m++, gs.getGrid().length,
-                1 + (gs.getGrid().length / 2));
-            newX = EngineTools.seededRandom(gs.getGrid(), 1 - m++, gs.getGrid().length, 0);
-          } while (!gs.getGrid()[newY][newX].equals(""));
-          p.setPosition(new int[] {newY, newX});
-          gs.getGrid()[newY][newX] = p.getId();
-        }
       }
+      i++;
     }
-    return;
   }
 
   /**
