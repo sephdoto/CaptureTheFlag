@@ -10,8 +10,7 @@ import org.ctf.ui.customobjects.BackgroundCellV2;
 import org.ctf.ui.customobjects.BlockRepV3;
 import org.ctf.ui.customobjects.CostumFigurePain;
 
-
-
+import javafx.animation.TranslateTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.geometry.HPos;
@@ -24,7 +23,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 
 /**
@@ -89,10 +90,33 @@ public class GamePane extends HBox {
 
 	public void moveFigure(int x, int y, CostumFigurePain mover) {
 		mover.getParentCell().removeFigure();
-		//mover.updatePos(x, y);
+		//BackgroundCellV2 oldField = mover.getParentCell();
 		BackgroundCellV2 newField = cells.get(generateKey(x, y));
+		//showTransition(mover, oldField, newField);
+		if(newField.isOccupied()) {
+			CostumFigurePain figureToDelete = newField.getChild();
+			System.out.println("XXX" + figureToDelete.getPiece().getId());
+			boolean delted = figures.remove(figureToDelete.getPiece().getId(), figureToDelete); 
+			System.out.println(delted);
+			newField.removeFigure();
+		}
 		newField.addFigure(mover);
 	}
+	
+	public void showTransition(CostumFigurePain pain, BackgroundCellV2 old, BackgroundCellV2 neu) {
+		TranslateTransition transition = new TranslateTransition(Duration.seconds(20), pain);
+		transition.setFromX(0); 
+	    transition.setFromY(0);
+        transition.setToX(neu.getLayoutX() - neu.base.widthProperty().divide(2).doubleValue() ); 
+        transition.setToY(neu.getLayoutY() -  neu.base.heightProperty().divide(2).doubleValue()); 
+        transition.play();
+        
+        transition.setOnFinished(e -> {
+        	pain.toFront();
+        	 neu.addFigure(pain);
+            StackPane.setAlignment(pain, javafx.geometry.Pos.CENTER);
+        });
+    }
 	
 	
 	public int generateKey(int x, int y) {

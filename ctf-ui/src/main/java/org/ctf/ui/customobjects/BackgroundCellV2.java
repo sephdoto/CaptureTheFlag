@@ -3,7 +3,10 @@ package org.ctf.ui.customobjects;
 import org.ctf.ui.Game;
 
 import javafx.beans.binding.Bindings;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -17,7 +20,7 @@ public class BackgroundCellV2 extends Pane {
 	public Circle rc;
 	public boolean active;
 	//public Game game;
-	StackPane base;
+	public StackPane base;
 	CostumFigurePain child;
 
 	public BackgroundCellV2(int x, int y) {
@@ -43,8 +46,6 @@ public class BackgroundCellV2 extends Pane {
 		child = figure;
 		base.getChildren().add(child);
 		figure.setParente(this);
-		
-		
 	}
 	
 
@@ -70,6 +71,8 @@ public class BackgroundCellV2 extends Pane {
 
 	public void createBase() {
 		StackPane base = new StackPane();
+		//base.setStyle("-fx-background-color: blue");
+		base.setAlignment(Pos.CENTER);
 		base.prefWidthProperty().bind(Bindings.divide(widthProperty(), 2));
 		base.prefHeightProperty().bind(Bindings.divide(heightProperty(), 2));
 		base.layoutXProperty().bind(Bindings.subtract(widthProperty().divide(2), base.widthProperty().divide(2)));
@@ -78,7 +81,9 @@ public class BackgroundCellV2 extends Pane {
 
 			@Override
 			public void handle(MouseEvent e) {
+				if(active) {
 				performClickOnCell();
+				}
 			}
 		});
 		this.base = base;
@@ -86,12 +91,9 @@ public class BackgroundCellV2 extends Pane {
 	}
 
 	public void performClickOnCell() {
-		if (active) {
 			//rc.setFill(Color.RED);
 			int[] xk = { x, y };
 			Game.makeMoveRequest(xk);
-
-		}
 	}
 
 	public void setActive() {
@@ -103,13 +105,15 @@ public class BackgroundCellV2 extends Pane {
 	}
 	public void removeFigure() {
 		occupied = false;
+		base.getChildren().remove(child);
 		this.child = null;
+		
 	}
 	
 	public CostumFigurePain getChild() {
 		return child;
 	}
-
+	
 	public void setUActive() {
 		this.active = false;
 	}

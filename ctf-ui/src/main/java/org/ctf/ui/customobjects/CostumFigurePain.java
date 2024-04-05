@@ -40,6 +40,7 @@ public class CostumFigurePain extends Pane {
 	int posX;	
 	int posY;
 	boolean active;
+	boolean attacable;
 	BackgroundCellV2 parent;
 	
 
@@ -67,8 +68,11 @@ public class CostumFigurePain extends Pane {
 	showPieceInformationWhenHovering();
 	this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 		public void handle(MouseEvent e) {
-			if(active) {
-				performMouseClick();
+			if(active && ! attacable) {
+				performSelectClick();
+			}
+			if(attacable) {
+				performAttackClick();
 			}
 		}
 	});
@@ -79,20 +83,26 @@ public class CostumFigurePain extends Pane {
 	 * creates a Shadow which can be used to highlight the currently selected Figure
 	 * @param ImageView
 	 */
-	public void showShadow() {
+	public void showShadow(Color col) {
 		DropShadow borderGlow = new DropShadow();
-        borderGlow.setColor(Color.BLACK);
+        borderGlow.setColor(col);
         borderGlow.setOffsetX(0f);
         borderGlow.setOffsetY(0f);
         vw.setEffect(borderGlow);
 	}
 	
+	public void performAttackClick() {
+		int[] xk = { posX, posY };
+		Game.makeMoveRequest(xk);
+	}
 	
-	public void performMouseClick() {
+	
+	
+	public void performSelectClick() {
 		if(Game.getCurrent() != null) {
 			Game.getCurrent().disableShadow();				}
 	System.out.println("Hallo: " + posX + ", " + posY);
-	showShadow();
+	showShadow(Color.BLACK);
 	showPieceInformationWhenClicked();
 	Game.setCurrent(CostumFigurePain.this);
 	Game.showPossibleMoves();
@@ -110,7 +120,9 @@ public class CostumFigurePain extends Pane {
 	public void showPieceInformationWhenHovering() {
 		String pieceInfos = "type: " + piece.getDescription().getType() + "\n" +
 							"attack power: " +  piece.getDescription().getAttackPower() + "\n" +
-							"count: " + piece.getDescription().getCount();
+							"count: " + piece.getDescription().getCount() + "\n" + 
+							"pieceid: " + piece.getId();
+			
 		Tooltip tooltip = new Tooltip(pieceInfos);
 		Duration delay = new Duration(1);
 		tooltip.setShowDelay(delay);
@@ -171,6 +183,20 @@ public class CostumFigurePain extends Pane {
 
 	public void setParent(BackgroundCellV2 parent) {
 		this.parent = parent;
+	}
+	
+	public boolean isAttacable() {
+		return attacable;
+	}
+
+	public void setAttacable() {
+		this.attacable = true;
+		showShadow(Color.RED);
+	}
+	
+	public void setUnattacble() {
+		this.disableShadow();
+		this.attacable = false;
 	}
 	
 //	public Game getGame() {

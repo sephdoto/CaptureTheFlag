@@ -18,10 +18,12 @@ import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
 
+import javafx.animation.TranslateTransition;
 import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
+import javafx.util.Duration;
 
 public class Game {
 	
@@ -61,6 +63,9 @@ public class Game {
 			}
 		}
 	}
+	
+	
+		 
 
 	// hier wird Move Objekt an Client gesendet
 	public static void makeMoveRequest(int[] newPos) {
@@ -100,6 +105,7 @@ public class Game {
 		}
 		for (CostumFigurePain cf : cb.getFigures().values()) {
 			cf.setUnactive();
+			cf.setUnattacble();
 		}
 	}
 
@@ -116,6 +122,11 @@ public class Game {
 		glow.setLevel(0.2);
 		String pieceName = currentPlayer.getPiece().getId();
 		possibleMoves = AI_Tools.getPossibleMoves(state, pieceName, possibleMoves);
+		for(CostumFigurePain c: cb.getFigures().values()) {
+			if(c != currentPlayer) {
+			c.disableShadow();
+			}
+		}
 		for (BackgroundCellV2 c : cb.getCells().values()) {
 			c.rc.setFill(Color.WHITE);
 			c.active = false;
@@ -130,7 +141,7 @@ public class Game {
 					c.rc.setFill(color);
 					c.active = true;
 					} else if (c.isOccupied()) {
-						//System.out.println("Diese Zelle " + pos[0] + ", " + pos[1]);
+						c.getChild().setAttacable();
 					}
 				}
 
