@@ -5,7 +5,7 @@ import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.Team;
 import org.ctf.shared.state.data.map.MapTemplate;
-
+import org.junit.jupiter.api.Test;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -42,6 +42,60 @@ static String[][] exm1 = {
 		  {"p:2_8", "p:2_9", "p:2_10", "p:2_11", "p:2_12", "p:2_13", "p:2_14", "p:2_15"}
 		};
 
+@Test 
+void testGameState() {
+  GameState gameState = new GameState();
+  gameState.setGrid(new String[10][5]);
+  for(int i=0; i<gameState.getGrid().length; i++)
+    for(int j=0; j<gameState.getGrid()[i].length; j++)
+      gameState.getGrid()[i][j] = "";
+  Move move = new Move();
+  move.setPieceId(null);
+  gameState.setLastMove(move);
+  gameState.setCurrentTeam(0);
+  Team team1 = new Team();
+  team1.setBase(new int[] {2,2});
+  gameState.getGrid()[2][2] = "b:0";
+  team1.setFlags(1);
+  team1.setId("0");
+  team1.setColor("");
+  Team team2 = new Team();
+  team2.setBase(new int[] {7,2});
+  gameState.getGrid()[7][2] = "b:1";
+  team2.setFlags(1);
+  team2.setColor("");
+  team2.setId("1");
+  Piece[] pieces0 = new Piece[2];
+  pieces0[0] = new Piece();
+  pieces0[0].setDescription(getTestTemplate().getPieces()[1]);
+  pieces0[0].setId("p:0_1");
+  pieces0[0].setPosition(new int[] {3,2});
+  pieces0[0].setTeamId("0");
+  pieces0[1] = new Piece();
+  pieces0[1].setDescription(getTestTemplate().getPieces()[1]);
+  pieces0[1].setId("p:0_2");
+  pieces0[1].setPosition(new int[] {4,2});
+  pieces0[1].setTeamId("0");
+  team1.setPieces(pieces0);
+  Piece[] pieces1 = new Piece[2];
+  pieces1[0] = new Piece();
+  pieces1[0].setDescription(getTestTemplate().getPieces()[1]);
+  pieces1[0].setId("p:1_1");
+  pieces1[0].setPosition(new int[] {6,2});
+  pieces1[0].setTeamId("1");
+  pieces1[1] = new Piece();
+  pieces1[1].setDescription(getTestTemplate().getPieces()[1]);
+  pieces1[1].setId("p:1_2");
+  pieces1[1].setPosition(new int[] {2,1});
+  pieces1[1].setTeamId("1");
+  team2.setPieces(pieces1);
+  gameState.setTeams(new Team[] {team1, team2});
+  
+  gameState.getGrid()[3][2] = pieces0[0].getId();
+  gameState.getGrid()[4][2] = pieces0[1].getId();
+  gameState.getGrid()[6][2] = pieces1[0].getId();
+  gameState.getGrid()[2][1] = pieces1[1].getId();
+}
 
 public static GameState createTestGameState1() {
 	GameState gameState = new GameState();
