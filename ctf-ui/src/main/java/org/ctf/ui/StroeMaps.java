@@ -47,7 +47,7 @@ public  class StroeMaps {
 	
 	public static void initDefaultMaps() {
 		putMap("p1", CreateTextGameStates.getTestState());
-		putMap("p2", CreateTextGameStates.getTestState());
+		putMap("p2", CreateTextGameStates.testGameState());
 		putMap("p3", CreateTextGameStates.getTestState());
 
 		

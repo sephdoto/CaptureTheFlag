@@ -43,7 +43,7 @@ static String[][] exm1 = {
 		};
 
 @Test 
-void testGameState() {
+public static GameState testGameState() {
   GameState gameState = new GameState();
   gameState.setGrid(new String[10][5]);
   for(int i=0; i<gameState.getGrid().length; i++)
@@ -95,6 +95,7 @@ void testGameState() {
   gameState.getGrid()[4][2] = pieces0[1].getId();
   gameState.getGrid()[6][2] = pieces1[0].getId();
   gameState.getGrid()[2][1] = pieces1[1].getId();
+  return gameState;
 }
 
 public static GameState createTestGameState1() {
