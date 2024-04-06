@@ -15,20 +15,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class MCTS_ToolsTest {
-  static GameState gameState;
-
+  static ReferenceGameState rGameState;
+  
   @BeforeEach
   void setUp() {
-      gameState = TestValues.getTestState();
+      rGameState = new ReferenceGameState(TestValues.getTestState());
   }
   
   @Test
   void testPutNeighbouringPieces() {
     HashSet<Piece> updateThese = new HashSet<Piece>();
-    MCTS mcts = new MCTS(new TreeNode(null, gameState, null));
-    MCTS_Tools.putNeighbouringPieces(updateThese, mcts.root.grid, mcts.root.gameState.getTeams()[0].getPieces()[2].getPosition());
+    ReferenceGameState gameState = new ReferenceGameState(TestValues.getTestState());
+    TreeNode node = new TreeNode(null, gameState, null);
+    MCTS_Tools.putNeighbouringPieces(updateThese, gameState.getGrid(), gameState.getTeams()[0].getPieces()[2].getPosition());
     HashSet<Piece> trueNeighbours = new HashSet<Piece>();
-    trueNeighbours.add(mcts.root.gameState.getTeams()[0].getPieces()[3]);
+    trueNeighbours.add(gameState.getTeams()[0].getPieces()[3]);
     assertTrue(trueNeighbours.equals(updateThese));
   }
   
@@ -38,7 +39,7 @@ class MCTS_ToolsTest {
     Piece piece = node.gameState.getTeams()[1].getPieces()[1];                          //Piece at position 7,3; only position it can walk to is above, 6,3.
     ArrayList<int[]> possibleMoves = new ArrayList<int[]>();
     ArrayList<int[]> impossibleMoves = new ArrayList<int[]>();
-    impossibleMoves = MCTS_Tools.getPossibleMovesWithPieceVision(node.gameState, node.grid, piece, possibleMoves);
+    impossibleMoves = MCTS_Tools.getPossibleMovesWithPieceVision(node.gameState, piece, possibleMoves);
     
     ArrayList<int[]> musterPossibleMoves = new ArrayList<int[]>();
     musterPossibleMoves.add(new int[] {6,3});
@@ -57,15 +58,15 @@ class MCTS_ToolsTest {
   @Test
   void testPickMoveComplex() {
     try {
-      MCTS_Tools.pickMoveComplex(gameState, new Grid(gameState));
+      MCTS_Tools.pickMoveComplex(rGameState);
     } catch (NoMovesLeftException e) {
       fail("there should be moves left");
     } catch (InvalidShapeException e) {e.printStackTrace();}
     
-    gameState = TestValues.getEmptyTestState();
+    rGameState = new ReferenceGameState(TestValues.getEmptyTestState());
     boolean noMoves = false;
     try {
-      MCTS_Tools.pickMoveComplex(gameState, new Grid(gameState));
+      MCTS_Tools.pickMoveComplex(rGameState);
     } catch (NoMovesLeftException e) {
       noMoves = true;
     } catch (InvalidShapeException e) {e.printStackTrace();}
@@ -92,19 +93,19 @@ class MCTS_ToolsTest {
       Piece weakPiece = new Piece();
       weakPiece.setDescription(TestValues.getTestTemplate().getPieces()[0]);
 
-      assertTrue(MCTS_Tools.validPos(new int[] {3,3}, gameState.getTeams()[0].getPieces()[0], gameState, new Grid(gameState)));      //valid empty position
-      assertFalse(MCTS_Tools.validPos(new int[] {-1,0}, gameState.getTeams()[0].getPieces()[0], gameState, new Grid(gameState)));    //out of bounds 1
-      assertFalse(MCTS_Tools.validPos(new int[] {10,0}, gameState.getTeams()[0].getPieces()[0], gameState, new Grid(gameState)));    //out of bounds 2
-      assertTrue(MCTS_Tools.validPos(new int[] {2,2}, gameState.getTeams()[0].getPieces()[0], gameState, new Grid(gameState)));      //rook team1 captures another rook from team0
-      assertFalse(MCTS_Tools.validPos(new int[] {2,2}, weakPiece, gameState, new Grid(gameState)));                                  //weak Pawn cannot capture a stronger rook from team0
-      assertFalse(MCTS_Tools.validPos(new int[] {7,2}, gameState.getTeams()[0].getPieces()[0], gameState, new Grid(gameState)));     //rook team1 cannot capture a team1 piece
-      assertFalse(MCTS_Tools.validPos(new int[] {5,3}, gameState.getTeams()[0].getPieces()[0], gameState, new Grid(gameState)));     //5,3 is occupied by a block
-      gameState.setCurrentTeam(0);
-      assertTrue(MCTS_Tools.validPos(new int[] {9,9}, gameState.getTeams()[0].getPieces()[0], gameState, new Grid(gameState)));      //it is possible to walk on an opponents base
-      gameState.setCurrentTeam(1);
-      assertTrue(MCTS_Tools.validPos(new int[] {0,0}, gameState.getTeams()[1].getPieces()[0], gameState, new Grid(gameState)));      //it is possible to walk on an opponents base
-      gameState.setCurrentTeam(0);
-      assertFalse(MCTS_Tools.validPos(new int[] {0,0}, gameState.getTeams()[0].getPieces()[0], gameState, new Grid(gameState)));      //it is not possible to walk on the own base
+      assertTrue(MCTS_Tools.validPos(new int[] {3,3}, rGameState.getTeams()[0].getPieces()[0], rGameState));      //valid empty position
+      assertFalse(MCTS_Tools.validPos(new int[] {-1,0}, rGameState.getTeams()[0].getPieces()[0], rGameState));    //out of bounds 1
+      assertFalse(MCTS_Tools.validPos(new int[] {10,0}, rGameState.getTeams()[0].getPieces()[0], rGameState));    //out of bounds 2
+      assertTrue(MCTS_Tools.validPos(new int[] {2,2}, rGameState.getTeams()[0].getPieces()[0], rGameState));      //rook team1 captures another rook from team0
+      assertFalse(MCTS_Tools.validPos(new int[] {2,2}, weakPiece, rGameState));                                  //weak Pawn cannot capture a stronger rook from team0
+      assertFalse(MCTS_Tools.validPos(new int[] {7,2}, rGameState.getTeams()[0].getPieces()[0], rGameState));     //rook team1 cannot capture a team1 piece
+      assertFalse(MCTS_Tools.validPos(new int[] {5,3}, rGameState.getTeams()[0].getPieces()[0], rGameState));     //5,3 is occupied by a block
+      rGameState.setCurrentTeam(0);
+      assertTrue(MCTS_Tools.validPos(new int[] {9,9}, rGameState.getTeams()[0].getPieces()[0], rGameState));      //it is possible to walk on an opponents base
+      rGameState.setCurrentTeam(1);
+      assertTrue(MCTS_Tools.validPos(new int[] {0,0}, rGameState.getTeams()[1].getPieces()[0], rGameState));      //it is possible to walk on an opponents base
+      rGameState.setCurrentTeam(0);
+      assertFalse(MCTS_Tools.validPos(new int[] {0,0}, rGameState.getTeams()[0].getPieces()[0], rGameState));      //it is not possible to walk on the own base
   }
 
   @Test
@@ -128,16 +129,16 @@ class MCTS_ToolsTest {
    */
   @Test
   void testValidDirection() {
-      Piece rook = gameState.getTeams()[1].getPieces()[1];                //rook on 7,3
+      Piece rook = rGameState.getTeams()[1].getPieces()[1];                //rook on 7,3
 
-      assertFalse(MCTS_Tools.validDirection(gameState, new Grid(gameState), rook, 0));           //a piece on the left doesn't allow the movement to the left
-      assertFalse(MCTS_Tools.validDirection(gameState, new Grid(gameState), rook, 1));           //a piece on the right doesn't allow the movement to the right
-      assertTrue(MCTS_Tools.validDirection(gameState, new Grid(gameState), rook, 2));            //there's a free position above, this direction is accessible
-      assertTrue(MCTS_Tools.validDirection(gameState, new Grid(gameState), rook, 3));            //there's a free position below, this direction is accessible
-      assertTrue(MCTS_Tools.validDirection(gameState, new Grid(gameState), rook, 4));            //there's a free position above-left, this direction is accessible
-      assertTrue(MCTS_Tools.validDirection(gameState, new Grid(gameState), rook, 5));            //there's a free position above-right, this direction is accessible
-      assertTrue(MCTS_Tools.validDirection(gameState, new Grid(gameState), rook, 6));            //there's a free position below-left, this direction is accessible
-      assertFalse(MCTS_Tools.validDirection(gameState, new Grid(gameState), rook, 7));           //there's a piece below-right, this direction is not accessible
+      assertFalse(MCTS_Tools.validDirection(rGameState, rook, 0));           //a piece on the left doesn't allow the movement to the left
+      assertFalse(MCTS_Tools.validDirection(rGameState, rook, 1));           //a piece on the right doesn't allow the movement to the right
+      assertTrue(MCTS_Tools.validDirection(rGameState, rook, 2));            //there's a free position above, this direction is accessible
+      assertTrue(MCTS_Tools.validDirection(rGameState, rook, 3));            //there's a free position below, this direction is accessible
+      assertTrue(MCTS_Tools.validDirection(rGameState, rook, 4));            //there's a free position above-left, this direction is accessible
+      assertTrue(MCTS_Tools.validDirection(rGameState, rook, 5));            //there's a free position above-right, this direction is accessible
+      assertTrue(MCTS_Tools.validDirection(rGameState, rook, 6));            //there's a free position below-left, this direction is accessible
+      assertFalse(MCTS_Tools.validDirection(rGameState, rook, 7));           //there's a piece below-right, this direction is not accessible
   }
 
   /**
@@ -146,32 +147,32 @@ class MCTS_ToolsTest {
    */
   @Test
   void testCheckMoveValidity() {
-      Piece rook = gameState.getTeams()[1].getPieces()[1];                //rook on 7,3
-      Piece rook2 = gameState.getTeams()[1].getPieces()[3];               //rook on 7,5
+      Piece rook = rGameState.getTeams()[1].getPieces()[1];                //rook on 7,3
+      Piece rook2 = rGameState.getTeams()[1].getPieces()[3];               //rook on 7,5
 
-      assertNull(MCTS_Tools.checkMoveValidity(gameState, new Grid(gameState), rook, 0, 2));      //rook cannot walk over another same team rook
-      assertNull(MCTS_Tools.checkMoveValidity(gameState, new Grid(gameState), rook, 1, 1));      //rook cannot walk onto another same team rook
-      assertNotNull(MCTS_Tools.checkMoveValidity(gameState, new Grid(gameState), rook, 2, 1));   //rook can walk on the empty space above
-      assertNull(MCTS_Tools.checkMoveValidity(gameState, new Grid(gameState), rook, 2, 3));      //rook cannot jump over the block above
-      assertNotNull(MCTS_Tools.checkMoveValidity(gameState, new Grid(gameState), rook, 3, 1));   //rook can walk on the empty space below
-      assertNotNull(MCTS_Tools.checkMoveValidity(gameState, new Grid(gameState), rook, 6, 1));   //piece could go to the empty field below-left
-      assertNull(MCTS_Tools.checkMoveValidity(gameState, new Grid(gameState), rook2, 4, 4));     //piece could not walk over a block to the empty field above-left 3,1
-      assertNull(MCTS_Tools.checkMoveValidity(gameState, new Grid(gameState), rook2, 4, 0));//piece could not walk onto its own position
+      assertNull(MCTS_Tools.checkMoveValidity(rGameState, rook, 0, 2));      //rook cannot walk over another same team rook
+      assertNull(MCTS_Tools.checkMoveValidity(rGameState, rook, 1, 1));      //rook cannot walk onto another same team rook
+      assertNotNull(MCTS_Tools.checkMoveValidity(rGameState, rook, 2, 1));   //rook can walk on the empty space above
+      assertNull(MCTS_Tools.checkMoveValidity(rGameState, rook, 2, 3));      //rook cannot jump over the block above
+      assertNotNull(MCTS_Tools.checkMoveValidity(rGameState, rook, 3, 1));   //rook can walk on the empty space below
+      assertNotNull(MCTS_Tools.checkMoveValidity(rGameState, rook, 6, 1));   //piece could go to the empty field below-left
+      assertNull(MCTS_Tools.checkMoveValidity(rGameState, rook2, 4, 4));     //piece could not walk over a block to the empty field above-left 3,1
+      assertNull(MCTS_Tools.checkMoveValidity(rGameState, rook2, 4, 0));//piece could not walk onto its own position
   }
 
   @Test
   void testSightLine() {
-      assertTrue(MCTS_Tools.sightLine(gameState, new Grid(gameState), new int[]{4,6}, 1, 3));    //free line of sight
-      assertTrue(MCTS_Tools.sightLine(gameState, new Grid(gameState), new int[]{7,2}, 0, 0));    //newPos = oldPos
-      assertFalse(MCTS_Tools.sightLine(gameState, new Grid(gameState), new int[]{4,8}, 1, 2));   //there is one block
-      assertFalse(MCTS_Tools.sightLine(gameState, new Grid(gameState), new int[]{5,5}, 0, 100)); //newPos is not on the grid, outOfBounds
-      assertFalse(MCTS_Tools.sightLine(gameState, new Grid(gameState), new int[]{1,1}, 4, 6));   //there is an enemy Piece blocking the line of sight
+      assertTrue(MCTS_Tools.sightLine(rGameState, new int[]{4,6}, 1, 3));    //free line of sight
+      assertTrue(MCTS_Tools.sightLine(rGameState, new int[]{7,2}, 0, 0));    //newPos = oldPos
+      assertFalse(MCTS_Tools.sightLine(rGameState, new int[]{4,8}, 1, 2));   //there is one block
+      assertFalse(MCTS_Tools.sightLine(rGameState, new int[]{5,5}, 0, 100)); //newPos is not on the grid, outOfBounds
+      assertFalse(MCTS_Tools.sightLine(rGameState, new int[]{1,1}, 4, 6));   //there is an enemy Piece blocking the line of sight
   }
   
   @Test
   void testOtherTeamsBase() {
-    assertTrue(MCTS_Tools.otherTeamsBase(new Grid(gameState), new int[] {0,0}, gameState.getTeams()[1].getPieces()[0].getPosition()));
-    assertFalse(MCTS_Tools.otherTeamsBase( new Grid(gameState), new int[] {0,0}, gameState.getTeams()[0].getPieces()[0].getPosition()));
+    assertTrue(MCTS_Tools.otherTeamsBase(rGameState.getGrid(), new int[] {0,0}, rGameState.getTeams()[1].getPieces()[0].getPosition()));
+    assertFalse(MCTS_Tools.otherTeamsBase(rGameState.getGrid(), new int[] {0,0}, rGameState.getTeams()[0].getPieces()[0].getPosition()));
   }
   
   @Test
@@ -188,10 +189,11 @@ class MCTS_ToolsTest {
 
   @Test
   void testGetShapeMoves() {
+      GameState gameState = TestValues.getTestState();
       Piece knight = new Piece();
       knight.setId("p:1_8");
       knight.setPosition(new int[]{9,0});
-      knight.setTeamId("team1");
+      knight.setTeamId("1");
       knight.setDescription(TestValues.getTestTemplate().getPieces()[2]);     //new knight with l-shape movement
       gameState.getTeams()[1].getPieces()[7] = knight;
       gameState.getGrid()[9][0] = knight.getId();                             //knight is only able to move 2up1right or 2right1up (+ spaces in-between)
@@ -203,7 +205,7 @@ class MCTS_ToolsTest {
       
       ArrayList<int[]> aiToolsShapeMoves = new ArrayList<int[]>();
       try {
-           aiToolsShapeMoves = MCTS_Tools.getShapeMoves(gameState, new Grid(gameState), knight, new ArrayList<int[]>());
+           aiToolsShapeMoves = MCTS_Tools.getShapeMoves(new ReferenceGameState(gameState), knight, new ArrayList<int[]>());
       } catch (InvalidShapeException e) {
           fail("All shapes are valid");
       }
@@ -216,24 +218,25 @@ class MCTS_ToolsTest {
 
   @Test
   void testCreateDirectionMap() {
+    GameState gameState = TestValues.getTestState();
       ArrayList<int[]> dirMap = new ArrayList<int[]>();
       Piece picked = gameState.getTeams()[1].getPieces()[1];                              //rook on 7,3
       dirMap.add(new int[] {2, 2});                                                       //the rook can move 2 fields up
       dirMap.add(new int[] {3, 2});                                                       //the rook can move 2 fields down
-      assertArrayEquals(dirMap.toArray(), MCTS_Tools.createDirectionMap(gameState, new Grid(gameState), picked, new ArrayList<int[]>()).toArray());
+      assertArrayEquals(dirMap.toArray(), MCTS_Tools.createDirectionMap(new ReferenceGameState(gameState), picked, new ArrayList<int[]>()).toArray());
       
       gameState.getGrid()[6][4] = "b";                                                    //completely enclosing the rook on 7,4
       picked = gameState.getTeams()[1].getPieces()[2];                                    //rook on 7,4
-      assertEquals(new ArrayList<int[]>(), MCTS_Tools.createDirectionMap(gameState, new Grid(gameState), picked, new ArrayList<int[]>()));
+      assertEquals(new ArrayList<int[]>(), MCTS_Tools.createDirectionMap(new ReferenceGameState(gameState), picked, new ArrayList<int[]>()));
   }
   
   @Test
   void testGetDirectionMove() {
-      Piece rook = gameState.getTeams()[1].getPieces()[1];                //rook on 7,3
+      Piece rook = rGameState.getTeams()[1].getPieces()[1];                //rook on 7,3
       ArrayList<int[]> dirMap = new ArrayList<int[]>();
       dirMap.add(new int[] {2,5});                                        //rook can only move to one field ()
       int[] onlyPosition = new int[] {6,3};                               //the only possible Position is 6,3
-      int[] newPosition = MCTS_Tools.getDirectionMove(dirMap, rook, gameState, new Grid(gameState)).getNewPosition();
+      int[] newPosition = MCTS_Tools.getDirectionMove(dirMap, rook, rGameState).getNewPosition();
 
       assertArrayEquals(onlyPosition, newPosition);
   }
@@ -250,7 +253,7 @@ class MCTS_ToolsTest {
   
   @Test
   void testToNextTeam() {
-    GameState gameState = new GameState();
+    ReferenceGameState gameState = new ReferenceGameState(TestValues.getTestState());
     gameState.setCurrentTeam(0);
     Team[] teams = new Team[5];
     for(int i=0; i<5; i++)
@@ -273,7 +276,7 @@ class MCTS_ToolsTest {
   void testGetPossibleMoves() {
     GameState gameState = TestValues.getTestState();
     Piece piece = gameState.getTeams()[1].getPieces()[1];
-    ArrayList<int[]> moves = MCTS_Tools.getPossibleMoves(gameState, new Grid(gameState), piece, new ArrayList<int[]>());
+    ArrayList<int[]> moves = MCTS_Tools.getPossibleMoves(rGameState, piece, new ArrayList<int[]>());
 
     ArrayList<int[]> actuallyValidMoves = new ArrayList<int[]>();
     actuallyValidMoves.add(new int[] {6,3});
@@ -284,7 +287,7 @@ class MCTS_ToolsTest {
     
     gameState.getGrid()[6][3] = "b";
     gameState.getGrid()[8][3] = "b";
-    moves = MCTS_Tools.getPossibleMoves(gameState, new Grid(gameState), piece, new ArrayList<int[]>());
+    moves = MCTS_Tools.getPossibleMoves(new ReferenceGameState(gameState), piece, new ArrayList<int[]>());
     actuallyValidMoves.clear();
     
     assertArrayEquals(moves.toArray(), actuallyValidMoves.toArray());
@@ -296,12 +299,18 @@ class MCTS_ToolsTest {
     int[] basePos = new int[] {2,4};
     gameState.getGrid()[0][0] = "";
     gameState.getGrid()[2][4] = "b:0";
+    gameState.getTeams()[0].setBase(basePos);
+    Piece[] pieces = new Piece[7];
+    for(int i=0, n=0; i<8; i++)
+      if(i!=4)
+        pieces[n++] = gameState.getTeams()[0].getPieces()[i];           //remove piece 2,4 so the base is placed there
+    gameState.getTeams()[0].setPieces(pieces);
     gameState.getGrid()[1][3] = "b";
     gameState.getGrid()[3][3] = "b";
     gameState.getGrid()[3][5] = "b";                                    //1 free field in direct contact to 2,4: 3,4
-    int[] pos = MCTS_Tools.respawnPiecePosition(new Grid(gameState) ,basePos);
+    int[] pos = MCTS_Tools.respawnPiecePosition(new Grid(gameState), basePos);
     assertArrayEquals(new int[] {3,4}, pos);
-
+    
     gameState.getGrid()[3][4] = "b";                                    //block last free field, distance from base must be +1
     pos = MCTS_Tools.respawnPiecePosition(new Grid(gameState), basePos);
     assertArrayEquals(new int[] {4,5}, pos);                            //randomly chosen field: 4,5. Should stay the same every time (with this gameState)

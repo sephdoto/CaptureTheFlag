@@ -30,8 +30,23 @@ public class GridObjectContainer {
     }
   }
   
+  public GridObjectContainer(Grid grid, int x, int y) {
+    switch(grid.getGrid()[y][x].getObject()) {
+      case block:
+        this.object = GridObjects.block;
+        break;
+      case base:
+        this.object = GridObjects.base;
+        this.teamId = grid.getGrid()[y][x].getTeamId();
+        break;
+      case piece:
+        this.object = GridObjects.piece;
+        this.teamId = grid.getGrid()[y][x].getTeamId();
+        this.piece = grid.getGrid()[y][x].getPiece();
+    }
+  }
+  
   public GridObjectContainer(GameState gameState, int x, int y) {
-
     if(gameState.getGrid()[y][x].equals("b")) {
       this.object = GridObjects.block;
       

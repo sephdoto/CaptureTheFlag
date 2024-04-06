@@ -129,7 +129,7 @@ public class MCTS_Tools {
    * @param gameState
    * @return previous teams index
    */
-  public static int getPreviousTeam(GameState gameState) {
+  public static int getPreviousTeam(ReferenceGameState gameState) {
     for(int i=(gameState.getCurrentTeam()-1) % gameState.getTeams().length; ;i = (i - 1) % gameState.getTeams().length) {
       i = i<0? -1*i : i;
       if(gameState.getTeams()[i] != null) {
@@ -143,7 +143,7 @@ public class MCTS_Tools {
    * @param gameState
    * @return altered gameState
    */
-  public static GameState toNextTeam(GameState gameState) {
+  public static ReferenceGameState toNextTeam(ReferenceGameState gameState) {
     for(int i=(gameState.getCurrentTeam()+1) % gameState.getTeams().length; ;i = (i + 1) % gameState.getTeams().length) {
       if(gameState.getTeams()[i] != null) {
         gameState.setCurrentTeam(i);
@@ -157,7 +157,7 @@ public class MCTS_Tools {
    * @param gameState
    * @return altered gameState
    */
-  public static int getNextTeam(GameState gameState) {
+  public static int getNextTeam(ReferenceGameState gameState) {
     for(int i=(gameState.getCurrentTeam()+1) % gameState.getTeams().length; ;i = (i + 1) % gameState.getTeams().length) {
       if(gameState.getTeams()[i] != null) {
         return i;
@@ -171,14 +171,14 @@ public class MCTS_Tools {
    * @param gameState
    * @param team
    */
-  public static void removeTeam(GameState gameState, Grid grid, int team) {
-    grid.setPosition(null, gameState.getTeams()[team].getBase()[1], gameState.getTeams()[team].getBase()[0]);
+  public static void removeTeam(ReferenceGameState gameState, int team) {
+    gameState.getGrid().setPosition(null, gameState.getTeams()[team].getBase()[1], gameState.getTeams()[team].getBase()[0]);
     for(int i=0; i<gameState.getTeams()[team].getPieces().length; i++) {
       Piece p = gameState.getTeams()[team].getPieces()[i];
-      grid.setPosition(null, p.getPosition()[1], p.getPosition()[0]);
-      for(int[] pos : grid.pieceVisions.get(p))
-        grid.pieceVisionGrid[pos[0]][pos[1]].pieces.remove(p);
-      grid.pieceVisions.remove(p);
+      gameState.getGrid().setPosition(null, p.getPosition()[1], p.getPosition()[0]);
+      for(int[] pos : gameState.getGrid().pieceVisions.get(p))
+        gameState.getGrid().pieceVisionGrid[pos[0]][pos[1]].pieces.remove(p);
+      gameState.getGrid().pieceVisions.remove(p);
       //TODO ich weiß nicht ob der garbage collector das team löscht oder ich den array erst leeren muss. Später schauen.
     }
     gameState.getTeams()[team] = null;
@@ -194,30 +194,30 @@ public class MCTS_Tools {
    * @param String pieceID
    * @return ArrayList<int[]> that contains all first sightline violations could move to but they are occupied by another piece.
    */
-  public static ArrayList<int[]> getPossibleMovesWithPieceVision(GameState gameState, Grid grid, Piece piece, ArrayList<int[]> possibleMoves) {
+  public static ArrayList<int[]> getPossibleMovesWithPieceVision(ReferenceGameState gameState, Piece piece, ArrayList<int[]> possibleMoves) {
     possibleMoves.clear();
     ArrayList<int[]> pieceInSightP = new ArrayList<int[]>();
     ArrayList<int[]> dirMap = new ArrayList<int[]>();
     if (piece.getDescription().getMovement().getDirections() == null) {
       try {
-        pieceInSightP.addAll(getShapeMovesWithPieceVision(gameState, grid, piece, possibleMoves));
+        pieceInSightP.addAll(getShapeMovesWithPieceVision(gameState, piece, possibleMoves));
       } catch (InvalidShapeException e) {
         e.printStackTrace();
       }
 
     } else {
-      dirMap = createDirectionMapWithPieceVision(gameState, grid, piece, dirMap);
+      dirMap = createDirectionMapWithPieceVision(gameState, piece, dirMap);
       for (int[] entry : dirMap) {
         for (int reach = entry[1]; reach > 0; reach--) {
           Move move = new Move();
-          move = checkMoveValidity(gameState, grid, piece, entry[0], reach);
+          move = checkMoveValidity(gameState, piece, entry[0], reach);
           if (move != null) {
             possibleMoves.add(move.getNewPosition());
           } else {
             int[] newPos = updatePos(piece.getPosition().clone(), entry[0], reach);
-            if(!positionOutOfBounds(grid, newPos) && 
-                sightLine(gameState, grid, newPos.clone(), entry[0], reach) &&
-                occupiedByPiece(grid, newPos)){
+            if(!positionOutOfBounds(gameState.getGrid(), newPos) && 
+                sightLine(gameState, newPos.clone(), entry[0], reach) &&
+                occupiedByPiece(gameState.getGrid(), newPos)){
                 pieceInSightP.add(newPos);
             }
           }
@@ -235,18 +235,18 @@ public class MCTS_Tools {
    * @param picked
    * @return ArrayList<int[direction,reach]>
    */
-  public static ArrayList<int[]> createDirectionMapWithPieceVision(GameState gameState, Grid grid, Piece picked, ArrayList<int[]> dirMap) {
+  public static ArrayList<int[]> createDirectionMapWithPieceVision(ReferenceGameState gameState, Piece picked, ArrayList<int[]> dirMap) {
     dirMap.clear();
     for (int i = 0; i < 8; i++) {
       int reach = getReach(picked.getDescription().getMovement().getDirections(), i);
       if (reach > 0) {
         int[] pos = updatePos(picked.getPosition().clone(), i, 1);
-        if(positionOutOfBounds(grid, pos))
+        if(positionOutOfBounds(gameState.getGrid(), pos))
           continue;
         if(
-            emptyField(grid, pos) ||
-            occupiedByPiece(grid, pos) ||
-            otherTeamsBase(grid, pos, picked.getPosition())){
+            emptyField(gameState.getGrid(), pos) ||
+            occupiedByPiece(gameState.getGrid(), pos) ||
+            otherTeamsBase(gameState.getGrid(), pos, picked.getPosition())){
           dirMap.add(new int[] {i,reach});
         } else {
           continue;
@@ -263,7 +263,7 @@ public class MCTS_Tools {
    * @return ArrayList containing all valid moves
    * @throws InvalidShapeException if the Shape is not yet implemented here
    */
-  public static ArrayList<int[]> getShapeMovesWithPieceVision(GameState gameState, Grid grid, Piece piece, ArrayList<int[]> positions)
+  public static ArrayList<int[]> getShapeMovesWithPieceVision(ReferenceGameState gameState, Piece piece, ArrayList<int[]> positions)
       throws InvalidShapeException {
 
     ArrayList<int[]> pieceInSightP = new ArrayList<int[]>();
@@ -290,12 +290,11 @@ public class MCTS_Tools {
               piece.getPosition()[0] + yTransforms[i], piece.getPosition()[1] + xTransforms[i]
           };
             
-      if (validPos(newPos, piece, gameState, grid)) {
+      if (validPos(newPos, piece, gameState)) {
         if (i >= direction.length) {
           positions.add(newPos);
         } else if (sightLine(
             gameState,
-            grid,
             new int[] {
                 piece.getPosition()[0] + yTransforms[(1 + (i / 3) * 3)],
                 piece.getPosition()[1] + xTransforms[(1 + (i / 3) * 3)]
@@ -304,12 +303,11 @@ public class MCTS_Tools {
             2)) {
           positions.add(newPos);
         }
-      } else if (!positionOutOfBounds(grid, newPos) && occupiedByPiece(grid, newPos)) { // TODO NEU EINGEFÜGT; TESTEN!
+      } else if (!positionOutOfBounds(gameState.getGrid(), newPos) && occupiedByPiece(gameState.getGrid(), newPos)) { // TODO NEU EINGEFÜGT; TESTEN!
         if (i >= direction.length) {
           pieceInSightP.add(newPos);
         } else if (sightLine(
             gameState,
-            grid,
             new int[] {
                 piece.getPosition()[0] + yTransforms[(1 + (i / 3) * 3)],
                 piece.getPosition()[1] + xTransforms[(1 + (i / 3) * 3)]
@@ -332,22 +330,23 @@ public class MCTS_Tools {
    * @param String pieceID
    * @return ArrayList<int[]> that contains all valid positions a piece could move to
    */
-  public static ArrayList<int[]> getPossibleMoves(GameState gameState, Grid grid, Piece piece, ArrayList<int[]> possibleMoves) {
+  //TODO REMOVE METHOD??
+  public static ArrayList<int[]> getPossibleMoves(ReferenceGameState gameState, Piece piece, ArrayList<int[]> possibleMoves) {
     possibleMoves.clear();
     ArrayList<int[]> dirMap = new ArrayList<int[]>();
     if (piece.getDescription().getMovement().getDirections() == null) {
       try {
-        getShapeMoves(gameState, grid, piece, possibleMoves);
+        getShapeMoves(gameState, piece, possibleMoves);
       } catch (InvalidShapeException e) {
         e.printStackTrace();
       }
 
     } else {
-      dirMap = createDirectionMap(gameState, grid, piece, dirMap);
+      dirMap = createDirectionMap(gameState, piece, dirMap);
       for (int[] entry : dirMap) {
         for (int reach = entry[1]; reach > 0; reach--) {
           Move move = new Move();
-          move = checkMoveValidity(gameState, grid, piece, entry[0], reach);
+          move = checkMoveValidity(gameState, piece, entry[0], reach);
           if (move != null) possibleMoves.add(move.getNewPosition());
         }
       }
@@ -363,7 +362,7 @@ public class MCTS_Tools {
    * @return ArrayList containing all valid moves
    * @throws InvalidShapeException if the Shape is not yet implemented here
    */
-  public static ArrayList<int[]> getShapeMoves(GameState gameState, Grid grid, Piece piece, ArrayList<int[]> positions)
+  public static ArrayList<int[]> getShapeMoves(ReferenceGameState gameState, Piece piece, ArrayList<int[]> positions)
       throws InvalidShapeException {
     positions.clear();
     int[] xTransforms;
@@ -387,12 +386,11 @@ public class MCTS_Tools {
           new int[] {
               piece.getPosition()[0] + yTransforms[i], piece.getPosition()[1] + xTransforms[i]
       };
-      if (validPos(newPos, piece, gameState, grid)) {
+      if (validPos(newPos, piece, gameState)) {
         if (i >= direction.length) {
           positions.add(newPos);
         } else if (sightLine(
             gameState,
-            grid,
             new int[] {
                 piece.getPosition()[0] + yTransforms[(1 + (i / 3) * 3)],
                 piece.getPosition()[1] + xTransforms[(1 + (i / 3) * 3)]
@@ -415,12 +413,12 @@ public class MCTS_Tools {
    * @param picked
    * @return ArrayList<int[direction,reach]>
    */
-  public static ArrayList<int[]> createDirectionMap(GameState gameState, Grid grid, Piece picked, ArrayList<int[]> dirMap) {
+  public static ArrayList<int[]> createDirectionMap(ReferenceGameState gameState, Piece picked, ArrayList<int[]> dirMap) {
     dirMap.clear();
     for (int i = 0; i < 8; i++) {
       int reach = getReach(picked.getDescription().getMovement().getDirections(), i);
       if (reach > 0) {
-        if (validDirection(gameState, grid, picked, i)) {
+        if (validDirection(gameState, picked, i)) {
           dirMap.add(new int[] {i, reach});
         } else {
           continue;
@@ -439,8 +437,8 @@ public class MCTS_Tools {
    * @param direction
    * @return false if there are no possible moves in this direction, true otherwise.
    */
-  public static boolean validDirection(GameState gameState, Grid grid, Piece piece, int direction) {
-    return checkMoveValidity(gameState, grid, piece, direction, 1) != null;
+  public static boolean validDirection(ReferenceGameState gameState, Piece piece, int direction) {
+    return checkMoveValidity(gameState, piece, direction, 1) != null;
   }
   
   /**
@@ -455,13 +453,13 @@ public class MCTS_Tools {
    * @return a Move instance with the piece and its new position
    * @return null if the piece can't occupy the position or the position is not in the grid
    */
-  public static Move checkMoveValidity(GameState gameState, Grid grid, Piece piece, int direction, int reach) {
+  public static Move checkMoveValidity(ReferenceGameState gameState, Piece piece, int direction, int reach) {
     int[] pos = new int[] {piece.getPosition()[0], piece.getPosition()[1]};
     updatePos(pos, direction, reach);
 
-    if (!validPos(pos, piece, gameState, grid)) {
+    if (!validPos(pos, piece, gameState)) {
       return null;
-    } else if (!sightLine(gameState, grid, new int[] {pos[0], pos[1]}, direction, reach)) {
+    } else if (!sightLine(gameState, new int[] {pos[0], pos[1]}, direction, reach)) {
       return null;
     } else {
       Move move = new Move();
@@ -485,12 +483,12 @@ public class MCTS_Tools {
    * @return true if there is no obstacle in between
    * @return false if any obstacle is in between or the target position is not on the grid
    */
-  public static boolean sightLine(GameState gameState, Grid grid, int[] newPos, int direction, int reach) {
+  public static boolean sightLine(ReferenceGameState gameState, int[] newPos, int direction, int reach) {
     --reach;
     for (; reach > 0; reach--) {
       updatePos(newPos, direction, -1);
       try {
-        if (grid.getGrid()[newPos[0]][newPos[1]] == null) {
+        if (gameState.getGrid().getGrid()[newPos[0]][newPos[1]] == null) {
           continue;
         } else {
           return false;
@@ -584,14 +582,14 @@ public class MCTS_Tools {
    * @param gameState
    * @return true if the position can be occupied.
    */
-  public static boolean validPos(int[] pos, Piece piece, GameState gameState, Grid grid) {
+  public static boolean validPos(int[] pos, Piece piece, ReferenceGameState gameState) {
     // checks if the position can be occupied
-    if (positionOutOfBounds(grid, pos)) return false;
-    if (emptyField(grid, pos)) return true;
-    if (occupiedByBlock(grid, pos)) return false;
-    if (occupiedBySameTeam(gameState, grid, pos)) return false;
-    if (otherTeamsBase(grid, pos, piece.getPosition())) return true;
-    if (occupiedByWeakerOpponent(grid.getPosition(pos[1], pos[0]).getPiece(), piece)) return true;
+    if (positionOutOfBounds(gameState.getGrid(), pos)) return false;
+    if (emptyField(gameState.getGrid(), pos)) return true;
+    if (occupiedByBlock(gameState.getGrid(), pos)) return false;
+    if (occupiedBySameTeam(gameState, pos)) return false;
+    if (otherTeamsBase(gameState.getGrid(), pos, piece.getPosition())) return true;
+    if (occupiedByWeakerOpponent(gameState.getGrid().getPosition(pos[1], pos[0]).getPiece(), piece)) return true;
 
     // if opponent is stronger or something unforeseen happens
     return false;
@@ -648,8 +646,8 @@ public class MCTS_Tools {
    * @param pos
    * @return true if the position is occupied by a Piece of the same Team
    */
-  public static boolean occupiedBySameTeam(GameState gameState, Grid grid, int[] pos) {
-    return gameState.getCurrentTeam() == grid.getPosition(pos[1], pos[0]).getTeamId();
+  public static boolean occupiedBySameTeam(ReferenceGameState gameState, int[] pos) {
+    return gameState.getCurrentTeam() == gameState.getGrid().getPosition(pos[1], pos[0]).getTeamId();
   }
 
   /**
@@ -677,6 +675,7 @@ public class MCTS_Tools {
    * @return true if the position is occupied by another teams base and a flag can be captured
    */
   public static boolean otherTeamsBase(Grid grid, int[] newPos, int[] oldPos) {
+//    System.out.println(grid.getPosition(newPos[1], newPos[0]).getObject());
     if (grid.getPosition(newPos[1], newPos[0]).getObject() == GridObjects.base){
       if(grid.getPosition(oldPos[1], oldPos[0]).getTeamId() != grid.getPosition(newPos[1], newPos[0]).getTeamId())
         return true;
@@ -696,7 +695,7 @@ public class MCTS_Tools {
    * @throws NoMovesLeftException
    * @throws InvalidShapeException 
    */
-  public static ReferenceMove pickMoveComplex(GameState gameState, Grid grid) throws NoMovesLeftException, InvalidShapeException {
+  public static ReferenceMove pickMoveComplex(ReferenceGameState gameState) throws NoMovesLeftException, InvalidShapeException {
     ArrayList<Piece> piecesCurrentTeam = new ArrayList<Piece>(Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()));
     ArrayList<int[]> dirMap = new ArrayList<int[]>();
     ArrayList<int[]> shapeMoves = new ArrayList<int[]>();
@@ -706,15 +705,15 @@ public class MCTS_Tools {
       Piece picked = piecesCurrentTeam.get(random);
 
       if(picked.getDescription().getMovement().getDirections() != null) {       //move if Directions
-        dirMap = createDirectionMap(gameState, grid, picked, dirMap);
+        dirMap = createDirectionMap(gameState, picked, dirMap);
         if(dirMap.size() > 0) {
-          return getDirectionMove(dirMap, picked, gameState, grid);
+          return getDirectionMove(dirMap, picked, gameState);
         } else {
             piecesCurrentTeam.remove(random);
           continue;
         }
       } else {                                                                  //Move if Shape
-        shapeMoves = getShapeMoves(gameState, grid, picked, shapeMoves);
+        shapeMoves = getShapeMoves(gameState, picked, shapeMoves);
         if(shapeMoves.size() > 0) {
           return getRandomShapeMove(shapeMoves, picked);
         } else {
@@ -755,13 +754,13 @@ public class MCTS_Tools {
    * @param gameState
    * @return a valid move
    */
-  public static ReferenceMove getDirectionMove(ArrayList<int[]> dirMap, Piece piece, GameState gameState, Grid grid) {
+  public static ReferenceMove getDirectionMove(ArrayList<int[]> dirMap, Piece piece, ReferenceGameState gameState) {
     int randomDir = (int) (dirMap.size() * Math.random());
     int reach;
 
     while (true) {
       reach = (int) (Math.random() * dirMap.get(randomDir)[1] + 1);
-      Move newPos = checkMoveValidity(gameState, grid, piece, dirMap.get(randomDir)[0], reach);
+      Move newPos = checkMoveValidity(gameState, piece, dirMap.get(randomDir)[0], reach);
       if (newPos != null) 
         return new ReferenceMove(piece, newPos.getNewPosition());
       dirMap.get(randomDir)[1] =  reach - 1;

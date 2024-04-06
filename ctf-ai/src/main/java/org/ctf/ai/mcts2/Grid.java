@@ -3,17 +3,20 @@ package org.ctf.ai.mcts2;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
+import java.util.LinkedList;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
+import org.ctf.shared.state.Team;
 
 /**
  * This class replaces the "dumb" String[][] Grid with a smart GridObjectContainer Grid.
  */
 public class Grid {
+  static int[][] blocks;
   GridObjectContainer[][] grid;
   GridPieceContainer[][] pieceVisionGrid;
   IdentityHashMap<Piece, ArrayList<int[]>> pieceVisions;
-
+  
   public Grid(GridObjectContainer[][] grid, GridPieceContainer[][] pieceVisionGrid, IdentityHashMap<Piece, ArrayList<int[]>> pieceVisions) {
     this.grid = grid;
     this.pieceVisionGrid = pieceVisionGrid;
@@ -38,13 +41,36 @@ public class Grid {
     }
   }
   
+  public Grid(Grid grid) {
+    this.grid = new GridObjectContainer[grid.getGrid().length][grid.getGrid()[0].length];
+    for(int y=0; y<this.grid.length; y++) {
+      for(int x=0; x<this.grid[y].length; x++) {
+        if(grid.getGrid()[y][x] != null)
+          this.grid[y][x] = new GridObjectContainer(grid, x, y);
+      }
+    }
+    this.pieceVisionGrid = new GridPieceContainer[grid.getGrid().length][grid.getGrid()[0].length];
+    this.pieceVisions = new IdentityHashMap<Piece, ArrayList<int[]>>();
+  }
+  
   public Grid(GameState gameState) {
     this.grid = new GridObjectContainer[gameState.getGrid().length][gameState.getGrid()[0].length];
+    LinkedList<int[]> blocks = new LinkedList<int[]>();
     for(int y=0; y<this.grid.length; y++) {
       for(int x=0; x<gameState.getGrid()[y].length; x++) {
-        if(!gameState.getGrid()[y][x].equals(""))
-          this.grid[y][x] = new GridObjectContainer(gameState, x, y);
+        if(gameState.getGrid()[y][x].equals("b")) {
+          this.grid[y][x] = new GridObjectContainer(GridObjects.block, 0, null);
+          blocks.add(new int[] {y, x});
+        }
       }
+    }
+    Grid.blocks = blocks.toArray(new int[blocks.size()][]);
+    for(Team team : gameState.getTeams()) {
+      if(team == null)
+        continue;
+      this.grid[team.getBase()[0]][team.getBase()[1]] = new GridObjectContainer(GridObjects.base, Integer.parseInt(team.getId()), null);
+      for(Piece p : team.getPieces())
+        this.grid[p.getPosition()[0]][p.getPosition()[1]] = new GridObjectContainer(p);
     }
     this.pieceVisionGrid = new GridPieceContainer[grid.length][grid[0].length];
     this.pieceVisions = new IdentityHashMap<Piece, ArrayList<int[]>>();

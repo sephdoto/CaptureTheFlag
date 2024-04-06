@@ -1,5 +1,7 @@
 package org.ctf.ai.mcts2;
 
+import java.util.Arrays;
+import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
 
@@ -17,6 +19,19 @@ public class ReferenceMove {
     this.newPosition = newPos;
   }
 
+  public ReferenceMove(GameState gameState, Move move) {
+    if(move.getPieceId() != null) {
+      this.newPosition = move.getNewPosition();
+      this.piece =
+          Arrays.stream(
+              gameState.getTeams()[Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0])]
+                  .getPieces())
+          .filter(p -> p.getId().equals(move.getPieceId()))
+          .findFirst()
+          .get();
+    }
+  }
+
   public Move toMove() {
     Move move = new Move();
     move.setNewPosition(this.newPosition);
@@ -24,7 +39,7 @@ public class ReferenceMove {
       move.setPieceId(this.piece.getId());
     return move;
   }
-  
+
   public Piece getPiece() {
     return piece;
   }

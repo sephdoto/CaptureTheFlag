@@ -14,9 +14,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.ctf.ai.AI_Constants;
 import org.ctf.ai.AI_Tools.InvalidShapeException;
 import org.ctf.ai.AI_Tools.NoMovesLeftException;
-import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
-import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
 
 public class MCTS {
@@ -36,7 +35,7 @@ public class MCTS {
     heuristicCounter = new AtomicInteger();
     expansionCounter = new AtomicInteger();
     this.teams = root.gameState.getTeams().length;
-    this.maxDistance = (int)Math.round(Math.sqrt(Math.pow(root.gameState.getGrid().length, 2) + Math.pow(root.gameState.getGrid()[0].length, 2)));
+    this.maxDistance = (int)Math.round(Math.sqrt(Math.pow(root.gameState.getGrid().getGrid().length, 2) + Math.pow(root.gameState.getGrid().getGrid()[0].length, 2)));
     this.executorService  = Executors.newFixedThreadPool(AI_Constants.numThreads);
   }
 
@@ -63,7 +62,7 @@ public class MCTS {
     //      printResults(bestChild);
 
     this.executorService.shutdown();
-    return (bestChild.gameState.getLastMove());
+    return bestChild.gameState.getLastMove().toMove();
   }
 
 
@@ -96,7 +95,8 @@ public class MCTS {
   TreeNode expand(TreeNode parent){
     for(int i=0; i<parent.children.length; i++) {
       if(parent.children[i] == null) {
-        TreeNode child = parent.clone(parent.copyGameState());
+        TreeNode child = parent.clone(parent.gameState.clone());
+//        child.initPossibleMovesAndChildren();
         oneMove(child, parent, false);
         parent.children[i] = child;
         return child;
@@ -158,11 +158,11 @@ public class MCTS {
     }
     
 
-    simulateOn = simulateOn.clone(simulateOn.copyGameState());
+    simulateOn = simulateOn.clone(simulateOn.gameState.clone());
 
     for(;count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn)) {
       oneMove(simulateOn, simulateOn, true);
-      removeTeamCheck(simulateOn.gameState, simulateOn.grid);
+      removeTeamCheck(simulateOn.gameState);
     }
     if(isTerminal < 0) {  
       simulationCounter.decrementAndGet();
@@ -267,7 +267,7 @@ public class MCTS {
    */
   int isTerminal(TreeNode node) {
     int teamsLeft = 0;
-    removeTeamCheck(node.gameState, node.grid);
+    removeTeamCheck(node.gameState);
     for(int i=0; i<node.gameState.getTeams().length; i++) {
       if(node.gameState.getTeams()[i] != null) {
         teamsLeft++;
@@ -281,15 +281,14 @@ public class MCTS {
           continue;
         //only if a move can be made no exception is thrown
         try {
-          //TODO RANDOM AI AN GRID ANPASSEN!
-          MCTS_Tools.pickMoveComplex(node.gameState, node.grid);
+          MCTS_Tools.pickMoveComplex(node.gameState);
           canMove = true;
         } catch (Exception e) {} 
       }
       if(canMove) {
         return -1;
       } else if (!canMove){
-        MCTS_Tools.removeTeam(node.gameState, node.grid, i);
+        MCTS_Tools.removeTeam(node.gameState, i);
         teamsLeft--;
       }
     }
@@ -362,45 +361,36 @@ public class MCTS {
    * @return a child node containing the simulation result
    */
   void oneMove(TreeNode alter, TreeNode original, boolean simulate) {
-    if(isTerminal(alter) != -1)
-      System.out.println("node was terminal but got simulated");
-//    simulate = false;
+//    alter.printGrids();
     if(simulate) {
       ReferenceMove move = getAndRemoveMoveHeuristicFromGrid(original);
       HashSet<Piece> updateThese = new HashSet<Piece>();
       Piece center = move.getPiece();
       int[] oldPos = center.getPosition();
-      alterGameStateAndGrid(alter.gameState, alter.grid, move.toMove());
-//      System.out.println(move.getPiece().getId() + " moves to " + move.getNewPosition()[0] + " " + move.getNewPosition()[1]);
-//      alter.printGrids();
       updateThese.add(center);
-      MCTS_Tools.putNeighbouringPieces(updateThese, alter.grid, oldPos);
-      MCTS_Tools.putNeighbouringPieces(updateThese, alter.grid, center.getPosition());
+      MCTS_Tools.putNeighbouringPieces(updateThese, alter.gameState.getGrid(), oldPos);
+      alterGameStateAndGrid(alter.gameState, move);
+      MCTS_Tools.putNeighbouringPieces(updateThese, alter.gameState.getGrid(), center.getPosition());
       alter.updateGrids(updateThese);
+      //TODO putNeighbouringPieces methode entfernen, alte und neue position und piece übergeben, dann in treenode berechnen.
     } else {
-      alterGameStateAndGrid(alter.gameState, alter.grid, getAndRemoveMoveHeuristic(original));
+      alterGameStateAndGrid(alter.gameState, getAndRemoveMoveHeuristic(original));
       alter.initPossibleMovesAndChildren();
     }
   }   
 
   ReferenceMove getAndRemoveMoveHeuristicFromGrid(TreeNode parent) {
     for(Piece piece : parent.gameState.getTeams()[parent.gameState.getCurrentTeam()].getPieces()) {
-//      try {
-//      if(parent.grid.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]].getTeamId() != parent.gameState.getCurrentTeam())
-//        continue;
-//      } catch(Exception e) {
-//        System.out.println("piece on position not found: " + piece.getPosition()[0] + "." + piece.getPosition()[1]);
-//      }
-      for(int i=0; i<parent.grid.getPieceVisions().get(piece).size(); i++) {
-        int[] pos = parent.grid.getPieceVisions().get(piece).get(i);
-        if(MCTS_Tools.emptyField(parent.grid, pos)) {
+      for(int i=0; i<parent.gameState.getGrid().getPieceVisions().get(piece).size(); i++) {
+        int[] pos = parent.gameState.getGrid().getPieceVisions().get(piece).get(i);
+        if(MCTS_Tools.emptyField(parent.gameState.getGrid(), pos)) {
           continue;
         }
-        if(MCTS_Tools.otherTeamsBase(parent.grid, pos, piece.getPosition())) {
+        if(MCTS_Tools.otherTeamsBase(parent.gameState.getGrid(), pos, piece.getPosition())) {
           return new ReferenceMove(piece, pos);
         }
-        if(!MCTS_Tools.occupiedBySameTeam(parent.gameState, parent.grid, pos)
-            && MCTS_Tools.occupiedByWeakerOpponent(parent.grid.getPosition(pos[1], pos[0]).getPiece(), piece)) {
+        if(!MCTS_Tools.occupiedBySameTeam(parent.gameState, pos)
+            && MCTS_Tools.occupiedByWeakerOpponent(parent.gameState.getGrid().getPosition(pos[1], pos[0]).getPiece(), piece)) {
           return new ReferenceMove(piece, pos);
         }
       }
@@ -412,7 +402,7 @@ public class MCTS {
     ReferenceMove move = null;
     
     try {
-      move = MCTS_Tools.pickMoveComplex(parent.gameState, parent.grid);
+      move = MCTS_Tools.pickMoveComplex(parent.gameState);
     } catch (NoMovesLeftException e) {
       e.printStackTrace();
     } catch (InvalidShapeException e) {
@@ -425,17 +415,17 @@ public class MCTS {
   
   
   
-  Move getAndRemoveMoveHeuristic(TreeNode parent) {
+  ReferenceMove getAndRemoveMoveHeuristic(TreeNode parent) {
     for(Piece piece : parent.possibleMoves.keySet()) {
       for(int i=0; i<parent.possibleMoves.get(piece).size(); i++) {
         int[] pos = parent.possibleMoves.get(piece).get(i);
-        if(MCTS_Tools.emptyField(parent.grid, pos)) {
+        if(MCTS_Tools.emptyField(parent.gameState.getGrid(), pos)) {
           continue;
         }
-        if(MCTS_Tools.otherTeamsBase(parent.grid, pos, piece.getPosition())) {
+        if(MCTS_Tools.otherTeamsBase(parent.gameState.getGrid(), pos, piece.getPosition())) {
           return createMoveDeleteIndex(parent, piece, i);
         }
-        if(MCTS_Tools.occupiedByWeakerOpponent(parent.grid.getPosition(pos[1], pos[0]).getPiece(), piece)) {
+        if(MCTS_Tools.occupiedByWeakerOpponent(parent.gameState.getGrid().getPosition(pos[1], pos[0]).getPiece(), piece)) {
           return createMoveDeleteIndex(parent, piece, i);
         }
       }
@@ -444,22 +434,14 @@ public class MCTS {
     return getAndRemoveMoveRandom(parent);
   }
 
-  Move getAndRemoveMoveRandom(TreeNode parent){
-    Piece key = null;
-    try {
-    key = (Piece)parent.possibleMoves.keySet().toArray()[rand.nextInt(parent.possibleMoves.keySet().size())];
-    } catch (Exception e) {
-      System.out.println("fehler bei random");
-    }
+  ReferenceMove getAndRemoveMoveRandom(TreeNode parent){
+    Piece key = (Piece)parent.possibleMoves.keySet().toArray()[rand.nextInt(parent.possibleMoves.keySet().size())];
     int randomMove = rand.nextInt(parent.possibleMoves.get(key).size());
-
     return createMoveDeleteIndex(parent, key, randomMove);
   }
 
-  Move createMoveDeleteIndex(TreeNode parent, Piece key, int index) {
-    Move move = new Move();
-    move.setPieceId(key.getId());
-    move.setNewPosition(parent.possibleMoves.get(key).get(index));
+  ReferenceMove createMoveDeleteIndex(TreeNode parent, Piece key, int index) {
+    ReferenceMove move = new ReferenceMove(key, parent.possibleMoves.get(key).get(index));
 
     parent.possibleMoves.get(key).remove(index);
     if(parent.possibleMoves.get(key).size() <= 0) {
@@ -473,13 +455,13 @@ public class MCTS {
    * This method checks if a team got no more flags or no more pieces.
    * @param gameState
    */
-  void removeTeamCheck(GameState gameState, Grid grid) {
+  void removeTeamCheck(ReferenceGameState gameState) {
     for(int i=0; i<gameState.getTeams().length; i++) {
       if(gameState.getTeams()[i] == null)
         continue;
       if(gameState.getTeams()[i].getFlags() == 0 ||
           gameState.getTeams()[i].getPieces().length == 0) {
-        MCTS_Tools.removeTeam(gameState, grid, i--);
+        MCTS_Tools.removeTeam(gameState, i--);
       }
     }
   }
@@ -492,29 +474,24 @@ public class MCTS {
    * @param move
    */
   //TODO statt Move move ein Piece : new Position ding übergeben. würde alles verschnellern
-  void alterGameStateAndGrid(GameState gameState, Grid grid, Move move) {
-    GridObjectContainer occupant = grid.getPosition(move.getNewPosition()[1], move.getNewPosition()[0]);
-    Piece picked = null;
-    try {
-    picked = Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(move.getPieceId())).findFirst().get();
-    } catch (Exception e) {
-      System.out.println("piece " + move.getPieceId() + " was not present in gameState");
-    }
-    grid.setPosition(null, picked.getPosition()[1], picked.getPosition()[0]);
+  void alterGameStateAndGrid(ReferenceGameState gameState, ReferenceMove move) {
+    GridObjectContainer occupant = gameState.getGrid().getPosition(move.getNewPosition()[1], move.getNewPosition()[0]);
+    Piece picked = move.getPiece();
+    gameState.getGrid().setPosition(null, picked.getPosition()[1], picked.getPosition()[0]);
     if(occupant == null) {
-      grid.setPosition(new GridObjectContainer(GridObjects.piece, gameState.getCurrentTeam(), picked), move.getNewPosition()[1], move.getNewPosition()[0]);
+      gameState.getGrid().setPosition(new GridObjectContainer(GridObjects.piece, gameState.getCurrentTeam(), picked), move.getNewPosition()[1], move.getNewPosition()[0]);
       picked.setPosition(move.getNewPosition());
     } else if(occupant.getObject() == GridObjects.piece) {
       gameState.getTeams()[occupant.getTeamId()].setPieces(
           Arrays.asList(gameState.getTeams()[occupant.getTeamId()].getPieces()).stream()
           .filter(p -> !p.getId().equals(occupant.getPiece().getId()))
           .toArray(Piece[]::new));
-      grid.setPosition(new GridObjectContainer(GridObjects.piece, gameState.getCurrentTeam(), picked), move.getNewPosition()[1], move.getNewPosition()[0]);
+      gameState.getGrid().setPosition(new GridObjectContainer(GridObjects.piece, gameState.getCurrentTeam(), picked), move.getNewPosition()[1], move.getNewPosition()[0]);
       picked.setPosition(move.getNewPosition());
     } else {
       gameState.getTeams()[occupant.getTeamId()].setFlags(gameState.getTeams()[occupant.getTeamId()].getFlags() -1);
-      picked.setPosition(MCTS_Tools.respawnPiecePosition(grid, gameState.getTeams()[gameState.getCurrentTeam()].getBase()));
-      grid.setPosition(new GridObjectContainer(GridObjects.piece, gameState.getCurrentTeam(), picked), picked.getPosition()[1], picked.getPosition()[0]);
+      picked.setPosition(MCTS_Tools.respawnPiecePosition(gameState.getGrid(), gameState.getTeams()[gameState.getCurrentTeam()].getBase()));
+      gameState.getGrid().setPosition(new GridObjectContainer(GridObjects.piece, gameState.getCurrentTeam(), picked), picked.getPosition()[1], picked.getPosition()[0]);
     }
     gameState.setLastMove(move);
     MCTS_Tools.toNextTeam(gameState);
@@ -540,7 +517,7 @@ public class MCTS {
         n += 1;
         continue;
       }
-      Move rootMove = root.children[i].gameState.getLastMove();
+      Move rootMove = root.children[i].gameState.getLastMove().toMove();
       sb.append("\n   " + rootMove.getPieceId() + " to [" + rootMove.getNewPosition()[0] + "," + rootMove.getNewPosition()[1] + "]"
           + " winning chance: " + (root.children[i].getV() * 100) + "% with " + root.children[i].getNK() + " nodes" + ", uct: " + root.children[i].getUCT(AI_Constants.C) + " wins 0 " + root.children[i].wins[0] + ", wins 1 " + root.children[i].wins[1]);
     }

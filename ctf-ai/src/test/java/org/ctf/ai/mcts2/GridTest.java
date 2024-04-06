@@ -10,9 +10,9 @@ class GridTest {
   @Test
   void testEquals() {
     TreeNode node = new TreeNode(null, TestValues.getTestState(), null);
-    TreeNode clone = node.clone(node.copyGameState());
-    assertTrue(node.grid.equals(node.grid));
-    assertTrue(node.grid.equals(clone.grid));
+    TreeNode clone = node.clone(node.gameState.clone());
+    assertTrue(node.gameState.getGrid().equals(node.gameState.getGrid()));
+    assertTrue(node.gameState.getGrid().equals(clone.gameState.getGrid()));
   }
   
   @Test
@@ -43,37 +43,40 @@ class GridTest {
   void testInitPieceVision() {
     GameState testState = TestValues.getTestState();
     TreeNode node = new TreeNode(null, testState, null);
-    Grid grid = node.grid;
+    Grid grid = node.gameState.getGrid();
     for(Piece key : node.possibleMoves.keySet())
       for(int[] pos : node.possibleMoves.get(key))
         assertNotNull(grid.pieceVisionGrid[pos[0]][pos[1]]);
     
-    for(int i=0; i<node.grid.getGrid().length; i++) {
-      for(int j=0; j<node.grid.getGrid()[0].length; j++) {
-        if(node.grid.getPieceVisionGrid()[i][j] == null)
+    for(int i=0; i<node.gameState.getGrid().getGrid().length; i++) {
+      for(int j=0; j<node.gameState.getGrid().getGrid()[0].length; j++) {
+        if(node.gameState.getGrid().getPieceVisionGrid()[i][j] == null)
           System.out.print(". ");
-        else if(node.grid.getPieceVisionGrid()[i][j].getPieces().stream().anyMatch(p -> p.getId().equals("p:0_6")))
+        else if(node.gameState.getGrid().getPieceVisionGrid()[i][j].getPieces().stream().anyMatch(p -> p.getId().equals("p:0_6")))
           System.out.print("X ");
         else
-          System.out.print(node.grid.getPieceVisionGrid()[i][j].getPieces().size() + " ");
+          System.out.print(node.gameState.getGrid().getPieceVisionGrid()[i][j].getPieces().size() + " ");
       }
       System.out.print("\t");
-      for(int j=0; j<node.grid.getGrid()[0].length; j++) {
-        if(node.grid.getGrid()[i][j] == null)
+      for(int j=0; j<node.gameState.getGrid().getGrid()[0].length; j++) {
+        if(node.gameState.getGrid().getGrid()[i][j] == null)
           System.out.print(". ");
         else
-          System.out.print(node.grid.getGrid()[i][j].getObject().ordinal() + " ");
+          System.out.print(node.gameState.getGrid().getGrid()[i][j].getObject().ordinal() + " ");
       }
      System.out.println(); 
     }
     
     
+    //Das Grid wird nicht mehr komplett geclont, PieceVisions sollen in den Nodes initialisiert werden?
+    /*
     Grid clone = grid.clone();
+    
     for(Piece key : node.possibleMoves.keySet())
       for(int[] pos : node.possibleMoves.get(key)) {
         assertNotNull(clone.pieceVisionGrid[pos[0]][pos[1]]);
         assertFalse(clone.pieceVisionGrid[pos[0]][pos[1]].equals(grid.pieceVisionGrid[pos[1]][pos[0]]));
-      }
+      }*/
   }
 
 }

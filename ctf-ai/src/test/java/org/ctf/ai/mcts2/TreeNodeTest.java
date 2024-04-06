@@ -17,10 +17,11 @@ class TreeNodeTest {
     MCTS mcts = new MCTS(node);
     for(int i=0; i<50 && mcts.isTerminal(node) == -1; i++){
       mcts.oneMove(node, node, true);
-      mcts.removeTeamCheck(node.gameState, node.grid);
+      mcts.removeTeamCheck(node.gameState);
+      node.printGrids();
       System.out.println(node.gameState.getTeams()[0].getPieces().length + "<- 0, 1 ->" + node.gameState.getTeams()[1].getPieces().length);
     }
-    TreeNode copy = node.clone(node.copyGameState());
+    TreeNode copy = node.clone(node.gameState.clone());
     copy.initPossibleMovesAndChildren();
     
   }
