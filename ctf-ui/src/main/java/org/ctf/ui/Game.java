@@ -78,19 +78,19 @@ public class Game {
 		//JavaClient.makeMoveRequest(move)
 		}
 		catch (SessionNotFound e) {
-			Dialogs.showErrorDialog("Session not found", e.getMessage());
+			Dialogs.showExceptionDialog("Session not found", e.getMessage());
 		}
 		catch (ForbiddenMove e) {
-			Dialogs.showErrorDialog("Forbidden Move", e.getMessage());
+			Dialogs.showExceptionDialog("Forbidden Move", e.getMessage());
 		}
 		catch (InvalidMove e) {
-			Dialogs.showErrorDialog("Invalid Move", e.getMessage());
+			Dialogs.showExceptionDialog("Invalid Move", e.getMessage());
 		}
 		catch (GameOver e) {
-			Dialogs.showErrorDialog("Game Over", e.getMessage());
+			Dialogs.showExceptionDialog("Game Over", e.getMessage());
 		}
 		catch (UnknownError e) {
-			Dialogs.showErrorDialog("Unknown Error", e.getMessage());
+			Dialogs.showExceptionDialog("Unknown Error", e.getMessage());
 		}
 		resetStateAfterMoveRequest();
 	}

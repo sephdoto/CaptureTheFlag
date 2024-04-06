@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.ctf.shared.state.GameState;
 
+import configs.AIPower;
 import configs.Dialogs;
 import configs.GameMode;
 import configs.ImageLoader;
@@ -44,7 +45,9 @@ import javafx.scene.layout.VBox;
 
 /**
  * @author mkrakows
- * This Class contains a scene in that a user can choose a map with a choiceBox and display it on the left side
+ * This Class shows a scene in that a user can choose a map with a choiceBox and display it on the left side
+ * With this map the user will have the option to start either a online or Offline Game or to play against Ai
+ * 
  */
 public class CreateGameScreen  {
 	static VBox topContainerVBox;
@@ -56,6 +59,14 @@ public class CreateGameScreen  {
 	static VBox rightVBox;
 	static GameState state;
 
+	/**
+	 * This method is called when the user clicks "create game" on the homeScreen
+	 * It initializes some default maps and also self created maps from that the user
+	 * can choose. It loads all Images than will be used to display figures later.
+	 * The scene consists of a center where the map is shown and a right side where the user 
+	 * can choose which map is shown and start a game.
+	 * @param stage The stage on which the scene should be shown
+	 */
 	public static void initCreateGameScreen(Stage stage) {
 		ImageLoader.loadImages();
 		s = stage;
@@ -78,13 +89,20 @@ public class CreateGameScreen  {
 		stage.show();
 	}
 	
+	/**
+	 * This methode chooses a default map from all the stored maps and displays it
+	 */
 	private static void chooseDefaultMap() {
 		selected = StroeMaps.getRandomMapName();
 		displayMapname();
 		gm = createLeftSidPane(selected);
 	}
 	
-
+	/**
+	 * This methode creates the right side of the scene including a menubar on the top right corner,
+	 * thechoiceBox to choose a map and the buttons which are used to create a game
+	 * @return
+	 */
 	private static VBox createRightSide() {
 		VBox right = new VBox(s.heightProperty().divide(5).doubleValue());
 		right.setStyle("-fx-background-color: lightblue");
@@ -105,21 +123,28 @@ public class CreateGameScreen  {
 		return right;
 	}
 	
+	/**
+	 * This method creates the Box in with the 3 buttons to create a game are shown
+	 * @param parent
+	 * @return
+	 */
 	private static VBox createCreateGameButtons(VBox parent) {
 		VBox createGameButtonBox = new VBox(20);
 		createGameButtonBox.setStyle("-fx-border-color: black; -fx-border-width: 2px;" + "-fx-background-color: white;"
 				+ "-fx-background-radius: 20px; -fx-border-radius: 20px;" + "-fx-alignment: top-center;");
 		Button startOnlineGame = createStartButton("Start Online Game", parent, GameMode.Online);
 		Button startAiGame = createStartButton("Start Offline Game", parent, GameMode.OneDevice);
-		Button startSingleDeviceGame = createStartButton("Play Against Ai", parent, GameMode.Online);
+		Button startSingleDeviceGame = createStartButton("Play Against Ai", parent, GameMode.AI);
 		createGameButtonBox.setPadding(new Insets(20));
 		createGameButtonBox.getChildren().addAll(startOnlineGame,startSingleDeviceGame,startAiGame);
 		return createGameButtonBox;
 	}
+	
+	
 	@Deprecated
 	private static Button createBackButton(VBox parent) {
 		Button backButton = new Button("back");
-		applyButtonStyle(backButton);
+		applyButtonStyle(backButton, "lightblue");
 		VBox.setMargin(backButton, new Insets(10,0,0,0));
 		backButton.prefWidthProperty().bind(parent.widthProperty().multiply(0.5));
 		backButton.prefHeightProperty().bind(parent.heightProperty().multiply(0.05));
@@ -133,15 +158,18 @@ public class CreateGameScreen  {
 		Button startButton = new Button(text);
 		startButton.prefWidthProperty().bind(parent.widthProperty().multiply(0.7));
 		startButton.prefHeightProperty().bind(parent.heightProperty().multiply(0.1));
-		applyButtonStyle(startButton);
+		applyButtonStyle(startButton,"lightblue");
 		startButton.setOnAction(event ->{
+			if(mode.equals(GameMode.AI)) {
+				AIPower pow = Dialogs.showChooseAi();
+			}
 			PlayGameScreen.initPlayGameScreen(s, state, mode);
 		});
 		return startButton;
 	}
 	
 	private static void perfromBackButtonClick(String header, String content) {
-		boolean goBack = Dialogs.showConfirmationDialog(header, content);
+		boolean goBack = Dialogs.showYesNoDialog(header, content);
 		if (goBack) {
 			Scene scene = App.getScene();
 		    s.setScene(scene);
@@ -231,22 +259,23 @@ public class CreateGameScreen  {
 	private static void displayMapname() {
 		mapName.setText("Your map: " +  selected);
 	}
-	
-public static void applyButtonStyle(Button button) {
+
+public static void applyButtonStyle(Button button, String color) {
 	    button.setStyle("-fx-background-color:"
 			      + " linear-gradient(#5a5c5e, #3e3f41);"
 			      + " -fx-background-radius: 20; -fx-border-radius: 20;"
-			      + " -fx-text-fill: #FFFFFF");
+			      + " -fx-text-fill:" + color);
 	    button.hoverProperty().addListener((observable, oldValue, newValue) -> {
 	      if (newValue) {
 	        button.setStyle("-fx-background-color: linear-gradient(#6a6c6e, #4e4f51);"
 			          + " -fx-background-radius: 20; -fx-border-radius: 20;"
-			          + "-fx-text-fill: #FFFFFF");
+			          + "-fx-text-fill:" + color + ";"
+			          + "-fx-font-size: 15");
 	      } else {
 	        button.setStyle("-fx-background-color:"
 	  		      + " linear-gradient(#5a5c5e, #3e3f41);"
 			      + " -fx-background-radius: 20; -fx-border-radius: 20;"
-			      + " -fx-text-fill: #FFFFFF");
+			      + " -fx-text-fill:" + color);
 	      }
 	    });
 	  }

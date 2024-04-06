@@ -1,5 +1,5 @@
 package configs;
 
 public enum GameMode {
-	OneDevice, Online;
+	OneDevice, Online, AI;
 }
