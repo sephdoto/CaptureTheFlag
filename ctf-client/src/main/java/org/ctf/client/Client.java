@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import java.util.Date;
 
 import org.ctf.client.service.CommLayer;
+import org.ctf.client.service.CommLayerInterface;
+import org.ctf.client.service.RestClientLayer;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
@@ -38,7 +40,7 @@ public class Client implements GameClientInterface {
 
   private Gson gson; // Gson object for conversions incase needed
   //Two CommLayers Available CommLayer and RestClientLayer
-  private CommLayer comm; // Layer instance which is used for communication
+  private CommLayerInterface comm; // Layer instance which is used for communication
 
   // Block for Server Info
   private String currentServer; // Creates URL with Session ID for use later
@@ -63,22 +65,34 @@ public class Client implements GameClientInterface {
   // Block for booleans
   public boolean gameOver;
 
-  /** Constructor which inits some objects on creation */
-  public Client() {
+  /** Constructor which inits some objects on creation 
+   *  @param restLayerEnabled True for RestClient False for Java Client
+  */
+  
+  public Client(boolean restLayerEnabled) {
     this.gson = new Gson(); // creates a gson Object on creation to conserve memory
     this.currentState = new GameState();
     this.currentSession = new GameSession();
-    this.comm = new CommLayer();
+    if(restLayerEnabled){
+      this.comm = new RestClientLayer(); 
+    } else {
+      try {
+        this.comm = new CommLayer();
+      } catch (Exception e) {
+        this.comm = new CommLayer();
+      }
+      
+    }
   }
 
   /**
    * Additional constructor to set the IP and port on object creation
-   *
-   * @param IP
-   * @param port
+   * @param selector boolean to enable RESTClient
+   * @param IP the IP to connect to Exp "localhost" or "192.xxx.xxx.xxx"
+   * @param port the port the server is at Exp 9999 / 8080 /
    */
-  public Client(String IP, String port) {
-    this();
+  public Client(boolean restLayerEnabled, String IP, String port) {
+    this(restLayerEnabled);
     setServer(IP, port);
   }
   

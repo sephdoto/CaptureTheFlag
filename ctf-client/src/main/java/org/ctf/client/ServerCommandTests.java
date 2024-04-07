@@ -372,8 +372,8 @@ public class ServerCommandTests {
     Gson gson = new Gson();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     CommLayer comm = new CommLayer();
-    Client javaClient = new Client("localhost", "8888");
-    Client javaClient2 = new Client("localhost", "8888");
+    Client javaClient = new Client(true, "localhost", "8888");
+    Client javaClient2 = new Client(true, "localhost", "8888");
     
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
@@ -517,8 +517,8 @@ public class ServerCommandTests {
 
     Gson gson = new Gson();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
-    Client javaClient = new Client("localhost", "8888");
-    Client javaClient2 = new Client("localhost", "8888");
+    Client javaClient = new Client(true,"localhost", "8888");
+    Client javaClient2 = new Client(true,"localhost", "8888");
     javaClient.createGame(template);
     javaClient.joinGame("Se[j1]");
     javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "nasd");

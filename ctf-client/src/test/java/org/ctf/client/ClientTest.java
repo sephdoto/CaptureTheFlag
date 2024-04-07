@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
 import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
 import java.io.IOException;
-import org.ctf.client.service.RestClientLayer;
+import org.ctf.client.service.CommLayer;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
@@ -25,9 +25,9 @@ import org.junit.jupiter.api.Test;
  *
  * @author rsyed
  */
-public class JavaClientRestLayerTests {
+public class ClientTest {
 
-  static RestClientLayer comm = new RestClientLayer();
+  static CommLayer comm = new CommLayer();
   static Client javaClient;
   static Client javaClient2;
   final MapTemplate template = createGameTemplate();
@@ -36,13 +36,13 @@ public class JavaClientRestLayerTests {
   static void setup() {
     String[] args = new String[] {};
     CtfApplication.main(args);
-    javaClient = new Client("localhost", "9999");
+    javaClient = new Client(false, "localhost", "9999");
   }
 
   @BeforeEach
   void setupBeforeEach() {
-    javaClient = new Client("localhost", "9999");
-    javaClient2 = new Client("localhost", "9999");
+    javaClient = new Client(false, "localhost", "9999");
+    javaClient2 = new Client(false, "localhost", "9999");
   }
 
   @Test

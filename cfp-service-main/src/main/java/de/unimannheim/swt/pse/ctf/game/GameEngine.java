@@ -91,7 +91,7 @@ public class GameEngine implements Game {
     
     
 
-    this.remainingTeamSlots = template.getTeams();  //Sets counter for remaining teams
+    this.remainingTeamSlots = template.getTeams() - 1 ;  //Sets counter for remaining teams
     // Setting Flags
     this.isGameOver = false;
 
