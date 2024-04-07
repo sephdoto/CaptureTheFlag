@@ -3,7 +3,6 @@ package org.ctf.shared.ai;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
-import org.ctf.shared.ai.AI_Tools;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
@@ -15,12 +14,11 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 /**
- * This class is used for testing Methods which are not used in the ctf-ai module.
- * Those methods were implemented for different use cases than the RandomAI.
+ * This class is used for testing Methods which are used in other modules than ctf-ai.
  * @author sistumpf
  */
 class AI_ToolsTest {
-  
+
 
   @Test
   void testToNextTeam() {
@@ -31,13 +29,13 @@ class AI_ToolsTest {
       teams[i] = null;
     teams[3] = new Team();
     gameState.setTeams(teams);
-    
+
     AI_Tools.toNextTeam(gameState);
 
     assertEquals(gameState.getTeams()[gameState.getCurrentTeam()].getClass(), Team.class);
     gameState.getTeams()[3] = null;
     gameState.getTeams()[1] = new Team();
-    
+
     AI_Tools.toNextTeam(gameState);
 
     assertEquals(gameState.getTeams()[gameState.getCurrentTeam()].getClass(), Team.class);
@@ -53,17 +51,17 @@ class AI_ToolsTest {
     actuallyValidMoves.add(new int[] {6,3});
     actuallyValidMoves.add(new int[] {9,3});
     actuallyValidMoves.add(new int[] {8,3});
-    
+
     assertArrayEquals(moves.toArray(), actuallyValidMoves.toArray());
-    
+
     gameState.getGrid()[6][3] = "b";
     gameState.getGrid()[8][3] = "b";
     moves = AI_Tools.getPossibleMoves(gameState, pieceId, new ArrayList<int[]>());
     actuallyValidMoves.clear();
-    
+
     assertArrayEquals(moves.toArray(), actuallyValidMoves.toArray());
   }
-  
+
   @Test
   void testRespawnPiecePosition() {
     GameState gameState = getTestState();
@@ -79,11 +77,11 @@ class AI_ToolsTest {
     gameState.getGrid()[3][4] = "b";                                    //block last free field, distance from base must be +1
     pos = AI_Tools.respawnPiecePosition(gameState, basePos); 
     assertArrayEquals(new int[] {4,5}, pos);                            //randomly chosen field: 4,5. Should stay the same every time (with this gameState)
-   
+
     gameState.getGrid()[0][0] = "b";                                    //alter gameState so the seeded random chooses another field, even though 4,4 is free to be occupied
     pos = AI_Tools.respawnPiecePosition(gameState, basePos);
     assertArrayEquals(new int[] {3,6}, pos);                            //randomly chosen field: 3,6. Should stay the same every time (with this gameState)
-    
+
     for(int i= 0; i<gameState.getGrid().length; i++) {                  //place a block onto every free position on the grid
       for(int j=0; j<gameState.getGrid().length; j++) {
         if(gameState.getGrid()[i][j] == "") {
@@ -91,7 +89,7 @@ class AI_ToolsTest {
         }
       }
     }
-    
+
     for(int i= 0; i<gameState.getGrid().length; i++) {
       for(int j=0; j<gameState.getGrid().length; j++) {
         if(gameState.getGrid()[i][j].equals("b")) {
@@ -103,7 +101,7 @@ class AI_ToolsTest {
       }
     }
   }
-  
+
   void printGrid(GameState state) {
     for(int i= 0; i<state.getGrid().length; i++) {
       for(int j=0; j<state.getGrid().length; j++) {
@@ -126,7 +124,7 @@ class AI_ToolsTest {
     assertArrayEquals(dist3, AI_Tools.fillXTransformations(new int[24], 3));
     assertArrayEquals(dist4, AI_Tools.fillXTransformations(new int[32], 4));
   }
-  
+
   @Test
   void testYTransformations() {
     int[] dist1 = new int[] {-1, -1, -1, 0, 1, 1, 1, 0};

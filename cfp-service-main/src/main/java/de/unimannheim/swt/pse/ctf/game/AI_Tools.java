@@ -1,9 +1,6 @@
 package de.unimannheim.swt.pse.ctf.game;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.stream.Stream;
 import de.unimannheim.swt.pse.ctf.game.map.Directions;
 import de.unimannheim.swt.pse.ctf.game.map.ShapeType;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
@@ -11,16 +8,16 @@ import de.unimannheim.swt.pse.ctf.game.state.Move;
 import de.unimannheim.swt.pse.ctf.game.state.Piece;
 
 /**
- * @author sistumpf
  * This class contains some of the same methods as AI_Tools from module "shared" but it uses and returns classes from the server.
  * As the map or state package exists in the shared and ctf module, here the ctf versions are used.
  * This class should only be references from EngineTools, as it contains all the methods used by EngineTools but not by GameEngine.
+ * @author sistumpf
  */
 class AI_Tools {
   /**
    * This method is needed to respawn a piece, it adds all positions in a certain radius around the base to an Array.
-   * @param xTrans
-   * @param distance
+   * @param xTrans translations on x-axis
+   * @param distance to a base
    * @return Array containing Transformations to use on the base position
    */
   public static int[] fillXTransformations(int[] xTrans, int distance){
@@ -41,8 +38,8 @@ class AI_Tools {
 
   /**
    * This method is needed to respawn a piece, it adds all positions in a certain radius around the base to an Array.
-   * @param yTrans
-   * @param distance
+   * @param yTrans translations on y-axis
+   * @param distance to a base
    * @return Array containing Transformations to use on the base position
    */
   public static int[] fillYTransformations(int[] yTrans, int distance){
@@ -63,7 +60,6 @@ class AI_Tools {
 
   /**
    * Creates an ArrayList with all valid Moves a piece with shape movement can do.
-   *
    * @param gameState
    * @param piece
    * @return ArrayList containing all valid moves
@@ -115,7 +111,6 @@ class AI_Tools {
    * Creates an ArrayList containing all a pieces valid directions and its maximum reach into that direction in int[direction, reach] pairs.
    * This map only applies for the Piece picked. The reach value is directly
    * from MapTemplate, this method only checks if the positions adjacent to a piece are occupied.
-   *
    * @param gameState
    * @param picked
    * @return ArrayList<int[direction,reach]>
@@ -138,7 +133,6 @@ class AI_Tools {
   /**
    * This method tests if a piece could walk into a given direction. It does not test if a pieces
    * reach in a direction is >0. The direction is given as an int (0-7).
-   *
    * @param gameState
    * @param piece
    * @param direction
@@ -152,7 +146,6 @@ class AI_Tools {
    * Returns the Move if a piece can occupy specific position. This method does not test if a pieces
    * reach in a direction is >0. The direction is given as an int (0-7) and reach as an int that
    * specifies how many fields into that direction.
-   *
    * @param gameState
    * @param piece
    * @param direction
@@ -182,7 +175,6 @@ class AI_Tools {
    * minus the reach in the negative direction the piece took to get to newPos. In simpler words, if
    * a piece went from 2,2 to 2,0 (2 to left) newPos would be [2,0], reach would be 2 and the
    * direction 0 (left)
-   *
    * @param gameState
    * @param newPos
    * @param direction
@@ -210,7 +202,6 @@ class AI_Tools {
   /**
    * Updates the y,x position of a piece. A given int[2] positional Array is altered by going a
    * given amount of steps (reach) into a given direction.
-   *
    * @param pos
    * @param direction
    * @param reach
@@ -252,7 +243,6 @@ class AI_Tools {
 
   /**
    * Checks if a piece can occupy a given position.
-   *
    * @param pos
    * @param piece
    * @param gameState
@@ -273,7 +263,6 @@ class AI_Tools {
 
   /**
    * Checks if a position is not contained in the grid.
-   *
    * @param grid
    * @param pos
    * @return true if the position is out of bounds
@@ -284,7 +273,6 @@ class AI_Tools {
 
   /**
    * Checks if a position on the grid contains an empty String.
-   *
    * @param grid
    * @param pos
    * @return true if the position is an empty Field "" and can be occupied
@@ -295,7 +283,6 @@ class AI_Tools {
 
   /**
    * Checks if a position on the grid contains a block.
-   *
    * @param grid
    * @param pos
    * @return true if the position is occupied by a block and cannot be walked on
@@ -306,7 +293,6 @@ class AI_Tools {
 
   /**
    * Checks if a position on the grid is occupied by a piece from the current team.
-   *
    * @param grid
    * @param pos
    * @return true if the position is occupied by a Piece of the same Team
@@ -318,7 +304,6 @@ class AI_Tools {
   /**
    * Checks if a position on the grid is occupied by a piece with a weaker or the same AttackPower
    * as a given piece.
-   *
    * @param gameState
    * @param pos
    * @param picked
@@ -342,7 +327,6 @@ class AI_Tools {
 
   /**
    * Checks if a position on the grid is occupied by an opponents base.
-   *
    * @param grid
    * @param pos
    * @param picked
@@ -372,7 +356,6 @@ class AI_Tools {
   /**
    * Returns a pieces maximum reach into a certain direction. Assumes the direction is valid,
    * doesn't catch Null Pointer Exceptions.
-   *
    * @param directions
    * @param dir
    * @return reach into direction dir

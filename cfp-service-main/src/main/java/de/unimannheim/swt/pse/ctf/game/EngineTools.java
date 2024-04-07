@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.stream.Stream;
@@ -14,7 +13,6 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Move;
 import de.unimannheim.swt.pse.ctf.game.state.Piece;
@@ -29,6 +27,7 @@ public class EngineTools extends AI_Tools {
    * Returns a GameStates next valid (not null) team.
    * @param gameState
    * @return next Team != null
+   * @author sistumpf
    */
   public static int getNextTeam(GameState gameState) {
     for(int i=(gameState.getCurrentTeam()+1) % gameState.getTeams().length; ;i = (i + 1) % gameState.getTeams().length) {
@@ -43,6 +42,7 @@ public class EngineTools extends AI_Tools {
    * team is the place of the team in the GameState.getTeams Array.
    * @param gameState
    * @param team
+   * @author sistumpf
    */
   public static void removeTeam(GameState gameState, int team) {
     gameState.getGrid()[gameState.getTeams()[team].getBase()[0]][gameState.getTeams()[team].getBase()[1]] = "";
@@ -54,7 +54,7 @@ public class EngineTools extends AI_Tools {
   /**
    * This method should be used instead of Math.random() to generate deterministic positive pseudo
    * random values. Changing modifier changes the resulting output for the same seed.
-   *
+   * @author sistumpf
    * @param grid, used as a base to generate a random seed
    * @param modifier, to get different random values with the same seed
    * @param upperBound, upper bound for returned random values, upperBound = 3 -> values 0 to 2
@@ -70,7 +70,7 @@ public class EngineTools extends AI_Tools {
 
   /**
    * Returns a valid position on which a Piece can safely respawn.
-   * TODO test if this really works
+   * @author sistumpf
    * @param gameState to access the grid and generate pseudo random numbers
    * @param basePos the position of the base of the Piece that gets respawned
    * @return valid position to respawn a piece on, null shouldn't be returned (compiler needs it).
@@ -109,7 +109,7 @@ public class EngineTools extends AI_Tools {
    * Given a Piece and a GameState containing the Piece, an ArrayList with all valid locations the
    * Piece can walk on is returned. The ArrayList contains int[2] values, representing a (y,x)
    * location on the grid.
-   *
+   * @author sistumpf
    * @param GameState gameState
    * @param String pieceID
    * @return ArrayList<int[]> that contains all valid positions a piece could move to
@@ -298,6 +298,7 @@ public class EngineTools extends AI_Tools {
    * Deep Copies a GameState (hopefully)
    * @author ysiebenh
    * @return
+   * TODO simon sagt da fehlt der letzte move, er weiß aber nicht ob der in deinem anwendungsfall benötigt ist.
    */
   static GameState deepCopyGameStateOld(GameState gs) {
     GameState newGs = new GameState();
