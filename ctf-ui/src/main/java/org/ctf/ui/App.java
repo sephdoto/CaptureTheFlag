@@ -25,6 +25,7 @@ import javafx.util.Duration;
 /**
  * @author mkrakows
  * @author rsyed (Bug fixer) startpoint for the Gui Application Opens HomeScreen
+ * @author aniemesc
  */
 public class App extends Application {
 	static Stage mainStage;
@@ -77,7 +78,13 @@ public class App extends Application {
 		root.getChildren().addAll(vw, vbox);
 		return root;
 	}
-
+	/**
+	 * method that generates a lockscreen when for the start of the application 
+	 * 
+	 * @author aniemesc
+	 * @return Parent root
+	 * 
+	 */
 	private Parent createLockScreen() {
 		VBox root = new VBox();
 		root.setStyle("-fx-background-color: black;");

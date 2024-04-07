@@ -13,6 +13,13 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+/**
+ * class that represents a container that contains information and joining option 
+ * for a game session 
+ * 
+ * @author aniemesc
+ * 
+ */
 public class JoinItem extends StackPane{
 	String id;
 	String host;
@@ -31,7 +38,13 @@ public class JoinItem extends StackPane{
 		generateComponents();
 
 	}
-
+	/**
+	 * method that generates the gui components for the container 
+	 * 
+	 * @author aniemesc
+	 * 
+	 * 
+	 */
 	private void generateComponents() {
 		GridPane gp = new GridPane();
 		gp.setHgap(10);

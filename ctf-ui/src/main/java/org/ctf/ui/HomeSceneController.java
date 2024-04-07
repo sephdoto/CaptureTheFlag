@@ -1,7 +1,8 @@
 package org.ctf.ui;
 
 /**
- * @author mkrakows This Class controls what happens when clicking the buttons on the HomeScreen
+ * @author mkrakows & aniemesc
+This Class controls what happens when clicking the buttons on the HomeScreen
  */
 import java.io.IOException;
 import javafx.event.ActionEvent;

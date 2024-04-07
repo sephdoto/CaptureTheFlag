@@ -2,8 +2,22 @@ package org.ctf.ui;
 
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.data.map.PieceDescription;
-
+/**
+ * class that provides methods on cheching validity of templates 
+ * 
+ * @author aniemesc
+ * 
+ * 
+ */
 public class TemplateChecker {
+	/**
+	 * method that that checks wheter a template provides enough space 
+	 * 
+	 * @author aniemesc
+	 * @param MapTemplate template
+	 * @return boolean isValid
+	 * 
+	 */
 	public static boolean checkTemplate(MapTemplate template) {
 		int space = template.getGridSize()[0]*template.getGridSize()[1];
 		int figurecount = 0;

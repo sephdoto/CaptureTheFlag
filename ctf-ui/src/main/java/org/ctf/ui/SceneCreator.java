@@ -15,14 +15,25 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-
+/**
+ * Class that generates the join scene
+ * 
+ * @author aniemesc
+ * 
+ */
 public class SceneCreator {
 	public HomeSceneController controller;
 
 	public SceneCreator(HomeSceneController controller) {
 		this.controller = controller;
 	}
-
+	/**
+	 * method that creates the overall layout of the scene 
+	 * 
+	 * @author aniemesc
+	 * @return Scene joinScene
+	 * 
+	 */
 	public Scene createJoinScene() {
 		StackPane root = new StackPane();
 		root.setAlignment(Pos.CENTER);
@@ -72,7 +83,13 @@ public class SceneCreator {
 		root.getChildren().add(vbox);
 		return new Scene(root);
 	}
-
+	/**
+	 * method that generates the exit button 
+	 * 
+	 * @author aniemesc
+	 * @return Button exit
+	 * 
+	 */
 	private Button createJoinExit() {
 		Button exit = new Button("Leave");
 		exit.setFont(Font.font("System", FontWeight.BOLD, 14));
@@ -92,7 +109,13 @@ public class SceneCreator {
 		});
 		return exit;
 	}
-
+	/**
+	 * method that generates the refresh button 
+	 * 
+	 * @author aniemesc
+	 * @return Button refresh
+	 * 
+	 */
 	private Button createJoinRefresh() {
 		Button refresh = new Button("Refresh");
 		refresh.setFont(Font.font("System", FontWeight.BOLD, 14));
@@ -109,7 +132,13 @@ public class SceneCreator {
 		});
 		return refresh;
 	}
-
+	/**
+	 * method that generates the search field for the sessions 
+	 * 
+	 * @author aniemesc
+	 * @return Button exit
+	 * 
+	 */
 	private TextField createJoinSearch() {
 		TextField searchField = new TextField();
 		searchField.setMaxWidth(250);

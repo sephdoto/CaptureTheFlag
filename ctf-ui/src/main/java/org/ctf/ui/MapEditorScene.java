@@ -44,7 +44,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-
+/**
+ * Scene that contains all gui components for the Map editor and handles custom map 
+ * templtates and pieces
+ * 
+ * @author aniemesc
+ */
 public class MapEditorScene extends Scene {
 	private String[][] feld;
 	private Parent[] options;
@@ -80,7 +85,11 @@ public class MapEditorScene extends Scene {
 		options[2] = createFigureCustomizer();
 		this.createLayout();
 	}
-
+	/**
+	 * Creates the basic layout for the scene
+	 * 
+	 * @author aniemesc
+	 */
 	private void createLayout() {
 		VBox root = (VBox) this.getRoot();
 		root.setStyle("-fx-background-color: black;" + "-fx-padding: 25px;" + "-fx-spacing: 50px;"
@@ -123,7 +132,12 @@ public class MapEditorScene extends Scene {
 		sep.getChildren().add(CreateMapGrid());
 
 	}
-
+	/**
+	 * Creates and fills the container for the 'Edit Map' option
+	 * 
+	 * @author aniemesc
+	 * @return VBox editMap
+	 */
 	private VBox createMapChooser() {
 		VBox controlBox = new VBox();
 		controlBox.setAlignment(Pos.CENTER);
@@ -286,7 +300,12 @@ public class MapEditorScene extends Scene {
 		});
 		return controlBox;
 	}
-
+	/**
+	 * Creates and fills the container for the 'Add Pieces' option
+	 * 
+	 * @author aniemesc
+	 * @return HBox addPieces
+	 */
 	private HBox createFigurChooser() {
 		HBox controlBox = new HBox();
 		controlBox.setAlignment(Pos.CENTER);
@@ -508,7 +527,12 @@ public class MapEditorScene extends Scene {
 		controlBox.getChildren().add(choose2);
 		return controlBox;
 	}
-
+	/**
+	 * Creates and fills the container for the 'Custom Pieces' option
+	 * 
+	 * @author aniemesc
+	 * @return VBox customPieces
+	 */
 	private VBox createFigureCustomizer() {
 		VBox controlBox = new VBox();
 		controlBox.setAlignment(Pos.CENTER);
@@ -658,7 +682,12 @@ public class MapEditorScene extends Scene {
 
 		return controlBox;
 	}
-
+	/**
+	 * Initial test method that initializes the tmpTemplate
+	 * 
+	 * @author aniemesc
+	 * 
+	 */
 	private void initializeTemplate() {
 		feld = new String[5][5];
 		for (int row = 0; row < 5; row++) {
@@ -684,7 +713,12 @@ public class MapEditorScene extends Scene {
 //		PieceDescription[] result = usedPieces.toArray(new PieceDescription[usedPieces.size()]);
 //		tmpTemplate.setPieces(result);
 	}
-
+	/**
+	 * test method for genrating an example piece
+	 * 
+	 * @author aniemesc
+	 * 
+	 */
 	private void createExamplePieces() {
 		Movement bm = new Movement();
 		Directions directions = new Directions();
@@ -697,7 +731,12 @@ public class MapEditorScene extends Scene {
 		bauer.setCount(5);
 		this.customPieces.put("Bauer", bauer);
 	}
-
+	/**
+	 * helping method for generating a copy of a Directions object
+	 * 
+	 * @author aniemesc
+	 * 
+	 */
 	public Directions genrateMovementCopy() {
 		Directions result = new Directions();
 		result.setLeft(this.tmpMovement.getDirections().getLeft());
@@ -710,14 +749,20 @@ public class MapEditorScene extends Scene {
 		result.setDownRight(this.tmpMovement.getDirections().getDownRight());
 		return result;
 	}
-
+	/**
+	 * method that genrates the option menu button
+	 * 
+	 * @author aniemesc
+	 * @return MenuButton optionMenuButton
+	 * 
+	 */
 	private MenuButton createMenuButton() {
 		MenuButton mb = new MenuButton("Edit Map");
 		mb.setPrefSize(130, 30);
 		mb.getStyleClass().add("custom-menu-button");
 		MenuItem mapMenuItem = new MenuItem("Edit Map");
 		MenuItem figureMenuItem = new MenuItem("Add Pieces");
-		MenuItem configMenuItem = new MenuItem("Configure Pieces");
+		MenuItem configMenuItem = new MenuItem("Costum Pieces");
 		mb.getItems().addAll(mapMenuItem, figureMenuItem, configMenuItem);
 		mapMenuItem.setOnAction(event -> {
 			left.getChildren().clear();
@@ -733,11 +778,17 @@ public class MapEditorScene extends Scene {
 		configMenuItem.setOnAction(event -> {
 			left.getChildren().clear();
 			left.getChildren().add(options[2]);
-			mb.setText("Configure Pieces");
+			mb.setText("Costum Pieces");
 		});
 		return mb;
 	}
-
+	/**
+	 * method that genrates the map menu button
+	 * 
+	 * @author aniemesc
+	 * @return MenuButton mapMenuButton
+	 * 
+	 */
 	private MenuButton createMapMenuButton() {
 		MenuButton mb = new MenuButton("Load Map");
 		mb.setPrefSize(130, 30);
@@ -778,7 +829,13 @@ public class MapEditorScene extends Scene {
 
 		return mb;
 	}
-
+	/**
+	 * method that genrates the exit button
+	 * 
+	 * @author aniemesc
+	 * @return Button exit
+	 * 
+	 */
 	private Button createExit() {
 		Button exit = new Button("LEAVE");
 		exit.setPrefSize(100, 25);
@@ -796,7 +853,13 @@ public class MapEditorScene extends Scene {
 		exit.setFont(Font.font("System", FontWeight.BOLD, 14));
 		return exit;
 	}
-
+	/**
+	 * method that genrates the submit button
+	 * 
+	 * @author aniemesc
+	 * @return Button submit
+	 * 
+	 */
 	private Button createSubmit() {
 		Button submit = new Button("SUBMIT");
 		submit.setPrefSize(100, 25);
@@ -814,7 +877,13 @@ public class MapEditorScene extends Scene {
 		submit.setFont(Font.font("System", FontWeight.BOLD, 14));
 		return submit;
 	}
-
+	/**
+	 * method that genrates a test grid
+	 * 
+	 * @author aniemesc
+	 * @return Gridpane testgrid
+	 * 
+	 */
 	private GridPane CreateMapGrid() {
 		GridPane gridPane = new GridPane();
 		for (int row = 0; row < 5; row++) {
@@ -843,7 +912,13 @@ public class MapEditorScene extends Scene {
 		return gridPane;
 
 	}
-
+	/**
+	 * method that generates a text representation of a template
+	 * 
+	 * @author aniemesc
+	 * 
+	 * 
+	 */
 	public void printTemplate() {
 		StringBuffer buf = new StringBuffer();
 		for (PieceDescription p : tmpTemplate.getPieces()) {
@@ -854,7 +929,13 @@ public class MapEditorScene extends Scene {
 				+ "\n" + "placement" + tmpTemplate.getPlacement().toString() + "\n" + "thinktime "
 				+ tmpTemplate.getMoveTimeLimitInSeconds() + buf.toString());
 	}
-
+	/**
+	 * method that updates the custompieces hash map when a new template is loaded 
+	 * 
+	 * @author aniemesc
+	 * 
+	 * 
+	 */
 	private void initializePieces() {
 		ArrayList<String> usedTypes = new ArrayList<String>();
 		for (PieceDescription piece : tmpTemplate.getPieces()) {
@@ -868,7 +949,14 @@ public class MapEditorScene extends Scene {
 		}
 
 	}
-
+	/**
+	 * method that delivers count value
+	 * 
+	 * @author aniemesc
+	 * @param String name
+	 * @return int value
+	 * 
+	 */
 	private int initialValue(String name) {
 		if (!customPieces.containsKey(name)) {
 			return 0;
@@ -916,7 +1004,14 @@ public class MapEditorScene extends Scene {
 		updatedPieces[updatedlength - 1] = customPieces.get(s);
 		tmpTemplate.setPieces(updatedPieces);
 	}
-
+	/**
+	 * method that updates the number of pieces of a maptemplate
+	 * 
+	 * @author aniemesc
+	 * @param String type
+	 * @param int newValue
+	 * 
+	 */
 	public void betterUpdateCount(String s, int newValue) {
 		customPieces.get(s).setCount(newValue);
 		int number = (int) customPieces.values().stream().filter(p -> p.getCount() > 0).count();
@@ -931,6 +1026,13 @@ public class MapEditorScene extends Scene {
 		tmpTemplate.setPieces(updated);
 
 	}
+	/**
+	 * method that inform the user via the gui using a textinput
+	 * 
+	 * @author aniemesc
+	 * @param String info
+	 * 
+	 */
 	private void inform(String s) {
 		text.setText(s);
 		FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), text);
