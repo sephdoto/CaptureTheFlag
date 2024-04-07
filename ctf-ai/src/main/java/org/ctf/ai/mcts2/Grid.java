@@ -10,6 +10,9 @@ import org.ctf.shared.state.Team;
 
 /**
  * This class replaces the "dumb" String[][] Grid with a smart GridObjectContainer Grid.
+ * It also contains a separate pieceVision Grid containing the pieces and the valid positions they could go to.
+ * Adding to that pieceVision Grid is a HashMap contained, to store pieces and all positions they can access.
+ * @author sistumpf
  */
 public class Grid {
   static int[][] blocks;
@@ -23,6 +26,7 @@ public class Grid {
     this.pieceVisions = pieceVisions;
   }
 
+  @SafeVarargs
   public Grid(GridObjectContainer[][] grid, IdentityHashMap<Piece, ArrayList<int[]>> ... moves ) {
     this.grid = grid;
     this.pieceVisions = new IdentityHashMap<Piece, ArrayList<int[]>>();
@@ -39,6 +43,29 @@ public class Grid {
         }
       }
     }
+  }
+  
+  /**
+   * Creates a grid from an array of teams.
+   * Use this to clone a grid with cloned references to pieces.
+   * @param teams
+   * @param height
+   * @param width
+   */
+  public Grid(Team[] teams, int height, int width) {
+    this.grid = new GridObjectContainer[height][width];
+    for(int[] block : Grid.blocks)
+      grid[block[0]][block[1]] = new GridObjectContainer(GridObjects.block, 0, null);
+    for(Team team : teams) {
+      if(team == null)
+        continue;
+      grid[team.getBase()[0]][team.getBase()[1]] = new GridObjectContainer(GridObjects.base, Integer.parseInt(team.getId()), null);
+      for(Piece piece : team.getPieces())
+        grid[piece.getPosition()[0]][piece.getPosition()[1]] = new GridObjectContainer(piece);
+    }
+    
+    this.pieceVisionGrid = new GridPieceContainer[height][width];
+    this.pieceVisions = new IdentityHashMap<Piece, ArrayList<int[]>>();  
   }
   
   public Grid(Grid grid) {
@@ -77,7 +104,7 @@ public class Grid {
   }
 
   /**
-   * Deep clones a Grid but not the piecevision or piecevisiongrid.
+   * Deep clones a Grid but not the pieceVision or pieceVisionGrid.
    */
   @Override
   public Grid clone(){

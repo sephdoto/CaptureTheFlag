@@ -18,6 +18,11 @@ import org.ctf.shared.state.Team;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
 
+/**
+ * This class is a replica of an older MCTS version, it is just used for testing.
+ * The comments and code is outdated, only MCTS is the newest version.
+ * @author sistumpf
+ */
 public class MCTS_TestDouble {
   Random rand;
   int teams;

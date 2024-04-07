@@ -3,6 +3,10 @@ package org.ctf.ai.mcts2;
 import java.util.HashSet;
 import org.ctf.shared.state.Piece;
 
+/**
+ * This class represents a single (y,x) coordinate on the grid and all the pieces that can see this coordinate.
+ * @author sistumpf
+ */
 public class GridPieceContainer {
   HashSet<Piece> pieces;
   
@@ -13,6 +17,7 @@ public class GridPieceContainer {
     this.pieces = pieces;
   }
   
+  @Override
   public GridPieceContainer clone() {
     HashSet<Piece> pieces = new HashSet<Piece>();
     pieces.addAll(this.pieces);

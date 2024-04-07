@@ -7,7 +7,6 @@ import java.util.Random;
 import java.util.stream.Stream;
 import org.ctf.ai.AI_Tools.InvalidShapeException;
 import org.ctf.ai.AI_Tools.NoMovesLeftException;
-import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.data.map.Directions;
@@ -28,9 +27,9 @@ public class MCTS_Tools {
   
   /**
    * Returns a valid position on which a Piece can safely respawn.
-   * @param gameState to access the grid and generate pseudo random numbers
+   * @param grid to generate pseudo random numbers and access the grid
    * @param basePos the position of the base of the Piece that gets respawned
-   * @return valid position to respawn a piece on, null shouldn't be returned (compiler needs it).
+   * @return valid position to respawn a piece on, null shouldn't be returned.
    */
   public static int[] respawnPiecePosition(Grid grid, int[] basePos) {
     int[] xTransforms;
@@ -82,8 +81,8 @@ public class MCTS_Tools {
 
   /**
    * This method is needed to respawn a piece, it adds all positions in a certain radius around the base to an Array.
-   * @param xTrans
-   * @param distance
+   * @param xTrans translations on x-axis
+   * @param distance from the base
    * @return Array containing Transformations to use on the base position
    */
   public static int[] fillXTransformations(int[] xTrans, int distance){
@@ -104,8 +103,8 @@ public class MCTS_Tools {
 
   /**
    * This method is needed to respawn a piece, it adds all positions in a certain radius around the base to an Array.
-   * @param yTrans
-   * @param distance
+   * @param yTrans translations on y-axis
+   * @param distance from the base
    * @return Array containing Transformations to use on the base position
    */
   public static int[] fillYTransformations(int[] yTrans, int distance){
@@ -139,7 +138,7 @@ public class MCTS_Tools {
   }
 
   /**
-   * Switches a GameState current team to the next valid (not null) team.
+   * Switches a ReferenceGameState current team to the next valid (not null) team.
    * @param gameState
    * @return altered gameState
    */
@@ -167,17 +166,17 @@ public class MCTS_Tools {
   
   /**
    * Removes a certain team from the GameState.
-   * team is the place of the team in the GameState.getTeams Array.
    * @param gameState
-   * @param team
+   * @param team the place of the team in the ReferenceGameState.getTeams Array
    */
   public static void removeTeam(ReferenceGameState gameState, int team) {
     gameState.getGrid().setPosition(null, gameState.getTeams()[team].getBase()[1], gameState.getTeams()[team].getBase()[0]);
     for(int i=0; i<gameState.getTeams()[team].getPieces().length; i++) {
       Piece p = gameState.getTeams()[team].getPieces()[i];
       gameState.getGrid().setPosition(null, p.getPosition()[1], p.getPosition()[0]);
-      for(int[] pos : gameState.getGrid().pieceVisions.get(p))
-        gameState.getGrid().pieceVisionGrid[pos[0]][pos[1]].pieces.remove(p);
+      if(gameState.getGrid().pieceVisions.size() > 0)
+        for(int[] pos : gameState.getGrid().pieceVisions.get(p))
+          gameState.getGrid().pieceVisionGrid[pos[0]][pos[1]].pieces.remove(p);
       gameState.getGrid().pieceVisions.remove(p);
       //TODO ich weiß nicht ob der garbage collector das team löscht oder ich den array erst leeren muss. Später schauen.
     }
@@ -185,13 +184,13 @@ public class MCTS_Tools {
   }
   
   /**
-   * Given a Piece and a GameState containing the Piece, a given ArrayList is altered to contain all valid locations the
+   * Given a Piece and a ReferenceGameState containing the Piece, a given ArrayList is altered to contain all valid locations the
    * Piece can walk on. The ArrayList contains int[2] values, representing a (y,x) location on the grid.
-   * This method returns the first sightline violations for a piece (if it's caused by another piece), so
-   * the PieceVision Grid can be correctly initialized.
-   *
-   * @param GameState gameState
-   * @param String pieceID
+   * This method returns the first sightline violations for a piece (if it's caused by another piece), 
+   * so the PieceVision Grid can be correctly initialized.
+   * @param ReferenceGameState gameState
+   * @param Piece piece that moves
+   * @param possibleMoves will contain all possible moves after the method is finished.
    * @return ArrayList<int[]> that contains all first sightline violations could move to but they are occupied by another piece.
    */
   public static ArrayList<int[]> getPossibleMovesWithPieceVision(ReferenceGameState gameState, Piece piece, ArrayList<int[]> possibleMoves) {
@@ -230,7 +229,6 @@ public class MCTS_Tools {
    * Creates an ArrayList containing all a pieces valid directions and its maximum reach into that direction in int[direction, reach] pairs.
    * This map only applies for the Piece picked. The reach value is directly
    * from MapTemplate, this method only checks if the positions adjacent to a piece are occupied.
-   *
    * @param gameState
    * @param picked
    * @return ArrayList<int[direction,reach]>
@@ -255,12 +253,14 @@ public class MCTS_Tools {
     }
     return dirMap;
   }
+  
   /**
    * Alters an ArrayList with all valid Moves a piece with shape movement can do.
    * Returns an ArrayList with the first sightline violations, if they are caused by another Piece.
    * @param gameState
    * @param piece
-   * @return ArrayList containing all valid moves
+   * @param positions will be altered to contain all valid moves
+   * @return ArrayList containing all invalid moves
    * @throws InvalidShapeException if the Shape is not yet implemented here
    */
   public static ArrayList<int[]> getShapeMovesWithPieceVision(ReferenceGameState gameState, Piece piece, ArrayList<int[]> positions)
@@ -325,12 +325,10 @@ public class MCTS_Tools {
    * Given a Piece and a GameState containing the Piece, an ArrayList with all valid locations the
    * Piece can walk on is returned. The ArrayList contains int[2] values, representing a (y,x)
    * location on the grid.
-   *
-   * @param GameState gameState
-   * @param String pieceID
+   * @param gameState
+   * @param pieceID
    * @return ArrayList<int[]> that contains all valid positions a piece could move to
    */
-  //TODO REMOVE METHOD??
   public static ArrayList<int[]> getPossibleMoves(ReferenceGameState gameState, Piece piece, ArrayList<int[]> possibleMoves) {
     possibleMoves.clear();
     ArrayList<int[]> dirMap = new ArrayList<int[]>();
@@ -356,7 +354,6 @@ public class MCTS_Tools {
   
   /**
    * Creates an ArrayList with all valid Moves a piece with shape movement can do.
-   *
    * @param gameState
    * @param piece
    * @return ArrayList containing all valid moves
@@ -408,7 +405,6 @@ public class MCTS_Tools {
    * Creates an ArrayList containing all a pieces valid directions and its maximum reach into that direction in int[direction, reach] pairs.
    * This map only applies for the Piece picked. The reach value is directly
    * from MapTemplate, this method only checks if the positions adjacent to a piece are occupied.
-   *
    * @param gameState
    * @param picked
    * @return ArrayList<int[direction,reach]>
@@ -431,7 +427,6 @@ public class MCTS_Tools {
   /**
    * This method tests if a piece could walk into a given direction. It does not test if a pieces
    * reach in a direction is >0. The direction is given as an int (0-7).
-   *
    * @param gameState
    * @param piece
    * @param direction
@@ -445,7 +440,6 @@ public class MCTS_Tools {
    * Returns the Move if a piece can occupy specific position. This method does not test if a pieces
    * reach in a direction is >0. The direction is given as an int (0-7) and reach as an int that
    * specifies how many fields into that direction.
-   *
    * @param gameState
    * @param piece
    * @param direction
@@ -475,7 +469,6 @@ public class MCTS_Tools {
    * minus the reach in the negative direction the piece took to get to newPos. In simpler words, if
    * a piece went from 2,2 to 2,0 (2 to left) newPos would be [2,0], reach would be 2 and the
    * direction 0 (left)
-   *
    * @param gameState
    * @param newPos
    * @param direction
@@ -503,7 +496,6 @@ public class MCTS_Tools {
   /**
    * Updates the y,x position of a piece. A given int[2] positional Array is altered by going a
    * given amount of steps (reach) into a given direction.
-   *
    * @param pos
    * @param direction
    * @param reach
@@ -546,7 +538,6 @@ public class MCTS_Tools {
   /**
    * Returns a pieces maximum reach into a certain direction. Assumes the direction is valid,
    * doesn't catch Null Pointer Exceptions.
-   *
    * @param directions
    * @param dir
    * @return reach into direction dir
@@ -570,13 +561,13 @@ public class MCTS_Tools {
       case 7:
         return directions.getDownRight();
       default:
-        return -1;
+        return 0;
     }
   }
   
   /**
    * Checks if a piece can occupy a given position.
-   *TODO
+   * Does not check sightLine()
    * @param pos
    * @param piece
    * @param gameState
@@ -587,7 +578,7 @@ public class MCTS_Tools {
     if (positionOutOfBounds(gameState.getGrid(), pos)) return false;
     if (emptyField(gameState.getGrid(), pos)) return true;
     if (occupiedByBlock(gameState.getGrid(), pos)) return false;
-    if (occupiedBySameTeam(gameState, pos)) return false;
+    if (occupiedBySameTeam(gameState, piece.getPosition(), pos)) return false;
     if (otherTeamsBase(gameState.getGrid(), pos, piece.getPosition())) return true;
     if (occupiedByWeakerOpponent(gameState.getGrid().getPosition(pos[1], pos[0]).getPiece(), piece)) return true;
 
@@ -597,7 +588,6 @@ public class MCTS_Tools {
   
   /**
    * Checks if a position is not contained in the grid.
-   *
    * @param grid
    * @param pos
    * @return true if the position is out of bounds
@@ -608,7 +598,6 @@ public class MCTS_Tools {
 
   /**
    * Checks if a position on the grid is empty.
-   *
    * @param grid
    * @param pos
    * @return true if the position is an empty Field "" and can be occupied
@@ -619,7 +608,6 @@ public class MCTS_Tools {
 
   /**
    * Checks if a position on the grid contains a block.
-   *
    * @param grid
    * @param pos
    * @return true if the position is occupied by a block and cannot be walked on
@@ -630,7 +618,6 @@ public class MCTS_Tools {
   
   /**
    * Checks if a position on the grid contains a piece.
-   *
    * @param grid
    * @param pos
    * @return true if the position is occupied by a piece
@@ -640,22 +627,21 @@ public class MCTS_Tools {
   }
 
   /**
-   * Checks if a position on the grid is occupied by a piece from the current team.
-   *
-   * @param grid
+   * Checks if a position on the grid is occupied by a piece from the same team as the moving piece.
+   * @param gameState
+   * @param oldPos to get the moving piece
    * @param pos
    * @return true if the position is occupied by a Piece of the same Team
    */
-  public static boolean occupiedBySameTeam(ReferenceGameState gameState, int[] pos) {
-    return gameState.getCurrentTeam() == gameState.getGrid().getPosition(pos[1], pos[0]).getTeamId();
+  public static boolean occupiedBySameTeam(ReferenceGameState gameState, int[] oldPos, int[] pos) {
+    return gameState.getGrid().getPosition(oldPos[1], oldPos[0]).getTeamId() 
+        == gameState.getGrid().getPosition(pos[1], pos[0]).getTeamId();
   }
 
   /**
    * Checks if a position on the grid is occupied by a piece with a weaker or the same AttackPower
    * as a given piece.
-   *
-   * @param gameState
-   * @param pos
+   * @param opponent
    * @param picked
    * @return true if the position is occupied by a weaker opponent that can be captured
    */
@@ -668,10 +654,9 @@ public class MCTS_Tools {
 
   /**
    * Checks if a position on the grid is occupied by an opponents base.
-   *
    * @param grid
-   * @param pos
-   * @param picked
+   * @param newPos
+   * @param oldPos represents the moving piece
    * @return true if the position is occupied by another teams base and a flag can be captured
    */
   public static boolean otherTeamsBase(Grid grid, int[] newPos, int[] oldPos) {
@@ -685,6 +670,7 @@ public class MCTS_Tools {
   
   
   /**
+   * Adjusted RandomAI to be used with ReferenceGameStates.
    * Given a GameState, the next move is randomly chosen.
    * A random piece is chosen out of all pieces, if it is able to move its move is randomly chosen.
    * If the piece is not able to move a new piece is chosen from the remaining pieces.
@@ -731,7 +717,6 @@ public class MCTS_Tools {
   
   /**
    * Selects and returns a random Move from an ArrayList which only contains valid Moves.
-   *
    * @param positionArrayList
    * @param pieceId
    * @return randomly picked move
@@ -743,12 +728,11 @@ public class MCTS_Tools {
   /**
    * Returns a Move from a given HashMap of possible directions and and their reach to move in. This
    * method picks a random dirction-reach pair and returns a Move to this position using {@link
-   * #checkMoveValidity(GameState gameState, Piece piece, int direction, int reach)}. If the
+   * #checkMoveValidity(ReferenceGameState gameState, Piece piece, int direction, int reach)}. If the
    * position is invalid this process is tried again till a valid move is generated. If a random
    * position is invalid the HashMap reach value is lowered to ensure the same position is not
    * picked again. This method assumes the HashMap contains elements and all directions contain at
    * least 1 valid position.
-   *
    * @param dirMap
    * @param piece
    * @param gameState

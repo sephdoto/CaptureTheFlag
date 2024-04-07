@@ -8,6 +8,12 @@ import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.Team;
 
+/**
+ * This class represents a node in the MCTS Tree.
+ * It contains the current gameState, wins, possibleMoves for the current team, its parent and the children.
+ * The parent is the game one move prior, the children are the game one move further.
+ * @author sistumpf
+ */
 public class TreeNode implements Comparable<TreeNode> {
   TreeNode parent;
   TreeNode[] children;
@@ -22,6 +28,9 @@ public class TreeNode implements Comparable<TreeNode> {
     initPossibleMovesAndChildren();
   }
   
+  /**
+   * possibleMoves (filled) and the children array (empty) get initialized,
+   */
   public void initPossibleMovesAndChildren() {
     this.possibleMoves = new IdentityHashMap<Piece, ArrayList<int[]>>();
     int children = 0;
@@ -45,7 +54,6 @@ public class TreeNode implements Comparable<TreeNode> {
 
    /** 
     * Returns the average wins for the team which move lead to this node.
-    * 
     * @return V value for UCT
     */
    public double getV() {
@@ -71,6 +79,10 @@ public class TreeNode implements Comparable<TreeNode> {
      return treeNode;
    }
 
+   /**
+    * Used instead of a GameState.clone method, as GameState is not altered in this MCTS implementation.
+    * @return a deep copy of this nodes gameState
+    */
    //TODO sehr ineffizient, offen für Verbesserungsvorschläge
    public GameState copyGameState() {
      GameState newState = new GameState();
@@ -102,14 +114,19 @@ public class TreeNode implements Comparable<TreeNode> {
      return newState;
    }
 
-   @Override
+   /**
+    * Compares two nodes with their V value.
+    * @param node to compare to
+    * @return as super.compareTo
+    */
+   @Override  
    public int compareTo(TreeNode node) {
      return Double.compare(node.getV(), getV());
    }
 
    /**
     * prints the node and its important attributes to the console
-    * TODO needs to be implemented
+    * TODO more attributes need to be implemented
     */
    public void printMe(String s) {
      printGrid();

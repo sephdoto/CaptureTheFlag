@@ -1,11 +1,14 @@
 package org.ctf.ai.mcts2;
 
-import static org.junit.jupiter.api.Assertions.*;
+//import static org.junit.jupiter.api.Assertions.*;
 import org.ctf.ai.TestValues;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
 import org.junit.jupiter.api.Test;
 
+/**
+ * @author sistumpf
+ */
 class TreeNodeTest {
 
   @Test
@@ -18,8 +21,8 @@ class TreeNodeTest {
     for(int i=0; i<50 && mcts.isTerminal(node) == -1; i++){
       mcts.oneMove(node, node, true);
       mcts.removeTeamCheck(node.gameState);
-      node.printGrids();
-      System.out.println(node.gameState.getTeams()[0].getPieces().length + "<- 0, 1 ->" + node.gameState.getTeams()[1].getPieces().length);
+//      node.printGrids();
+//      System.out.println(node.gameState.getTeams()[0].getPieces().length + "<- 0, 1 ->" + node.gameState.getTeams()[1].getPieces().length);
     }
     TreeNode copy = node.clone(node.gameState.clone());
     copy.initPossibleMovesAndChildren();
@@ -77,7 +80,7 @@ class TreeNodeTest {
     MCTS mcts = new MCTS(node);
     for(; mcts.isTerminal(node) == -1; ) {
       mcts.oneMove(node, node, true);
-      node.printGrids();
+//      node.printGrids();
     }
   }
   
@@ -117,7 +120,7 @@ class TreeNodeTest {
     MCTS mcts = new MCTS(node);
     for(; mcts.isTerminal(node) == -1; ) {
       mcts.oneMove(node, node, true);
-      node.printGrids();
+//      node.printGrids();
     }
   }
 }

@@ -7,6 +7,9 @@ import org.ctf.ai.AI_Tools;
 import org.ctf.shared.state.GameState;
 import org.junit.jupiter.api.Test;
 
+/**
+ * @author sistumpf
+ */
 class TreeNodeTest {
 
   @Test

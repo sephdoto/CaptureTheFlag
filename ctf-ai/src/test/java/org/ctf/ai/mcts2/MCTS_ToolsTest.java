@@ -14,6 +14,9 @@ import org.ctf.shared.state.data.map.Directions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * @author sistumpf
+ */
 class MCTS_ToolsTest {
   static ReferenceGameState rGameState;
   
@@ -26,7 +29,6 @@ class MCTS_ToolsTest {
   void testPutNeighbouringPieces() {
     HashSet<Piece> updateThese = new HashSet<Piece>();
     ReferenceGameState gameState = new ReferenceGameState(TestValues.getTestState());
-    TreeNode node = new TreeNode(null, gameState, null);
     MCTS_Tools.putNeighbouringPieces(updateThese, gameState.getGrid(), gameState.getTeams()[0].getPieces()[2].getPosition());
     HashSet<Piece> trueNeighbours = new HashSet<Piece>();
     trueNeighbours.add(gameState.getTeams()[0].getPieces()[3]);
@@ -96,9 +98,9 @@ class MCTS_ToolsTest {
       assertTrue(MCTS_Tools.validPos(new int[] {3,3}, rGameState.getTeams()[0].getPieces()[0], rGameState));      //valid empty position
       assertFalse(MCTS_Tools.validPos(new int[] {-1,0}, rGameState.getTeams()[0].getPieces()[0], rGameState));    //out of bounds 1
       assertFalse(MCTS_Tools.validPos(new int[] {10,0}, rGameState.getTeams()[0].getPieces()[0], rGameState));    //out of bounds 2
-      assertTrue(MCTS_Tools.validPos(new int[] {2,2}, rGameState.getTeams()[0].getPieces()[0], rGameState));      //rook team1 captures another rook from team0
+      assertTrue(MCTS_Tools.validPos(new int[] {7,2}, rGameState.getTeams()[0].getPieces()[0], rGameState));      //rook team1 captures another rook from team0
       assertFalse(MCTS_Tools.validPos(new int[] {2,2}, weakPiece, rGameState));                                  //weak Pawn cannot capture a stronger rook from team0
-      assertFalse(MCTS_Tools.validPos(new int[] {7,2}, rGameState.getTeams()[0].getPieces()[0], rGameState));     //rook team1 cannot capture a team1 piece
+      assertFalse(MCTS_Tools.validPos(new int[] {2,5}, rGameState.getTeams()[0].getPieces()[0], rGameState));     //rook team1 cannot capture a team1 piece
       assertFalse(MCTS_Tools.validPos(new int[] {5,3}, rGameState.getTeams()[0].getPieces()[0], rGameState));     //5,3 is occupied by a block
       rGameState.setCurrentTeam(0);
       assertTrue(MCTS_Tools.validPos(new int[] {9,9}, rGameState.getTeams()[0].getPieces()[0], rGameState));      //it is possible to walk on an opponents base

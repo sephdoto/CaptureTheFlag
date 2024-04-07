@@ -68,15 +68,15 @@ public class RandomAI extends AI_Tools {
         if(dirMap.size() > 0) {
           return getDirectionMove(dirMap, picked, gameState);
         } else {
-        	piecesCurrentTeam.remove(random);
+          piecesCurrentTeam.remove(random);
           continue;
         }
       } else {																	//Move if Shape
-    	shapeMoves = getShapeMoves(gameState, picked, shapeMoves);
+        shapeMoves = getShapeMoves(gameState, picked, shapeMoves);
         if(shapeMoves.size() > 0) {
           return getRandomShapeMove(shapeMoves, picked.getId());
         } else {
-        	piecesCurrentTeam.remove(random);
+          piecesCurrentTeam.remove(random);
           continue;
         }
       }

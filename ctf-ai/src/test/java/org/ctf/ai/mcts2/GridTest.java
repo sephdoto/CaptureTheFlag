@@ -6,6 +6,9 @@ import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
 import org.junit.jupiter.api.Test;
 
+/**
+ * @author sistumpf
+ */
 class GridTest {
   @Test
   void testEquals() {

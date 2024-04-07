@@ -1,23 +1,27 @@
 package org.ctf.ai.mcts;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.contains;
+//import static org.junit.jupiter.api.Assertions.*;
+//import static org.mockito.ArgumentMatchers.contains;
 import java.util.HashMap;
-import org.ctf.ai.AI_Constants;
+//import org.ctf.ai.AI_Constants;
 import org.ctf.ai.TestValues;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.Team;
-import org.junit.jupiter.api.Test;
-import org.openjdk.jol.info.ClassLayout;
+//import org.junit.jupiter.api.Test;
+//import org.openjdk.jol.info.ClassLayout;
 import org.openjdk.jol.info.GraphLayout;
-import org.openjdk.jol.vm.VM;
+//import org.openjdk.jol.vm.VM;
 
+/**
+ * This class is mainly used to test the memory usage of implemented Objects
+ * @author sistumpf
+ */
 class ObjectMemoryAnalyzer {
 
-  @Test
+//  @Test
   void testPrintOutCurrentMemoryUsage() {
-    TreeNode node = new TreeNode(null, TestValues.getTestState(), null);
+//    TreeNode node = new TreeNode(null, TestValues.getTestState(), null);
 //    System.out.println(ClassLayout.parseClass(HashMap.class).toPrintable());
 
 
@@ -31,7 +35,7 @@ class ObjectMemoryAnalyzer {
 //    System.out.println(GraphLayout.parseInstance(mcts).toFootprint());
   }
   
-  @Test
+//  @Test
   void testGridMemoryUsage() {
     GameState gameState = TestValues.getTestState();
     HashMap<int[], Piece> piecePos = new  HashMap<int[], Piece>();

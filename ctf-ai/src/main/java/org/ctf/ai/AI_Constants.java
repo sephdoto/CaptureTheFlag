@@ -1,5 +1,9 @@
 package org.ctf.ai;
 
+/**
+ * This class contains Constants used only in the AI.
+ * @author sistumpf
+ */
 public class AI_Constants {
   //package ai.mcts, classes MCTS & TreeNode
   public static final double C = Math.E/2;                   //used to calculate UCT

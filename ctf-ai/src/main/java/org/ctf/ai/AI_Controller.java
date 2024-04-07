@@ -14,8 +14,9 @@ import org.ctf.shared.tools.JSON_Tools;
 import org.ctf.shared.tools.JSON_Tools.MapNotFoundException;
 
 /**
- * @author sistumpf This class requests a GameState from the server, uses one of the implemented AIs
- *     to generate the next move and finally returns said move back to the server.
+ * This class requests a GameState from the server, uses one of the implemented AIs
+ * to generate the next move and finally returns said move.
+ * @author sistumpf 
  */
 public class AI_Controller {
 

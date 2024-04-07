@@ -18,6 +18,9 @@ import org.ctf.shared.state.Team;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
 
+/**
+ * @author sistumpf
+ */
 public class MCTS {
   Random rand;
   int teams;
@@ -41,7 +44,7 @@ public class MCTS {
 
 
   /**
-   * starts a Monte Carlo Tree Search from a given state of the game,
+   * Starts a Monte Carlo Tree Search from a given state of the game,
    * if the given time runs out the best calculated move is returned.
    * @param time in milliseconds the algorithm is allowed to take
    * @param Constant C used in the UCT formula
@@ -67,10 +70,10 @@ public class MCTS {
 
 
   /**
-   * Selects a node to simulate on using the UCBk formula.
+   * Selects a node to simulate on using the UCT formula.
    * expands a children if a node in the chain has unexpanded ones.
    * @param parent node, from it on the nodes will be checked for one to simulate on
-   * @param constant C used in UCBk formula
+   * @param constant C used in UCT formula
    * @return the node to simulate on
    */
   TreeNode selectAndExpand(TreeNode node, double C){
@@ -87,7 +90,7 @@ public class MCTS {
 
 
   /**
-   * adds one child to the parent node, the child is identical to the parent but simulated one move further
+   * Adds one child to the parent node, the child is identical to the parent but simulated one move further.
    * @param the selected node which gets expanded
    * @return the new child
    * @return null if anything unforeseen happens
@@ -103,7 +106,12 @@ public class MCTS {
     }
     return null;
   }
-
+  
+  /**
+   * Simulates a certain amount of simulations simultaneously.
+   * @param simulateOn
+   * @return an array containing a number of wins for the team at position teamId
+   */
   int[] multiSimulate(TreeNode simulateOn) { 
     int[] winners = new int[simulateOn.gameState.getTeams().length];
 
@@ -134,14 +142,11 @@ public class MCTS {
     return winners;
   }
 
-
   /**
    * Simulates a game from a specific node to finish (or a maximum step value of Constants.MAX_STEPS simulation),
-   * First checks if a node is in a terminal state, if thats the case the simulation ends and the result is returned
+   * First checks if a node is in a terminal state, if thats the case the simulation ends and the result is returned.
    * @param the node from which a game is going to be simulated
-   * @return true if player A wins the simulation (either by getting more beans or player B having no moves left), 
-   *         false if player B wins the simulation (either by getting more beans or player A having no moves left)
-   *         default case is a heuristic. if it returns value > 0, player A is winning
+   * @return an array containing a number of wins for the team at position teamId
    */
   int[] simulate(TreeNode simulateOn){      
     simulationCounter.incrementAndGet();
@@ -153,7 +158,6 @@ public class MCTS {
       return winners;
     }
     
-
     simulateOn = simulateOn.clone(simulateOn.copyGameState());
 
     for(;count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn)) {
@@ -225,6 +229,12 @@ public class MCTS {
     return max;
   }
 
+  /**
+   * Calculates the euclidean distance between two 2D positions
+   * @param base
+   * @param piece
+   * @return distance between base and piece
+   */
   float distanceToBase(int[] base, int[] piece) {
     return (float) Math.sqrt(Math.pow(base[1]-piece[1], 2) + Math.pow(base[0]-piece[0], 2));
   }
@@ -240,7 +250,7 @@ public class MCTS {
 
 
   /**
-   * propagates the simulation result up the tree until the root element is reached
+   * Propagates the simulation result up the tree until the root element is reached.
    * @param node on which the simulation was executed
    * @param an int Array containing as many spaces as teams are left, a place in the Array corresponds to the teamId and contains the number of wins of that team.
    */
@@ -258,8 +268,8 @@ public class MCTS {
    * Checks if a game is in a terminal state.
    * 
    * @param a node to check if it is terminal
-   * @return -1 if the game is not in a terminal state
-   *           0 - Integer.MAX_VALUE winner team id
+   * @return -1: the game is not in a terminal state
+   *         0 - Integer.MAX_VALUE: winner team id
    */
   int isTerminal(TreeNode node) {
     int teamsLeft = 0;
@@ -303,11 +313,10 @@ public class MCTS {
     return parent.possibleMoves.keySet().size() == 0;
   }
 
-
   /**
-   * checks all the parents children for their UCBk value, returns the node with the highest value
-   * = "BestChild" from the pseudo-code
+   * checks all the parents children for their UCT value, returns the node with the highest value.
    * @param parent node
+   * @param C value for UCT
    * @return the child node with the highest UCT value
    */
   TreeNode bestChild(TreeNode parent, double c) {
@@ -357,6 +366,13 @@ public class MCTS {
     alter.initPossibleMovesAndChildren();
   }   
 
+  /**
+   * A nodes possible moves get checked, the first one to fit the heuristic gets returned.
+   * The heuristic does not check all moves if a move fits the heuristic.
+   * If no move fits the heuristic, a random one gets returned.
+   * @param parent
+   * @return possible move
+   */
   Move getAndRemoveMoveHeuristic(TreeNode parent) {
     for(Piece piece : parent.possibleMoves.keySet()) {
       for(int i=0; i<parent.possibleMoves.get(piece).size(); i++) {
@@ -375,6 +391,12 @@ public class MCTS {
     return getAndRemoveMoveRandom(parent);
   }
 
+  /**
+   * Returns a valid random move from a TreeNode.
+   * Removes the move from the nodes possibleMoves.
+   * @param parent
+   * @return random move
+   */
   Move getAndRemoveMoveRandom(TreeNode parent){
     Piece key = (Piece)parent.possibleMoves.keySet().toArray()[rand.nextInt(parent.possibleMoves.keySet().size())];
     int randomMove = rand.nextInt(parent.possibleMoves.get(key).size());
@@ -382,6 +404,13 @@ public class MCTS {
     return createMoveDeleteIndex(parent, key, randomMove);
   }
 
+  /**
+   * Removes a move from the parents possibleMoves, returns that move.
+   * @param parent
+   * @param key
+   * @param index in parent.possibleMoves
+   * @return the move made
+   */
   Move createMoveDeleteIndex(TreeNode parent, Piece key, int index) {
     Move move = new Move();
     move.setPieceId(key.getId());

@@ -18,6 +18,9 @@ import org.ctf.shared.state.Team;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
 
+/**
+ * @author sistumpf
+ */
 public class MCTS {
   Random rand;
   int teams;
@@ -41,7 +44,7 @@ public class MCTS {
 
 
   /**
-   * starts a Monte Carlo Tree Search from a given state of the game,
+   * Starts a Monte Carlo Tree Search from a given state of the game,
    * if the given time runs out the best calculated move is returned.
    * @param time in milliseconds the algorithm is allowed to take
    * @param Constant C used in the UCT formula
@@ -67,10 +70,10 @@ public class MCTS {
 
 
   /**
-   * Selects a node to simulate on using the UCBk formula.
+   * Selects a node to simulate on using the UCT formula.
    * expands a children if a node in the chain has unexpanded ones.
    * @param parent node, from it on the nodes will be checked for one to simulate on
-   * @param constant C used in UCBk formula
+   * @param constant C used in UCT formula
    * @return the node to simulate on
    */
   TreeNode selectAndExpand(TreeNode node, double C){
@@ -87,7 +90,7 @@ public class MCTS {
 
 
   /**
-   * adds one child to the parent node, the child is identical to the parent but simulated one move further
+   * Adds one child to the parent node, the child is identical to the parent but simulated one move further.
    * @param the selected node which gets expanded
    * @return the new child
    * @return null if anything unforeseen happens
@@ -229,13 +232,19 @@ public class MCTS {
     return max;
   }
 
+  /**
+   * Calculates the euclidean distance between two 2D positions
+   * @param base
+   * @param piece
+   * @return distance between base and piece
+   */
   float distanceToBase(int[] base, int[] piece) {
     return (float) Math.sqrt(Math.pow(base[1]-piece[1], 2) + Math.pow(base[0]-piece[0], 2));
   }
 
 
   /**
-   * picks a (random) move to make a move on
+   * Picks a (random) move.
    * @return a random chosen move out of an ArrayList containing possible moves.
    */
   int[] pickRandomMove(ArrayList<int[]> moveList) {
@@ -244,7 +253,7 @@ public class MCTS {
 
 
   /**
-   * propagates the simulation result up the tree until the root element is reached
+   * Propagates the simulation result up the tree until the root element is reached.
    * @param node on which the simulation was executed
    * @param an int Array containing as many spaces as teams are left, a place in the Array corresponds to the teamId and contains the number of wins of that team.
    */
@@ -262,8 +271,8 @@ public class MCTS {
    * Checks if a game is in a terminal state.
    * 
    * @param a node to check if it is terminal
-   * @return -1 if the game is not in a terminal state
-   *           0 - Integer.MAX_VALUE winner team id
+   * @return -1: the game is not in a terminal state
+   *         0 - Integer.MAX_VALUE: winner team id
    */
   int isTerminal(TreeNode node) {
     int teamsLeft = 0;
@@ -302,7 +311,7 @@ public class MCTS {
   }
 
   /**
-   * Checks if all possible children from a specific node are expanded
+   * Checks if all possible children from a specific node are expanded.
    * @param parent node
    * @return true if all children are expanded
    */
@@ -312,9 +321,9 @@ public class MCTS {
 
 
   /**
-   * checks all the parents children for their UCBk value, returns the node with the highest value
-   * = "BestChild" from the pseudo-code
+   * Checks all the parents children for their UCT value, returns the node with the highest value.
    * @param parent node
+   * @param C value for UCT
    * @return the child node with the highest UCT value
    */
   TreeNode bestChild(TreeNode parent, double c) {
@@ -371,16 +380,31 @@ public class MCTS {
       MCTS_Tools.putNeighbouringPieces(updateThese, alter.gameState.getGrid(), oldPos);
       alterGameStateAndGrid(alter.gameState, move);
       MCTS_Tools.putNeighbouringPieces(updateThese, alter.gameState.getGrid(), center.getPosition());
+//      System.out.println(move.getPiece().getId() + " moves to " + move.getNewPosition()[0] + "-" + move.getNewPosition()[1]);
       alter.updateGrids(updateThese);
+//      alter.printGrids();
+      
       //TODO putNeighbouringPieces methode entfernen, alte und neue position und piece übergeben, dann in treenode berechnen.
+      
     } else {
-      alterGameStateAndGrid(alter.gameState, getAndRemoveMoveHeuristic(original));
+      ReferenceMove move = getAndRemoveMoveHeuristic(original);
+      move.setPiece(alter.gameState.getGrid().getGrid()[move.getPiece().getPosition()[0]][move.getPiece().getPosition()[1]].getPiece());
+      alterGameStateAndGrid(alter.gameState, move);
       alter.initPossibleMovesAndChildren();
     }
   }   
 
+  /**
+   * A nodes possible moves get checked, the first one to fit the heuristic gets returned.
+   * The heuristic does not check all moves if a move fits the heuristic.
+   * If no move fits the heuristic, a random one gets returned.
+   * @param parent
+   * @return possible move
+   */
   ReferenceMove getAndRemoveMoveHeuristicFromGrid(TreeNode parent) {
     for(Piece piece : parent.gameState.getTeams()[parent.gameState.getCurrentTeam()].getPieces()) {
+      if(parent.gameState.getGrid().getPieceVisions().get(piece) == null)
+        System.out.println("weird null pointer in getAndRemove");
       for(int i=0; i<parent.gameState.getGrid().getPieceVisions().get(piece).size(); i++) {
         int[] pos = parent.gameState.getGrid().getPieceVisions().get(piece).get(i);
         if(MCTS_Tools.emptyField(parent.gameState.getGrid(), pos)) {
@@ -389,7 +413,7 @@ public class MCTS {
         if(MCTS_Tools.otherTeamsBase(parent.gameState.getGrid(), pos, piece.getPosition())) {
           return new ReferenceMove(piece, pos);
         }
-        if(!MCTS_Tools.occupiedBySameTeam(parent.gameState, pos)
+        if(!MCTS_Tools.occupiedBySameTeam(parent.gameState, piece.getPosition(), pos)
             && MCTS_Tools.occupiedByWeakerOpponent(parent.gameState.getGrid().getPosition(pos[1], pos[0]).getPiece(), piece)) {
           return new ReferenceMove(piece, pos);
         }
@@ -398,6 +422,11 @@ public class MCTS {
     return getRandomFromGrid(parent);
   }
   
+  /**
+   * Returns a valid random move from a TreeNode.
+   * @param parent
+   * @return random move
+   */
   ReferenceMove getRandomFromGrid(TreeNode parent){
     ReferenceMove move = null;
     
@@ -414,7 +443,14 @@ public class MCTS {
 
   
   
-  
+  /**
+   * A nodes possible moves get checked, the first one to fit the heuristic gets returned.
+   * The heuristic does not check all moves if a move fits the heuristic.
+   * If no move fits the heuristic, a random one gets returned.
+   * The move gets removed from the parents possibleMoves.
+   * @param parent
+   * @return valid move
+   */
   ReferenceMove getAndRemoveMoveHeuristic(TreeNode parent) {
     for(Piece piece : parent.possibleMoves.keySet()) {
       for(int i=0; i<parent.possibleMoves.get(piece).size(); i++) {
@@ -433,7 +469,12 @@ public class MCTS {
 
     return getAndRemoveMoveRandom(parent);
   }
-
+  
+  /**
+   * Returns a valid random move from a TreeNode, removes it from the nodes possibleMoves.
+   * @param parent
+   * @return random move
+   */
   ReferenceMove getAndRemoveMoveRandom(TreeNode parent){
     Piece key = (Piece)parent.possibleMoves.keySet().toArray()[rand.nextInt(parent.possibleMoves.keySet().size())];
     int randomMove = rand.nextInt(parent.possibleMoves.get(key).size());
@@ -473,7 +514,6 @@ public class MCTS {
    * @param gameState
    * @param move
    */
-  //TODO statt Move move ein Piece : new Position ding übergeben. würde alles verschnellern
   void alterGameStateAndGrid(ReferenceGameState gameState, ReferenceMove move) {
     GridObjectContainer occupant = gameState.getGrid().getPosition(move.getNewPosition()[1], move.getNewPosition()[0]);
     Piece picked = move.getPiece();

@@ -6,6 +6,7 @@ import org.ctf.shared.state.Team;
 
 /**
  * This class is an adjusted version of GameState, using the Grid class instead of a String[][] Array.
+ * @author sistumpf
  */
 public class ReferenceGameState {
   private Grid grid;
@@ -13,10 +14,21 @@ public class ReferenceGameState {
   private int currentTeam;
   private ReferenceMove lastMove;
 
+  /**
+   * Initializes a ReferenceGameState from a normal GameState.
+   * @param gameState
+   */
   public ReferenceGameState(GameState gameState) {
     this(new Grid(gameState), gameState.getTeams(), gameState.getCurrentTeam(), new ReferenceMove(gameState, gameState.getLastMove()));
   }
   
+  /**
+   * Default Constructor to initialize a ReferenceGameState.
+   * @param grid
+   * @param teams
+   * @param currentTeam
+   * @param lastMove
+   */
   public ReferenceGameState(Grid grid, Team[] teams, int currentTeam, ReferenceMove lastMove) {
     this.grid = grid;
     this.teams = teams;
@@ -26,10 +38,8 @@ public class ReferenceGameState {
 
   //TODO sehr ineffizient, offen für Verbesserungsvorschläge
   /**
-   * This method only deep copies the Grid, the pieceVisionGrid should
-   * TODO PRÜFEN OB DAS AUCH SO WICHTIG ist oder ob man deep copien kann und nicht initialisieren muss.
-   * Man kann das kopieren überarbeiten, sodass die richtigen pieces aus dem anderen gameState genommen werden. Das ist mal ein TODO
-   * @return
+   * This method only deep copies the Grid.grid, the pieceVisionGrid and pieceVisions should be initialized in TreeNode.
+   * @return clone of this ReferenceGameState
    */
   @Override
   public ReferenceGameState clone() {
@@ -51,8 +61,14 @@ public class ReferenceGameState {
       }
       teams[i].setPieces(pieces);
     }
-    return new ReferenceGameState(this.grid.clone(), teams, this.currentTeam, this.lastMove);
-    //TODO eventuell lastMove deep clonen?
+    ReferenceMove lastMove;
+    if(this.lastMove.getPiece() == null)
+      lastMove = new ReferenceMove(null, new int[] {0,0});
+    else
+      lastMove = new ReferenceMove(
+        this.grid.getPosition(this.lastMove.getPiece().getPosition()[1], this.lastMove.getPiece().getPosition()[0]).getPiece(), 
+        this.lastMove.getNewPosition());
+    return new ReferenceGameState(new Grid(teams, this.grid.getGrid().length, this.grid.getGrid()[0].length), teams, this.currentTeam, lastMove);
   }
   
   public Grid getGrid() {
