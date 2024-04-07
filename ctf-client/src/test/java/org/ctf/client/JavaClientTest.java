@@ -28,21 +28,21 @@ import org.junit.jupiter.api.Test;
 public class JavaClientTest {
 
   static CommLayer comm = new CommLayer();
-  static JavaClient javaClient;
-  static JavaClient javaClient2;
+  static Client javaClient;
+  static Client javaClient2;
   final MapTemplate template = createGameTemplate();
 
   @BeforeAll
   static void setup() {
     String[] args = new String[] {};
     CtfApplication.main(args);
-    javaClient = new JavaClient("localhost", "9999");
+    javaClient = new Client("localhost", "9999");
   }
 
   @BeforeEach
   void setupBeforeEach() {
-    javaClient = new JavaClient("localhost", "9999");
-    javaClient2 = new JavaClient("localhost", "9999");
+    javaClient = new Client("localhost", "9999");
+    javaClient2 = new Client("localhost", "9999");
   }
 
   @Test

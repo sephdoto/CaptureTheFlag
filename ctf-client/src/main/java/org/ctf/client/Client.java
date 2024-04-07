@@ -27,7 +27,7 @@ import org.ctf.shared.state.dto.MoveRequest;
  *
  * @author rsyed
  */
-public class JavaClient implements GameClientInterface {
+public class Client implements GameClientInterface {
 
   // Main DataStore block
   private volatile GameState currentState;
@@ -64,7 +64,7 @@ public class JavaClient implements GameClientInterface {
   public boolean gameOver;
 
   /** Constructor which inits some objects on creation */
-  public JavaClient() {
+  public Client() {
     this.gson = new Gson(); // creates a gson Object on creation to conserve memory
     this.currentState = new GameState();
     this.currentSession = new GameSession();
@@ -77,7 +77,7 @@ public class JavaClient implements GameClientInterface {
    * @param IP
    * @param port
    */
-  public JavaClient(String IP, String port) {
+  public Client(String IP, String port) {
     this();
     setServer(IP, port);
   }

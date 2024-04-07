@@ -42,6 +42,7 @@ public class GameEngine implements Game {
   private MapTemplate currentTemplate; // Saves a copy of the template
 
   private int remainingTeamSlots;
+  private int teamPos = 0;
   private Map<String, Integer> teamIDtoInteger;
   private boolean isGameOver;
 
@@ -71,8 +72,9 @@ public class GameEngine implements Game {
     this.currentTemplate = template; // Saves a copy of the initial template
 
     this.gameState = new GameState();
-    //Inits Grid and Teams with pieces
+    //Inits Grid + Assigns pieces to teams
     BoardSetUp.makeGridandTeams(this.gameState, template);
+    //Sets Bases on the Grid
     BoardSetUp.placeBases(this.gameState, template);
     
     // placing the pieces and blocks
@@ -89,7 +91,7 @@ public class GameEngine implements Game {
     
     
 
-    this.remainingTeamSlots = template.getTeams() - 1;
+    this.remainingTeamSlots = template.getTeams();  //Sets counter for remaining teams
     // Setting Flags
     this.isGameOver = false;
 
@@ -135,6 +137,45 @@ public class GameEngine implements Game {
       throw new NoMoreTeamSlots(); // Throws it further up to the method
     }
     return retu;
+  }
+
+  /**
+   * Updates a game and its state based on team join request (add team).
+   *
+   * <ul>
+   *   <li>adds team if a slot is free (array element is null)
+   *   <li>if all team slots are finally assigned, implicitly starts the game by picking a starting
+   *       team at random
+   * </ul>
+   *
+   * @author rsyed
+   * @param teamId Team ID
+   * @return Team
+   * @throws NoMoreTeamSlots No more team slots available
+   */
+  public Team joinGameNew(String teamId) {
+    // Initial check if Slots are even available
+    Team randomStartTeam = new Team();
+    if(getRemainingTeamSlots() < 1){
+      throw new NoMoreTeamSlots();
+    } else {
+      addTeam(teamId, teamPos);  //ADD TEAM TO THE GAME
+
+      this.remainingTeamSlots--; //DECREASE THE NUMBER OF TEAMS
+      this.teamPos++;            //Increase the Pos tracker
+     
+      if(getRemainingTeamSlots() < 1){     //CHECK SLOTS LEFT
+        //CHECK FLAGS FOR ALT MODE
+
+        //SET DATA FOR ALT MODE
+
+        //START THE GAME
+
+        //RETURN RANDOM TEAM
+        
+      }
+    }
+    return randomStartTeam;
   }
 
   /**
@@ -517,7 +558,7 @@ public class GameEngine implements Game {
 
   /**
    * Helper method to add a team to the gameState. It takes in a String which it uses to create a
-   * team, also needs a position to add the team at Also sets a random color to the team
+   * team, also needs a position to add the team at. Also sets a random color to the team
    *
    * @author rsyed
    * @param teamID Name of the team
