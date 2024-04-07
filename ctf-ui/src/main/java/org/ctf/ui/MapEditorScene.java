@@ -44,9 +44,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+
 /**
- * Scene that contains all gui components for the Map editor and handles custom map 
- * templtates and pieces
+ * Scene that contains all gui components for the Map editor and handles custom
+ * map templtates and pieces
  * 
  * @author aniemesc
  */
@@ -71,20 +72,28 @@ public class MapEditorScene extends Scene {
 		File defaultMap = new File("src" + File.separator + "main" + File.separator + "java" + File.separator + "org"
 				+ File.separator + "ctf" + File.separator + "ui" + File.separator + "default.json");
 		try {
-			tmpTemplate = JSON_Tools.readMapTemplate(defaultMap);
+			if (defaultMap.exists()) {
+				tmpTemplate = JSON_Tools.readMapTemplate(defaultMap);
+			} else {
+				tmpTemplate = createExampleTemplate();
+				System.out.println("Fehler: Default Template konnte nicht geladen werden!"
+						+ "Es wurde ein alternatives Template geladen.");
+			}
+
 		} catch (IncompleteMapTemplateException | IOException e) {
 			System.out.println("fail");
 		}
 
 		initializeTemplate();
 		initializePieces();
-		printTemplate();
+		//printTemplate();
 		options = new Parent[3];
 		options[0] = createMapChooser();
 		options[1] = createFigurChooser();
 		options[2] = createFigureCustomizer();
 		this.createLayout();
 	}
+
 	/**
 	 * Creates the basic layout for the scene
 	 * 
@@ -124,14 +133,15 @@ public class MapEditorScene extends Scene {
 		leftroot.getChildren().add(left);
 		leftroot.setStyle("-fx-spacing: 20px;");
 		leftroot.setAlignment(Pos.CENTER);
-		
+
 		leftroot.getChildren().add(text);
 		text.setStyle("-fx-fill: rgba(255, 255, 255, 1);");
-		
+
 		sep.getChildren().add(leftroot);
 		sep.getChildren().add(CreateMapGrid());
 
 	}
+
 	/**
 	 * Creates and fills the container for the 'Edit Map' option
 	 * 
@@ -300,6 +310,7 @@ public class MapEditorScene extends Scene {
 		});
 		return controlBox;
 	}
+
 	/**
 	 * Creates and fills the container for the 'Add Pieces' option
 	 * 
@@ -333,8 +344,8 @@ public class MapEditorScene extends Scene {
 				spinnerchange = false;
 				return;
 			}
-			if(newValue==0) {
-				if(tmpTemplate.getPieces().length==1) {
+			if (newValue == 0) {
+				if (tmpTemplate.getPieces().length == 1) {
 					spinnerchange = true;
 					bauerSpinner.getValueFactory().setValue(old);
 					System.out.println("Mindestens eine Figur noetig");
@@ -359,8 +370,8 @@ public class MapEditorScene extends Scene {
 				spinnerchange = false;
 				return;
 			}
-			if(newValue==0) {
-				if(tmpTemplate.getPieces().length==1) {
+			if (newValue == 0) {
+				if (tmpTemplate.getPieces().length == 1) {
 					spinnerchange = true;
 					springerSpinner.getValueFactory().setValue(old);
 					System.out.println("Mindestens eine Figur noetig");
@@ -386,8 +397,8 @@ public class MapEditorScene extends Scene {
 				spinnerchange = false;
 				return;
 			}
-			if(newValue==0) {
-				if(tmpTemplate.getPieces().length==1) {
+			if (newValue == 0) {
+				if (tmpTemplate.getPieces().length == 1) {
 					spinnerchange = true;
 					dameSpinner.getValueFactory().setValue(old);
 					System.out.println("Mindestens eine Figur noetig");
@@ -425,8 +436,8 @@ public class MapEditorScene extends Scene {
 				spinnerchange = false;
 				return;
 			}
-			if(newValue==0) {
-				if(tmpTemplate.getPieces().length==1) {
+			if (newValue == 0) {
+				if (tmpTemplate.getPieces().length == 1) {
 					spinnerchange = true;
 					laufSpinner.getValueFactory().setValue(old);
 					System.out.println("Mindestens eine Figur noetig");
@@ -451,8 +462,8 @@ public class MapEditorScene extends Scene {
 				spinnerchange = false;
 				return;
 			}
-			if(newValue==0) {
-				if(tmpTemplate.getPieces().length==1) {
+			if (newValue == 0) {
+				if (tmpTemplate.getPieces().length == 1) {
 					spinnerchange = true;
 					turmSpinner.getValueFactory().setValue(old);
 					System.out.println("Mindestens eine Figur noetig");
@@ -469,18 +480,18 @@ public class MapEditorScene extends Scene {
 		});
 		choose2.getChildren().add(turmSpinner);
 
-		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 2);
+		valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
 		Spinner<Integer> customSpinner = new Spinner<>(valueFactory);
 		customSpinner.setPrefWidth(100);
 		choose2.getChildren().add(customSpinner);
 
-		ObservableList<String> options = FXCollections.observableArrayList("Custom1", "Custom2");
+		//ObservableList<String> options = FXCollections.observableArrayList("Custom1", "Custom2");
 
-		// Erstellen der ComboBox und Hinzufügen der Optionen
-		pieceComboBox = new ComboBox<>(options);
+		
+		pieceComboBox = new ComboBox<>();
 		// comboBox.prefWidthProperty().bind(turmSpinner.widthProperty());
 		pieceComboBox.getStyleClass().add("custom-combo-box");
-		pieceComboBox.setValue("Custom1");
+		pieceComboBox.setValue("Customs");
 		String[] names = { "Pawn", "Knight", "Queen", "Bishop", "Rook" };
 		ArrayList<String> defaultPieces = new ArrayList<String>(Arrays.asList(names));
 		for (String type : customPieces.keySet()) {
@@ -503,8 +514,8 @@ public class MapEditorScene extends Scene {
 				spinnerchange = false;
 				return;
 			}
-			if(newv==0) {
-				if(tmpTemplate.getPieces().length==1) {
+			if (newv == 0) {
+				if (tmpTemplate.getPieces().length == 1) {
 					spinnerchange = true;
 					customSpinner.getValueFactory().setValue(old);
 					System.out.println("Mindestens eine Figur noetig");
@@ -527,6 +538,7 @@ public class MapEditorScene extends Scene {
 		controlBox.getChildren().add(choose2);
 		return controlBox;
 	}
+
 	/**
 	 * Creates and fills the container for the 'Custom Pieces' option
 	 * 
@@ -564,7 +576,6 @@ public class MapEditorScene extends Scene {
 
 		ObservableList<String> options = FXCollections.observableArrayList("None", "L-Shape");
 
-		// Erstellen der ComboBox und Hinzufügen der Optionen
 		ComboBox<String> comboBox = new ComboBox<>(options);
 		// comboBox.prefWidthProperty().bind(turmSpinner.widthProperty());
 		comboBox.getStyleClass().add("custom-combo-box");
@@ -583,7 +594,6 @@ public class MapEditorScene extends Scene {
 		ObservableList<String> options2 = FXCollections.observableArrayList("Left", "Right", "Up", "Down", "Up-Left",
 				"Up-Right", "Down-Left", "Down-Right");
 
-		// Erstellen der ComboBox und Hinzufügen der Optionen
 		ComboBox<String> comboBox2 = new ComboBox<>(options2);
 		// comboBox.prefWidthProperty().bind(turmSpinner.widthProperty());
 		comboBox2.getStyleClass().add("custom-combo-box");
@@ -610,8 +620,8 @@ public class MapEditorScene extends Scene {
 			result.setAttackPower(strengthSpinner.getValueFactory().getValue());
 			customPieces.put(result.getType(), result);
 			pieceComboBox.getItems().add(result.getType());
-			this.inform(result.getType()+" was added to custom Pieces.");
-			
+			this.inform(result.getType() + " was added to custom Pieces.");
+
 		});
 
 		comboBox2.setOnAction(e -> {
@@ -682,6 +692,7 @@ public class MapEditorScene extends Scene {
 
 		return controlBox;
 	}
+
 	/**
 	 * Initial test method that initializes the tmpTemplate
 	 * 
@@ -713,6 +724,7 @@ public class MapEditorScene extends Scene {
 //		PieceDescription[] result = usedPieces.toArray(new PieceDescription[usedPieces.size()]);
 //		tmpTemplate.setPieces(result);
 	}
+
 	/**
 	 * test method for genrating an example piece
 	 * 
@@ -732,6 +744,34 @@ public class MapEditorScene extends Scene {
 		this.customPieces.put("Bauer", bauer);
 	}
 	/**
+	 * test method for genrating an example template
+	 * 
+	 * @author aniemesc
+	 * @return MapTemplate example
+	 */
+	private MapTemplate createExampleTemplate() {
+		createExamplePieces();
+		MapTemplate example = new MapTemplate();
+		int[] gridsize = { 10, 10 };
+		example.setGridSize(gridsize);
+		example.setBlocks(0);
+		example.setFlags(1);
+		example.setMoveTimeLimitInSeconds(60);
+		example.setTotalTimeLimitInSeconds(180);
+		example.setTeams(2);
+		example.setPlacement(PlacementType.symmetrical);
+		ArrayList<PieceDescription> usedPieces = new ArrayList<PieceDescription>();
+		for (String type : customPieces.keySet()) {
+			if (customPieces.get(type).getCount() > 0) {
+				usedPieces.add(customPieces.get(type));
+			}
+		}
+		PieceDescription[] result = usedPieces.toArray(new PieceDescription[usedPieces.size()]);
+		example.setPieces(result);
+		return example;
+	}
+
+	/**
 	 * helping method for generating a copy of a Directions object
 	 * 
 	 * @author aniemesc
@@ -749,6 +789,7 @@ public class MapEditorScene extends Scene {
 		result.setDownRight(this.tmpMovement.getDirections().getDownRight());
 		return result;
 	}
+
 	/**
 	 * method that genrates the option menu button
 	 * 
@@ -782,6 +823,7 @@ public class MapEditorScene extends Scene {
 		});
 		return mb;
 	}
+
 	/**
 	 * method that genrates the map menu button
 	 * 
@@ -829,6 +871,7 @@ public class MapEditorScene extends Scene {
 
 		return mb;
 	}
+
 	/**
 	 * method that genrates the exit button
 	 * 
@@ -853,6 +896,7 @@ public class MapEditorScene extends Scene {
 		exit.setFont(Font.font("System", FontWeight.BOLD, 14));
 		return exit;
 	}
+
 	/**
 	 * method that genrates the submit button
 	 * 
@@ -877,6 +921,7 @@ public class MapEditorScene extends Scene {
 		submit.setFont(Font.font("System", FontWeight.BOLD, 14));
 		return submit;
 	}
+
 	/**
 	 * method that genrates a test grid
 	 * 
@@ -912,6 +957,7 @@ public class MapEditorScene extends Scene {
 		return gridPane;
 
 	}
+
 	/**
 	 * method that generates a text representation of a template
 	 * 
@@ -929,8 +975,9 @@ public class MapEditorScene extends Scene {
 				+ "\n" + "placement" + tmpTemplate.getPlacement().toString() + "\n" + "thinktime "
 				+ tmpTemplate.getMoveTimeLimitInSeconds() + buf.toString());
 	}
+
 	/**
-	 * method that updates the custompieces hash map when a new template is loaded 
+	 * method that updates the custompieces hash map when a new template is loaded
 	 * 
 	 * @author aniemesc
 	 * 
@@ -949,6 +996,7 @@ public class MapEditorScene extends Scene {
 		}
 
 	}
+
 	/**
 	 * method that delivers count value
 	 * 
@@ -1004,12 +1052,13 @@ public class MapEditorScene extends Scene {
 		updatedPieces[updatedlength - 1] = customPieces.get(s);
 		tmpTemplate.setPieces(updatedPieces);
 	}
+
 	/**
 	 * method that updates the number of pieces of a maptemplate
 	 * 
 	 * @author aniemesc
 	 * @param String type
-	 * @param int newValue
+	 * @param int    newValue
 	 * 
 	 */
 	public void betterUpdateCount(String s, int newValue) {
@@ -1026,6 +1075,7 @@ public class MapEditorScene extends Scene {
 		tmpTemplate.setPieces(updated);
 
 	}
+
 	/**
 	 * method that inform the user via the gui using a textinput
 	 * 
@@ -1036,14 +1086,14 @@ public class MapEditorScene extends Scene {
 	private void inform(String s) {
 		text.setText(s);
 		FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), text);
-        fadeTransition.setDelay(Duration.seconds(1));
-		fadeTransition.setFromValue(1.0); 
-        fadeTransition.setToValue(0.0);
-        fadeTransition.setOnFinished(event -> {
-        	text.setText("");
-        	text.setOpacity(1);     	
-        });
-        fadeTransition.play();
+		fadeTransition.setDelay(Duration.seconds(1));
+		fadeTransition.setFromValue(1.0);
+		fadeTransition.setToValue(0.0);
+		fadeTransition.setOnFinished(event -> {
+			text.setText("");
+			text.setOpacity(1);
+		});
+		fadeTransition.play();
 	}
 
 }
