@@ -34,8 +34,8 @@ public class ServerCommandTests {
     // testConnection();
     // testStart();
     // joinTest();
-    // copierCheck();
-     arrayTest();
+     copierCheck();
+     //arrayTest();
    // getStateTests();
     // testConnectionTimedGameMode();
     // testMalformedConnection();
@@ -372,8 +372,8 @@ public class ServerCommandTests {
     Gson gson = new Gson();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     CommLayer comm = new CommLayer();
-    Client javaClient = new Client(true, "localhost", "8888");
-    Client javaClient2 = new Client(true, "localhost", "8888");
+    Client javaClient = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector("AI").build();
+    Client javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector("AI").build();
     
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
@@ -517,8 +517,8 @@ public class ServerCommandTests {
 
     Gson gson = new Gson();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
-    Client javaClient = new Client(true,"localhost", "8888");
-    Client javaClient2 = new Client(true,"localhost", "8888");
+    Client javaClient = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector("AI").build();
+    Client javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector("AI").build();
     javaClient.createGame(template);
     javaClient.joinGame("Se[j1]");
     javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "nasd");
@@ -640,8 +640,8 @@ public class ServerCommandTests {
     Gson gson = new Gson();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     CommLayer comm = new CommLayer();
-    Client javaClient = new Client(true, "localhost", "8888");
-    Client javaClient2 = new Client(true,"localhost", "8888");
+    Client javaClient = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector("AI").build();
+    Client javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector("AI").build();
     
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
@@ -654,9 +654,16 @@ public class ServerCommandTests {
     move.setNewPosition(new int[] {0, 1});
 
     javaClient.getStateFromServer();
+    javaClient.getSessionFromServer();
+    javaClient2.getSessionFromServer();
     javaClient2.getStateFromServer();
 
-    GameState state1 = javaClient.getCurrentState();
+
+    System.out.println(javaClient.getStartDate());
+    System.out.println(javaClient2.getCurrentSession().getGameStarted());
+    
+
+/*     GameState state1 = javaClient.getCurrentState();
     System.out.println("GSON " + gson.toJson(state1));
 
     ObjectMapper mapper = new ObjectMapper();
@@ -670,8 +677,9 @@ public class ServerCommandTests {
 			System.out.println("Error in deepCopyGameState JSON Method");
 		} catch (IOException e) {
 			System.out.println("Error in deepCopyGameState JSON Method");
-		}
+		}*/
   }
+   
 
   public static void arrayTest(){
     Team[] teams = new Team[3];

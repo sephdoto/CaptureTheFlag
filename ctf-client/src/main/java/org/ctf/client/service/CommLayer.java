@@ -38,8 +38,7 @@ import org.ctf.shared.state.dto.MoveRequest;
  */
 public class CommLayer implements CommLayerInterface {
 
-  // Data Blocks for the Layer
-  private Gson gson; // Gson object to convert classes to Json
+  private Gson gson;
   private ExecutorService executor;
   private HttpClient client;
   private HttpRequest request;

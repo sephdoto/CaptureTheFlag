@@ -1,14 +1,11 @@
-package org.ctf.client;
+package org.ctf.client.lib;
 
-import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.map.MapTemplate;
-import org.ctf.shared.state.dto.GameSessionResponse;
-import org.ctf.shared.state.dto.JoinGameResponse;
 
 /**
- * This is the contract the client HAS to fulfill. How it fulfills it is upto the Client
- * Methods throw Exceptions as returns instead of classes
+ * This is the contract the client HAS to fulfill. How it fulfills it is upto the Client Methods
+ * throw Exceptions as returns instead of classes
  *
  * @author rsyed
  */
@@ -43,25 +40,15 @@ public interface GameClientInterface {
    */
   void makeMove(Move move);
 
-  /**
-   * Requests to give up in the currentGame
-   *
-   */
+  /** Requests to give up in the currentGame */
   void giveUp();
 
-   /**
-   * Pulls the GameSession information from the server for the current Session
-   *
-   */
+  /** Pulls the GameSession information from the server for the current Session */
   void getSessionFromServer();
 
-   /**
-   * Pulls the GameState from the server for the ID
-   */
+  /** Pulls the GameState from the server for the ID */
   void getStateFromServer();
 
-   /**
-   * Deletes the current session 
-   */
+  /** Deletes the current session */
   void deleteSession();
 }

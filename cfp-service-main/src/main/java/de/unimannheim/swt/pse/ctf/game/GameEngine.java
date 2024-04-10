@@ -27,7 +27,7 @@ import org.ctf.shared.state.data.exceptions.TooManyPiecesException;
 import javafx.scene.paint.Color;
 
 /**
- * Game Engine Implementation\
+ * Game Engine Implementation
  *
  * @author rsyed & ysiebenh & sistumpf
  */
@@ -153,6 +153,7 @@ public class GameEngine implements Game {
    * @return Team
    * @throws NoMoreTeamSlots No more team slots available
    */
+  /* 
   public Team joinGameNew(String teamId) {
     // Initial check if Slots are even available
     Team randomStartTeam = new Team();
@@ -176,7 +177,7 @@ public class GameEngine implements Game {
       }
     }
     return randomStartTeam;
-  }
+  } */
 
   /**
    * @return number of remaining team slots
