@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Min;
 
 /**
  * This class describes a {@link Piece} in a game.
+ * @author Marcus Kessel
  */
 public class PieceDescription {
 
