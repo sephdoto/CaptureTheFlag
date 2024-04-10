@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * This class represents a team together with all its pieces.
+ * @author Marcus Kessel
  */
 public class Team {
     @Schema(

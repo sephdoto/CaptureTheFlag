@@ -6,6 +6,7 @@ import java.util.Date;
 
 /**
  * This class is used to represent the state of a game session.
+ * @author Marcus Kessel
  */
 public class GameSessionResponse {
 

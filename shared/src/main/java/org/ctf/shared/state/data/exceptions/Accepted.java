@@ -16,6 +16,6 @@ public class Accepted extends RuntimeException {
     }
 
     public Accepted() {
-        //TODO Auto-generated constructor stub
+        super();
     }
 }

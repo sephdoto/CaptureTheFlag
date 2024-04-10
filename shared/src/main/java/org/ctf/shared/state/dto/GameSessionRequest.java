@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * This class is used to represent a request to create a new game session.
+ * @author Marcus Kessel
  */
 public class GameSessionRequest {
 

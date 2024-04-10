@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 /**
  * This class represents a move request,
  * which contains the piece ID and the new position for the piece.
+ * @author Marcus Kessel
  */
 public class MoveRequest {
 

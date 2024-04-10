@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 /**
  * This class represents possible piece movements
  * in terms of squares to move in one or more direction(s).
+ * @author Marcus Kessel
  */
 public class Directions {
 

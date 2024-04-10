@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * This class represents a game specific configuration.
+ * @author Marcus Kessel
  */
 public class MapTemplate {
 

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * This class is used to represent the response after adding a team successfully to a game session.
+ * @author Marcus Kessel
  */
 public class JoinGameResponse {
     @Schema(

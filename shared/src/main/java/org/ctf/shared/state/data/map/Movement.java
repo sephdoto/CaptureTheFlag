@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * This class represents a possible movement.
+ * @author Marcus Kessel
  */
 public class Movement {
 

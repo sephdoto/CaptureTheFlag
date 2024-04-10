@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * This class represents a piece.
+ * @author Marcus Kessel
  */
 public class Piece {
     @Schema(

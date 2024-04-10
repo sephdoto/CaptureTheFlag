@@ -2,6 +2,7 @@ package org.ctf.shared.state.data.map;
 
 /**
  * This enum represents strategies for piece placements.
+ * @author Marcus Kessel
  */
 public enum PlacementType {
 

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * This class represents the request to let a team join a game session.
+ * @author Marcus Kessel
  */
 public class JoinGameRequest {
     @Schema(

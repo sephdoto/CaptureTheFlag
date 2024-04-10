@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * This class is used to represent the current game state for a specific game session.
+ * @author Marcus Kessel
  */
 public class GameState {
     @Schema(
