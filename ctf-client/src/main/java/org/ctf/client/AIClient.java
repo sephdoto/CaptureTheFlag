@@ -12,6 +12,10 @@ public class AIClient extends Client implements Runnable {
     super(comm, IP, port);
   }
 
+  public void setSelectedAI(Constants.AI selectedAI){
+    this.selectedAI = selectedAI;
+  }
+  
   @Override
   public void run() {
     // TODO Auto-generated method stub

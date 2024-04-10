@@ -101,6 +101,7 @@ public class ClientStepBuilder {
      Client client;
      if(!playerType.equals(Constants.AI.HUMAN)){
       client = new AIClient(comm, host, port); 
+      client.setPlayerType(playerType);
      } else {
       client = new Client(comm, host, port);
      }
