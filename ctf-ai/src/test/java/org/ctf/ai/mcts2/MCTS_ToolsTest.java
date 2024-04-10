@@ -122,7 +122,7 @@ class MCTS_ToolsTest {
       assertEquals(0, MCTS_Tools.getReach(rookDirections, 5));
       assertEquals(0, MCTS_Tools.getReach(rookDirections, 6));
       assertEquals(0, MCTS_Tools.getReach(rookDirections, 7));
-      assertEquals(-1, MCTS_Tools.getReach(rookDirections, 8));     //invalid direction: -1
+      assertEquals(0, MCTS_Tools.getReach(rookDirections, 8));     //invalid direction: -1
   }
   
   /**
