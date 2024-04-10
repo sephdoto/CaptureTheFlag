@@ -3,6 +3,7 @@ package org.ctf.client;
 import com.google.gson.Gson;
 import java.util.Date;
 
+import org.ctf.client.lib.GameClientInterface;
 import org.ctf.client.service.CommLayer;
 import org.ctf.client.service.CommLayerInterface;
 import org.ctf.client.service.RestClientLayer;
@@ -26,6 +27,7 @@ import org.ctf.shared.state.dto.MoveRequest;
 /**
  * Base Client file which is going to use the Translation Layer to talk to the game server Has
  * support for multiple gameSessions and flexible server polling
+ * Uses a StepBuilder Class to Create Objects
  *
  * @author rsyed
  */
@@ -53,46 +55,30 @@ public class Client implements GameClientInterface {
   private String[] winners;
 
   // Block for Team Data
+  public String playerType;
   private String teamSecret;
   public String teamID;
   public String teamColor;
 
-  // Block for alt game mode data
   public Date startDate;
+  // Block for alt game mode data
   public Date endDate;
   public Date moveTimeLeft;
 
   // Block for booleans
   public boolean gameOver;
 
-  /** Constructor which inits some objects on creation 
-   *  @param restLayerEnabled True for RestClient False for Java Client
-  */
-  
-  public Client(boolean restLayerEnabled) {
-    this.gson = new Gson(); // creates a gson Object on creation to conserve memory
-    this.currentState = new GameState();
-    this.currentSession = new GameSession();
-    if(restLayerEnabled){
-      this.comm = new RestClientLayer(); 
-    } else {
-      try {
-        this.comm = new CommLayer();
-      } catch (Exception e) {
-        this.comm = new CommLayer();
-      }
-      
-    }
-  }
-
   /**
-   * Additional constructor to set the IP and port on object creation
+   * Constructor to set the IP and port on object creation
    * @param selector boolean to enable RESTClient
    * @param IP the IP to connect to Exp "localhost" or "192.xxx.xxx.xxx"
    * @param port the port the server is at Exp 9999 / 8080 /
    */
-  public Client(boolean restLayerEnabled, String IP, String port) {
-    this(restLayerEnabled);
+  Client(CommLayerInterface comm, String IP, String port) {
+    this.gson = new Gson();
+    this.currentState = new GameState();
+    this.currentSession = new GameSession();
+    this.comm = comm;
     setServer(IP, port);
   }
   
@@ -234,21 +220,26 @@ public class Client implements GameClientInterface {
     return gameResponse;
   }
 
+  //TODO Improve GameSessionResponse Parsing. You need to save it to a GameSession Object 
   private void gameSessionResponseParser(GameSessionResponse gameSessionResponse) {
     this.currentGameSessionID = gameSessionResponse.getId();
     this.currentServer = shortURL + "/" + currentGameSessionID;
+    
     try {
       this.startDate = gameSessionResponse.getGameStarted();
+      this.currentSession.setGameStarted(gameSessionResponse.getGameStarted());
     } catch (NullPointerException e) {
       System.out.println("Game hasnt started yet");
     }
     try {
       this.endDate = gameSessionResponse.getGameEnded();
+      this.currentSession.setGameEnded(gameSessionResponse.getGameEnded());
     } catch (NullPointerException e) {
       System.out.println("Game hasnt ended yet");
     }
     try {
       this.gameOver = gameSessionResponse.isGameOver();
+      this.currentSession.setGameOver(gameSessionResponse.isGameOver());
     } catch (NullPointerException e) {
       System.out.println("Game hasnt ended yet");
     }
@@ -257,6 +248,13 @@ public class Client implements GameClientInterface {
     } catch (NullPointerException e) {
       System.out.println("There are no winners");
     }
+    try {
+      this.currentGameSessionID = gameSessionResponse.getId();
+      this.currentSession.setId(gameSessionResponse.getId());
+    } catch (NullPointerException e) {
+      System.out.println("No Game ID is set yet");
+    }
+    
   }
 
   private JoinGameResponse joinGameCaller(String teamName) {
@@ -388,5 +386,9 @@ public class Client implements GameClientInterface {
 
   public boolean isGameOver() {
     return gameOver;
+  }
+
+  public void setPlayerType(String playerType) {
+    this.playerType = playerType;
   }
 }

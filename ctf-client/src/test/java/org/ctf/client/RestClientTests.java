@@ -36,13 +36,13 @@ public class RestClientTests {
   static void setup() {
     String[] args = new String[] {};
     CtfApplication.main(args);
-    javaClient = new Client(true,"localhost", "9999");
+    javaClient = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("9999").playerSelector("AI").build();
   }
 
   @BeforeEach
   void setupBeforeEach() {
-    javaClient = new Client(true,"localhost", "9999");
-    javaClient2 = new Client(true,"localhost", "9999");
+    javaClient = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("9999").playerSelector("AI").build();
+    javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("9999").playerSelector("AI").build();
   }
 
   @Test
