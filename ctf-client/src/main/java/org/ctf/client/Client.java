@@ -2,11 +2,9 @@ package org.ctf.client;
 
 import com.google.gson.Gson;
 import java.util.Date;
-
 import org.ctf.client.lib.GameClientInterface;
-import org.ctf.client.service.CommLayer;
 import org.ctf.client.service.CommLayerInterface;
-import org.ctf.client.service.RestClientLayer;
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
@@ -26,8 +24,8 @@ import org.ctf.shared.state.dto.MoveRequest;
 
 /**
  * Base Client file which is going to use the Translation Layer to talk to the game server Has
- * support for multiple gameSessions and flexible server polling
- * Uses a StepBuilder Class to Create Objects
+ * support for multiple gameSessions and flexible server polling Uses a StepBuilder Class to Create
+ * Objects
  *
  * @author rsyed
  */
@@ -41,7 +39,7 @@ public class Client implements GameClientInterface {
   private Team[] teams;
 
   private Gson gson; // Gson object for conversions incase needed
-  //Two CommLayers Available CommLayer and RestClientLayer
+  // Two CommLayers Available CommLayer and RestClientLayer
   private CommLayerInterface comm; // Layer instance which is used for communication
 
   // Block for Server Info
@@ -55,7 +53,7 @@ public class Client implements GameClientInterface {
   private String[] winners;
 
   // Block for Team Data
-  public String playerType;
+  public Constants.AI playerType;
   private String teamSecret;
   public String teamID;
   public String teamColor;
@@ -70,6 +68,7 @@ public class Client implements GameClientInterface {
 
   /**
    * Constructor to set the IP and port on object creation
+   *
    * @param selector boolean to enable RESTClient
    * @param IP the IP to connect to Exp "localhost" or "192.xxx.xxx.xxx"
    * @param port the port the server is at Exp 9999 / 8080 /
@@ -81,7 +80,7 @@ public class Client implements GameClientInterface {
     this.comm = comm;
     setServer(IP, port);
   }
-  
+
   /**
    * Method to set the server which this this object communicates with
    *
@@ -92,10 +91,10 @@ public class Client implements GameClientInterface {
     this.currentServer = "http://" + IP + ":" + port + "/api/gamesession";
     this.shortURL = "http://" + IP + ":" + port + "/api/gamesession";
   }
- 
+
   /**
-   * Requests the server specified in the current object to create a GameSession using the map in the
-   * MapTemplate parameter. Throws exceptions on acception and incase errors occour
+   * Requests the server specified in the current object to create a GameSession using the map in
+   * the MapTemplate parameter. Throws exceptions on acception and incase errors occour
    *
    * @param map
    * @throws UnknownError (500)
@@ -116,7 +115,6 @@ public class Client implements GameClientInterface {
   @Override
   public void joinGame(String teamName) {
     joinGameParser(joinGameCaller(teamName));
-    
   }
 
   /**
@@ -134,10 +132,11 @@ public class Client implements GameClientInterface {
     makeMoverCaller(currentServer, teamID, teamSecret, move);
   }
 
-   /**
-   * Requests a refresh of the GameState from the server. Parses the data and makes it available for consumption
-   * Throws exceptions listed incase of acceptance or errors.
-   * Functions as a REFRESH COMMAND for GAMESTATE
+  /**
+   * Requests a refresh of the GameState from the server. Parses the data and makes it available for
+   * consumption Throws exceptions listed incase of acceptance or errors. Functions as a REFRESH
+   * COMMAND for GAMESTATE
+   *
    * @throws SessionNotFound
    * @throws UnknownError
    * @throws URLError (404)
@@ -148,9 +147,9 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Requests the server to return the current state of the session and parses it
-   * Throws exceptions depending on what happens.
-   * Functions as a REFRESH command for SESSION INFO
+   * Requests the server to return the current state of the session and parses it Throws exceptions
+   * depending on what happens. Functions as a REFRESH command for SESSION INFO
+   *
    * @throws SessionNotFound (404)
    * @throws UnknownError (500)
    * @throws URLError (404)
@@ -162,8 +161,8 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Requests the server to delete the current session. Returns the
-   * server reponse which are HTTP status codes thrown as exceptions.
+   * Requests the server to delete the current session. Returns the server reponse which are HTTP
+   * status codes thrown as exceptions.
    *
    * @throws SessionNotFound (404)
    * @throws UnknownError (500)
@@ -174,9 +173,8 @@ public class Client implements GameClientInterface {
     comm.deleteCurrentSession(currentServer);
   }
 
-   /**
-   * Used to send a give up request to the current session.
-   * Throws exceptions depending on errors
+  /**
+   * Used to send a give up request to the current session. Throws exceptions depending on errors
    *
    * @throws SessionNotFound (404)
    * @throws ForbiddenMove (403)
@@ -189,13 +187,13 @@ public class Client implements GameClientInterface {
     comm.giveUp(currentServer, teamID, teamSecret);
   }
 
-/**
+  /**
    * Changes the sessionID which this client object is pointing to. Functions as a join game command
-   * 
-   *  @param IP
-   *  @param port
-   *  @param gameSessionID
-   *  @param teamName
+   *
+   * @param IP
+   * @param port
+   * @param gameSessionID
+   * @param teamName
    */
   public void joinExistingGame(String IP, String port, String gameSessionID, String teamName) {
     this.currentServer = "http://" + IP + ":" + port + "/api/gamesession";
@@ -220,11 +218,11 @@ public class Client implements GameClientInterface {
     return gameResponse;
   }
 
-  //TODO Improve GameSessionResponse Parsing. You need to save it to a GameSession Object 
+  // TODO Improve GameSessionResponse Parsing. You need to save it to a GameSession Object
   private void gameSessionResponseParser(GameSessionResponse gameSessionResponse) {
     this.currentGameSessionID = gameSessionResponse.getId();
     this.currentServer = shortURL + "/" + currentGameSessionID;
-    
+
     try {
       this.startDate = gameSessionResponse.getGameStarted();
       this.currentSession.setGameStarted(gameSessionResponse.getGameStarted());
@@ -254,7 +252,6 @@ public class Client implements GameClientInterface {
     } catch (NullPointerException e) {
       System.out.println("No Game ID is set yet");
     }
-    
   }
 
   private JoinGameResponse joinGameCaller(String teamName) {
@@ -285,7 +282,7 @@ public class Client implements GameClientInterface {
 
   private void makeMoverCaller(String currentServer, String teamID, String teamSecret, Move move) {
     try {
-        MoveRequest moveReq = new MoveRequest();
+      MoveRequest moveReq = new MoveRequest();
       moveReq.setTeamId(teamID);
       moveReq.setTeamSecret(teamSecret);
       moveReq.setPieceId(move.getPieceId());
@@ -388,7 +385,7 @@ public class Client implements GameClientInterface {
     return gameOver;
   }
 
-  public void setPlayerType(String playerType) {
+  public void setPlayerType(Constants.AI playerType) {
     this.playerType = playerType;
   }
 }

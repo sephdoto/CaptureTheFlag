@@ -15,6 +15,7 @@ import org.ctf.shared.state.Team;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.dto.GameSessionRequest;
 import org.ctf.shared.state.dto.GameSessionResponse;
+import org.ctf.shared.constants.Constants;
 
 /** Tests for the layer and the responses it gives out. */
 public class ServerCommandTests {
@@ -372,8 +373,8 @@ public class ServerCommandTests {
     Gson gson = new Gson();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     CommLayer comm = new CommLayer();
-    Client javaClient = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector("AI").build();
-    Client javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector("AI").build();
+    Client javaClient = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector(Constants.AI.HUMAN).build();
+    Client javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector(Constants.AI.HUMAN).build();
     
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
@@ -517,8 +518,8 @@ public class ServerCommandTests {
 
     Gson gson = new Gson();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
-    Client javaClient = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector("AI").build();
-    Client javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector("AI").build();
+    Client javaClient = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector(Constants.AI.HUMAN).build();
+    Client javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector(Constants.AI.HUMAN).build();
     javaClient.createGame(template);
     javaClient.joinGame("Se[j1]");
     javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "nasd");
@@ -640,8 +641,8 @@ public class ServerCommandTests {
     Gson gson = new Gson();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     CommLayer comm = new CommLayer();
-    Client javaClient = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector("AI").build();
-    Client javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector("AI").build();
+    Client javaClient = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector(Constants.AI.HUMAN).build();
+    Client javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector(Constants.AI.HUMAN).build();
     
     javaClient.createGame(template);
     javaClient.joinGame("Team1");

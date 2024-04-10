@@ -10,6 +10,7 @@ import de.unimannheim.swt.pse.ctf.CtfApplication;
 import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
 import java.io.IOException;
 import org.ctf.client.service.CommLayer;
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
@@ -36,13 +37,13 @@ public class ClientTest {
   static void setup() {
     String[] args = new String[] {};
     CtfApplication.main(args);
-    javaClient = ClientStepBuilder.newBuilder().enableRestLayer(false).onHost("localhost").onPort("9999").playerSelector("AI").build();
+    javaClient = ClientStepBuilder.newBuilder().enableRestLayer(false).onHost("localhost").onPort("9999").playerSelector(Constants.AI.HUMAN).build();
   }
 
   @BeforeEach
   void setupBeforeEach() {
-    javaClient = ClientStepBuilder.newBuilder().enableRestLayer(false).onHost("localhost").onPort("9999").playerSelector("AI").build();
-    javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(false).onHost("localhost").onPort("9999").playerSelector("AI").build();
+    javaClient = ClientStepBuilder.newBuilder().enableRestLayer(false).onHost("localhost").onPort("9999").playerSelector(Constants.AI.HUMAN).build();
+    javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(false).onHost("localhost").onPort("9999").playerSelector(Constants.AI.HUMAN).build();
   }
 
   @Test

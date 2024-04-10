@@ -47,7 +47,7 @@ public class ClientStepBuilder {
    * 
    */
   public static interface PlayerTypeSelectionStep{
-     BuildStep playerSelector(String playerType);
+     BuildStep playerSelector(Constants.AI num);
   }
 
   public static interface BuildStep {
@@ -60,7 +60,7 @@ public class ClientStepBuilder {
     private CommLayerInterface comm;
     private String host;
     private String port;
-    private String playerType;
+    private Constants.AI playerType;
 
     @Override
     public HostStep enableRestLayer(boolean enableRestClient) {
@@ -86,7 +86,7 @@ public class ClientStepBuilder {
     
 
     @Override
-    public BuildStep playerSelector(String playerType) {
+    public BuildStep playerSelector(Constants.AI playerType) {
       this.playerType = playerType;
       return this;
     }
@@ -98,8 +98,12 @@ public class ClientStepBuilder {
         serverDetails.setHost(host);
         serverDetails.setPort(port);
      }
-      Client client = new Client(comm, host, port); 
-      client.setPlayerType(playerType);
+     Client client;
+     if(!playerType.equals(Constants.AI.HUMAN)){
+      client = new AIClient(comm, host, port); 
+     } else {
+      client = new Client(comm, host, port);
+     }
       return client;
     }
   }

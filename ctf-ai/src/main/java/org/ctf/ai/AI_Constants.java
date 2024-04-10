@@ -20,7 +20,7 @@ public class AI_Constants {
   
 
 
-  public enum AI {
-    RANDOM, SIMPLE_RANDOM
+  public enum Player {
+    HUMAN, RANDOM, SIMPLE_RANDOM, MCTS
   }
 }

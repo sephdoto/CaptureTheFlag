@@ -21,5 +21,7 @@ public class Constants {
 	public static final String remoteIP = "localhost";
 	public static final String remotePort = "8888";
 	public static final String remoteBinder = "/api/";
+	public enum AI {
+		HUMAN, RANDOM, SIMPLE_RANDOM
+	  }
 }
-
