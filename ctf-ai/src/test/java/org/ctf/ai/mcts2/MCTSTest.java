@@ -63,58 +63,61 @@ class MCTSTest {
         + ",\nsimulations till the end: " + simulations + ", heuristic used: " + heuristics + "\nResults computed with " + crashes + " crashes");
   }
   
-//  @Test       !!Fehlerhaft
+//  @Test   TODO funktioniert aber sollte nicht beim testen ausgeführt werden, dauert so lang
   void testMctsWorks() throws InterruptedException {
     int randomTillEnd = 0;
-    while(mcts.isTerminal(mcts.root) == -1) {
+    while(mcts.isTerminal(mcts.root.gameState) == -1) {
       randomTillEnd++;
       mcts.oneMove(mcts.root, mcts.root, true);
-      mcts.root.printGrids();
-      System.out.println("\nlastmove: " + mcts.root.gameState.getLastMove().getPiece().getId() + " to " +
-          mcts.root.gameState.getLastMove().getNewPosition()[0] + " " + mcts.root.gameState.getLastMove().getNewPosition()[1] + "\n\n");
+//      mcts.root.printGrids();
+//      System.out.println("\nlastmove: " + mcts.root.gameState.getLastMove().getPiece().getId() + " to " +
+//          mcts.root.gameState.getLastMove().getNewPosition()[0] + " " + mcts.root.gameState.getLastMove().getNewPosition()[1] + "\n\n");
       mcts.removeTeamCheck(mcts.root.gameState);
     }
 
 
     gameState = new ReferenceGameState(TestValues.getTestState());
     TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
-    mcts = new MCTS(parent);
 
     int mctsTillEnd = 0;
-    while(mcts.isTerminal(mcts.root) == -1) {
 
-      Move move = mcts.getMove(1000, AI_Constants.C);
+    MCTS gameMCTS = new MCTS(parent);
+    while(gameMCTS.isTerminal(gameMCTS.root.gameState) == -1) {
+      gameMCTS.expansionCounter.set(0);
+      gameMCTS.simulationCounter.set(0);
+      gameMCTS.heuristicCounter.set(0);
+      Move move = gameMCTS.getMove(1000, AI_Constants.C);
       ++mctsTillEnd;      
       
-      System.out.println("\nROUND: " + mctsTillEnd + "\n" + mcts.printResults(move) + "\n");
+      System.out.println("\nROUND: " + mctsTillEnd + "\n" + gameMCTS.printResults(move) + "\n");
       
-      mcts.root.gameState.getLastMove().setNewPosition(move.getNewPosition());
-      mcts.root.gameState.getLastMove().setPiece(new Piece());
-      mcts.root.gameState.getLastMove().getPiece().setId(move.getPieceId());
-      TreeNode node = mcts.root.clone(mcts.root.gameState.clone());
-      mcts.alterGameStateAndGrid(node.gameState, mcts.root.gameState.getLastMove());
-      
-      if(mcts.isTerminal(mcts.root) != -1)
-        break;
+      gameMCTS.alterGameStateAndGrid(gameMCTS.root.gameState, new ReferenceMove(gameMCTS.root.gameState, move));
 
-      mcts.oneMove(node, node, false);
+      gameMCTS.root.printGrids();
+      
+      if(gameMCTS.isTerminal(gameMCTS.root.gameState) != -1)
+        break;
+      gameMCTS.root.initPossibleMovesAndChildren();
+      gameMCTS.oneMove(gameMCTS.root, gameMCTS.root, false);
       ++mctsTillEnd;
 
-      mcts.removeTeamCheck(mcts.root.gameState);
-            System.out.println("\nROUND: " + mctsTillEnd + "\nRandom: Piece " + node.gameState.getLastMove().getPiece().getId() + " to " 
-            + node.gameState.getLastMove().getNewPosition()[0] + "," + node.gameState.getLastMove().getNewPosition()[1] + "\n");
-            node.printGrids();
 
-      for(int i=0; i<node.parent.children.length; i++) {
-        node.parent.children[i] = null;
-      }
-      node.parent = null;
-      for(int i = 0; i<node.children.length; i++)
-        node.children[i] = null;
-      node.wins = new int[] {0,0};
+      gameMCTS.removeTeamCheck(gameMCTS.root.gameState);
+      System.out.println("\nROUND: " + mctsTillEnd + "\nRandom: Piece " + gameMCTS.root.gameState.getLastMove().getPiece().getId() + " to " 
+          + gameMCTS.root.gameState.getLastMove().getNewPosition()[0] + "," + gameMCTS.root.gameState.getLastMove().getNewPosition()[1] + "\n");
+      gameMCTS.root.printGrids();
+
+      if(gameMCTS.root.parent != null)
+        for(int i=0; i<gameMCTS.root.parent.children.length; i++) {
+          gameMCTS.root.parent.children[i] = null;
+        }
+      gameMCTS.root.parent = null;
+      for(int i = 0; i<gameMCTS.root.children.length; i++)
+        gameMCTS.root.children[i] = null;
+      gameMCTS.root.wins = new int[] {0,0};
 
 
-      mcts = new MCTS(node);
+//      mcts = new MCTS(gameMCTS.root);
     }
     System.out.println("\"testMctsWorks\": random steps till end: " + randomTillEnd + ", mcts steps till end: " + mctsTillEnd);
     assertTrue(mctsTillEnd < randomTillEnd);
@@ -201,7 +204,7 @@ class MCTSTest {
     mcts.getMove(1000, (float)Math.sqrt(2));
 //    System.out.println("Piece: " + move.getPieceId() + " moves to " + move.getNewPosition()[0] + ", " + move.getNewPosition()[1]);
     for(int i=0; i<parent.possibleMoves.size(); i++) {
-      if(-1 == mcts.isTerminal(mcts.root))
+      if(-1 == mcts.isTerminal(mcts.root.gameState))
         mcts.oneMove(mcts.root, mcts.root, false);
     }
   }
@@ -240,7 +243,7 @@ class MCTSTest {
     mcts.getMove(1000, (float)Math.sqrt(2));
 //    System.out.println("Piece: " + move.getPieceId() + " moves to " + move.getNewPosition()[0] + ", " + move.getNewPosition()[1]);
     for(int i=0; i<parent.possibleMoves.size(); i++) {
-      if(-1 == mcts.isTerminal(mcts.root))
+      if(-1 == mcts.isTerminal(mcts.root.gameState))
         mcts.oneMove(mcts.root, mcts.root, false);
     }
   }
@@ -307,7 +310,8 @@ class MCTSTest {
     gameState.getGrid()[0][1] = pieces0[0].getId();
     gameState.getGrid()[2][0] = pieces1[0].getId();
     MCTS mcts = new MCTS(new TreeNode(null, gameState, null));
-
+    mcts.getMove(1000, AI_Constants.C);
+    mcts.root.initPossibleMovesAndChildren();
     ReferenceMove move = mcts.getAndRemoveMoveHeuristic(mcts.root);
     assertEquals(0, move.getNewPosition()[0]);
     assertEquals(0, move.getNewPosition()[1]);
@@ -401,7 +405,7 @@ class MCTSTest {
 
 //    parent.printGrids();
     
-    assertEquals(1, mcts.isTerminal(mcts.root));
+    assertEquals(1, mcts.isTerminal(mcts.root.gameState));
 
     //TODO test for 3 teams
   }
@@ -413,7 +417,7 @@ class MCTSTest {
     TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
     MCTS mcts = new MCTS(parent);
 
-    assertEquals(-1, mcts.isTerminal(mcts.root));
+    assertEquals(-1, mcts.isTerminal(mcts.root.gameState));
   }
   
   @Test

@@ -77,7 +77,7 @@ public class MCTS {
    * @return the node to simulate on
    */
   TreeNode selectAndExpand(TreeNode node, double C){
-    while(isTerminal(node) == -1) {      
+    while(isTerminal(node.gameState) == -1) {      
       if(!isFullyExpanded(node)){
         expansionCounter.incrementAndGet();
         return expand(node);
@@ -152,7 +152,7 @@ public class MCTS {
    */
   int[] simulate(TreeNode simulateOn){      
     simulationCounter.incrementAndGet();
-    int isTerminal = isTerminal(simulateOn);
+    int isTerminal = isTerminal(simulateOn.gameState);
     int[] winners = new int[this.teams];
     int count = AI_Constants.MAX_STEPS;
     if(isTerminal >= 0) {
@@ -163,7 +163,7 @@ public class MCTS {
 
     simulateOn = simulateOn.clone(simulateOn.gameState.clone());
 
-    for(;count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn)) {
+    for(;count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn.gameState)) {
       oneMove(simulateOn, simulateOn, true);
       removeTeamCheck(simulateOn.gameState);
     }
@@ -273,39 +273,41 @@ public class MCTS {
    * @param a node to check if it is terminal
    * @return -1: the game is not in a terminal state
    *         0 - Integer.MAX_VALUE: winner team id
+   *         -2: error
    */
-  int isTerminal(TreeNode node) {
+  int isTerminal(ReferenceGameState gameState) {
     int teamsLeft = 0;
-    removeTeamCheck(node.gameState);
-    for(int i=0; i<node.gameState.getTeams().length; i++) {
-      if(node.gameState.getTeams()[i] != null) {
+    removeTeamCheck(gameState);
+    for(int i=0; i<gameState.getTeams().length; i++) {
+      if(gameState.getTeams()[i] != null) {
         teamsLeft++;
       }
     }
 
-    for(int i=node.gameState.getCurrentTeam(); teamsLeft > 1; i = MCTS_Tools.toNextTeam(node.gameState).getCurrentTeam()) {
+    for(int i=gameState.getCurrentTeam(); teamsLeft > 1; i = MCTS_Tools.toNextTeam(gameState).getCurrentTeam()) {
       boolean canMove = false;
-      for(int j=0; !canMove && j<node.gameState.getTeams()[i].getPieces().length; j++) {
-        if(node.gameState.getTeams()[i].getFlags() < 1)
+      for(int j=0; !canMove && j<gameState.getTeams()[i].getPieces().length; j++) {
+        if(gameState.getTeams()[i].getFlags() < 1)
           continue;
         //only if a move can be made no exception is thrown
         try {
-          MCTS_Tools.pickMoveComplex(node.gameState);
+          MCTS_Tools.pickMoveComplex(gameState);
           canMove = true;
         } catch (Exception e) {} 
       }
       if(canMove) {
         return -1;
       } else if (!canMove){
-        MCTS_Tools.removeTeam(node.gameState, i);
+        MCTS_Tools.removeTeam(gameState, i);
         teamsLeft--;
       }
     }
 
     if(teamsLeft <= 1) {
-      for(Team team : node.gameState.getTeams())
+      for(Team team : gameState.getTeams())
         if(team != null)
           return Integer.parseInt(team.getId());
+      return -2;
     }
     return -1;
   }
@@ -514,7 +516,7 @@ public class MCTS {
    * @param gameState
    * @param move
    */
-  void alterGameStateAndGrid(ReferenceGameState gameState, ReferenceMove move) {
+  public void alterGameStateAndGrid(ReferenceGameState gameState, ReferenceMove move) {
     GridObjectContainer occupant = gameState.getGrid().getPosition(move.getNewPosition()[1], move.getNewPosition()[0]);
     Piece picked = move.getPiece();
     gameState.getGrid().setPosition(null, picked.getPosition()[1], picked.getPosition()[0]);

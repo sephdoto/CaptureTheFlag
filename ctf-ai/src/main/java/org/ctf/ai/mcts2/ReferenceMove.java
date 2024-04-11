@@ -45,6 +45,25 @@ public class ReferenceMove {
   }
 
   /**
+   * Constructor to initialize a ReferenceMove from a Move.
+   * The Piece gets taken from a referenceGameState which gets searched for the PieceID in move.
+   * @param gameState
+   * @param move
+   */
+  public ReferenceMove(ReferenceGameState gameState, Move move) {
+    if(move.getPieceId() != null) {
+      this.newPosition = move.getNewPosition();
+      this.piece =
+          Arrays.stream(
+              gameState.getTeams()[Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0])]
+                  .getPieces())
+          .filter(p -> p.getId().equals(move.getPieceId()))
+          .findFirst()
+          .get();
+    }
+  }
+  
+  /**
    * Converts a ReferenceMove back to a normal Move.
    * @return Move representing this ReferenceMove.
    */

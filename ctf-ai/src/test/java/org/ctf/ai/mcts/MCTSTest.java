@@ -36,7 +36,7 @@ class MCTSTest {
     int mctsTillEnd = 0;
     int timeForMove = 50;
 
-    while(mcts.isTerminal(mcts.root) == -1) {
+    while(mcts.isTerminal(mcts.root.gameState) == -1) {
       mcts = new MCTS(mcts.root.clone((mcts.root.gameState)));
 
       Move move = mcts.getMove(timeForMove, AI_Constants.C);
@@ -48,7 +48,7 @@ class MCTSTest {
             System.out.println("\nROUND: " + mctsTillEnd + ", MCTS_TestDouble\n" + mcts.printResults(tn.gameState.getLastMove()) + "\n");
             tn.printGrid();
 
-      if(mcts.isTerminal(tn) != -1)
+      if(mcts.isTerminal(tn.gameState) != -1)
         break;
 
       clearNodeParentAndChildren(tn);
@@ -159,7 +159,7 @@ class MCTSTest {
 //  @Test       nimmt zu viel Zeit beim Überprüfen der Tests weg, nur testen wenn man was geändert hat!
   void testMctsWorks() {
     int randomTillEnd = 0;
-    while(mcts.isTerminal(mcts.root) == -1) {
+    while(mcts.isTerminal(mcts.root.gameState) == -1) {
       randomTillEnd++;
       mcts.oneMove(mcts.root, mcts.root);
       mcts.removeTeamCheck(mcts.root.gameState);
@@ -170,7 +170,7 @@ class MCTSTest {
     mcts = new MCTS(parent);
 
     int mctsTillEnd = 0;
-    while(mcts.isTerminal(mcts.root) == -1) {
+    while(mcts.isTerminal(mcts.root.gameState) == -1) {
 
       Move move = mcts.getMove(1000, AI_Constants.C);
       ++mctsTillEnd;      
@@ -181,7 +181,7 @@ class MCTSTest {
 //            System.out.println("\nROUND: " + mctsTillEnd + "\n" + mcts.printResults(tn.gameState.getLastMove()) + "\n");
 //            tn.printGrid();
 
-      if(mcts.isTerminal(tn) != -1)
+      if(mcts.isTerminal(tn.gameState) != -1)
         break;
 
       tn = tn.clone(tn.copyGameState());
@@ -241,7 +241,7 @@ class MCTSTest {
     Move move = mcts.getMove(100, (float)Math.sqrt(2));
 //    System.out.println("Piece: " + move.getPieceId() + " moves to " + move.getNewPosition()[0] + ", " + move.getNewPosition()[1]);
     for(int i=0; i<parent.possibleMoves.size(); i++) {
-      if(-1 == mcts.isTerminal(mcts.root))
+      if(-1 == mcts.isTerminal(mcts.root.gameState))
         mcts.oneMove(mcts.root, mcts.root);
     }
   }
@@ -392,7 +392,7 @@ class MCTSTest {
     TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
     MCTS mcts = new MCTS(parent);
 
-    assertEquals(1, mcts.isTerminal(mcts.root));
+    assertEquals(1, mcts.isTerminal(mcts.root.gameState));
 
     //TODO test for 3 teams
   }
@@ -403,7 +403,17 @@ class MCTSTest {
     TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
     MCTS mcts = new MCTS(parent);
 
-    assertEquals(-1, mcts.isTerminal(mcts.root));
+    assertEquals(-1, mcts.isTerminal(mcts.root.gameState));
+  }
+  @Test
+  void testIsTerminal_noTeamsLeft() {
+    gameState = TestValues.getTestState();
+    gameState.setCurrentTeam(0);
+    assertEquals(-1, mcts.isTerminal(gameState));
+    gameState.getTeams()[0] = null;
+    assertEquals(1, mcts.isTerminal(gameState));
+    gameState.getTeams()[1] = null;
+    assertEquals(-2, mcts.isTerminal(gameState));
   }
 
 

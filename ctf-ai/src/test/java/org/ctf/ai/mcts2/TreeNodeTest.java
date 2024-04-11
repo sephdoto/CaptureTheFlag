@@ -18,7 +18,7 @@ class TreeNodeTest {
   void testUpdating() {
     TreeNode node = new TreeNode(null, TestValues.getTestState(), null);
     MCTS mcts = new MCTS(node);
-    for(int i=0; i<50 && mcts.isTerminal(node) == -1; i++){
+    for(int i=0; i<50 && mcts.isTerminal(node.gameState) == -1; i++){
       mcts.oneMove(node, node, true);
       mcts.removeTeamCheck(node.gameState);
 //      node.printGrids();
@@ -78,7 +78,7 @@ class TreeNodeTest {
     TreeNode node = new TreeNode(null, gameState, null);
     
     MCTS mcts = new MCTS(node);
-    for(; mcts.isTerminal(node) == -1; ) {
+    for(; mcts.isTerminal(node.gameState) == -1; ) {
       mcts.oneMove(node, node, true);
 //      node.printGrids();
     }
@@ -118,7 +118,7 @@ class TreeNodeTest {
     TreeNode node = new TreeNode(null, gameState, null);
     
     MCTS mcts = new MCTS(node);
-    for(; mcts.isTerminal(node) == -1; ) {
+    for(; mcts.isTerminal(node.gameState) == -1; ) {
       mcts.oneMove(node, node, true);
 //      node.printGrids();
     }

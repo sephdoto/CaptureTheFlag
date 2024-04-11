@@ -200,7 +200,7 @@ public class TreeNode implements Comparable<TreeNode> {
   /**
    * prints the grids
    */
-  void printGrids() {
+  public void printGrids() {
     for(int i=0; i<gameState.getGrid().getGrid().length; i++) {
       for(int j=0; j<gameState.getGrid().getGrid()[0].length; j++) {
         if(gameState.getGrid().getGrid()[i][j] != null && gameState.getGrid().getGrid()[i][j].getPiece() != null)

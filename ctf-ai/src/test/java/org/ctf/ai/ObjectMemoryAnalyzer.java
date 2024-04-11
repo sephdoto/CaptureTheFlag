@@ -1,10 +1,8 @@
-package org.ctf.ai.mcts;
+package org.ctf.ai;
 
 //import static org.junit.jupiter.api.Assertions.*;
 //import static org.mockito.ArgumentMatchers.contains;
 import java.util.HashMap;
-//import org.ctf.ai.AI_Constants;
-import org.ctf.ai.TestValues;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.Team;
