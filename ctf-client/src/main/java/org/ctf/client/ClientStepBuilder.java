@@ -147,7 +147,7 @@ public class ClientStepBuilder {
     @Override
     public Client build() {
       Client client;
-      if (!playerType.equals(Constants.AI.HUMAN)) {
+      if (!playerType.equals(AI.HUMAN)) {
         client = new AIClient(comm, host, port);
         client.setPlayerType(playerType);
       } else {

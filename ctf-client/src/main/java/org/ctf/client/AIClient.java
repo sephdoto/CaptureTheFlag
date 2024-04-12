@@ -1,11 +1,14 @@
 package org.ctf.client;
 
 import java.util.ArrayList;
+
+import org.ctf.ai.AI_Controller;
+import org.ctf.client.lib.GameClientInterface;
 import org.ctf.client.service.CommLayerInterface;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.Move;
 
-public class AIClient extends Client implements Runnable {
+public class AIClient extends Client implements Runnable{
 
   Constants.AI selectedAI;
   ArrayList<Move> moves;
@@ -32,6 +35,8 @@ public class AIClient extends Client implements Runnable {
         }
         this.getSessionFromServer();
         this.getStateFromServer();
+        AI_Controller Controller = new AI_Controller(getCurrentState(), org.ctf.shared.constants.Constants.AI.MCTS_IMPROVED);
+        makeMove(Controller.getNextMove());
       }
       Thread.sleep(800);
     } catch (Exception e) {

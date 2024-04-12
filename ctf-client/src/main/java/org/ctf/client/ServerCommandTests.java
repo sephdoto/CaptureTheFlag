@@ -2,7 +2,12 @@ package org.ctf.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import org.ctf.ai.AI_Controller;
+import org.ctf.ai.AI_Tools.InvalidShapeException;
+import org.ctf.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.client.service.CommLayer;
+import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.constants.Constants.Port;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
@@ -27,9 +32,9 @@ public class ServerCommandTests {
     // testConnection();
     // testStart();
     // joinTest();
-    copierCheck();
+    //copierCheck();
     // arrayTest();
-    // getStateTests();
+    getStateTests();
     // testConnectionTimedGameMode();
     // testMalformedConnection();
     // testConnectionTimedMoveMode();
@@ -521,20 +526,29 @@ public class ServerCommandTests {
         ClientStepBuilder.newBuilder()
             .enableRestLayer(true)
             .onLocalHost()
-            .onPort(Port.DEFAULTPORT)
-            .HumanPlayer()
+            .onPort("8888")
+            .AIPlayerSelector(AI.MCTS)
             .build();
     Client javaClient2 =
         ClientStepBuilder.newBuilder()
             .enableRestLayer(true)
             .onLocalHost()
-            .onPort(Port.DEFAULTPORT)
-            .HumanPlayer()
+            .onPort("8888")
+            .AIPlayerSelector(AI.MCTS)
             .build();
     javaClient.createGame(template);
-    javaClient.joinGame("Se[j1]");
-    javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "nasd");
+    javaClient.joinGame("0");
+    javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "1");
     javaClient.getStateFromServer();
+    System.out.println(gson.toJson(javaClient.getCurrentState()));
+    AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), org.ctf.shared.constants.Constants.AI.MCTS_IMPROVED);
+    try {
+      javaClient.makeMove(Controller.getNextMove());
+    } catch (NoMovesLeftException | InvalidShapeException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
   }
 
   public static void copierCheck() {

@@ -1,5 +1,6 @@
 package org.ctf.client.lib;
 
+import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.map.MapTemplate;
 
@@ -51,4 +52,7 @@ public interface GameClientInterface {
 
   /** Deletes the current session */
   void deleteSession();
+
+  /** Sets the type of player the Client is going to use */
+  void setPlayerType(AI num);
 }
