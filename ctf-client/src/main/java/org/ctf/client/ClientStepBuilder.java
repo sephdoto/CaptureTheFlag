@@ -8,56 +8,86 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.constants.Constants.Port;
 
+/**
+ * Defines the Step Builder Pattern which must be used to create an object of the Client Class
+ *
+ * @author rsyed
+ */
 public class ClientStepBuilder {
 
   private ClientStepBuilder() {}
 
-  /*
-   * First Step to init the Step builder
-   */
-  public static LayerSelectionStep newBuilder() { // FirstStep (Starting Step)
+  /** Starter method for the builder */
+  public static LayerSelectionStep newBuilder() {
     return new Steps();
   }
 
-  /*
-   * Defining the First Step
-   * Uses a Boolean to enable RestClient
-   * After this is the Host Selector
-   */
-  public static interface LayerSelectionStep { // p st int 1stStep
-    HostStep enableRestLayer(boolean enableRestClient); // 2nd step 1stStepMethod
+  /** Defining the First Step RestClient Selector */
+  public static interface LayerSelectionStep {
+    /**
+     * @param enableRestClient enables on true, disables on false
+     */
+    HostStep enableRestLayer(boolean enableRestClient);
   }
 
-  /*
-   * Third Step in charge of Server...
-   * detects if local host
-   * if present goes to port selection.
-   */
-  public static interface HostStep { // p st int 2nd step
-    PortSelectionStep onLocalHost(); // 3rdStep 2ndStepMethod
+  /** Second Step in charge of Server... Two options in this step. Either Local or Remote host. */
+  public static interface HostStep {
+    /** This method sets the client to use LocalHost as IP */
+    PortSelectionStep onLocalHost();
 
+    /**
+     * This method sets a remote host IP
+     *
+     * @param String host IP in format "xxx.xxx.xxx.xxx" as String
+     */
     PortSelectionStep onRemoteHost(String host);
   }
 
-  /** */
-  public static interface PortSelectionStep { // p st int 3rd step
-    PlayerTypeSelectionStep onPort(String breadType); // 4thStep 3rdStepMethod
+  /**
+   * Third Step in the builder: Port selector. Either you can pass a String for custom port or a
+   * Constants.Port ENUM for a predefined port
+   */
+  public static interface PortSelectionStep {
+    /**
+     * Method for a custom port as a String xxxx
+     *
+     * @param port example String "9999" etc
+     */
+    PlayerTypeSelectionStep onPort(String port);
 
-    PlayerTypeSelectionStep onPort(Constants.Port DEFAULTPORT); // 4thStep 3rdStepMethod
+    /**
+     * Method for setting the port using a Constant ENUM from Constants.Port
+     *
+     * @param port example String "9999" etc
+     */
+    PlayerTypeSelectionStep onPort(Constants.Port DEFAULTPORT);
   }
 
-  /** */
-  public static interface PlayerTypeSelectionStep { // p st int 4th Step
+  /**
+   * Fourth and last customization. Selects what kind of player the client is going to take input
+   * from
+   */
+  public static interface PlayerTypeSelectionStep {
+    /** Method which sets Human player. Creates an instance of Client.java */
     BuildStep HumanPlayer();
 
-    BuildStep AIPlayerSelector(Constants.AI num); // LastStep 4thStep Method
+    /**
+     * Method which creates an instance of AIClient.java. Extension has build in support for AI
+     * players
+     *
+     * @param num Exp: Constants.AI.MCTS, Constants.AI.MCTS.RANDOM, etc
+     */
+    BuildStep AIPlayerSelector(Constants.AI num);
   }
 
+  /** Build Step */
   public static interface BuildStep {
 
     public Client build();
   }
-
+/** 
+   * Builder class itself where code gets implemented and the object creation happens
+  */
   private static class Steps
       implements LayerSelectionStep,
           HostStep,
@@ -131,7 +161,5 @@ public class ClientStepBuilder {
       }
       return client;
     }
-
-  
   }
 }
