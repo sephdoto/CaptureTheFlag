@@ -39,7 +39,8 @@ public class Constants {
   public enum AI {
     HUMAN,
     RANDOM,
-    SIMPLE_RANDOM
+    MCTS,
+    MCTS_IMPROVED
   }
 
   public enum Port {

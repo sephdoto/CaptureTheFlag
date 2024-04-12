@@ -17,10 +17,4 @@ public class AI_Constants {
   public static final int directionMultiplier = 2;           //how much a pieces reach into a certain direction is valued
   public static final int shapeReachMultiplier = 1;          //for valuing a shape Similar to a Direction movement. Calculated as 8 * this value (instead of 8 directions)
   public static final int distanceBaseMultiplier = 10;        //how much a pieces distance to the enemies base is weighted (higher = near enemies base is better)
-  
-
-
-  public enum AI {
-    HUMAN, RANDOM, SIMPLE_RANDOM, MCTS
-  }
 }
