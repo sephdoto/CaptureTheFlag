@@ -37,13 +37,13 @@ public class ClientTest {
   static void setup() {
     String[] args = new String[] {};
     CtfApplication.main(args);
-    javaClient = ClientStepBuilder.newBuilder().enableRestLayer(false).onLocalHost().onPort("9999").HumanPlayer().build();
+    javaClient = ClientStepBuilder.newBuilder().enableRestLayer(false).onLocalHost().onPort("8080").HumanPlayer().build();
   }
 
   @BeforeEach
   void setupBeforeEach() {
-    javaClient = ClientStepBuilder.newBuilder().enableRestLayer(false).onLocalHost().onPort("9999").HumanPlayer().build();
-    javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(false).onLocalHost().onPort("9999").HumanPlayer().build();
+    javaClient = ClientStepBuilder.newBuilder().enableRestLayer(false).onLocalHost().onPort("8080").HumanPlayer().build();
+    javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(false).onLocalHost().onPort("8080").HumanPlayer().build();
   }
 
   @Test
@@ -99,7 +99,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
     assertNotNull(javaClient.getCurrentTeamTurn());
   }
 
@@ -108,7 +108,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
     try {
       if (javaClient.getCurrentTeamTurn() == 1) {
         javaClient.giveUp();
@@ -131,7 +131,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
     assertNotNull(javaClient.getGrid());
@@ -142,7 +142,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
     Move move = new Move();
     if (javaClient.getCurrentTeamTurn() == 1) {
       try {
@@ -172,7 +172,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
     try {
       javaClient.getSessionFromServer();
       javaClient2.getSessionFromServer();
@@ -188,7 +188,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
     try {
       javaClient.getSessionFromServer();
       javaClient.getStateFromServer();
@@ -205,7 +205,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
     try {
       javaClient.getSessionFromServer();
       javaClient2.getSessionFromServer();
@@ -219,7 +219,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
     assertNotNull(javaClient.getTeamColor());
   }
 
@@ -242,7 +242,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
     javaClient.getStateFromServer();
     assertNotNull(javaClient.getTeams());
   }
@@ -252,7 +252,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
     if (javaClient.getCurrentTeamTurn() == 0) {
       javaClient.giveUp();
     } else {
@@ -267,7 +267,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
     try {
       if (javaClient.getCurrentTeamTurn() == 0) {
         javaClient.giveUp();
@@ -282,7 +282,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
     try {
       javaClient.getSessionFromServer();
       javaClient.getStateFromServer();
@@ -297,7 +297,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
     assertNotNull(javaClient2.getTeamSecret());
   }
 
@@ -313,7 +313,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
     Move move = new Move();
     move.setPieceId("p:1_1");
     move.setNewPosition(new int[] {1, 1});
@@ -327,7 +327,7 @@ public class ClientTest {
   @Test
   void testSetServer() {
     try {
-      javaClient.setServer("localhost", "9999");
+      javaClient.setServer("localhost", "8080");
       javaClient.createGame(template);
     } catch (Exception ex) {
       fail();

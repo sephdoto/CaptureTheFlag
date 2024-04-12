@@ -3,7 +3,6 @@ package org.ctf.client;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.ctf.client.service.CommLayer;
-import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Constants.Port;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
@@ -367,19 +366,19 @@ public class ServerCommandTests {
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     CommLayer comm = new CommLayer();
     Client javaClient =
-    ClientStepBuilder.newBuilder()
-    .enableRestLayer(true)
-    .onLocalHost()
-    .onPort(Port.DEFAULTPORT)
-    .HumanPlayer()
-    .build();
+        ClientStepBuilder.newBuilder()
+            .enableRestLayer(true)
+            .onLocalHost()
+            .onPort(Port.DEFAULTPORT)
+            .HumanPlayer()
+            .build();
     Client javaClient2 =
-    ClientStepBuilder.newBuilder()
-    .enableRestLayer(true)
-    .onLocalHost()
-    .onPort(Port.DEFAULTPORT)
-    .HumanPlayer()
-    .build();
+        ClientStepBuilder.newBuilder()
+            .enableRestLayer(true)
+            .onLocalHost()
+            .onPort(Port.DEFAULTPORT)
+            .HumanPlayer()
+            .build();
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
@@ -520,18 +519,18 @@ public class ServerCommandTests {
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     Client javaClient =
         ClientStepBuilder.newBuilder()
-        .enableRestLayer(true)
-        .onLocalHost()
-        .onPort(Port.DEFAULTPORT)
-        .HumanPlayer()
-        .build();
+            .enableRestLayer(true)
+            .onLocalHost()
+            .onPort(Port.DEFAULTPORT)
+            .HumanPlayer()
+            .build();
     Client javaClient2 =
         ClientStepBuilder.newBuilder()
-        .enableRestLayer(true)
-        .onLocalHost()
-        .onPort(Port.DEFAULTPORT)
-        .HumanPlayer()
-        .build();
+            .enableRestLayer(true)
+            .onLocalHost()
+            .onPort(Port.DEFAULTPORT)
+            .HumanPlayer()
+            .build();
     javaClient.createGame(template);
     javaClient.joinGame("Se[j1]");
     javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "nasd");
