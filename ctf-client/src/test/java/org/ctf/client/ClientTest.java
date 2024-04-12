@@ -37,13 +37,13 @@ public class ClientTest {
   static void setup() {
     String[] args = new String[] {};
     CtfApplication.main(args);
-    javaClient = ClientStepBuilder.newBuilder().enableRestLayer(false).onHost("localhost").onPort("9999").playerSelector(Constants.AI.HUMAN).build();
+    javaClient = ClientStepBuilder.newBuilder().enableRestLayer(false).onLocalHost().onPort("9999").HumanPlayer().build();
   }
 
   @BeforeEach
   void setupBeforeEach() {
-    javaClient = ClientStepBuilder.newBuilder().enableRestLayer(false).onHost("localhost").onPort("9999").playerSelector(Constants.AI.HUMAN).build();
-    javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(false).onHost("localhost").onPort("9999").playerSelector(Constants.AI.HUMAN).build();
+    javaClient = ClientStepBuilder.newBuilder().enableRestLayer(false).onLocalHost().onPort("9999").HumanPlayer().build();
+    javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(false).onLocalHost().onPort("9999").HumanPlayer().build();
   }
 
   @Test

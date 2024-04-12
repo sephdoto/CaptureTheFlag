@@ -35,15 +35,21 @@ public class RestClientTests {
 
   @BeforeAll
   static void setup() {
+    try {
+      Thread.sleep(4000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     String[] args = new String[] {};
     CtfApplication.main(args);
-    javaClient = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("9999").playerSelector(Constants.AI.HUMAN).build();
+    javaClient = ClientStepBuilder.newBuilder().enableRestLayer(true).onLocalHost().onPort("9999").HumanPlayer().build();
   }
 
   @BeforeEach
   void setupBeforeEach() {
-    javaClient = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("9999").playerSelector(Constants.AI.HUMAN).build();
-    javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("9999").playerSelector(Constants.AI.HUMAN).build();
+    javaClient = ClientStepBuilder.newBuilder().enableRestLayer(true).onLocalHost().onPort("9999").HumanPlayer().build();
+    javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(true).onLocalHost().onPort("9999").HumanPlayer().build();
   }
 
   @Test
