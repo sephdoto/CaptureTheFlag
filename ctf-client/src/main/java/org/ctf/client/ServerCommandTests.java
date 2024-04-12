@@ -11,6 +11,7 @@ import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.constants.Constants.Port;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
+import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.dto.GameSessionRequest;
 
@@ -524,30 +525,65 @@ public class ServerCommandTests {
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     Client javaClient =
         ClientStepBuilder.newBuilder()
-            .enableRestLayer(true)
+            .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
-            .AIPlayerSelector(AI.MCTS)
+            .HumanPlayer()
             .build();
     Client javaClient2 =
         ClientStepBuilder.newBuilder()
-            .enableRestLayer(true)
+            .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
-            .AIPlayerSelector(AI.MCTS)
+            .HumanPlayer()
             .build();
     javaClient.createGame(template);
     javaClient.joinGame("0");
     javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "1");
     javaClient.getStateFromServer();
+    javaClient2.getStateFromServer();
+  /*   Move move = new Move();
+    if (javaClient.getCurrentTeamTurn() == 1) {
+      try {
+        move.setPieceId("p:1_2");
+        move.setNewPosition(new int[] {9, 8});
+        javaClient.makeMove(move);
+      } catch (Exception e) {
+        System.out.println("Made move");
+      }
+    } else {
+      try {
+        move.setPieceId("p:0_2");
+        move.setNewPosition(new int[] {0, 1});
+        javaClient2.makeMove(move);
+      } catch (Exception e) {
+        System.out.println("Made move");
+      }
+    } */
+    javaClient.getStateFromServer();
+    javaClient2.getStateFromServer();
     System.out.println(gson.toJson(javaClient.getCurrentState()));
-    AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), org.ctf.shared.constants.Constants.AI.MCTS_IMPROVED);
-    try {
-      javaClient.makeMove(Controller.getNextMove());
-    } catch (NoMovesLeftException | InvalidShapeException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS);
+    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS);
+    for (int i = 0; i<90;i++){
+      try {
+        javaClient.makeMove(Controller.getNextMove());
+        javaClient.getStateFromServer();
+        javaClient2.getStateFromServer();
+        Controller.update(javaClient.getCurrentState());
+        Controller2.update(javaClient2.getCurrentState());
+        javaClient2.makeMove(Controller2.getNextMove());
+        javaClient.getStateFromServer();
+        javaClient2.getStateFromServer();
+        Controller.update(javaClient.getCurrentState());
+        Controller2.update(javaClient2.getCurrentState());
+      } catch (NoMovesLeftException | InvalidShapeException | InvalidMove e) {
+        javaClient.getStateFromServer();
+        System.out.println(gson.toJson(javaClient.getCurrentState()));
+        e.printStackTrace();
+      }
     }
+    
 
   }
 
