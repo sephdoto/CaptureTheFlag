@@ -109,7 +109,8 @@ class JSON_ToolsTest {
     new TypeToken<>() {}.getType(); 
     this.mapTemplate = gson.fromJson(mapString, MapTemplate.class);
     this.mapTemplateFolder = Constants.mapTemplateFolder;
-    Constants.mapTemplateFolder = Paths.get("target" + File.separator + "classes" + File.separator + "maptemplates").toAbsolutePath().toString() + File.separator;
+    Constants.mapTemplateFolder = Paths.get("src" + File.separator + "test" + File.separator +"java" + File.separator + "org" + File.separator + "ctf" + 
+    File.separator +"shared" + File.separator +"tools" + File.separator + "maptemplates").toAbsolutePath().toString() + File.separator;
   }
 
   @AfterAll
