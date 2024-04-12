@@ -470,9 +470,12 @@ public class GameEngine implements Game {
   }
   
   private boolean movePreconditionsMet(Move move) {
+    if(isGameOver()){
+      throw new GameOver();
+    }
     if (isGameOver() || !isTurn(move)) {
       return false;
-    } else if (!isValidMove(move) || !isTurn(move)){
+    } else if (!isValidMove(move)){
       throw new InvalidMove();
     }
     return true;
