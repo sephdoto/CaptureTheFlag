@@ -14,7 +14,6 @@ public class Constants {
       Paths.get("").toAbsolutePath().toString().split("cfp14")[0]
           + "cfp14"
           + File.separator
-          + File.separator
           + "cfp-service-main"
           + File.separator
           + "src"
