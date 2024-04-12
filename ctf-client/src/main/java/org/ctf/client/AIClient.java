@@ -6,6 +6,7 @@ import org.ctf.ai.AI_Controller;
 import org.ctf.client.lib.GameClientInterface;
 import org.ctf.client.service.CommLayerInterface;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.state.Move;
 
 public class AIClient extends Client implements Runnable{
@@ -35,8 +36,9 @@ public class AIClient extends Client implements Runnable{
         }
         this.getSessionFromServer();
         this.getStateFromServer();
-        AI_Controller Controller = new AI_Controller(getCurrentState(), org.ctf.shared.constants.Constants.AI.MCTS_IMPROVED);
+        AI_Controller Controller = new AI_Controller(getCurrentState(), AI.MCTS_IMPROVED);
         makeMove(Controller.getNextMove());
+        getSessionFromServer();
       }
       Thread.sleep(800);
     } catch (Exception e) {

@@ -36,6 +36,7 @@ public class ServerCommandTests {
     //copierCheck();
     // arrayTest();
     getStateTests();
+    //AIVSHUMAN();
     // testConnectionTimedGameMode();
     // testMalformedConnection();
     // testConnectionTimedMoveMode();
@@ -160,98 +161,7 @@ public class ServerCommandTests {
     GameSessionRequest request = new GameSessionRequest();
     request.setTemplate(test);
 
-    /*  JavaClient client = new JavaClient();
-     client.connect("localhost", "9999", test);
-     //System.out.println(client.getSessionID());
-
-     client.joinGame("team1");
-     //System.out.println(client.getSecretID());
-     client.joinGame("team2");
-     //System.out.println(client.getSecretID());
-     // client.joinGame("team3");
-     // System.out.println(client.getSecretID());
-     client.refreshSession();
-     //GameState  gs = client.getState();
-    // System.out.println(gson.toJson(gs));
-
-     ServerCommandTests st = new ServerCommandTests(); */
-
-    Thread t =
-        new Thread() {
-          public void run() {
-            long start1 = System.currentTimeMillis();
-            for (int i = 0; i < 10000; i++) {
-              // st.setState(client.getState());
-              // System.out.println(gson.toJson(gs));
-            }
-            long end1 = System.currentTimeMillis();
-            System.out.println("T1 Elapsed Time in ms: " + (end1 - start1));
-          }
-        };
-    t.start();
-
-    Thread t2 =
-        new Thread() {
-          public void run() {
-            long start2 = System.currentTimeMillis();
-            for (int i = 0; i < 10000; i++) {
-              // st.setState(client.getState());
-              // System.out.println(gson.toJson(gs));
-            }
-            long end2 = System.currentTimeMillis();
-            System.out.println("T2 Elapsed Time in ms: " + (end2 - start2));
-          }
-        };
-    t2.start();
-
-    Thread t3 =
-        new Thread() {
-          public void run() {
-            long start1 = System.currentTimeMillis();
-            for (int i = 0; i < 10000; i++) {
-              // st.setState(client.getState());
-              // System.out.println(gson.toJson(gs));
-            }
-            long end1 = System.currentTimeMillis();
-            System.out.println("T3 Elapsed Time in ms: " + (end1 - start1));
-          }
-        };
-    t3.start();
-
-    Thread t4 =
-        new Thread() {
-          public void run() {
-            long start1 = System.currentTimeMillis();
-            for (int i = 0; i < 10000; i++) {
-              // st.setState(client.getState());
-              // System.out.println(gson.toJson(gs));
-            }
-            long end1 = System.currentTimeMillis();
-            System.out.println("T4 Elapsed Time in ms: " + (end1 - start1));
-          }
-        };
-    t4.start();
-
-    Thread t5 =
-        new Thread() {
-          public void run() {
-            long start1 = System.currentTimeMillis();
-            try {
-              sleep(10000);
-            } catch (InterruptedException e) {
-              // TODO Auto-generated catch block
-              e.printStackTrace();
-            }
-            long end1 = System.currentTimeMillis();
-            System.out.println("T4 Elapsed Time in ms: " + (end1 - start1));
-          }
-        };
-    t5.start();
-
-    // long end1 = System.currentTimeMillis();
-    // System.out.println("Elapsed Time in ms: "+ (end1-start1));
-
-    // System.out.println(client.gameOver);
+   
 
   }
 
@@ -525,14 +435,14 @@ public class ServerCommandTests {
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     Client javaClient =
         ClientStepBuilder.newBuilder()
-            .enableRestLayer(false)
+            .enableRestLayer(true)
             .onLocalHost()
             .onPort("8888")
             .HumanPlayer()
             .build();
     Client javaClient2 =
         ClientStepBuilder.newBuilder()
-            .enableRestLayer(false)
+            .enableRestLayer(true)
             .onLocalHost()
             .onPort("8888")
             .HumanPlayer()
@@ -564,7 +474,7 @@ public class ServerCommandTests {
     javaClient2.getStateFromServer();
     System.out.println(gson.toJson(javaClient.getCurrentState()));
     AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS);
-    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS);
+    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.RANDOM);
     for (int i = 0; i<90;i++){
       try {
         javaClient.makeMove(Controller.getNextMove());
@@ -583,11 +493,10 @@ public class ServerCommandTests {
         e.printStackTrace();
       }
     }
-    
-
   }
 
-  public static void copierCheck() {
+  public static void AIVSHUMAN() {
+    
     String jsonPayload =
         """
           {
@@ -698,69 +607,65 @@ public class ServerCommandTests {
           }
         """;
 
-    Gson gson2 = new GsonBuilder().setPrettyPrinting().create();
     Gson gson = new Gson();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
-    CommLayer comm = new CommLayer();
     Client javaClient =
         ClientStepBuilder.newBuilder()
             .enableRestLayer(true)
             .onLocalHost()
-            .onPort(Port.DEFAULTPORT)
-            .HumanPlayer()
+            .onPort("8888")
+            .AIPlayerSelector(AI.RANDOM)
             .build();
     Client javaClient2 =
         ClientStepBuilder.newBuilder()
             .enableRestLayer(true)
             .onLocalHost()
-            .onPort(Port.DEFAULTPORT)
+            .onPort("8888")
             .HumanPlayer()
             .build();
-
     javaClient.createGame(template);
-    javaClient.joinGame("Team1");
-    javaClient2.joinExistingGame(
-        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
+    javaClient.joinGame("0");
+    javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "1");
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
-    Move move = new Move();
-    move.setPieceId("p:0_2");
-    move.setNewPosition(new int[] {0, 1});
-
+  /*   Move move = new Move();
+    if (javaClient.getCurrentTeamTurn() == 1) {
+      try {
+        move.setPieceId("p:1_2");
+        move.setNewPosition(new int[] {9, 8});
+        javaClient.makeMove(move);
+      } catch (Exception e) {
+        System.out.println("Made move");
+      }
+    } else {
+      try {
+        move.setPieceId("p:0_2");
+        move.setNewPosition(new int[] {0, 1});
+        javaClient2.makeMove(move);
+      } catch (Exception e) {
+        System.out.println("Made move");
+      }
+    } */
     javaClient.getStateFromServer();
-    javaClient.getSessionFromServer();
-    javaClient2.getSessionFromServer();
     javaClient2.getStateFromServer();
+    System.out.println(gson.toJson(javaClient.getCurrentState()));
+    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.RANDOM);
+    for (int i = 0; i<90;i++){
+      try {
+        javaClient.getStateFromServer();
+        javaClient2.getStateFromServer();
 
-    System.out.println(javaClient.getStartDate());
-    System.out.println(javaClient2.getCurrentSession().getGameStarted());
-
-    /*     GameState state1 = javaClient.getCurrentState();
-      System.out.println("GSON " + gson.toJson(state1));
-
-      ObjectMapper mapper = new ObjectMapper();
-    GameState re = new GameState();
-    try {
-    	String asJson = mapper.writeValueAsString(state1);
-        System.out.println("As JSON " + asJson);
-    } catch (JsonGenerationException e) {
-    	System.out.println("Error in deepCopyGameState JSON Method");
-    } catch (JsonMappingException e) {
-    	System.out.println("Error in deepCopyGameState JSON Method");
-    } catch (IOException e) {
-    	System.out.println("Error in deepCopyGameState JSON Method");
-    }*/
-  }
-
-  public static void arrayTest() {
-    Team[] teams = new Team[3];
-    for (int i = 0; i < teams.length; i++) {
-      teams[i] = new Team();
-      teams[i].setId(Integer.toString(i));
-    }
-
-    for (Team t : teams) {
-      System.out.println(t.getId());
+        Controller2.update(javaClient2.getCurrentState());
+        javaClient2.makeMove(Controller2.getNextMove());
+        javaClient.getStateFromServer();
+        javaClient2.getStateFromServer();
+        Controller2.update(javaClient2.getCurrentState());
+      } catch (NoMovesLeftException | InvalidShapeException | InvalidMove e) {
+        javaClient.getStateFromServer();
+        System.out.println(gson.toJson(javaClient.getCurrentState()));
+        e.printStackTrace();
+      }
     }
   }
+
 }

@@ -126,7 +126,7 @@ public class EngineTools extends AI_Tools {
     ArrayList<int[]> dirMap = new ArrayList<int[]>();
     if (piece.getDescription().getMovement().getDirections() == null) {
       try {
-        getShapeMoves(gameState, piece);
+        return getShapeMoves(gameState, piece);
       } catch (InvalidShapeException e) {
         e.printStackTrace();
       }
