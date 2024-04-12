@@ -39,10 +39,18 @@ public class AI_Controller {
         return RandomAI.pickMoveComplex(gameState);
       case MCTS:
         org.ctf.ai.mcts.TreeNode root = new org.ctf.ai.mcts.TreeNode(null, gameState, null);
-        return new org.ctf.ai.mcts.MCTS(root).getMove(milis, AI_Constants.C);
+        org.ctf.ai.mcts.MCTS mcts = new org.ctf.ai.mcts.MCTS(root); 
+        Move move = mcts.getMove(milis, AI_Constants.C);
+        mcts.root.printGrid();
+        System.out.println(mcts.printResults(move));
+        return move;
       case MCTS_IMPROVED:
         org.ctf.ai.mcts2.TreeNode root2 = new org.ctf.ai.mcts2.TreeNode(null, gameState, null);
-        return new org.ctf.ai.mcts2.MCTS(root2).getMove(milis, AI_Constants.C);  
+        org.ctf.ai.mcts2.MCTS mcts2 = new org.ctf.ai.mcts2.MCTS(root2);
+        Move move2 = mcts2.getMove(milis, AI_Constants.C);
+        mcts2.root.printGrids();
+        System.out.println(mcts2.printResults(move2));
+        return move2;  
       default:
         return RandomAI.pickMoveComplex(gameState);
     }
