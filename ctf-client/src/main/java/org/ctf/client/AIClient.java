@@ -1,7 +1,6 @@
 package org.ctf.client;
 
 import java.util.ArrayList;
-
 import org.ctf.client.service.CommLayerInterface;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.Move;
@@ -25,10 +24,10 @@ public class AIClient extends Client implements Runnable {
     try {
       // checks if game has a start date and no end date
       while ((this.getEndDate() == null) && (this.getStartDate() != null)) {
-        //Saves the last move locally
+        // Saves the last move locally
         Move lastMove = this.getLastMove();
-       
-        if( (this.getLastMove() != null) && (this.getLastMove() != lastMove)) {
+
+        if ((this.getLastMove() != null) && (this.getLastMove() != lastMove)) {
           moves.add(getLastMove());
         }
         this.getSessionFromServer();
@@ -38,6 +37,5 @@ public class AIClient extends Client implements Runnable {
     } catch (Exception e) {
 
     }
-
   }
 }

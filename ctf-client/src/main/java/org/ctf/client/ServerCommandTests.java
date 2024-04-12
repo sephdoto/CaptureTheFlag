@@ -1,21 +1,14 @@
 package org.ctf.client;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import java.io.IOException;
-
 import org.ctf.client.service.CommLayer;
-import org.ctf.shared.state.GameState;
+import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Constants.Port;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.dto.GameSessionRequest;
-import org.ctf.shared.state.dto.GameSessionResponse;
-import org.ctf.shared.constants.Constants;
 
 /** Tests for the layer and the responses it gives out. */
 public class ServerCommandTests {
@@ -35,9 +28,9 @@ public class ServerCommandTests {
     // testConnection();
     // testStart();
     // joinTest();
-     copierCheck();
-     //arrayTest();
-   // getStateTests();
+    copierCheck();
+    // arrayTest();
+    // getStateTests();
     // testConnectionTimedGameMode();
     // testMalformedConnection();
     // testConnectionTimedMoveMode();
@@ -373,33 +366,40 @@ public class ServerCommandTests {
     Gson gson = new Gson();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     CommLayer comm = new CommLayer();
-    Client javaClient = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector(Constants.AI.HUMAN).build();
-    Client javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector(Constants.AI.HUMAN).build();
-    
+    Client javaClient =
+    ClientStepBuilder.newBuilder()
+    .enableRestLayer(true)
+    .onLocalHost()
+    .onPort(Port.DEFAULTPORT)
+    .HumanPlayer()
+    .build();
+    Client javaClient2 =
+    ClientStepBuilder.newBuilder()
+    .enableRestLayer(true)
+    .onLocalHost()
+    .onPort(Port.DEFAULTPORT)
+    .HumanPlayer()
+    .build();
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
         "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
-        javaClient.getStateFromServer();
-        javaClient2.getStateFromServer();
+    javaClient.getStateFromServer();
+    javaClient2.getStateFromServer();
     Move move = new Move();
     move.setPieceId("p:0_2");
     move.setNewPosition(new int[] {0, 1});
-    //javaClient2.makeMove(move);
-      /*       move.setPieceId("p:1_2");
-        move.setNewPosition(new int[] {9, 8});
-        javaClient.makeMove(move); */
-    
+    // javaClient2.makeMove(move);
+    /*       move.setPieceId("p:1_2");
+    move.setNewPosition(new int[] {9, 8});
+    javaClient.makeMove(move); */
 
-      
-        
- 
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
     System.out.println(gson.toJson(javaClient.getGrid()));
     System.out.println(gson.toJson(javaClient.getLastMove()));
     System.out.println(gson.toJson(javaClient2.getLastMove()));
- /*    for(int i = 0; i < 100; i++){
+    /*    for(int i = 0; i < 100; i++){
       System.out.println( (int) (Math.random() * 2) );
     } */
   }
@@ -518,15 +518,27 @@ public class ServerCommandTests {
 
     Gson gson = new Gson();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
-    Client javaClient = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector(Constants.AI.HUMAN).build();
-    Client javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector(Constants.AI.HUMAN).build();
+    Client javaClient =
+        ClientStepBuilder.newBuilder()
+        .enableRestLayer(true)
+        .onLocalHost()
+        .onPort(Port.DEFAULTPORT)
+        .HumanPlayer()
+        .build();
+    Client javaClient2 =
+        ClientStepBuilder.newBuilder()
+        .enableRestLayer(true)
+        .onLocalHost()
+        .onPort(Port.DEFAULTPORT)
+        .HumanPlayer()
+        .build();
     javaClient.createGame(template);
     javaClient.joinGame("Se[j1]");
     javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "nasd");
     javaClient.getStateFromServer();
   }
 
-  public static void copierCheck(){
+  public static void copierCheck() {
     String jsonPayload =
         """
           {
@@ -641,15 +653,27 @@ public class ServerCommandTests {
     Gson gson = new Gson();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     CommLayer comm = new CommLayer();
-    Client javaClient = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector(Constants.AI.HUMAN).build();
-    Client javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(true).onHost("localhost").onPort("8888").playerSelector(Constants.AI.HUMAN).build();
-    
+    Client javaClient =
+        ClientStepBuilder.newBuilder()
+            .enableRestLayer(true)
+            .onLocalHost()
+            .onPort(Port.DEFAULTPORT)
+            .HumanPlayer()
+            .build();
+    Client javaClient2 =
+        ClientStepBuilder.newBuilder()
+            .enableRestLayer(true)
+            .onLocalHost()
+            .onPort(Port.DEFAULTPORT)
+            .HumanPlayer()
+            .build();
+
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
         "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
-        javaClient.getStateFromServer();
-        javaClient2.getStateFromServer();
+    javaClient.getStateFromServer();
+    javaClient2.getStateFromServer();
     Move move = new Move();
     move.setPieceId("p:0_2");
     move.setNewPosition(new int[] {0, 1});
@@ -659,37 +683,34 @@ public class ServerCommandTests {
     javaClient2.getSessionFromServer();
     javaClient2.getStateFromServer();
 
-
     System.out.println(javaClient.getStartDate());
     System.out.println(javaClient2.getCurrentSession().getGameStarted());
-    
 
-/*     GameState state1 = javaClient.getCurrentState();
-    System.out.println("GSON " + gson.toJson(state1));
+    /*     GameState state1 = javaClient.getCurrentState();
+      System.out.println("GSON " + gson.toJson(state1));
 
-    ObjectMapper mapper = new ObjectMapper();
-		GameState re = new GameState();
-		try {
-			String asJson = mapper.writeValueAsString(state1);
-      System.out.println("As JSON " + asJson);
-		} catch (JsonGenerationException e) {
-			System.out.println("Error in deepCopyGameState JSON Method");
-		} catch (JsonMappingException e) {
-			System.out.println("Error in deepCopyGameState JSON Method");
-		} catch (IOException e) {
-			System.out.println("Error in deepCopyGameState JSON Method");
-		}*/
+      ObjectMapper mapper = new ObjectMapper();
+    GameState re = new GameState();
+    try {
+    	String asJson = mapper.writeValueAsString(state1);
+        System.out.println("As JSON " + asJson);
+    } catch (JsonGenerationException e) {
+    	System.out.println("Error in deepCopyGameState JSON Method");
+    } catch (JsonMappingException e) {
+    	System.out.println("Error in deepCopyGameState JSON Method");
+    } catch (IOException e) {
+    	System.out.println("Error in deepCopyGameState JSON Method");
+    }*/
   }
-   
 
-  public static void arrayTest(){
+  public static void arrayTest() {
     Team[] teams = new Team[3];
     for (int i = 0; i < teams.length; i++) {
       teams[i] = new Team();
       teams[i].setId(Integer.toString(i));
     }
-   
-    for(Team t : teams){
+
+    for (Team t : teams) {
       System.out.println(t.getId());
     }
   }

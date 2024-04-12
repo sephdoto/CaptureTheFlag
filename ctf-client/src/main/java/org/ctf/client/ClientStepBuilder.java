@@ -5,6 +5,8 @@ import org.ctf.client.service.CommLayer;
 import org.ctf.client.service.CommLayerInterface;
 import org.ctf.client.service.RestClientLayer;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Constants.AI;
+import org.ctf.shared.constants.Constants.Port;
 
 public class ClientStepBuilder {
 
@@ -13,7 +15,7 @@ public class ClientStepBuilder {
   /*
    * First Step to init the Step builder
    */
-  public static LayerSelectionStep newBuilder() {
+  public static LayerSelectionStep newBuilder() { // FirstStep (Starting Step)
     return new Steps();
   }
 
@@ -22,8 +24,8 @@ public class ClientStepBuilder {
    * Uses a Boolean to enable RestClient
    * After this is the Host Selector
    */
-  public static interface LayerSelectionStep {
-    HostStep enableRestLayer(boolean enableRestClient);
+  public static interface LayerSelectionStep { // p st int 1stStep
+    HostStep enableRestLayer(boolean enableRestClient); // 2nd step 1stStepMethod
   }
 
   /*
@@ -31,23 +33,24 @@ public class ClientStepBuilder {
    * detects if local host
    * if present goes to port selection.
    */
-  public static interface HostStep {
-    PortSelectionStep onHost(String host);
+  public static interface HostStep { // p st int 2nd step
+    PortSelectionStep onLocalHost(); // 3rdStep 2ndStepMethod
+
+    PortSelectionStep onRemoteHost(String host);
   }
 
-  /** 
-   * This step is in charge of the Port Selection Next Step available : Player Type Selection 
-  */
-  public static interface PortSelectionStep {
-    PlayerTypeSelectionStep onPort(String breadType);
+  /** */
+  public static interface PortSelectionStep { // p st int 3rd step
+    PlayerTypeSelectionStep onPort(String breadType); // 4thStep 3rdStepMethod
+
+    PlayerTypeSelectionStep onPort(Constants.Port DEFAULTPORT); // 4thStep 3rdStepMethod
   }
 
-  /** 
-   * This step is in charge of the Port Selection Next Step available : MainFillingStep 
-   * 
-   */
-  public static interface PlayerTypeSelectionStep{
-     BuildStep playerSelector(Constants.AI num);
+  /** */
+  public static interface PlayerTypeSelectionStep { // p st int 4th Step
+    BuildStep HumanPlayer();
+
+    BuildStep AIPlayerSelector(Constants.AI num); // LastStep 4thStep Method
   }
 
   public static interface BuildStep {
@@ -56,7 +59,11 @@ public class ClientStepBuilder {
   }
 
   private static class Steps
-      implements  LayerSelectionStep, HostStep, PortSelectionStep, PlayerTypeSelectionStep, BuildStep{
+      implements LayerSelectionStep,
+          HostStep,
+          PortSelectionStep,
+          PlayerTypeSelectionStep,
+          BuildStep {
     private CommLayerInterface comm;
     private String host;
     private String port;
@@ -64,7 +71,7 @@ public class ClientStepBuilder {
 
     @Override
     public HostStep enableRestLayer(boolean enableRestClient) {
-      if(enableRestClient){
+      if (enableRestClient) {
         this.comm = new RestClientLayer();
       } else {
         this.comm = new CommLayer();
@@ -73,39 +80,58 @@ public class ClientStepBuilder {
     }
 
     @Override
-    public PortSelectionStep onHost(String host) {
-     this.host = host;
-     return this;
+    public PortSelectionStep onLocalHost() {
+      this.host = "localhost";
+      return this;
     }
-   
+
     @Override
     public PlayerTypeSelectionStep onPort(String port) {
       this.port = port;
       return this;
-     }
-    
+    }
 
     @Override
-    public BuildStep playerSelector(Constants.AI playerType) {
+    public BuildStep HumanPlayer() {
+      this.playerType = Constants.AI.HUMAN;
+      return this;
+    }
+
+    @Override
+    public BuildStep AIPlayerSelector(AI playerType) {
       this.playerType = playerType;
       return this;
     }
 
     @Override
-    public Client build(){
-      ServerDetails serverDetails = new ServerDetails(host,port);
+    public PortSelectionStep onRemoteHost(String host) {
+      this.host = host;
+      return this;
+    }
+
+    @Override
+    public PlayerTypeSelectionStep onPort(Port DEFAULTPORT) {
+      this.port = DEFAULTPORT.name();
+      return this;
+    }
+
+    @Override
+    public Client build() {
+      ServerDetails serverDetails = new ServerDetails(host, port);
       if (!serverDetails.isLocalhost()) {
         serverDetails.setHost(host);
-        serverDetails.setPort(port);
-     }
-     Client client;
-     if(!playerType.equals(Constants.AI.HUMAN)){
-      client = new AIClient(comm, host, port); 
-      client.setPlayerType(playerType);
-     } else {
-      client = new Client(comm, host, port);
-     }
+      }
+      serverDetails.setPort(port);
+      Client client;
+      if (!playerType.equals(Constants.AI.HUMAN)) {
+        client = new AIClient(comm, host, port);
+        client.setPlayerType(playerType);
+      } else {
+        client = new Client(comm, host, port);
+      }
       return client;
     }
+
+  
   }
 }
