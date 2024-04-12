@@ -85,9 +85,8 @@ public class ClientStepBuilder {
 
     public Client build();
   }
-/** 
-   * Builder class itself where code gets implemented and the object creation happens
-  */
+
+  /** Builder class itself where code gets implemented and the object creation happens */
   private static class Steps
       implements LayerSelectionStep,
           HostStep,
@@ -147,11 +146,6 @@ public class ClientStepBuilder {
 
     @Override
     public Client build() {
-      ServerDetails serverDetails = new ServerDetails(host, port);
-      if (!serverDetails.isLocalhost()) {
-        serverDetails.setHost(host);
-      }
-      serverDetails.setPort(port);
       Client client;
       if (!playerType.equals(Constants.AI.HUMAN)) {
         client = new AIClient(comm, host, port);
