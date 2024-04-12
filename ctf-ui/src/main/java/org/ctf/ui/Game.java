@@ -107,6 +107,7 @@ public class Game {
 			cf.setUnactive();
 			cf.setUnattacble();
 		}
+		PlayGameScreen.resetTimer();
 	}
 
 	public static void setCurrentTeamActiveTeamactive() {
@@ -148,7 +149,22 @@ public class Game {
 			}
 		}
 	}
-	
+	public static void deselectFigure() {
+		if(currentPlayer != null) {
+			currentPlayer.disableShadow();
+		}
+		for (BackgroundCellV2 c : cb.getCells().values()) {
+			c.rc.setFill(Color.WHITE);
+			c.active = false;
+		}
+		for (CostumFigurePain cf : cb.getFigures().values()) {
+			cf.setUnattacble();
+		}
+		currentPlayer = null;
+		
+		
+		
+	}
 
 	public static CostumFigurePain getCurrent() {
 		return currentPlayer;

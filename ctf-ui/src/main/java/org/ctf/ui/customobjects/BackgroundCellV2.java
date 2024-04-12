@@ -83,12 +83,15 @@ public class BackgroundCellV2 extends Pane {
 			public void handle(MouseEvent e) {
 				if(active) {
 				performClickOnCell();
+				} else if(!occupied){
+					Game.deselectFigure();
 				}
 			}
 		});
 		this.base = base;
 		this.getChildren().add(base);
 	}
+	
 
 	public void performClickOnCell() {
 			//rc.setFill(Color.RED);

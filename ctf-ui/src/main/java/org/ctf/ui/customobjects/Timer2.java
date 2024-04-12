@@ -22,6 +22,13 @@ public class Timer2 extends Text {
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
+    
+    public void reset() {
+    	this.hour = 0;
+    	this.second= 0;
+    	this.minute = 5;
+    	this.setFill(Color.BLACK);
+    }
 
     public String getCurrentTime(){
         return hour + ":" + minute + ":" + second;

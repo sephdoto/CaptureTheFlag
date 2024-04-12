@@ -85,7 +85,7 @@ public class CreateGameScreen  {
 		stage.setMinHeight(500);
 		stage.setMinWidth(900);
 		stage.setScene(scene);
-		stage.setFullScreen(true);
+		//stage.setFullScreen(true);
 		stage.show();
 	}
 	

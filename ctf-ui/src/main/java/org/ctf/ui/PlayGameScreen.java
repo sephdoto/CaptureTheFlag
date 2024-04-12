@@ -35,6 +35,7 @@ public class PlayGameScreen {
 	static String[][] exm2 = { { "b", "p:1_2", "b", "" }, { "b", "p:2_3", "b", "" }, { "b", "", "", "" } };
 	static String selected;
 	static Label mapName;
+	static Timer2 timer2;
 	static VBox rightVBox;
 
 	public static void initPlayGameScreen(Stage stage, GameState state, GameMode mode) {
@@ -54,7 +55,7 @@ public class PlayGameScreen {
 		v.getChildren().add(center);
 		Scene scene = new Scene(v);
 		stage.setScene(scene);
-		 stage.setFullScreen(true);
+		 //stage.setFullScreen(true);
 		stage.show();
 	}
 	private static GamePane createLeftSidPane(GameState state) {
@@ -63,6 +64,10 @@ public class PlayGameScreen {
 		gm.prefHeightProperty().bind(s.heightProperty());
 		return gm;
 	}
+	
+	public static void resetTimer() {
+		timer2.reset();
+	}
 
 	private static HBox createTimerBox() {
 		HBox headerBox = new HBox(30);
@@ -70,8 +75,8 @@ public class PlayGameScreen {
 		headerBox.setPadding(new Insets(0, 0, 0, 20));
 		headerBox.setStyle("-fx-background-color: white");
 		Timer timer1 = new Timer(0,0,0);
-		Timer2 timer = new Timer2(0, 5, 0);
-		headerBox.getChildren().addAll(timer1,timer);
+		timer2 = new Timer2(0, 5, 0);
+		headerBox.getChildren().addAll(timer1,timer2);
 		return headerBox;
 	}
 	
