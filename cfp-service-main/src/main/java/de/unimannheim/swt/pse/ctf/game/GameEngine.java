@@ -1,13 +1,10 @@
 // TODO Add license if applicable
 package de.unimannheim.swt.pse.ctf.game;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import de.unimannheim.swt.pse.ctf.game.exceptions.GameOver;
 import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
 import de.unimannheim.swt.pse.ctf.game.exceptions.NoMoreTeamSlots;
 import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
-import de.unimannheim.swt.pse.ctf.game.map.PieceDescription;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Move;
 import de.unimannheim.swt.pse.ctf.game.state.Piece;
@@ -23,43 +20,50 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import org.ctf.shared.state.data.exceptions.TooManyPiecesException;
 import javafx.scene.paint.Color;
+import org.ctf.shared.state.data.exceptions.TooManyPiecesException;
 
 /**
  * Game Engine Implementation
  *
- * @author rsyed & ysiebenh & sistumpf
+ * @author ysiebenh & sistumpf & rsyed Mainly bug fixing and code consistency checks by rsyed
  */
 public class GameEngine implements Game {
-  
+
   // **************************************************
   // Fields
   // **************************************************
 
+  // **************************************************
+  // Required by GameEngine
+  // **************************************************
   private GameState gameState; // MAIN Data Store for GameEngine
+  private boolean isGameOver;
+  private int remainingTeamSlots;
+  private Date startedDate;
+  private Date endDate;
+  // **************************************************
+  // End of Required by GameState
+  // **************************************************
 
   private MapTemplate currentTemplate; // Saves a copy of the template
-
-  private int remainingTeamSlots;
   private int teamPos = 0;
   private Map<String, Integer> teamIDtoInteger;
-  private boolean isGameOver;
 
   // Blocks for branches in game mode
   // Game state is taking care of all time calculations
   private boolean timeLimitedGame;
   private LocalDateTime gameEndsAt;
   private boolean moveTimeLimitedGame;
-  private Date startedDate;
-  private Date endDate;
+  
+  
   private LocalDateTime lastMoveTime;
   private LocalDateTime nextMoveTime;
 
   // **************************************************
   // Public Methods
   // **************************************************
-  
+
   /**
    * Creates a game session with the corresponding Map passed onto as the Template
    *
@@ -72,26 +76,26 @@ public class GameEngine implements Game {
     this.currentTemplate = template; // Saves a copy of the initial template
 
     this.gameState = new GameState();
-    //Inits Grid + Assigns pieces to teams
+    // Inits Grid + Assigns pieces to teams
     BoardSetUp.makeGridandTeams(this.gameState, template);
-    //Sets Bases on the Grid
+    // Sets Bases on the Grid
     BoardSetUp.placeBases(this.gameState, template);
-    
+
     // placing the pieces and blocks
-   
+
     try {
       BoardSetUp.initPieces(this.gameState, template);
-    } catch (TooManyPiecesException e) {  //If too many pieces. Catches the exception and throws UnknownError at the client.
+    } catch (
+        TooManyPiecesException
+            e) { // If too many pieces. Catches the exception and throws UnknownError at the client.
       throw new UnknownError();
-    } 
-    
-    BoardSetUp.initGrid(this.gameState, template);
-    
-    BoardSetUp.placeBlocks(template, this.gameState.getGrid(), template.getBlocks());
-    
-    
+    }
 
-    this.remainingTeamSlots = template.getTeams() - 1 ;  //Sets counter for remaining teams
+    BoardSetUp.initGrid(this.gameState, template);
+
+    BoardSetUp.placeBlocks(template, this.gameState.getGrid(), template.getBlocks());
+
+    this.remainingTeamSlots = template.getTeams() - 1; // Sets counter for remaining teams
     // Setting Flags
     this.isGameOver = false;
 
@@ -153,7 +157,7 @@ public class GameEngine implements Game {
    * @return Team
    * @throws NoMoreTeamSlots No more team slots available
    */
-  /* 
+  /*
   public Team joinGameNew(String teamId) {
     // Initial check if Slots are even available
     Team randomStartTeam = new Team();
@@ -164,7 +168,7 @@ public class GameEngine implements Game {
 
       this.remainingTeamSlots--; //DECREASE THE NUMBER OF TEAMS
       this.teamPos++;            //Increase the Pos tracker
-     
+
       if(getRemainingTeamSlots() < 1){     //CHECK SLOTS LEFT
         //CHECK FLAGS FOR ALT MODE
 
@@ -173,7 +177,7 @@ public class GameEngine implements Game {
         //START THE GAME
 
         //RETURN RANDOM TEAM
-        
+
       }
     }
     return randomStartTeam;
@@ -197,8 +201,9 @@ public class GameEngine implements Game {
   @Override
   public void giveUp(String teamId) {
     EngineTools.removeTeam(gameState, Integer.valueOf(teamIDtoInteger.get(teamId)));
-    //Logic for switching Current Team
-    if (gameState.getTeams()[gameState.getCurrentTeam()] == null) gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
+    // Logic for switching Current Team
+    if (gameState.getTeams()[gameState.getCurrentTeam()] == null)
+      gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
     this.gameOverCheck();
   }
 
@@ -213,12 +218,14 @@ public class GameEngine implements Game {
   }
 
   /**
-   * @author rsyed Checks whether the game is started based on the current {@link GameState}.
-   *     <ul>
-   *       <li>{@link Game#isGameOver()} == false
-   *       <li>{@link Game#getCurrentGameState()} != null
-   *     </ul>
+   * Checks whether the game is started based on the current {@link GameState}.
    *
+   * <ul>
+   *   <li>{@link Game#isGameOver()} == false
+   *   <li>{@link Game#getCurrentGameState()} != null
+   * </ul>
+   *
+   * @author rsyed
    * @return boolean
    */
   @Override
@@ -318,7 +325,12 @@ public class GameEngine implements Game {
    */
   @Override
   public void makeMove(Move move) {
-    if (!movePreconditionsMet(move)) return;
+    if (isGameOver()) {
+      throw new GameOver();
+    }
+    if (!isTurn(move)) {
+      throw new InvalidMove();
+    }
 
     String occupant = gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]];
     Piece picked =
@@ -361,7 +373,7 @@ public class GameEngine implements Game {
 
     afterMoveCleanup();
   }
-  
+
   /**
    * The {@link GameEngine#isGameOver()} method only returns the {@link GameEngine#isGameOver}
    * value, so this method implements the game over checks. It updates the isGameOver {@link
@@ -405,7 +417,6 @@ public class GameEngine implements Game {
               LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()); // Sets game end time
     }
   }
-  
 
   /**
    * If the game is over a String Array containing all winner IDs is returned. This method relies on
@@ -465,22 +476,6 @@ public class GameEngine implements Game {
   }
 
   /**
-   * Call this before making a move.
-   *
-   * @param move
-   * @return false if the move is invalid, either because it is the wrong player, the move itself is
-   *         invalid or the game is already over.
-   */
-  private boolean movePreconditionsMet(Move move) {
-    if (isGameOver() || !isTurn(move)) {
-      return false;
-    } else if (!isValidMove(move)) {
-      throw new InvalidMove();
-    }
-    return true;
-  }
-
-  /**
    * Helper method to perform a turn check. So that players cannot make out of turn moves.
    *
    * @author rsyed
@@ -492,7 +487,6 @@ public class GameEngine implements Game {
     return (moveTeamIdentifier == gameState.getCurrentTeam());
   }
 
-  
   /**
    * This method checks if the current team got moves left, if thats not the case the team get
    * removed. After a team got removed the next team gets checked, until only 1 team is left or a
@@ -566,7 +560,7 @@ public class GameEngine implements Game {
    * @param int position to add it in
    */
   private Team addTeam(String teamID, int pos) {
-    this.teamIDtoInteger.put(teamID,pos);
+    this.teamIDtoInteger.put(teamID, pos);
     Team[] team = gameState.getTeams();
     team[pos].setId(teamID);
     team[pos].setColor(getRandColor());
@@ -617,9 +611,9 @@ public class GameEngine implements Game {
       gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
     }
   }
-  
+
   // **************************************************
-  // Simons Special Methods 
+  // Simons Special Methods
   // **************************************************
 
   /**
