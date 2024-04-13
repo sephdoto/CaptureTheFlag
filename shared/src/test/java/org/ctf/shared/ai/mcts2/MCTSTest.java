@@ -36,6 +36,12 @@ class MCTSTest {
       tn.children[i] = null;
     tn.wins = new int[] {0,0};
   }
+  
+  @Test
+  void testMakeEmptyMove() {
+    mcts.root.gameState.setLastMove(null);
+    mcts.getMove(1000, AI_Constants.C);
+  }
 
   @Test
   void testPerformance() throws InterruptedException {

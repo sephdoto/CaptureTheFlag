@@ -55,6 +55,8 @@ public class MCTS {
 
     while(System.currentTimeMillis() - time < milis){
       //Schritte des UCT abarbeiten
+      if(root.gameState.getLastMove() == null)
+        root.gameState.setLastMove(new ReferenceMove(null, new int[2]));
       TreeNode selected = selectAndExpand(root, C);
       backpropagate(selected, simulate(selected));
     }
