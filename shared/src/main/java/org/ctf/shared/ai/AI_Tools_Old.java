@@ -1,6 +1,8 @@
 package org.ctf.shared.ai;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.stream.Stream;
 import org.ctf.shared.state.GameState;
@@ -11,40 +13,33 @@ import org.ctf.shared.state.data.map.ShapeType;
 
 /**
  * This class includes useful methods to analyze and work with GameStates and Moves.
- *
- * @author sistumpf
+ * @author sistumpf 
  */
-public class AI_Tools {
-  static Random random = new Random();
-
+public class AI_Tools_Old {
+  
   /**
    * Returns the previous teams index in the team array.
-   *
    * @param gameState
    * @return previous teams index
    */
   public static int getPreviousTeam(GameState gameState) {
-    for (int i = (gameState.getCurrentTeam() - 1) % gameState.getTeams().length;
-        ;
-        i = (i - 1) % gameState.getTeams().length) {
-      i = i < 0 ? -1 * i : i;
-      if (gameState.getTeams()[i] != null) {
+    for(int i=(gameState.getCurrentTeam()-1) % gameState.getTeams().length; ;i = (i - 1) % gameState.getTeams().length) {
+      i = i<0? -1*i : i;
+      if(gameState.getTeams()[i] != null) {
         return i;
       }
     }
-  }
 
+  }
+  
   /**
    * Switches a GameState current team to the next valid (not null) team.
-   *
    * @param gameState
    * @return altered gameState
    */
   public static GameState toNextTeam(GameState gameState) {
-    for (int i = (gameState.getCurrentTeam() + 1) % gameState.getTeams().length;
-        ;
-        i = (i + 1) % gameState.getTeams().length) {
-      if (gameState.getTeams()[i] != null) {
+    for(int i=(gameState.getCurrentTeam()+1) % gameState.getTeams().length; ;i = (i + 1) % gameState.getTeams().length) {
+      if(gameState.getTeams()[i] != null) {
         gameState.setCurrentTeam(i);
         return gameState;
       }
@@ -52,25 +47,20 @@ public class AI_Tools {
   }
 
   /**
-   * Removes a certain team from the GameState. team is the place of the team in the
-   * GameState.getTeams Array.
-   *
+   * Removes a certain team from the GameState.
+   * team is the place of the team in the GameState.getTeams Array.
    * @param gameState
    * @param team
    */
   public static void removeTeam(GameState gameState, int team) {
-    gameState
-            .getGrid()[gameState.getTeams()[team].getBase()[0]][
-            gameState.getTeams()[team].getBase()[1]] =
-        "";
-    for (Piece p : gameState.getTeams()[team].getPieces())
+    gameState.getGrid()[gameState.getTeams()[team].getBase()[0]][gameState.getTeams()[team].getBase()[1]] = "";
+    for(Piece p : gameState.getTeams()[team].getPieces())
       gameState.getGrid()[p.getPosition()[0]][p.getPosition()[1]] = "";
     gameState.getTeams()[team] = null;
   }
 
   /**
    * Returns a valid position on which a Piece can safely respawn.
-   *
    * @param gameState to access the grid and generate pseudo random numbers
    * @param basePos the position of the base of the Piece that gets respawned
    * @return valid position to respawn a piece on, null shouldn't be returned (compiler needs it).
@@ -82,7 +72,8 @@ public class AI_Tools {
     for (int distance = 1; distance < gameState.getGrid().length; distance++) {
       xTransforms = fillXTransformations(new int[distance * 8], distance);
       yTransforms = fillYTransformations(new int[distance * 8], distance);
-
+      
+      
       for (int clockHand = 0; clockHand < distance * 8; clockHand++) {
         int x = basePos[1] + xTransforms[clockHand];
         int y = basePos[0] + yTransforms[clockHand];
@@ -90,8 +81,7 @@ public class AI_Tools {
         if (positionOutOfBounds(gameState.getGrid(), newPos)) continue;
 
         if (emptyField(gameState.getGrid(), newPos)) {
-          for (int i = 1, random = seededRandom(gameState.getGrid(), i, xTransforms.length, 0);
-              ;
+          for (int i = 1, random = seededRandom(gameState.getGrid(), i, xTransforms.length, 0); ;
               i++, random = seededRandom(gameState.getGrid(), i, xTransforms.length, 0)) {
             x = basePos[1] + xTransforms[random];
             y = basePos[0] + yTransforms[random];
@@ -106,49 +96,52 @@ public class AI_Tools {
   }
 
   /**
-   * This method is needed to respawn a piece, it adds all positions in a certain radius around the
-   * base to an Array.
-   *
+   * This method is needed to respawn a piece, it adds all positions in a certain radius around the base to an Array.
    * @param xTrans translations on x-axis
-   * @param distance from base
+   * @param distance to a base
    * @return Array containing Transformations to use on the base position
    */
-  public static int[] fillXTransformations(int[] xTrans, int distance) {
+  public static int[] fillXTransformations(int[] xTrans, int distance){
     int side = -1;
-    for (int i = 0; i < distance * 8; i++) {
-      if (i < 1 + distance * 2) xTrans[i] = ++side - distance;
-      else if (i < (distance * 8) / 2) xTrans[i] = distance;
-      else if (i < (distance * 8) - (2 * (distance - 1)) - 1) xTrans[i] = side-- - distance;
-      else xTrans[i] = -1 * distance;
+    for(int i=0; i<distance*8; i++) {
+      if(i< 1+ distance*2)
+        xTrans[i] = ++side - distance;
+      else if(i< (distance*8)/2)
+        xTrans[i] = distance;
+      else if(i< (distance*8) - (2 * (distance-1)) - 1)
+        xTrans[i] = side-- - distance;
+      else  
+        xTrans[i] = -1*distance;
     }
-
+    
     return xTrans;
   }
 
   /**
-   * This method is needed to respawn a piece, it adds all positions in a certain radius around the
-   * base to an Array.
-   *
+   * This method is needed to respawn a piece, it adds all positions in a certain radius around the base to an Array.
    * @param yTrans translations on y-axis
-   * @param distance from base
+   * @param distance to a base
    * @return Array containing Transformations to use on the base position
    */
-  public static int[] fillYTransformations(int[] yTrans, int distance) {
+  public static int[] fillYTransformations(int[] yTrans, int distance){
     int side = 0;
-    for (int i = 0; i < distance * 8; i++) {
-      if (i < 1 + distance * 2) yTrans[i] = -1 * distance;
-      else if (i < (distance * 8) / 2) yTrans[i] = ++side - distance;
-      else if (i < (distance * 8) - (2 * (distance - 1)) - 1) yTrans[i] = distance;
-      else yTrans[i] = side-- - distance;
+    for(int i=0; i<distance*8; i++) {
+      if(i< 1+ distance*2)
+        yTrans[i] = -1*distance;
+      else if(i< (distance*8)/2)
+        yTrans[i] = ++side - distance;
+      else if(i< (distance*8) - (2 * (distance-1)) - 1)
+        yTrans[i] = distance;
+      else
+        yTrans[i] = side-- - distance;
     }
-
+    
     return yTrans;
   }
-
+  
   /**
    * This method should be used instead of Math.random() to generate deterministic positive pseudo
    * random values. Changing modifier changes the resulting output for the same seed.
-   *
    * @param grid, used as a base to generate a random seed
    * @param modifier, to get different random values with the same seed
    * @param upperBound, upper bound for returned random values, upperBound = 3 -> values 0 to 2
@@ -159,24 +152,28 @@ public class AI_Tools {
     StringBuilder sb = new StringBuilder();
     Stream.of(grid).forEach(s -> Stream.of(s).forEach(ss -> sb.append(ss)));
     int seed = sb.append(modifier).toString().hashCode();
-    random.setSeed(seed);
-    return random.nextInt(upperBound - lowerBound) + lowerBound;
+    return new Random(seed).nextInt(upperBound - lowerBound) + lowerBound;
   }
-
+  
   /**
    * Given a Piece and a GameState containing the Piece, an ArrayList with all valid locations the
    * Piece can walk on is returned. The ArrayList contains int[2] values, representing a (y,x)
    * location on the grid.
-   *
-   * @param gameState
-   * @param piece
-   * @param ArrayList<int[]> possibleMoves, will be cleared and filled
+   * @param GameState gameState
+   * @param String pieceID
    * @return ArrayList<int[]> that contains all valid positions a piece could move to
    */
-  public static ArrayList<int[]> getPossibleMoves(
-      GameState gameState, Piece piece, ArrayList<int[]> possibleMoves) {
+  public static ArrayList<int[]> getPossibleMoves(GameState gameState, String pieceID, ArrayList<int[]> possibleMoves) {
     possibleMoves.clear();
-    ArrayList<int[]> dirMap = new ArrayList<int[]>();
+    HashMap<Integer, Integer> dirMap = new HashMap<Integer, Integer>();
+    Piece piece =
+        Arrays.stream(
+            gameState.getTeams()[Integer.parseInt(pieceID.split(":")[1].split("_")[0])]
+                .getPieces())
+        .filter(p -> p.getId().equals(pieceID))
+        .findFirst()
+        .get();
+
     if (piece.getDescription().getMovement().getDirections() == null) {
       try {
         getShapeMoves(gameState, piece, possibleMoves);
@@ -185,15 +182,14 @@ public class AI_Tools {
       }
 
     } else {
-      dirMap = AI_Tools.createDirectionMap(gameState, piece, dirMap);
-      for (int[] entry : dirMap) {
-        for (int reach = entry[1]; reach > 0; reach--) {
+      dirMap = AI_Tools_Old.createDirectionMap(gameState, piece, dirMap);
+      for (Integer direction : dirMap.keySet()) {
+        for (int reach = dirMap.get(direction); reach > 0; reach--) {
           Move move = new Move();
           try {
-            move = AI_Tools.checkMoveValidity(gameState, piece, entry[0], reach);
-          } catch (Exception e) {
+            move = AI_Tools_Old.checkMoveValidity(gameState, piece, direction, reach);
+          } catch(Exception e) {
             System.out.println(2);
-            move = AI_Tools.checkMoveValidity(gameState, piece, entry[0], reach);
           }
           if (move != null) possibleMoves.add(move.getNewPosition());
         }
@@ -204,7 +200,6 @@ public class AI_Tools {
 
   /**
    * Selects and returns a random Move from an ArrayList which only contains valid Moves.
-   *
    * @param positionArrayList
    * @param pieceId
    * @return randomly picked move
@@ -218,14 +213,14 @@ public class AI_Tools {
 
   /**
    * Creates an ArrayList with all valid Moves a piece with shape movement can do.
-   *
    * @param gameState
    * @param piece
+   * @param positions will be cleared and filled
    * @return ArrayList containing all valid moves
    * @throws InvalidShapeException if the Shape is not yet implemented here
    */
-  public static ArrayList<int[]> getShapeMoves(
-      GameState gameState, Piece piece, ArrayList<int[]> positions) throws InvalidShapeException {
+  public static ArrayList<int[]> getShapeMoves(GameState gameState, Piece piece, ArrayList<int[]> positions )
+      throws InvalidShapeException {
     positions.clear();
     int[] xTransforms;
     int[] yTransforms;
@@ -246,16 +241,16 @@ public class AI_Tools {
     for (int i = 0; i < xTransforms.length; i++) {
       int[] newPos =
           new int[] {
-            piece.getPosition()[0] + yTransforms[i], piece.getPosition()[1] + xTransforms[i]
-          };
+              piece.getPosition()[0] + yTransforms[i], piece.getPosition()[1] + xTransforms[i]
+      };
       if (validPos(newPos, piece, gameState)) {
         if (i >= direction.length) {
           positions.add(newPos);
         } else if (sightLine(
             gameState,
             new int[] {
-              piece.getPosition()[0] + yTransforms[(1 + (i / 3) * 3)],
-              piece.getPosition()[1] + xTransforms[(1 + (i / 3) * 3)]
+                piece.getPosition()[0] + yTransforms[(1 + (i / 3) * 3)],
+                piece.getPosition()[1] + xTransforms[(1 + (i / 3) * 3)]
             },
             direction[i],
             2)) {
@@ -267,24 +262,21 @@ public class AI_Tools {
   }
 
   /**
-   * Creates an ArrayList containing all a pieces valid directions and its maximum reach into that
-   * direction in int[direction, reach] pairs. This map only applies for the Piece picked. The reach
-   * value is directly from MapTemplate, this method only checks if the positions adjacent to a
-   * piece are occupied.
-   *
+   * Creates a key-value map where a direction is the key and a value is the pieces maximum reach
+   * into that direction. This map only applies for the Piece picked. The reach value is directly
+   * from MapTemplate, this method only checks if the positions adjacent to a piece are occupied.
    * @param gameState
    * @param picked
-   * @param dirMap, will be cleared and filled
-   * @return ArrayList<int[direction,reach]>
+   * @param dirMap will be cleared and filled up
+   * @return HashMap<Integer,Integer> dirMap
    */
-  public static ArrayList<int[]> createDirectionMap(
-      GameState gameState, Piece picked, ArrayList<int[]> dirMap) {
+  public static HashMap<Integer, Integer> createDirectionMap(GameState gameState, Piece picked, HashMap<Integer, Integer> dirMap) {
     dirMap.clear();
     for (int i = 0; i < 8; i++) {
       int reach = getReach(picked.getDescription().getMovement().getDirections(), i);
       if (reach > 0) {
         if (validDirection(gameState, picked, i)) {
-          dirMap.add(new int[] {i, reach});
+          dirMap.put(i, reach);
         } else {
           continue;
         }
@@ -301,21 +293,21 @@ public class AI_Tools {
    * position is invalid the HashMap reach value is lowered to ensure the same position is not
    * picked again. This method assumes the HashMap contains elements and all directions contain at
    * least 1 valid position.
-   *
    * @param dirMap
    * @param piece
    * @param gameState
    * @return a valid move
    */
-  public static Move getDirectionMove(ArrayList<int[]> dirMap, Piece piece, GameState gameState) {
-    int randomDir = (int) (dirMap.size() * Math.random());
+  public static Move getDirectionMove(
+      HashMap<Integer, Integer> dirMap, Piece piece, GameState gameState) {
+    int randomKey = (int) dirMap.keySet().toArray()[(int) (dirMap.size() * Math.random())];
     int reach;
 
     while (true) {
-      reach = (int) (Math.random() * dirMap.get(randomDir)[1] + 1);
-      Move newPos = checkMoveValidity(gameState, piece, dirMap.get(randomDir)[0], reach);
+      reach = (int) (Math.random() * dirMap.get(randomKey) + 1);
+      Move newPos = checkMoveValidity(gameState, piece, randomKey, reach);
       if (newPos != null) return newPos;
-      dirMap.get(randomDir)[1] = reach - 1;
+      dirMap.replace(randomKey, reach - 1);
       continue;
     }
   }
@@ -323,7 +315,6 @@ public class AI_Tools {
   /**
    * This method tests if a piece could walk into a given direction. It does not test if a pieces
    * reach in a direction is >0. The direction is given as an int (0-7).
-   *
    * @param gameState
    * @param piece
    * @param direction
@@ -337,7 +328,6 @@ public class AI_Tools {
    * Returns the Move if a piece can occupy specific position. This method does not test if a pieces
    * reach in a direction is >0. The direction is given as an int (0-7) and reach as an int that
    * specifies how many fields into that direction.
-   *
    * @param gameState
    * @param piece
    * @param direction
@@ -367,7 +357,6 @@ public class AI_Tools {
    * minus the reach in the negative direction the piece took to get to newPos. In simpler words, if
    * a piece went from 2,2 to 2,0 (2 to left) newPos would be [2,0], reach would be 2 and the
    * direction 0 (left)
-   *
    * @param gameState
    * @param newPos
    * @param direction
@@ -376,11 +365,12 @@ public class AI_Tools {
    * @return false if any obstacle is in between or the target position is not on the grid
    */
   public static boolean sightLine(GameState gameState, int[] newPos, int direction, int reach) {
+    String[][] grid = gameState.getGrid();
     --reach;
     for (; reach > 0; reach--) {
       newPos = updatePos(newPos, direction, -1);
       try {
-        if (gameState.getGrid()[newPos[0]][newPos[1]].equals("")) {
+        if (grid[newPos[0]][newPos[1]].equals("")) {
           continue;
         } else {
           return false;
@@ -395,7 +385,6 @@ public class AI_Tools {
   /**
    * Updates the y,x position of a piece. A given int[2] positional Array is altered by going a
    * given amount of steps (reach) into a given direction.
-   *
    * @param pos
    * @param direction
    * @param reach
@@ -437,7 +426,6 @@ public class AI_Tools {
 
   /**
    * Checks if a piece can occupy a given position.
-   *
    * @param pos
    * @param piece
    * @param gameState
@@ -458,7 +446,6 @@ public class AI_Tools {
 
   /**
    * Checks if a position is not contained in the grid.
-   *
    * @param grid
    * @param pos
    * @return true if the position is out of bounds
@@ -469,7 +456,6 @@ public class AI_Tools {
 
   /**
    * Checks if a position on the grid contains an empty String.
-   *
    * @param grid
    * @param pos
    * @return true if the position is an empty Field "" and can be occupied
@@ -480,7 +466,6 @@ public class AI_Tools {
 
   /**
    * Checks if a position on the grid contains a block.
-   *
    * @param grid
    * @param pos
    * @return true if the position is occupied by a block and cannot be walked on
@@ -491,26 +476,29 @@ public class AI_Tools {
 
   /**
    * Checks if a position on the grid is occupied by a piece from the current team.
-   *
-   * @param grid
+   * @param gameState
    * @param pos
    * @return true if the position is occupied by a Piece of the same Team
    */
   public static boolean occupiedBySameTeam(GameState gameState, int[] pos) {
-    return gameState.getCurrentTeam() == getOccupantTeam(gameState.getGrid(), pos);
+    return gameState.getCurrentTeam()
+        == Integer.parseInt(gameState.getGrid()[pos[0]][pos[1]].split(":")[1].split("_")[0]);
   }
 
   /**
    * Checks if a position on the grid is occupied by a piece with a weaker or the same AttackPower
    * as a given piece.
-   *
    * @param gameState
    * @param pos
    * @param picked
    * @return true if the position is occupied by a weaker opponent that can be captured
    */
   public static boolean occupiedByWeakerOpponent(GameState gameState, int[] pos, Piece picked) {
-    for (Piece p : gameState.getTeams()[getOccupantTeam(gameState.getGrid(), pos)].getPieces()) {
+    for (Piece p :
+      gameState
+      .getTeams()[
+                  Integer.parseInt(gameState.getGrid()[pos[0]][pos[1]].split(":")[1].split("_")[0])]
+                      .getPieces()) {
       if (p.getId().equals(gameState.getGrid()[pos[0]][pos[1]])) {
         if (p.getDescription().getAttackPower() <= picked.getDescription().getAttackPower()) {
           return true;
@@ -524,7 +512,6 @@ public class AI_Tools {
 
   /**
    * Checks if a position on the grid is occupied by an opponents base.
-   *
    * @param grid
    * @param pos
    * @param picked
@@ -532,33 +519,16 @@ public class AI_Tools {
    */
   public static boolean otherTeamsBase(String[][] grid, int[] pos, Piece picked) {
     if (grid[pos[0]][pos[1]].contains("b:")) {
-      if (Integer.parseInt(picked.getTeamId()) != getOccupantTeam(grid, pos)) return true;
+      if (!grid[pos[0]][pos[1]].split("b:")[1].equals(picked.getId())) {
+        return true;
+      }
     }
     return false;
   }
 
   /**
-   * This method returns an occupants (piece/base) team. It splits it Id and parses the enclosed
-   * TeamId to Integer.
-   *
-   * @param grid
-   * @param pos
-   * @return the occupants teamID as int
-   */
-  public static int getOccupantTeam(String[][] grid, int[] pos) {
-    int start = grid[pos[0]][pos[1]].indexOf(":") + 1,
-        indexUnderscore = grid[pos[0]][pos[1]].indexOf("_", start);
-    return Integer.parseInt(
-        grid[pos[0]][pos[1]],
-        start,
-        indexUnderscore == -1 ? grid[pos[0]][pos[1]].length() : indexUnderscore,
-        10);
-  }
-
-  /**
    * Returns a pieces maximum reach into a certain direction. Assumes the direction is valid,
    * doesn't catch Null Pointer Exceptions.
-   *
    * @param directions
    * @param dir
    * @return reach into direction dir

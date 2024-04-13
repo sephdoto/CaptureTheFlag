@@ -35,7 +35,12 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
-   <dependency>
+    <dependency>
+      <groupId>org.openjdk.jol</groupId>
+      <artifactId>jol-core</artifactId>
+      <version>0.17</version>
+    </dependency>
+    <dependency>
       <groupId>de.uni-mannheim.swt.pse</groupId>
       <artifactId>ctf</artifactId>
       <scope>test</scope>

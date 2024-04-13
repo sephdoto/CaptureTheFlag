@@ -3,6 +3,7 @@ package org.ctf.shared.client;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.client.service.CommLayer;

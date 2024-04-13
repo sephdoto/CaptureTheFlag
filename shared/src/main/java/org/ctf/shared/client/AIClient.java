@@ -2,6 +2,7 @@ package org.ctf.shared.client;
 
 import java.util.ArrayList;
 
+import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.client.service.CommLayerInterface;
 import org.ctf.shared.constants.Constants;

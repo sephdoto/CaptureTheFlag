@@ -1,7 +1,8 @@
-package org.ctf.ai.mcts;
+package org.ctf.shared.ai.mcts2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -10,20 +11,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.ctf.shared.ai.AI_Tools_Old;
-import org.ctf.ai.random.RandomAI;
-import org.ctf.ai.AI_Constants;
-import org.ctf.shared.state.Move;
+import org.ctf.shared.ai.AI_Constants;
+import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
+import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.state.Team;
-import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
 
 /**
- * This class is a replica of an older MCTS version, it is just used for testing.
- * The comments and code is outdated, only MCTS is the newest version.
  * @author sistumpf
  */
-public class MCTS_TestDouble {
+public class MCTS {
   Random rand;
   int teams;
   int maxDistance;
@@ -33,20 +31,20 @@ public class MCTS_TestDouble {
   public AtomicInteger expansionCounter;
   ExecutorService executorService;
 
-  public MCTS_TestDouble(TreeNode root) {
+  public MCTS(TreeNode root) {
     this.root = root;
     this.rand = new Random();
     simulationCounter = new AtomicInteger();
     heuristicCounter = new AtomicInteger();
     expansionCounter = new AtomicInteger();
     this.teams = root.gameState.getTeams().length;
-    this.maxDistance = (int)Math.round(Math.sqrt(Math.pow(root.gameState.getGrid().length, 2) + Math.pow(root.gameState.getGrid()[0].length, 2)));
+    this.maxDistance = (int)Math.round(Math.sqrt(Math.pow(root.gameState.getGrid().getGrid().length, 2) + Math.pow(root.gameState.getGrid().getGrid()[0].length, 2)));
     this.executorService  = Executors.newFixedThreadPool(AI_Constants.numThreads);
   }
 
 
   /**
-   * starts a Monte Carlo Tree Search from a given state of the game,
+   * Starts a Monte Carlo Tree Search from a given state of the game,
    * if the given time runs out the best calculated move is returned.
    * @param time in milliseconds the algorithm is allowed to take
    * @param Constant C used in the UCT formula
@@ -58,7 +56,7 @@ public class MCTS_TestDouble {
     while(System.currentTimeMillis() - time < milis){
       //Schritte des UCT abarbeiten
       TreeNode selected = selectAndExpand(root, C);
-      backpropagate(selected, multiSimulate(selected));
+      backpropagate(selected, simulate(selected));
     }
 
     TreeNode bestChild = getRootBest(root);
@@ -67,19 +65,19 @@ public class MCTS_TestDouble {
     //      printResults(bestChild);
 
     this.executorService.shutdown();
-    return (bestChild.gameState.getLastMove());
+    return bestChild.gameState.getLastMove().toMove();
   }
 
 
   /**
-   * Selects a node to simulate on using the UCBk formula.
+   * Selects a node to simulate on using the UCT formula.
    * expands a children if a node in the chain has unexpanded ones.
    * @param parent node, from it on the nodes will be checked for one to simulate on
-   * @param constant C used in UCBk formula
+   * @param constant C used in UCT formula
    * @return the node to simulate on
    */
   TreeNode selectAndExpand(TreeNode node, double C){
-    while(isTerminal(node) == -1) {      
+    while(isTerminal(node.gameState) == -1) {      
       if(!isFullyExpanded(node)){
         expansionCounter.incrementAndGet();
         return expand(node);
@@ -92,7 +90,7 @@ public class MCTS_TestDouble {
 
 
   /**
-   * adds one child to the parent node, the child is identical to the parent but simulated one move further
+   * Adds one child to the parent node, the child is identical to the parent but simulated one move further.
    * @param the selected node which gets expanded
    * @return the new child
    * @return null if anything unforeseen happens
@@ -100,8 +98,9 @@ public class MCTS_TestDouble {
   TreeNode expand(TreeNode parent){
     for(int i=0; i<parent.children.length; i++) {
       if(parent.children[i] == null) {
-        TreeNode child = parent.clone(parent.copyGameState());
-        oneMove(child, parent);
+        TreeNode child = parent.clone(parent.gameState.clone());
+//        child.initPossibleMovesAndChildren();
+        oneMove(child, parent, false);
         parent.children[i] = child;
         return child;
       }
@@ -109,6 +108,11 @@ public class MCTS_TestDouble {
     return null;
   }
 
+  /**
+   * Simulates a certain amount of simulations simultaneously.
+   * @param simulateOn
+   * @return an array containing a number of wins for the team at position teamId
+   */
   int[] multiSimulate(TreeNode simulateOn) { 
     int[] winners = new int[simulateOn.gameState.getTeams().length];
 
@@ -144,25 +148,23 @@ public class MCTS_TestDouble {
    * Simulates a game from a specific node to finish (or a maximum step value of Constants.MAX_STEPS simulation),
    * First checks if a node is in a terminal state, if thats the case the simulation ends and the result is returned
    * @param the node from which a game is going to be simulated
-   * @return true if player A wins the simulation (either by getting more beans or player B having no moves left), 
-   *         false if player B wins the simulation (either by getting more beans or player A having no moves left)
-   *         default case is a heuristic. if it returns value > 0, player A is winning
+   * @return an array containing a number of wins for the team at position teamId
    */
   int[] simulate(TreeNode simulateOn){      
     simulationCounter.incrementAndGet();
-    int isTerminal = isTerminal(simulateOn);
+    int isTerminal = isTerminal(simulateOn.gameState);
     int[] winners = new int[this.teams];
     int count = AI_Constants.MAX_STEPS;
     if(isTerminal >= 0) {
-//      winners[isTerminal] += count;
-      winners[isTerminal] += 1;
+      winners[isTerminal] += count;
       return winners;
     }
+    
 
-    simulateOn = simulateOn.clone(simulateOn.copyGameState());
+    simulateOn = simulateOn.clone(simulateOn.gameState.clone());
 
-    for(;count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn)) {
-      oneMove(simulateOn, simulateOn);
+    for(;count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn.gameState)) {
+      oneMove(simulateOn, simulateOn, true);
       removeTeamCheck(simulateOn.gameState);
     }
     if(isTerminal < 0) {  
@@ -170,7 +172,6 @@ public class MCTS_TestDouble {
       heuristicCounter.incrementAndGet();
       winners[terminalHeuristic(simulateOn)] += 1;
     } else {
-      //TODO: count zum Testen durch isTerminal ersetzen
       winners[isTerminal] += count;
     }
 
@@ -204,7 +205,7 @@ public class MCTS_TestDouble {
 
         if(p.getDescription().getMovement().getDirections() != null) {
           for(int dir=0; dir<8; dir++)
-            points[i] += AI_Tools_Old.getReach(p.getDescription().getMovement().getDirections(), dir) * AI_Constants.directionMultiplier;
+            points[i] += MCTS_Tools.getReach(p.getDescription().getMovement().getDirections(), dir) * AI_Constants.directionMultiplier;
         } else {
           points[i] += 8 * AI_Constants.shapeReachMultiplier;
         }
@@ -231,13 +232,19 @@ public class MCTS_TestDouble {
     return max;
   }
 
+  /**
+   * Calculates the euclidean distance between two 2D positions
+   * @param base
+   * @param piece
+   * @return distance between base and piece
+   */
   float distanceToBase(int[] base, int[] piece) {
     return (float) Math.sqrt(Math.pow(base[1]-piece[1], 2) + Math.pow(base[0]-piece[0], 2));
   }
 
 
   /**
-   * picks a (random) move to make a move on
+   * Picks a (random) move.
    * @return a random chosen move out of an ArrayList containing possible moves.
    */
   int[] pickRandomMove(ArrayList<int[]> moveList) {
@@ -246,7 +253,7 @@ public class MCTS_TestDouble {
 
 
   /**
-   * propagates the simulation result up the tree until the root element is reached
+   * Propagates the simulation result up the tree until the root element is reached.
    * @param node on which the simulation was executed
    * @param an int Array containing as many spaces as teams are left, a place in the Array corresponds to the teamId and contains the number of wins of that team.
    */
@@ -264,44 +271,49 @@ public class MCTS_TestDouble {
    * Checks if a game is in a terminal state.
    * 
    * @param a node to check if it is terminal
-   * @return -1 if the game is not in a terminal state
-   * 		   0 - Integer.MAX_VALUE winner team id
+   * @return -1: the game is not in a terminal state
+   *         0 - Integer.MAX_VALUE: winner team id
+   *         -2: error
    */
-  int isTerminal(TreeNode node) {
+  int isTerminal(ReferenceGameState gameState) {
     int teamsLeft = 0;
-    for(int i=0; i<node.gameState.getTeams().length; i++) {
-      if(node.gameState.getTeams()[i] != null) {
+    removeTeamCheck(gameState);
+    for(int i=0; i<gameState.getTeams().length; i++) {
+      if(gameState.getTeams()[i] != null) {
         teamsLeft++;
       }
     }
 
-    for(int i=node.gameState.getCurrentTeam(); teamsLeft > 1; i = AI_Tools_Old.toNextTeam(node.gameState).getCurrentTeam()) {
+    for(int i=gameState.getCurrentTeam(); teamsLeft > 1; i = MCTS_Tools.toNextTeam(gameState).getCurrentTeam()) {
       boolean canMove = false;
-      for(int j=0; !canMove && j<node.gameState.getTeams()[i].getPieces().length; j++) {
+      for(int j=0; !canMove && j<gameState.getTeams()[i].getPieces().length; j++) {
+        if(gameState.getTeams()[i].getFlags() < 1)
+          continue;
         //only if a move can be made no exception is thrown
         try {
-          RandomAI.pickMoveComplex(node.gameState);
+          MCTS_Tools.pickMoveComplex(gameState);
           canMove = true;
         } catch (Exception e) {} 
       }
       if(canMove) {
         return -1;
       } else if (!canMove){
-        AI_Tools_Old.removeTeam(node.gameState, i);
+        MCTS_Tools.removeTeam(gameState, i);
         teamsLeft--;
       }
     }
 
     if(teamsLeft <= 1) {
-      for(Team team : node.gameState.getTeams())
+      for(Team team : gameState.getTeams())
         if(team != null)
           return Integer.parseInt(team.getId());
+      return -2;
     }
     return -1;
   }
 
   /**
-   * Checks if all possible children from a specific node are expanded
+   * Checks if all possible children from a specific node are expanded.
    * @param parent node
    * @return true if all children are expanded
    */
@@ -311,9 +323,9 @@ public class MCTS_TestDouble {
 
 
   /**
-   * checks all the parents children for their UCBk value, returns the node with the highest value
-   * = "BestChild" from the pseudo-code
+   * Checks all the parents children for their UCT value, returns the node with the highest value.
    * @param parent node
+   * @param C value for UCT
    * @return the child node with the highest UCT value
    */
   TreeNode bestChild(TreeNode parent, double c) {
@@ -356,45 +368,123 @@ public class MCTS_TestDouble {
    * Simulates one move and returns a new node containing the new state.
    * @param alter node, this nodes GameState is altered
    * @param original node, the move made gets removed from it
+   * @param if this is a simulation or expansion. If it's a simulation there are optimizations in TreeNode.
    * @return a child node containing the simulation result
    */
-  void oneMove(TreeNode alter, TreeNode original) {
-    alterGameState(alter.gameState, getAndRemoveMoveHeuristic(original));
-    alter.initPossibleMovesAndChildren();
+  void oneMove(TreeNode alter, TreeNode original, boolean simulate) {
+//    alter.printGrids();
+    if(simulate) {
+      ReferenceMove move = getAndRemoveMoveHeuristicFromGrid(original);
+      HashSet<Piece> updateThese = new HashSet<Piece>();
+      Piece center = move.getPiece();
+      int[] oldPos = center.getPosition();
+      updateThese.add(center);
+      MCTS_Tools.putNeighbouringPieces(updateThese, alter.gameState.getGrid(), oldPos);
+      alterGameStateAndGrid(alter.gameState, move);
+      MCTS_Tools.putNeighbouringPieces(updateThese, alter.gameState.getGrid(), center.getPosition());
+//      System.out.println(move.getPiece().getId() + " moves to " + move.getNewPosition()[0] + "-" + move.getNewPosition()[1]);
+      alter.updateGrids(updateThese);
+//      alter.printGrids();
+      
+      //TODO putNeighbouringPieces methode entfernen, alte und neue position und piece übergeben, dann in treenode berechnen.
+      
+    } else {
+      ReferenceMove move = getAndRemoveMoveHeuristic(original);
+      move.setPiece(alter.gameState.getGrid().getGrid()[move.getPiece().getPosition()[0]][move.getPiece().getPosition()[1]].getPiece());
+      alterGameStateAndGrid(alter.gameState, move);
+      alter.initPossibleMovesAndChildren();
+    }
   }   
 
-  @SuppressWarnings("unlikely-arg-type")
-  Move getAndRemoveMoveHeuristic(TreeNode parent) {
+  /**
+   * A nodes possible moves get checked, the first one to fit the heuristic gets returned.
+   * The heuristic does not check all moves if a move fits the heuristic.
+   * If no move fits the heuristic, a random one gets returned.
+   * @param parent
+   * @return possible move
+   */
+  ReferenceMove getAndRemoveMoveHeuristicFromGrid(TreeNode parent) {
+    for(Piece piece : parent.gameState.getTeams()[parent.gameState.getCurrentTeam()].getPieces()) {
+      if(parent.gameState.getGrid().getPieceVisions().get(piece) == null)
+        System.out.println("weird null pointer in getAndRemove");
+      for(int i=0; i<parent.gameState.getGrid().getPieceVisions().get(piece).size(); i++) {
+        int[] pos = parent.gameState.getGrid().getPieceVisions().get(piece).get(i);
+        if(MCTS_Tools.emptyField(parent.gameState.getGrid(), pos)) {
+          continue;
+        }
+        if(MCTS_Tools.otherTeamsBase(parent.gameState.getGrid(), pos, piece.getPosition())) {
+          return new ReferenceMove(piece, pos);
+        }
+        if(!MCTS_Tools.occupiedBySameTeam(parent.gameState, piece.getPosition(), pos)
+            && MCTS_Tools.occupiedByWeakerOpponent(parent.gameState.getGrid().getPosition(pos[1], pos[0]).getPiece(), piece)) {
+          return new ReferenceMove(piece, pos);
+        }
+      }
+    }
+    return getRandomFromGrid(parent);
+  }
+  
+  /**
+   * Returns a valid random move from a TreeNode.
+   * @param parent
+   * @return random move
+   */
+  ReferenceMove getRandomFromGrid(TreeNode parent){
+    ReferenceMove move = null;
+    
+    try {
+      move = MCTS_Tools.pickMoveComplex(parent.gameState);
+    } catch (NoMovesLeftException e) {
+      e.printStackTrace();
+    } catch (InvalidShapeException e) {
+      e.printStackTrace();
+    }
+    
+    return move;
+  }
+
+  
+  
+  /**
+   * A nodes possible moves get checked, the first one to fit the heuristic gets returned.
+   * The heuristic does not check all moves if a move fits the heuristic.
+   * If no move fits the heuristic, a random one gets returned.
+   * The move gets removed from the parents possibleMoves.
+   * @param parent
+   * @return valid move
+   */
+  ReferenceMove getAndRemoveMoveHeuristic(TreeNode parent) {
     for(Piece piece : parent.possibleMoves.keySet()) {
-//      Piece picked = Arrays.asList(parent.gameState.getTeams()[parent.gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(key)).findFirst().get();
       for(int i=0; i<parent.possibleMoves.get(piece).size(); i++) {
         int[] pos = parent.possibleMoves.get(piece).get(i);
-        if(parent.gameState.getGrid()[pos[0]][pos[1]].contains("b:") && 
-            !parent.gameState.getGrid()[pos[0]][pos[1]].split("b:")[1].equals(parent.gameState.getCurrentTeam())) {
+        if(MCTS_Tools.emptyField(parent.gameState.getGrid(), pos)) {
+          continue;
+        }
+        if(MCTS_Tools.otherTeamsBase(parent.gameState.getGrid(), pos, piece.getPosition())) {
           return createMoveDeleteIndex(parent, piece, i);
         }
-        if(parent.gameState.getGrid()[pos[0]][pos[1]].contains("p:")&& 
-            !parent.gameState.getGrid()[pos[0]][pos[1]].split("p:")[1].split("_")[0].equals(parent.gameState.getCurrentTeam())) {
-          if(AI_Tools_Old.validPos(pos, piece, parent.gameState))
-            return createMoveDeleteIndex(parent, piece, i);
+        if(MCTS_Tools.occupiedByWeakerOpponent(parent.gameState.getGrid().getPosition(pos[1], pos[0]).getPiece(), piece)) {
+          return createMoveDeleteIndex(parent, piece, i);
         }
       }
     }
 
     return getAndRemoveMoveRandom(parent);
   }
-
-  Move getAndRemoveMoveRandom(TreeNode parent){
+  
+  /**
+   * Returns a valid random move from a TreeNode, removes it from the nodes possibleMoves.
+   * @param parent
+   * @return random move
+   */
+  ReferenceMove getAndRemoveMoveRandom(TreeNode parent){
     Piece key = (Piece)parent.possibleMoves.keySet().toArray()[rand.nextInt(parent.possibleMoves.keySet().size())];
     int randomMove = rand.nextInt(parent.possibleMoves.get(key).size());
-
     return createMoveDeleteIndex(parent, key, randomMove);
   }
 
-  Move createMoveDeleteIndex(TreeNode parent, Piece key, int index) {
-    Move move = new Move();
-    move.setPieceId(key.getId());
-    move.setNewPosition(parent.possibleMoves.get(key).get(index));
+  ReferenceMove createMoveDeleteIndex(TreeNode parent, Piece key, int index) {
+    ReferenceMove move = new ReferenceMove(key, parent.possibleMoves.get(key).get(index));
 
     parent.possibleMoves.get(key).remove(index);
     if(parent.possibleMoves.get(key).size() <= 0) {
@@ -408,51 +498,45 @@ public class MCTS_TestDouble {
    * This method checks if a team got no more flags or no more pieces.
    * @param gameState
    */
-  void removeTeamCheck(GameState gameState) {
+  void removeTeamCheck(ReferenceGameState gameState) {
     for(int i=0; i<gameState.getTeams().length; i++) {
       if(gameState.getTeams()[i] == null)
         continue;
       if(gameState.getTeams()[i].getFlags() == 0 ||
           gameState.getTeams()[i].getPieces().length == 0) {
-        AI_Tools_Old.removeTeam(gameState, i--);
+        MCTS_Tools.removeTeam(gameState, i--);
       }
     }
   }
 
   /**
    * A given GameState is updated with a given move.
-   * This method is pretty much a replica of the makeMove method from the server.
+   * This method updates a gameState and the grid with a given move.
+   * A given Piece moves to a new position, capturing a flag, piece or an empty field.
    * @param gameState
    * @param move
    */
-  void alterGameState(GameState gameState, Move move) {
-    String occupant = gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]];
-    Piece picked = Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream().filter(p -> p.getId().equals(move.getPieceId())).findFirst().get();
-    int[] oldPos = picked.getPosition();
-
-    gameState.getGrid()[oldPos[0]][oldPos[1]] = "";
-
-    if (occupant.contains("p:")) {
-      int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
-      gameState.getTeams()[occupantTeam].setPieces(
-          Arrays.asList(gameState.getTeams()[occupantTeam].getPieces()).stream()
-          .filter(p -> !p.getId().equals(occupant))
+  public void alterGameStateAndGrid(ReferenceGameState gameState, ReferenceMove move) {
+    GridObjectContainer occupant = gameState.getGrid().getPosition(move.getNewPosition()[1], move.getNewPosition()[0]);
+    Piece picked = move.getPiece();
+    gameState.getGrid().setPosition(null, picked.getPosition()[1], picked.getPosition()[0]);
+    if(occupant == null) {
+      gameState.getGrid().setPosition(new GridObjectContainer(GridObjects.piece, gameState.getCurrentTeam(), picked), move.getNewPosition()[1], move.getNewPosition()[0]);
+      picked.setPosition(move.getNewPosition());
+    } else if(occupant.getObject() == GridObjects.piece) {
+      gameState.getTeams()[occupant.getTeamId()].setPieces(
+          Arrays.asList(gameState.getTeams()[occupant.getTeamId()].getPieces()).stream()
+          .filter(p -> !p.getId().equals(occupant.getPiece().getId()))
           .toArray(Piece[]::new));
-      gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
+      gameState.getGrid().setPosition(new GridObjectContainer(GridObjects.piece, gameState.getCurrentTeam(), picked), move.getNewPosition()[1], move.getNewPosition()[0]);
       picked.setPosition(move.getNewPosition());
-    } 
-    else if (occupant.contains("b:")) {
-      int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
-      gameState.getTeams()[occupantTeam].setFlags(gameState.getTeams()[occupantTeam].getFlags() -1);
-      picked.setPosition(AI_Tools_Old.respawnPiecePosition(gameState, gameState.getTeams()[gameState.getCurrentTeam()].getBase()));
-      gameState.getGrid()[picked.getPosition()[0]][picked.getPosition()[1]] = picked.getId();
-    } 
-    else {    
-      gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
-      picked.setPosition(move.getNewPosition());
+    } else {
+      gameState.getTeams()[occupant.getTeamId()].setFlags(gameState.getTeams()[occupant.getTeamId()].getFlags() -1);
+      picked.setPosition(MCTS_Tools.respawnPiecePosition(gameState.getGrid(), gameState.getTeams()[gameState.getCurrentTeam()].getBase()));
+      gameState.getGrid().setPosition(new GridObjectContainer(GridObjects.piece, gameState.getCurrentTeam(), picked), picked.getPosition()[1], picked.getPosition()[0]);
     }
     gameState.setLastMove(move);
-    AI_Tools_Old.toNextTeam(gameState);
+    MCTS_Tools.toNextTeam(gameState);
   }
 
 
@@ -475,7 +559,7 @@ public class MCTS_TestDouble {
         n += 1;
         continue;
       }
-      Move rootMove = root.children[i].gameState.getLastMove();
+      Move rootMove = root.children[i].gameState.getLastMove().toMove();
       sb.append("\n   " + rootMove.getPieceId() + " to [" + rootMove.getNewPosition()[0] + "," + rootMove.getNewPosition()[1] + "]"
           + " winning chance: " + (root.children[i].getV() * 100) + "% with " + root.children[i].getNK() + " nodes" + ", uct: " + root.children[i].getUCT(AI_Constants.C) + " wins 0 " + root.children[i].wins[0] + ", wins 1 " + root.children[i].wins[1]);
     }

@@ -1,11 +1,11 @@
-package org.ctf.ai.mcts;
+package org.ctf.shared.ai.mcts;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import org.ctf.ai.AI_Constants;
-import org.ctf.ai.TestValues;
+import org.ctf.shared.ai.AI_Constants;
+import org.ctf.shared.ai.TestValues;
 import org.ctf.shared.ai.AI_Tools_Old;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
