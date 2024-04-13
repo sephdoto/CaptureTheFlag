@@ -35,8 +35,8 @@ public class ServerCommandTests {
     // joinTest();
     //copierCheck();
     // arrayTest();
-    getStateTests();
-    //AIVSHUMAN();
+    //getStateTests();
+    AIVSHUMAN();
     // testConnectionTimedGameMode();
     // testMalformedConnection();
     // testConnectionTimedMoveMode();
@@ -611,14 +611,14 @@ public class ServerCommandTests {
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     Client javaClient =
         ClientStepBuilder.newBuilder()
-            .enableRestLayer(true)
+            .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
             .AIPlayerSelector(AI.RANDOM)
             .build();
     Client javaClient2 =
         ClientStepBuilder.newBuilder()
-            .enableRestLayer(true)
+            .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
             .HumanPlayer()
@@ -652,12 +652,9 @@ public class ServerCommandTests {
     AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.RANDOM);
     for (int i = 0; i<90;i++){
       try {
-        javaClient.getStateFromServer();
         javaClient2.getStateFromServer();
-
         Controller2.update(javaClient2.getCurrentState());
         javaClient2.makeMove(Controller2.getNextMove());
-        javaClient.getStateFromServer();
         javaClient2.getStateFromServer();
         Controller2.update(javaClient2.getCurrentState());
       } catch (NoMovesLeftException | InvalidShapeException | InvalidMove e) {
