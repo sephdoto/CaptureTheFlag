@@ -29,7 +29,8 @@ class MCTS_ToolsTest {
   void testPutNeighbouringPieces() {
     HashSet<Piece> updateThese = new HashSet<Piece>();
     ReferenceGameState gameState = new ReferenceGameState(TestValues.getTestState());
-    MCTS_Tools.putNeighbouringPieces(updateThese, gameState.getGrid(), gameState.getTeams()[0].getPieces()[2].getPosition());
+    TreeNode node = new TreeNode(null, gameState, null);
+    MCTS_Tools.putNeighbouringPieces(updateThese, node.gameState.getGrid(), node.gameState.getTeams()[0].getPieces()[2].getPosition());
     HashSet<Piece> trueNeighbours = new HashSet<Piece>();
     trueNeighbours.add(gameState.getTeams()[0].getPieces()[3]);
     assertTrue(trueNeighbours.equals(updateThese));
