@@ -1,9 +1,8 @@
-package org.ctf.client;
+package org.ctf.shared.client;
 
-import org.ctf.client.lib.ServerDetails;
-import org.ctf.client.service.CommLayer;
-import org.ctf.client.service.CommLayerInterface;
-import org.ctf.client.service.RestClientLayer;
+import org.ctf.shared.client.service.CommLayer;
+import org.ctf.shared.client.service.CommLayerInterface;
+import org.ctf.shared.client.service.RestClientLayer;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.constants.Constants.Port;

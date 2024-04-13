@@ -1,4 +1,4 @@
-package org.ctf.client.service;
+package org.ctf.shared.client.service;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -8,6 +8,7 @@ import de.unimannheim.swt.pse.ctf.CtfApplication;
 import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
 import java.io.IOException;
 
+import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.map.MapTemplate;

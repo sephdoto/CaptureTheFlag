@@ -1,4 +1,4 @@
-package org.ctf.client.service;
+package org.ctf.shared.client.service;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;

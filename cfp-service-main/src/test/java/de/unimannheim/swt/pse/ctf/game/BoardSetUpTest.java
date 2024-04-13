@@ -1,12 +1,12 @@
 package de.unimannheim.swt.pse.ctf.game;
 
 import static org.junit.jupiter.api.Assertions.*;
-import org.ctf.shared.state.data.exceptions.TooManyPiecesException;
 import org.junit.jupiter.api.Test;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import de.unimannheim.swt.pse.ctf.game.exceptions.TooManyPiecesException;
 import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Team;

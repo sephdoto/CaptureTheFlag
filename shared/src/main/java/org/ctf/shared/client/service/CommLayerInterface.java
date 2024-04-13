@@ -1,4 +1,4 @@
-package org.ctf.client.service;
+package org.ctf.shared.client.service;
 
 
 import org.ctf.shared.state.GameState;

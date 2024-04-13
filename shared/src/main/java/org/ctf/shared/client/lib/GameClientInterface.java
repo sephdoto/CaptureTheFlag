@@ -1,4 +1,4 @@
-package org.ctf.client.lib;
+package org.ctf.shared.client.lib;
 
 import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.state.Move;

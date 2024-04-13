@@ -1,4 +1,4 @@
-package org.ctf.client.lib;
+package org.ctf.shared.client.lib;
 
 public class ServerDetails {
   private String host;

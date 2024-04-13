@@ -1,4 +1,4 @@
-package org.ctf.client;
+package org.ctf.shared.client;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -9,11 +9,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
 import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
 import java.io.IOException;
-import org.ctf.client.service.RestClientLayer;
-import org.ctf.shared.constants.Constants;
+import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.exceptions.Accepted;
-import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.shared.state.data.exceptions.URLError;
 import org.ctf.shared.state.data.map.MapTemplate;
@@ -27,9 +25,9 @@ import org.junit.jupiter.api.Test;
  *
  * @author rsyed
  */
-public class RestClientTests {
+public class ClientTest {
 
-  static RestClientLayer comm = new RestClientLayer();
+  static CommLayer comm = new CommLayer();
   static Client javaClient;
   static Client javaClient2;
   final MapTemplate template = createGameTemplate();
@@ -38,13 +36,31 @@ public class RestClientTests {
   static void setup() {
     String[] args = new String[] {};
     CtfApplication.main(args);
-    javaClient = ClientStepBuilder.newBuilder().enableRestLayer(true).onLocalHost().onPort("8080").HumanPlayer().build();
+    javaClient =
+        ClientStepBuilder.newBuilder()
+            .enableRestLayer(false)
+            .onLocalHost()
+            .onPort("8080")
+            .HumanPlayer()
+            .build();
   }
 
   @BeforeEach
   void setupBeforeEach() {
-    javaClient = ClientStepBuilder.newBuilder().enableRestLayer(true).onLocalHost().onPort("8080").HumanPlayer().build();
-    javaClient2 = ClientStepBuilder.newBuilder().enableRestLayer(true).onLocalHost().onPort("8080").HumanPlayer().build();
+    javaClient =
+        ClientStepBuilder.newBuilder()
+            .enableRestLayer(false)
+            .onLocalHost()
+            .onPort("8080")
+            .HumanPlayer()
+            .build();
+    javaClient2 =
+        ClientStepBuilder.newBuilder()
+            .enableRestLayer(false)
+            .onLocalHost()
+            .onPort("8080")
+            .HumanPlayer()
+            .build();
   }
 
   @Test
@@ -100,7 +116,7 @@ public class RestClientTests {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
     assertNotNull(javaClient.getCurrentTeamTurn());
   }
 

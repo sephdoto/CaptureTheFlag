@@ -1,10 +1,12 @@
-package org.ctf.client;
+package org.ctf.shared.client;
 
 import com.google.gson.Gson;
 import java.util.Date;
-import org.ctf.client.lib.GameClientInterface;
-import org.ctf.client.service.CommLayerInterface;
+
+import org.ctf.shared.client.lib.GameClientInterface;
+import org.ctf.shared.client.service.CommLayerInterface;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
@@ -385,7 +387,7 @@ public class Client implements GameClientInterface {
     return gameOver;
   }
 
-  public void setPlayerType(Constants.AI playerType) {
+  public void setPlayerType(AI playerType) {
     this.playerType = playerType;
   }
 }

@@ -4,6 +4,7 @@ package de.unimannheim.swt.pse.ctf.game;
 import de.unimannheim.swt.pse.ctf.game.exceptions.GameOver;
 import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
 import de.unimannheim.swt.pse.ctf.game.exceptions.NoMoreTeamSlots;
+import de.unimannheim.swt.pse.ctf.game.exceptions.TooManyPiecesException;
 import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Move;
@@ -21,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import javafx.scene.paint.Color;
-import org.ctf.shared.state.data.exceptions.TooManyPiecesException;
 
 /**
  * Game Engine Implementation

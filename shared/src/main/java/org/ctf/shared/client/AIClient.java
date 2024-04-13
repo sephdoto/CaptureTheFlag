@@ -1,10 +1,9 @@
-package org.ctf.client;
+package org.ctf.shared.client;
 
 import java.util.ArrayList;
 
-import org.ctf.ai.AI_Controller;
-import org.ctf.client.lib.GameClientInterface;
-import org.ctf.client.service.CommLayerInterface;
+import org.ctf.shared.client.service.CommLayer;
+import org.ctf.shared.client.service.CommLayerInterface;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.state.Move;

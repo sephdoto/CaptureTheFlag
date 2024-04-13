@@ -1,6 +1,8 @@
 package de.unimannheim.swt.pse.ctf.game;
 
 import com.google.gson.Gson;
+
+import de.unimannheim.swt.pse.ctf.game.exceptions.TooManyPiecesException;
 import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 import de.unimannheim.swt.pse.ctf.game.map.PieceDescription;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
@@ -9,11 +11,9 @@ import de.unimannheim.swt.pse.ctf.game.state.Team;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
-import org.ctf.shared.state.data.exceptions.TooManyPiecesException;
 
 /**
- * Stores all static helper methods for the {@link GameEngine#create(MapTemplate) create}
- * method
+ * Stores all static helper methods for the {@link GameEngine#create(MapTemplate) create} method
  *
  * @author rsyed & ysiebenh & sistumpf
  */
@@ -126,7 +126,7 @@ public class BoardSetUp {
       while (true) {
         LinkedList<GameState> neighbors =
             EngineTools.getNeighbors(current, Integer.decode(t.getId()), null);
-        if(neighbors.size() == 0) {
+        if (neighbors.size() == 0) {
           break;
         }
         GameState bestNeighbor = EngineTools.getBestState(neighbors, Integer.decode(t.getId()));
@@ -150,7 +150,7 @@ public class BoardSetUp {
    * @param GameState gameState
    */
   static void placePiecesDefensive(GameState gs) {
-    // TODO implements position out of bounds 
+    // TODO implements position out of bounds
     placePiecesSpaced(gs);
     for (int i = 0; i < gs.getTeams().length; i++) {
       LinkedList<Piece> pieces = EngineTools.getStrongest(gs.getTeams()[i].getPieces());
@@ -160,7 +160,8 @@ public class BoardSetUp {
           for (Piece p : pieces) {
             if (p.getPosition()[0] == gs.getTeams()[i].getBase()[0] + y
                 && p.getPosition()[1] == gs.getTeams()[i].getBase()[1] + x) {
-              toDelete = p;;
+              toDelete = p;
+              ;
             }
           }
           pieces.remove(toDelete);
@@ -182,8 +183,8 @@ public class BoardSetUp {
   }
 
   /**
-   * Places the pieces on the board randomly using the
-   * {@link EngineTools#seededRandom(String[][], int, int, int) seededRandom} method
+   * Places the pieces on the board randomly using the {@link EngineTools#seededRandom(String[][],
+   * int, int, int) seededRandom} method
    *
    * @author ysiebenh
    * @param GameState gameState
@@ -203,7 +204,6 @@ public class BoardSetUp {
         } while (!gs.getGrid()[newY][newX].equals(""));
         p.setPosition(new int[] {newY, newX});
         gs.getGrid()[newY][newX] = p.getId();
-
       }
       i++;
     }
@@ -225,7 +225,8 @@ public class BoardSetUp {
       if (boundaries[t][4] == 0) {
         row = gs.getTeams()[t].getBase()[0] - 1;
       } else {
-        row = gs.getTeams()[t].getBase()[0] + 1;;
+        row = gs.getTeams()[t].getBase()[0] + 1;
+        ;
       }
 
       int column = boundaries[t][2] + 1;
@@ -242,8 +243,10 @@ public class BoardSetUp {
           column = boundaries[t][2] + 1;
 
           if (gs.getTeams()[t].getPieces().length - j < (boundaries[t][3] - boundaries[t][2]) / 2) {
-            column = (boundaries[t][3] - boundaries[t][2]) / 2
-                - (gs.getTeams()[t].getPieces().length - j) / 2 + boundaries[t][2];
+            column =
+                (boundaries[t][3] - boundaries[t][2]) / 2
+                    - (gs.getTeams()[t].getPieces().length - j) / 2
+                    + boundaries[t][2];
           }
         }
 
@@ -335,7 +338,7 @@ public class BoardSetUp {
   }
 
   /**
-   * Helper method to initialize the grid and teams 
+   * Helper method to initialize the grid and teams
    *
    * @author rsyed
    * @param GameState the object to to operations on
@@ -344,7 +347,7 @@ public class BoardSetUp {
    */
   static GameState makeGridandTeams(GameState gs, MapTemplate template) {
     gs.setGrid(
-      initEmptyGrid(
+        initEmptyGrid(
             template.getGridSize()[0], template.getGridSize()[1])); // INIT Size and make the board
     gs.setTeams(initTeams(template));
     return gs;
