@@ -55,7 +55,6 @@ public class Client implements GameClientInterface {
   private String[] winners;
 
   // Block for Team Data
-  public Constants.AI playerType;
   private String teamSecret;
   public String teamID;
   public String teamColor;
@@ -385,9 +384,5 @@ public class Client implements GameClientInterface {
 
   public boolean isGameOver() {
     return gameOver;
-  }
-
-  public void setPlayerType(AI playerType) {
-    this.playerType = playerType;
   }
 }

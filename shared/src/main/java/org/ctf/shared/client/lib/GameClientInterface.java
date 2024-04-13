@@ -52,7 +52,4 @@ public interface GameClientInterface {
 
   /** Deletes the current session */
   void deleteSession();
-
-  /** Sets the type of player the Client is going to use */
-  void setPlayerType(AI num);
 }

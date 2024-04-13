@@ -35,8 +35,8 @@ public class ServerCommandTests {
     // joinTest();
     //copierCheck();
     // arrayTest();
-    //getStateTests();
-    AIVSHUMAN();
+    getStateTests();
+    //AIVSHUMAN();
     // testConnectionTimedGameMode();
     // testMalformedConnection();
     // testConnectionTimedMoveMode();
@@ -435,14 +435,14 @@ public class ServerCommandTests {
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     Client javaClient =
         ClientStepBuilder.newBuilder()
-            .enableRestLayer(true)
+            .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
             .HumanPlayer()
             .build();
     Client javaClient2 =
         ClientStepBuilder.newBuilder()
-            .enableRestLayer(true)
+            .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
             .HumanPlayer()
@@ -474,20 +474,28 @@ public class ServerCommandTests {
     javaClient2.getStateFromServer();
     System.out.println(gson.toJson(javaClient.getCurrentState()));
     AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS);
-    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.RANDOM);
+    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS);
     for (int i = 0; i<90;i++){
       try {
+        if(javaClient.getCurrentState().getCurrentTeam() == Integer.parseInt(javaClient.teamID)){
+          System.out.println("it was team 0s turn!");
         javaClient.makeMove(Controller.getNextMove());
+        System.out.println("team 0 made a move");
         javaClient.getStateFromServer();
         javaClient2.getStateFromServer();
         Controller.update(javaClient.getCurrentState());
         Controller2.update(javaClient2.getCurrentState());
-        javaClient2.makeMove(Controller2.getNextMove());
-        javaClient.getStateFromServer();
-        javaClient2.getStateFromServer();
-        Controller.update(javaClient.getCurrentState());
-        Controller2.update(javaClient2.getCurrentState());
-      } catch (NoMovesLeftException | InvalidShapeException | InvalidMove e) {
+        } else {
+          System.out.println("it was team 1s turn!");
+          javaClient2.makeMove(Controller2.getNextMove());
+          System.out.println("team 1 made a move");
+          javaClient.getStateFromServer();
+          javaClient2.getStateFromServer();
+          Controller.update(javaClient.getCurrentState());
+          Controller2.update(javaClient2.getCurrentState());
+        }
+        Thread.sleep(1000);
+      } catch (NoMovesLeftException | InvalidShapeException | InterruptedException | InvalidMove e) {
         javaClient.getStateFromServer();
         System.out.println(gson.toJson(javaClient.getCurrentState()));
         e.printStackTrace();
@@ -616,53 +624,10 @@ public class ServerCommandTests {
             .onPort("8888")
             .AIPlayerSelector(AI.RANDOM)
             .build();
-    Client javaClient2 =
-        ClientStepBuilder.newBuilder()
-            .enableRestLayer(false)
-            .onLocalHost()
-            .onPort("8888")
-            .HumanPlayer()
-            .build();
     javaClient.createGame(template);
     javaClient.joinGame("0");
-    javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "1");
-    javaClient.getStateFromServer();
-    javaClient2.getStateFromServer();
-  /*   Move move = new Move();
-    if (javaClient.getCurrentTeamTurn() == 1) {
-      try {
-        move.setPieceId("p:1_2");
-        move.setNewPosition(new int[] {9, 8});
-        javaClient.makeMove(move);
-      } catch (Exception e) {
-        System.out.println("Made move");
-      }
-    } else {
-      try {
-        move.setPieceId("p:0_2");
-        move.setNewPosition(new int[] {0, 1});
-        javaClient2.makeMove(move);
-      } catch (Exception e) {
-        System.out.println("Made move");
-      }
-    } */
-    javaClient.getStateFromServer();
-    javaClient2.getStateFromServer();
-    System.out.println(gson.toJson(javaClient.getCurrentState()));
-    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.RANDOM);
-    for (int i = 0; i<90;i++){
-      try {
-        javaClient2.getStateFromServer();
-        Controller2.update(javaClient2.getCurrentState());
-        javaClient2.makeMove(Controller2.getNextMove());
-        javaClient2.getStateFromServer();
-        Controller2.update(javaClient2.getCurrentState());
-      } catch (NoMovesLeftException | InvalidShapeException | InvalidMove e) {
-        javaClient.getStateFromServer();
-        System.out.println(gson.toJson(javaClient.getCurrentState()));
-        e.printStackTrace();
-      }
-    }
+    System.out.println("joined");
+    ((AIClient) javaClient).run();
   }
 
 }

@@ -1,46 +1,44 @@
 package org.ctf.shared.client;
 
 import java.util.ArrayList;
-
 import org.ctf.shared.ai.AI_Controller;
-import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.client.service.CommLayerInterface;
-import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.state.Move;
 
-public class AIClient extends Client implements Runnable{
+public class AIClient extends Client implements Runnable {
 
-  Constants.AI selectedAI;
-  ArrayList<Move> moves;
+  public AI selectedPlayer;
+  public ArrayList<Move> moves;
 
   AIClient(CommLayerInterface comm, String IP, String port) {
     super(comm, IP, port);
-    moves = new ArrayList<Move>();
+    //moves = new ArrayList<Move>();
   }
 
-  public void setSelectedAI(Constants.AI selectedAI) {
-    this.selectedAI = selectedAI;
+  AIClient(CommLayerInterface comm, String IP, String port, AI selected) {
+    this(comm, IP, port);
+    this.selectedPlayer = selected;
+
   }
 
   @Override
   public void run() {
     try {
+      AI_Controller controller = new AI_Controller(getCurrentState(), this.selectedPlayer);
       // checks if game has a start date and no end date
       while ((this.getEndDate() == null) && (this.getStartDate() != null)) {
-        // Saves the last move locally
-        Move lastMove = this.getLastMove();
-
-        if ((this.getLastMove() != null) && (this.getLastMove() != lastMove)) {
-          moves.add(getLastMove());
-        }
         this.getSessionFromServer();
         this.getStateFromServer();
-        AI_Controller Controller = new AI_Controller(getCurrentState(), AI.MCTS_IMPROVED);
-        makeMove(Controller.getNextMove());
-        getSessionFromServer();
-      }
-      Thread.sleep(800);
+        if(this.getCurrentState().getCurrentTeam() == Integer.parseInt(this.teamID)){
+          System.out.println("Its my turn!");
+          this.makeMove(controller.getNextMove());
+        }
+        
+        this.getSessionFromServer();
+        controller.update(getCurrentState());
+        Thread.sleep(800);
+      }  
     } catch (Exception e) {
 
     }

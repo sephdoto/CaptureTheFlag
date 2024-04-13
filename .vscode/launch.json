@@ -6,16 +6,23 @@
     "configurations": [
         {
             "type": "java",
-            "name": "EntryPoint",
+            "name": "AIPlayerSimulator",
             "request": "launch",
-            "mainClass": "org.ctf.ui.EntryPoint",
-            "projectName": "ctf-ui"
+            "mainClass": "org.ctf.shared.client.AIPlayerSimulator",
+            "projectName": "shared"
         },
         {
             "type": "java",
-            "name": "App",
+            "name": "ServerCommandTests",
             "request": "launch",
-            "mainClass": "org.ctf.ui.App",
+            "mainClass": "org.ctf.shared.client.ServerCommandTests",
+            "projectName": "shared"
+        },
+        {
+            "type": "java",
+            "name": "EntryPoint",
+            "request": "launch",
+            "mainClass": "org.ctf.ui.EntryPoint",
             "projectName": "ctf-ui"
         },
         {
@@ -24,48 +31,6 @@
             "request": "launch",
             "mainClass": "org.ctf.CtfClientApplication",
             "projectName": "httpservice"
-        },
-        {
-            "type": "java",
-            "name": "CtfClientApplication",
-            "request": "launch",
-            "mainClass": "org.ctf.client.service.CtfClientApplication",
-            "projectName": "ctf-client"
-        },
-        {
-            "type": "java",
-            "name": "CtfClientApplication",
-            "request": "launch",
-            "mainClass": "org.ctf.client.CtfClientApplication",
-            "projectName": "ctf-client"
-        },
-        {
-            "type": "java",
-            "name": "clientTest",
-            "request": "launch",
-            "mainClass": "org.ctf.client.clientTest",
-            "projectName": "ctf-client"
-        },
-        {
-            "type": "java",
-            "name": "ServerCommandTests",
-            "request": "launch",
-            "mainClass": "org.ctf.client.ServerCommandTests",
-            "projectName": "ctf-client"
-        },
-        {
-            "type": "java",
-            "name": "GameEngine",
-            "request": "launch",
-            "mainClass": "de.unimannheim.swt.pse.ctf.game.GameEngine",
-            "projectName": "ctf"
-        },
-        {
-            "type": "java",
-            "name": "CtfApplication",
-            "request": "launch",
-            "mainClass": "de.unimannheim.swt.pse.ctf.CtfApplication",
-            "projectName": "ctf"
         },
         {
             "type": "java",
@@ -82,35 +47,11 @@
         },
         {
             "type": "java",
-            "name": "AI_Controller",
-            "request": "launch",
-            "mainClass": "org.ctf.AI.AI_Controller",
-            "projectName": "ctf-AI"
-        },
-        {
-            "type": "java",
-            "name": "ServerCommandTests",
-            "request": "launch",
-            "mainClass": "org.ctf.client.ServerCommandTests",
-            "projectName": "ctf-Client"
-        },
-        {
-            "type": "java",
             "name": "Main",
             "request": "launch",
             "vmArgs": "--module-path C:/Programming Utils/javafx-sdk-21.0.2/lib --add-modules javafx.controls,javafx.fxml",
             "mainClass": "Main",
             "projectName": "ctf-ui"
         },
-        {
-            "type": "java",
-            "name": "CtfApplication",
-            "request": "launch",
-            "mainClass": "de.unimannheim.swt.pse.ctf.CtfApplication",
-            "projectName": "ctf",
-            "noDebug": false,
-            "__progressId": "77aea0c7-7869-4f36-b31f-486e91de5ae2",
-            "__origin": "internal"
-        }
     ]
 }
