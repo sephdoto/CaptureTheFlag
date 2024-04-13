@@ -83,7 +83,6 @@
 
   <modules>
     <module>ctf-ui</module>
-    <module>ctf-ai</module>
     <module>shared</module>
     <module>cfp-service-main</module>
   </modules>
