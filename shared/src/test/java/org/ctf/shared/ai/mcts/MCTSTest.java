@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import org.ctf.shared.ai.AI_Constants;
+import org.ctf.shared.ai.AI_Tools;
 import org.ctf.shared.ai.TestValues;
-import org.ctf.shared.ai.AI_Tools_Old;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
@@ -456,10 +456,10 @@ class MCTSTest {
   void testBestChild() {
     mcts.root.children = new TreeNode[2];
     mcts.root.children[0] =
-        new TreeNode(null, AI_Tools_Old.toNextTeam(mcts.root.copyGameState()), new int[] {0, 0});
+        new TreeNode(null, AI_Tools.toNextTeam(mcts.root.copyGameState()), new int[] {0, 0});
     mcts.root.children[0].parent = mcts.root;
     mcts.root.children[1] =
-        new TreeNode(null, AI_Tools_Old.toNextTeam(mcts.root.copyGameState()), new int[] {0, 0});
+        new TreeNode(null, AI_Tools.toNextTeam(mcts.root.copyGameState()), new int[] {0, 0});
     mcts.root.children[1].parent = mcts.root; // 2 Kindknoten als Kinder von root initialisiert
 
     mcts.root.children[0].wins = new int[] {4, 0}; // Team 0 hat mehr wins als Team 1
@@ -485,10 +485,10 @@ class MCTSTest {
   void testGetRootBest() {
     mcts.root.children = new TreeNode[2];
     mcts.root.children[0] =
-        new TreeNode(null, AI_Tools_Old.toNextTeam(mcts.root.copyGameState()), new int[] {0, 0});
+        new TreeNode(null, AI_Tools.toNextTeam(mcts.root.copyGameState()), new int[] {0, 0});
     mcts.root.children[0].parent = mcts.root;
     mcts.root.children[1] =
-        new TreeNode(null, AI_Tools_Old.toNextTeam(mcts.root.copyGameState()), new int[] {0, 0});
+        new TreeNode(null, AI_Tools.toNextTeam(mcts.root.copyGameState()), new int[] {0, 0});
     mcts.root.children[1].parent = mcts.root; // 2 Kindknoten als Kinder von root initialisiert
 
     mcts.root.children[0].wins = new int[] {4, 0}; // Team 0 hat mehr wins als Team 1

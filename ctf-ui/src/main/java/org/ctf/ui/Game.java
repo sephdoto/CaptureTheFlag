@@ -5,7 +5,7 @@ import configs.GameMode;
 import java.util.ArrayList;
 import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
-import org.ctf.shared.ai.AI_Tools_Old;
+import org.ctf.shared.ai.AI_Tools;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.exceptions.ForbiddenMove;
@@ -100,7 +100,7 @@ public class Game {
     Glow glow = new Glow();
     glow.setLevel(0.2);
     String pieceName = currentPlayer.getPiece().getId();
-    possibleMoves = AI_Tools_Old.getPossibleMoves(state, pieceName, possibleMoves);
+    possibleMoves = AI_Tools.getPossibleMoves(state, pieceName, possibleMoves);
     for (CostumFigurePain c : cb.getFigures().values()) {
       if (c != currentPlayer) {
         c.disableShadow();

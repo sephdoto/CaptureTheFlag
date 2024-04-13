@@ -1,6 +1,7 @@
 package org.ctf.shared.ai;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.stream.Stream;
 import org.ctf.shared.state.GameState;
@@ -164,6 +165,26 @@ public class AI_Tools {
   }
 
   /**
+   * The old getPossibleMoves method, which takes a pieceId String instead of a piece.
+   * It finds the piece in the gameState, then calls the new getPossibleMoves method.
+   * @param gameState
+   * @param pieceId
+   * @param possibleMoves
+   * @return ArrayList<int[]> that contains all valid positions a piece could move to
+   */
+  public static ArrayList<int[]> getPossibleMoves(
+      GameState gameState, String pieceId, ArrayList<int[]> possibleMoves) {
+    Piece piece =
+        Arrays.stream(
+            gameState.getTeams()[Integer.parseInt(pieceId.split(":")[1].split("_")[0])]
+                .getPieces())
+        .filter(p -> p.getId().equals(pieceId))
+        .findFirst()
+        .get();
+    return getPossibleMoves(gameState, piece, possibleMoves);
+  }
+  
+  /**
    * Given a Piece and a GameState containing the Piece, an ArrayList with all valid locations the
    * Piece can walk on is returned. The ArrayList contains int[2] values, representing a (y,x)
    * location on the grid.
@@ -179,7 +200,7 @@ public class AI_Tools {
     ArrayList<int[]> dirMap = new ArrayList<int[]>();
     if (piece.getDescription().getMovement().getDirections() == null) {
       try {
-        getShapeMoves(gameState, piece, possibleMoves);
+        possibleMoves.addAll(getShapeMoves(gameState, piece, possibleMoves));
       } catch (InvalidShapeException e) {
         e.printStackTrace();
       }
