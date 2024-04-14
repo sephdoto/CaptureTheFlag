@@ -104,7 +104,8 @@ public class NewGameEngine implements Game {
    * If the game is over a String Array containing all winner IDs is returned. This method relies on
    * the fact that loser teams get set to null in the gameState.teams Array.
    *
-   * @author Code: sistumpf Fixes: rsyed
+   * @author Code: sistumpf 
+   * @author Fixes: rsyed
    * @return {@link Team#getId()} if there is a winner
    */
   @Override
