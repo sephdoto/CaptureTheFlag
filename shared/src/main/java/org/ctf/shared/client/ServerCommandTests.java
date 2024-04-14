@@ -452,7 +452,7 @@ public class ServerCommandTests {
     javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "1");
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
-  /*   Move move = new Move();
+   /*   Move move = new Move();
     if (javaClient.getCurrentTeamTurn() == 1) {
       try {
         move.setPieceId("p:1_2");
@@ -469,12 +469,12 @@ public class ServerCommandTests {
       } catch (Exception e) {
         System.out.println("Made move");
       }
-    } */
+    }  */
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
     System.out.println(gson.toJson(javaClient.getCurrentState()));
     AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS);
-    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS);
+    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS_IMPROVED);
     for (int i = 0; i<90;i++){
       try {
         if(javaClient.getCurrentState().getCurrentTeam() == Integer.parseInt(javaClient.teamID)){
