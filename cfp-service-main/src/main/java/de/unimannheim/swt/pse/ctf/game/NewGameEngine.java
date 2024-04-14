@@ -308,9 +308,8 @@ public class NewGameEngine implements Game {
                     // TODO ASK SIMON FOR CLARIFICATION ON HOW TO DO BEST DO THIS
                     // TODO SWTICH THE CURRENT TEAM TO THE NEXT TEAM
 
-                    this.turnEndsBy = // UPDATES when the next turn should end
-                        Clock.fixed(
-                            Clock.offset(currentTime, turnTime).instant(), ZoneId.systemDefault());
+                  
+                    increaseTurnTimer();  // UPDATES when the next turn should end
                   }
                   if (isGameOver()) { // Checks if game is over
                     moveTimeLimitedGameTrigger = false; // Ends the thread if game is over
