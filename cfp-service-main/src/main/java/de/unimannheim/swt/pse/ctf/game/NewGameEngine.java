@@ -108,7 +108,6 @@ public class NewGameEngine implements Game {
    * the fact that loser teams get set to null in the gameState.teams Array.
    *
    * @author Code: sistumpf
-   * @author Fixes: rsyed
    * @return {@link Team#getId()} if there is a winner
    */
   @Override
