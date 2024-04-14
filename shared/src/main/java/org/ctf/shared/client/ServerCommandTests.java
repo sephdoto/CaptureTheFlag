@@ -3,6 +3,11 @@ package org.ctf.shared.client;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.sql.Time;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.ZoneId;
+
 import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
@@ -10,7 +15,6 @@ import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.constants.Constants.Port;
 import org.ctf.shared.state.Move;
-import org.ctf.shared.state.Team;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.dto.GameSessionRequest;
@@ -33,16 +37,27 @@ public class ServerCommandTests {
     // testConnection();
     // testStart();
     // joinTest();
-    //copierCheck();
+    // copierCheck();
     // arrayTest();
-    getStateTests();
-    //AIVSHUMAN();
+    //getStateTests();
+    // AIVSHUMAN();
     // testConnectionTimedGameMode();
     // testMalformedConnection();
     // testConnectionTimedMoveMode();
-
+    TimeTests();
     // join();
     // joinNDelete();
+  }
+
+  public static void TimeTests() {
+    Duration totalGameTime =
+    Duration.ofSeconds(10);
+    Clock currentTime = Clock.systemDefaultZone(); // Inits Calender when the Game Started
+    Clock gameShouldEndBy =
+        Clock.fixed(Clock.offset(currentTime, totalGameTime).instant(), ZoneId.systemDefault());
+
+    Duration test1 = Duration.between(currentTime.instant(), gameShouldEndBy.instant());
+    System.out.println(Math.toIntExact(test1.getSeconds()));
   }
 
   public static void testConnection() {
@@ -160,9 +175,6 @@ public class ServerCommandTests {
     MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
     GameSessionRequest request = new GameSessionRequest();
     request.setTemplate(test);
-
-   
-
   }
 
   public static void joinTest() {
@@ -452,7 +464,7 @@ public class ServerCommandTests {
     javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "1");
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
-   /*   Move move = new Move();
+    /*   Move move = new Move();
     if (javaClient.getCurrentTeamTurn() == 1) {
       try {
         move.setPieceId("p:1_2");
@@ -475,16 +487,16 @@ public class ServerCommandTests {
     System.out.println(gson.toJson(javaClient.getCurrentState()));
     AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS);
     AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS_IMPROVED);
-    for (int i = 0; i<90;i++){
+    for (int i = 0; i < 90; i++) {
       try {
-        if(javaClient.getCurrentState().getCurrentTeam() == Integer.parseInt(javaClient.teamID)){
+        if (javaClient.getCurrentState().getCurrentTeam() == Integer.parseInt(javaClient.teamID)) {
           System.out.println("it was team 0s turn!");
-        javaClient.makeMove(Controller.getNextMove());
-        System.out.println("team 0 made a move");
-        javaClient.getStateFromServer();
-        javaClient2.getStateFromServer();
-        Controller.update(javaClient.getCurrentState());
-        Controller2.update(javaClient2.getCurrentState());
+          javaClient.makeMove(Controller.getNextMove());
+          System.out.println("team 0 made a move");
+          javaClient.getStateFromServer();
+          javaClient2.getStateFromServer();
+          Controller.update(javaClient.getCurrentState());
+          Controller2.update(javaClient2.getCurrentState());
         } else {
           System.out.println("it was team 1s turn!");
           javaClient2.makeMove(Controller2.getNextMove());
@@ -495,7 +507,10 @@ public class ServerCommandTests {
           Controller2.update(javaClient2.getCurrentState());
         }
         Thread.sleep(1000);
-      } catch (NoMovesLeftException | InvalidShapeException | InterruptedException | InvalidMove e) {
+      } catch (NoMovesLeftException
+          | InvalidShapeException
+          | InterruptedException
+          | InvalidMove e) {
         javaClient.getStateFromServer();
         System.out.println(gson.toJson(javaClient.getCurrentState()));
         e.printStackTrace();
@@ -504,7 +519,7 @@ public class ServerCommandTests {
   }
 
   public static void AIVSHUMAN() {
-    
+
     String jsonPayload =
         """
           {
@@ -629,5 +644,4 @@ public class ServerCommandTests {
     System.out.println("joined");
     ((AIClient) javaClient).run();
   }
-
 }

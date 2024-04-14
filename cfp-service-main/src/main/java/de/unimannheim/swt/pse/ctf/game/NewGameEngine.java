@@ -4,8 +4,14 @@ import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Move;
 import de.unimannheim.swt.pse.ctf.game.state.Team;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NewGameEngine implements Game {
 
@@ -27,9 +33,23 @@ public class NewGameEngine implements Game {
   // Nice to haves
   // **************************************************
   private MapTemplate currentTemplate; // Saves a copy of the template
+  private static final Logger LOG = LoggerFactory.getLogger(NewGameEngine.class);
 
   // **************************************************
   // END of Nice to haves
+  // **************************************************
+
+  // **************************************************
+  // Alt Mode Data : Never Asked for directly: Internal use Vars
+  // **************************************************
+  private boolean timeLimitedGameTrigger;
+  private boolean moveTimeLimitedGameTrigger;
+
+  private Clock currentTime;
+  private Clock gameShouldEndBy;
+
+  // **************************************************
+  // END of Alt Mode Data
   // **************************************************
 
   @Override
@@ -43,7 +63,6 @@ public class NewGameEngine implements Game {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'joinGame'");
   }
-
 
   @Override
   public void makeMove(Move move) {
@@ -139,7 +158,7 @@ public class NewGameEngine implements Game {
 
   /**
    * Checks how many empty objects are left in the Team[] in the gameState
-   * 
+   *
    * @author rsyed
    * @return number of remaining team slots
    */
@@ -158,10 +177,60 @@ public class NewGameEngine implements Game {
   // Alt Game Mode Methods
   // **************************************************
 
+  /**
+   * Checks how much time is left for the game mode
+   *
+   * @author rsyed
+   * @return number of seconds left
+   */
   @Override
   public int getRemainingGameTimeInSeconds() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getRemainingGameTimeInSeconds'");
+    if (!timeLimitedGameTrigger) {
+      if (isGameOver()) {
+        return 0;
+      } else {
+        return -1;
+      }
+    } else { 
+      return Math.toIntExact(Duration.between(currentTime.instant(), gameShouldEndBy.instant()).getSeconds());
+    }
+  }
+
+  /**
+   * Handler which should be called incase the Game is a TimeLimited Game
+   *
+   * @author rsyed
+   * 
+   */
+  public void timeLimitedHandler() {
+    Thread timeLimitedThread =
+        new Thread(
+            () -> {
+              while (timeLimitedGameTrigger) {
+                Duration totalGameTime =
+                    Duration.ofSeconds(currentTemplate.getTotalTimeLimitInSeconds());
+                if (isStarted()) {
+                  this.currentTime =
+                      Clock.systemDefaultZone(); // Inits Calender when the Game Started
+                  this.gameShouldEndBy =
+                      Clock.fixed(
+                          Clock.offset(currentTime, totalGameTime).instant(),
+                          ZoneId.systemDefault());
+
+                  if (currentTime.instant().isAfter(gameShouldEndBy.instant())) {
+                    gameOverHandler();              //Calls the Handler incase game has to end
+                    timeLimitedGameTrigger = false; // Ends the Thread to reclaim resources
+                  }
+                }
+                try { // Checks EVERY 1 second
+                    //TODO Discuss if a check every second is okay or we need faster ones
+                  Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                  LOG.info("Exception Occured in timeLimitedHandler thread");
+                }
+              }
+            });
+    timeLimitedThread.run();
   }
 
   @Override
@@ -174,4 +243,23 @@ public class NewGameEngine implements Game {
   // End of Alt Game Mode Methods
   // **************************************************
 
+  // **************************************************
+  // Private Internal Methods
+  // **************************************************
+
+  /**
+   * Method which will take care of ending the game for ALT MODES
+   *
+   * @author rsyed
+   * 
+   */
+  //TODO Write Handler
+  private void gameOverHandler() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'gameOverHandler'");
+  }
+
+  // **************************************************
+  // End of Private Internal Methods
+  // **************************************************
 }
