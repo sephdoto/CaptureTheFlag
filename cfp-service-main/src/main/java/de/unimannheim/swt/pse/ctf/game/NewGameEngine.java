@@ -17,7 +17,6 @@ public class NewGameEngine implements Game {
   // Required by GameEngine
   // **************************************************
   private GameState gameState; // MAIN Data Store for GameEngine
-  private int remainingTeamSlots;
   private Date startedDate;
   private Date endDate;
   // **************************************************
@@ -45,11 +44,6 @@ public class NewGameEngine implements Game {
     throw new UnsupportedOperationException("Unimplemented method 'joinGame'");
   }
 
-  @Override
-  public int getRemainingTeamSlots() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getRemainingTeamSlots'");
-  }
 
   @Override
   public void makeMove(Move move) {
@@ -66,7 +60,7 @@ public class NewGameEngine implements Game {
   @Override
   public boolean isValidMove(Move move) {
     // TODO Auto-generated method stub
-
+    throw new UnsupportedOperationException("Unimplemented method isValidMove");
   }
 
   /**
@@ -141,6 +135,24 @@ public class NewGameEngine implements Game {
   @Override
   public GameState getCurrentGameState() {
     return this.gameState;
+  }
+
+  /**
+   * Checks how many empty objects are left in the Team[] in the gameState
+   * 
+   * @author rsyed
+   * @return number of remaining team slots
+   */
+  @Override
+  public int getRemainingTeamSlots() {
+    Team[] currentTeamObject = gameState.getTeams();
+    int counter = 0;
+    for (Team t : currentTeamObject) {
+      if (t == null) {
+        counter++;
+      }
+    }
+    return counter;
   }
 
   // **************************************************
