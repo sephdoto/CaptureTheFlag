@@ -34,6 +34,7 @@ public class NewGameEngine implements Game {
   // **************************************************
   private MapTemplate currentTemplate; // Saves a copy of the template
   private static final Logger LOG = LoggerFactory.getLogger(NewGameEngine.class);
+  private boolean TeamsAreFull;
 
   // **************************************************
   // END of Nice to haves
@@ -255,8 +256,9 @@ public class NewGameEngine implements Game {
    */
   //TODO Write Handler
   private void gameOverHandler() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'gameOverHandler'");
+    //CASE CALLED FROM LIMITED GAME TIME GAMEOVER HANDLER
+
+    //CASE CALLED FROM LIMITED MOVE TIME HANDLER
   }
 
   // **************************************************
