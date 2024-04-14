@@ -47,7 +47,9 @@ public class NewGameEngine implements Game {
   private boolean moveTimeLimitedGameTrigger;
 
   private Clock gameShouldEndBy;
+  private Duration totalGameTime;
   private Clock turnEndsBy;
+  private Duration turnTime;
 
   // **************************************************
   // END of Alt Mode Data
@@ -200,10 +202,12 @@ public class NewGameEngine implements Game {
       this.currentTime = Clock.systemDefaultZone(); // Start BaseClock
       if (template.getTotalTimeLimitInSeconds() != -1) {
         this.timeLimitedGameTrigger = true;
+        this.totalGameTime = Duration.ofSeconds(copyOfTemplate.getTotalTimeLimitInSeconds());
         timeLimitedHandler();
       }
       if (template.getMoveTimeLimitInSeconds() != -1) {
         this.moveTimeLimitedGameTrigger = true;
+        this.turnTime = Duration.ofSeconds(copyOfTemplate.getMoveTimeLimitInSeconds());
         moveTimeLimitedHander();
       }
     } else {
@@ -221,10 +225,10 @@ public class NewGameEngine implements Game {
   @Override
   public int getRemainingGameTimeInSeconds() {
     if (copyOfTemplate.getTotalTimeLimitInSeconds() == -1) {
-        return -1;
+      return -1;
     }
     if (isGameOver()) {
-        return 0;
+      return 0;
     } else {
       return Math.toIntExact(
           Duration.between(currentTime.instant(), gameShouldEndBy.instant()).getSeconds());
@@ -240,16 +244,14 @@ public class NewGameEngine implements Game {
     Thread timeLimitedThread =
         new Thread(
             () -> {
+              boolean setOnceTrigger = true;
               while (timeLimitedGameTrigger) {
-                Duration totalGameTime =
-                    Duration.ofSeconds(copyOfTemplate.getTotalTimeLimitInSeconds());
                 if (TeamsAreFull) {
-
-                  this.gameShouldEndBy =
-                      Clock.fixed(
-                          Clock.offset(currentTime, totalGameTime).instant(),
-                          ZoneId.systemDefault());
-
+                  if (setOnceTrigger) {
+                    setWhenGameShouldEnd();
+                    setOnceTrigger = false;
+                  }
+                  // Checks if Clock says its past game end time
                   if (currentTime.instant().isAfter(gameShouldEndBy.instant())) {
                     gameOverHandler(); // Calls the Handler incase game has to end
                     timeLimitedGameTrigger = false; // Ends the Thread to reclaim resources
@@ -267,16 +269,16 @@ public class NewGameEngine implements Game {
   }
 
   /**
-   * 
+   * @author rsyed
    * @return -1 if no move time limit set, 0 if over, > 0 if seconds remain
    */
   @Override
   public int getRemainingMoveTimeInSeconds() {
     if (copyOfTemplate.getMoveTimeLimitInSeconds() == -1) {
-        return -1;
+      return -1;
     }
     if (isGameOver()) {
-        return 0;
+      return 0;
     } else {
       return Math.toIntExact(
           Duration.between(currentTime.instant(), turnEndsBy.instant()).getSeconds());
@@ -284,7 +286,9 @@ public class NewGameEngine implements Game {
   }
 
   /**
-   * Handler which should be called incase the moves are time limited in the game
+   * Handler which should be called incase the moves are time limited in the game While the trigger
+   * is active AND Teams are full, Checks if current time is after the time the turn should end. If
+   * so..Switches Current Team to the next available team and resets the time
    *
    * @author rsyed
    */
@@ -292,15 +296,21 @@ public class NewGameEngine implements Game {
     Thread moveLimitedThread =
         new Thread(
             () -> {
+              boolean setOnceTrigger = true;
               while (moveTimeLimitedGameTrigger) {
-                Duration turnTime = Duration.ofSeconds(copyOfTemplate.getMoveTimeLimitInSeconds());
                 if (TeamsAreFull) { // If teams are full
-                  this.turnEndsBy = // Records when the turn should end
-                      Clock.fixed(
-                          Clock.offset(currentTime, turnTime).instant(), ZoneId.systemDefault());
+                  // Block for increasing the timer ONCE for the first turn
+                  if (setOnceTrigger) {
+                    increaseTurnTimer();
+                    setOnceTrigger = false;
+                  }
                   if (currentTime.instant().isAfter(turnEndsBy.instant())) {
                     // TODO ASK SIMON FOR CLARIFICATION ON HOW TO DO BEST DO THIS
-                    // SWTICH THE CURRENT TEAM TO THE NEXT TEAM
+                    // TODO SWTICH THE CURRENT TEAM TO THE NEXT TEAM
+
+                    this.turnEndsBy = // UPDATES when the next turn should end
+                        Clock.fixed(
+                            Clock.offset(currentTime, turnTime).instant(), ZoneId.systemDefault());
                   }
                   if (isGameOver()) { // Checks if game is over
                     moveTimeLimitedGameTrigger = false; // Ends the thread if game is over
@@ -315,6 +325,16 @@ public class NewGameEngine implements Game {
               }
             });
     moveLimitedThread.run();
+  }
+
+  private void increaseTurnTimer() {
+    this.turnEndsBy =
+        Clock.fixed(Clock.offset(currentTime, turnTime).instant(), ZoneId.systemDefault());
+  }
+
+  private void setWhenGameShouldEnd() {
+    this.gameShouldEndBy =
+        Clock.fixed(Clock.offset(currentTime, totalGameTime).instant(), ZoneId.systemDefault());
   }
 
   // **************************************************
