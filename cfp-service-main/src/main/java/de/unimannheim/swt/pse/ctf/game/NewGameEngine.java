@@ -8,7 +8,6 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +24,7 @@ public class NewGameEngine implements Game {
   private GameState gameState; // MAIN Data Store for GameEngine
   private Date startedDate;
   private Date endDate;
+  private Clock currentTime;
   // **************************************************
   // End of Required by GameState
   // **************************************************
@@ -32,7 +32,7 @@ public class NewGameEngine implements Game {
   // **************************************************
   // Nice to haves
   // **************************************************
-  private MapTemplate currentTemplate; // Saves a copy of the template
+  private MapTemplate copyOfTemplate; // Saves a copy of the template
   private static final Logger LOG = LoggerFactory.getLogger(NewGameEngine.class);
   private boolean TeamsAreFull;
 
@@ -46,8 +46,8 @@ public class NewGameEngine implements Game {
   private boolean timeLimitedGameTrigger;
   private boolean moveTimeLimitedGameTrigger;
 
-  private Clock currentTime;
   private Clock gameShouldEndBy;
+  private Clock turnEndsBy;
 
   // **************************************************
   // END of Alt Mode Data
@@ -55,7 +55,9 @@ public class NewGameEngine implements Game {
 
   @Override
   public GameState create(MapTemplate template) {
-    // TODO Auto-generated method stub
+    this.copyOfTemplate = template; // Template Copy Box
+
+    initAltGameModeLogic(template); // Inits Alt Game mode support
     throw new UnsupportedOperationException("Unimplemented method 'create'");
   }
 
@@ -84,10 +86,10 @@ public class NewGameEngine implements Game {
   }
 
   /**
-   * Checks whether the game is over based on the current {@link GameState}.
+   * Checks whether the Game SESSION is started based on the current {@link GameState}.
    *
    * @author rsyed
-   * @return true if game is over, false if game is still running.
+   * @return true if game is started, false is over
    */
   @Override
   public boolean isStarted() {
@@ -98,9 +100,19 @@ public class NewGameEngine implements Game {
     }
   }
 
+  /**
+   * Checks whether the game is over based on the current {@link GameState}.
+   *
+   * @author rsyed
+   * @return true if game is over, false if game is still running.
+   */
   @Override
   public boolean isGameOver() {
-    throw new UnsupportedOperationException("Unimplemented method 'isGameOver'");
+    if (getEndDate() != null) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -178,21 +190,44 @@ public class NewGameEngine implements Game {
   // **************************************************
 
   /**
+   * Helper method to check if alt game modes are set and to start logic accordingly
+   *
+   * @author rsyed
+   */
+  private void initAltGameModeLogic(MapTemplate template) {
+    if ((template.getMoveTimeLimitInSeconds() != -1)
+        || (template.getTotalTimeLimitInSeconds() != -1)) { // If flags are set
+      this.currentTime = Clock.systemDefaultZone(); // Start BaseClock
+      if (template.getTotalTimeLimitInSeconds() != -1) {
+        this.timeLimitedGameTrigger = true;
+        timeLimitedHandler();
+      }
+      if (template.getMoveTimeLimitInSeconds() != -1) {
+        this.moveTimeLimitedGameTrigger = true;
+        moveTimeLimitedHander();
+      }
+    } else {
+      this.timeLimitedGameTrigger = false;
+      this.moveTimeLimitedGameTrigger = false;
+    }
+  }
+
+  /**
    * Checks how much time is left for the game mode
    *
    * @author rsyed
-   * @return number of seconds left
+   * @return -1 if no total game time limit set, 0 if over, > 0 if seconds remain
    */
   @Override
   public int getRemainingGameTimeInSeconds() {
-    if (!timeLimitedGameTrigger) {
-      if (isGameOver()) {
-        return 0;
-      } else {
+    if (copyOfTemplate.getTotalTimeLimitInSeconds() == -1) {
         return -1;
-      }
-    } else { 
-      return Math.toIntExact(Duration.between(currentTime.instant(), gameShouldEndBy.instant()).getSeconds());
+    }
+    if (isGameOver()) {
+        return 0;
+    } else {
+      return Math.toIntExact(
+          Duration.between(currentTime.instant(), gameShouldEndBy.instant()).getSeconds());
     }
   }
 
@@ -200,7 +235,6 @@ public class NewGameEngine implements Game {
    * Handler which should be called incase the Game is a TimeLimited Game
    *
    * @author rsyed
-   * 
    */
   public void timeLimitedHandler() {
     Thread timeLimitedThread =
@@ -208,22 +242,21 @@ public class NewGameEngine implements Game {
             () -> {
               while (timeLimitedGameTrigger) {
                 Duration totalGameTime =
-                    Duration.ofSeconds(currentTemplate.getTotalTimeLimitInSeconds());
-                if (isStarted()) {
-                  this.currentTime =
-                      Clock.systemDefaultZone(); // Inits Calender when the Game Started
+                    Duration.ofSeconds(copyOfTemplate.getTotalTimeLimitInSeconds());
+                if (TeamsAreFull) {
+
                   this.gameShouldEndBy =
                       Clock.fixed(
                           Clock.offset(currentTime, totalGameTime).instant(),
                           ZoneId.systemDefault());
 
                   if (currentTime.instant().isAfter(gameShouldEndBy.instant())) {
-                    gameOverHandler();              //Calls the Handler incase game has to end
+                    gameOverHandler(); // Calls the Handler incase game has to end
                     timeLimitedGameTrigger = false; // Ends the Thread to reclaim resources
                   }
                 }
                 try { // Checks EVERY 1 second
-                    //TODO Discuss if a check every second is okay or we need faster ones
+                  // TODO Discuss if a check every second is okay or we need faster ones
                   Thread.sleep(1000);
                 } catch (InterruptedException e) {
                   LOG.info("Exception Occured in timeLimitedHandler thread");
@@ -233,10 +266,55 @@ public class NewGameEngine implements Game {
     timeLimitedThread.run();
   }
 
+  /**
+   * 
+   * @return -1 if no move time limit set, 0 if over, > 0 if seconds remain
+   */
   @Override
   public int getRemainingMoveTimeInSeconds() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getRemainingMoveTimeInSeconds'");
+    if (copyOfTemplate.getMoveTimeLimitInSeconds() == -1) {
+        return -1;
+    }
+    if (isGameOver()) {
+        return 0;
+    } else {
+      return Math.toIntExact(
+          Duration.between(currentTime.instant(), turnEndsBy.instant()).getSeconds());
+    }
+  }
+
+  /**
+   * Handler which should be called incase the moves are time limited in the game
+   *
+   * @author rsyed
+   */
+  public void moveTimeLimitedHander() {
+    Thread moveLimitedThread =
+        new Thread(
+            () -> {
+              while (moveTimeLimitedGameTrigger) {
+                Duration turnTime = Duration.ofSeconds(copyOfTemplate.getMoveTimeLimitInSeconds());
+                if (TeamsAreFull) { // If teams are full
+                  this.turnEndsBy = // Records when the turn should end
+                      Clock.fixed(
+                          Clock.offset(currentTime, turnTime).instant(), ZoneId.systemDefault());
+                  if (currentTime.instant().isAfter(turnEndsBy.instant())) {
+                    // TODO ASK SIMON FOR CLARIFICATION ON HOW TO DO BEST DO THIS
+                    // SWTICH THE CURRENT TEAM TO THE NEXT TEAM
+                  }
+                  if (isGameOver()) { // Checks if game is over
+                    moveTimeLimitedGameTrigger = false; // Ends the thread if game is over
+                  }
+                }
+              }
+              try { // Checks EVERY quater second
+                // TODO Discuss if this is okay or we need faster ones
+                Thread.sleep(250);
+              } catch (InterruptedException e) {
+                LOG.info("Exception Occured in moveTimeLimitedHander thread");
+              }
+            });
+    moveLimitedThread.run();
   }
 
   // **************************************************
@@ -251,13 +329,12 @@ public class NewGameEngine implements Game {
    * Method which will take care of ending the game for ALT MODES
    *
    * @author rsyed
-   * 
    */
-  //TODO Write Handler
+  // TODO Write Handler
   private void gameOverHandler() {
-    //CASE CALLED FROM LIMITED GAME TIME GAMEOVER HANDLER
+    // CASE CALLED FROM LIMITED GAME TIME GAMEOVER HANDLER
 
-    //CASE CALLED FROM LIMITED MOVE TIME HANDLER
+    // CASE CALLED FROM LIMITED MOVE TIME HANDLER
   }
 
   // **************************************************
