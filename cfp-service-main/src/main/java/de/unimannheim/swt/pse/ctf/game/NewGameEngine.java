@@ -216,12 +216,12 @@ public class NewGameEngine implements Game {
   }
 
   /**
-   * Main CONTROLLER for Alt Game Modes Call when Game Starts (teams are full)
-   * Call this from JoinGame when you fulfill game starting logic
-   * 
+   * Main CONTROLLER for Alt Game Modes Call when Game Starts (teams are full) 
+   * TODO Call this from JoinGame when you fulfill game starting logic
+   *
    * @author rsyed
    */
-  private void AltGameController() {
+  private void startAltGameController() {
     if (moveTimeLimitedGameTrigger) {
       startMoveTimeLimitedGame();
     }
@@ -252,7 +252,7 @@ public class NewGameEngine implements Game {
   }
 
   /**
-   * Checks how much time is left for the game mode
+   * Checks how much time is left for the game
    *
    * @author rsyed
    * @return -1 if no total game time limit set, 0 if over, > 0 if seconds remain
@@ -304,6 +304,7 @@ public class NewGameEngine implements Game {
   }
 
   /**
+   * Method returns how many seconds are left in the turn
    * @author rsyed
    * @return -1 if no move time limit set, 0 if over, > 0 if seconds remain
    */
@@ -359,11 +360,27 @@ public class NewGameEngine implements Game {
     moveLimitedThread.run();
   }
 
+  /**
+   * Part of turn Time limited Game logic
+   * Method to increase the timer. Can be used when a turn has been made. Also called when turn
+   * timer expires to set timer for next move
+   * Call when turn time expires (already done)
+   * TODO this method when flag is set and a move is made
+   *
+   * @author rsyed
+   */
   private void increaseTurnTimer() {
     this.turnEndsBy =
         Clock.fixed(Clock.offset(currentTime, turnTime).instant(), ZoneId.systemDefault());
   }
 
+  /**
+   * Part of time limited game Logic.
+   * Method called to set the time when the game should end. Auto Set by the handler. 
+   * Call when handler inits (already done)
+   * 
+   * @author rsyed
+   */
   private void setWhenGameShouldEnd() {
     this.gameShouldEndBy =
         Clock.fixed(Clock.offset(currentTime, totalGameTime).instant(), ZoneId.systemDefault());
@@ -388,6 +405,14 @@ public class NewGameEngine implements Game {
 
     // CASE CALLED FROM LIMITED MOVE TIME HANDLER
   }
+
+  // **************************************************
+  // End of Alt Game Mode Methods
+  // **************************************************
+
+  // **************************************************
+  // Private Internal Methods
+  // **************************************************
 
   // **************************************************
   // End of Private Internal Methods
