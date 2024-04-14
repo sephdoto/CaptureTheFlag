@@ -4,6 +4,8 @@ import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Move;
 import de.unimannheim.swt.pse.ctf.game.state.Team;
+
+import java.util.ArrayList;
 import java.util.Date;
 
 public class NewGameEngine implements Game {
@@ -16,7 +18,6 @@ public class NewGameEngine implements Game {
   // Required by GameEngine
   // **************************************************
   private GameState gameState; // MAIN Data Store for GameEngine
-  private boolean isGameOver;
   private int remainingTeamSlots;
   private Date startedDate;
   private Date endDate;
@@ -99,10 +100,24 @@ public class NewGameEngine implements Game {
     throw new UnsupportedOperationException("Unimplemented method 'isGameOver'");
   }
 
+   /**
+   * If the game is over a String Array containing all winner IDs is returned. This method relies on
+   * the fact that loser teams get set to null in the gameState.teams Array.
+   *
+   * @author Code: sistumpf Fixes: rsyed
+   * @return {@link Team#getId()} if there is a winner
+   */
   @Override
   public String[] getWinner() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getWinner'");
+    ArrayList<String> winners = new ArrayList<String>();
+    if (this.isGameOver()) {
+      for (Team team : this.gameState.getTeams()) {
+        if (team != null) {
+          winners.add(team.getId());
+        }
+      }
+    }
+    return winners.toArray(new String[winners.size()]);
   }
 
   @Override
