@@ -121,15 +121,23 @@ public class NewGameEngine implements Game {
     return winners.toArray(new String[winners.size()]);
   }
 
+  /**
+   * Simple Getter for the date the Game Started On
+   * @author rsyed
+   * @return Start {@link Date} of game
+   */
   @Override
   public Date getStartedDate() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getStartedDate'");
+    return startedDate;
   }
 
+  /**
+   * Simple Getter for the date the game Ended on
+   * @author rsyed
+   * @return End date of game
+   */
   @Override
   public Date getEndDate() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getEndDate'");
+    return this.endDate;
   }
 }
