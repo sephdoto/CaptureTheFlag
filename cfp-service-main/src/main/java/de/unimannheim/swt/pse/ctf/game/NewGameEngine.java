@@ -25,6 +25,7 @@ public class NewGameEngine implements Game {
   private Date startedDate;
   private Date endDate;
   private Clock currentTime;
+  
   // **************************************************
   // End of Required by GameState
   // **************************************************
@@ -50,7 +51,7 @@ public class NewGameEngine implements Game {
   private Duration totalGameTime;
   private Clock turnEndsBy;
   private Duration turnTime;
-
+  private int graceTime;      //Time added to be fair for processing delays
   // **************************************************
   // END of Alt Mode Data
   // **************************************************
@@ -202,12 +203,12 @@ public class NewGameEngine implements Game {
       this.currentTime = Clock.systemDefaultZone(); // Start BaseClock
       if (template.getTotalTimeLimitInSeconds() != -1) {
         this.timeLimitedGameTrigger = true;
-        this.totalGameTime = Duration.ofSeconds(copyOfTemplate.getTotalTimeLimitInSeconds());
+        this.totalGameTime = Duration.ofSeconds(copyOfTemplate.getTotalTimeLimitInSeconds() + graceTime);
         timeLimitedHandler();
       }
       if (template.getMoveTimeLimitInSeconds() != -1) {
         this.moveTimeLimitedGameTrigger = true;
-        this.turnTime = Duration.ofSeconds(copyOfTemplate.getMoveTimeLimitInSeconds());
+        this.turnTime = Duration.ofSeconds(copyOfTemplate.getMoveTimeLimitInSeconds() + graceTime);
         moveTimeLimitedHander();
       }
     } else {
@@ -299,9 +300,8 @@ public class NewGameEngine implements Game {
               boolean setOnceTrigger = true;
               while (moveTimeLimitedGameTrigger) {
                 if (TeamsAreFull) { // If teams are full
-                  // Block for increasing the timer ONCE for the first turn
                   if (setOnceTrigger) {
-                    increaseTurnTimer();
+                    increaseTurnTimer();      // Block for increasing the timer ONCE for the first turn
                     setOnceTrigger = false;
                   }
                   if (currentTime.instant().isAfter(turnEndsBy.instant())) {

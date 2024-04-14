@@ -2,12 +2,9 @@ package org.ctf.shared.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import java.sql.Time;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.ZoneId;
-
 import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
@@ -39,7 +36,7 @@ public class ServerCommandTests {
     // joinTest();
     // copierCheck();
     // arrayTest();
-    //getStateTests();
+    // getStateTests();
     // AIVSHUMAN();
     // testConnectionTimedGameMode();
     // testMalformedConnection();
@@ -50,14 +47,28 @@ public class ServerCommandTests {
   }
 
   public static void TimeTests() {
-    Duration totalGameTime =
-    Duration.ofSeconds(10);
-    Clock currentTime = Clock.systemDefaultZone(); // Inits Calender when the Game Started
-    Clock gameShouldEndBy =
-        Clock.fixed(Clock.offset(currentTime, totalGameTime).instant(), ZoneId.systemDefault());
+    Duration turnTime = Duration.ofSeconds(10);
 
-    Duration test1 = Duration.between(currentTime.instant(), gameShouldEndBy.instant());
-    System.out.println(Math.toIntExact(test1.getSeconds()));
+    Clock currentTime = Clock.systemDefaultZone(); // Inits Calender when the Game Started
+    Clock turnEndsBy =
+    Clock.fixed(Clock.offset(currentTime, turnTime).instant(), ZoneId.systemDefault());
+    for (int i = 0; i < 12; i++) {
+      
+      System.out.println(
+          Math.toIntExact(
+              Duration.between(currentTime.instant(), turnEndsBy.instant()).getSeconds()));
+              if (currentTime.instant().isAfter(turnEndsBy.instant())) {
+                System.out.println("timed out");
+                break;
+              }
+      try {
+        Thread.sleep(1000);
+      } catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      
+    }
   }
 
   public static void testConnection() {
