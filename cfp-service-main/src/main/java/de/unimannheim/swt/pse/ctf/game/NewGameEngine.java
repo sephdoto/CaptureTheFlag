@@ -23,9 +23,9 @@ public class NewGameEngine implements Game {
   // **************************************************
   private GameState gameState; // MAIN Data Store for GameEngine
   private Date startedDate;
-  private Date endDate;
+  private Date endDate; // Setting this Ends the game
   private Clock currentTime;
-  
+
   // **************************************************
   // End of Required by GameState
   // **************************************************
@@ -51,7 +51,8 @@ public class NewGameEngine implements Game {
   private Duration totalGameTime;
   private Clock turnEndsBy;
   private Duration turnTime;
-  private int graceTime;      //Time added to be fair for processing delays
+  private int graceTime = 1; // Time added to be fair for processing delays
+
   // **************************************************
   // END of Alt Mode Data
   // **************************************************
@@ -193,28 +194,61 @@ public class NewGameEngine implements Game {
   // **************************************************
 
   /**
-   * Helper method to check if alt game modes are set and to start logic accordingly
+   * Method to call from create method while parsing {@link GameTemplate} and inits some prereqs for
+   * the Alt Game Mode.
    *
    * @author rsyed
    */
   private void initAltGameModeLogic(MapTemplate template) {
     if ((template.getMoveTimeLimitInSeconds() != -1)
-        || (template.getTotalTimeLimitInSeconds() != -1)) { // If flags are set
+        || (template.getTotalTimeLimitInSeconds() != -1)) {
       this.currentTime = Clock.systemDefaultZone(); // Start BaseClock
-      if (template.getTotalTimeLimitInSeconds() != -1) {
-        this.timeLimitedGameTrigger = true;
-        this.totalGameTime = Duration.ofSeconds(copyOfTemplate.getTotalTimeLimitInSeconds() + graceTime);
-        timeLimitedHandler();
-      }
       if (template.getMoveTimeLimitInSeconds() != -1) {
         this.moveTimeLimitedGameTrigger = true;
-        this.turnTime = Duration.ofSeconds(copyOfTemplate.getMoveTimeLimitInSeconds() + graceTime);
-        moveTimeLimitedHander();
+      }
+      if (template.getTotalTimeLimitInSeconds() != -1) {
+        this.timeLimitedGameTrigger = true;
       }
     } else {
       this.timeLimitedGameTrigger = false;
       this.moveTimeLimitedGameTrigger = false;
     }
+  }
+
+  /**
+   * Main CONTROLLER for Alt Game Modes Call when Game Starts (teams are full)
+   * Call this from JoinGame when you fulfill game starting logic
+   * 
+   * @author rsyed
+   */
+  private void AltGameController() {
+    if (moveTimeLimitedGameTrigger) {
+      startMoveTimeLimitedGame();
+    }
+    if (timeLimitedGameTrigger) {
+      startTimeLimitedGame();
+    }
+  }
+
+  /**
+   * Helper method to start logic for TimeLimitedGame.
+   *
+   * @author rsyed
+   */
+  private void startTimeLimitedGame() {
+    this.totalGameTime =
+        Duration.ofSeconds(copyOfTemplate.getTotalTimeLimitInSeconds() + graceTime);
+    timeLimitedHandler();
+  }
+
+  /**
+   * Helper method to start logic for MoveTimeLimitedGame. Do not call
+   *
+   * @author rsyed
+   */
+  private void startMoveTimeLimitedGame() {
+    this.turnTime = Duration.ofSeconds(copyOfTemplate.getMoveTimeLimitInSeconds() + graceTime);
+    moveTimeLimitedHander();
   }
 
   /**
@@ -254,7 +288,7 @@ public class NewGameEngine implements Game {
                   }
                   // Checks if Clock says its past game end time
                   if (currentTime.instant().isAfter(gameShouldEndBy.instant())) {
-                    gameOverHandler(); // Calls the Handler incase game has to end
+                    altGameModeGameOverHandler(); // Calls the Handler incase game has to end
                     timeLimitedGameTrigger = false; // Ends the Thread to reclaim resources
                   }
                 }
@@ -301,15 +335,14 @@ public class NewGameEngine implements Game {
               while (moveTimeLimitedGameTrigger) {
                 if (TeamsAreFull) { // If teams are full
                   if (setOnceTrigger) {
-                    increaseTurnTimer();      // Block for increasing the timer ONCE for the first turn
+                    increaseTurnTimer(); // Block for increasing the timer ONCE for the first turn
                     setOnceTrigger = false;
                   }
                   if (currentTime.instant().isAfter(turnEndsBy.instant())) {
                     // TODO ASK SIMON FOR CLARIFICATION ON HOW TO DO BEST DO THIS
-                    // TODO SWTICH THE CURRENT TEAM TO THE NEXT TEAM
+                    EngineTools.getNextTeam(this.gameState);
 
-                  
-                    increaseTurnTimer();  // UPDATES when the next turn should end
+                    increaseTurnTimer(); // UPDATES when the next turn should end
                   }
                   if (isGameOver()) { // Checks if game is over
                     moveTimeLimitedGameTrigger = false; // Ends the thread if game is over
@@ -345,12 +378,12 @@ public class NewGameEngine implements Game {
   // **************************************************
 
   /**
-   * Method which will take care of ending the game for ALT MODES
+   * Method which will take care of ending the game for Time limited Alt Mode
    *
    * @author rsyed
    */
   // TODO Write Handler
-  private void gameOverHandler() {
+  private void altGameModeGameOverHandler() {
     // CASE CALLED FROM LIMITED GAME TIME GAMEOVER HANDLER
 
     // CASE CALLED FROM LIMITED MOVE TIME HANDLER
