@@ -145,9 +145,8 @@ public class NewGameEngine implements Game {
    */
   @Override
   public int getRemainingTeamSlots() {
-    Team[] currentTeamObject = gameState.getTeams();
     int counter = 0;
-    for (Team t : currentTeamObject) {
+    for (Team t : gameState.getTeams()) {
       if (t == null) {
         counter++;
       }
