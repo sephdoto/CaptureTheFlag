@@ -4,7 +4,6 @@ import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Move;
 import de.unimannheim.swt.pse.ctf.game.state.Team;
-
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -85,26 +84,34 @@ public class NewGameEngine implements Game {
   @Override
   public boolean isValidMove(Move move) {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'isValidMove'");
+
   }
 
+  /**
+   * Checks whether the game is over based on the current {@link GameState}.
+   *
+   * @author rsyed
+   * @return true if game is over, false if game is still running.
+   */
   @Override
   public boolean isStarted() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'isStarted'");
+    if (isGameOver() && (getCurrentGameState() != null)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @Override
   public boolean isGameOver() {
-    // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'isGameOver'");
   }
 
-   /**
+  /**
    * If the game is over a String Array containing all winner IDs is returned. This method relies on
    * the fact that loser teams get set to null in the gameState.teams Array.
    *
-   * @author Code: sistumpf 
+   * @author Code: sistumpf
    * @author Fixes: rsyed
    * @return {@link Team#getId()} if there is a winner
    */
@@ -123,6 +130,7 @@ public class NewGameEngine implements Game {
 
   /**
    * Simple Getter for the date the Game Started On
+   *
    * @author rsyed
    * @return Start {@link Date} of game
    */
@@ -133,6 +141,7 @@ public class NewGameEngine implements Game {
 
   /**
    * Simple Getter for the date the game Ended on
+   *
    * @author rsyed
    * @return End date of game
    */
