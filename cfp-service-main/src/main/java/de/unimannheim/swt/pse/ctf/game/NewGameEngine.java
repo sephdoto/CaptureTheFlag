@@ -40,12 +40,6 @@ public class NewGameEngine implements Game {
   }
 
   @Override
-  public GameState getCurrentGameState() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getCurrentGameState'");
-  }
-
-  @Override
   public Team joinGame(String teamId) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'joinGame'");
@@ -61,18 +55,6 @@ public class NewGameEngine implements Game {
   public void makeMove(Move move) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'makeMove'");
-  }
-
-  @Override
-  public int getRemainingGameTimeInSeconds() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getRemainingGameTimeInSeconds'");
-  }
-
-  @Override
-  public int getRemainingMoveTimeInSeconds() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getRemainingMoveTimeInSeconds'");
   }
 
   @Override
@@ -149,4 +131,36 @@ public class NewGameEngine implements Game {
   public Date getEndDate() {
     return this.endDate;
   }
+
+  /**
+   * Simple Getter for the GameState Object
+   *
+   * @author rsyed
+   * @return Current {@link GameState} of the Session
+   */
+  @Override
+  public GameState getCurrentGameState() {
+    return this.gameState;
+  }
+
+  // **************************************************
+  // Alt Game Mode Methods
+  // **************************************************
+
+  @Override
+  public int getRemainingGameTimeInSeconds() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getRemainingGameTimeInSeconds'");
+  }
+
+  @Override
+  public int getRemainingMoveTimeInSeconds() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getRemainingMoveTimeInSeconds'");
+  }
+
+  // **************************************************
+  // End of Alt Game Mode Methods
+  // **************************************************
+
 }
