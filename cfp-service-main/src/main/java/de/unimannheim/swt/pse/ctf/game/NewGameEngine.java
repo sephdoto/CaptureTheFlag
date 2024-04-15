@@ -10,7 +10,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,7 +109,7 @@ public class NewGameEngine implements Game {
    */
   @Override
   public boolean isStarted() {
-   return (isGameOver() && (getCurrentGameState() != null));
+    return (isGameOver() && (getCurrentGameState() != null));
   }
 
   /**
@@ -221,8 +220,8 @@ public class NewGameEngine implements Game {
   }
 
   /**
-   * Main CONTROLLER for Alt Game Modes Call when Game Starts (teams are full) 
-   * TODO Call this from JoinGame when you fulfill game starting logic
+   * Main CONTROLLER for Alt Game Modes Call when Game Starts (teams are full) TODO Call this from
+   * JoinGame when you fulfill game starting logic
    *
    * @author rsyed
    */
@@ -310,6 +309,7 @@ public class NewGameEngine implements Game {
 
   /**
    * Method returns how many seconds are left in the turn
+   *
    * @author rsyed
    * @return -1 if no move time limit set, 0 if over, > 0 if seconds remain
    */
@@ -366,11 +366,9 @@ public class NewGameEngine implements Game {
   }
 
   /**
-   * Part of turn Time limited Game logic
-   * Method to increase the timer. Can be used when a turn has been made. Also called when turn
-   * timer expires to set timer for next move
-   * Call when turn time expires (already done)
-   * TODO this method when flag is set and a move is made
+   * Part of turn Time limited Game logic Method to increase the timer. Can be used when a turn has
+   * been made. Also called when turn timer expires to set timer for next move Call when turn time
+   * expires (already done) TODO this method when flag is set and a move is made
    *
    * @author rsyed
    */
@@ -380,10 +378,9 @@ public class NewGameEngine implements Game {
   }
 
   /**
-   * Part of time limited game Logic.
-   * Method called to set the time when the game should end. Auto Set by the handler. 
-   * Call when handler inits (already done)
-   * 
+   * Part of time limited game Logic. Method called to set the time when the game should end. Auto
+   * Set by the handler. Call when handler inits (already done)
+   *
    * @author rsyed
    */
   private void setWhenGameShouldEnd() {
@@ -418,8 +415,31 @@ public class NewGameEngine implements Game {
   // **************************************************
   // Private Internal Methods
   // **************************************************
-  private void setGameOver(){
+
+  /**
+   * Ends the game INTERNALLY by setting the endDate Variable
+   *
+   * @author rsyed
+   */
+  private void setGameOver() {
     this.endDate = new Date();
+  }
+
+  /**
+   * Checks how many teams are still standing in the Team Array
+   * 0 if no teams left standing
+   * @author rsyed
+   * @return number of remaining team slots
+   *
+   */
+  public int teamsLeft() {
+    int counter = copyOfTemplate.getTeams();
+    for (Team t : gameState.getTeams()) {
+      if (t != null) {
+        counter--;
+      }
+    }
+    return counter;
   }
   // **************************************************
   // End of Private Internal Methods
