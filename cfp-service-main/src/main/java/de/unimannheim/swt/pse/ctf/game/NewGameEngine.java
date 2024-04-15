@@ -9,6 +9,8 @@ import java.time.Duration;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +27,7 @@ public class NewGameEngine implements Game {
   private Date startedDate;
   private Date endDate; // Setting this Ends the game
   private Clock currentTime;
+  private Map<Integer, String> integerToTeamID;
 
   // **************************************************
   // End of Required by GameState

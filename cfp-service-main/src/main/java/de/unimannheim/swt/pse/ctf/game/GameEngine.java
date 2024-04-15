@@ -214,7 +214,7 @@ public class GameEngine implements Game {
    */
   @Override
   public void giveUp(String teamId) {
-    EngineTools.removeTeam(gameState, Integer.valueOf(teamIDtoInteger.get(teamId)));
+    EngineTools.removeTeam(gameState, Integer.valueOf(teamIDtoInteger.get(teamId)));  //removed and set to null
     // Logic for switching Current Team
     if (gameState.getTeams()[gameState.getCurrentTeam()] == null)
       gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
