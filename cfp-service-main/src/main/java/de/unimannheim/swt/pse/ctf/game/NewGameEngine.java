@@ -35,7 +35,7 @@ public class NewGameEngine implements Game {
   // **************************************************
   private MapTemplate copyOfTemplate; // Saves a copy of the template
   private static final Logger LOG = LoggerFactory.getLogger(NewGameEngine.class);
-  private boolean TeamsAreFull;
+  private boolean teamsAreFull;
 
   // **************************************************
   // END of Nice to haves
@@ -83,10 +83,20 @@ public class NewGameEngine implements Game {
     throw new UnsupportedOperationException("Unimplemented method 'giveUp'");
   }
 
+  /**
+   * Checks whether a move is valid based on the current game state.
+   *
+   * @author sistumpf
+   * @param move {@link Move}
+   * @return true if move is valid based on current game state, false otherwise
+   */
   @Override
   public boolean isValidMove(Move move) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method isValidMove");
+    if (teamsAreFull) {
+      return EngineTools.getPossibleMoves(this.gameState, move.getPieceId()).stream()
+          .anyMatch(i -> i[0] == move.getNewPosition()[0] && i[1] == move.getNewPosition()[1]);
+    }
+    return false;
   }
 
   /**
@@ -97,11 +107,7 @@ public class NewGameEngine implements Game {
    */
   @Override
   public boolean isStarted() {
-    if (isGameOver() && (getCurrentGameState() != null)) {
-      return true;
-    } else {
-      return false;
-    }
+   return (isGameOver() && (getCurrentGameState() != null));
   }
 
   /**
@@ -112,11 +118,7 @@ public class NewGameEngine implements Game {
    */
   @Override
   public boolean isGameOver() {
-    if (getEndDate() != null) {
-      return true;
-    } else {
-      return false;
-    }
+    return (getEndDate() != null);
   }
 
   /**
@@ -281,7 +283,7 @@ public class NewGameEngine implements Game {
             () -> {
               boolean setOnceTrigger = true;
               while (timeLimitedGameTrigger) {
-                if (TeamsAreFull) {
+                if (teamsAreFull) {
                   if (setOnceTrigger) {
                     setWhenGameShouldEnd();
                     setOnceTrigger = false;
@@ -334,7 +336,7 @@ public class NewGameEngine implements Game {
             () -> {
               boolean setOnceTrigger = true;
               while (moveTimeLimitedGameTrigger) {
-                if (TeamsAreFull) { // If teams are full
+                if (teamsAreFull) { // If teams are full
                   if (setOnceTrigger) {
                     increaseTurnTimer(); // Block for increasing the timer ONCE for the first turn
                     setOnceTrigger = false;
@@ -352,7 +354,7 @@ public class NewGameEngine implements Game {
               }
               try { // Checks EVERY quater second
                 // TODO Discuss if this is okay or we need faster ones
-                Thread.sleep(250);
+                Thread.sleep(160);
               } catch (InterruptedException e) {
                 LOG.info("Exception Occured in moveTimeLimitedHander thread");
               }
@@ -413,7 +415,9 @@ public class NewGameEngine implements Game {
   // **************************************************
   // Private Internal Methods
   // **************************************************
-
+  private void setGameOver(){
+    this.endDate = new Date();
+  }
   // **************************************************
   // End of Private Internal Methods
   // **************************************************
