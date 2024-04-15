@@ -37,7 +37,7 @@ public class NewGameEngine implements Game {
   // **************************************************
   private MapTemplate copyOfTemplate; // Saves a copy of the template
   private static final Logger LOG = LoggerFactory.getLogger(NewGameEngine.class);
-  private boolean teamsAreFull;
+
 
   // **************************************************
   // END of Nice to haves
@@ -94,7 +94,7 @@ public class NewGameEngine implements Game {
    */
   @Override
   public boolean isValidMove(Move move) {
-    if (teamsAreFull) {
+    if (isStarted()) {
       return EngineTools.getPossibleMoves(this.gameState, move.getPieceId()).stream()
           .anyMatch(i -> i[0] == move.getNewPosition()[0] && i[1] == move.getNewPosition()[1]);
     }
@@ -109,7 +109,7 @@ public class NewGameEngine implements Game {
    */
   @Override
   public boolean isStarted() {
-    return (isGameOver() && (getCurrentGameState() != null));
+    return (isGameOver() && (getStartedDate() != null));
   }
 
   /**
@@ -285,7 +285,7 @@ public class NewGameEngine implements Game {
             () -> {
               boolean setOnceTrigger = true;
               while (timeLimitedGameTrigger) {
-                if (teamsAreFull) {
+                if (isStarted()) {
                   if (setOnceTrigger) {
                     setWhenGameShouldEnd();
                     setOnceTrigger = false;
@@ -339,7 +339,7 @@ public class NewGameEngine implements Game {
             () -> {
               boolean setOnceTrigger = true;
               while (moveTimeLimitedGameTrigger) {
-                if (teamsAreFull) { // If teams are full
+                if (isStarted()) { // If teams are full
                   if (setOnceTrigger) {
                     increaseTurnTimer(); // Block for increasing the timer ONCE for the first turn
                     setOnceTrigger = false;
@@ -428,6 +428,7 @@ public class NewGameEngine implements Game {
   /**
    * Checks how many teams are still standing in the Team Array
    * 0 if no teams left standing
+   * 
    * @author rsyed
    * @return number of remaining team slots
    *
