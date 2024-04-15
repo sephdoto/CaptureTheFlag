@@ -23,7 +23,7 @@ public class NewGameEngine implements Game {
   // Required by GameEngine
   // **************************************************
   private GameState gameState; // MAIN Data Store for GameEngine
-  private Date startedDate;
+  private Date startedDate = null;
   private Date endDate; // Setting this Ends the game
   private Clock currentTime;
   private Map<Integer, String> integerToTeamID;
