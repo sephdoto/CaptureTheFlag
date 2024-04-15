@@ -109,7 +109,7 @@ public class NewGameEngine implements Game {
    */
   @Override
   public boolean isStarted() {
-    return (isGameOver() && (getStartedDate() != null));
+    return (!isGameOver() && (getStartedDate() != null));
   }
 
   /**
