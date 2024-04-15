@@ -38,7 +38,6 @@ public class NewGameEngine implements Game {
   private MapTemplate copyOfTemplate; // Saves a copy of the template
   private static final Logger LOG = LoggerFactory.getLogger(NewGameEngine.class);
 
-
   // **************************************************
   // END of Nice to haves
   // **************************************************
@@ -426,14 +425,12 @@ public class NewGameEngine implements Game {
   }
 
   /**
-   * Checks how many teams are still standing in the Team Array
-   * 0 if no teams left standing
-   * 
+   * Checks how many teams are still standing in the Team Array 0 if no teams left standing
+   *
    * @author rsyed
    * @return number of remaining team slots
-   *
    */
-  public int teamsLeft() {
+  private int teamsLeft() {
     int counter = copyOfTemplate.getTeams();
     for (Team t : gameState.getTeams()) {
       if (t != null) {
@@ -442,6 +439,25 @@ public class NewGameEngine implements Game {
     }
     return counter;
   }
+
+  /**
+   * Checks how many teams are still standing in the Team Array 0 if no teams left standing
+   *
+   * @author rsyed
+   * @return number of remaining team slots
+   */
+  private void canWeStartTheGameUwU() {
+    if (getRemainingTeamSlots() == 0) {
+      setRandomStartingTeam();
+      startAltGameController();
+      this.startedDate = new Date();
+    }
+  }
+
+  private void setRandomStartingTeam() {
+    this.gameState.setCurrentTeam((int)(Math.random() * teamsLeft()));
+  }
+
   // **************************************************
   // End of Private Internal Methods
   // **************************************************
