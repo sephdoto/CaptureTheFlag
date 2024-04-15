@@ -387,14 +387,6 @@ public class NewGameEngine implements Game {
         Clock.fixed(Clock.offset(currentTime, totalGameTime).instant(), ZoneId.systemDefault());
   }
 
-  // **************************************************
-  // End of Alt Game Mode Methods
-  // **************************************************
-
-  // **************************************************
-  // Private Internal Methods
-  // **************************************************
-
   /**
    * Method which will take care of ending the game for Time limited Alt Mode
    *
@@ -441,10 +433,10 @@ public class NewGameEngine implements Game {
   }
 
   /**
-   * Checks how many teams are still standing in the Team Array 0 if no teams left standing
+   * Checks if we can start the game. Call this after adding a team to the game
    *
    * @author rsyed
-   * @return number of remaining team slots
+
    */
   private void canWeStartTheGameUwU() {
     if (getRemainingTeamSlots() == 0) {
@@ -454,8 +446,14 @@ public class NewGameEngine implements Game {
     }
   }
 
+  /**
+   * Sets a random team as starting team
+   * From 0 to n
+   *
+   * @author rsyed
+   */
   private void setRandomStartingTeam() {
-    this.gameState.setCurrentTeam((int)(Math.random() * teamsLeft()));
+    this.gameState.setCurrentTeam((int) (Math.random() * teamsLeft()));
   }
 
   // **************************************************
