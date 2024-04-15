@@ -352,13 +352,12 @@ public class NewGameEngine implements Game {
                   if (isGameOver()) { // Checks if game is over
                     moveTimeLimitedGameTrigger = false; // Ends the thread if game is over
                   }
+                  try {
+                    Thread.sleep(160);
+                  } catch (InterruptedException e) {
+                    LOG.info("Exception Occured in moveTimeLimitedHander thread");
+                  }
                 }
-              }
-              try { // Checks EVERY quater second
-                // TODO Discuss if this is okay or we need faster ones
-                Thread.sleep(160);
-              } catch (InterruptedException e) {
-                LOG.info("Exception Occured in moveTimeLimitedHander thread");
               }
             });
     moveLimitedThread.run();
@@ -436,7 +435,6 @@ public class NewGameEngine implements Game {
    * Checks if we can start the game. Call this after adding a team to the game
    *
    * @author rsyed
-
    */
   private void canWeStartTheGameUwU() {
     if (getRemainingTeamSlots() == 0) {
@@ -447,8 +445,7 @@ public class NewGameEngine implements Game {
   }
 
   /**
-   * Sets a random team as starting team
-   * From 0 to n
+   * Sets a random team as starting team. From 0 to n
    *
    * @author rsyed
    */
