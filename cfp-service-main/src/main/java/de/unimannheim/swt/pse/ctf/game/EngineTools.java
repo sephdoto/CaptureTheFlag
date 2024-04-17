@@ -24,6 +24,47 @@ import de.unimannheim.swt.pse.ctf.game.state.Team;
  */
 public class EngineTools extends AI_Tools {
   /**
+   * Starting from the current team, the following teams which cannot move get removed.
+   * @param gameState
+   * @return true if only one team is left
+   */
+  public static boolean removeMovelessTeams(GameState gameState) {
+    while(numberOfTeamsLeft(gameState) > 1 &&
+        !teamGotMovesLeft(gameState, gameState.getCurrentTeam())) {
+      removeTeam(gameState, gameState.getCurrentTeam());       //removed and set to null
+      gameState.setCurrentTeam(getNextTeam(gameState));
+    }
+    return numberOfTeamsLeft(gameState) == 1 ? true : false;
+  }
+  
+  /**
+   * This method returns how many Teams in a GameState are not null (= still playing)
+   * @param gameState
+   * @return number of teams left
+   */
+  public static int numberOfTeamsLeft(GameState gameState) {
+    int i = gameState.getTeams().length;
+    for(int j=i-1; j>=0; i--, j--)
+      if(gameState.getTeams()[j] != null)
+        i++;
+    return i;
+  }
+
+  /**
+   * Inefficient way for checking if a team got moves left but should be okay for GameEngine
+   * @param gameState
+   * @param teamIndex
+   * @return true if the team got moves left
+   */
+  public static boolean teamGotMovesLeft(GameState gameState, int teamIndex) {
+    for(int i = gameState.getTeams()[teamIndex].getPieces().length-1; i>=0; i--) {
+      if(getPossibleMoves(gameState, gameState.getTeams()[teamIndex].getPieces()[i].getId()).size() > 0)
+        return true;
+    }
+    return false;
+  }
+  
+  /**
    * Returns a GameStates next valid (not null) team.
    * @param gameState
    * @return next Team != null

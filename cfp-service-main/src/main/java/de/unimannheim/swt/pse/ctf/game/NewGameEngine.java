@@ -78,11 +78,24 @@ public class NewGameEngine implements Game {
     throw new UnsupportedOperationException("Unimplemented method 'makeMove'");
   }
 
+ /** 
+  * A team has to option to give up a game (i.e., losing the game as a result).
+  * Assume that a team can only give up if it is its move (turn).
+  * If the next teams got no moves left they also get removed.
+  * If only one team is left the game ends.
+  *
+  * @author sistumpf
+  * @param teamId Team ID
+  */
   @Override
   public void giveUp(String teamId) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'giveUp'");
-  }
+    if(Integer.parseInt(teamId) == this.gameState.getCurrentTeam()) {   //test is also in controller but doppelt gemoppelt hält besser
+      EngineTools.removeTeam(gameState, Integer.valueOf(teamId));       //removed and set to null
+      this.gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
+    }
+    if(EngineTools.removeMovelessTeams(this.gameState))
+      setGameOver();
+    }
 
   /**
    * Checks whether a move is valid based on the current game state.
