@@ -477,23 +477,18 @@ public class ServerCommandTests {
     AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS);
     for (int i = 0; i<90;i++){
       try {
-        if(javaClient.getCurrentState().getCurrentTeam() == Integer.parseInt(javaClient.teamID)){
+        if(javaClient.isItMyTurn()){
           System.out.println("it was team 0s turn!");
         javaClient.makeMove(Controller.getNextMove());
-        System.out.println("team 0 made a move");
+        } else {
+          javaClient2.makeMove(Controller2.getNextMove());
+          System.out.println("team 1 made a move");
+        }
+       
         javaClient.getStateFromServer();
         javaClient2.getStateFromServer();
         Controller.update(javaClient.getCurrentState());
         Controller2.update(javaClient2.getCurrentState());
-        } else {
-          System.out.println("it was team 1s turn!");
-          javaClient2.makeMove(Controller2.getNextMove());
-          System.out.println("team 1 made a move");
-          javaClient.getStateFromServer();
-          javaClient2.getStateFromServer();
-          Controller.update(javaClient.getCurrentState());
-          Controller2.update(javaClient2.getCurrentState());
-        }
         Thread.sleep(1000);
       } catch (NoMovesLeftException | InvalidShapeException | InterruptedException | InvalidMove e) {
         javaClient.getStateFromServer();
