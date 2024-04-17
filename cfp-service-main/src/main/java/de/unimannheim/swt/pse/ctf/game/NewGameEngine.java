@@ -383,7 +383,7 @@ public class NewGameEngine implements Game {
                 }
               }
             });
-    timeLimitedThread.run();
+    timeLimitedThread.start();
   }
 
   /**
@@ -441,7 +441,7 @@ public class NewGameEngine implements Game {
                 }
               }
             });
-    moveLimitedThread.run();
+    moveLimitedThread.start();
   }
 
   /**
@@ -475,7 +475,8 @@ public class NewGameEngine implements Game {
   // TODO Write Handler
   private void altGameModeGameOverHandler() {
     // CASE CALLED FROM LIMITED GAME TIME GAMEOVER HANDLER
-
+    //DUMMY END
+    setGameOver();
     // CASE CALLED FROM LIMITED MOVE TIME HANDLER
   }
 

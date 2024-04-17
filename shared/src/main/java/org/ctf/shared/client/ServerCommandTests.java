@@ -297,8 +297,8 @@ public class ServerCommandTests {
               }
             ],
             "placement": "symmetrical",
-            "totalTimeLimitInSeconds": -1,
-            "moveTimeLimitInSeconds": 5
+            "totalTimeLimitInSeconds": 8,
+            "moveTimeLimitInSeconds": 2
           }
         """;
 
@@ -330,9 +330,14 @@ public class ServerCommandTests {
     System.out.println(gson.toJson(javaClient.getCurrentState()));
     System.out.println(gson.toJson(javaClient.getCurrentSession()));
 try {
-  Thread.sleep(1000);
-  javaClient.getSessionFromServer();
-  System.out.println(gson.toJson(javaClient.getCurrentSession()));
+  for(int i = 0;i<10;i++){
+    Thread.sleep(1000);
+    javaClient.getStateFromServer();
+    System.out.println(gson.toJson(javaClient.getCurrentState()));
+    javaClient.getSessionFromServer();
+    System.out.println(gson.toJson(javaClient.getCurrentSession()));
+  }
+  
 } catch (InterruptedException e) {
   // TODO Auto-generated catch block
   e.printStackTrace();
