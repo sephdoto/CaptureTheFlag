@@ -1,6 +1,9 @@
 package org.ctf.shared.client;
 
 import com.google.gson.Gson;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.ZoneId;
 import java.util.Date;
 import org.ctf.shared.client.lib.GameClientInterface;
 import org.ctf.shared.client.service.CommLayerInterface;
@@ -36,6 +39,7 @@ public class Client implements GameClientInterface {
   private int currentTeamTurn;
   private Move lastMove;
   private Team[] teams;
+  private Clock currentTime;
 
   private Gson gson; // Gson object for conversions incase needed
   // Two CommLayers Available CommLayer and RestClientLayer
@@ -49,7 +53,6 @@ public class Client implements GameClientInterface {
   private GameSession currentSession;
   private String currentGameSessionID;
   private GameSessionResponse gameResponse;
-  private GameSessionResponse lastGameSessionResponse;
   private String[] winners;
 
   // Block for Team Data
@@ -58,14 +61,23 @@ public class Client implements GameClientInterface {
   private String teamID; // TeamID we get from the server for current team recognition
   public String teamColor;
 
-  public Date startDate;
   // Block for alt game mode data
+  public Date startDate;
   public Date endDate;
-  public Date moveTimeLeft;
+  public int moveTimeLeft;
+  private Duration turnTime;
+  private Clock gameShouldEndBy;
+  public int timeLeftInTheGame;
+  private Duration timeLimDuration;
+  private Integer lastTeamTurn = null;
 
   // Block for booleans
   public boolean gameOver;
-  protected boolean turnSupportFlag; //is enabled when the team ID recieved in response is an INT
+  public boolean gameStarted;
+  protected boolean turnSupportFlag; // is enabled when the team ID recieved in response is an INT
+  private boolean moveTimeLimitedGameTrigger = false;
+  private boolean timeLimitedGameTrigger = false;
+  private Clock turnEndsBy;
 
   /**
    * Constructor to set the IP and port on object creation
@@ -203,7 +215,9 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Refreshes Game State from the server and then checks if the GameStatesCurrent team matches the one from 
+   * Refreshes Game State from the server and then checks if the GameStatesCurrent team matches the
+   * one from
+   *
    * @throws NumberFormatException if the server does not support proper ID return
    * @return true if its your turn, false if its not
    */
@@ -219,32 +233,37 @@ public class Client implements GameClientInterface {
     GameSessionRequest gsr = new GameSessionRequest();
     gsr.setTemplate(map);
     try {
-      gameResponse = comm.createGameSession(currentServer, gsr);
+      this.gameResponse = comm.createGameSession(currentServer, gsr);
     } catch (URLError e) {
       System.out.println("Something wrong with the server. Try to fix using setServer");
     } catch (UnknownError e) {
       System.out.println("Something is wrong with the server");
     }
-
+    //// Block for parsing and setting alt game mode flags here
+    //
+    initAltGameModeLogic(map);
+    //
+    // End of Block
     return gameResponse;
   }
 
   private void gameSessionResponseParser(GameSessionResponse gameSessionResponse) {
-    this.lastGameSessionResponse = gameSessionResponse;
     this.currentGameSessionID = gameSessionResponse.getId();
     this.currentServer = shortURL + "/" + currentGameSessionID;
 
     try {
       this.startDate = gameSessionResponse.getGameStarted();
       this.currentSession.setGameStarted(gameSessionResponse.getGameStarted());
+      this.gameStarted = true;
+      startGameController();
     } catch (NullPointerException e) {
-      System.out.println("Game hasnt started yet");
+      this.gameStarted = false;
     }
     try {
       this.endDate = gameSessionResponse.getGameEnded();
       this.currentSession.setGameEnded(gameSessionResponse.getGameEnded());
     } catch (NullPointerException e) {
-      System.out.println("Game hasnt ended yet");
+      // Do nothing because isGameOver is handling the setting
     }
     try {
       this.gameOver = gameSessionResponse.isGameOver();
@@ -323,7 +342,19 @@ public class Client implements GameClientInterface {
   private void gameStateHelper() {
     GameState gameState = comm.getCurrentGameState(currentServer);
     this.grid = gameState.getGrid();
+
+    if(this.lastTeamTurn != null){    //init both
+      this.lastTeamTurn = gameState.getCurrentTeam();
+      this.currentTeamTurn = gameState.getCurrentTeam();
+    } else {
+      int updatedvalue = gameState.getCurrentTeam();    //update B
+      if(currentTeamTurn != updatedvalue){
+        this.lastTeamTurn = this.currentTeamTurn;
+        this.currentTeamTurn = updatedvalue;
+      }
+    }
     this.currentTeamTurn = gameState.getCurrentTeam();
+
     this.lastMove = gameState.getLastMove();
     this.teams = gameState.getTeams();
     this.currentState = gameState;
@@ -341,9 +372,109 @@ public class Client implements GameClientInterface {
     return gameSessionResponse;
   }
 
+  /**
+   * Method to call from create call while parsing {@link GameTemplate} and inits some prereqs for
+   * the Alt Game Mode.
+   *
+   * @author rsyed
+   */
+  private void initAltGameModeLogic(MapTemplate map) {
+    if (map.getMoveTimeLimitInSeconds() != -1) {
+      this.moveTimeLimitedGameTrigger = true;
+      this.turnTime = Duration.ofSeconds(map.getMoveTimeLimitInSeconds());
+    }
+    if (map.getTotalTimeLimitInSeconds() != -1) {
+      this.timeLimitedGameTrigger = true;
+      this.timeLimDuration = Duration.ofSeconds(map.getTotalTimeLimitInSeconds());
+    }
+  }
+
+  /**
+   * Main CONTROLLER for Client. Call when game has started (gameStarted is set)
+   *
+   * @author rsyed
+   */
+  private void startGameController() {
+    if (this.gameStarted) {
+      clientThread();
+    }
+  }
+
+  /**
+   * Checks how much time is left for the game
+   *
+   * @author rsyed
+   * @return -1 if no total game time limit set, 0 if over, > 0 if seconds remain
+   */
+  public int getRemainingGameTimeInSeconds() {
+    if (!this.timeLimitedGameTrigger) {
+      return -1;
+    }
+    if (isGameOver()) {
+      return 0;
+    } else {
+      return Math.toIntExact(
+          Duration.between(currentTime.instant(), gameShouldEndBy.instant()).getSeconds());
+    }
+  }
+
+  /**
+   * Handler which should be called incase the Game is a TimeLimited Game
+   *
+   * @author rsyed
+   */
+  public void clientThread() {
+    Thread timeLimitedThread =
+        new Thread(
+            () -> {
+              while (!isGameOver()) {
+                if (this.gameStarted) {
+                  this.getSessionFromServer(); // Gets  Session from server
+                  this.getStateFromServer(); // Gets game state from Server
+
+                  boolean setOnceTriggerTime = true;
+                  if (timeLimitedGameTrigger) {
+                    setWhenGameShouldEnd();
+                    setOnceTriggerTime = false;
+                  }
+
+                  if (moveTimeLimitedGameTrigger) {
+                    boolean setOnceTriggerMove = true;    //updates it for the first time
+                    if (setOnceTriggerMove) {
+                      increaseTurnTimer();
+                      setOnceTriggerMove = false;
+                    }
+                   if (lastTeamTurn != currentTeamTurn){
+                    increaseTurnTimer();
+                   }
+                    
+                  }
+                }
+              }
+              try { // Checks EVERY 1 second
+                // TODO Discuss if a check every second is okay or we need faster ones
+                Thread.sleep(250);
+              } catch (InterruptedException e) {
+
+              }
+            });
+    timeLimitedThread.start();
+  }
+
+  private void setWhenGameShouldEnd() {
+    this.gameShouldEndBy =
+        Clock.offset(
+            Clock.fixed(getStartDate().toInstant(), ZoneId.systemDefault()), timeLimDuration);
+  }
+
+  private void increaseTurnTimer() {
+    this.turnEndsBy =
+        Clock.fixed(Clock.offset(currentTime, turnTime).instant(), ZoneId.systemDefault());
+  }
+
   // Getter Block
   public GameSessionResponse getLastGameSessionResponse() {
-    return this.lastGameSessionResponse;
+    return this.gameResponse;
   }
 
   public GameState getCurrentState() {
@@ -404,5 +535,12 @@ public class Client implements GameClientInterface {
 
   public boolean isGameOver() {
     return gameOver;
+  }
+
+  // This method gets the game started flag forcefully and allows for automatic refreshing from
+  // server
+  public void forceSetGameStarted() {
+    this.gameStarted = true;
+    this.gameOver = false;
   }
 }
