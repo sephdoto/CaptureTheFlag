@@ -2,11 +2,8 @@ package org.ctf.shared.client;
 
 import com.google.gson.Gson;
 import java.util.Date;
-
 import org.ctf.shared.client.lib.GameClientInterface;
 import org.ctf.shared.client.service.CommLayerInterface;
-import org.ctf.shared.constants.Constants;
-import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
@@ -52,11 +49,13 @@ public class Client implements GameClientInterface {
   private GameSession currentSession;
   private String currentGameSessionID;
   private GameSessionResponse gameResponse;
+  private GameSessionResponse lastGameSessionResponse;
   private String[] winners;
 
   // Block for Team Data
   private String teamSecret;
-  public String teamID;
+  public String teamName; // Team name we request from the Server
+  private String teamID; // TeamID we get from the server for current team recognition
   public String teamColor;
 
   public Date startDate;
@@ -66,6 +65,7 @@ public class Client implements GameClientInterface {
 
   // Block for booleans
   public boolean gameOver;
+  private boolean teamIDisIntTrigger; //is enabled when the team ID recieved in response is an INT
 
   /**
    * Constructor to set the IP and port on object creation
@@ -202,6 +202,16 @@ public class Client implements GameClientInterface {
     joinGame(teamName);
   }
 
+  /**
+   * Refreshes Game State from the server and then checks if the GameStatesCurrent team matches the one from 
+   * @throws NumberFormatException if the server does not support proper ID return
+   * @return true if its your turn, false if its not
+   */
+  public boolean isItMyTurn() throws NumberFormatException {
+    getStateFromServer();
+    return Integer.parseInt(this.teamID) == currentTeamTurn;
+  }
+
   // HELPER METHODS
 
   private GameSessionResponse createGameCaller(MapTemplate map) {
@@ -219,8 +229,8 @@ public class Client implements GameClientInterface {
     return gameResponse;
   }
 
-  // TODO Improve GameSessionResponse Parsing. You need to save it to a GameSession Object
   private void gameSessionResponseParser(GameSessionResponse gameSessionResponse) {
+    this.lastGameSessionResponse = gameSessionResponse;
     this.currentGameSessionID = gameSessionResponse.getId();
     this.currentServer = shortURL + "/" + currentGameSessionID;
 
@@ -257,7 +267,7 @@ public class Client implements GameClientInterface {
 
   private JoinGameResponse joinGameCaller(String teamName) {
     JoinGameResponse response = new JoinGameResponse();
-
+    this.teamName = teamName;
     try {
       response = comm.joinGame(currentServer, teamName);
     } catch (SessionNotFound e) {
@@ -272,7 +282,13 @@ public class Client implements GameClientInterface {
   }
 
   private void joinGameParser(JoinGameResponse joinGameResponse) {
-    this.teamID = joinGameResponse.getTeamId();
+    try {
+      int temp = Integer.parseInt(joinGameResponse.getTeamId());
+      this.teamIDisIntTrigger = true;
+    } catch (Exception e) {
+      this.teamIDisIntTrigger = false;
+    }
+    this.teamID = joinGameResponse.getTeamId(); // This is the INT Parseable ID from the server
     this.teamSecret = joinGameResponse.getTeamSecret();
     try {
       this.teamColor = joinGameResponse.getTeamColor();
@@ -326,6 +342,10 @@ public class Client implements GameClientInterface {
   }
 
   // Getter Block
+  public GameSessionResponse getLastGameSessionResponse() {
+    return this.lastGameSessionResponse;
+  }
+
   public GameState getCurrentState() {
     return currentState;
   }
