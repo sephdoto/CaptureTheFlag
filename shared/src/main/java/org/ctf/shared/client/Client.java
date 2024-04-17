@@ -65,7 +65,7 @@ public class Client implements GameClientInterface {
 
   // Block for booleans
   public boolean gameOver;
-  private boolean teamIDisIntTrigger; //is enabled when the team ID recieved in response is an INT
+  protected boolean turnSupportFlag; //is enabled when the team ID recieved in response is an INT
 
   /**
    * Constructor to set the IP and port on object creation
@@ -207,7 +207,7 @@ public class Client implements GameClientInterface {
    * @throws NumberFormatException if the server does not support proper ID return
    * @return true if its your turn, false if its not
    */
-  public boolean isItMyTurn() throws NumberFormatException {
+  protected boolean isItMyTurn() throws NumberFormatException {
     getStateFromServer();
     return Integer.parseInt(this.teamID) == currentTeamTurn;
   }
@@ -284,9 +284,9 @@ public class Client implements GameClientInterface {
   private void joinGameParser(JoinGameResponse joinGameResponse) {
     try {
       int temp = Integer.parseInt(joinGameResponse.getTeamId());
-      this.teamIDisIntTrigger = true;
+      this.turnSupportFlag = true;
     } catch (Exception e) {
-      this.teamIDisIntTrigger = false;
+      this.turnSupportFlag = false;
     }
     this.teamID = joinGameResponse.getTeamId(); // This is the INT Parseable ID from the server
     this.teamSecret = joinGameResponse.getTeamSecret();

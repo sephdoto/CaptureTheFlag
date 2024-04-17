@@ -30,9 +30,12 @@ public class AIClient extends Client implements Runnable {
       while ((this.getEndDate() == null) && (this.getStartDate() != null)) {
         this.getSessionFromServer();
         this.getStateFromServer();
-        if(this.getCurrentState().getCurrentTeam() == Integer.parseInt(this.teamID)){
-          System.out.println("Its my turn!");
-          this.makeMove(controller.getNextMove());
+        if(turnSupportFlag){
+          if(isItMyTurn()){
+            this.makeMove(controller.getNextMove());
+          }
+        } else {
+          //TODO Code for ALT Turn making support if server is badly written
         }
         
         this.getSessionFromServer();
