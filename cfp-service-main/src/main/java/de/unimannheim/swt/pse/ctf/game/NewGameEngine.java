@@ -413,7 +413,6 @@ public class NewGameEngine implements Game {
    * @author rsyed
    */
   public void moveTimeLimitedHander() {
-    LOG.info("MOve time handler started");
     Thread moveLimitedThread =
         new Thread(
             () -> {
@@ -425,9 +424,7 @@ public class NewGameEngine implements Game {
                     setOnceTrigger = false;
                   }
                   if (currentTime.instant().isAfter(turnEndsBy.instant())) {
-
                     this.gameState.setCurrentTeam(EngineTools.getNextTeam(this.gameState));
-
                     increaseTurnTimer(); // UPDATES when the next turn should end
                   }
                   if (isGameOver()) { // Checks if game is over
