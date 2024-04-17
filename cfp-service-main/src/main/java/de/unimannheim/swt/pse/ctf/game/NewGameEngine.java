@@ -9,7 +9,9 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import javafx.scene.paint.Color;
@@ -65,9 +67,21 @@ public class NewGameEngine implements Game {
   @Override
   public GameState create(MapTemplate template) {
     this.copyOfTemplate = template; // Template Copy Box
+    this.integerToTeam = Collections.synchronizedMap(new HashMap<>());
+    this.teamToInteger = Collections.synchronizedMap(new HashMap<>());
+    gameState = new GameState();
 
+    String[][] grid = new String[ template.getGridSize()[0]][template.getGridSize()[1]];
+    for (int i = 0; i < grid.length; i++) {
+      for (int j = 0; j < grid[i].length; j++) {
+        grid[i][j] = "";
+      }
+    }
+    gameState.setGrid(grid);
+    gameState.setTeams(new Team[template.getTeams()]);
     initAltGameModeLogic(template); // Inits Alt Game mode support
-    throw new UnsupportedOperationException("Unimplemented method 'create'");
+    
+    return gameState;
   }
 
   /**
@@ -87,20 +101,26 @@ public class NewGameEngine implements Game {
   public Team joinGame(String teamId) {
     if (getRemainingTeamSlots() == 0) {
       throw new NoMoreTeamSlots();
-    }
-
-    Team tempTeam = new Team();
+    } 
     int slot = EngineTools.getNextEmptyTeamSlot(this.gameState);
+    Team tempTeam = BoardSetUp.initializeTeam(slot, copyOfTemplate);
+    // Method above Sets Flags, Pieces in the Team object
+
     teamToInteger.put(
         teamId, slot); // initial save in two dictionaries.I know its stupid but we can remove one
     integerToTeam.put(slot, teamId);
-    tempTeam.setId(String.valueOf(slot));
-    tempTeam.setColor(getRandColor());
 
     // **************************************************
     // Init the Game State here with the Team
     // **************************************************
     // TODO Base, Pieces, Flag
+    // test code 
+    if(slot==0){
+      tempTeam.setBase(new int[]{2,5});
+    } else {
+      tempTeam.setBase(new int[]{7,5});
+    }
+
     // **************************************************
     // End of Init the Game State
     // **************************************************
@@ -135,7 +155,7 @@ public class NewGameEngine implements Game {
    */
   @Override
   public void giveUp(String teamId) {
-    if (Integer.parseInt(teamId)
+    if (teamToInteger.get(teamId)
         == this.gameState
             .getCurrentTeam()) { // test is also in controller but doppelt gemoppelt hält besser
       EngineTools.removeTeam(gameState, Integer.valueOf(teamId)); // removed and set to null
@@ -244,8 +264,8 @@ public class NewGameEngine implements Game {
   @Override
   public int getRemainingTeamSlots() {
     int counter = 0;
-    for (Team t : gameState.getTeams()) {
-      if (t == null) {
+    for(Team t : gameState.getTeams()){
+      if(t == null){
         counter++;
       }
     }
@@ -498,6 +518,8 @@ public class NewGameEngine implements Game {
    */
   private void canWeStartTheGameUwU() {
     if (getRemainingTeamSlots() == 0) {
+      BoardSetUp.initGrid(this.gameState, copyOfTemplate);
+      // BoardSetUp.placeBases(this.gameState, copyOfTemplate);
       setRandomStartingTeam();
       startAltGameController();
       this.startedDate = new Date();

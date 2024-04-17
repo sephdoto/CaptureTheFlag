@@ -263,6 +263,8 @@ public class BoardSetUp {
     }
   }
 
+  
+
   /**
    * Assigns positions to the Bases
    *
@@ -384,5 +386,31 @@ public class BoardSetUp {
       teams[i] = initializeTeam(i, template);
     }
     return teams;
+  }
+
+  /**
+   * ONLY places bases 
+   *
+   * @author rsyed
+   * @param GameState gameState, MapTemplate template
+   */
+  static void assignTeamBases(GameState gs, MapTemplate mt) {
+    int teams = mt.getTeams();
+    int[][] boundaries = EngineTools.cutUpGrid(gs);
+
+    for (int i = 0; i < mt.getTeams(); i++) {
+      if (boundaries[i][4] == 0) {
+        gs.getTeams()[i].setBase(
+            new int[] {
+              boundaries[i][1] / 2, (boundaries[i][3] - boundaries[i][2]) / 2 + boundaries[i][2]
+            });
+      } else if (boundaries[i][4] == 1) {
+        gs.getTeams()[i].setBase(
+            new int[] {
+              (boundaries[i][1] - boundaries[i][0]) / 2 + (boundaries[i][0]),
+              (boundaries[i][3] - boundaries[i][2]) / 2 + boundaries[i][2]
+            });
+      }
+    }
   }
 }

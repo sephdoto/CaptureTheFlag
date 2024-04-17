@@ -41,7 +41,8 @@ public class ServerCommandTests {
     // testConnectionTimedGameMode();
     // testMalformedConnection();
     // testConnectionTimedMoveMode();
-    TimeTests();
+    //TimeTests();
+    joinTest();
     // join();
     // joinNDelete();
   }
@@ -186,6 +187,7 @@ public class ServerCommandTests {
     MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
     GameSessionRequest request = new GameSessionRequest();
     request.setTemplate(test);
+
   }
 
   public static void joinTest() {
@@ -306,37 +308,40 @@ public class ServerCommandTests {
     CommLayer comm = new CommLayer();
     Client javaClient =
         ClientStepBuilder.newBuilder()
-            .enableRestLayer(true)
+            .enableRestLayer(false)
             .onLocalHost()
-            .onPort(Port.DEFAULTPORT)
+            .onPort("8888")
             .HumanPlayer()
             .build();
     Client javaClient2 =
         ClientStepBuilder.newBuilder()
-            .enableRestLayer(true)
+            .enableRestLayer(false)
             .onLocalHost()
-            .onPort(Port.DEFAULTPORT)
+            .onPort("8888")
             .HumanPlayer()
             .build();
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
-    Move move = new Move();
+    javaClient.getSessionFromServer();
+    System.out.println(gson.toJson(javaClient.getCurrentState()));
+    System.out.println(gson.toJson(javaClient.getCurrentSession()));
+    /* Move move = new Move();
     move.setPieceId("p:0_2");
-    move.setNewPosition(new int[] {0, 1});
+    move.setNewPosition(new int[] {0, 1}); */
     // javaClient2.makeMove(move);
     /*       move.setPieceId("p:1_2");
     move.setNewPosition(new int[] {9, 8});
     javaClient.makeMove(move); */
 
-    javaClient.getStateFromServer();
+ /*    javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
     System.out.println(gson.toJson(javaClient.getGrid()));
     System.out.println(gson.toJson(javaClient.getLastMove()));
-    System.out.println(gson.toJson(javaClient2.getLastMove()));
+    System.out.println(gson.toJson(javaClient2.getLastMove())); */
     /*    for(int i = 0; i < 100; i++){
       System.out.println( (int) (Math.random() * 2) );
     } */
