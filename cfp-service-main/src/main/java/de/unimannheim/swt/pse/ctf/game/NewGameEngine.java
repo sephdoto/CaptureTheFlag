@@ -71,7 +71,7 @@ public class NewGameEngine implements Game {
     this.teamToInteger = Collections.synchronizedMap(new HashMap<>());
     gameState = new GameState();
 
-    String[][] grid = new String[ template.getGridSize()[0]][template.getGridSize()[1]];
+    String[][] grid = new String[template.getGridSize()[0]][template.getGridSize()[1]];
     for (int i = 0; i < grid.length; i++) {
       for (int j = 0; j < grid[i].length; j++) {
         grid[i][j] = "";
@@ -80,7 +80,7 @@ public class NewGameEngine implements Game {
     gameState.setGrid(grid);
     gameState.setTeams(new Team[template.getTeams()]);
     initAltGameModeLogic(template); // Inits Alt Game mode support
-    
+
     return gameState;
   }
 
@@ -101,7 +101,7 @@ public class NewGameEngine implements Game {
   public Team joinGame(String teamId) {
     if (getRemainingTeamSlots() == 0) {
       throw new NoMoreTeamSlots();
-    } 
+    }
     int slot = EngineTools.getNextEmptyTeamSlot(this.gameState);
     Team tempTeam = BoardSetUp.initializeTeam(slot, copyOfTemplate);
     // Method above Sets Flags, Pieces in the Team object
@@ -114,11 +114,11 @@ public class NewGameEngine implements Game {
     // Init the Game State here with the Team
     // **************************************************
     // TODO Base, Pieces, Flag
-    // test code 
-    if(slot==0){
-      tempTeam.setBase(new int[]{2,5});
+    // test code
+    if (slot == 0) {
+      tempTeam.setBase(new int[] {2, 5});
     } else {
-      tempTeam.setBase(new int[]{7,5});
+      tempTeam.setBase(new int[] {7, 5});
     }
 
     // **************************************************
@@ -264,8 +264,8 @@ public class NewGameEngine implements Game {
   @Override
   public int getRemainingTeamSlots() {
     int counter = 0;
-    for(Team t : gameState.getTeams()){
-      if(t == null){
+    for (Team t : gameState.getTeams()) {
+      if (t == null) {
         counter++;
       }
     }
@@ -413,6 +413,7 @@ public class NewGameEngine implements Game {
    * @author rsyed
    */
   public void moveTimeLimitedHander() {
+    LOG.info("MOve time handler started");
     Thread moveLimitedThread =
         new Thread(
             () -> {
@@ -424,8 +425,8 @@ public class NewGameEngine implements Game {
                     setOnceTrigger = false;
                   }
                   if (currentTime.instant().isAfter(turnEndsBy.instant())) {
-                    // TODO ASK SIMON FOR CLARIFICATION ON HOW TO DO BEST DO THIS
-                    EngineTools.getNextTeam(this.gameState);
+
+                    this.gameState.setCurrentTeam(EngineTools.getNextTeam(this.gameState));
 
                     increaseTurnTimer(); // UPDATES when the next turn should end
                   }
@@ -518,8 +519,17 @@ public class NewGameEngine implements Game {
    */
   private void canWeStartTheGameUwU() {
     if (getRemainingTeamSlots() == 0) {
+
+      // **************************************************
+      // Make the game Grid
+      // **************************************************
+      //TODO Buggy
       BoardSetUp.initGrid(this.gameState, copyOfTemplate);
       // BoardSetUp.placeBases(this.gameState, copyOfTemplate);
+      // **************************************************
+      // End of making the game Grid
+      // **************************************************
+      
       setRandomStartingTeam();
       startAltGameController();
       this.startedDate = new Date();

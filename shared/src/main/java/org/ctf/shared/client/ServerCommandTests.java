@@ -298,7 +298,7 @@ public class ServerCommandTests {
             ],
             "placement": "symmetrical",
             "totalTimeLimitInSeconds": -1,
-            "moveTimeLimitInSeconds": -1
+            "moveTimeLimitInSeconds": 5
           }
         """;
 
@@ -329,6 +329,15 @@ public class ServerCommandTests {
     javaClient.getSessionFromServer();
     System.out.println(gson.toJson(javaClient.getCurrentState()));
     System.out.println(gson.toJson(javaClient.getCurrentSession()));
+try {
+  Thread.sleep(1000);
+  javaClient.getSessionFromServer();
+  System.out.println(gson.toJson(javaClient.getCurrentSession()));
+} catch (InterruptedException e) {
+  // TODO Auto-generated catch block
+  e.printStackTrace();
+}
+    
     /* Move move = new Move();
     move.setPieceId("p:0_2");
     move.setNewPosition(new int[] {0, 1}); */
