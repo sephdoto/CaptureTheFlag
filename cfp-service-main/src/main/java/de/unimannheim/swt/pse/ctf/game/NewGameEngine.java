@@ -1,5 +1,6 @@
 package de.unimannheim.swt.pse.ctf.game;
 
+import de.unimannheim.swt.pse.ctf.game.exceptions.NoMoreTeamSlots;
 import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Move;
@@ -10,6 +11,8 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
+import java.util.Random;
+import javafx.scene.paint.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +29,8 @@ public class NewGameEngine implements Game {
   private Date startedDate = null;
   private Date endDate; // Setting this Ends the game
   private Clock currentTime;
-  private Map<Integer, String> integerToTeamID;
+  private Map<Integer, String> integerToTeam;
+  private Map<String, Integer> teamToInteger;
 
   // **************************************************
   // End of Required by GameState
@@ -66,10 +70,53 @@ public class NewGameEngine implements Game {
     throw new UnsupportedOperationException("Unimplemented method 'create'");
   }
 
+  /**
+   * Updates a game and its state based on team join request (add team).
+   *
+   * <ul>
+   *   <li>adds team if a slot is free (array element is null)
+   *   <li>if all team slots are finally assigned, implicitly starts the game by picking a starting
+   *       team at random
+   * </ul>
+   *
+   * @param teamId Team ID
+   * @return Team
+   * @throws NoMoreTeamSlots No more team slots available
+   */
   @Override
   public Team joinGame(String teamId) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'joinGame'");
+    if (getRemainingTeamSlots() == 0) {
+      throw new NoMoreTeamSlots();
+    }
+
+    Team tempTeam = new Team();
+    int slot = EngineTools.getNextEmptyTeamSlot(this.gameState);
+    teamToInteger.put(
+        teamId, slot); // initial save in two dictionaries.I know its stupid but we can remove one
+    integerToTeam.put(slot, teamId);
+    tempTeam.setId(String.valueOf(slot));
+    tempTeam.setColor(getRandColor());
+
+    // **************************************************
+    // Init the Game State here with the Team
+    // **************************************************
+    // TODO Base, Pieces, Flag
+    // **************************************************
+    // End of Init the Game State
+    // **************************************************
+
+    this.gameState.getTeams()[slot] = tempTeam; // places the team in the slot its supposed to go in
+
+    // **************************************************
+    // Slot Full Check
+    // **************************************************
+    canWeStartTheGameUwU(); // Method also checks for alt game logic
+
+    // **************************************************
+    // End of is Slot Full Check
+    // **************************************************
+
+    return tempTeam;
   }
 
   @Override
@@ -78,24 +125,24 @@ public class NewGameEngine implements Game {
     throw new UnsupportedOperationException("Unimplemented method 'makeMove'");
   }
 
- /** 
-  * A team has to option to give up a game (i.e., losing the game as a result).
-  * Assume that a team can only give up if it is its move (turn).
-  * If the next teams got no moves left they also get removed.
-  * If only one team is left the game ends.
-  *
-  * @author sistumpf
-  * @param teamId Team ID
-  */
+  /**
+   * A team has to option to give up a game (i.e., losing the game as a result). Assume that a team
+   * can only give up if it is its move (turn). If the next teams got no moves left they also get
+   * removed. If only one team is left the game ends.
+   *
+   * @author sistumpf
+   * @param teamId Team ID
+   */
   @Override
   public void giveUp(String teamId) {
-    if(Integer.parseInt(teamId) == this.gameState.getCurrentTeam()) {   //test is also in controller but doppelt gemoppelt hält besser
-      EngineTools.removeTeam(gameState, Integer.valueOf(teamId));       //removed and set to null
+    if (Integer.parseInt(teamId)
+        == this.gameState
+            .getCurrentTeam()) { // test is also in controller but doppelt gemoppelt hält besser
+      EngineTools.removeTeam(gameState, Integer.valueOf(teamId)); // removed and set to null
       this.gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
     }
-    if(EngineTools.removeMovelessTeams(this.gameState))
-      setGameOver();
-    }
+    if (EngineTools.removeMovelessTeams(this.gameState)) setGameOver();
+  }
 
   /**
    * Checks whether a move is valid based on the current game state.
@@ -466,6 +513,20 @@ public class NewGameEngine implements Game {
     this.gameState.setCurrentTeam((int) (Math.random() * teamsLeft()));
   }
 
+  /**
+   * Helper method returns HEX Codes for colors
+   *
+   * @author rsyed
+   * @return
+   */
+  static String getRandColor() {
+    Random rand = new Random();
+    int r = rand.nextInt(255);
+    int g = rand.nextInt(255);
+    int b = rand.nextInt(255);
+    Color testColor = Color.rgb(r, g, b);
+    return testColor.toString();
+  }
   // **************************************************
   // End of Private Internal Methods
   // **************************************************
