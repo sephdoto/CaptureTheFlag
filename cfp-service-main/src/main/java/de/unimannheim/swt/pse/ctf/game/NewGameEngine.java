@@ -130,6 +130,7 @@ public class NewGameEngine implements Game {
     // **************************************************
     // Slot Full Check
     // **************************************************
+    //TODO this method below ALSO has to set the map in the game state with all the pieces, blocks, bases etc on the map! Code needs to be finished
     canWeStartTheGameUwU(); // Method also checks for alt game logic
 
     // **************************************************
@@ -299,8 +300,7 @@ public class NewGameEngine implements Game {
   }
 
   /**
-   * Main CONTROLLER for Alt Game Modes Call when Game Starts (teams are full) TODO Call this from
-   * JoinGame when you fulfill game starting logic
+   * Main CONTROLLER for Alt Game Modes Call when Game Starts (teams are full) 
    *
    * @author rsyed
    */
