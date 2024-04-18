@@ -74,7 +74,7 @@ public class NewGameEngine implements Game {
 
     gameState.setGrid(boardController.initEmptyGrid(template.getGridSize()[0],template.getGridSize()[1]));  //Makes an Empty Grid
 
-    
+
 
 
 
@@ -102,8 +102,9 @@ public class NewGameEngine implements Game {
     if (getRemainingTeamSlots() == 0) {
       throw new NoMoreTeamSlots();
     }
+    BoardController boardController = new BoardController();
     int slot = EngineTools.getNextEmptyTeamSlot(this.gameState);
-    Team tempTeam = BoardSetUp.initializeTeam(slot, copyOfTemplate);
+    Team tempTeam = boardController.initializeTeam(slot, copyOfTemplate);
     // Method above Sets Flags, Pieces in the Team object
 
     teamToInteger.put(
