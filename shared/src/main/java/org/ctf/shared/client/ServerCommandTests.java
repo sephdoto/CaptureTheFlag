@@ -32,10 +32,10 @@ public class ServerCommandTests {
     // Uncomment to do invidivual tests
     // testConnection();
     // testStart();
-    // joinTest();
+     joinTest();
     //copierCheck();
     // arrayTest();
-    getStateTests();
+    //getStateTests();
     //AIVSHUMAN();
     // testConnectionTimedGameMode();
     // testMalformedConnection();
@@ -272,7 +272,7 @@ public class ServerCommandTests {
               }
             ],
             "placement": "symmetrical",
-            "totalTimeLimitInSeconds": -1,
+            "totalTimeLimitInSeconds": 20,
             "moveTimeLimitInSeconds": -1
           }
         """;
@@ -285,38 +285,52 @@ public class ServerCommandTests {
         ClientStepBuilder.newBuilder()
             .enableRestLayer(true)
             .onLocalHost()
-            .onPort(Port.DEFAULTPORT)
+            .onPort("8888")
             .HumanPlayer()
             .build();
     Client javaClient2 =
         ClientStepBuilder.newBuilder()
             .enableRestLayer(true)
             .onLocalHost()
-            .onPort(Port.DEFAULTPORT)
+            .onPort("8888")
             .HumanPlayer()
             .build();
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
-    Move move = new Move();
+    javaClient.startGameController();
+    try {
+      for (int i=0;i<20;i++){
+        System.out.println(javaClient.getRemainingGameTimeInSeconds());
+        Thread.sleep(1000);
+      }
+      
+      
+    } catch (InterruptedException | InvalidMove e) {
+      
+    }
+   
+ /*    Move move = new Move();
     move.setPieceId("p:0_2");
-    move.setNewPosition(new int[] {0, 1});
+    move.setNewPosition(new int[] {0, 1}); */
     // javaClient2.makeMove(move);
     /*       move.setPieceId("p:1_2");
     move.setNewPosition(new int[] {9, 8});
     javaClient.makeMove(move); */
 
-    javaClient.getStateFromServer();
+   /*  javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
     System.out.println(gson.toJson(javaClient.getGrid()));
     System.out.println(gson.toJson(javaClient.getLastMove()));
-    System.out.println(gson.toJson(javaClient2.getLastMove()));
+    System.out.println(gson.toJson(javaClient2.getLastMove())); */
     /*    for(int i = 0; i < 100; i++){
       System.out.println( (int) (Math.random() * 2) );
     } */
+
+
   }
 
   public static void getStateTests() {

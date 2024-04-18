@@ -255,7 +255,7 @@ public class Client implements GameClientInterface {
       this.startDate = gameSessionResponse.getGameStarted();
       this.currentSession.setGameStarted(gameSessionResponse.getGameStarted());
       this.gameStarted = true;
-      startGameController();
+     // startGameController();
     } catch (NullPointerException e) {
       this.gameStarted = false;
     }
@@ -343,12 +343,12 @@ public class Client implements GameClientInterface {
     GameState gameState = comm.getCurrentGameState(currentServer);
     this.grid = gameState.getGrid();
 
-    if(this.lastTeamTurn != null){    //init both
+    if (this.lastTeamTurn != null) { // init both
       this.lastTeamTurn = gameState.getCurrentTeam();
       this.currentTeamTurn = gameState.getCurrentTeam();
     } else {
-      int updatedvalue = gameState.getCurrentTeam();    //update B
-      if(currentTeamTurn != updatedvalue){
+      int updatedvalue = gameState.getCurrentTeam(); // update B
+      if (currentTeamTurn != updatedvalue) {
         this.lastTeamTurn = this.currentTeamTurn;
         this.currentTeamTurn = updatedvalue;
       }
@@ -394,7 +394,7 @@ public class Client implements GameClientInterface {
    *
    * @author rsyed
    */
-  private void startGameController() {
+  public void startGameController() {
     if (this.gameStarted) {
       clientThread();
     }
@@ -424,7 +424,7 @@ public class Client implements GameClientInterface {
    * @author rsyed
    */
   public void clientThread() {
-    Thread timeLimitedThread =
+    Thread internalThread =
         new Thread(
             () -> {
               while (!isGameOver()) {
@@ -439,15 +439,14 @@ public class Client implements GameClientInterface {
                   }
 
                   if (moveTimeLimitedGameTrigger) {
-                    boolean setOnceTriggerMove = true;    //updates it for the first time
+                    boolean setOnceTriggerMove = true; // updates it for the first time
                     if (setOnceTriggerMove) {
                       increaseTurnTimer();
                       setOnceTriggerMove = false;
                     }
-                   if (lastTeamTurn != currentTeamTurn){
-                    increaseTurnTimer();
-                   }
-                    
+                    if (lastTeamTurn != currentTeamTurn) {
+                      increaseTurnTimer();
+                    }
                   }
                 }
               }
@@ -455,10 +454,10 @@ public class Client implements GameClientInterface {
                 // TODO Discuss if a check every second is okay or we need faster ones
                 Thread.sleep(250);
               } catch (InterruptedException e) {
-
+                throw new Error("Something went wrong in the Client Thread");
               }
             });
-    timeLimitedThread.start();
+    internalThread.start();
   }
 
   private void setWhenGameShouldEnd() {
