@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 import de.unimannheim.swt.pse.ctf.game.map.PieceDescription;
+import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Piece;
 import de.unimannheim.swt.pse.ctf.game.state.Team;
 
@@ -64,4 +65,36 @@ public class BoardController {
     return team;
   }
 
+    /**
+   * Assigns positions to the Bases
+   *
+   * @author ysiebenh
+   * @param GameState gameState, MapTemplate template
+   */
+  static void placeBases(GameState gs, MapTemplate mt) {
+    int teams = mt.getTeams();
+    int[][] boundaries = EngineTools.cutUpGrid(gs);
+    if (teams % 2 != 0) {
+      teams++;
+    }
+
+    for (int i = 0; i < mt.getTeams(); i++) {
+      if (boundaries[i][4] == 0) {
+        gs.getTeams()[i].setBase(
+            new int[] {
+              boundaries[i][1] / 2, (boundaries[i][3] - boundaries[i][2]) / 2 + boundaries[i][2]
+            });
+        gs.getGrid()[gs.getTeams()[i].getBase()[0]][gs.getTeams()[i].getBase()[1]] =
+            "b:" + gs.getTeams()[i].getId();
+      } else if (boundaries[i][4] == 1) {
+        gs.getTeams()[i].setBase(
+            new int[] {
+              (boundaries[i][1] - boundaries[i][0]) / 2 + (boundaries[i][0]),
+              (boundaries[i][3] - boundaries[i][2]) / 2 + boundaries[i][2]
+            });
+        gs.getGrid()[gs.getTeams()[i].getBase()[0]][gs.getTeams()[i].getBase()[1]] =
+            "b:" + gs.getTeams()[i].getId();
+      }
+    }
+  }
 }

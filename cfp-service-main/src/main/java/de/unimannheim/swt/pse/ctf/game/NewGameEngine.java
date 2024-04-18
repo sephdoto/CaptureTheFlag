@@ -1,6 +1,7 @@
 package de.unimannheim.swt.pse.ctf.game;
 
 import de.unimannheim.swt.pse.ctf.game.exceptions.NoMoreTeamSlots;
+import de.unimannheim.swt.pse.ctf.game.exceptions.TooManyPiecesException;
 import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Move;
@@ -116,11 +117,6 @@ public class NewGameEngine implements Game {
     // **************************************************
     // TODO Base, Pieces, Flag
     // test code
-    if (slot == 0) {
-      tempTeam.setBase(new int[] {2, 5});
-    } else {
-      tempTeam.setBase(new int[] {7, 5});
-    }
 
     // **************************************************
     // End of Init the Game State
@@ -523,8 +519,15 @@ public class NewGameEngine implements Game {
       // Make the game Grid
       // **************************************************
       //TODO Buggy
-      BoardSetUp.initGrid(this.gameState, copyOfTemplate);
-      // BoardSetUp.placeBases(this.gameState, copyOfTemplate);
+      BoardController boardController = new BoardController();
+      boardController.placeBases(this.gameState, copyOfTemplate); //Places and inits teams properly on the map
+      BoardSetUp.placeBlocks(copyOfTemplate,this.gameState.getGrid(),copyOfTemplate.getBlocks());
+      try {
+        BoardSetUp.initPieces(this.gameState,copyOfTemplate);
+      } catch (TooManyPiecesException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
       // **************************************************
       // End of making the game Grid
       // **************************************************

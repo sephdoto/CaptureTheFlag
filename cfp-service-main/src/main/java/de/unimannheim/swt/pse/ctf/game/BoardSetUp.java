@@ -66,14 +66,18 @@ public class BoardSetUp {
    */
   static void initPieces(GameState gameState, MapTemplate template) throws TooManyPiecesException {
 
+    //Exception Calculator
     if (gameState.getTeams()[0].getPieces().length
         > (gameState.getGrid().length / 2) * (gameState.getGrid()[0].length - 2)) {
       throw new TooManyPiecesException("Too many Pieces! Make the board bigger! :)");
     }
-
+    
+    //Base teamID assigner
     for (Team team : gameState.getTeams()) {
       gameState.getGrid()[team.getBase()[0]][team.getBase()[1]] = "b:" + team.getId();
     }
+    
+    //Switch for placement strat
     switch (template.getPlacement()) {
       case symmetrical:
         placePiecesSymmetrical(gameState);
@@ -386,31 +390,5 @@ public class BoardSetUp {
       teams[i] = initializeTeam(i, template);
     }
     return teams;
-  }
-
-  /**
-   * ONLY places bases 
-   *
-   * @author rsyed
-   * @param GameState gameState, MapTemplate template
-   */
-  static void assignTeamBases(GameState gs, MapTemplate mt) {
-    int teams = mt.getTeams();
-    int[][] boundaries = EngineTools.cutUpGrid(gs);
-
-    for (int i = 0; i < mt.getTeams(); i++) {
-      if (boundaries[i][4] == 0) {
-        gs.getTeams()[i].setBase(
-            new int[] {
-              boundaries[i][1] / 2, (boundaries[i][3] - boundaries[i][2]) / 2 + boundaries[i][2]
-            });
-      } else if (boundaries[i][4] == 1) {
-        gs.getTeams()[i].setBase(
-            new int[] {
-              (boundaries[i][1] - boundaries[i][0]) / 2 + (boundaries[i][0]),
-              (boundaries[i][3] - boundaries[i][2]) / 2 + boundaries[i][2]
-            });
-      }
-    }
   }
 }

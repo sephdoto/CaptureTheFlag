@@ -195,8 +195,8 @@ public class ServerCommandTests {
     String jsonPayload =
         """
           {
-            "gridSize": [10, 10],
-            "teams": 2,
+            "gridSize": [20, 20],
+            "teams": 3,
             "flags": 1,
             "blocks": 0,
             "pieces": [
@@ -320,10 +320,19 @@ public class ServerCommandTests {
             .onPort("8888")
             .HumanPlayer()
             .build();
+            Client javaClient3 =
+        ClientStepBuilder.newBuilder()
+            .enableRestLayer(false)
+            .onLocalHost()
+            .onPort("8888")
+            .HumanPlayer()
+            .build();
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
         "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
+        javaClient3.joinExistingGame(
+        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team3");
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
     javaClient.getSessionFromServer();
