@@ -70,14 +70,14 @@ public class NewGameEngine implements Game {
     this.integerToTeam = Collections.synchronizedMap(new HashMap<>());
     this.teamToInteger = Collections.synchronizedMap(new HashMap<>());
     gameState = new GameState();
+    BoardController boardController = new BoardController();
 
-    String[][] grid = new String[template.getGridSize()[0]][template.getGridSize()[1]];
-    for (int i = 0; i < grid.length; i++) {
-      for (int j = 0; j < grid[i].length; j++) {
-        grid[i][j] = "";
-      }
-    }
-    gameState.setGrid(grid);
+    gameState.setGrid(boardController.initEmptyGrid(template.getGridSize()[0],template.getGridSize()[1]));  //Makes an Empty Grid
+
+    
+
+
+
     gameState.setTeams(new Team[template.getTeams()]);
     initAltGameModeLogic(template); // Inits Alt Game mode support
 
