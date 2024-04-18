@@ -216,7 +216,7 @@ public class NewGameEngine implements Game {
     if (this.isGameOver()) {
       for (Team team : this.gameState.getTeams()) {
         if (team != null) {
-          winners.add(team.getId());
+          winners.add(integerToTeam.get(Integer.parseInt(team.getId())));
         }
       }
     }
