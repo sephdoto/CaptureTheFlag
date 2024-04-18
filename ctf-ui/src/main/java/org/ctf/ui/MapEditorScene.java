@@ -16,6 +16,7 @@ import org.ctf.shared.state.data.map.PlacementType;
 import org.ctf.shared.tools.JSON_Tools;
 import org.ctf.shared.tools.JSON_Tools.IncompleteMapTemplateException;
 
+
 import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -44,6 +45,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import test.CreateTextGameStates;
 
 /**
  * Scene that contains all gui components for the Map editor and handles custom
@@ -109,10 +111,10 @@ public class MapEditorScene extends Scene {
 		root.getChildren().add(meIv);
 		HBox sep = new HBox();
 		sep.setAlignment(Pos.CENTER);
-		sep.setStyle("-fx-spacing: 100px;");
+		sep.setStyle("-fx-spacing: 25px;");
 		root.getChildren().add(sep);
 		left = new StackPane();
-		left.setStyle("-fx-border-color: rgba(255,255,255,1); -fx-border-width: 2px;" + "-fx-background-color: black;"
+		left.setStyle("-fx-border-color: rgba(255,255,255,1); -fx-border-width: 2px;" + "-fx-background-color: rgb(25,25,25);"
 				+ "-fx-background-radius: 20px; -fx-border-radius: 20px;" + "-fx-alignment: top-center;");
 		left.getChildren().add(options[0]);
 
@@ -138,7 +140,17 @@ public class MapEditorScene extends Scene {
 		text.setStyle("-fx-fill: rgba(255, 255, 255, 1);");
 
 		sep.getChildren().add(leftroot);
-		sep.getChildren().add(CreateMapGrid());
+		//sep.getChildren().add(CreateMapGrid());
+		StackPane test = new StackPane();
+		test.setStyle("-fx-border-color: rgba(255,255,255,1); -fx-border-width: 2px;" + "-fx-background-color: 	rgb(25,25,25);"
+				+ "-fx-background-radius: 20px; -fx-border-radius: 20px;" + "-fx-alignment: top-center;");
+		
+		GamePane visual = new GamePane(CreateTextGameStates.createTestGameState1());
+		
+		test.getChildren().add(visual);
+		test.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
+		sep.getChildren().add(test);
+
 
 	}
 
