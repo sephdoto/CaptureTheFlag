@@ -167,7 +167,7 @@ public class NewGameEngine implements Game {
     if (teamToInteger.get(teamId)
         == this.gameState
             .getCurrentTeam()) { // test is also in controller but doppelt gemoppelt hält besser
-      EngineTools.removeTeam(gameState, Integer.valueOf(teamId)); // removed and set to null
+      EngineTools.removeTeam(gameState, teamToInteger.get(teamId)); // removed and set to null
       this.gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
     }
     if (EngineTools.removeMovelessTeams(this.gameState)) setGameOver();
