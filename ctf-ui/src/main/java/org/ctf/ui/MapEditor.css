@@ -48,13 +48,30 @@
 	 -fx-alignment: top-center;
 }
 .leave-button {
-	 -fx-background-color: rgb(15,15,15); /* Hintergrundfarbe */
-    -fx-text-fill: white; /* Schriftfarbe */
-    -fx-font-size: 14px; /* Schriftgröße */
-    -fx-font-family: "Century Gothic", sans-serif; /* Schriftart */
+	 -fx-background-color: rgb(15,15,15); 
+    -fx-text-fill: white; 
+    -fx-font-size: 14px; 
+    -fx-font-family: "Century Gothic", sans-serif; 
 	 -fx-background-radius: 5px; 
-    -fx-border-radius: 5px; /* Randradius */
-    -fx-border-color: white; /* Rahmenfarbe */
-    -fx-border-width: 2px; /* Rahmenbreite */
-    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); /* Schattierung */
+    -fx-border-radius: 5px; 
+    -fx-border-color: white; 
+    -fx-border-width: 2px; 
+    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
 }
+.custom-search-field {
+	 -fx-prompt-text-fill: white; 
+    -fx-text-fill: white;
+    -fx-background-color: rgba(53,89,119,0.4);
+    -fx-border-color: white; -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px; 
+     -fx-font-family: "Century Gothic", sans-serif;
+}
+.custom-header {
+	 -fx-font-family: "Century Gothic", sans-serif;
+	  -fx-font-size: 20px; 
+	  -fx-fill: white;
+}
+
+
+
