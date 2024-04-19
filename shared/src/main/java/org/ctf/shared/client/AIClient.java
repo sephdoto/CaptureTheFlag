@@ -6,6 +6,11 @@ import org.ctf.shared.client.service.CommLayerInterface;
 import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.state.Move;
 
+/**
+ * Extension of Client with support for AI functions
+ *
+ * @author rsyed
+ */
 public class AIClient extends Client implements Runnable {
 
   public AI selectedPlayer;

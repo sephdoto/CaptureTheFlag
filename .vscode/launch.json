@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "PreviewGenerator",
+            "request": "launch",
+            "mainClass": "org.ctf.ui.controllers.PreviewGenerator",
+            "projectName": "ctf-ui"
+        },
+        {
+            "type": "java",
             "name": "AIPlayerSimulator",
             "request": "launch",
             "mainClass": "org.ctf.shared.client.AIPlayerSimulator",
@@ -52,6 +59,6 @@
             "vmArgs": "--module-path C:/Programming Utils/javafx-sdk-21.0.2/lib --add-modules javafx.controls,javafx.fxml",
             "mainClass": "Main",
             "projectName": "ctf-ui"
-        },
+        }
     ]
 }
