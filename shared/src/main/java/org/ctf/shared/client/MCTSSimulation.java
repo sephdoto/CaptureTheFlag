@@ -177,6 +177,19 @@ public class MCTSSimulation {
             Controller.update(javaClient.getCurrentState());
             javaClient2.getStateFromServer();
             Controller2.update(javaClient2.getCurrentState());
+            if(javaClient.getCurrentTeamTurn() == -1){
+              javaClient.getStateFromServer();
+              System.out.println(gson.toJson(javaClient.getCurrentState()));
+              javaClient.getSessionFromServer();
+              System.out.println(gson.toJson(javaClient.getCurrentSession()));
+              javaClient2.getStateFromServer();
+              System.out.println(gson.toJson(javaClient2.getCurrentState()));
+              javaClient2.getSessionFromServer();
+              System.out.println(gson.toJson(javaClient2.getCurrentSession()));
+              System.out.println(gson.toJson(javaClient.getWinners()));
+              System.out.println(gson.toJson(javaClient2.getWinners()));
+              break;
+            }
             //System.out.println(gson.toJson(javaClient.getGrid()));
           } catch (NoMovesLeftException e) {
             e.printStackTrace();

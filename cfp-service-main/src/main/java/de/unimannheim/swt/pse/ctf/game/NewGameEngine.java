@@ -222,6 +222,7 @@ public class NewGameEngine implements Game {
    */
   @Override
   public String[] getWinner() {
+    LOG.info("get Winner was called");
     ArrayList<String> winners = new ArrayList<String>();
     if (this.isGameOver()) {
       for (Team team : this.gameState.getTeams()) {
