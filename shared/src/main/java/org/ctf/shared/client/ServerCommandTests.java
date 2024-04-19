@@ -1,7 +1,10 @@
 package org.ctf.shared.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import java.io.IOException;
 
 import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
@@ -637,6 +640,22 @@ public class ServerCommandTests {
     javaClient.joinGame("0");
     System.out.println("joined");
     ((AIClient) javaClient).run();
+  }
+
+  private MapTemplate createGameTemplate() {
+    ObjectMapper objectMapper = new ObjectMapper();
+    MapTemplate mapTemplate = null;
+    try {
+      mapTemplate =
+          objectMapper.readValue(
+              getClass().getResourceAsStream("/maptemplates/10x10_2teams_example.json"),
+              MapTemplate.class);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    return mapTemplate;
   }
 
 }
