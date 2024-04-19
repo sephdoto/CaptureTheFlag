@@ -1,4 +1,3 @@
-
 stages:
   - build
 
@@ -21,7 +20,10 @@ variables:
     --show-version
     -DinstallAtEnd=true
     -DdeployAtEnd=true  
-
+include:
+  - local: cfp-service-main/.gitlab-ci.yml
+  - local: ctf-ui/.gitlab-ci.yml
+  - local: shared/.gitlab-ci.yml
 java-build:
   # select the most appropriate image for your project
   image: maven:3.9.6-eclipse-temurin-17

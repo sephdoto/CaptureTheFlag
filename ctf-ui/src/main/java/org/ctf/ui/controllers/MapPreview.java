@@ -2,6 +2,7 @@ package org.ctf.ui.controllers;
 
 import org.ctf.shared.client.Client;
 import org.ctf.shared.client.ClientStepBuilder;
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 
@@ -169,5 +170,6 @@ public class MapPreview {
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     MapPreview prev = new MapPreview(template);
     System.out.println(gson.toJson(prev.getGameState()));
+    
   }
 }
