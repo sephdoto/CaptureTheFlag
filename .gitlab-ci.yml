@@ -39,6 +39,11 @@ include:
     - "*/target"
 
 # BUILD JOBS
+build-server-module:
+  extends:
+  - .cfp-module
+  - .build-module
+
 build-ui-module:
   extends:
   - .ui-module
@@ -50,6 +55,11 @@ build-shared-module:
   - .build-module
 
 # TEST JOBS
+test-server-module:
+  extends:
+  - .cfp-module
+  - .build-module
+
 test-ui-module:
   extends:
     - .ui-module
