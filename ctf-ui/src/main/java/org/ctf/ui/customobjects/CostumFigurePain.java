@@ -139,7 +139,11 @@ public class CostumFigurePain extends Pane {
 	
 	
 	public void setImage() {
-		this.bImage = ImageLoader.getImageByName(type);
+		if(ImageLoader.getImageByName(type) != null) {
+			this.bImage = ImageLoader.getImageByName(type);
+		} else {
+			this.bImage = ImageLoader.getDefaultImage();
+		}
 		this.vw = new ImageView(bImage);
 		vw.fitWidthProperty().bind(this.widthProperty());
 		vw.fitHeightProperty().bind(this.heightProperty());
@@ -198,17 +202,5 @@ public class CostumFigurePain extends Pane {
 		this.disableShadow();
 		this.attacable = false;
 	}
-	
-//	public Game getGame() {
-//		return game;
-//	}
-//
-//	public void setGame(Game game) {
-//		this.game = game;
-//	}
-
-	
-	
-	
 }
 	
