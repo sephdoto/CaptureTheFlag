@@ -221,7 +221,7 @@ public class EngineTools extends AI_Tools {
    * 
    * @author ysiebenh
    */
-  static LinkedList<GameState> getNeighbors(GameState gs, int teamID, int[] startEnd) {
+  static LinkedList<GameState> getNeighbors(GameState gs, int teamID) {
 
     LinkedList<GameState> result = new LinkedList<GameState>();
     int[][] boundaries = EngineTools.cutUpGrid(gs);
