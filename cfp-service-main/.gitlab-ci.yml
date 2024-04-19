@@ -1,6 +1,6 @@
 .cfp-module:
   variables:
-    MODULE: " cfp-service-main"
+    MODULE: "cfp-service-main"
   only:
     changes:
-    - " cfp-service-main/**/*"
+    - "cfp-service-main/**/*"
