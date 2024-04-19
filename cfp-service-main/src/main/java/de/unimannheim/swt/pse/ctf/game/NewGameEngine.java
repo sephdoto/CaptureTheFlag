@@ -13,10 +13,14 @@ import java.time.Duration;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 import javafx.scene.paint.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -475,12 +479,22 @@ public class NewGameEngine implements Game {
   /**
    * Method which will take care of ending the game for Time limited Alt Mode
    *
-   * @author rsyed
+   * @author sistumpf
    */
-  // TODO Write Handler
   private void altGameModeGameOverHandler() {
-    // CASE CALLED FROM LIMITED GAME TIME GAMEOVER HANDLER
-    //DUMMY END
+    ArrayList<Team> teamList = new ArrayList<Team>();
+    Stream.of(this.gameState.getTeams()).forEach(team -> {if(team != null) teamList.add(team);});
+    teamList.sort(new Comparator<Team>() {
+      public int compare(Team team1, Team team2){
+        return team2.getPieces().length - team1.getPieces().length;
+        }
+      });
+    teamList.removeIf(new Predicate<Team>() {
+      public boolean test(Team team){
+        return teamList.get(0).getPieces().length > team.getPieces().length;
+      }
+    });
+    this.gameState.setTeams(teamList.toArray(new Team[teamList.size()]));
     setGameOver();
     // CASE CALLED FROM LIMITED MOVE TIME HANDLER
   }
