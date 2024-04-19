@@ -103,20 +103,20 @@ public class GamePane extends HBox {
 		newField.addFigure(mover);
 	}
 	
-	public void showTransition(CostumFigurePain pain, BackgroundCellV2 old, BackgroundCellV2 neu) {
-		TranslateTransition transition = new TranslateTransition(Duration.seconds(20), pain);
-		transition.setFromX(0); 
-	    transition.setFromY(0);
-        transition.setToX(neu.getLayoutX() - neu.base.widthProperty().divide(2).doubleValue() ); 
-        transition.setToY(neu.getLayoutY() -  neu.base.heightProperty().divide(2).doubleValue()); 
-        transition.play();
-        
-        transition.setOnFinished(e -> {
-        	pain.toFront();
-        	 neu.addFigure(pain);
-            StackPane.setAlignment(pain, javafx.geometry.Pos.CENTER);
-        });
-    }
+//	public void showTransition(CostumFigurePain pain, BackgroundCellV2 old, BackgroundCellV2 neu) {
+//		TranslateTransition transition = new TranslateTransition(Duration.seconds(20), pain);
+//		transition.setFromX(0); 
+//	    transition.setFromY(0);
+//        transition.setToX(neu.getLayoutX() - neu.base.widthProperty().divide(2).doubleValue() ); 
+//        transition.setToY(neu.getLayoutY() -  neu.base.heightProperty().divide(2).doubleValue()); 
+//        transition.play();
+//        
+//        transition.setOnFinished(e -> {
+//        	pain.toFront();
+//        	 neu.addFigure(pain);
+//            StackPane.setAlignment(pain, javafx.geometry.Pos.CENTER);
+//        });
+//    }
 	
 	
 	public int generateKey(int x, int y) {
@@ -160,9 +160,9 @@ public class GamePane extends HBox {
 				cells.put(generateKey(i, j),child);
 				String objectOnMap = map[i][j];
 				if(objectOnMap.equals("b")) {
-					child.addBlock(new BlockRepV3());
-				} else if (objectOnMap.startsWith("b:1")) {
-					//Add base of team 1 here
+					child.addBlock();
+				} else if (objectOnMap.startsWith("b:")) {
+					
 				}else if (objectOnMap.startsWith("b:2")) {
 					//Add base of team 2 here
 				}
@@ -173,7 +173,12 @@ public class GamePane extends HBox {
 		}
 		teams = state.getTeams();
 		for(int i=0;i<teams.length;i++) {
-			Piece[] pieces = teams[i].getPieces();
+			Team currenTeam = teams[i];
+			int baseX = currenTeam.getBase()[0];
+			int baseY = currenTeam.getBase()[1];
+			String teamColor = currenTeam.getColor();
+			cells.get(generateKey(baseX, baseY)).addBasis(currenTeam.getFlags(),teamColor, currenTeam.getId());
+			Piece[] pieces = currenTeam.getPieces();
 			for(Piece piece: pieces) {
 				CostumFigurePain pieceRep = new CostumFigurePain(piece);
 				figures.put(piece.getId(), pieceRep);
@@ -185,6 +190,9 @@ public class GamePane extends HBox {
 		}
 		vBox.getChildren().add(gridPane);
 	}
+	
+	
+	
 	
 
 

@@ -129,7 +129,7 @@ public class BoardSetUp {
       GameState current = gameState;
       while (true) {
         LinkedList<GameState> neighbors =
-            EngineTools.getNeighbors(current, Integer.decode(t.getId()), null);
+            EngineTools.getNeighbors(current, Integer.decode(t.getId()));
         if (neighbors.size() == 0) {
           break;
         }
@@ -154,18 +154,19 @@ public class BoardSetUp {
    * @param GameState gameState
    */
   static void placePiecesDefensive(GameState gs) {
-    // TODO implements position out of bounds
+    // TODO implement position out of bounds
     placePiecesSpaced(gs);
     for (int i = 0; i < gs.getTeams().length; i++) {
       LinkedList<Piece> pieces = EngineTools.getStrongest(gs.getTeams()[i].getPieces());
       for (int y = -1; y <= 1; y++) {
         for (int x = -1; x <= 1; x++) {
+          
+          //checks if there already is a piece on that position:
           Piece toDelete = null;
           for (Piece p : pieces) {
             if (p.getPosition()[0] == gs.getTeams()[i].getBase()[0] + y
                 && p.getPosition()[1] == gs.getTeams()[i].getBase()[1] + x) {
               toDelete = p;
-              ;
             }
           }
           pieces.remove(toDelete);
@@ -182,8 +183,6 @@ public class BoardSetUp {
         }
       }
     }
-
-    return;
   }
 
   /**
@@ -223,45 +222,38 @@ public class BoardSetUp {
   static void placePiecesSymmetrical(GameState gs) {
     int[][] boundaries = EngineTools.cutUpGrid(gs);
     for (int t = 0; t < gs.getTeams().length; t++) {
-      int row;
+      int y;
 
       // checking the orientation and then putting the starting point 'under' the base
       if (boundaries[t][4] == 0) {
-        row = gs.getTeams()[t].getBase()[0] - 1;
+        y = gs.getTeams()[t].getBase()[0] - 1;
       } else {
-        row = gs.getTeams()[t].getBase()[0] + 1;
-        ;
+        y = gs.getTeams()[t].getBase()[0] + 1;
       }
-
-      int column = boundaries[t][2] + 1;
-      boolean lastRound = false;
-
-      if (gs.getTeams()[t].getPieces().length < gs.getGrid()[0].length - 2) {
-        lastRound = true;
-      }
-
+      int x = boundaries[t][2] + 1;
+      
       for (int j = 0; j < gs.getTeams()[0].getPieces().length; j++) {
-        if (column == boundaries[t][3] - 1 || lastRound) {
-          lastRound = false;
-          row = (boundaries[t][4] == 0) ? row + 1 : row - 1;
-          column = boundaries[t][2] + 1;
+        
+        if (x == boundaries[t][3] - 1 || gs.getTeams()[t].getPieces().length < gs.getGrid()[0].length - 2) {
+          y = (boundaries[t][4] == 0) ? y + 1 : y - 1;
+          x = boundaries[t][2] + 1;
 
           if (gs.getTeams()[t].getPieces().length - j < (boundaries[t][3] - boundaries[t][2]) / 2) {
-            column =
+            x =
                 (boundaries[t][3] - boundaries[t][2]) / 2
                     - (gs.getTeams()[t].getPieces().length - j) / 2
                     + boundaries[t][2];
           }
         }
 
-        if (!gs.getGrid()[row][column].equals("")) {
-          column++;
+        if (!gs.getGrid()[y][x].equals("")) {
+          x++;
           j--;
         } else {
           Piece piece = gs.getTeams()[t].getPieces()[j];
-          piece.setPosition(new int[] {row, column});
-          gs.getGrid()[row][column] = piece.getId();
-          column++;
+          piece.setPosition(new int[] {y, x});
+          gs.getGrid()[y][x] = piece.getId();
+          x++;
         }
       }
     }
@@ -392,3 +384,4 @@ public class BoardSetUp {
     return teams;
   }
 }
+

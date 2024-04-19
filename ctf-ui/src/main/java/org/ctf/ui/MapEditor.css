@@ -9,10 +9,7 @@
     -fx-background-color: black; 
     -fx-text-fill: red; 
     -fx-font-weight: bold; 
-    -fx-border-color: white;
-    
-   
-    
+    -fx-border-color: white;   
 }
 
 .custom-menu-button:hover {
@@ -39,3 +36,42 @@
 .custom-combo-box .list-view .list-cell {
     -fx-text-fill: black; 
 }
+.join-root {
+	 -fx-background-color: black;
+}
+.option-pane {
+	-fx-border-color: rgba(255,255,255,1);
+	 -fx-border-width: 2px;
+	 -fx-background-color: rgb(25,25,25);
+	 -fx-background-radius: 20px; 
+	 -fx-border-radius: 20px;
+	 -fx-alignment: top-center;
+}
+.leave-button {
+	 -fx-background-color: rgb(15,15,15); 
+    -fx-text-fill: white; 
+    -fx-font-size: 14px; 
+    -fx-font-family: "Century Gothic", sans-serif; 
+	 -fx-background-radius: 5px; 
+    -fx-border-radius: 5px; 
+    -fx-border-color: white; 
+    -fx-border-width: 2px; 
+    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
+}
+.custom-search-field {
+	 -fx-prompt-text-fill: white; 
+    -fx-text-fill: white;
+    -fx-background-color: rgba(53,89,119,0.4);
+    -fx-border-color: white; -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px; 
+     -fx-font-family: "Century Gothic", sans-serif;
+}
+.custom-header {
+	 -fx-font-family: "Century Gothic", sans-serif;
+	  -fx-font-size: 20px; 
+	  -fx-fill: white;
+}
+
+
+

@@ -1,0 +1,6 @@
+.ui-module:
+  variables:
+    MODULE: "ctf-ui"
+  only:
+    changes:
+    - "ctf-ui/**/*"

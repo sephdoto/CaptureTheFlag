@@ -8,8 +8,15 @@ import java.util.Objects;
 import javafx.scene.image.Image;
 
 public class ImageLoader {
-
+	
+	private static Image defauImage;
+	
 	private static final String WORRIOR = "RealWarrior.png";
+	private static final String DEFAULTIMAGE = "Gorilla.JPG";
+	private static final String BASE = "xy.jpg";
+	
+	
+	//public static final String BASE = ""
 	private static HashMap<String, Image> images;
 
 	/**
@@ -18,8 +25,13 @@ public class ImageLoader {
 	 */
 	public static void loadImages() {
 		images = new HashMap<>();
-		Image WorriorImage = initImage(WORRIOR);
-		images.put("WarriorV1", WorriorImage);
+		Image worriorImage = initImage(WORRIOR);
+		images.put("WarriorV1", worriorImage);
+		defauImage = initImage(DEFAULTIMAGE);
+		Image hexagon = initImage(BASE);
+		images.put("base", hexagon);
+		
+		
 	}
 
 	/**
@@ -31,6 +43,9 @@ public class ImageLoader {
 	 */
 	public static Image getImageByName(String imageName) {
 		return images.get(imageName);
+	}
+	public static Image getDefaultImage() {
+		return defauImage;
 	}
 
 	/**

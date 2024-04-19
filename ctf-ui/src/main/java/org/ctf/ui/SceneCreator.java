@@ -50,7 +50,7 @@ public class SceneCreator {
 		}
 		VBox vbox = new VBox();
 		vbox.setAlignment(Pos.TOP_CENTER);
-		Image mp = new Image(getClass().getResourceAsStream("MP.png"));
+		Image mp = new Image(getClass().getResourceAsStream("multiplayerlogo.png"));
 		ImageView mpv = new ImageView(mp);
 		mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.8));
 		mpv.setPreserveRatio(true);

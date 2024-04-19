@@ -1,0 +1,6 @@
+.shared-module:
+  variables:
+    MODULE: "shared"
+  only:
+    changes:
+    - "shared/**/*"

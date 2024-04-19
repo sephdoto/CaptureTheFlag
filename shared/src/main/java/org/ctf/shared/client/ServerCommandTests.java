@@ -1,5 +1,6 @@
 package org.ctf.shared.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.time.Clock;
@@ -368,13 +369,13 @@ try {
     /*    for(int i = 0; i < 100; i++){
       System.out.println( (int) (Math.random() * 2) );
     } */
+
   }
 
   public static void getStateTests() {
-
     String jsonPayload =
         """
-          {
+        {
             "gridSize": [10, 10],
             "teams": 2,
             "flags": 1,
@@ -478,7 +479,7 @@ try {
             ],
             "placement": "symmetrical",
             "totalTimeLimitInSeconds": -1,
-            "moveTimeLimitInSeconds": -1
+            "moveTimeLimitInSeconds": 3
           }
         """;
 
@@ -523,7 +524,7 @@ try {
     }  */
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
-    System.out.println(gson.toJson(javaClient.getCurrentState()));
+    // System.out.println(gson.toJson(javaClient.getCurrentState()));
     AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS);
     AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS_IMPROVED);
     for (int i = 0; i < 90; i++) {
@@ -539,11 +540,7 @@ try {
         } else {
           System.out.println("it was team 1s turn!");
           javaClient2.makeMove(Controller2.getNextMove());
-          System.out.println("team 1 made a move");
-          javaClient.getStateFromServer();
-          javaClient2.getStateFromServer();
-          Controller.update(javaClient.getCurrentState());
-          Controller2.update(javaClient2.getCurrentState());
+          System.out.println("client 1 made a move");
         }
         Thread.sleep(1000);
       } catch (NoMovesLeftException
@@ -551,7 +548,14 @@ try {
           | InterruptedException
           | InvalidMove e) {
         javaClient.getStateFromServer();
-        System.out.println(gson.toJson(javaClient.getCurrentState()));
+        Controller.update(javaClient.getCurrentState());
+        javaClient2.getStateFromServer();
+        Controller2.update(javaClient2.getCurrentState());
+        // System.out.println(gson.toJson(javaClient.getGrid()));
+      } catch (NoMovesLeftException e) {
+        e.printStackTrace();
+      } catch (InvalidShapeException e) {
+
         e.printStackTrace();
       }
     }

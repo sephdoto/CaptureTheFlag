@@ -50,5 +50,13 @@ public class Constants {
     private Port(String label) {
       this.label = label;
     }
+
+    public boolean equalsName(String otherEnum) {
+      return label.equals(otherEnum);
+    }
+
+    public String toString() {
+      return this.label;
+    }
   }
 }

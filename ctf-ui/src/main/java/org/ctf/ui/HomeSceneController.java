@@ -53,7 +53,7 @@ public class HomeSceneController {
   }
   
   public void switchToJoinScene (Stage stage) {
-	  stage.setScene(new SceneCreator(this).createJoinScene());
+	  stage.setScene(new JoinScene(this, stage.getWidth(), stage.getHeight()));
   }
   
   public void switchToMapEditorScene (Stage stage) {

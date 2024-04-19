@@ -12,6 +12,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
 
 public class BackgroundCellV2 extends Pane {
 	public int x, y;
@@ -49,11 +50,18 @@ public class BackgroundCellV2 extends Pane {
 	}
 	
 
-	public void addBlock(BlockRepV3 block) {
+	public void addBlock() {
 		occupied = true;
-		BlockRepV3 blocki = block;
+		BlockRepV3 blocki = new BlockRepV3();
 		base.getChildren().clear();
 		base.getChildren().add(blocki);
+	}
+
+	public void addBasis(int flags, String color, String teamID) {
+		occupied = true;
+		BaseRep basis = new BaseRep(flags, color, teamID);
+		base.getChildren().clear();
+		base.getChildren().add(basis);
 	}
 
 //	public Game getGame() {
