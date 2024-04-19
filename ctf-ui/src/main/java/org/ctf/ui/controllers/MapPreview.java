@@ -1,12 +1,11 @@
 package org.ctf.ui.controllers;
 
+import com.google.gson.Gson;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.client.ClientStepBuilder;
-import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 
-import com.google.gson.Gson;
 /**
  * Controller which gets a GameState from server to display as a map preview
  *
@@ -16,10 +15,23 @@ public class MapPreview {
 
   private MapTemplate mapTemplate;
 
+  /**
+   * Constructor
+   *
+   * @param mapTemplate The Map which you need a generated GameState for
+   * @author rsyed
+   */
   public MapPreview(MapTemplate mapTemplate) {
     this.mapTemplate = mapTemplate;
   }
 
+  /**
+   * Method internally generates Clients for each Player. Joins a server with it and deletes the
+   * session at the end to save server resources. Waits 80ms between commands in case the server is slow.
+   *
+   * @return GameState object containing all data from the server (including blocks and placement)
+   * @author rsyed
+   */
   public GameState getGameState() {
     Client[] clients = new Client[mapTemplate.getTeams()];
 
@@ -40,12 +52,12 @@ public class MapPreview {
             "8888",
             clients[0].getCurrentGameSessionID(),
             Integer.toString(i)); // Joins the other clients for team creation
-            try {
-                Thread.sleep(150);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+        try {
+          Thread.sleep(80);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+          throw new UnknownError("Something went wrong in the thread for Map Preview creation");
+        }
       }
     }
     clients[0].getStateFromServer();
@@ -170,6 +182,5 @@ public class MapPreview {
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     MapPreview prev = new MapPreview(template);
     System.out.println(gson.toJson(prev.getGameState()));
-    
   }
 }
