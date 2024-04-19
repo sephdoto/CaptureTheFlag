@@ -39,11 +39,6 @@ include:
     - "*/target"
 
 # BUILD JOBS
-build-common-module:
-  extends:
-  - .common-module
-  - .build-module
-
 build-ui-module:
   extends:
   - .ui-module
@@ -55,11 +50,6 @@ build-shared-module:
   - .build-module
 
 # TEST JOBS
-test-common-module:
-  extends:
-  - .common-module
-  - .test-module
-
 test-ui-module:
   extends:
     - .ui-module
