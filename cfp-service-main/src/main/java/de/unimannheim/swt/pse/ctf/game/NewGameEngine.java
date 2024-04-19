@@ -1,5 +1,7 @@
 package de.unimannheim.swt.pse.ctf.game;
 
+import de.unimannheim.swt.pse.ctf.game.exceptions.GameOver;
+import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
 import de.unimannheim.swt.pse.ctf.game.exceptions.NoMoreTeamSlots;
 import de.unimannheim.swt.pse.ctf.game.exceptions.TooManyPiecesException;
 import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
@@ -139,8 +141,9 @@ public class NewGameEngine implements Game {
 
   @Override
   public void makeMove(Move move) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'makeMove'");
+    if(!movePreconditionsMet(move)) return ;
+    EngineTools.computeMove(this.gameState, move);
+    afterMoveCleanup();
   }
 
   /**
@@ -482,6 +485,43 @@ public class NewGameEngine implements Game {
   // Private Internal Methods
   // **************************************************
 
+  /**
+   * Cleans up the GameState after a move was made.
+   * Updates the timer if the game uses time limits,
+   * Updates the current team and removes it if it got no moves left.
+   * Repeats the second step till only 1 team is left or the current team got moves.
+   * @author sistumpf
+   */
+  private void afterMoveCleanup() {
+    if(this.moveTimeLimitedGameTrigger)
+      increaseTurnTimer();
+    gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
+    if(EngineTools.removeMovelessTeams(gameState))
+      setGameOver();
+  }
+  
+  /**
+   * Returns true if a move is valid.
+   * The move is valid if
+   *    * the game is not over
+   *    * the piece belongs to the current team
+   *    * the move complies with the rules
+   * @author sistumpf
+   * @param move
+   * @return true if the move is valid
+   */
+  private boolean movePreconditionsMet(Move move) {
+    if(isGameOver()){
+      throw new GameOver();
+    } else if (gameState.getCurrentTeam() != Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0])) {
+      throw new InvalidMove();
+    } else if (!isValidMove(move)){
+      throw new InvalidMove();
+    } else {
+      return true;
+    }
+  }
+  
   /**
    * Ends the game INTERNALLY by setting the endDate Variable
    *

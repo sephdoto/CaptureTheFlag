@@ -23,23 +23,76 @@ import java.util.stream.Stream;
  */
 public class EngineTools extends AI_Tools {
   /**
+   * A given move is made on the GameState.
+   * Only updates the Team array, the Grid and the last move.
+   * Checks for removing teams are not made here.
+   * 
+   * @author sistumpf
+   * @param gameState
+   * @param move
+   */
+  public static void computeMove(GameState gameState, Move move) {
+    String occupant = gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]];
+    Piece picked =
+        Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream()
+            .filter(p -> p.getId().equals(move.getPieceId()))
+            .findFirst()
+            .get();
+    int[] oldPos = picked.getPosition();
+
+    gameState.getGrid()[oldPos[0]][oldPos[1]] = "";
+
+    if (occupant.contains("p:")) {
+      int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
+      gameState.getTeams()[occupantTeam].setPieces(
+          Arrays.asList(gameState.getTeams()[occupantTeam].getPieces()).stream()
+              .filter(p -> !p.getId().equals(occupant))
+              .toArray(Piece[]::new));
+      gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
+      picked.setPosition(move.getNewPosition());
+    } else if (occupant.contains("b:")) {
+      int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
+      gameState.getTeams()[occupantTeam].setFlags(
+          gameState.getTeams()[occupantTeam].getFlags() - 1);
+      picked.setPosition(
+          EngineTools.respawnPiecePosition(
+              gameState, gameState.getTeams()[gameState.getCurrentTeam()].getBase()));
+      gameState.getGrid()[picked.getPosition()[0]][picked.getPosition()[1]] = picked.getId();
+    } else {
+      gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
+      picked.setPosition(move.getNewPosition());
+    }
+
+    gameState.setLastMove(move);
+  }
+  
+  /**
    * Starting from the current team, the following teams which cannot move get removed.
    *
+   * @author sistumpf
    * @param gameState
    * @return true if only one team is left
    */
   public static boolean removeMovelessTeams(GameState gameState) {
+    for(int i=0; i<gameState.getTeams().length; EngineTools.getNextTeam(gameState)) {
+      if(gameState.getTeams()[i].getFlags() <= 0)
+        removeTeam(gameState, i);
+      else if(gameState.getTeams()[i].getPieces().length == 0)
+        removeTeam(gameState, i);
+    }
+    
     while (numberOfTeamsLeft(gameState) > 1
         && !teamGotMovesLeft(gameState, gameState.getCurrentTeam())) {
       removeTeam(gameState, gameState.getCurrentTeam()); // removed and set to null
       gameState.setCurrentTeam(getNextTeam(gameState));
     }
-    return numberOfTeamsLeft(gameState) == 1 ? true : false;
+    return numberOfTeamsLeft(gameState) <= 1 ? true : false;
   }
 
   /**
    * This method returns how many Teams in a GameState are not null (= still playing)
    *
+   * @author sistumpf
    * @param gameState
    * @return number of teams left
    */
@@ -52,6 +105,7 @@ public class EngineTools extends AI_Tools {
   /**
    * Inefficient way for checking if a team got moves left but should be okay for GameEngine
    *
+   * @author sistumpf
    * @param gameState
    * @param teamIndex
    * @return true if the team got moves left
@@ -83,7 +137,7 @@ public class EngineTools extends AI_Tools {
 
   /**
    * Returns a GameStates next valid (null) team.
-   *
+   * !! only use when teams join, otherwise the output might not be correct !!
    * @param gameState
    * @return next Team == null
    * @author rsyed
