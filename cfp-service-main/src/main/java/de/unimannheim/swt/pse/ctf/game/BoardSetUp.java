@@ -66,14 +66,18 @@ public class BoardSetUp {
    */
   static void initPieces(GameState gameState, MapTemplate template) throws TooManyPiecesException {
 
+    //Exception Calculator
     if (gameState.getTeams()[0].getPieces().length
         > (gameState.getGrid().length / 2) * (gameState.getGrid()[0].length - 2)) {
       throw new TooManyPiecesException("Too many Pieces! Make the board bigger! :)");
     }
-
+    
+    //Base teamID assigner
     for (Team team : gameState.getTeams()) {
       gameState.getGrid()[team.getBase()[0]][team.getBase()[1]] = "b:" + team.getId();
     }
+    
+    //Switch for placement strat
     switch (template.getPlacement()) {
       case symmetrical:
         placePiecesSymmetrical(gameState);
@@ -254,6 +258,8 @@ public class BoardSetUp {
       }
     }
   }
+
+  
 
   /**
    * Assigns positions to the Bases

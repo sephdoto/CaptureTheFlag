@@ -6,10 +6,20 @@
     "configurations": [
         {
             "type": "java",
-            "name": "PreviewGenerator",
+            "name": "MCTSSimulation",
             "request": "launch",
-            "mainClass": "org.ctf.ui.controllers.PreviewGenerator",
-            "projectName": "ctf-ui"
+            "mainClass": "org.ctf.shared.client.MCTSSimulation",
+            "projectName": "shared"
+        },
+        {
+            "type": "java",
+            "name": "CtfApplication",
+            "request": "launch",
+            "mainClass": "de.unimannheim.swt.pse.ctf.CtfApplication",
+            "projectName": "ctf",
+            "noDebug": false,
+            "__progressId": "62c2c4ef-e69d-4954-8698-292fb013b12e",
+            "__origin": "internal"
         },
         {
             "type": "java",

@@ -1,5 +1,12 @@
 package de.unimannheim.swt.pse.ctf.game;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.unimannheim.swt.pse.ctf.game.state.GameState;
+import de.unimannheim.swt.pse.ctf.game.state.Move;
+import de.unimannheim.swt.pse.ctf.game.state.Piece;
+import de.unimannheim.swt.pse.ctf.game.state.Team;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,51 +16,164 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import de.unimannheim.swt.pse.ctf.game.state.GameState;
-import de.unimannheim.swt.pse.ctf.game.state.Move;
-import de.unimannheim.swt.pse.ctf.game.state.Piece;
-import de.unimannheim.swt.pse.ctf.game.state.Team;
-
 /**
  * This class contains useful methods for the GameEngine.
+ *
  * @author sistumpf & ysiebenh
  */
 public class EngineTools extends AI_Tools {
   /**
+   * A given move is made on the GameState.
+   * Only updates the Team array, the Grid and the last move.
+   * Checks for removing teams are not made here.
+   * 
+   * @author sistumpf
+   * @param gameState
+   * @param move
+   */
+  public static void computeMove(GameState gameState, Move move) {
+    String occupant = gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]];
+    Piece picked =
+        Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream()
+            .filter(p -> p.getId().equals(move.getPieceId()))
+            .findFirst()
+            .get();
+    int[] oldPos = picked.getPosition();
+
+    gameState.getGrid()[oldPos[0]][oldPos[1]] = "";
+
+    if (occupant.contains("p:")) {
+      int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
+      gameState.getTeams()[occupantTeam].setPieces(
+          Arrays.asList(gameState.getTeams()[occupantTeam].getPieces()).stream()
+              .filter(p -> !p.getId().equals(occupant))
+              .toArray(Piece[]::new));
+      gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
+      picked.setPosition(move.getNewPosition());
+    } else if (occupant.contains("b:")) {
+      int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
+      gameState.getTeams()[occupantTeam].setFlags(
+          gameState.getTeams()[occupantTeam].getFlags() - 1);
+      picked.setPosition(
+          EngineTools.respawnPiecePosition(
+              gameState, gameState.getTeams()[gameState.getCurrentTeam()].getBase()));
+      gameState.getGrid()[picked.getPosition()[0]][picked.getPosition()[1]] = picked.getId();
+    } else {
+      gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
+      picked.setPosition(move.getNewPosition());
+    }
+
+    gameState.setLastMove(move);
+  }
+  
+  /**
+   * Starting from the current team, the following teams which cannot move get removed.
+   *
+   * @author sistumpf
+   * @param gameState
+   * @return true if only one team is left
+   */
+  public static boolean removeMovelessTeams(GameState gameState) {
+    for(int i=0; i < gameState.getTeams().length && gameState.getTeams()[i] != null; i++) {
+      if(gameState.getTeams()[i].getFlags() <= 0)
+        removeTeam(gameState, i);
+      else if(gameState.getTeams()[i].getPieces().length == 0)
+        removeTeam(gameState, i);
+    }
+    
+    while (numberOfTeamsLeft(gameState) > 1
+        && !teamGotMovesLeft(gameState, gameState.getCurrentTeam())) {
+      removeTeam(gameState, gameState.getCurrentTeam()); // removed and set to null
+      gameState.setCurrentTeam(getNextTeam(gameState));
+    }
+    return numberOfTeamsLeft(gameState) <= 1 ? true : false;
+  }
+
+  /**
+   * This method returns how many Teams in a GameState are not null (= still playing)
+   *
+   * @author sistumpf
+   * @param gameState
+   * @return number of teams left
+   */
+  public static int numberOfTeamsLeft(GameState gameState) {
+    int i = gameState.getTeams().length;
+    for (int j = i - 1; j >= 0; i--, j--) if (gameState.getTeams()[j] != null) i++;
+    return i;
+  }
+
+  /**
+   * Inefficient way for checking if a team got moves left but should be okay for GameEngine
+   *
+   * @author sistumpf
+   * @param gameState
+   * @param teamIndex
+   * @return true if the team got moves left
+   */
+  public static boolean teamGotMovesLeft(GameState gameState, int teamIndex) {
+    for (int i = gameState.getTeams()[teamIndex].getPieces().length - 1; i >= 0; i--) {
+      if (getPossibleMoves(gameState, gameState.getTeams()[teamIndex].getPieces()[i].getId()).size()
+          > 0) return true;
+    }
+    return false;
+  }
+
+  /**
    * Returns a GameStates next valid (not null) team.
+   *
    * @param gameState
    * @return next Team != null
    * @author sistumpf
    */
   public static int getNextTeam(GameState gameState) {
-    for(int i=(gameState.getCurrentTeam()+1) % gameState.getTeams().length; ;i = (i + 1) % gameState.getTeams().length) {
-      if(gameState.getTeams()[i] != null) {
+    for (int i = (gameState.getCurrentTeam() + 1) % gameState.getTeams().length;
+        ;
+        i = (i + 1) % gameState.getTeams().length) {
+      if (gameState.getTeams()[i] != null) {
         return i;
       }
     }
   }
-  
+
   /**
-   * Removes a certain team from the GameState.
-   * team is the place of the team in the GameState.getTeams Array.
+   * Returns a GameStates next valid (null) team.
+   * !! only use when teams join, otherwise the output might not be correct !!
+   * @param gameState
+   * @return next Team == null
+   * @author rsyed
+   */
+  public static int getNextEmptyTeamSlot(GameState gameState) {
+    int ret = 0;
+    for (int i = 0; i < gameState.getTeams().length; i++) {
+      if(gameState.getTeams()[i] == null){
+        ret = i;
+      }
+    }
+    return ret;
+  }
+
+  /**
+   * Removes a certain team from the GameState. team is the place of the team in the
+   * GameState.getTeams Array.
+   *
    * @param gameState
    * @param team
    * @author sistumpf
    */
   public static void removeTeam(GameState gameState, int team) {
-    gameState.getGrid()[gameState.getTeams()[team].getBase()[0]][gameState.getTeams()[team].getBase()[1]] = "";
-    for(Piece p : gameState.getTeams()[team].getPieces())
+    gameState
+            .getGrid()[gameState.getTeams()[team].getBase()[0]][
+            gameState.getTeams()[team].getBase()[1]] =
+        "";
+    for (Piece p : gameState.getTeams()[team].getPieces())
       gameState.getGrid()[p.getPosition()[0]][p.getPosition()[1]] = "";
     gameState.getTeams()[team] = null;
   }
-  
+
   /**
    * This method should be used instead of Math.random() to generate deterministic positive pseudo
    * random values. Changing modifier changes the resulting output for the same seed.
+   *
    * @author sistumpf
    * @param grid, used as a base to generate a random seed
    * @param modifier, to get different random values with the same seed
@@ -70,6 +190,7 @@ public class EngineTools extends AI_Tools {
 
   /**
    * Returns a valid position on which a Piece can safely respawn.
+   *
    * @author sistumpf
    * @param gameState to access the grid and generate pseudo random numbers
    * @param basePos the position of the base of the Piece that gets respawned
@@ -82,8 +203,7 @@ public class EngineTools extends AI_Tools {
     for (int distance = 1; distance < gameState.getGrid().length; distance++) {
       xTransforms = fillXTransformations(new int[distance * 8], distance);
       yTransforms = fillYTransformations(new int[distance * 8], distance);
-      
-      
+
       for (int clockHand = 0; clockHand < distance * 8; clockHand++) {
         int x = basePos[1] + xTransforms[clockHand];
         int y = basePos[0] + yTransforms[clockHand];
@@ -91,7 +211,8 @@ public class EngineTools extends AI_Tools {
         if (positionOutOfBounds(gameState.getGrid(), newPos)) continue;
 
         if (emptyField(gameState.getGrid(), newPos)) {
-          for (int i = 1, random = seededRandom(gameState.getGrid(), i, xTransforms.length, 0); ;
+          for (int i = 1, random = seededRandom(gameState.getGrid(), i, xTransforms.length, 0);
+              ;
               i++, random = seededRandom(gameState.getGrid(), i, xTransforms.length, 0)) {
             x = basePos[1] + xTransforms[random];
             y = basePos[0] + yTransforms[random];
@@ -104,11 +225,12 @@ public class EngineTools extends AI_Tools {
     }
     return null;
   }
-  
+
   /**
    * Given a Piece and a GameState containing the Piece, an ArrayList with all valid locations the
    * Piece can walk on is returned. The ArrayList contains int[2] values, representing a (y,x)
    * location on the grid.
+   *
    * @author sistumpf
    * @param GameState gameState
    * @param String pieceID
@@ -138,7 +260,7 @@ public class EngineTools extends AI_Tools {
           Move move = new Move();
           try {
             move = AI_Tools.checkMoveValidity(gameState, piece, entry[0], reach);
-          } catch(Exception e) {
+          } catch (Exception e) {
             System.out.println(2);
             move = AI_Tools.checkMoveValidity(gameState, piece, entry[0], reach);
           }
@@ -148,77 +270,74 @@ public class EngineTools extends AI_Tools {
     }
     return possibleMoves;
   }
-  
+
   /**
-   * Creates x and y boundaries for all teams 
-   * !If we want to change the layout of the teams on the map, we should do it here!
-   * 
+   * Creates x and y boundaries for all teams !If we want to change the layout of the teams on the
+   * map, we should do it here!
+   *
    * @author ysiebenh
    * @returns an Integer array which stores the upper and lower x and y boundaries for each team
-   *          (format: int[teamID][{lowerY,UpperY,lowerX,upperX, orientation(south = 0; north = 1}]
+   *     (format: int[teamID][{lowerY,UpperY,lowerX,upperX, orientation(south = 0; north = 1}]
    */
   static int[][] cutUpGrid(GameState gs) {
     // TODO add more than four players
     int[][] teams = null;
-    if(gs.getTeams().length == 2) {
+    if (gs.getTeams().length == 2) {
       teams = new int[2][5];
       teams[0][0] = 0;
-      teams[0][1] = gs.getGrid().length/2;
+      teams[0][1] = gs.getGrid().length / 2;
       teams[0][2] = 0;
       teams[0][3] = gs.getGrid()[0].length;
       teams[0][4] = 0;
-      teams[1][0] = gs.getGrid().length/2;
+      teams[1][0] = gs.getGrid().length / 2;
       teams[1][1] = gs.getGrid().length;
       teams[1][2] = 0;
       teams[1][3] = gs.getGrid()[0].length;
       teams[1][4] = 1;
-      
-    } else if(gs.getTeams().length == 3 || gs.getTeams().length == 4){
+
+    } else if (gs.getTeams().length == 3 || gs.getTeams().length == 4) {
       teams = new int[4][5];
-      
+
       teams[0][0] = 0;
-      teams[0][1] = gs.getGrid().length/2;
+      teams[0][1] = gs.getGrid().length / 2;
       teams[0][2] = 0;
-      teams[0][3] = gs.getGrid()[0].length/2;
+      teams[0][3] = gs.getGrid()[0].length / 2;
       teams[0][4] = 0;
-      
+
       teams[1][0] = 0;
-      teams[1][1] = gs.getGrid().length/2;
-      teams[1][2] = gs.getGrid()[0].length/2;
+      teams[1][1] = gs.getGrid().length / 2;
+      teams[1][2] = gs.getGrid()[0].length / 2;
       teams[1][3] = gs.getGrid()[0].length;
       teams[1][4] = 0;
-      
-      teams[2][0] = gs.getGrid().length/2;
+
+      teams[2][0] = gs.getGrid().length / 2;
       teams[2][1] = gs.getGrid().length;
       teams[2][2] = 0;
-      teams[2][3] = gs.getGrid()[0].length/2;
+      teams[2][3] = gs.getGrid()[0].length / 2;
       teams[2][4] = 1;
-      
-      teams[3][0] = gs.getGrid().length/2;
+
+      teams[3][0] = gs.getGrid().length / 2;
       teams[3][1] = gs.getGrid().length;
-      teams[3][2] = gs.getGrid()[0].length/2;
+      teams[3][2] = gs.getGrid()[0].length / 2;
       teams[3][3] = gs.getGrid()[0].length;
       teams[3][4] = 1;
-      
-      
-    } else if(gs.getTeams().length == 5 || gs.getTeams().length == 6){
-      
-    } else if(gs.getTeams().length == 7 || gs.getTeams().length == 8){
-      
+
+    } else if (gs.getTeams().length == 5 || gs.getTeams().length == 6) {
+
+    } else if (gs.getTeams().length == 7 || gs.getTeams().length == 8) {
+
     }
 
     return teams;
   }
-  
-  
+
   // ******************************
-  // Helper methods for the hill-climbing in the spaced_out placement 
+  // Helper methods for the hill-climbing in the spaced_out placement
   // ******************************
 
-  
   /**
    * Helper method for spaced placement
-   * 
+   *
    * @author ysiebenh
    */
   static LinkedList<GameState> getNeighbors(GameState gs, int teamID) {
@@ -232,12 +351,15 @@ public class EngineTools extends AI_Tools {
 
           if (gs.getGrid()[y][x].equals("")) {
             GameState newGs = deepCopyGameStateOld(gs);
-            newGs.getGrid()[newGs.getTeams()[teamID].getPieces()[i]
-                .getPosition()[0]][newGs.getTeams()[teamID].getPieces()[i].getPosition()[1]] = "";
+            newGs
+                    .getGrid()[newGs.getTeams()[teamID].getPieces()[i].getPosition()[0]][
+                    newGs.getTeams()[teamID].getPieces()[i].getPosition()[1]] =
+                "";
             newGs.getTeams()[teamID].getPieces()[i].setPosition(new int[] {y, x});
-            newGs.getGrid()[newGs.getTeams()[teamID].getPieces()[i]
-                .getPosition()[0]][newGs.getTeams()[teamID].getPieces()[i].getPosition()[1]] =
-                    newGs.getTeams()[teamID].getPieces()[i].getId();
+            newGs
+                    .getGrid()[newGs.getTeams()[teamID].getPieces()[i].getPosition()[0]][
+                    newGs.getTeams()[teamID].getPieces()[i].getPosition()[1]] =
+                newGs.getTeams()[teamID].getPieces()[i].getId();
             newGs.setGrid(newGs.getGrid());
             result.add(newGs);
           }
@@ -246,8 +368,10 @@ public class EngineTools extends AI_Tools {
     }
     return result;
   }
+
   /**
    * helper for the spaced placement
+   *
    * @author ysiebenh
    * @return
    */
@@ -258,9 +382,10 @@ public class EngineTools extends AI_Tools {
     }
     return result;
   }
-  
+
   /**
    * helper for the spaced placement
+   *
    * @author ysiebenh
    * @return
    */
@@ -273,32 +398,34 @@ public class EngineTools extends AI_Tools {
     }
     return current;
   }
-  
+
   /**
    * helper for the spaced placement
+   *
    * @author rsyed
    * @return
    */
   public static GameState deepCopyGameState(GameState gs) {
     ObjectMapper mapper = new ObjectMapper();
-		GameState re = new GameState();
-		try {
-			re = mapper.readValue(mapper.writeValueAsString(gs), GameState.class);
-		} catch (JsonGenerationException e) {
-			System.out.println("Error in deepCopyGameState JSON Method");
-		} catch (JsonMappingException e) {
-			System.out.println("Error in deepCopyGameState JSON Method");
-		} catch (IOException e) {
-			System.out.println("Error in deepCopyGameState JSON Method");
-		}
+    GameState re = new GameState();
+    try {
+      re = mapper.readValue(mapper.writeValueAsString(gs), GameState.class);
+    } catch (JsonGenerationException e) {
+      System.out.println("Error in deepCopyGameState JSON Method");
+    } catch (JsonMappingException e) {
+      System.out.println("Error in deepCopyGameState JSON Method");
+    } catch (IOException e) {
+      System.out.println("Error in deepCopyGameState JSON Method");
+    }
     return re;
   }
 
   /**
    * Deep Copies a GameState (hopefully)
+   *
    * @author ysiebenh
-   * @return
-   * TODO simon sagt da fehlt der letzte move, er weiß aber nicht ob der in deinem anwendungsfall benötigt ist.
+   * @return TODO simon sagt da fehlt der letzte move, er weiß aber nicht ob der in deinem
+   *     anwendungsfall benötigt ist.
    */
   static GameState deepCopyGameStateOld(GameState gs) {
     GameState newGs = new GameState();
@@ -338,27 +465,27 @@ public class EngineTools extends AI_Tools {
     newGs.setCurrentTeam(gs.getCurrentTeam());
     return newGs;
   }
-  
+
   /**
-   * Returns a List of the Pieces sorted by Strength 
+   * Returns a List of the Pieces sorted by Strength
+   *
    * @author ysiebenh
    * @return
    */
   static LinkedList<Piece> getStrongest(Piece[] pieces) {
     LinkedList<Piece> list = new LinkedList<Piece>();
-    
-    for(Piece p : pieces) {
+
+    for (Piece p : pieces) {
       list.add(p);
     }
     Collections.sort(list, new EngineTools().new StrengthComparator());
-    
+
     return list;
-    
   }
-  
-  
+
   /**
-   * Updates the positions of the pieces based on their position in the Team Object  
+   * Updates the positions of the pieces based on their position in the Team Object
+   *
    * @author ysiebenh
    */
   static void updateGrid(GameState gs) {
@@ -368,20 +495,18 @@ public class EngineTools extends AI_Tools {
       }
     }
   }
-  
+
   // ******************************
   // Inner Classes
   // ******************************
 
-  class StrengthComparator implements Comparator <Piece>{
-    
+  class StrengthComparator implements Comparator<Piece> {
+
     @Override
     public int compare(Piece a, Piece b) {
-        if(a.getDescription().getAttackPower() > b.getDescription().getAttackPower()) return -1;
-        else if(a.getDescription().getAttackPower() < b.getDescription().getAttackPower()) return 1;
-        else return 0;      
+      if (a.getDescription().getAttackPower() > b.getDescription().getAttackPower()) return -1;
+      else if (a.getDescription().getAttackPower() < b.getDescription().getAttackPower()) return 1;
+      else return 0;
     }
-}
-
-
+  }
 }

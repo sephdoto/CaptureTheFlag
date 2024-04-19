@@ -26,7 +26,7 @@ import javafx.scene.paint.Color;
 /**
  * Game Engine Implementation
  *
- * @author ysiebenh & sistumpf & rsyed Mainly bug fixing and code consistency checks by rsyed
+ * @author ysiebenh & sistumpf & rsyed (Design)
  */
 public class GameEngine implements Game {
 
@@ -46,17 +46,31 @@ public class GameEngine implements Game {
   // End of Required by GameState
   // **************************************************
 
+  // **************************************************
+  // Nice to haves
+  // **************************************************
   private MapTemplate currentTemplate; // Saves a copy of the template
+  
+  
+  // **************************************************
+  // END of Nice to haves
+  // **************************************************
+  
+  
   private int teamPos = 0;
   private Map<String, Integer> teamIDtoInteger;
 
-  // Blocks for branches in game mode
-  // Game state is taking care of all time calculations
+  // **************************************************
+  // Alt Mode Data : Never Asked for directly: Internal use Vars
+  // **************************************************
   private boolean timeLimitedGame;
-  private LocalDateTime gameEndsAt;
   private boolean moveTimeLimitedGame;
+  // **************************************************
+  // END of Alt Mode Data
+  // **************************************************
   
-  
+
+  private LocalDateTime gameEndsAt;
   private LocalDateTime lastMoveTime;
   private LocalDateTime nextMoveTime;
 
@@ -200,7 +214,7 @@ public class GameEngine implements Game {
    */
   @Override
   public void giveUp(String teamId) {
-    EngineTools.removeTeam(gameState, Integer.valueOf(teamIDtoInteger.get(teamId)));
+    EngineTools.removeTeam(gameState, Integer.valueOf(teamIDtoInteger.get(teamId)));  //removed and set to null
     // Logic for switching Current Team
     if (gameState.getTeams()[gameState.getCurrentTeam()] == null)
       gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));

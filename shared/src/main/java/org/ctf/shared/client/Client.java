@@ -290,7 +290,6 @@ public class Client implements GameClientInterface {
     } catch (UnknownError e) {
       System.out.println("Something wong");
     }
-
     return response;
   }
 

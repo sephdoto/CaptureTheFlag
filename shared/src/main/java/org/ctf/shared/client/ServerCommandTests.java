@@ -3,12 +3,16 @@ package org.ctf.shared.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.io.IOException;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.ZoneId;
 import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Constants.AI;
+import org.ctf.shared.constants.Constants.Port;
+import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.dto.GameSessionRequest;
@@ -33,14 +37,40 @@ public class ServerCommandTests {
     // joinTest();
     // copierCheck();
     // arrayTest();
-    getStateTests();
+    // getStateTests();
     // AIVSHUMAN();
     // testConnectionTimedGameMode();
     // testMalformedConnection();
     // testConnectionTimedMoveMode();
-
+    //TimeTests();
+    joinTest();
     // join();
     // joinNDelete();
+  }
+
+  public static void TimeTests() {
+    Duration turnTime = Duration.ofSeconds(10);
+
+    Clock currentTime = Clock.systemDefaultZone(); // Inits Calender when the Game Started
+    Clock turnEndsBy =
+    Clock.fixed(Clock.offset(currentTime, turnTime).instant(), ZoneId.systemDefault());
+    for (int i = 0; i < 12; i++) {
+      
+      System.out.println(
+          Math.toIntExact(
+              Duration.between(currentTime.instant(), turnEndsBy.instant()).getSeconds()));
+              if (currentTime.instant().isAfter(turnEndsBy.instant())) {
+                System.out.println("timed out");
+                break;
+              }
+      try {
+        Thread.sleep(1000);
+      } catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      
+    }
   }
 
   public static void testConnection() {
@@ -158,6 +188,7 @@ public class ServerCommandTests {
     MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
     GameSessionRequest request = new GameSessionRequest();
     request.setTemplate(test);
+
   }
 
   public static void joinTest() {
@@ -165,8 +196,8 @@ public class ServerCommandTests {
     String jsonPayload =
         """
           {
-            "gridSize": [10, 10],
-            "teams": 2,
+            "gridSize": [20, 20],
+            "teams": 3,
             "flags": 1,
             "blocks": 0,
             "pieces": [
@@ -267,8 +298,8 @@ public class ServerCommandTests {
               }
             ],
             "placement": "symmetrical",
-            "totalTimeLimitInSeconds": 20,
-            "moveTimeLimitInSeconds": -1
+            "totalTimeLimitInSeconds": 8,
+            "moveTimeLimitInSeconds": 2
           }
         """;
 
@@ -278,14 +309,21 @@ public class ServerCommandTests {
     CommLayer comm = new CommLayer();
     Client javaClient =
         ClientStepBuilder.newBuilder()
-            .enableRestLayer(true)
+            .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
             .HumanPlayer()
             .build();
     Client javaClient2 =
         ClientStepBuilder.newBuilder()
-            .enableRestLayer(true)
+            .enableRestLayer(false)
+            .onLocalHost()
+            .onPort("8888")
+            .HumanPlayer()
+            .build();
+            Client javaClient3 =
+        ClientStepBuilder.newBuilder()
+            .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
             .HumanPlayer()
@@ -294,20 +332,28 @@ public class ServerCommandTests {
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
         "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
+        javaClient3.joinExistingGame(
+        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team3");
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
-    javaClient.startGameController();
-    try {
-      for (int i = 0; i < 20; i++) {
-        System.out.println(javaClient.getRemainingGameTimeInSeconds());
-        Thread.sleep(1000);
-      }
-
-    } catch (InterruptedException | InvalidMove e) {
-
-    }
-
-    /*    Move move = new Move();
+    javaClient.getSessionFromServer();
+    System.out.println(gson.toJson(javaClient.getCurrentState()));
+    System.out.println(gson.toJson(javaClient.getCurrentSession()));
+try {
+  for(int i = 0;i<10;i++){
+    Thread.sleep(1000);
+    javaClient.getStateFromServer();
+    System.out.println(gson.toJson(javaClient.getCurrentState()));
+    javaClient.getSessionFromServer();
+    System.out.println(gson.toJson(javaClient.getCurrentSession()));
+  }
+  
+} catch (InterruptedException e) {
+  // TODO Auto-generated catch block
+  e.printStackTrace();
+}
+    
+    /* Move move = new Move();
     move.setPieceId("p:0_2");
     move.setNewPosition(new int[] {0, 1}); */
     // javaClient2.makeMove(move);
@@ -315,7 +361,7 @@ public class ServerCommandTests {
     move.setNewPosition(new int[] {9, 8});
     javaClient.makeMove(move); */
 
-    /*  javaClient.getStateFromServer();
+ /*    javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
     System.out.println(gson.toJson(javaClient.getGrid()));
     System.out.println(gson.toJson(javaClient.getLastMove()));
@@ -480,16 +526,27 @@ public class ServerCommandTests {
     javaClient2.getStateFromServer();
     // System.out.println(gson.toJson(javaClient.getCurrentState()));
     AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS);
-    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS);
+    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS_IMPROVED);
     for (int i = 0; i < 90; i++) {
       try {
-        if (javaClient.getCurrentTeamTurn() == 0) {
+        if (javaClient.getCurrentState().getCurrentTeam() == Integer.parseInt(javaClient.teamID)) {
+          System.out.println("it was team 0s turn!");
           javaClient.makeMove(Controller.getNextMove());
-          System.out.println("client 0 made a move");
-        } else if (javaClient.getCurrentTeamTurn() == 1) {
+          System.out.println("team 0 made a move");
+          javaClient.getStateFromServer();
+          javaClient2.getStateFromServer();
+          Controller.update(javaClient.getCurrentState());
+          Controller2.update(javaClient2.getCurrentState());
+        } else {
+          System.out.println("it was team 1s turn!");
           javaClient2.makeMove(Controller2.getNextMove());
           System.out.println("client 1 made a move");
         }
+        Thread.sleep(1000);
+      } catch (NoMovesLeftException
+          | InvalidShapeException
+          | InterruptedException
+          | InvalidMove e) {
         javaClient.getStateFromServer();
         Controller.update(javaClient.getCurrentState());
         javaClient2.getStateFromServer();
@@ -630,5 +687,4 @@ public class ServerCommandTests {
     System.out.println("joined");
     ((AIClient) javaClient).run();
   }
-
 }
