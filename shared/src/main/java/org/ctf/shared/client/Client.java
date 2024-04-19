@@ -69,7 +69,7 @@ public class Client implements GameClientInterface {
   private Clock gameShouldEndBy;
   public int timeLeftInTheGame;
   private Duration timeLimDuration;
-  private Integer lastTeamTurn;
+  private int lastTeamTurn;
 
   // Block for booleans
   public boolean gameOver;
@@ -538,6 +538,6 @@ public class Client implements GameClientInterface {
   }
 
   public int getLastTeamTurn() {
-    return (lastMove!=null) ? Integer.parseInt(lastMove.getPieceId().split(":")[1].split("_")[0]) : -1;
+    return lastTeamTurn;
   }
 }
