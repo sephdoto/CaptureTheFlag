@@ -74,7 +74,7 @@ public class EngineTools extends AI_Tools {
    * @return true if only one team is left
    */
   public static boolean removeMovelessTeams(GameState gameState) {
-    for(int i=0, start = i; i != start; EngineTools.getNextTeam(gameState)) {
+    for(int i=0; i < gameState.getTeams().length && gameState.getTeams()[i] != null; i++) {
       if(gameState.getTeams()[i].getFlags() <= 0)
         removeTeam(gameState, i);
       else if(gameState.getTeams()[i].getPieces().length == 0)
