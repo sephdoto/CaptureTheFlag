@@ -38,7 +38,7 @@ java-build:
       - .m2/repository
   script:
     - ./mvnw $MAVEN_CLI_OPTS package
-  #artifacts:
-  #  name: "Maven artifacts from $CI_PROJECT_NAME on $CI_COMMIT_REF_SLUG"
-  #  paths:
-  #    - "**/target"
+  artifacts:
+    name: "Maven artifacts from $CI_PROJECT_NAME on $CI_COMMIT_REF_SLUG"
+    paths:
+      - "**/target"
