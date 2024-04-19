@@ -36,6 +36,23 @@
 .custom-combo-box .list-view .list-cell {
     -fx-text-fill: black; 
 }
+.custom-combo-box-2 {
+   -fx-background-color: rgb(25,25,25); 
+   -fx-text-fill: white; 
+   -fx-border-color: white; 
+   -fx-border-width: 2.0px;
+   -fx-background-radius: 5px; 
+	 -fx-border-radius: 5px;
+   
+    
+    }
+    .custom-combo-box-2 .list-cell {
+    -fx-text-fill: white; 
+    -fx-font-family: "Century Gothic", sans-serif;
+}
+.custom-combo-box-2 .list-view .list-cell {
+    -fx-text-fill: black; 
+}
 .join-root {
 	 -fx-background-color: black;
 }
@@ -81,5 +98,15 @@
 	 -fx-border-radius: 20px;
 	 -fx-alignment: top-center;
 }
-
+.join-button {
+	 -fx-background-color: rgb(30,90,30); 
+    -fx-text-fill: white; 
+    -fx-font-size: 14px; 
+    -fx-font-family: "Century Gothic", sans-serif; 
+	 -fx-background-radius: 5px; 
+    -fx-border-radius: 5px; 
+    -fx-border-color: white; 
+    -fx-border-width: 2dpx; 
+    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
+}
 

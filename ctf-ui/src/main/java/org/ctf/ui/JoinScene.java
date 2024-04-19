@@ -1,13 +1,17 @@
 package org.ctf.ui;
 
 import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -140,6 +144,8 @@ public class JoinScene extends Scene {
 				.bind(Bindings.createObjectBinding(() -> Font.font(right.getWidth() / 18), right.widthProperty()));
 		rightBox.getChildren().add(rightHeader);
 		rightBox.getChildren().add(createSessionInfo(12345, 4, 20));
+		rightBox.getChildren().add(createButtonOption());
+		
 		return rightBox;
 	}
 
@@ -207,5 +213,58 @@ public class JoinScene extends Scene {
 		return sessionInfoBox;
 	}
 	
+	private Button createJoinButton(String label) {
+		Button join = new Button(label);
+		join.getStyleClass().add("join-button");
+		join.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
+		join.prefHeightProperty().bind(join.widthProperty().multiply(0.25));
+		return join;
+	}
+	private GridPane createButtonOption() {
+		GridPane buttonBox = new GridPane();
+		buttonBox.setAlignment(Pos.CENTER);
+		buttonBox.setHgap(right.widthProperty().doubleValue()*0.05);
+		right.widthProperty().addListener((obs, oldVal, newVal) -> {
+			double spacing = newVal.doubleValue() * 0.05;
+			buttonBox.setHgap(spacing);
+		});
+		buttonBox.setVgap(right.heightProperty().doubleValue()*0.03);
+		right.widthProperty().addListener((obs, oldVal, newVal) -> {
+			double spacing = newVal.doubleValue() * 0.03;
+			buttonBox.setVgap(spacing);
+		});
+		Button playerButton = createJoinButton("Join as Player");
+		buttonBox.add(playerButton, 0, 0);
+		
+		Button aiButton = createJoinButton("Join as AI-Client");
+		buttonBox.add(aiButton,1,0);
+		
+		
+//		Button testButton = createJoinButton("Test");
+//		buttonBox.add(testButton,1,1);
+		buttonBox.add(createAiChooser(), 1, 1);
+		
+		return buttonBox;
+		
+	}
+	
+	private VBox createAiChooser() {
+		VBox childBox = new VBox();
+		childBox.setAlignment(Pos.CENTER);
+		right.heightProperty().addListener((obs, oldVal, newVal) -> {
+			double spacing = newVal.doubleValue() * 0.03;
+			childBox.setSpacing(spacing);
+		});
+		Text pickText = createInfoText("Pick an AI-Client", 25);
+		childBox.getChildren().add(pickText);
+		ObservableList<String> options = FXCollections.observableArrayList("MCTS V1", "MCTS V2");
+		ComboBox<String> aiComboBox = new ComboBox<>(options);
+		aiComboBox.setValue(options.get(0));
+		aiComboBox.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
+		aiComboBox.prefHeightProperty().bind(aiComboBox.widthProperty().multiply(0.25));
+		aiComboBox.getStyleClass().add("custom-combo-box-2");
+		childBox.getChildren().add(aiComboBox);
+		return childBox;
+	}
 	
 }
