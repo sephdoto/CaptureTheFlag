@@ -47,7 +47,7 @@ public class JoinScene extends Scene {
 		right = createOptionPane();
 		sep.getChildren().add(right);
 		info = createInfoText("Please enter all \n" + "necessary information \n " + " and search for \n"
-				+ " sessions to \n" + "enter a game.");
+				+ " sessions to \n" + "enter a game.", 18);
 		right.getChildren().add(info);
 		StackPane.setAlignment(info, Pos.CENTER);
 
@@ -106,7 +106,7 @@ public class JoinScene extends Scene {
 		VBox leftBox = new VBox();
 		leftBox.setAlignment(Pos.TOP_CENTER);
 		leftBox.setPadding(new Insets(20));
-		leftBox.setSpacing(20);
+		leftBox.setSpacing(left.heightProperty().doubleValue()*0.06);
 		left.heightProperty().addListener((obs, oldVal, newVal) -> {
 			double spacing = newVal.doubleValue() * 0.06;
 			leftBox.setSpacing(spacing);
@@ -129,6 +129,7 @@ public class JoinScene extends Scene {
 		VBox rightBox = new VBox();
 		rightBox.setAlignment(Pos.TOP_CENTER);
 		rightBox.setPadding(new Insets(20));
+		rightBox.setSpacing(20);
 		left.heightProperty().addListener((obs, oldVal, newVal) -> {
 			double spacing = newVal.doubleValue() * 0.06;
 			rightBox.setSpacing(spacing);
@@ -138,9 +139,9 @@ public class JoinScene extends Scene {
 		rightHeader.fontProperty()
 				.bind(Bindings.createObjectBinding(() -> Font.font(right.getWidth() / 18), right.widthProperty()));
 		rightBox.getChildren().add(rightHeader);
+		rightBox.getChildren().add(createSessionInfo(12345, 4, 20));
 		return rightBox;
 	}
-	
 
 	private TextField createTextfield(String prompt) {
 		TextField searchField = new TextField();
@@ -175,12 +176,36 @@ public class JoinScene extends Scene {
 		return search;
 	}
 
-	private Text createInfoText(String s) {
+	private Text createInfoText(String s, int divider) {
 		Text info = new Text(s);
 		info.getStyleClass().add("custom-header");
 		info.setTextAlignment(TextAlignment.CENTER);
-		info.fontProperty()
-				.bind(Bindings.createObjectBinding(() -> Font.font(right.getWidth() / 18), right.widthProperty()));
+		info.fontProperty().bind(Bindings.createObjectBinding(
+				() -> Font.font("Century Gothic", right.getWidth() / divider), right.widthProperty()));
 		return info;
 	}
+
+	private StackPane createSessionInfo(int id, int teams, int space) {
+		StackPane sessionInfoBox = new StackPane();
+		sessionInfoBox.getStyleClass().add("session-info");
+		sessionInfoBox.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
+		sessionInfoBox.prefHeightProperty().bind(sessionInfoBox.widthProperty().multiply(0.1));
+		VBox textBox = new VBox();
+		textBox.setPadding(new Insets(15));
+		textBox.setSpacing(right.heightProperty().doubleValue()*0.03);
+		right.heightProperty().addListener((obs, oldVal, newVal) -> {
+			double spacing = newVal.doubleValue() * 0.03;
+			textBox.setSpacing(spacing);
+		});
+		Text idtext = createInfoText("Session ID:  " + id, 25);
+		textBox.getChildren().add(idtext);
+		
+		Text teamText = createInfoText("Teams:  " +teams + "/" + space,25);
+		textBox.getChildren().add(teamText);
+		sessionInfoBox.getChildren().add(textBox);
+
+		return sessionInfoBox;
+	}
+	
+	
 }
