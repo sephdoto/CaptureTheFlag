@@ -631,19 +631,4 @@ public class ServerCommandTests {
     ((AIClient) javaClient).run();
   }
 
-  private static MapTemplate createGameTemplate() {
-    ObjectMapper objectMapper = new ObjectMapper();
-    MapTemplate mapTemplate = null;
-    try {
-      mapTemplate =
-          objectMapper.readValue(
-              getClass().getResourceAsStream("/maptemplates/10x10_2teams_example.json"),
-              MapTemplate.class);
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
-    return mapTemplate;
-  }
 }
