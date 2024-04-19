@@ -16,7 +16,7 @@ public class MCTSSimulation {
             "gridSize": [10, 10],
             "teams": 2,
             "flags": 1,
-            "blocks": 0,
+            "blocks": 5,
             "pieces": [
               {
                 "type": "Pawn",

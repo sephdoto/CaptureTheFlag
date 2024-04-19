@@ -17,7 +17,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -79,11 +78,9 @@ public class NewGameEngine implements Game {
     gameState = new GameState();
     BoardController boardController = new BoardController();
 
-    gameState.setGrid(boardController.initEmptyGrid(template.getGridSize()[0],template.getGridSize()[1]));  //Makes an Empty Grid
-
-
-
-
+    gameState.setGrid(
+        boardController.initEmptyGrid(
+            template.getGridSize()[0], template.getGridSize()[1])); // Makes an Empty Grid
 
     gameState.setTeams(new Team[template.getTeams()]);
     initAltGameModeLogic(template); // Inits Alt Game mode support
@@ -133,7 +130,8 @@ public class NewGameEngine implements Game {
     // **************************************************
     // Slot Full Check
     // **************************************************
-    //TODO this method below ALSO has to set the map in the game state with all the pieces, blocks, bases etc on the map! Code needs to be finished
+    // TODO this method below ALSO has to set the map in the game state with all the pieces, blocks,
+    // bases etc on the map! Code needs to be finished
     canWeStartTheGameUwU(); // Method also checks for alt game logic
 
     // **************************************************
@@ -143,17 +141,17 @@ public class NewGameEngine implements Game {
     return tempTeam;
   }
 
- /** 
-  * Here a move, if valid, updates the grid, a pieces position, a teams flags and the time.
-  *
-  * @author sistumpf
-  * @param move {@link Move}
-  * @throws InvalidMove Requested move is invalid
-  * @throws GameOver Game is over
-  */
+  /**
+   * Here a move, if valid, updates the grid, a pieces position, a teams flags and the time.
+   *
+   * @author sistumpf
+   * @param move {@link Move}
+   * @throws InvalidMove Requested move is invalid
+   * @throws GameOver Game is over
+   */
   @Override
   public void makeMove(Move move) {
-    if(!movePreconditionsMet(move)) return ;
+    if (!movePreconditionsMet(move)) return;
     EngineTools.computeMove(this.gameState, move);
     afterMoveCleanup();
   }
@@ -312,7 +310,7 @@ public class NewGameEngine implements Game {
   }
 
   /**
-   * Main CONTROLLER for Alt Game Modes Call when Game Starts (teams are full) 
+   * Main CONTROLLER for Alt Game Modes Call when Game Starts (teams are full)
    *
    * @author rsyed
    */
@@ -483,20 +481,25 @@ public class NewGameEngine implements Game {
    */
   private void altGameModeGameOverHandler() {
     ArrayList<Team> teamList = new ArrayList<Team>();
-    Stream.of(this.gameState.getTeams()).forEach(team -> {if(team != null) teamList.add(team);});
-    teamList.sort(new Comparator<Team>() {
-      public int compare(Team team1, Team team2){
-        return team2.getPieces().length - team1.getPieces().length;
-        }
-      });
-    teamList.removeIf(new Predicate<Team>() {
-      public boolean test(Team team){
-        return teamList.get(0).getPieces().length > team.getPieces().length;
-      }
-    });
+    Stream.of(this.gameState.getTeams())
+        .forEach(
+            team -> {
+              if (team != null) teamList.add(team);
+            });
+    teamList.sort(
+        new Comparator<Team>() {
+          public int compare(Team team1, Team team2) {
+            return team2.getPieces().length - team1.getPieces().length;
+          }
+        });
+    teamList.removeIf(
+        new Predicate<Team>() {
+          public boolean test(Team team) {
+            return teamList.get(0).getPieces().length > team.getPieces().length;
+          }
+        });
     this.gameState.setTeams(teamList.toArray(new Team[teamList.size()]));
     setGameOver();
-    // CASE CALLED FROM LIMITED MOVE TIME HANDLER
   }
 
   // **************************************************
@@ -508,48 +511,46 @@ public class NewGameEngine implements Game {
   // **************************************************
 
   /**
-   * Cleans up the GameState after a move was made.
-   * Updates the timer if the game uses time limits,
-   * Updates the current team and removes it if it got no moves left.
-   * Repeats the second step till only 1 team is left or the current team got moves.
+   * Cleans up the GameState after a move was made. Updates the timer if the game uses time limits,
+   * Updates the current team and removes it if it got no moves left. Repeats the second step till
+   * only 1 team is left or the current team got moves.
+   *
    * @author sistumpf
    */
   private void afterMoveCleanup() {
-    if(this.moveTimeLimitedGameTrigger)
-      increaseTurnTimer();
+    if (this.moveTimeLimitedGameTrigger) increaseTurnTimer();
     gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
-    if(EngineTools.removeMovelessTeams(gameState))
-      setGameOver();
+    if (EngineTools.removeMovelessTeams(gameState)) setGameOver();
   }
-  
+
   /**
-   * Returns true if a move is valid.
-   * The move is valid if
-   *    * the game is not over
-   *    * the piece belongs to the current team
-   *    * the move complies with the rules
+   * Returns true if a move is valid. The move is valid if * the game is not over * the piece
+   * belongs to the current team * the move complies with the rules
+   *
    * @author sistumpf
    * @param move
    * @return true if the move is valid
    */
   private boolean movePreconditionsMet(Move move) {
-    if(isGameOver()){
+    if (isGameOver()) {
       throw new GameOver();
-    } else if (gameState.getCurrentTeam() != Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0])) {
+    } else if (gameState.getCurrentTeam()
+        != Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0])) {
       throw new InvalidMove();
-    } else if (!isValidMove(move)){
+    } else if (!isValidMove(move)) {
       throw new InvalidMove();
     } else {
       return true;
     }
   }
-  
+
   /**
    * Ends the game INTERNALLY by setting the endDate Variable
    *
    * @author rsyed
    */
   private void setGameOver() {
+    this.gameState.setCurrentTeam(-1);  //Sets current team to -1 to indicate game has ended
     this.endDate = new Date();
   }
 
@@ -580,12 +581,16 @@ public class NewGameEngine implements Game {
       // **************************************************
       // Make the game Grid
       // **************************************************
-      //TODO Buggy
+
       BoardController boardController = new BoardController();
-      boardController.placeBases(this.gameState, copyOfTemplate); //Places and inits teams properly on the map
-      BoardSetUp.placeBlocks(copyOfTemplate,this.gameState.getGrid(),copyOfTemplate.getBlocks());
+      boardController.placeBases(
+          this.gameState, copyOfTemplate); // Places and inits teams properly on the map
+      BoardSetUp.placeBlocks(
+          copyOfTemplate,
+          this.gameState.getGrid(),
+          copyOfTemplate.getBlocks()); // Places blocks....tested
       try {
-        BoardSetUp.initPieces(this.gameState,copyOfTemplate);
+        BoardSetUp.initPieces(this.gameState, copyOfTemplate); // Inits pieces on the grid
       } catch (TooManyPiecesException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
@@ -593,7 +598,7 @@ public class NewGameEngine implements Game {
       // **************************************************
       // End of making the game Grid
       // **************************************************
-      
+
       setRandomStartingTeam();
       startAltGameController();
       this.startedDate = new Date();
