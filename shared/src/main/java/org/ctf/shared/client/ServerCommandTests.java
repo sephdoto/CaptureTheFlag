@@ -1,6 +1,5 @@
 package org.ctf.shared.client;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.time.Clock;
@@ -11,8 +10,6 @@ import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Constants.AI;
-import org.ctf.shared.constants.Constants.Port;
-import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.dto.GameSessionRequest;
@@ -37,13 +34,13 @@ public class ServerCommandTests {
     // joinTest();
     // copierCheck();
     // arrayTest();
-    // getStateTests();
-    // AIVSHUMAN();
+     getStateTests();
+    //AIVSHUMAN();
     // testConnectionTimedGameMode();
     // testMalformedConnection();
     // testConnectionTimedMoveMode();
-    //TimeTests();
-    joinTest();
+    // TimeTests();
+    // joinTest();
     // join();
     // joinNDelete();
   }
@@ -53,23 +50,22 @@ public class ServerCommandTests {
 
     Clock currentTime = Clock.systemDefaultZone(); // Inits Calender when the Game Started
     Clock turnEndsBy =
-    Clock.fixed(Clock.offset(currentTime, turnTime).instant(), ZoneId.systemDefault());
+        Clock.fixed(Clock.offset(currentTime, turnTime).instant(), ZoneId.systemDefault());
     for (int i = 0; i < 12; i++) {
-      
+
       System.out.println(
           Math.toIntExact(
               Duration.between(currentTime.instant(), turnEndsBy.instant()).getSeconds()));
-              if (currentTime.instant().isAfter(turnEndsBy.instant())) {
-                System.out.println("timed out");
-                break;
-              }
+      if (currentTime.instant().isAfter(turnEndsBy.instant())) {
+        System.out.println("timed out");
+        break;
+      }
       try {
         Thread.sleep(1000);
       } catch (InterruptedException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-      
     }
   }
 
@@ -188,7 +184,6 @@ public class ServerCommandTests {
     MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
     GameSessionRequest request = new GameSessionRequest();
     request.setTemplate(test);
-
   }
 
   public static void joinTest() {
@@ -321,7 +316,7 @@ public class ServerCommandTests {
             .onPort("8888")
             .HumanPlayer()
             .build();
-            Client javaClient3 =
+    Client javaClient3 =
         ClientStepBuilder.newBuilder()
             .enableRestLayer(false)
             .onLocalHost()
@@ -332,27 +327,27 @@ public class ServerCommandTests {
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
         "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
-        javaClient3.joinExistingGame(
+    javaClient3.joinExistingGame(
         "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team3");
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
     javaClient.getSessionFromServer();
     System.out.println(gson.toJson(javaClient.getCurrentState()));
     System.out.println(gson.toJson(javaClient.getCurrentSession()));
-try {
-  for(int i = 0;i<10;i++){
-    Thread.sleep(1000);
-    javaClient.getStateFromServer();
-    System.out.println(gson.toJson(javaClient.getCurrentState()));
-    javaClient.getSessionFromServer();
-    System.out.println(gson.toJson(javaClient.getCurrentSession()));
-  }
-  
-} catch (InterruptedException e) {
-  // TODO Auto-generated catch block
-  e.printStackTrace();
-}
-    
+    try {
+      for (int i = 0; i < 10; i++) {
+        Thread.sleep(1000);
+        javaClient.getStateFromServer();
+        System.out.println(gson.toJson(javaClient.getCurrentState()));
+        javaClient.getSessionFromServer();
+        System.out.println(gson.toJson(javaClient.getCurrentSession()));
+      }
+
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
     /* Move move = new Move();
     move.setPieceId("p:0_2");
     move.setNewPosition(new int[] {0, 1}); */
@@ -361,7 +356,7 @@ try {
     move.setNewPosition(new int[] {9, 8});
     javaClient.makeMove(move); */
 
- /*    javaClient.getStateFromServer();
+    /*    javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
     System.out.println(gson.toJson(javaClient.getGrid()));
     System.out.println(gson.toJson(javaClient.getLastMove()));
@@ -529,7 +524,7 @@ try {
     AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS_IMPROVED);
     for (int i = 0; i < 90; i++) {
       try {
-        if (javaClient.getCurrentState().getCurrentTeam() == Integer.parseInt(javaClient.teamID)) {
+        if (javaClient.isItMyTurn()) {
           System.out.println("it was team 0s turn!");
           javaClient.makeMove(Controller.getNextMove());
           System.out.println("team 0 made a move");
@@ -668,8 +663,8 @@ try {
               }
             ],
             "placement": "symmetrical",
-            "totalTimeLimitInSeconds": -1,
-            "moveTimeLimitInSeconds": -1
+            "totalTimeLimitInSeconds": 5,
+            "moveTimeLimitInSeconds": 5
           }
         """;
 
@@ -682,9 +677,26 @@ try {
             .onPort("8888")
             .AIPlayerSelector(AI.RANDOM)
             .build();
+    Client javaClient2 =
+        ClientStepBuilder.newBuilder()
+            .enableRestLayer(false)
+            .onLocalHost()
+            .onPort("8888")
+            .AIPlayerSelector(AI.RANDOM)
+            .build();
     javaClient.createGame(template);
     javaClient.joinGame("0");
-    System.out.println("joined");
-    ((AIClient) javaClient).run();
+    javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "1");
+    for(int i = 0;i<10;i++){
+      try {
+        Thread.sleep(800);
+        System.out.println(javaClient.getRemainingGameTimeInSeconds());
+        javaClient2.giveUp();
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+
+        e.printStackTrace();
+      }
+    }
   }
 }

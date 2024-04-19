@@ -69,7 +69,7 @@ public class Client implements GameClientInterface {
   private Clock gameShouldEndBy;
   public int timeLeftInTheGame;
   private Duration timeLimDuration;
-  private Integer lastTeamTurn = null;
+  private Integer lastTeamTurn;
 
   // Block for booleans
   public boolean gameOver;
@@ -253,6 +253,7 @@ public class Client implements GameClientInterface {
     this.currentServer = shortURL + "/" + currentGameSessionID;
     try {
       this.startDate = gameSessionResponse.getGameStarted();
+    //  startGameController();
     } catch (NullPointerException e) {
       System.out.println("Game hasnt started yet");
     }
@@ -335,20 +336,9 @@ public class Client implements GameClientInterface {
   private void gameStateHelper() {
     GameState gameState = comm.getCurrentGameState(currentServer);
     this.grid = gameState.getGrid();
-
-    if (this.lastTeamTurn != null) { // init both
-      this.lastTeamTurn = gameState.getCurrentTeam();
-      this.currentTeamTurn = gameState.getCurrentTeam();
-    } else {
-      int updatedvalue = gameState.getCurrentTeam(); // update B
-      if (currentTeamTurn != updatedvalue) {
-        this.lastTeamTurn = this.currentTeamTurn;
-        this.currentTeamTurn = updatedvalue;
-      }
-    }
     this.currentTeamTurn = gameState.getCurrentTeam();
-
     this.lastMove = gameState.getLastMove();
+    updateLastTeam();
     this.teams = gameState.getTeams();
     this.currentState = gameState;
   }
@@ -406,6 +396,7 @@ public class Client implements GameClientInterface {
     if (isGameOver()) {
       return 0;
     } else {
+      currentTime = Clock.systemDefaultZone();
       return Math.toIntExact(
           Duration.between(currentTime.instant(), gameShouldEndBy.instant()).getSeconds());
     }
@@ -420,12 +411,12 @@ public class Client implements GameClientInterface {
     Thread internalThread =
         new Thread(
             () -> {
-              while (!isGameOver()) {
-                if (this.gameStarted) {
+              while (this.gameStarted) {
+                
                   this.getSessionFromServer(); // Gets  Session from server
                   this.getStateFromServer(); // Gets game state from Server
 
-                  boolean setOnceTriggerTime = true;
+              /*     boolean setOnceTriggerTime = true;
                   if (timeLimitedGameTrigger) {
                     setWhenGameShouldEnd();
                     setOnceTriggerTime = false;
@@ -440,12 +431,12 @@ public class Client implements GameClientInterface {
                     if (lastTeamTurn != currentTeamTurn) {
                       increaseTurnTimer();
                     }
-                  }
-                }
+                  } */
+                
               }
               try { // Checks EVERY 1 second
                 // TODO Discuss if a check every second is okay or we need faster ones
-                Thread.sleep(250);
+                Thread.sleep(1000);
               } catch (InterruptedException e) {
                 throw new Error("Something went wrong in the Client Thread");
               }
@@ -463,6 +454,16 @@ public class Client implements GameClientInterface {
     this.turnEndsBy =
         Clock.fixed(Clock.offset(currentTime, turnTime).instant(), ZoneId.systemDefault());
   }
+
+  /**
+   * Helper method which sets an int to keep track of which teams turn it was before (Derived from Last Move)
+   * Sets the lastTeamTurn int
+   * -1 if no last move, 0 to n Otherwise
+   * @author rsyed
+   */
+  private void updateLastTeam() {
+    this.lastTeamTurn = (lastMove!=null) ? Integer.parseInt(lastMove.getPieceId().split(":")[1].split("_")[0]) : -1;
+   }
 
   // Getter Block
   public GameSessionResponse getLastGameSessionResponse() {
@@ -534,5 +535,9 @@ public class Client implements GameClientInterface {
   public void forceSetGameStarted() {
     this.gameStarted = true;
     this.gameOver = false;
+  }
+
+  public int getLastTeamTurn() {
+    return (lastMove!=null) ? Integer.parseInt(lastMove.getPieceId().split(":")[1].split("_")[0]) : -1;
   }
 }
