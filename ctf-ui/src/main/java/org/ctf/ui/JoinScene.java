@@ -20,6 +20,8 @@ public class JoinScene extends Scene {
 	HomeSceneController hsc;
 	StackPane root;
 	StackPane left;
+	StackPane right;
+	Text info;
 
 	public JoinScene(HomeSceneController hsc, double width, double height) {
 		super(new StackPane(), width, height);
@@ -42,8 +44,13 @@ public class JoinScene extends Scene {
 		sep.setSpacing(50);
 		left = createOptionPane();
 		sep.getChildren().add(left);
-		StackPane right = createOptionPane();
+		right = createOptionPane();
 		sep.getChildren().add(right);
+		info = createInfoText("Please enter all \n" + "necessary information \n " + " and search for \n"
+				+ " sessions to \n" + "enter a game.");
+		right.getChildren().add(info);
+		StackPane.setAlignment(info, Pos.CENTER);
+
 		mainBox.getChildren().add(sep);
 
 		this.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -84,7 +91,7 @@ public class JoinScene extends Scene {
 	}
 
 	private Button createLeave() {
-		Button exit = new Button("LEAVE");
+		Button exit = new Button("Leave");
 		exit.getStyleClass().add("leave-button");
 		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
@@ -100,14 +107,12 @@ public class JoinScene extends Scene {
 		leftBox.setAlignment(Pos.TOP_CENTER);
 		leftBox.setPadding(new Insets(20));
 		leftBox.setSpacing(20);
-		Text leftheader = new Text("FIND YOUR GAME");
-		//leftheader.setStyle("-fx-font-family: Arial; -fx-font-size: 20px; -fx-fill: white;");
-		leftheader.getStyleClass().add("custom-header");
-		//leftheader.setTextAlignment(TextAlignment.LEFT);
-		leftheader.fontProperty().bind(
-				Bindings.createObjectBinding(() -> Font.font(leftBox.getWidth() / 18), leftBox.widthProperty()));
-		leftBox.getChildren().add(leftheader);
-		
+		left.heightProperty().addListener((obs, oldVal, newVal) -> {
+			double spacing = newVal.doubleValue() * 0.06;
+			leftBox.setSpacing(spacing);
+		});
+		leftBox.getChildren().add(createLeftHeader(leftBox));
+
 		TextField serverIPText = createTextfield("Enter the Server IP");
 		leftBox.getChildren().add(serverIPText);
 		TextField portText = createTextfield("Enter the Port");
@@ -115,8 +120,27 @@ public class JoinScene extends Scene {
 		TextField sessionText = createTextfield("Enter the Session ID");
 		leftBox.getChildren().add(sessionText);
 
+		leftBox.getChildren().add(createSearch());
+
 		return leftBox;
 	}
+
+	private VBox createRightContent() {
+		VBox rightBox = new VBox();
+		rightBox.setAlignment(Pos.TOP_CENTER);
+		rightBox.setPadding(new Insets(20));
+		left.heightProperty().addListener((obs, oldVal, newVal) -> {
+			double spacing = newVal.doubleValue() * 0.06;
+			rightBox.setSpacing(spacing);
+		});
+		Text rightHeader = new Text("Session Was Found!");
+		rightHeader.getStyleClass().add("custom-header");
+		rightHeader.fontProperty()
+				.bind(Bindings.createObjectBinding(() -> Font.font(right.getWidth() / 18), right.widthProperty()));
+		rightBox.getChildren().add(rightHeader);
+		return rightBox;
+	}
+	
 
 	private TextField createTextfield(String prompt) {
 		TextField searchField = new TextField();
@@ -128,5 +152,35 @@ public class JoinScene extends Scene {
 			searchField.setFont(new Font(newFontSize));
 		});
 		return searchField;
+	}
+
+	private Text createLeftHeader(VBox leftBox) {
+		Text leftheader = new Text("FIND YOUR GAME");
+		leftheader.getStyleClass().add("custom-header");
+		leftheader.fontProperty()
+				.bind(Bindings.createObjectBinding(() -> Font.font(leftBox.getWidth() / 18), leftBox.widthProperty()));
+		return leftheader;
+	}
+
+	private Button createSearch() {
+		Button search = new Button("Search");
+		search.getStyleClass().add("leave-button");
+		search.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
+		search.prefHeightProperty().bind(search.widthProperty().multiply(0.25));
+
+		search.setOnAction(e -> {
+			right.getChildren().remove(info);
+			right.getChildren().add(createRightContent());
+		});
+		return search;
+	}
+
+	private Text createInfoText(String s) {
+		Text info = new Text(s);
+		info.getStyleClass().add("custom-header");
+		info.setTextAlignment(TextAlignment.CENTER);
+		info.fontProperty()
+				.bind(Bindings.createObjectBinding(() -> Font.font(right.getWidth() / 18), right.widthProperty()));
+		return info;
 	}
 }
