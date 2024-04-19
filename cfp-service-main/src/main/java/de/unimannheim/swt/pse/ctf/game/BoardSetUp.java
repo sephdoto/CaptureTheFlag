@@ -367,7 +367,7 @@ public class BoardSetUp {
    * @param int y
    * @return String[][] with empty boxes
    */
-  public static String[][] initEmptyGrid(int x, int y) {
+  private static String[][] initEmptyGrid(int x, int y) {
     String[][] grid = new String[x][y];
     for (int i = 0; i < grid.length; i++) {
       for (int j = 0; j < grid[i].length; j++) {
