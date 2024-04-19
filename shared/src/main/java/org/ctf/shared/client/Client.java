@@ -248,26 +248,21 @@ public class Client implements GameClientInterface {
   }
 
   private void gameSessionResponseParser(GameSessionResponse gameSessionResponse) {
+    this.currentSession = gson.fromJson(gson.toJson(gameSessionResponse), GameSession.class);
     this.currentGameSessionID = gameSessionResponse.getId();
     this.currentServer = shortURL + "/" + currentGameSessionID;
-
     try {
       this.startDate = gameSessionResponse.getGameStarted();
-      this.currentSession.setGameStarted(gameSessionResponse.getGameStarted());
-      this.gameStarted = true;
-     // startGameController();
     } catch (NullPointerException e) {
-      this.gameStarted = false;
+      System.out.println("Game hasnt started yet");
     }
     try {
       this.endDate = gameSessionResponse.getGameEnded();
-      this.currentSession.setGameEnded(gameSessionResponse.getGameEnded());
     } catch (NullPointerException e) {
-      // Do nothing because isGameOver is handling the setting
+      System.out.println("Game hasnt ended yet");
     }
     try {
       this.gameOver = gameSessionResponse.isGameOver();
-      this.currentSession.setGameOver(gameSessionResponse.isGameOver());
     } catch (NullPointerException e) {
       System.out.println("Game hasnt ended yet");
     }
@@ -278,7 +273,6 @@ public class Client implements GameClientInterface {
     }
     try {
       this.currentGameSessionID = gameSessionResponse.getId();
-      this.currentSession.setId(gameSessionResponse.getId());
     } catch (NullPointerException e) {
       System.out.println("No Game ID is set yet");
     }
