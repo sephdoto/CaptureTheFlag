@@ -139,6 +139,14 @@ public class NewGameEngine implements Game {
     return tempTeam;
   }
 
+ /** 
+  * Here a move, if valid, updates the grid, a pieces position, a teams flags and the time.
+  *
+  * @author sistumpf
+  * @param move {@link Move}
+  * @throws InvalidMove Requested move is invalid
+  * @throws GameOver Game is over
+  */
   @Override
   public void makeMove(Move move) {
     if(!movePreconditionsMet(move)) return ;
