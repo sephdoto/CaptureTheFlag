@@ -184,7 +184,6 @@ public class GamePane extends HBox {
 				figures.put(piece.getId(), pieceRep);
 				//allFigures.add(pieceRep);
 				int x = piece.getPosition()[0];
-				
 				int y = piece.getPosition()[1];
 				cells.get(generateKey(x, y)).addFigure(pieceRep);
 			}
