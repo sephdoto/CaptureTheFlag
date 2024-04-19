@@ -182,7 +182,14 @@ public class MCTSSimulation {
             e.printStackTrace();
           } catch (InvalidShapeException e) {
             e.printStackTrace();
-          }
+          } catch (NullPointerException e) {
+            e.printStackTrace();
+            javaClient.getStateFromServer();
+             System.out.println(gson.toJson(javaClient.getCurrentState()));
+             javaClient.getSessionFromServer();
+             System.out.println(gson.toJson(javaClient.getCurrentSession()));
+             break;
+          } 
           
         }
     }
