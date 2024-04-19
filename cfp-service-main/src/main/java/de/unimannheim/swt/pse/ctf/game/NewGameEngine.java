@@ -228,9 +228,11 @@ public class NewGameEngine implements Game {
       for (Team team : this.gameState.getTeams()) {
         if (team != null) {
           winners.add(integerToTeam.get(Integer.parseInt(team.getId())));
+          LOG.info("Winner was " + integerToTeam.get(Integer.parseInt(team.getId())));
         }
       }
     }
+   
     return winners.toArray(new String[winners.size()]);
   }
 

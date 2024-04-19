@@ -2,11 +2,8 @@ package org.ctf.shared.client;
 
 import com.google.gson.Gson;
 import java.util.Date;
-
 import org.ctf.shared.client.lib.GameClientInterface;
 import org.ctf.shared.client.service.CommLayerInterface;
-import org.ctf.shared.constants.Constants;
-import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
@@ -219,26 +216,22 @@ public class Client implements GameClientInterface {
     return gameResponse;
   }
 
-  // TODO Improve GameSessionResponse Parsing. You need to save it to a GameSession Object
   private void gameSessionResponseParser(GameSessionResponse gameSessionResponse) {
+    this.currentSession = gson.fromJson(gson.toJson(gameSessionResponse), GameSession.class);
     this.currentGameSessionID = gameSessionResponse.getId();
     this.currentServer = shortURL + "/" + currentGameSessionID;
-
     try {
       this.startDate = gameSessionResponse.getGameStarted();
-      this.currentSession.setGameStarted(gameSessionResponse.getGameStarted());
     } catch (NullPointerException e) {
       System.out.println("Game hasnt started yet");
     }
     try {
       this.endDate = gameSessionResponse.getGameEnded();
-      this.currentSession.setGameEnded(gameSessionResponse.getGameEnded());
     } catch (NullPointerException e) {
       System.out.println("Game hasnt ended yet");
     }
     try {
       this.gameOver = gameSessionResponse.isGameOver();
-      this.currentSession.setGameOver(gameSessionResponse.isGameOver());
     } catch (NullPointerException e) {
       System.out.println("Game hasnt ended yet");
     }
@@ -249,7 +242,6 @@ public class Client implements GameClientInterface {
     }
     try {
       this.currentGameSessionID = gameSessionResponse.getId();
-      this.currentSession.setId(gameSessionResponse.getId());
     } catch (NullPointerException e) {
       System.out.println("No Game ID is set yet");
     }
@@ -257,7 +249,6 @@ public class Client implements GameClientInterface {
 
   private JoinGameResponse joinGameCaller(String teamName) {
     JoinGameResponse response = new JoinGameResponse();
-
     try {
       response = comm.joinGame(currentServer, teamName);
     } catch (SessionNotFound e) {
@@ -267,7 +258,6 @@ public class Client implements GameClientInterface {
     } catch (UnknownError e) {
       System.out.println("Something wong");
     }
-
     return response;
   }
 

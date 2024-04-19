@@ -4,6 +4,7 @@ import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.constants.Constants.AI;
+import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.map.MapTemplate;
 
 import com.google.gson.Gson;
@@ -116,7 +117,7 @@ public class MCTSSimulation {
             ],
             "placement": "symmetrical",
             "totalTimeLimitInSeconds": -1,
-            "moveTimeLimitInSeconds": 3
+            "moveTimeLimitInSeconds": -1
           }
         """;
     
@@ -137,28 +138,10 @@ public class MCTSSimulation {
                 .HumanPlayer()
                 .build();
         javaClient.createGame(template);
-        javaClient.joinGame("0");
-        javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "1");
+        javaClient.joinGame("Team 1");
+        javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 2");
         javaClient.getStateFromServer();
         javaClient2.getStateFromServer();
-        /*   Move move = new Move();
-        if (javaClient.getCurrentTeamTurn() == 1) {
-          try {
-            move.setPieceId("p:1_2");
-            move.setNewPosition(new int[] {9, 8});
-            javaClient.makeMove(move);
-          } catch (Exception e) {
-            System.out.println("Made move");
-          }
-        } else {
-          try {
-            move.setPieceId("p:0_2");
-            move.setNewPosition(new int[] {0, 1});
-            javaClient2.makeMove(move);
-          } catch (Exception e) {
-            System.out.println("Made move");
-          }
-        }  */
         javaClient.getStateFromServer();
         javaClient2.getStateFromServer();
         //System.out.println(gson.toJson(javaClient.getCurrentState()));
@@ -197,6 +180,12 @@ public class MCTSSimulation {
             e.printStackTrace();
           } catch (NullPointerException e) {
             e.printStackTrace();
+            javaClient.getStateFromServer();
+             System.out.println(gson.toJson(javaClient.getCurrentState()));
+             javaClient.getSessionFromServer();
+             System.out.println(gson.toJson(javaClient.getCurrentSession()));
+             break;
+          } catch (GameOver e) {
             javaClient.getStateFromServer();
              System.out.println(gson.toJson(javaClient.getCurrentState()));
              javaClient.getSessionFromServer();
