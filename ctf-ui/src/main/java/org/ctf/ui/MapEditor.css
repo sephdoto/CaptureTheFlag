@@ -9,10 +9,7 @@
     -fx-background-color: black; 
     -fx-text-fill: red; 
     -fx-font-weight: bold; 
-    -fx-border-color: white;
-    
-   
-    
+    -fx-border-color: white;   
 }
 
 .custom-menu-button:hover {
@@ -38,4 +35,26 @@
 }
 .custom-combo-box .list-view .list-cell {
     -fx-text-fill: black; 
+}
+.join-root {
+	 -fx-background-color: black;
+}
+.option-pane {
+	-fx-border-color: rgba(255,255,255,1);
+	 -fx-border-width: 2px;
+	 -fx-background-color: rgb(25,25,25);
+	 -fx-background-radius: 20px; 
+	 -fx-border-radius: 20px;
+	 -fx-alignment: top-center;
+}
+.leave-button {
+	 -fx-background-color: rgb(15,15,15); /* Hintergrundfarbe */
+    -fx-text-fill: white; /* Schriftfarbe */
+    -fx-font-size: 14px; /* Schriftgröße */
+    -fx-font-family: "Century Gothic", sans-serif; /* Schriftart */
+	 -fx-background-radius: 5px; 
+    -fx-border-radius: 5px; /* Randradius */
+    -fx-border-color: white; /* Rahmenfarbe */
+    -fx-border-width: 2px; /* Rahmenbreite */
+    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); /* Schattierung */
 }
