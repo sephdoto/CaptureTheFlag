@@ -76,9 +76,11 @@ public class NewGameEngine implements Game {
     this.integerToTeam = Collections.synchronizedMap(new HashMap<>());
     this.teamToInteger = Collections.synchronizedMap(new HashMap<>());
     gameState = new GameState();
+    BoardController boardController = new BoardController();
+
     gameState.setGrid(
-        BoardSetUp.initEmptyGrid(template.getGridSize()[0], template.getGridSize()[1]));
-    // Makes an Empty Grid
+        boardController.initEmptyGrid(
+            template.getGridSize()[0], template.getGridSize()[1])); // Makes an Empty Grid
 
     gameState.setTeams(new Team[template.getTeams()]);
     initAltGameModeLogic(template); // Inits Alt Game mode support
@@ -104,8 +106,9 @@ public class NewGameEngine implements Game {
     if (getRemainingTeamSlots() == 0) {
       throw new NoMoreTeamSlots();
     }
+    BoardController boardController = new BoardController();
     int slot = EngineTools.getNextEmptyTeamSlot(this.gameState);
-    Team tempTeam = BoardSetUp.initializeTeam(slot, copyOfTemplate);
+    Team tempTeam = boardController.initializeTeam(slot, copyOfTemplate);
     // Method above Sets Flags, Pieces in the Team object
 
     teamToInteger.put(
@@ -229,7 +232,7 @@ public class NewGameEngine implements Game {
         }
       }
     }
-
+   
     return winners.toArray(new String[winners.size()]);
   }
 
@@ -550,7 +553,7 @@ public class NewGameEngine implements Game {
    * @author rsyed
    */
   private void setGameOver() {
-    this.gameState.setCurrentTeam(-1); // Sets current team to -1 to indicate game has ended
+    this.gameState.setCurrentTeam(-1);  //Sets current team to -1 to indicate game has ended
     this.endDate = new Date();
   }
 
@@ -581,7 +584,9 @@ public class NewGameEngine implements Game {
       // **************************************************
       // Make the game Grid
       // **************************************************
-      BoardSetUp.placeBases(
+
+      BoardController boardController = new BoardController();
+      boardController.placeBases(
           this.gameState, copyOfTemplate); // Places and inits teams properly on the map
       BoardSetUp.placeBlocks(
           copyOfTemplate,
