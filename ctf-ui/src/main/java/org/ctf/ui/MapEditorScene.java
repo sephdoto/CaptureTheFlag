@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.ctf.shared.constants.Constants;
+import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.Directions;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.data.map.Movement;
@@ -15,7 +17,7 @@ import org.ctf.shared.state.data.map.PieceDescription;
 import org.ctf.shared.state.data.map.PlacementType;
 import org.ctf.shared.tools.JSON_Tools;
 import org.ctf.shared.tools.JSON_Tools.IncompleteMapTemplateException;
-
+import org.ctf.ui.controllers.MapPreview;
 
 import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
@@ -71,11 +73,14 @@ public class MapEditorScene extends Scene {
 		super(new VBox(), 1000, 500);
 		this.hsc = hsc;
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
-		File defaultMap = new File("src" + File.separator + "main" + File.separator + "java" + File.separator + "org"
-				+ File.separator + "ctf" + File.separator + "ui" + File.separator + "default.json");
+//		File defaultMap = new File("src" + File.separator + "main" + File.separator + "java" + File.separator + "org"
+//				+ File.separator + "ctf" + File.separator + "ui" + File.separator + "default.json");
+		File defaultMap = new File(Constants.mapTemplateFolder+"10x10_2teams_example.json");
 		try {
 			if (defaultMap.exists()) {
 				tmpTemplate = JSON_Tools.readMapTemplate(defaultMap);
+//				MapPreview mp = new MapPreview(tmpTemplate);
+//				GameState gamestate = mp.getGameState();
 			} else {
 				tmpTemplate = createExampleTemplate();
 				System.out.println("Fehler: Default Template konnte nicht geladen werden!"
@@ -145,7 +150,9 @@ public class MapEditorScene extends Scene {
 		test.setStyle("-fx-border-color: rgba(255,255,255,1); -fx-border-width: 2px;" + "-fx-background-color: 	rgb(25,25,25);"
 				+ "-fx-background-radius: 20px; -fx-border-radius: 20px;" + "-fx-alignment: top-center;");
 		
+		
 		GamePane visual = new GamePane(CreateTextGameStates.createTestGameState1());
+		//GamePane visual = new GamePane(mp.getGameState());
 		
 		test.getChildren().add(visual);
 		test.prefWidthProperty().bind(this.widthProperty().multiply(0.4));

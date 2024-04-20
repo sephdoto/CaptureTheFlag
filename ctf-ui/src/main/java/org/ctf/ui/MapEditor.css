@@ -106,7 +106,7 @@
 	 -fx-background-radius: 5px; 
     -fx-border-radius: 5px; 
     -fx-border-color: white; 
-    -fx-border-width: 2dpx; 
+    -fx-border-width: 2px; 
     -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
 }
 
