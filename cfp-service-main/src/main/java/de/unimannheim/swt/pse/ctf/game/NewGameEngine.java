@@ -76,7 +76,7 @@ public class NewGameEngine implements Game {
     this.integerToTeam = Collections.synchronizedMap(new HashMap<>());
     this.teamToInteger = Collections.synchronizedMap(new HashMap<>());
     gameState = new GameState();
-    BoardController boardController = new BoardController();
+    BoardController boardController = new BoardController(gameState, template);
 
     gameState.setGrid(
         boardController.initEmptyGrid(
@@ -106,7 +106,7 @@ public class NewGameEngine implements Game {
     if (getRemainingTeamSlots() == 0) {
       throw new NoMoreTeamSlots();
     }
-    BoardController boardController = new BoardController();
+    BoardController boardController = new BoardController(this.gameState, this.copyOfTemplate);
     int slot = EngineTools.getNextEmptyTeamSlot(this.gameState);
     Team tempTeam = boardController.initializeTeam(slot, copyOfTemplate);
     // Method above Sets Flags, Pieces in the Team object
@@ -584,9 +584,9 @@ public class NewGameEngine implements Game {
       // Make the game Grid
       // **************************************************
 
-      BoardController boardController = new BoardController();
+      BoardController boardController = new BoardController(gameState, this.copyOfTemplate);
       boardController.placeBases(
-          this.gameState, copyOfTemplate); // Places and inits teams properly on the map
+          this.gameState); // Places and inits teams properly on the map
       BoardSetUp.placeBlocks(
           copyOfTemplate,
           this.gameState.getGrid(),

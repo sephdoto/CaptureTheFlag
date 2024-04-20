@@ -271,66 +271,6 @@ public class EngineTools extends AI_Tools {
     return possibleMoves;
   }
 
-  /**
-   * Creates x and y boundaries for all teams !If we want to change the layout of the teams on the
-   * map, we should do it here!
-   *
-   * @author ysiebenh
-   * @returns an Integer array which stores the upper and lower x and y boundaries for each team
-   *     (format: int[teamID][{lowerY,UpperY,lowerX,upperX, orientation(south = 0; north = 1}]
-   */
-  static int[][] cutUpGrid(GameState gs) {
-    // TODO add more than four players
-    int[][] teams = null;
-    if (gs.getTeams().length == 2) {
-      teams = new int[2][5];
-      teams[0][0] = 0;
-      teams[0][1] = gs.getGrid().length / 2;
-      teams[0][2] = 0;
-      teams[0][3] = gs.getGrid()[0].length;
-      teams[0][4] = 0;
-      teams[1][0] = gs.getGrid().length / 2;
-      teams[1][1] = gs.getGrid().length;
-      teams[1][2] = 0;
-      teams[1][3] = gs.getGrid()[0].length;
-      teams[1][4] = 1;
-
-    } else if (gs.getTeams().length == 3 || gs.getTeams().length == 4) {
-      teams = new int[4][5];
-
-      teams[0][0] = 0;
-      teams[0][1] = gs.getGrid().length / 2;
-      teams[0][2] = 0;
-      teams[0][3] = gs.getGrid()[0].length / 2;
-      teams[0][4] = 0;
-
-      teams[1][0] = 0;
-      teams[1][1] = gs.getGrid().length / 2;
-      teams[1][2] = gs.getGrid()[0].length / 2;
-      teams[1][3] = gs.getGrid()[0].length;
-      teams[1][4] = 0;
-
-      teams[2][0] = gs.getGrid().length / 2;
-      teams[2][1] = gs.getGrid().length;
-      teams[2][2] = 0;
-      teams[2][3] = gs.getGrid()[0].length / 2;
-      teams[2][4] = 1;
-
-      teams[3][0] = gs.getGrid().length / 2;
-      teams[3][1] = gs.getGrid().length;
-      teams[3][2] = gs.getGrid()[0].length / 2;
-      teams[3][3] = gs.getGrid()[0].length;
-      teams[3][4] = 1;
-
-    } else if (gs.getTeams().length == 5 || gs.getTeams().length == 6) {
-
-    } else if (gs.getTeams().length == 7 || gs.getTeams().length == 8) {
-
-    }
-
-    return teams;
-  }
-
   // ******************************
   // Helper methods for the hill-climbing in the spaced_out placement
   // ******************************
@@ -424,46 +364,35 @@ public class EngineTools extends AI_Tools {
    * Deep Copies a GameState (hopefully)
    *
    * @author ysiebenh
-   * @return TODO simon sagt da fehlt der letzte move, er weiß aber nicht ob der in deinem
-   *     anwendungsfall benötigt ist.
    */
-  static GameState deepCopyGameStateOld(GameState gs) {
-    GameState newGs = new GameState();
-    Team[] teams = new Team[gs.getTeams().length];
-    int c = 0;
-    for (Team t : gs.getTeams()) {
-      Team newTeam = new Team();
-      newTeam.setId(t.getId());
-      Piece[] newPieces = new Piece[t.getPieces().length];
-      int j = 0;
-      for (Piece piece : t.getPieces()) {
-        Piece newPiece = new Piece();
-        newPiece.setId(piece.getId());
-        newPiece.setPosition(piece.getPosition());
-        newPiece.setTeamId(piece.getTeamId());
-        newPiece.setDescription(piece.getDescription());
-        newPieces[j] = newPiece;
-        j++;
+  static GameState deepCopyGameStateOld(GameState gameState) {
+    GameState newState = new GameState();
+    newState.setCurrentTeam(gameState.getCurrentTeam());
+    newState.setLastMove(gameState.getLastMove());
+    Team[] teams = new Team[gameState.getTeams().length];
+    for(int i=0; i<teams.length; i++) {
+      if(gameState.getTeams()[i] == null)
+        continue;
+      teams[i] = new Team();
+      teams[i].setBase(gameState.getTeams()[i].getBase());
+      teams[i].setFlags(gameState.getTeams()[i].getFlags());
+      teams[i].setId(gameState.getTeams()[i].getId());
+      Piece[] pieces = new Piece[gameState.getTeams()[i].getPieces().length];
+      for(int j=0; j<pieces.length; j++) {
+        pieces[j] = new Piece();
+        pieces[j].setDescription(gameState.getTeams()[i].getPieces()[j].getDescription());
+        pieces[j].setId(gameState.getTeams()[i].getPieces()[j].getId());
+        pieces[j].setTeamId(gameState.getTeams()[i].getPieces()[j].getTeamId());
+        pieces[j].setPosition(new int[] {gameState.getTeams()[i].getPieces()[j].getPosition()[0],gameState.getTeams()[i].getPieces()[j].getPosition()[1]});
       }
-      newTeam.setPieces(newPieces);
-      teams[c++] = newTeam;
-    }
-    newGs.setTeams(teams);
-    String[][] grid = new String[gs.getGrid().length][gs.getGrid()[0].length];
-    int x = 0;
-    int y = 0;
-    for (String[] yAxis : gs.getGrid()) {
-      y = 0;
-      for (String value : yAxis) {
-
-        grid[x][y] = value;
-        y++;
-      }
-      x++;
-    }
-    newGs.setGrid(grid);
-    newGs.setCurrentTeam(gs.getCurrentTeam());
-    return newGs;
+      teams[i].setPieces(pieces);
+    }        
+    newState.setTeams(teams);
+    String[][] newGrid = new String[gameState.getGrid().length][gameState.getGrid()[0].length];
+    for(int i=0; i<gameState.getGrid().length; i++)
+      newGrid[i] = gameState.getGrid()[i].clone();
+    newState.setGrid(newGrid);
+    return newState;
   }
 
   /**
