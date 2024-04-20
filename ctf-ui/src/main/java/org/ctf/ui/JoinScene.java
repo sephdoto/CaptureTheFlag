@@ -15,11 +15,17 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
+/**
+ * This class represents a JavaFX scene for Joining remote games. It contains
+ * all necessary UI components for search game sessions and to join them as a
+ * human player or a selected AI client.
+ * 
+ * @author aniemesc
+ */
 public class JoinScene extends Scene {
 	HomeSceneController hsc;
 	StackPane root;
@@ -27,6 +33,16 @@ public class JoinScene extends Scene {
 	StackPane right;
 	Text info;
 
+	/**
+	 * This constructor starts the initialization process of the scene and connects
+	 * it to a CSS file.
+	 * 
+	 * @author aniemesc
+	 * @param hsc    - HomeSceneController that connects scene to rest of the
+	 *               application
+	 * @param width  - double value for init width
+	 * @param height - double value for init height
+	 */
 	public JoinScene(HomeSceneController hsc, double width, double height) {
 		super(new StackPane(), width, height);
 		this.hsc = hsc;
@@ -36,6 +52,12 @@ public class JoinScene extends Scene {
 
 	}
 
+	/**
+	 * This method creates the basic layout by adding all major top level containers
+	 * to the scene.
+	 * 
+	 * @author aniemesc
+	 */
 	private void createLayout() {
 		root.getStyleClass().add("join-root");
 		VBox mainBox = new VBox();
@@ -67,6 +89,12 @@ public class JoinScene extends Scene {
 
 	}
 
+	/**
+	 * This Method creates the header Image for the scene.
+	 * 
+	 * @author aniemesc
+	 * @return ImageView that gets added to the scene
+	 */
 	private ImageView createHeader() {
 		Image mp = new Image(getClass().getResourceAsStream("multiplayerlogo.png"));
 		ImageView mpv = new ImageView(mp);
@@ -84,6 +112,12 @@ public class JoinScene extends Scene {
 		return mpv;
 	}
 
+	/**
+	 * This Method creates the top level StackPanes for the scene.
+	 * 
+	 * @author aniemesc
+	 * @return StackPane that gets added to the scene
+	 */
 	public StackPane createOptionPane() {
 		StackPane pane = new StackPane();
 		pane.getStyleClass().add("option-pane");
@@ -94,6 +128,12 @@ public class JoinScene extends Scene {
 		return pane;
 	}
 
+	/**
+	 * This Method creates the leave button for the scene.
+	 * 
+	 * @author aniemesc
+	 * @return Button that gets added to the scene
+	 */
 	private Button createLeave() {
 		Button exit = new Button("Leave");
 		exit.getStyleClass().add("leave-button");
@@ -106,11 +146,18 @@ public class JoinScene extends Scene {
 		return exit;
 	}
 
+	/**
+	 * This Method creates the UI components for the StackPane on the left hand side
+	 * of the scene.
+	 * 
+	 * @author aniemesc
+	 * @return VBox that gets added to the left StackPane
+	 */
 	private VBox createLeftcontent() {
 		VBox leftBox = new VBox();
 		leftBox.setAlignment(Pos.TOP_CENTER);
 		leftBox.setPadding(new Insets(20));
-		leftBox.setSpacing(left.heightProperty().doubleValue()*0.06);
+		leftBox.setSpacing(left.heightProperty().doubleValue() * 0.06);
 		left.heightProperty().addListener((obs, oldVal, newVal) -> {
 			double spacing = newVal.doubleValue() * 0.06;
 			leftBox.setSpacing(spacing);
@@ -129,6 +176,13 @@ public class JoinScene extends Scene {
 		return leftBox;
 	}
 
+	/**
+	 * This Method creates the UI components for the StackPane on the right hand
+	 * side of the scene.
+	 * 
+	 * @author aniemesc
+	 * @return StackPane that gets added to the right StackPane
+	 */
 	private VBox createRightContent() {
 		VBox rightBox = new VBox();
 		rightBox.setAlignment(Pos.TOP_CENTER);
@@ -145,10 +199,17 @@ public class JoinScene extends Scene {
 		rightBox.getChildren().add(rightHeader);
 		rightBox.getChildren().add(createSessionInfo(12345, 4, 20));
 		rightBox.getChildren().add(createButtonOption());
-		
+
 		return rightBox;
 	}
 
+	/**
+	 * This method creates TextFields that can be added to the scene
+	 * 
+	 * @author aniemesc
+	 * @param prompt - String value for the user prompt
+	 * @return Textfield that can be added to the scene
+	 */
 	private TextField createTextfield(String prompt) {
 		TextField searchField = new TextField();
 		searchField.getStyleClass().add("custom-search-field");
@@ -161,6 +222,13 @@ public class JoinScene extends Scene {
 		return searchField;
 	}
 
+	/**
+	 * This method creates the header for the left StackPane
+	 * 
+	 * @author aniemesc
+	 * @param leftBox - left StackPane
+	 * @return Text that can be added to the left StackPane
+	 */
 	private Text createLeftHeader(VBox leftBox) {
 		Text leftheader = new Text("FIND YOUR GAME");
 		leftheader.getStyleClass().add("custom-header");
@@ -169,13 +237,19 @@ public class JoinScene extends Scene {
 		return leftheader;
 	}
 
+	/**
+	 * This Method creates the search button for the left StackPane.
+	 * 
+	 * @author aniemesc
+	 * @return Button that gets added to the left StackPane
+	 */
 	private Button createSearch() {
 		Button search = new Button("Search");
 		search.getStyleClass().add("leave-button");
 		search.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
 		search.prefHeightProperty().bind(search.widthProperty().multiply(0.25));
 		search.fontProperty().bind(Bindings.createObjectBinding(
-				() -> Font.font("Century Gothic", search.getHeight()*0.4 ), search.heightProperty()));
+				() -> Font.font("Century Gothic", search.getHeight() * 0.4), search.heightProperty()));
 		search.setOnAction(e -> {
 			right.getChildren().remove(info);
 			right.getChildren().add(createRightContent());
@@ -183,6 +257,14 @@ public class JoinScene extends Scene {
 		return search;
 	}
 
+	/**
+	 * Method that creates styled text that can be used within the scene.
+	 * 
+	 * @author Aaron Niemesch
+	 * @param s - String value input
+	 * @param divider - int value that defines font ration in relation to scene
+	 * @return Text that can be added to the scene
+	 */
 	private Text createInfoText(String s, int divider) {
 		Text info = new Text(s);
 		info.getStyleClass().add("custom-header");
@@ -191,7 +273,16 @@ public class JoinScene extends Scene {
 				() -> Font.font("Century Gothic", right.getWidth() / divider), right.widthProperty()));
 		return info;
 	}
-
+	
+	/**
+	 * Method that creates visual info objects belonging to a game session
+	 * 
+	 * @author aniemesc
+	 * @param id - int value for game ID
+	 * @param teams - int value for number of waiting teams
+	 * @param space - int value for number of open spots
+	 * @return StackPane that gets added to the right StackPane
+	 */
 	private StackPane createSessionInfo(int id, int teams, int space) {
 		StackPane sessionInfoBox = new StackPane();
 		sessionInfoBox.getStyleClass().add("session-info");
@@ -199,58 +290,77 @@ public class JoinScene extends Scene {
 		sessionInfoBox.prefHeightProperty().bind(sessionInfoBox.widthProperty().multiply(0.1));
 		VBox textBox = new VBox();
 		textBox.setPadding(new Insets(15));
-		textBox.setSpacing(right.heightProperty().doubleValue()*0.03);
+		textBox.setSpacing(right.heightProperty().doubleValue() * 0.03);
 		right.heightProperty().addListener((obs, oldVal, newVal) -> {
 			double spacing = newVal.doubleValue() * 0.03;
 			textBox.setSpacing(spacing);
 		});
 		Text idtext = createInfoText("Session ID:  " + id, 25);
 		textBox.getChildren().add(idtext);
-		
-		Text teamText = createInfoText("Teams:  " +teams + "/" + space,25);
+
+		Text teamText = createInfoText("Teams:  " + teams + "/" + space, 25);
 		textBox.getChildren().add(teamText);
 		sessionInfoBox.getChildren().add(textBox);
 
 		return sessionInfoBox;
 	}
-	
+
+	/**
+	 * This Method creates the join buttons for the right StackPane.
+	 * 
+	 * @author aniemesc
+	 * @param label - String value for button
+	 * @return Button that gets added to the right StackPane
+	 */
 	private Button createJoinButton(String label) {
 		Button join = new Button(label);
 		join.getStyleClass().add("join-button");
 		join.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
 		join.prefHeightProperty().bind(join.widthProperty().multiply(0.25));
 		join.fontProperty().bind(Bindings.createObjectBinding(
-				() -> Font.font("Century Gothic", join.getHeight()*0.35 ), join.heightProperty()));
+				() -> Font.font("Century Gothic", join.getHeight() * 0.35), join.heightProperty()));
 		return join;
 	}
+	
+	/**
+	 * This method creats the layout for the different join options.
+	 * 
+	 * @author aniemsc
+	 * @return GridPane that contains UI components for joining 
+	 */
 	private GridPane createButtonOption() {
 		GridPane buttonBox = new GridPane();
 		buttonBox.setAlignment(Pos.CENTER);
-		buttonBox.setHgap(right.widthProperty().doubleValue()*0.05);
+		buttonBox.setHgap(right.widthProperty().doubleValue() * 0.05);
 		right.widthProperty().addListener((obs, oldVal, newVal) -> {
 			double spacing = newVal.doubleValue() * 0.05;
 			buttonBox.setHgap(spacing);
 		});
-		buttonBox.setVgap(right.heightProperty().doubleValue()*0.03);
+		buttonBox.setVgap(right.heightProperty().doubleValue() * 0.03);
 		right.widthProperty().addListener((obs, oldVal, newVal) -> {
 			double spacing = newVal.doubleValue() * 0.03;
 			buttonBox.setVgap(spacing);
 		});
 		Button playerButton = createJoinButton("Join as Player");
 		buttonBox.add(playerButton, 0, 0);
-		
+
 		Button aiButton = createJoinButton("Join as AI-Client");
-		buttonBox.add(aiButton,1,0);
-		
-		
+		buttonBox.add(aiButton, 1, 0);
+
 //		Button testButton = createJoinButton("Test");
 //		buttonBox.add(testButton,1,1);
 		buttonBox.add(createAiChooser(), 1, 1);
-		
+
 		return buttonBox;
-		
+
 	}
 	
+	/**
+	 * This method creates the UI components for choosing an AI client
+	 * 
+	 * @author aniemesc
+	 * @return VBox that can be added to the join layout
+	 */
 	private VBox createAiChooser() {
 		VBox childBox = new VBox();
 		childBox.setAlignment(Pos.CENTER);
@@ -269,5 +379,5 @@ public class JoinScene extends Scene {
 		childBox.getChildren().add(aiComboBox);
 		return childBox;
 	}
-	
+
 }
