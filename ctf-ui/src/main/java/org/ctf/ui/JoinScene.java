@@ -174,7 +174,8 @@ public class JoinScene extends Scene {
 		search.getStyleClass().add("leave-button");
 		search.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
 		search.prefHeightProperty().bind(search.widthProperty().multiply(0.25));
-
+		search.fontProperty().bind(Bindings.createObjectBinding(
+				() -> Font.font("Century Gothic", search.getHeight()*0.4 ), search.heightProperty()));
 		search.setOnAction(e -> {
 			right.getChildren().remove(info);
 			right.getChildren().add(createRightContent());
@@ -218,6 +219,8 @@ public class JoinScene extends Scene {
 		join.getStyleClass().add("join-button");
 		join.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
 		join.prefHeightProperty().bind(join.widthProperty().multiply(0.25));
+		join.fontProperty().bind(Bindings.createObjectBinding(
+				() -> Font.font("Century Gothic", join.getHeight()*0.35 ), join.heightProperty()));
 		return join;
 	}
 	private GridPane createButtonOption() {

@@ -67,8 +67,8 @@
 .leave-button {
 	 -fx-background-color: rgb(15,15,15); 
     -fx-text-fill: white; 
-    -fx-font-size: 14px; 
-    -fx-font-family: "Century Gothic", sans-serif; 
+    
+    
 	 -fx-background-radius: 5px; 
     -fx-border-radius: 5px; 
     -fx-border-color: white; 
