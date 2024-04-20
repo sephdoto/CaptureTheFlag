@@ -76,13 +76,11 @@ public class NewGameEngine implements Game {
     this.integerToTeam = Collections.synchronizedMap(new HashMap<>());
     this.teamToInteger = Collections.synchronizedMap(new HashMap<>());
     gameState = new GameState();
-    BoardController boardController = new BoardController(gameState, template);
-
-    gameState.setGrid(
-        boardController.initEmptyGrid(
-            template.getGridSize()[0], template.getGridSize()[1])); // Makes an Empty Grid
-
     gameState.setTeams(new Team[template.getTeams()]);
+
+    //inits the grid with blocks and bases
+    new BoardController(gameState, template);
+    
     initAltGameModeLogic(template); // Inits Alt Game mode support
 
     return gameState;
@@ -106,10 +104,9 @@ public class NewGameEngine implements Game {
     if (getRemainingTeamSlots() == 0) {
       throw new NoMoreTeamSlots();
     }
-    BoardController boardController = new BoardController(this.gameState, this.copyOfTemplate);
     int slot = EngineTools.getNextEmptyTeamSlot(this.gameState);
-    Team tempTeam = boardController.initializeTeam(slot, copyOfTemplate);
-    // Method above Sets Flags, Pieces in the Team object
+    Team tempTeam = new BoardController(this.gameState).initializeTeam(slot, copyOfTemplate);
+    // Method above sets Flags, Pieces in the Team object, which is already a part of this.gameState
 
     teamToInteger.put(
         teamId, slot); // initial save in two dictionaries.I know its stupid but we can remove one
@@ -124,8 +121,6 @@ public class NewGameEngine implements Game {
     // **************************************************
     // End of Init the Game State
     // **************************************************
-
-    this.gameState.getTeams()[slot] = tempTeam; // places the team in the slot its supposed to go in
 
     // **************************************************
     // Slot Full Check
@@ -583,16 +578,11 @@ public class NewGameEngine implements Game {
       // **************************************************
       // Make the game Grid
       // **************************************************
-
-      BoardController boardController = new BoardController(gameState, this.copyOfTemplate);
-      boardController.placeBases(
-          this.gameState); // Places and inits teams properly on the map
-      BoardSetUp.placeBlocks(
-          copyOfTemplate,
-          this.gameState.getGrid(),
-          copyOfTemplate.getBlocks()); // Places blocks....tested
+      
+      BoardController boardController = new BoardController(this.gameState);
+      //Bases and Blocks are placed in the BordController constructor
       try {
-        BoardSetUp.initPieces(this.gameState, copyOfTemplate); // Inits pieces on the grid
+        boardController.initPieces(copyOfTemplate); // Inits pieces on the grid
       } catch (TooManyPiecesException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
