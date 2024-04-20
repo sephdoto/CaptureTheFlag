@@ -152,6 +152,9 @@ public class MCTSSimulation {
     //    "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 3");
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
+    javaClient.getSessionFromServer();
+    javaClient2.getSessionFromServer();
+    javaClient.startGameController();
    // javaClient3.getStateFromServer();
     // System.out.println(gson.toJson(javaClient.getCurrentState()));
     AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS);

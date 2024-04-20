@@ -499,6 +499,8 @@ public class ServerCommandTests {
     javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "1");
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
+    javaClient.getSessionFromServer();
+    javaClient2.getSessionFromServer();
     /*   Move move = new Move();
     if (javaClient.getCurrentTeamTurn() == 1) {
       try {
