@@ -128,7 +128,7 @@ public class Client implements GameClientInterface {
   @Override
   public void joinGame(String teamName) {
     joinGameParser(joinGameCaller(teamName));
-    startGameController();
+    //startGameController();
   }
 
   /**

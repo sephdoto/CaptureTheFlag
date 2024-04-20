@@ -14,7 +14,7 @@ public class MCTSSimulation {
     String jsonPayload =
         """
         {
-            "gridSize": [20, 20],
+            "gridSize": [40, 40],
             "teams": 2,
             "flags": 1,
             "blocks": 50,
@@ -115,8 +115,8 @@ public class MCTSSimulation {
                 }
               }
             ],
-            "placement": "defensive",
-            "totalTimeLimitInSeconds": 50,
+            "placement": "symmetrical",
+            "totalTimeLimitInSeconds": -1,
             "moveTimeLimitInSeconds": -1
           }
         """;
@@ -125,21 +125,35 @@ public class MCTSSimulation {
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     Client javaClient =
         ClientStepBuilder.newBuilder()
-            .enableRestLayer(true)
+            .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
             .HumanPlayer()
             .build();
     Client javaClient2 =
         ClientStepBuilder.newBuilder()
-            .enableRestLayer(true)
+            .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
             .HumanPlayer()
             .build();
-    /* Client javaClient3 =
+   /*  Client javaClient3 =
         ClientStepBuilder.newBuilder()
-            .enableRestLayer(true)
+            .enableRestLayer(false)
+            .onLocalHost()
+            .onPort("8888")
+            .HumanPlayer()
+            .build();
+    Client javaClient4 =
+        ClientStepBuilder.newBuilder()
+            .enableRestLayer(false)
+            .onLocalHost()
+            .onPort("8888")
+            .HumanPlayer()
+            .build();
+    Client javaClient5 =
+        ClientStepBuilder.newBuilder()
+            .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
             .HumanPlayer()
@@ -148,41 +162,60 @@ public class MCTSSimulation {
     javaClient.joinGame("Team 1");
     javaClient2.joinExistingGame(
         "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 2");
-    //javaClient3.joinExistingGame(
-    //    "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 3");
+  /*   javaClient3.joinExistingGame(
+        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 3");
+    javaClient4.joinExistingGame(
+        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 4");
+    javaClient5.joinExistingGame(
+        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 5"); */
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
+   /*  javaClient3.getStateFromServer();
+    javaClient4.getStateFromServer();
+    javaClient5.getStateFromServer(); */
     javaClient.getSessionFromServer();
     javaClient2.getSessionFromServer();
-    javaClient.startGameController();
-   // javaClient3.getStateFromServer();
-    // System.out.println(gson.toJson(javaClient.getCurrentState()));
+   /*  javaClient3.getSessionFromServer();
+    javaClient4.getSessionFromServer();
+    javaClient5.getSessionFromServer(); */
+
+    System.out.println(gson.toJson(javaClient.getCurrentState()));
     AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS);
     AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS);
-   // AI_Controller Controller3 = new AI_Controller(javaClient3.getCurrentState(), AI.MCTS);
+ /*    AI_Controller Controller3 = new AI_Controller(javaClient3.getCurrentState(), AI.MCTS);
+    AI_Controller Controller4 = new AI_Controller(javaClient4.getCurrentState(), AI.MCTS);
+    AI_Controller Controller5 = new AI_Controller(javaClient5.getCurrentState(), AI.MCTS); */
     for (int i = 0; i < 500; i++) {
       try {
         if (javaClient.isItMyTurn()) {
           System.out.println("it was Teams turn " + javaClient.getLastTeamTurn());
           javaClient.makeMove(Controller.getNextMove());
           System.out.println("client 0 made a move");
-         
+
         } else if (javaClient2.isItMyTurn()) {
           System.out.println("it was Teams turn " + javaClient2.getLastTeamTurn());
           javaClient2.makeMove(Controller2.getNextMove());
           System.out.println("client 1 made a move");
-          
-       // } else if (javaClient3.isItMyTurn()) {
-       //   javaClient3.makeMove(Controller2.getNextMove());
-       //   System.out.println("client 2 made a move");
-      //    System.out.println("it was Teams turn " + javaClient3.getLastTeamTurn());
-        }
+
+        }/*  else if (javaClient3.isItMyTurn()) {
+          javaClient3.makeMove(Controller3.getNextMove());
+          System.out.println("client 2 made a move");
+          System.out.println("it was Teams turn " + javaClient3.getLastTeamTurn());
+        } else if (javaClient4.isItMyTurn()) {
+          javaClient3.makeMove(Controller4.getNextMove());
+          System.out.println("client 3 made a move");
+          System.out.println("it was Teams turn " + javaClient3.getLastTeamTurn());
+        } else if (javaClient5.isItMyTurn()) {
+          javaClient3.makeMove(Controller5.getNextMove());
+          System.out.println("client 4 made a move");
+          System.out.println("it was Teams turn " + javaClient3.getLastTeamTurn());
+        } */
         javaClient.getStateFromServer();
         Controller.update(javaClient.getCurrentState());
         javaClient2.getStateFromServer();
         Controller2.update(javaClient2.getCurrentState());
-       // javaClient3.getStateFromServer();
-      //  Controller3.update(javaClient3.getCurrentState());
+     /*    javaClient3.getStateFromServer();
+        Controller3.update(javaClient3.getCurrentState()); */
         if (javaClient.getCurrentTeamTurn() == -1) {
           javaClient.getStateFromServer();
           System.out.println(gson.toJson(javaClient.getCurrentState()));

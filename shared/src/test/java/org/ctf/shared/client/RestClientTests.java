@@ -40,7 +40,7 @@ public class RestClientTests {
         ClientStepBuilder.newBuilder()
             .enableRestLayer(true)
             .onLocalHost()
-            .onPort("8080")
+            .onPort("8888")
             .HumanPlayer()
             .build();
   }
@@ -51,14 +51,14 @@ public class RestClientTests {
         ClientStepBuilder.newBuilder()
             .enableRestLayer(true)
             .onLocalHost()
-            .onPort("8080")
+            .onPort("8888")
             .HumanPlayer()
             .build();
     javaClient2 =
         ClientStepBuilder.newBuilder()
             .enableRestLayer(true)
             .onLocalHost()
-            .onPort("8080")
+            .onPort("8888")
             .HumanPlayer()
             .build();
   }
