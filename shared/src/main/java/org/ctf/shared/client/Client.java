@@ -128,6 +128,7 @@ public class Client implements GameClientInterface {
   @Override
   public void joinGame(String teamName) {
     joinGameParser(joinGameCaller(teamName));
+    startGameController();
   }
 
   /**
@@ -253,7 +254,7 @@ public class Client implements GameClientInterface {
     this.currentServer = shortURL + "/" + currentGameSessionID;
     try {
       this.startDate = gameSessionResponse.getGameStarted();
-    //  startGameController();
+      this.gameStarted = true;
     } catch (NullPointerException e) {
       System.out.println("Game hasnt started yet");
     }
@@ -378,10 +379,64 @@ public class Client implements GameClientInterface {
    * @author rsyed
    */
   public void startGameController() {
-    if (this.gameStarted) {
-      clientThread();
-    }
+    gameStartMonitor();
   }
+
+  /**
+   * Updater which monitors game start
+   *
+   * @author rsyed
+   */
+  public void gameStartMonitor() {
+    Thread updaterThread =
+        new Thread(
+            () -> {
+              boolean running = true;
+              while (running) {
+              try { 
+                this.getSessionFromServer();
+                if(this.startDate != null){
+                  updaterThread();
+                  this.currentTime = Clock.system(ZoneId.systemDefault());
+                  this.getSessionFromServer();
+
+                  //TODO Init Alt Game Logic here and hand it over to another thread for refreshing more frequently
+                  //initAltGameModeLogic(this.currentState);
+                  running = false;
+                }
+                Thread.sleep(1000);
+              } catch (InterruptedException e) {
+                throw new Error("Something went wrong in the updater Thread");
+              }
+            }
+            });
+    updaterThread.start();
+  }
+
+   /**
+   * Updater thread which updates clocks / all relevant data for the client to keep track of alt modes etc
+   *
+   * @author rsyed
+   */
+  //TODO Wait for professor to fix the game Client
+  public void updaterThread() {
+    Thread updater =
+        new Thread(
+            () -> {
+              boolean running = true;
+              while (running) {
+              try { 
+                this.getStateFromServer();
+                this.getSessionFromServer();
+                Thread.sleep(1000);
+              } catch (InterruptedException e) {
+                throw new Error("Something went wrong in the updater Thread");
+              }
+            }
+            });
+    updater.start();
+  }
+
 
   /**
    * Checks how much time is left for the game
@@ -407,32 +462,32 @@ public class Client implements GameClientInterface {
    *
    * @author rsyed
    */
-  public void clientThread() {
-    Thread internalThread =
+  public void altGameModeHander() {
+    Thread altModeHandlerThread =
         new Thread(
             () -> {
               while (this.gameStarted) {
-                
-                  this.getSessionFromServer(); // Gets  Session from server
-                  this.getStateFromServer(); // Gets game state from Server
 
-              /*     boolean setOnceTriggerTime = true;
-                  if (timeLimitedGameTrigger) {
-                    setWhenGameShouldEnd();
-                    setOnceTriggerTime = false;
+                this.getSessionFromServer(); // Gets  Session from server
+                this.getStateFromServer(); // Gets game state from Server
+
+                /*     boolean setOnceTriggerTime = true;
+                if (timeLimitedGameTrigger) {
+                  setWhenGameShouldEnd();
+                  setOnceTriggerTime = false;
+                }
+
+                if (moveTimeLimitedGameTrigger) {
+                  boolean setOnceTriggerMove = true; // updates it for the first time
+                  if (setOnceTriggerMove) {
+                    increaseTurnTimer();
+                    setOnceTriggerMove = false;
                   }
+                  if (lastTeamTurn != currentTeamTurn) {
+                    increaseTurnTimer();
+                  }
+                } */
 
-                  if (moveTimeLimitedGameTrigger) {
-                    boolean setOnceTriggerMove = true; // updates it for the first time
-                    if (setOnceTriggerMove) {
-                      increaseTurnTimer();
-                      setOnceTriggerMove = false;
-                    }
-                    if (lastTeamTurn != currentTeamTurn) {
-                      increaseTurnTimer();
-                    }
-                  } */
-                
               }
               try { // Checks EVERY 1 second
                 // TODO Discuss if a check every second is okay or we need faster ones
@@ -441,7 +496,7 @@ public class Client implements GameClientInterface {
                 throw new Error("Something went wrong in the Client Thread");
               }
             });
-    internalThread.start();
+    altModeHandlerThread.start();
   }
 
   private void setWhenGameShouldEnd() {
@@ -456,14 +511,17 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Helper method which sets an int to keep track of which teams turn it was before (Derived from Last Move)
-   * Sets the lastTeamTurn int
-   * -1 if no last move, 0 to n Otherwise
+   * Helper method which sets an int to keep track of which teams turn it was before (Derived from
+   * Last Move) Sets the lastTeamTurn int -1 if no last move, 0 to n Otherwise
+   *
    * @author rsyed
    */
   private void updateLastTeam() {
-    this.lastTeamTurn = (lastMove!=null) ? Integer.parseInt(lastMove.getPieceId().split(":")[1].split("_")[0]) : -1;
-   }
+    this.lastTeamTurn =
+        (lastMove != null)
+            ? Integer.parseInt(lastMove.getPieceId().split(":")[1].split("_")[0])
+            : -1;
+  }
 
   // Getter Block
   public GameSessionResponse getLastGameSessionResponse() {
