@@ -25,6 +25,23 @@ public class Constants {
           + "maptemplates"
           + File.separator;
 
+  public static String testTemplate =
+      Paths.get("").toAbsolutePath().toString().split("cfp14")[0]
+          + "cfp14"
+          + File.separator
+          + "cfp-service-main"
+          + File.separator
+          + "src"
+          + File.separator
+          + "main"
+          + File.separator
+          + "resources"
+          + File.separator
+          + "maptemplates"
+          + File.separator
+          + "serverTester.json";
+  
+
   /**
    * Constants needed to make the base URI of the restClient
    *
@@ -43,7 +60,7 @@ public class Constants {
   }
 
   public enum Port {
-    DEFAULTPORT("8888");
+    DEFAULT("8888");
 
     public final String label;
 

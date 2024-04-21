@@ -59,7 +59,7 @@ public class ClientStepBuilder {
      *
      * @param port example String "9999" etc
      */
-    PlayerTypeSelectionStep onPort(Constants.Port DEFAULTPORT);
+    PlayerTypeSelectionStep onPort(Port def);
   }
 
   /**
@@ -97,6 +97,10 @@ public class ClientStepBuilder {
     private String port;
     private AI ai;
 
+    /** 
+     * Sets the underlying layer in use by the Client
+     * @param enableRestClient true to enable restClient based layer, false to use Java based one
+     */
     @Override
     public HostStep enableRestLayer(boolean enableRestClient) {
       if (enableRestClient) {
@@ -107,39 +111,66 @@ public class ClientStepBuilder {
       return this;
     }
 
+    /** Auto set IP address as LocalHost */
     @Override
     public PortSelectionStep onLocalHost() {
       this.host = "localhost";
       return this;
     }
 
+    /**
+     * Step for port input as String
+     *
+     * @param port to connect to as String. Example "8888"
+     */
     @Override
     public PlayerTypeSelectionStep onPort(String port) {
       this.port = port;
       return this;
     }
 
+    /**
+     * Step for HumanPlayer
+     *
+     * <p>indicates the builder to create a normal Client file
+     */
     @Override
     public BuildStep HumanPlayer() {
       this.ai = AI.HUMAN;
       return this;
     }
 
+    /**
+     * Step for AI Selection for the layer
+     *
+     * @param ai the AI enum to specify the AI the Client is going to use. Example AI.MCTS
+     * 
+     */
     @Override
     public BuildStep AIPlayerSelector(AI ai) {
       this.ai = ai;
       return this;
     }
 
+    /**
+     * Step for remote host input
+     *
+     * @param host the remote IP address as "192.xxx.xxx.xxx"
+     */
     @Override
     public PortSelectionStep onRemoteHost(String host) {
       this.host = host;
       return this;
     }
 
+    /**
+     * Port.DEFAULT for 8888
+     *
+     * @param def an Enum
+     */
     @Override
-    public PlayerTypeSelectionStep onPort(Port DEFAULTPORT) {
-      this.port = DEFAULTPORT.name();
+    public PlayerTypeSelectionStep onPort(Port def) {
+      this.port = def.toString();
       return this;
     }
 
@@ -147,7 +178,7 @@ public class ClientStepBuilder {
     public Client build() {
       Client client;
       if (!ai.equals(AI.HUMAN)) {
-        client = new AIClient(comm, host, port,ai);
+        client = new AIClient(comm, host, port, ai);
       } else {
         client = new Client(comm, host, port);
       }

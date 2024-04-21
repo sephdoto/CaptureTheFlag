@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.time.ZoneId;
 import java.util.Date;
 import org.ctf.shared.client.lib.GameClientInterface;
+import org.ctf.shared.client.lib.ServerChecker;
 import org.ctf.shared.client.service.CommLayerInterface;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
@@ -70,6 +71,7 @@ public class Client implements GameClientInterface {
   public int timeLeftInTheGame;
   private Duration timeLimDuration;
   private int lastTeamTurn;
+  private long refreshTime = 300L;
 
   // Block for booleans
   public boolean gameOver;
@@ -128,7 +130,6 @@ public class Client implements GameClientInterface {
   @Override
   public void joinGame(String teamName) {
     joinGameParser(joinGameCaller(teamName));
-    //startGameController();
   }
 
   /**
@@ -227,6 +228,17 @@ public class Client implements GameClientInterface {
     return Integer.parseInt(this.teamID) == currentTeamTurn;
   }
 
+  /**
+   * Checks if server is active through a dummy gameTemplate
+   *
+   * @param ip IP of the server
+   * @param port port of the server
+   * @return true if server is active and ready to make sessions, false if not
+   */
+  protected boolean isServerActive(String ip, String port) {
+    return new ServerChecker().isServerActive(ip, port);
+  }
+
   // HELPER METHODS
 
   private GameSessionResponse createGameCaller(MapTemplate map) {
@@ -254,7 +266,6 @@ public class Client implements GameClientInterface {
     this.currentServer = shortURL + "/" + currentGameSessionID;
     try {
       this.startDate = gameSessionResponse.getGameStarted();
-      this.gameStarted = true;
     } catch (NullPointerException e) {
       System.out.println("Game hasnt started yet");
     }
@@ -337,9 +348,20 @@ public class Client implements GameClientInterface {
   private void gameStateHelper() {
     GameState gameState = comm.getCurrentGameState(currentServer);
     this.grid = gameState.getGrid();
+
+    if (this.lastTeamTurn != null) { // init both
+      this.lastTeamTurn = gameState.getCurrentTeam();
+      this.currentTeamTurn = gameState.getCurrentTeam();
+    } else {
+      int updatedvalue = gameState.getCurrentTeam(); // update B
+      if (currentTeamTurn != updatedvalue) {
+        this.lastTeamTurn = this.currentTeamTurn;
+        this.currentTeamTurn = updatedvalue;
+      }
+    }
     this.currentTeamTurn = gameState.getCurrentTeam();
+
     this.lastMove = gameState.getLastMove();
-    updateLastTeam();
     this.teams = gameState.getTeams();
     this.currentState = gameState;
   }
@@ -379,64 +401,8 @@ public class Client implements GameClientInterface {
    * @author rsyed
    */
   public void startGameController() {
-    gameStartMonitor();
+    startWatcher();
   }
-
-  /**
-   * Updater which monitors game start
-   *
-   * @author rsyed
-   */
-  public void gameStartMonitor() {
-    Thread updaterThread =
-        new Thread(
-            () -> {
-              boolean running = true;
-              while (running) {
-              try { 
-                this.getSessionFromServer();
-                if(this.startDate != null){
-                  updaterThread();
-                  this.currentTime = Clock.system(ZoneId.systemDefault());
-                  this.getSessionFromServer();
-
-                  //TODO Init Alt Game Logic here and hand it over to another thread for refreshing more frequently
-                  //initAltGameModeLogic(this.currentState);
-                  running = false;
-                }
-                Thread.sleep(1000);
-              } catch (InterruptedException e) {
-                throw new Error("Something went wrong in the updater Thread");
-              }
-            }
-            });
-    updaterThread.start();
-  }
-
-   /**
-   * Updater thread which updates clocks / all relevant data for the client to keep track of alt modes etc
-   *
-   * @author rsyed
-   */
-  //TODO Wait for professor to fix the game Client
-  public void updaterThread() {
-    Thread updater =
-        new Thread(
-            () -> {
-              boolean running = true;
-              while (running) {
-              try { 
-                this.getStateFromServer();
-                this.getSessionFromServer();
-                Thread.sleep(1000);
-              } catch (InterruptedException e) {
-                throw new Error("Something went wrong in the updater Thread");
-              }
-            }
-            });
-    updater.start();
-  }
-
 
   /**
    * Checks how much time is left for the game
@@ -451,52 +417,60 @@ public class Client implements GameClientInterface {
     if (isGameOver()) {
       return 0;
     } else {
-      currentTime = Clock.systemDefaultZone();
       return Math.toIntExact(
           Duration.between(currentTime.instant(), gameShouldEndBy.instant()).getSeconds());
     }
   }
 
   /**
-   * Handler which should be called incase the Game is a TimeLimited Game
+   * Watcher. Watches for game start
    *
    * @author rsyed
    */
-  public void altGameModeHander() {
-    Thread altModeHandlerThread =
+  public void startWatcher() {
+    Thread watcherThread =
         new Thread(
             () -> {
-              while (this.gameStarted) {
-
-                this.getSessionFromServer(); // Gets  Session from server
-                this.getStateFromServer(); // Gets game state from Server
-
-                /*     boolean setOnceTriggerTime = true;
-                if (timeLimitedGameTrigger) {
-                  setWhenGameShouldEnd();
-                  setOnceTriggerTime = false;
+              boolean running = true;
+              while (running) {
+                try {
+                  this.getSessionFromServer(); // Gets Session from server
+                  Long sleep = 1000L;
+                  if (getStartDate() != null) {
+                    gameStartedThread();
+                    running = false;
+                  }
+                  Thread.sleep(sleep);
+                } catch (InterruptedException e) {
+                  throw new Error("Something went wrong in the Client Thread");
                 }
-
-                if (moveTimeLimitedGameTrigger) {
-                  boolean setOnceTriggerMove = true; // updates it for the first time
-                  if (setOnceTriggerMove) {
-                    increaseTurnTimer();
-                    setOnceTriggerMove = false;
-                  }
-                  if (lastTeamTurn != currentTeamTurn) {
-                    increaseTurnTimer();
-                  }
-                } */
-
-              }
-              try { // Checks EVERY 1 second
-                // TODO Discuss if a check every second is okay or we need faster ones
-                Thread.sleep(1000);
-              } catch (InterruptedException e) {
-                throw new Error("Something went wrong in the Client Thread");
               }
             });
-    altModeHandlerThread.start();
+    watcherThread.start();
+  }
+
+  /**
+   * Thead which handles client logic for when game has started
+   *
+   * @author rsyed
+   */
+  public void gameStartedThread() {
+    Thread gameThread =
+        new Thread(
+            () -> {
+              boolean running = true;
+              while (running) {
+                try {
+                  this.getSessionFromServer();
+                  this.getStateFromServer();
+                  //TODO Additional Logic once Professor updates the server
+                  Thread.sleep(this.refreshTime);
+                } catch (InterruptedException e) {
+                  throw new Error("Something went wrong in the Client Thread");
+                }
+              }
+            });
+    gameThread.start();
   }
 
   private void setWhenGameShouldEnd() {
@@ -508,19 +482,6 @@ public class Client implements GameClientInterface {
   private void increaseTurnTimer() {
     this.turnEndsBy =
         Clock.fixed(Clock.offset(currentTime, turnTime).instant(), ZoneId.systemDefault());
-  }
-
-  /**
-   * Helper method which sets an int to keep track of which teams turn it was before (Derived from
-   * Last Move) Sets the lastTeamTurn int -1 if no last move, 0 to n Otherwise
-   *
-   * @author rsyed
-   */
-  private void updateLastTeam() {
-    this.lastTeamTurn =
-        (lastMove != null)
-            ? Integer.parseInt(lastMove.getPieceId().split(":")[1].split("_")[0])
-            : -1;
   }
 
   // Getter Block
@@ -596,6 +557,6 @@ public class Client implements GameClientInterface {
   }
 
   public int getLastTeamTurn() {
-    return lastTeamTurn;
+    return Integer.parseInt(lastMove.getPieceId().split(":")[1].split("_")[0]);
   }
 }
