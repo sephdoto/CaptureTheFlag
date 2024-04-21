@@ -275,39 +275,6 @@ public class EngineTools extends AI_Tools {
   // Helper methods for the hill-climbing in the spaced_out placement
   // ******************************
 
-  /**
-   * Helper method for spaced placement
-   *
-   * @author ysiebenh
-   */
-  static LinkedList<GameState> getNeighbors(GameState gs, int teamID) {
-
-    LinkedList<GameState> result = new LinkedList<GameState>();
-    int[][] boundaries = /*EngineTools.cutUpGrid(gs)*/ null;
-    for (int i = 0; i < gs.getTeams()[teamID].getPieces().length; i++) {
-      gs.setCurrentTeam(teamID);
-      for (int y = boundaries[teamID][0]; y < boundaries[teamID][1]; y++) {
-        for (int x = boundaries[teamID][2]; x < boundaries[teamID][3]; x++) {
-
-          if (gs.getGrid()[y][x].equals("")) {
-            GameState newGs = deepCopyGameStateOld(gs);
-            newGs
-                    .getGrid()[newGs.getTeams()[teamID].getPieces()[i].getPosition()[0]][
-                    newGs.getTeams()[teamID].getPieces()[i].getPosition()[1]] =
-                "";
-            newGs.getTeams()[teamID].getPieces()[i].setPosition(new int[] {y, x});
-            newGs
-                    .getGrid()[newGs.getTeams()[teamID].getPieces()[i].getPosition()[0]][
-                    newGs.getTeams()[teamID].getPieces()[i].getPosition()[1]] =
-                newGs.getTeams()[teamID].getPieces()[i].getId();
-            newGs.setGrid(newGs.getGrid());
-            result.add(newGs);
-          }
-        }
-      }
-    }
-    return result;
-  }
 
   /**
    * helper for the spaced placement

@@ -12,6 +12,55 @@ import de.unimannheim.swt.pse.ctf.game.state.Team;
  */
 class PiecePlacerTest {
   @Test
+  void testPlacePiecesSpaced() {
+    GameState gs = TestValues.getTestState();
+    MapTemplate mt = TestValues.getTestTemplate();
+    mt.setGridSize(new int[] {10,10});
+    mt.setTeams(2);
+//    mt.getPieces()[0].setCount(45);
+    gs.setTeams(new Team[2]);
+    BoardController bc = new BoardController(gs, mt);
+    for(int i=0; i<bc.gameState.getTeams().length; i++)
+      bc.initializeTeam(i, mt);
+    PiecePlacer pp = new PiecePlacer(bc.gameState, bc.boundaries);
+    pp.placePieces(PlacementType.spaced_out);
+//    printGrid(pp.gameState);
+//    for(int team=0; team < pp.gameState.getTeams().length; team++)
+//      System.out.println("team " + team + " got " + pp.numberPossibleMoves(gs, team) + " possible moves");
+  }
+  
+  @Test
+  void testRandomPlacement() {
+    GameState gs = TestValues.getTestState();
+    MapTemplate mt = TestValues.getTestTemplate();
+    mt.setGridSize(new int[] {20,20});
+    mt.setTeams(3);
+//    mt.getPieces()[0].setCount(45);
+    gs.setTeams(new Team[3]);
+    BoardController bc = new BoardController(gs, mt);
+    for(int i=0; i<bc.gameState.getTeams().length; i++)
+      bc.initializeTeam(i, mt);
+    PiecePlacer pp = new PiecePlacer(bc.gameState, bc.boundaries);
+    pp.randomPlacement();
+//    printGrid(pp.gameState);
+  }
+  
+  @Test
+  void testGetNeighbors() {
+    GameState gs = TestValues.getTestState();
+    MapTemplate mt = TestValues.getTestTemplate();
+    mt.setGridSize(new int[] {30,30});
+    mt.setTeams(3);
+//    mt.getPieces()[0].setCount(145);
+    gs.setTeams(new Team[3]);
+    BoardController bc = new BoardController(gs, mt);
+    for(int i=0; i<bc.gameState.getTeams().length; i++)
+      bc.initializeTeam(i, mt);
+    PiecePlacer pp = new PiecePlacer(bc.gameState, bc.boundaries);
+    pp.getBestNeighbour(gs, 0).getPieceId();
+  }
+  
+  @Test
   void testPlacePiecesSymmetrical() {
     GameState gs = TestValues.getTestState();
     MapTemplate mt = TestValues.getTestTemplate();

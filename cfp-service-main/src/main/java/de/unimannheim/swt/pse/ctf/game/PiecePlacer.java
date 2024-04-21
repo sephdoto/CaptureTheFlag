@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.DoubleSummaryStatistics;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 import de.unimannheim.swt.pse.ctf.game.map.PlacementType;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
+import de.unimannheim.swt.pse.ctf.game.state.Move;
 import de.unimannheim.swt.pse.ctf.game.state.Piece;
 import de.unimannheim.swt.pse.ctf.game.state.Team;
 
@@ -21,6 +23,8 @@ import de.unimannheim.swt.pse.ctf.game.state.Team;
  * @author sistumpf
  */
 public class PiecePlacer {
+  int spacedOutSideSteps = 10;
+  int spacedOutRepetitions = 4;
   GameState gameState;
   //boundaries = a teams rectangular partition of the map, in those boundaries the starter pieces will be placed
   int[][] boundaries;
@@ -91,9 +95,37 @@ public class PiecePlacer {
       }
     }
   }
-  private void placePiecesSpaced() {
-    
-  }  
+
+  /**
+   * Places the Pieces on the Board using a standard hill-climbing algorithm to ensure that every
+   * piece has the maximum amount of possible moves
+   *
+   * @author ysiebenh, sistumpf
+   * @param GameState gameState
+   */
+  void placePiecesSpaced() {
+    randomPlacement();
+    for(int repetitions = 0; repetitions < this.spacedOutRepetitions; repetitions ++) {
+      for (Team team : gameState.getTeams()) {
+        for(Move bestNeighbour = getBestNeighbour(gameState, Integer.parseInt(team.getId()));
+            !bestNeighbour.getPieceId().equals("");
+            bestNeighbour = getBestNeighbour(gameState, Integer.parseInt(team.getId()))) {
+          final String piece = bestNeighbour.getPieceId();
+          Piece picked =
+              Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream()
+              .filter(p -> p.getId().equals(piece))
+              .findFirst()
+              .get();
+          gameState.getGrid()[bestNeighbour.getNewPosition()[0]][bestNeighbour.getNewPosition()[1]]
+              = bestNeighbour.getPieceId();
+          gameState.getGrid()[picked.getPosition()[0]][picked.getPosition()[1]]
+              = "";
+          picked.setPosition(bestNeighbour.getNewPosition());
+        }
+      }
+    }
+  }
+  
   private void placePiecesDefensive() {
     
   }
@@ -101,6 +133,67 @@ public class PiecePlacer {
   ////////////////////////////////////////////////////
   //        additional helper methods               //
   ////////////////////////////////////////////////////
+  
+  /**
+   * Returns the best neighbour.
+   *
+   * @author ysiebenh, sistumpf
+   * @param GameState to analyze
+   * @param Team to analyze
+   * @return move that leads to the best neighbour
+   */
+  Move getBestNeighbour(GameState gs, int teamID) {
+    Move bestMove = new Move();
+    int bestPossibleMoves = numberPossibleMoves(gs, teamID);
+    for (int i = 0; i < gs.getTeams()[teamID].getPieces().length; i++) {
+      gs.setCurrentTeam(teamID);
+      int[] oldPos = new int[2];
+      for (int y = boundaries[teamID][0]; y <= boundaries[teamID][1]; y++) {
+        for (int x = boundaries[teamID][2]; x <= boundaries[teamID][3]; x++) {
+          oldPos[0] = gs.getTeams()[teamID].getPieces()[i].getPosition()[0]; 
+          oldPos[1] = gs.getTeams()[teamID].getPieces()[i].getPosition()[1];
+          
+          if (gs.getGrid()[y][x].equals("")) {
+            gs.getGrid()[y][x] = gs.getTeams()[teamID].getPieces()[i].getId();
+            gs.getGrid()[oldPos[0]][oldPos[1]] = "";
+            gs.getTeams()[teamID].getPieces()[i].setPosition(new int[] {y, x});
+            int currentPossibleMoves = numberPossibleMoves(gs, teamID);
+            if(currentPossibleMoves > bestPossibleMoves) {
+              bestMove.setNewPosition(new int[] {y,x});
+              bestMove.setPieceId(gs.getTeams()[teamID].getPieces()[i].getId());
+              bestPossibleMoves = currentPossibleMoves;
+            } else if (currentPossibleMoves == bestPossibleMoves && this.spacedOutSideSteps > 0) {
+              bestMove.setNewPosition(new int[] {y,x});
+              bestMove.setPieceId(gs.getTeams()[teamID].getPieces()[i].getId());
+              bestPossibleMoves = currentPossibleMoves;
+              this.spacedOutSideSteps--;
+            }
+            gs.getGrid()[oldPos[0]][oldPos[1]] = gs.getTeams()[teamID].getPieces()[i].getId();
+            gs.getGrid()[y][x] = "";
+            gs.getTeams()[teamID].getPieces()[i].setPosition(oldPos);
+           }
+        }
+      }
+    }
+    return bestMove;
+  }
+  
+  /**
+   * Calculates the number of possible moves a team is able to make.
+   * 
+   * @author sistumpf
+   * @param gameState
+   * @param teamId
+   * @return number of possible moves
+   */
+  int numberPossibleMoves(GameState gameState, int teamId) {
+    int moves = 0;
+    gameState.setCurrentTeam(teamId);
+    for(Piece p : gameState.getTeams()[teamId].getPieces())
+      moves += EngineTools.getPossibleMoves(gameState, p.getId()).size();
+    return moves;
+  }
+
   /**
    * Returns a valid position on which a Piece can safely respawn.
    *
@@ -224,27 +317,24 @@ public class PiecePlacer {
   }
   
   /**
-   * Places the pieces on the board randomly using the {@link EngineTools#seededRandom(String[][],
-   * int, int, int) seededRandom} method
+   * Places the pieces on the board randomly using the {@link EngineTools#seededRandom(String[][], int, int, int) seededRandom} method
    *
    * @author ysiebenh, sistumpf
    * @param GameState gameState
    */
-  private void randomPlacement() {
-    int i = 0;
-    for (Team t : gameState.getTeams()) {
-      for (Piece p : t.getPieces()) {
+  void randomPlacement() {
+    for (int team=0; team<gameState.getTeams().length; team++) {
+      for (Piece p : gameState.getTeams()[team].getPieces()) {
         int newY = 0;
         int newX = 0;
         int m = 0;
         do {
-          newY = EngineTools.seededRandom(gameState.getGrid(), m++, boundaries[i][1]+1, boundaries[i][0]);
-          newX = EngineTools.seededRandom(gameState.getGrid(), 1 - m++, boundaries[i][3]+1, boundaries[i][2]);
+          newY = EngineTools.seededRandom(gameState.getGrid(), m++, boundaries[team][1]+1, boundaries[team][0]);
+          newX = EngineTools.seededRandom(gameState.getGrid(), 1 - m++, boundaries[team][3]+1, boundaries[team][2]);
         } while (!gameState.getGrid()[newY][newX].equals(""));
-        p.setPosition(new int[] {newY, newX});
-        gameState.getGrid()[newY][newX] = p.getId();
+          p.setPosition(new int[] {newY, newX});
+          gameState.getGrid()[newY][newX] = p.getId();
       }
-      i++;
     }
   }
 }
