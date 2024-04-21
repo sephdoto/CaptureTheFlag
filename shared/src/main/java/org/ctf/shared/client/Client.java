@@ -350,6 +350,7 @@ public class Client implements GameClientInterface {
     this.grid = gameState.getGrid();
     this.currentTeamTurn = gameState.getCurrentTeam();
     this.lastMove = gameState.getLastMove();
+    updateLastTeam();
     this.teams = gameState.getTeams();
     this.currentState = gameState;
   }
@@ -461,6 +462,21 @@ public class Client implements GameClientInterface {
     gameThread.start();
   }
 
+
+  /**
+   * Helper method which sets an int to keep track of which teams turn it was before (Derived from
+   * Last Move) Sets the lastTeamTurn int -1 if no last move, 0 to n Otherwise
+   *
+   * @author rsyed
+   */
+  private void updateLastTeam() {
+    this.lastTeamTurn =
+        (lastMove != null)
+            ? Integer.parseInt(lastMove.getPieceId().split(":")[1].split("_")[0])
+            : -1;
+  }
+
+
   private void setWhenGameShouldEnd() {
     this.gameShouldEndBy =
         Clock.offset(
@@ -549,8 +565,7 @@ public class Client implements GameClientInterface {
    * @author rsyed
    */
   public int getLastTeamTurn() {
-    return (lastMove != null)
-        ? Integer.parseInt(lastMove.getPieceId().split(":")[1].split("_")[0])
-        : -1;
+    return lastTeamTurn;
   }
+
 }
