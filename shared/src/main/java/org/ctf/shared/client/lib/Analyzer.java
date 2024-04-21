@@ -34,7 +34,7 @@ public class Analyzer {
 
       ObjectOutputStream objectOutStream = new ObjectOutputStream(fileOutStream);
 
-      objectOutStream.writeObject(savedGame);
+      objectOutStream.writeObject(this.savedGame);
       objectOutStream.close();
       fileOutStream.close();
     } catch (IOException e) {
@@ -55,7 +55,7 @@ public class Analyzer {
       ObjectInputStream objectInput = new ObjectInputStream(fileInput);
 
       returnObject = (SavedGame) objectInput.readObject();
-
+      
       objectInput.close();
       fileInput.close();
 
@@ -96,10 +96,10 @@ public class Analyzer {
   }
 
   public void addMove(Move move) {
-    savedGame.addMove(move);
+    this.savedGame.addMove(move);
   }
 
   public void addGameState(GameState gameState) {
-    savedGame.setInitialGameState(gameState);
+    this.savedGame.setInitialGameState(gameState);
   }
 }

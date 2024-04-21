@@ -1,12 +1,10 @@
 package org.ctf.shared.client;
 
 import com.google.gson.Gson;
-
-import org.ctf.shared.client.lib.Analyzer;
-
 import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.shared.client.lib.Analyzer;
 import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.map.MapTemplate;
@@ -171,6 +169,7 @@ public class MCTSSimulation {
         "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 4");
     javaClient5.joinExistingGame(
         "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 5");
+    Analyzer newAna = new Analyzer();
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
     javaClient3.getStateFromServer();
@@ -181,9 +180,10 @@ public class MCTSSimulation {
     javaClient3.getSessionFromServer();
     javaClient4.getSessionFromServer();
     javaClient5.getSessionFromServer();
-    Analyzer newAna = new Analyzer();
+    newAna.addGameState(javaClient.getCurrentState());
 
     System.out.println(gson.toJson(javaClient.getCurrentState()));
+    newAna.addGameState(javaClient.getCurrentState());
     AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS);
     AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS);
     AI_Controller Controller3 = new AI_Controller(javaClient3.getCurrentState(), AI.MCTS);
@@ -214,7 +214,7 @@ public class MCTSSimulation {
           System.out.println("it was Teams turn " + javaClient3.getLastTeamTurn());
         }
         javaClient.getStateFromServer();
-        newAna.addToMap(javaClient.getCurrentState());
+        newAna.addMove(javaClient.getLastMove());
         Controller.update(javaClient.getCurrentState());
         javaClient2.getStateFromServer();
         Controller2.update(javaClient2.getCurrentState());
@@ -224,10 +224,11 @@ public class MCTSSimulation {
         Controller4.update(javaClient4.getCurrentState());
         javaClient5.getStateFromServer();
         Controller5.update(javaClient5.getCurrentState());
-        if(javaClient.gameOver){
+        if (javaClient.gameOver) {
           System.out.println(newAna.writeOut());
+          break;
         }
-        if (javaClient.getCurrentTeamTurn() == -1) {
+        /*  if (javaClient.getCurrentTeamTurn() == -1) {
           javaClient.getStateFromServer();
           System.out.println(gson.toJson(javaClient.getCurrentState()));
           javaClient.getSessionFromServer();
@@ -238,7 +239,7 @@ public class MCTSSimulation {
           System.out.println(gson.toJson(javaClient2.getCurrentSession()));
           System.out.println(gson.toJson(javaClient.getWinners()));
           System.out.println(gson.toJson(javaClient2.getWinners()));
-        }
+        } */
         // System.out.println(gson.toJson(javaClient.getGrid()));
       } catch (NoMovesLeftException e) {
         e.printStackTrace();
