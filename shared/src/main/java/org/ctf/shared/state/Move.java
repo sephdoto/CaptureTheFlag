@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * This class represents a move.
  * @author Marcus Kessel
  */
-public class Move {
+public class Move implements java.io.Serializable {
     @Schema(
             description = "the piece (by its ID) to move"
     )

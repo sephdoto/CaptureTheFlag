@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * in terms of squares to move in one or more direction(s).
  * @author Marcus Kessel
  */
-public class Directions {
+public class Directions implements java.io.Serializable {
 
     @Schema(
             description = "move N squares left"

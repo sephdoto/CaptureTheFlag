@@ -4,7 +4,7 @@ package org.ctf.shared.state.data.map;
  * This enum represents strategies for piece placements.
  * @author Marcus Kessel
  */
-public enum PlacementType {
+public enum PlacementType implements java.io.Serializable {
 
     /**
      * Symmetrical placement: To ensure a fair and balanced game, the initial placement of pieces should be symmetrical.

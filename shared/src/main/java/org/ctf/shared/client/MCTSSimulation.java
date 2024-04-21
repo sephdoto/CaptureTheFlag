@@ -1,6 +1,9 @@
 package org.ctf.shared.client;
 
 import com.google.gson.Gson;
+
+import org.ctf.shared.client.lib.Analyzer;
+
 import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
@@ -14,10 +17,10 @@ public class MCTSSimulation {
     String jsonPayload =
         """
         {
-            "gridSize": [40, 40],
+            "gridSize": [10, 10],
             "teams": 2,
             "flags": 1,
-            "blocks": 50,
+            "blocks": 5,
             "pieces": [
               {
                 "type": "Pawn",
@@ -137,7 +140,7 @@ public class MCTSSimulation {
             .onPort("8888")
             .HumanPlayer()
             .build();
-   /*  Client javaClient3 =
+    Client javaClient3 =
         ClientStepBuilder.newBuilder()
             .enableRestLayer(false)
             .onLocalHost()
@@ -157,65 +160,73 @@ public class MCTSSimulation {
             .onLocalHost()
             .onPort("8888")
             .HumanPlayer()
-            .build(); */
+            .build();
     javaClient.createGame(template);
     javaClient.joinGame("Team 1");
     javaClient2.joinExistingGame(
         "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 2");
-  /*   javaClient3.joinExistingGame(
+    javaClient3.joinExistingGame(
         "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 3");
     javaClient4.joinExistingGame(
         "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 4");
     javaClient5.joinExistingGame(
-        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 5"); */
+        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 5");
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
-   /*  javaClient3.getStateFromServer();
+    javaClient3.getStateFromServer();
     javaClient4.getStateFromServer();
-    javaClient5.getStateFromServer(); */
+    javaClient5.getStateFromServer();
     javaClient.getSessionFromServer();
     javaClient2.getSessionFromServer();
-   /*  javaClient3.getSessionFromServer();
+    javaClient3.getSessionFromServer();
     javaClient4.getSessionFromServer();
-    javaClient5.getSessionFromServer(); */
+    javaClient5.getSessionFromServer();
+    Analyzer newAna = new Analyzer();
 
     System.out.println(gson.toJson(javaClient.getCurrentState()));
     AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS);
     AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS);
- /*    AI_Controller Controller3 = new AI_Controller(javaClient3.getCurrentState(), AI.MCTS);
+    AI_Controller Controller3 = new AI_Controller(javaClient3.getCurrentState(), AI.MCTS);
     AI_Controller Controller4 = new AI_Controller(javaClient4.getCurrentState(), AI.MCTS);
-    AI_Controller Controller5 = new AI_Controller(javaClient5.getCurrentState(), AI.MCTS); */
-    for (int i = 0; i < 500; i++) {
+    AI_Controller Controller5 = new AI_Controller(javaClient5.getCurrentState(), AI.MCTS);
+    for (int i = 0; i < 50; i++) {
       try {
         if (javaClient.isItMyTurn()) {
           System.out.println("it was Teams turn " + javaClient.getLastTeamTurn());
           javaClient.makeMove(Controller.getNextMove());
-          System.out.println("client 0 made a move");
+          System.out.println("client 1 made a move");
 
         } else if (javaClient2.isItMyTurn()) {
           System.out.println("it was Teams turn " + javaClient2.getLastTeamTurn());
           javaClient2.makeMove(Controller2.getNextMove());
-          System.out.println("client 1 made a move");
-
-        }/*  else if (javaClient3.isItMyTurn()) {
-          javaClient3.makeMove(Controller3.getNextMove());
           System.out.println("client 2 made a move");
-          System.out.println("it was Teams turn " + javaClient3.getLastTeamTurn());
-        } else if (javaClient4.isItMyTurn()) {
-          javaClient3.makeMove(Controller4.getNextMove());
+        } else if (javaClient3.isItMyTurn()) {
+          javaClient3.makeMove(Controller3.getNextMove());
           System.out.println("client 3 made a move");
           System.out.println("it was Teams turn " + javaClient3.getLastTeamTurn());
-        } else if (javaClient5.isItMyTurn()) {
-          javaClient3.makeMove(Controller5.getNextMove());
+        } else if (javaClient4.isItMyTurn()) {
+          javaClient4.makeMove(Controller4.getNextMove());
           System.out.println("client 4 made a move");
           System.out.println("it was Teams turn " + javaClient3.getLastTeamTurn());
-        } */
+        } else if (javaClient5.isItMyTurn()) {
+          javaClient5.makeMove(Controller5.getNextMove());
+          System.out.println("client 5 made a move");
+          System.out.println("it was Teams turn " + javaClient3.getLastTeamTurn());
+        }
         javaClient.getStateFromServer();
+        newAna.addToMap(javaClient.getCurrentState());
         Controller.update(javaClient.getCurrentState());
         javaClient2.getStateFromServer();
         Controller2.update(javaClient2.getCurrentState());
-     /*    javaClient3.getStateFromServer();
-        Controller3.update(javaClient3.getCurrentState()); */
+        javaClient3.getStateFromServer();
+        Controller3.update(javaClient3.getCurrentState());
+        javaClient4.getStateFromServer();
+        Controller4.update(javaClient4.getCurrentState());
+        javaClient5.getStateFromServer();
+        Controller5.update(javaClient5.getCurrentState());
+        if(javaClient.gameOver){
+          System.out.println(newAna.writeOut());
+        }
         if (javaClient.getCurrentTeamTurn() == -1) {
           javaClient.getStateFromServer();
           System.out.println(gson.toJson(javaClient.getCurrentState()));
@@ -227,7 +238,6 @@ public class MCTSSimulation {
           System.out.println(gson.toJson(javaClient2.getCurrentSession()));
           System.out.println(gson.toJson(javaClient.getWinners()));
           System.out.println(gson.toJson(javaClient2.getWinners()));
-          break;
         }
         // System.out.println(gson.toJson(javaClient.getGrid()));
       } catch (NoMovesLeftException e) {

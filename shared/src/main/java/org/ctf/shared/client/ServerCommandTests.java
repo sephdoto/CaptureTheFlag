@@ -2,22 +2,12 @@ package org.ctf.shared.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import javassist.bytecode.analysis.Analyzer;
-
-import java.io.File;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.ZoneId;
-import java.util.HashMap;
-
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
-
 import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
-import org.ctf.shared.client.lib.AnalyzerJSON;
 import org.ctf.shared.client.lib.Analyzer;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Constants.AI;
@@ -46,7 +36,7 @@ public class ServerCommandTests {
     // copierCheck();
     // arrayTest();
     // getStateTests();
-    //AIVSHUMAN();
+    // AIVSHUMAN();
     // testConnectionTimedGameMode();
     // testMalformedConnection();
     // testConnectionTimedMoveMode();
@@ -54,24 +44,25 @@ public class ServerCommandTests {
     // joinTest();
     // join();
     // joinNDelete()
-   // tests();
+    tests();
   }
+
   public static void tests() {
-    AnalyzerJSON analyzer = new AnalyzerJSON();
+    Analyzer analyzer = new Analyzer();
+   /*  analyzer.addToMap(new GameState());
     analyzer.addToMap(new GameState());
     analyzer.addToMap(new GameState());
     analyzer.addToMap(new GameState());
     analyzer.addToMap(new GameState());
     analyzer.addToMap(new GameState());
-    analyzer.addToMap(new GameState());
-    analyzer.addToMap(new GameState());
-    analyzer.writeOut();
-    analyzer.simpleReader();
+    analyzer.addToMap(new GameState()); */
+    Gson gson = new Gson();
+
+    System.out.println(gson.toJson(analyzer.readFile()));
   }
-    
 
   public static void TimeTests() {
-    
+
     Duration turnTime = Duration.ofSeconds(10);
 
     Clock currentTime = Clock.systemDefaultZone(); // Inits Calender when the Game Started
@@ -715,7 +706,7 @@ public class ServerCommandTests {
     javaClient.createGame(template);
     javaClient.joinGame("0");
     javaClient2.joinExistingGame("localhost", "8888", javaClient.getCurrentGameSessionID(), "1");
-    for(int i = 0;i<10;i++){
+    for (int i = 0; i < 10; i++) {
       try {
         Thread.sleep(800);
         System.out.println(javaClient.getRemainingGameTimeInSeconds());
@@ -728,4 +719,3 @@ public class ServerCommandTests {
     }
   }
 }
-

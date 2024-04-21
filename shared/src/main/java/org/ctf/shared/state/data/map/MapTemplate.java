@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * This class represents a game specific configuration.
  * @author Marcus Kessel
  */
-public class MapTemplate {
+public class MapTemplate implements java.io.Serializable {
 
     @Schema(
             description = "grid size. format [rows, columns]",

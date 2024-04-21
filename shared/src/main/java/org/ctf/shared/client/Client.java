@@ -223,9 +223,17 @@ public class Client implements GameClientInterface {
    * @throws NumberFormatException if the server does not support proper ID return
    * @return true if its your turn, false if its not
    */
-  protected boolean isItMyTurn() throws NumberFormatException {
+  protected boolean isItMyTurn() {
     getStateFromServer();
-    return Integer.parseInt(this.teamID) == currentTeamTurn;
+    try {
+      if(Integer.parseInt(this.teamID) == currentTeamTurn){
+        return true;
+      } else {
+        return false;
+      }
+    } catch (Exception e) {
+      return false;
+    }
   }
 
   /**
