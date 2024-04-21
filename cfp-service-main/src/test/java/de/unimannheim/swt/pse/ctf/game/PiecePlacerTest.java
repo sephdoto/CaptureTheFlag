@@ -17,13 +17,14 @@ class PiecePlacerTest {
     MapTemplate mt = TestValues.getTestTemplate();
     mt.setGridSize(new int[] {30,30});
     mt.setTeams(3);
+//    mt.getPieces()[0].setCount(45);
     gs.setTeams(new Team[3]);
     BoardController bc = new BoardController(gs, mt);
     for(int i=0; i<bc.gameState.getTeams().length; i++)
       bc.initializeTeam(i, mt);
     PiecePlacer pp = new PiecePlacer(bc.gameState, bc.boundaries);
     pp.placePieces(PlacementType.symmetrical);
-    printGrid(pp.gameState);
+//    printGrid(pp.gameState);
   }
   
   @Test
@@ -37,9 +38,11 @@ class PiecePlacerTest {
     
     GameState gs = TestValues.getTestState();
     MapTemplate mt = TestValues.getTestTemplate();
-    mt.setTeams(3);
-    gs.setTeams(new Team[3]);
+    int teams = 3;
+    mt.setTeams(teams);
+    gs.setTeams(new Team[teams]);
     bc = new BoardController(gs, mt);
+    while(--teams>=0) bc.initializeTeam(teams, mt);
     bc.gameState.getTeams()[2].setBase(new int[] {4, 2});
     
     dir = new PiecePlacer(bc.gameState, null).nextBaseDirection(bc.gameState.getTeams()[0]);

@@ -86,7 +86,7 @@ public class PiecePlacer {
       }
       //place remaining pieces with respawn piece logic
       for(; piece<team.getPieces().length; piece++) {
-        int[] newPos = EngineTools.respawnPiecePosition(gameState, team.getBase());
+        int[] newPos = respawnPiecePosition(team.getBase(), facing);
         if(safeToPlace(Integer.parseInt(team.getId()), newPos)) placePiece(team, piece, newPos);
       }
     }
@@ -101,6 +101,48 @@ public class PiecePlacer {
   ////////////////////////////////////////////////////
   //        additional helper methods               //
   ////////////////////////////////////////////////////
+  /**
+   * Returns a valid position on which a Piece can safely respawn.
+   *
+   * @author sistumpf
+   * @param gameState to access the grid and generate pseudo random numbers
+   * @param basePos the position of the base of the Piece that gets respawned
+   * @return valid position to respawn a piece on, null shouldn't be returned (compiler needs it).
+   */
+  public int[] respawnPiecePosition(int[] basePos, int facing) {
+    int[] xTransforms;
+    int[] yTransforms;
+    
+    for (int distance = 1; distance < gameState.getGrid().length; distance++) {
+      xTransforms = EngineTools.fillXTransformations(new int[distance * 8], distance);
+      yTransforms = EngineTools.fillYTransformations(new int[distance * 8], distance);
+      int arrayPosModifier = 
+          facing == 0 ? 3*(xTransforms.length/4) : 
+            facing == 1 ? xTransforms.length/4 : 
+              facing == 3 ? 2*(xTransforms.length/4) : 
+                0;
+      
+      for (int clockHand = 0; clockHand < distance * 8; clockHand++) {
+        int team = Integer.parseInt(gameState.getGrid()[basePos[0]][basePos[1]].split(":")[1]);
+        int x = basePos[1] + xTransforms[clockHand];
+        int y = basePos[0] + yTransforms[clockHand];
+        int[] newPos = new int[] {y, x};
+        if (positionOutOfBounds(team, newPos)) continue;
+
+        if (EngineTools.emptyField(gameState.getGrid(), newPos)) {
+          for (int i = 0; i<xTransforms.length; i++) {
+            x = basePos[1] + xTransforms[(i+arrayPosModifier) % xTransforms.length];
+            y = basePos[0] + yTransforms[(i+arrayPosModifier) % xTransforms.length];
+            newPos = new int[] {y, x};
+            if (positionOutOfBounds(team, newPos)) continue;
+            if (EngineTools.emptyField(gameState.getGrid(), newPos)) return newPos;
+          }
+        }
+      }
+    }
+    return null;
+  }
+  
   /**
    * places a piece, given by its index in the team.pieces array, on the position newPos.
    * 
