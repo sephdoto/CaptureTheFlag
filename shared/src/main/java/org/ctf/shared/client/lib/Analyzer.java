@@ -7,25 +7,21 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import javax.swing.JFileChooser;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.Move;
 
-import com.google.gson.Gson;
-
+/**
+ * @author rsyed
+ */
 public class Analyzer {
 
-  HashMap<String, GameState> gameStates = new HashMap<>();
-  public static int key = 0;
   LocalDateTime localDateTime;
+  public SavedGame savedGame;
 
   public Analyzer() {
-    this.gameStates = new HashMap<String, GameState>();
-  }
-
-  public Analyzer(HashMap<String, GameState> gameStates) {
-    this.gameStates = gameStates;
+    savedGame = new SavedGame();
   }
 
   public boolean writeOut() {
@@ -38,7 +34,7 @@ public class Analyzer {
 
       ObjectOutputStream objectOutStream = new ObjectOutputStream(fileOutStream);
 
-      objectOutStream.writeObject(gameStates);
+      objectOutStream.writeObject(savedGame);
       objectOutStream.close();
       fileOutStream.close();
     } catch (IOException e) {
@@ -48,14 +44,9 @@ public class Analyzer {
     return true;
   }
 
-  public void addToMap(GameState gameState) {
-    this.gameStates.put(String.valueOf(key), gameState);
-    key++;
-  }
-
   @SuppressWarnings("unchecked")
-  public HashMap<String, GameState> readFile() {
-    HashMap<String, GameState> returnMap = null;
+  public SavedGame readFile() {
+    SavedGame returnObject = new SavedGame();
     try {
       final JFileChooser fc = new JFileChooser(Constants.dataBankPath);
       fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -63,7 +54,7 @@ public class Analyzer {
       FileInputStream fileInput = new FileInputStream(fc.getSelectedFile());
       ObjectInputStream objectInput = new ObjectInputStream(fileInput);
 
-      returnMap = (HashMap) objectInput.readObject();
+      returnObject = (SavedGame) objectInput.readObject();
 
       objectInput.close();
       fileInput.close();
@@ -75,7 +66,7 @@ public class Analyzer {
       System.out.println("Class not found");
       obj2.printStackTrace();
     }
-    return returnMap;
+    return returnObject;
   }
 
   @SuppressWarnings("unchecked")
@@ -84,7 +75,7 @@ public class Analyzer {
       FileInputStream fileInput = new FileInputStream(Constants.dataBankPath + name);
       ObjectInputStream objectInput = new ObjectInputStream(fileInput);
 
-      this.gameStates = (HashMap) objectInput.readObject();
+      this.savedGame = (SavedGame) objectInput.readObject();
 
       objectInput.close();
       fileInput.close();
@@ -100,12 +91,15 @@ public class Analyzer {
     return true;
   }
 
-  public HashMap<String, GameState> getMap() {
-    return this.gameStates;
+  public SavedGame getSavedGame() {
+    return this.savedGame;
   }
 
-  public String toJson(){
-    Gson gson = new Gson();
-    return gson.toJson(this.gameStates);
+  public void addMove(Move move) {
+    savedGame.addMove(move);
+  }
+
+  public void addGameState(GameState gameState) {
+    savedGame.setInitialGameState(gameState);
   }
 }

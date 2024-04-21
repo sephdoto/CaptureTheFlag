@@ -12,6 +12,7 @@ import org.ctf.shared.client.lib.Analyzer;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.dto.GameSessionRequest;
@@ -49,15 +50,10 @@ public class ServerCommandTests {
 
   public static void tests() {
     Analyzer analyzer = new Analyzer();
-   /*  analyzer.addToMap(new GameState());
-    analyzer.addToMap(new GameState());
-    analyzer.addToMap(new GameState());
-    analyzer.addToMap(new GameState());
-    analyzer.addToMap(new GameState());
-    analyzer.addToMap(new GameState());
-    analyzer.addToMap(new GameState()); */
+    analyzer.addGameState(new GameState());
+    analyzer.addMove(new Move());
+    analyzer.writeOut();
     Gson gson = new Gson();
-
     System.out.println(gson.toJson(analyzer.readFile()));
   }
 
