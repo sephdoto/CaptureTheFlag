@@ -76,7 +76,16 @@ public class ClientStepBuilder {
      *
      * @param num Exp: Constants.AI.MCTS, Constants.AI.MCTS.RANDOM, etc
      */
-    BuildStep AIPlayerSelector(Constants.AI num);
+    LoggerEnabler AIPlayerSelector(Constants.AI num);
+  }
+
+  public static interface LoggerEnabler {
+    /**
+     * Method to enable if the AI Game will be logged players
+     *
+     * @param selector True for Enabling Save, False for disabled
+     */
+    BuildStep enableSaveGame(boolean selector);
   }
 
   /** Build Step */
@@ -91,14 +100,17 @@ public class ClientStepBuilder {
           HostStep,
           PortSelectionStep,
           PlayerTypeSelectionStep,
+          LoggerEnabler,
           BuildStep {
     private CommLayerInterface comm;
     private String host;
     private String port;
     private AI ai;
+    private boolean enableSave;
 
-    /** 
+    /**
      * Sets the underlying layer in use by the Client
+     *
      * @param enableRestClient true to enable restClient based layer, false to use Java based one
      */
     @Override
@@ -144,10 +156,9 @@ public class ClientStepBuilder {
      * Step for AI Selection for the layer
      *
      * @param ai the AI enum to specify the AI the Client is going to use. Example AI.MCTS
-     * 
      */
     @Override
-    public BuildStep AIPlayerSelector(AI ai) {
+    public LoggerEnabler AIPlayerSelector(AI ai) {
       this.ai = ai;
       return this;
     }
@@ -174,11 +185,22 @@ public class ClientStepBuilder {
       return this;
     }
 
+    /**
+     * Option Presented if AI Client is selected. Enables the game to be saved as a SavedGame
+     *
+     * @param selector True for Enabling Save, False for Disabled
+     */
+    @Override
+    public BuildStep enableSaveGame(boolean selector) {
+      this.enableSave = selector;
+      return this;
+    }
+
     @Override
     public Client build() {
       Client client;
       if (!ai.equals(AI.HUMAN)) {
-        client = new AIClient(comm, host, port, ai);
+        client = new AIClient(comm, host, port, ai, enableSave);
       } else {
         client = new Client(comm, host, port);
       }
