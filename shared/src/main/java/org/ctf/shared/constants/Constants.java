@@ -25,22 +25,7 @@ public class Constants {
           + "maptemplates"
           + File.separator;
 
-  public static String testTemplate =
-      Paths.get("").toAbsolutePath().toString().split("cfp14")[0]
-          + "cfp14"
-          + File.separator
-          + "cfp-service-main"
-          + File.separator
-          + "src"
-          + File.separator
-          + "main"
-          + File.separator
-          + "resources"
-          + File.separator
-          + "maptemplates"
-          + File.separator
-          + "serverTester.json";
-  
+
 
   /**
    * Constants needed to make the base URI of the restClient
@@ -52,6 +37,50 @@ public class Constants {
   public static final String remotePort = "8888";
   public static final String remoteBinder = "/api/";
 
+  
+  /**
+   * Constants needed for file paths
+   *
+   * @author rsyed
+   */
+  public static String testTemplate =
+  Paths.get("").toAbsolutePath().toString().split("cfp14")[0]
+      + "cfp14"
+      + File.separator
+      + "cfp-service-main"
+      + File.separator
+      + "src"
+      + File.separator
+      + "main"
+      + File.separator
+      + "resources"
+      + File.separator
+      + "maptemplates"
+      + File.separator
+      + "serverTester.json";
+
+public static String dataBankPath =
+  Paths.get("").toAbsolutePath().toString().split("cfp14")[0]
+      + "cfp14"
+      + File.separator
+      + "cfp-service-main"
+      + File.separator
+      + "src"
+      + File.separator
+      + "main"
+      + File.separator
+      + "resources"
+      + File.separator
+      + "savedGames"
+      + File.separator;
+
+
+      
+  /**
+   * Enums for AI Client
+   *
+   * @author rsyed
+   */
   public enum AI {
     HUMAN,
     RANDOM,
@@ -59,6 +88,12 @@ public class Constants {
     MCTS_IMPROVED
   }
 
+  
+  /**
+   * Optional enums for Port Selection in Client
+   *
+   * @author rsyed
+   */
   public enum Port {
     DEFAULT("8888");
 

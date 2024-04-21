@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * This class represents a piece.
  * @author Marcus Kessel
  */
-public class Piece {
+public class Piece implements java.io.Serializable{
     @Schema(
             description = "unique piece identifier"
     )

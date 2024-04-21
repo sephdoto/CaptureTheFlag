@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Min;
  * This class describes a {@link Piece} in a game.
  * @author Marcus Kessel
  */
-public class PieceDescription {
+public class PieceDescription implements java.io.Serializable{
 
     @Schema(
             description = "unique piece type (e.g., 'Pawn' or 'Rook')"

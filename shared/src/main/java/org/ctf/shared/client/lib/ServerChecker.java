@@ -19,6 +19,8 @@ public class ServerChecker {
    * @param ip IP of the server
    * @param port port of the server
    * @return true if server is active and ready to make sessions, false if not
+   * 
+   * @author rsyed 
    */
   public boolean isServerActive(String ip, String port) {
     String Path = Constants.testTemplate;

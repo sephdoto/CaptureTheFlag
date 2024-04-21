@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * This class represents a possible movement.
  * @author Marcus Kessel
  */
-public class Movement {
+public class Movement implements java.io.Serializable{
 
     @Schema(
             description = "directions a piece can move. if set, shape must NOT be set"

@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * This class is used to represent the current game state for a specific game session.
  * @author Marcus Kessel
  */
-public class GameState {
+public class GameState implements java.io.Serializable {
     @Schema(
             description = "the current grid (game board) as a two-dimensional list (array). " +
                     "each element contains a string reference to a piece, a block, a team's base or an empty square." +

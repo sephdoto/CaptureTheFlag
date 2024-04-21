@@ -2,14 +2,26 @@ package org.ctf.shared.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import javassist.bytecode.analysis.Analyzer;
+
+import java.io.File;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.ZoneId;
+import java.util.HashMap;
+
+import javax.swing.JFileChooser;
+import javax.swing.JPanel;
+
 import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.shared.client.lib.AnalyzerJSON;
+import org.ctf.shared.client.lib.Analyzer;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Constants.AI;
+import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.dto.GameSessionRequest;
@@ -25,7 +37,6 @@ public class ServerCommandTests {
    * which is a VERY weird behaviour
    *
    */
-
   public static void main(String[] args) {
 
     // Uncomment to do invidivual tests
@@ -34,7 +45,7 @@ public class ServerCommandTests {
     // joinTest();
     // copierCheck();
     // arrayTest();
-     getStateTests();
+    // getStateTests();
     //AIVSHUMAN();
     // testConnectionTimedGameMode();
     // testMalformedConnection();
@@ -42,10 +53,25 @@ public class ServerCommandTests {
     // TimeTests();
     // joinTest();
     // join();
-    // joinNDelete();
+    // joinNDelete()
+   // tests();
   }
+  public static void tests() {
+    AnalyzerJSON analyzer = new AnalyzerJSON();
+    analyzer.addToMap(new GameState());
+    analyzer.addToMap(new GameState());
+    analyzer.addToMap(new GameState());
+    analyzer.addToMap(new GameState());
+    analyzer.addToMap(new GameState());
+    analyzer.addToMap(new GameState());
+    analyzer.addToMap(new GameState());
+    analyzer.writeOut();
+    analyzer.simpleReader();
+  }
+    
 
   public static void TimeTests() {
+    
     Duration turnTime = Duration.ofSeconds(10);
 
     Clock currentTime = Clock.systemDefaultZone(); // Inits Calender when the Game Started
@@ -702,3 +728,4 @@ public class ServerCommandTests {
     }
   }
 }
+
