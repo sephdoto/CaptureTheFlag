@@ -348,19 +348,7 @@ public class Client implements GameClientInterface {
   private void gameStateHelper() {
     GameState gameState = comm.getCurrentGameState(currentServer);
     this.grid = gameState.getGrid();
-
-    if (this.lastTeamTurn != null) { // init both
-      this.lastTeamTurn = gameState.getCurrentTeam();
-      this.currentTeamTurn = gameState.getCurrentTeam();
-    } else {
-      int updatedvalue = gameState.getCurrentTeam(); // update B
-      if (currentTeamTurn != updatedvalue) {
-        this.lastTeamTurn = this.currentTeamTurn;
-        this.currentTeamTurn = updatedvalue;
-      }
-    }
     this.currentTeamTurn = gameState.getCurrentTeam();
-
     this.lastMove = gameState.getLastMove();
     this.teams = gameState.getTeams();
     this.currentState = gameState;
@@ -463,7 +451,7 @@ public class Client implements GameClientInterface {
                 try {
                   this.getSessionFromServer();
                   this.getStateFromServer();
-                  //TODO Additional Logic once Professor updates the server
+                  // TODO Additional Logic once Professor updates the server
                   Thread.sleep(this.refreshTime);
                 } catch (InterruptedException e) {
                   throw new Error("Something went wrong in the Client Thread");
@@ -551,12 +539,18 @@ public class Client implements GameClientInterface {
 
   // This method gets the game started flag forcefully and allows for automatic refreshing from
   // server
-  public void forceSetGameStarted() {
-    this.gameStarted = true;
-    this.gameOver = false;
+  public void forcestartGameController() {
+    startGameController();
   }
 
+  /**
+   * Method which returns which team made the last move
+   * -1 if no last move. 0 to n otherwise
+   * @author rsyed
+   */
   public int getLastTeamTurn() {
-    return Integer.parseInt(lastMove.getPieceId().split(":")[1].split("_")[0]);
+    return (lastMove != null)
+        ? Integer.parseInt(lastMove.getPieceId().split(":")[1].split("_")[0])
+        : -1;
   }
 }
