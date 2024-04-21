@@ -180,8 +180,6 @@ public class MCTSSimulation {
     javaClient3.getSessionFromServer();
     javaClient4.getSessionFromServer();
     javaClient5.getSessionFromServer();
-    newAna.addGameState(javaClient.getCurrentState());
-
     System.out.println(gson.toJson(javaClient.getCurrentState()));
     newAna.addGameState(javaClient.getCurrentState());
     AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS);
@@ -228,7 +226,7 @@ public class MCTSSimulation {
           System.out.println(newAna.writeOut());
           break;
         }
-        /*  if (javaClient.getCurrentTeamTurn() == -1) {
+       if (javaClient.getCurrentTeamTurn() == -1) {
           javaClient.getStateFromServer();
           System.out.println(gson.toJson(javaClient.getCurrentState()));
           javaClient.getSessionFromServer();
@@ -239,7 +237,9 @@ public class MCTSSimulation {
           System.out.println(gson.toJson(javaClient2.getCurrentSession()));
           System.out.println(gson.toJson(javaClient.getWinners()));
           System.out.println(gson.toJson(javaClient2.getWinners()));
-        } */
+          newAna.writeOut();
+          break;
+        } 
         // System.out.println(gson.toJson(javaClient.getGrid()));
       } catch (NoMovesLeftException e) {
         e.printStackTrace();
