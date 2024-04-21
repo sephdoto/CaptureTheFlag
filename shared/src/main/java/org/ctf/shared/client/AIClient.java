@@ -28,19 +28,28 @@ public class AIClient extends Client implements Runnable {
     this(comm, IP, port);
     this.selectedPlayer = selected;
     this.enableSaveGame = enableSaveGame;
-    if (enableSaveGame) {
+/*     if (enableSaveGame) {
       saveGameHandler();
-    }
+    } */
   }
 
   @Override
   public void run() {
     try {
       AI_Controller controller = new AI_Controller(getCurrentState(), this.selectedPlayer);
+      boolean doOnce = true;
       // checks if game has a start date and no end date
       while ((this.getEndDate() == null) && (this.getStartDate() != null)) {
         this.getSessionFromServer();
         this.getStateFromServer();
+        if (enableSaveGame) {
+          analyzer = new Analyzer();
+          if (doOnce) {
+            analyzer.addGameState(getCurrentState());
+            doOnce = false;
+          }
+          analyzer.addMove(getLastMove());
+        }
         if (turnSupportFlag) {
           if (isItMyTurn()) {
             this.makeMove(controller.getNextMove());
@@ -58,7 +67,7 @@ public class AIClient extends Client implements Runnable {
     }
   }
 
-  private void saveGameHandler() {
+  /* private void saveGameHandler() {
     Thread gameSaverThread =
         new Thread(
             () -> {
@@ -90,5 +99,5 @@ public class AIClient extends Client implements Runnable {
               }
             });
     gameSaverThread.start();
-  }
+  } */
 }
