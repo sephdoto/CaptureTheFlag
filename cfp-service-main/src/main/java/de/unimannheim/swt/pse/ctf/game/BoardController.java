@@ -36,10 +36,10 @@ public class BoardController {
     this.boundaries = getBoundaries();
     
     //init//
-    for(int i=0; i<numberOfTeams; i++) {
-      gameState.getTeams()[i] = new Team();
-      gameState.getTeams()[i].setId(""+i); 
-    }
+//    for(int i=0; i<numberOfTeams; i++) {
+//      gameState.getTeams()[i] = new Team();
+//      gameState.getTeams()[i].setId(""+i); 
+//    }
     initEmptyGrid();
     placeBases(gameState);
     placeBlocks(template, gameState.getGrid(), template.getBlocks());
@@ -78,12 +78,11 @@ public class BoardController {
   /**
    * A team gets initialized and put in the GameState.
    *
-   * @author ysiebenh
+   * @author sistumpf, ysiebenh
    * @param int teamID, MapTemplate template
    * @return initialized team
    */
   public Team initializeTeam(int teamID, MapTemplate template) {
-
     // Creating the Pieces for the team
     int count = 1;
     LinkedList<Piece> indPieces = new LinkedList<Piece>();
@@ -98,11 +97,13 @@ public class BoardController {
     }
 
     // initializing the team
-    Team team = this.gameState.getTeams()[teamID];
+    Team team = new Team();
+//    this.gameState.getTeams()[teamID]
     team.setId(Integer.toString(teamID));
     team.setColor(GameEngine.getRandColor());
     team.setFlags(template.getFlags());
-
+    team.setBase(findBase(""+teamID));
+    
     Piece[] pieces = new Piece[indPieces.size()];
     int iterator = 0;
     for (Piece p : indPieces) {
@@ -111,6 +112,15 @@ public class BoardController {
     team.setPieces(pieces);
     this.gameState.getTeams()[teamID] = team;
     return team;
+  }
+  
+  int[] findBase(String teamID) {
+    for(int y=0; y<gameState.getGrid().length; y++)
+      for(int x=0; x<gameState.getGrid()[y].length; x++)
+        if(gameState.getGrid()[y][x].contains("b:"))
+          if(gameState.getGrid()[y][x].split("b:")[1].equals(teamID))
+            return new int[] {y,x};
+    return null;
   }
   
   /**
@@ -190,9 +200,9 @@ public class BoardController {
 //    System.out.println("xPartitions: " + (xCuts+1)+ " with size " + xPartitionSize + ", yPartitions: " + (yCuts+1)+ " with size " + yPartitionSize);
     for(int y=0, yc=0, team=0; yc*yPartitionsSize<grid.length; y+=yPartitionsSize, yc++)
       for(int x=0, xc=0; bases>0 && xc*xPartitionsSize<grid[y].length; x+=xPartitionsSize, bases--, xc++) {
-        grid[(int)(y + yPartitionsSize/2)][(int)(x + xPartitionsSize/2)] = "b:" + gameState.getTeams()[team].getId();
-        gameState.getTeams()[team].setBase(new int[] {(int)(y + yPartitionsSize/2), (int)(x + xPartitionsSize/2)});
-        team++;
+        grid[(int)(y + yPartitionsSize/2)][(int)(x + xPartitionsSize/2)] = "b:" + team++;
+//        gameState.getTeams()[team].setBase(new int[] {(int)(y + yPartitionsSize/2), (int)(x + xPartitionsSize/2)});
+//        team++;
       }
     this.gameState.setGrid(grid);
   }
