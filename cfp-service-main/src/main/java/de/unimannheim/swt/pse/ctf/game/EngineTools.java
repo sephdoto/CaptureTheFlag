@@ -10,7 +10,6 @@ import de.unimannheim.swt.pse.ctf.game.state.Team;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Random;
@@ -153,8 +152,7 @@ public class EngineTools extends AI_Tools {
   }
 
   /**
-   * Removes a certain team from the GameState. team is the place of the team in the
-   * GameState.getTeams Array.
+   * Removes a certain team from the GameState. team is the place of the team in the GameState.getTeams Array.
    *
    * @param gameState
    * @param team
@@ -264,41 +262,6 @@ public class EngineTools extends AI_Tools {
     return possibleMoves;
   }
 
-  // ******************************
-  // Helper methods for the hill-climbing in the spaced_out placement
-  // ******************************
-
-
-  /**
-   * helper for the spaced placement
-   *
-   * @author ysiebenh
-   * @return
-   */
-  static int valueOf(GameState gs, int teamID) {
-    int result = 0;
-    for (Piece p : gs.getTeams()[teamID].getPieces()) {
-      result += getPossibleMoves(gs, p).size();
-    }
-    return result;
-  }
-
-  /**
-   * helper for the spaced placement
-   *
-   * @author ysiebenh
-   * @return
-   */
-  static GameState getBestState(LinkedList<GameState> list, int teamID) {
-    GameState current = list.getFirst();
-    for (GameState gs : list) {
-      if (valueOf(gs, teamID) > valueOf(current, teamID)) {
-        current = gs;
-      }
-    }
-    return current;
-  }
-
   /**
    * helper for the spaced placement
    *
@@ -321,61 +284,9 @@ public class EngineTools extends AI_Tools {
   }
 
   /**
-   * Deep Copies a GameState (hopefully)
-   *
-   * @author ysiebenh
-   */
-  static GameState deepCopyGameStateOld(GameState gameState) {
-    GameState newState = new GameState();
-    newState.setCurrentTeam(gameState.getCurrentTeam());
-    newState.setLastMove(gameState.getLastMove());
-    Team[] teams = new Team[gameState.getTeams().length];
-    for(int i=0; i<teams.length; i++) {
-      if(gameState.getTeams()[i] == null)
-        continue;
-      teams[i] = new Team();
-      teams[i].setBase(gameState.getTeams()[i].getBase());
-      teams[i].setFlags(gameState.getTeams()[i].getFlags());
-      teams[i].setId(gameState.getTeams()[i].getId());
-      Piece[] pieces = new Piece[gameState.getTeams()[i].getPieces().length];
-      for(int j=0; j<pieces.length; j++) {
-        pieces[j] = new Piece();
-        pieces[j].setDescription(gameState.getTeams()[i].getPieces()[j].getDescription());
-        pieces[j].setId(gameState.getTeams()[i].getPieces()[j].getId());
-        pieces[j].setTeamId(gameState.getTeams()[i].getPieces()[j].getTeamId());
-        pieces[j].setPosition(new int[] {gameState.getTeams()[i].getPieces()[j].getPosition()[0],gameState.getTeams()[i].getPieces()[j].getPosition()[1]});
-      }
-      teams[i].setPieces(pieces);
-    }        
-    newState.setTeams(teams);
-    String[][] newGrid = new String[gameState.getGrid().length][gameState.getGrid()[0].length];
-    for(int i=0; i<gameState.getGrid().length; i++)
-      newGrid[i] = gameState.getGrid()[i].clone();
-    newState.setGrid(newGrid);
-    return newState;
-  }
-
-  /**
-   * Returns a List of the Pieces sorted by Strength
-   *
-   * @author ysiebenh
-   * @return
-   */
-  static LinkedList<Piece> getStrongest(Piece[] pieces) {
-    LinkedList<Piece> list = new LinkedList<Piece>();
-
-    for (Piece p : pieces) {
-      list.add(p);
-    }
-    Collections.sort(list, new EngineTools().new StrengthComparator());
-
-    return list;
-  }
-
-  /**
    * Updates the positions of the pieces based on their position in the Team Object
    *
-   * @author ysiebenh
+   * @author ysiebenh, sistumpf
    */
   static void updateGrid(GameState gs) {
     for (Team team : gs.getTeams()) {
@@ -383,20 +294,6 @@ public class EngineTools extends AI_Tools {
         if(!positionOutOfBounds(gs.getGrid(), piece.getPosition()))
           gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = piece.getId();
       }
-    }
-  }
-
-  // ******************************
-  // Inner Classes
-  // ******************************
-
-  class StrengthComparator implements Comparator<Piece> {
-
-    @Override
-    public int compare(Piece a, Piece b) {
-      if (a.getDescription().getAttackPower() > b.getDescription().getAttackPower()) return -1;
-      else if (a.getDescription().getAttackPower() < b.getDescription().getAttackPower()) return 1;
-      else return 0;
     }
   }
 }

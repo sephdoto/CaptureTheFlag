@@ -2,9 +2,9 @@ package de.unimannheim.swt.pse.ctf.game;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.Arrays;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import de.unimannheim.swt.pse.ctf.game.exceptions.TooManyPiecesException;
 import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 import de.unimannheim.swt.pse.ctf.game.map.PlacementType;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
@@ -12,7 +12,7 @@ import de.unimannheim.swt.pse.ctf.game.state.Team;
 
 class BoardControllerTest {
   BoardController bordi;
-  
+
   @BeforeEach
   void setUp() throws Exception {
     GameState state = TestValues.getTestState();
@@ -20,16 +20,30 @@ class BoardControllerTest {
     int teams = 2;
     template.setTeams(teams);
     state.setTeams(new Team[teams]);
-    state.setGrid(new String[1][1]);
     bordi = new BoardController(state, template);
+    for(int i=0; i<teams; i++)
+      bordi.initializeTeam(i, template);
   }
 
   @Test
-  void testPlacePiecesSymmetrical() {
-    new PiecePlacer(bordi.gameState, bordi.boundaries).placePieces(PlacementType.symmetrical);
-    printGrid(bordi.gameState);
+  void testPlacePiecesDefensive() throws TooManyPiecesException {
+    bordi.initPieces(PlacementType.defensive);
+    //    printGrid(bordi.gameState);
   }
 
+  @Test
+  void testPlacePiecesSpacedOut() throws TooManyPiecesException {
+    bordi.initPieces(PlacementType.spaced_out);
+    //    printGrid(bordi.gameState);
+  }
+
+  @Test
+  void testPlacePiecesSymmetrical() throws TooManyPiecesException {
+    bordi.initPieces(PlacementType.symmetrical);
+    //    printGrid(bordi.gameState);
+  }
+
+  @SuppressWarnings("unused")
   @Test
   void testGetBoundaries() {
     MapTemplate template = new MapTemplate();
@@ -43,9 +57,9 @@ class BoardControllerTest {
     int[][] b = bordi.getBoundaries();
     for(int[] bI : b) {
       for(int bII : bI) {
-//        System.out.print(bII + " ");
+        //        System.out.print(bII + " ");
       }
-//      System.out.println();
+      //      System.out.println();
     }
     for(int i=0; i<b.length; i++)
       for(int j=0; j<b.length; j++) {
@@ -54,12 +68,95 @@ class BoardControllerTest {
       }
   }
 
+  /**
+   * @author sistumpf
+   */
   @Test
-  void testPlaceBases() {
+  void testPlaceBasesNew() {
     GameState gameState = TestValues.getTestState();
     bordi.placeBases(gameState);
     for(Team team : gameState.getTeams())
       assertEquals("b:"+team.getId(), gameState.getGrid()[team.getBase()[0]][team.getBase()[1]]);
+  }
+
+  /**
+   * @author ysiebenh
+   * 
+   */
+  @Test
+  void testInitializeTeam() {
+    MapTemplate template = TestValues.getTestTemplate();
+    Team team = bordi.initializeTeam(0, template);
+    assertNotNull(team.getPieces());
+    assertNotNull(team.getBase());
+    assertNotNull(team.getClass());
+    assertNotNull(team.getColor());
+    assertEquals(team.getFlags(),template.getFlags());
+    assertNotNull(team.getId());     
+  }
+  
+  /**
+   * @author ysiebenh, sistumpf
+   */
+  @Test
+  void testPlaceBasesOld() {
+    MapTemplate[] templates = TestValues.getDummyTeplates();
+
+    for (int o = 0; o < templates.length; o++) {
+      GameState gs = new GameState();      
+      gs.setTeams(new Team[templates[o].getTeams()]);
+      BoardController bordi = new BoardController(gs, templates[o]);
+
+      for(int i=0; i<gs.getTeams().length; i++)
+        bordi.initializeTeam(i, templates[o]);
+      
+      bordi.placeBases(gs);
+      assertEquals(gs.getGrid()[gs.getTeams()[0].getBase()[0]][gs.getTeams()[0].getBase()[1]],"b:" + gs.getTeams()[0].getId() );
+      assertEquals(gs.getGrid()[gs.getTeams()[1].getBase()[0]][gs.getTeams()[1].getBase()[1]],"b:" + gs.getTeams()[1].getId() );
+    }
+  }
+
+  /**
+   * @author sistumpf
+   */
+  @Test
+  void testPlaceBlocks() {
+    String[][] grid = new String[][]
+        {{"","!","","!"},{"!","!",""},{"!","!"},{""}};
+        String[][] gridMuster = new String[][] {{"b","!","b","!"},{"!","!","b"},{"!","!"},{"b"}};
+        bordi.placeBlocks(TestValues.getTestTemplate(), grid, 4);
+
+        assertArrayEquals(gridMuster, grid);                                    //Belegung mit Pieces
+
+        grid = new String[][] {{"","",""},{"","",""},{"","",""}};
+        gridMuster = new String[][] {{"","b","b"},{"b","b",""},{"","b",""}};
+        bordi.placeBlocks(TestValues.getTestTemplate(), grid, 5);
+
+        assertArrayEquals(gridMuster, grid);                                    //Belegung ohne Pieces
+
+        grid = new String[][] {{"","",""},{"","",""},{"","",""}};
+        gridMuster = new String[][] {{"b","b","b"},{"","b",""},{"","b","b"}};
+        bordi.placeBlocks(TestValues.getTestTemplate(), grid, 6);
+
+        assertArrayEquals(gridMuster, grid);                                    //Belegung wie vorher mit 6 Blöcken
+  }
+
+  /**
+   * @author sistumpf
+   */
+  @Test
+  void testSeedRandom() {
+    int mult0 = bordi.seededRandom(TestValues.getTestTemplate(), 0, 10);
+    int mult1 = bordi.seededRandom(TestValues.getTestTemplate(), 1, 10);
+    int mult2 = bordi.seededRandom(TestValues.getTestTemplate(), 2, 10);
+    int bound9 = bordi.seededRandom(TestValues.getTestTemplate(), 0, 9);
+    int bound3 = bordi.seededRandom(TestValues.getTestTemplate(), 0, 3);
+
+    assertEquals(1, mult0);
+    assertEquals(6, mult1);
+    assertEquals(4, mult2);
+    assertEquals(2, bound3);
+    assertEquals(8, bound9);
   }
 
   void printGrid(GameState gameState) {
@@ -68,5 +165,6 @@ class BoardControllerTest {
         System.out.print(gameState.getGrid()[y][x].equals("") ? ".    " : gameState.getGrid()[y][x] + " ");
       System.out.println();
     }
+    System.out.println();
   }
 }

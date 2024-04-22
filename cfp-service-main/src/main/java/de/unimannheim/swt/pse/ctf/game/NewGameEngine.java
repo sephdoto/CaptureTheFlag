@@ -591,7 +591,7 @@ public class NewGameEngine implements Game {
       BoardController boardController = new BoardController(this.gameState);
       //Bases and Blocks are placed in the BordController constructor
       try {
-        boardController.initPieces(copyOfTemplate); // Inits pieces on the grid
+        boardController.initPieces(copyOfTemplate.getPlacement()); // Inits pieces on the grid
       } catch (TooManyPiecesException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
