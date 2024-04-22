@@ -1,16 +1,18 @@
 package org.ctf.shared.client;
 
+import ch.qos.logback.core.util.Duration;
 import com.google.gson.Gson;
 import java.time.Clock;
-import java.time.Duration;
-import java.time.ZoneId;
 import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import org.apache.catalina.util.ServerInfo;
+import org.ctf.shared.ai.AI_Controller;
+import org.ctf.shared.client.lib.Analyzer;
 import org.ctf.shared.client.lib.GameClientInterface;
 import org.ctf.shared.client.lib.ServerChecker;
-import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.service.CommLayerInterface;
+import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
@@ -19,7 +21,6 @@ import org.ctf.shared.state.data.exceptions.ForbiddenMove;
 import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.exceptions.NoMoreTeamSlots;
-import org.ctf.shared.state.data.exceptions.NoProperSupport;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.shared.state.data.exceptions.URLError;
 import org.ctf.shared.state.data.map.MapTemplate;
@@ -29,22 +30,14 @@ import org.ctf.shared.state.dto.GameSessionResponse;
 import org.ctf.shared.state.dto.JoinGameResponse;
 import org.ctf.shared.state.dto.MoveRequest;
 
-/**
- * Base Client file which is going to use the Translation Layer to talk to the game server Has
- * support for multiple gameSessions and flexible server polling Uses a StepBuilder Class to Create
- * Objects
- *
- * @author rsyed
- */
-public class Client implements GameClientInterface {
-
+public class AutomatedClient implements GameClientInterface {
   // Main DataStore block
   private volatile GameState currentState;
-  private String[][] grid;
-  private int currentTeamTurn;
-  private Move lastMove;
-  private Team[] teams;
-  private Clock currentTime;
+  private volatile String[][] grid;
+  private volatile int currentTeamTurn;
+  private volatile Move lastMove;
+  private volatile Team[] teams;
+  private volatile Clock currentTime;
 
   private Gson gson; // Gson object for conversions incase needed
   // Two CommLayers Available CommLayer and RestClientLayer
@@ -53,12 +46,13 @@ public class Client implements GameClientInterface {
   // Block for Server Info
   private String currentServer; // Creates URL with Session ID for use later
   private String shortURL;
-  private ServerDetails serverInfo;
+  private String port;
+  private String baseURL;
 
   // Block for session info
-  private GameSession currentSession;
+  private volatile GameSession currentSession;
   private String currentGameSessionID;
-  private GameSessionResponse gameResponse;
+  private volatile GameSessionResponse gameResponse;
   private String[] winners;
 
   // Block for Team Data
@@ -82,9 +76,12 @@ public class Client implements GameClientInterface {
   public boolean gameOver;
   public boolean gameStarted;
   protected boolean turnSupportFlag; // is enabled when the team ID recieved in response is an INT
-  private boolean moveTimeLimitedGameTrigger = false;
-  private boolean timeLimitedGameTrigger = false;
-  private Clock turnEndsBy;
+
+  public AI selectedPlayer;
+  public boolean enableSaveGame;
+  public volatile Analyzer analyzer;
+  public AI_Controller Controller;
+  ExecutorService executor = Executors.newFixedThreadPool(10);
 
   /**
    * Constructor to set the IP and port on object creation
@@ -93,12 +90,13 @@ public class Client implements GameClientInterface {
    * @param IP the IP to connect to Exp "localhost" or "192.xxx.xxx.xxx"
    * @param port the port the server is at Exp 9999 / 8080 /
    */
-  Client(CommLayerInterface comm, String IP, String port) {
+  AutomatedClient(CommLayerInterface comm, String IP, String port) {
+    this.baseURL = IP;
+    this.port = port;
     this.gson = new Gson();
     this.currentState = new GameState();
     this.currentSession = new GameSession();
     this.comm = comm;
-    this.serverInfo = new ServerDetails(IP,port);
     setServer(IP, port);
   }
 
@@ -121,6 +119,7 @@ public class Client implements GameClientInterface {
    * @throws UnknownError (500)
    * @throws URLError (404)
    */
+  @Override
   public void createGame(MapTemplate map) {
     gameSessionResponseParser(createGameCaller(map));
   }
@@ -217,8 +216,8 @@ public class Client implements GameClientInterface {
    * @param teamName
    */
   public void joinExistingGame(String IP, String port, String gameSessionID, String teamName) {
-    this.currentServer = "http://" + IP + ":" + port + "/api/gamesession";
-    this.currentServer = shortURL + "/" + gameSessionID;
+    setServer(IP, port);
+    this.currentGameSessionID = gameSessionID;
     joinGame(teamName);
   }
 
@@ -232,23 +231,25 @@ public class Client implements GameClientInterface {
   protected boolean isItMyTurn() {
     getStateFromServer();
     try {
-      if(Integer.parseInt(this.teamID) == currentTeamTurn){
+      if (Integer.parseInt(this.teamID) == currentTeamTurn) {
         return true;
       } else {
         return false;
       }
     } catch (Exception e) {
-      throw new NoProperSupport();
+      return false;
     }
   }
 
   /**
    * Checks if server is active through a dummy gameTemplate
    *
+   * @param ip IP of the server
+   * @param port port of the server
    * @return true if server is active and ready to make sessions, false if not
    */
-  protected boolean isServerActive() {
-    return new ServerChecker().isServerActive(this.serverInfo.getHost(), this.serverInfo.getPort());
+  protected boolean isServerActive(String ip, String port) {
+    return new ServerChecker().isServerActive(ip, port);
   }
 
   // HELPER METHODS
@@ -266,7 +267,7 @@ public class Client implements GameClientInterface {
     }
     //// Block for parsing and setting alt game mode flags here
     //
-    initAltGameModeLogic(map);
+    // initAltGameModeLogic(map);
     //
     // End of Block
     return gameResponse;
@@ -380,104 +381,8 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Method to call from create call while parsing {@link GameTemplate} and inits some prereqs for
-   * the Alt Game Mode.
-   *
-   * @author rsyed
-   */
-  private void initAltGameModeLogic(MapTemplate map) {
-    if (map.getMoveTimeLimitInSeconds() != -1) {
-      this.moveTimeLimitedGameTrigger = true;
-      this.turnTime = Duration.ofSeconds(map.getMoveTimeLimitInSeconds());
-    }
-    if (map.getTotalTimeLimitInSeconds() != -1) {
-      this.timeLimitedGameTrigger = true;
-      this.timeLimDuration = Duration.ofSeconds(map.getTotalTimeLimitInSeconds());
-    }
-  }
-
-  /**
-   * Main CONTROLLER for Client. Call when game has started (gameStarted is set)
-   *
-   * @author rsyed
-   */
-  public void startGameController() {
-    startWatcher();
-  }
-
-  /**
-   * Checks how much time is left for the game
-   *
-   * @author rsyed
-   * @return -1 if no total game time limit set, 0 if over, > 0 if seconds remain
-   */
-  public int getRemainingGameTimeInSeconds() {
-    if (!this.timeLimitedGameTrigger) {
-      return -1;
-    }
-    if (isGameOver()) {
-      return 0;
-    } else {
-      return Math.toIntExact(
-          Duration.between(currentTime.instant(), gameShouldEndBy.instant()).getSeconds());
-    }
-  }
-
-  /**
-   * Watcher. Watches for game start
-   *
-   * @author rsyed
-   */
-  public void startWatcher() {
-    Thread watcherThread =
-        new Thread(
-            () -> {
-              boolean running = true;
-              while (running) {
-                try {
-                  this.getSessionFromServer(); // Gets Session from server
-                  Long sleep = 1000L;
-                  if (getStartDate() != null) {
-                    gameStartedThread();
-                    running = false;
-                  }
-                  Thread.sleep(sleep);
-                } catch (InterruptedException e) {
-                  throw new Error("Something went wrong in the Client Thread");
-                }
-              }
-            });
-    watcherThread.start();
-  }
-
-  /**
-   * Thead which handles client logic for when game has started
-   *
-   * @author rsyed
-   */
-  public void gameStartedThread() {
-    Thread gameThread =
-        new Thread(
-            () -> {
-              boolean running = true;
-              while (running) {
-                try {
-                  this.getSessionFromServer();
-                  this.getStateFromServer();
-                  // TODO Additional Logic once Professor updates the server
-                  Thread.sleep(this.refreshTime);
-                } catch (InterruptedException e) {
-                  throw new Error("Something went wrong in the Client Thread");
-                }
-              }
-            });
-    gameThread.start();
-  }
-
-
-  /**
-   * Helper method which sets an int to keep track of which teams turn it was before (Derived from
-   * Last Move) Sets the lastTeamTurn int -1 if no last move, 0 to n Otherwise
+   * Method which sets an int to keep track of which teams turn it was before (Derived from Last
+   * Move). Sets the lastTeamTurn int to -1 if no last move, 0 to n Otherwise
    *
    * @author rsyed
    */
@@ -488,96 +393,77 @@ public class Client implements GameClientInterface {
             : -1;
   }
 
-
-  private void setWhenGameShouldEnd() {
-    this.gameShouldEndBy =
-        Clock.offset(
-            Clock.fixed(getStartDate().toInstant(), ZoneId.systemDefault()), timeLimDuration);
-  }
-
-  private void increaseTurnTimer() {
-    this.turnEndsBy =
-        Clock.fixed(Clock.offset(currentTime, turnTime).instant(), ZoneId.systemDefault());
-  }
-
-  // Getter Block
-  public GameSessionResponse getLastGameSessionResponse() {
-    return this.gameResponse;
-  }
-
-  public GameState getCurrentState() {
-    return currentState;
-  }
-
-  public String getCurrentServer() {
-    return currentServer;
-  }
-
-  public String[][] getGrid() {
-    return grid;
-  }
-
-  public int getCurrentTeamTurn() {
-    return currentTeamTurn;
-  }
-
-  public Move getLastMove() {
-    return lastMove;
-  }
-
-  public Team[] getTeams() {
-    return teams;
-  }
-
-  public GameSession getCurrentSession() {
-    return currentSession;
-  }
-
-  public String getCurrentGameSessionID() {
-    return currentGameSessionID;
-  }
-
-  public String[] getWinners() {
-    return winners;
-  }
-
-  public String getTeamSecret() {
-    return teamSecret;
-  }
-
-  public String getTeamID() {
-    return teamID;
-  }
-
-  public String getTeamColor() {
-    return teamColor;
-  }
-
-  public Date getStartDate() {
-    return startDate;
-  }
-
-  public Date getEndDate() {
-    return endDate;
-  }
-
-  public boolean isGameOver() {
-    return gameOver;
-  }
-
-  // This method gets the game started flag forcefully and allows for automatic refreshing from
-  // server
-  public void forcestartGameController() {
-    startGameController();
+  /**
+   * Method is used to create a Executor Task which checks if the server the client is set to is
+   * active. And then creates a game and join it automatically
+   *
+   * @param template The map which is going to be used
+   * @author rsyed
+   */
+  public void AutomatedCreateAndJoinTask(MapTemplate template, String teamName) {
+    Thread gameSaverThread =
+        new Thread(
+            () -> {
+              boolean running = true;
+              while (running) {
+                try {
+                  if (isServerActive("localhost", "8888")) {
+                    createGame(template);
+                    joinGame(teamName);
+                    Thread.sleep(200);
+                    if(this.currentGameSessionID != null){
+                      playTheGame(AI.MCTS);
+                    }
+                    //running = false;
+                  }
+                } catch (Exception e) {
+                  throw new Error("Method is borked");
+                }
+              }
+            });
+    gameSaverThread.start();
   }
 
   /**
-   * Method which returns which team made the last move
-   * -1 if no last move. 0 to n otherwise
+   * Method is used to create a Executor Task which checks if the server the client is set to is
+   * active. And then creates a game and join it automatically
+   *
+   * @param template The map which is going to be used
    * @author rsyed
    */
-  public int getLastTeamTurn() {
-    return lastTeamTurn;
+  public void playTheGame(AI selected) {
+    Thread player =
+        new Thread(
+            () -> {
+              boolean running = true;
+              while (running) {
+                try {
+                 getSessionFromServer();
+                 getStateFromServer(); 
+                 Controller = new AI_Controller(getCurrentState(), selected);
+                 if(isItMyTurn()){
+                  makeMove(Controller.getNextMove());
+                  getSessionFromServer();
+                  getStateFromServer(); 
+                  Controller.update(currentState);
+                 }   
+                 
+                 Thread.sleep(1000);
+                  
+                  
+                } catch (Exception e) {
+                  throw new Error("Method is borked");
+                }
+              }
+            });
+            player.start();
   }
 
+  private GameState getCurrentState() {
+    return this.currentState;
+  }
+
+  public String getSessionID(){
+    return this.currentGameSessionID;
+  }
 }

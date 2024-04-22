@@ -45,10 +45,10 @@ public class ServerCommandTests {
     // testMalformedConnection();
     // testConnectionTimedMoveMode();
     // TimeTests();
-    // joinTest();
+     joinTest();
     // join();
     // joinNDelete()
-    tests();
+    //tests();
   }
 
   public static void tests() {
@@ -339,14 +339,24 @@ public class ServerCommandTests {
     Gson gson = new Gson();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     CommLayer comm = new CommLayer();
-    Client javaClient =
-        ClientStepBuilder.newBuilder()
-            .enableRestLayer(false)
-            .onLocalHost()
-            .onPort("8888")
-            .HumanPlayer()
-            .build();
-    Client javaClient2 =
+    AutomatedClient client = new AutomatedClient(comm, "localhost", "8888");
+    //client.setServer("localhost", "8888");
+    client.AutomatedCreateAndJoinTask(template, "Seph1");
+   
+    AutomatedClient client2 = new AutomatedClient(comm, "localhost", "8888");
+    //client.setServer("localhost", "8888");
+    try {
+      Thread.sleep(2000);
+  
+        client2.joinExistingGame("localhost","8888", client.getSessionID() , "Seph2");
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    }
+
+   /*  Client javaClient2 =
         ClientStepBuilder.newBuilder()
             .enableRestLayer(false)
             .onLocalHost()
@@ -384,7 +394,7 @@ public class ServerCommandTests {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-
+ */
     /* Move move = new Move();
     move.setPieceId("p:0_2");
     move.setNewPosition(new int[] {0, 1}); */
@@ -402,7 +412,7 @@ public class ServerCommandTests {
       System.out.println( (int) (Math.random() * 2) );
     } */
 
-  }
+  
 
   public static void getStateTests() {
     String jsonPayload =

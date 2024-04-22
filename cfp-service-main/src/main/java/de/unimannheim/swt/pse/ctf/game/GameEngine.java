@@ -384,7 +384,6 @@ public class GameEngine implements Game {
                   }
                 }
                 try { // Checks EVERY 1 second
-                  // TODO Discuss if a check every second is okay or we need faster ones
                   Thread.sleep(1000);
                 } catch (InterruptedException e) {
                   LOG.info("Exception Occured in timeLimitedHandler thread");
@@ -452,7 +451,7 @@ public class GameEngine implements Game {
   /**
    * Part of turn Time limited Game logic Method to increase the timer. Can be used when a turn has
    * been made. Also called when turn timer expires to set timer for next move Call when turn time
-   * expires (already done) TODO this method when flag is set and a move is made
+   * expires (already done)
    *
    * @author rsyed
    */
