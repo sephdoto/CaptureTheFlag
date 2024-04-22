@@ -379,5 +379,7 @@ public class JoinScene extends Scene {
 		childBox.getChildren().add(aiComboBox);
 		return childBox;
 	}
+	
+	
 
 }

@@ -6,10 +6,13 @@
     
 }
 .custom-menu-button {
-    -fx-background-color: black; 
+    -fx-background-color: rgb(25,25,25); 
     -fx-text-fill: red; 
     -fx-font-weight: bold; 
-    -fx-border-color: white;   
+    -fx-border-color: white; 
+     -fx-background-radius: 5px; 
+    -fx-border-radius: 5px; 
+     -fx-border-width: 2px;   
 }
 
 .custom-menu-button:hover {
@@ -43,7 +46,7 @@
    -fx-border-width: 2.0px;
    -fx-background-radius: 5px; 
 	 -fx-border-radius: 5px;
-   
+   -fx-font-size: 90%;
     
     }
     .custom-combo-box-2 .list-cell {
@@ -109,4 +112,33 @@
     -fx-border-width: 2px; 
     -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
 }
+.custom-info-label {
+	 -fx-fill: white;
+	  -fx-font-family: "Century Gothic", sans-serif;
+}
+.spinner {
+   -fx-control-inner-background: rgba(10,40,50,1); 
+    -fx-border-color: black; 
+    -fx-border-width: 1px; 
+    -fx-border-radius: 5px; 
+    -fx-background-radius: 5px; 
+}
+
+.spinner .text-field {
+	-fx-text-fill: white;
+}
+
+.spinner .increment-arrow-button, .spinner .decrement-arrow-button {
+    -fx-background-color: #ccc; 
+}
+
+.spinner .increment-arrow-button:hover, .spinner .decrement-arrow-button:hover {
+    -fx-background-color: #aaa; 
+}
+
+.spinner .increment-arrow, .spinner .decrement-arrow {
+    -fx-background-color: #333; 
+}
+
+
 
