@@ -56,44 +56,35 @@ class EngineToolsTest {
    * @author yannicksiebenhaar
    * 
    */
-  @Test
+/*   @Test
   void testGetNeighbors() {
     fail("Not yet implemented");
-  }
+  } */
 
   /**
    * @author yannicksiebenhaar
    * 
    */
-  @Test
+/*   @Test
   void testValueOf() {
     fail("Not yet implemented");
   }
-
+ */
   /**
    * @author yannicksiebenhaar
    * 
    */
-  @Test
+/*   @Test
   void testGetBestState() {
     fail("Not yet implemented");
-  }
+  } */
 
   /**
    * @author yannicksiebenhaar
    * 
    */
-  @Test
-  void testDeepCopyGameState() {
-    fail("Not yet implemented");
-  }
-
-  /**
-   * @author yannicksiebenhaar
-   * 
-   */
-  @Test
+/*   @Test
   void testGetStrongest() {
     fail("Not yet implemented");
-  }
+  } */
 }
