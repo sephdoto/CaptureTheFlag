@@ -28,7 +28,7 @@ import de.unimannheim.swt.pse.ctf.game.state.Team;
  */
 public class PiecePlacer {
   int spacedOutSideSteps = 10;
-  int spacedOutRepetitions = 1/*Runtime.getRuntime().availableProcessors()*/;
+  int spacedOutRepetitions = Runtime.getRuntime().availableProcessors();
   GameState gameState;
   //boundaries = a teams rectangular partition of the map, in those boundaries the starter pieces will be placed
   int[][] boundaries;

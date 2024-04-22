@@ -10,15 +10,11 @@ import de.unimannheim.swt.pse.ctf.game.state.Team;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.Random;
 import java.util.stream.Stream;
 
 /**
  * This class contains useful methods for the GameEngine.
- *
- * @author sistumpf & ysiebenh
  */
 public class EngineTools extends AI_Tools {
   /**

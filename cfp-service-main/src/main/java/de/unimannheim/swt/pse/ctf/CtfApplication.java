@@ -1,7 +1,6 @@
 package de.unimannheim.swt.pse.ctf;
 
 import de.unimannheim.swt.pse.ctf.game.Game;
-import de.unimannheim.swt.pse.ctf.game.GameEngine;
 import de.unimannheim.swt.pse.ctf.game.NewGameEngine;
 
 import org.springframework.boot.SpringApplication;
