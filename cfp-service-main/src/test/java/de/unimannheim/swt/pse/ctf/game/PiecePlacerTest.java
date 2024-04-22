@@ -85,7 +85,7 @@ class PiecePlacerTest {
     for(int i=0; i<bc.gameState.getTeams().length; i++)
       bc.initializeTeam(i, mt);
     PiecePlacer pp = new PiecePlacer(bc.gameState, bc.boundaries);
-    pp.getBestNeighbour(gs, 0, new int[] {0}).getPieceId();
+    pp.getBestNeighbour(gs, 0, new int[] {0}).getPiece();
   }
   
   @Test

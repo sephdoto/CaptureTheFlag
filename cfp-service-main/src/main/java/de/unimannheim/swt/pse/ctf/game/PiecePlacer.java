@@ -158,20 +158,14 @@ public class PiecePlacer {
     randomPlacement(gameState, randomModifier);
     for (Team team : gameState.getTeams()) {
       int[] sideSteps = new int[] {steps};
-      for(Move bestNeighbour = getBestNeighbour(gameState, Integer.parseInt(team.getId()), sideSteps);
-          !bestNeighbour.getPieceId().equals("");
+      for(ReferenceMove bestNeighbour = getBestNeighbour(gameState, Integer.parseInt(team.getId()), sideSteps);
+          bestNeighbour.getPiece() != null;
           bestNeighbour = getBestNeighbour(gameState, Integer.parseInt(team.getId()), sideSteps)) {
-        final String piece = bestNeighbour.getPieceId();
-        Piece picked =
-            Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream()
-            .filter(p -> p.getId().equals(piece))
-            .findFirst()
-            .get();
         gameState.getGrid()[bestNeighbour.getNewPosition()[0]][bestNeighbour.getNewPosition()[1]]
-            = bestNeighbour.getPieceId();
-        gameState.getGrid()[picked.getPosition()[0]][picked.getPosition()[1]]
+            = bestNeighbour.getPiece().getId();
+        gameState.getGrid()[bestNeighbour.getPiece().getPosition()[0]][bestNeighbour.getPiece().getPosition()[1]]
             = "";
-        picked.setPosition(bestNeighbour.getNewPosition());
+        bestNeighbour.getPiece().setPosition(bestNeighbour.getNewPosition());
       }
     }
     return gameState;
@@ -185,8 +179,8 @@ public class PiecePlacer {
    * @param Team to analyze
    * @return move that leads to the best neighbour
    */
-  Move getBestNeighbour(GameState gs, int teamID, int[] spacedOutSideSteps) {
-    Move bestMove = new Move();
+  ReferenceMove getBestNeighbour(GameState gs, int teamID, int[] spacedOutSideSteps) {
+    ReferenceMove bestMove = new ReferenceMove(null, new int[] {0,0});
     int bestPossibleMoves = numberPossibleMoves(gs, teamID);
     for (int i = 0; i < gs.getTeams()[teamID].getPieces().length; i++) {
       gs.setCurrentTeam(teamID);
@@ -203,11 +197,11 @@ public class PiecePlacer {
             int currentPossibleMoves = numberPossibleMoves(gs, teamID);
             if(currentPossibleMoves > bestPossibleMoves) {
               bestMove.setNewPosition(new int[] {y,x});
-              bestMove.setPieceId(gs.getTeams()[teamID].getPieces()[i].getId());
+              bestMove.setPiece(gs.getTeams()[teamID].getPieces()[i]);
               bestPossibleMoves = currentPossibleMoves;
             } else if (currentPossibleMoves == bestPossibleMoves && spacedOutSideSteps[0] > 0) {
               bestMove.setNewPosition(new int[] {y,x});
-              bestMove.setPieceId(gs.getTeams()[teamID].getPieces()[i].getId());
+              bestMove.setPiece(gs.getTeams()[teamID].getPieces()[i]);
               bestPossibleMoves = currentPossibleMoves;
               spacedOutSideSteps[0]--;
             }
@@ -247,7 +241,7 @@ public class PiecePlacer {
     int moves = 0;
     gameState.setCurrentTeam(teamId);
     for(Piece p : gameState.getTeams()[teamId].getPieces())
-      moves += EngineTools.getPossibleMoves(gameState, p.getId()).size();
+      moves += EngineTools.getPossibleMoves(gameState, p).size();
     return moves;
   }
 

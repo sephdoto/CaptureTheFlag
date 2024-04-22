@@ -7,11 +7,13 @@ import de.unimannheim.swt.pse.ctf.game.exceptions.TooManyPiecesException;
 import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Move;
+import de.unimannheim.swt.pse.ctf.game.state.Piece;
 import de.unimannheim.swt.pse.ctf.game.state.Team;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -180,7 +182,14 @@ public class NewGameEngine implements Game {
   @Override
   public boolean isValidMove(Move move) {
     if (isStarted()) {
-      return EngineTools.getPossibleMoves(this.gameState, move.getPieceId()).stream()
+      Piece picked =
+          Arrays.stream(
+                  gameState.getTeams()[Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0])]
+                      .getPieces())
+              .filter(p -> p.getId().equals(move.getPieceId()))
+              .findFirst()
+              .get();
+      return EngineTools.getPossibleMoves(this.gameState, picked).stream()
           .anyMatch(i -> i[0] == move.getNewPosition()[0] && i[1] == move.getNewPosition()[1]);
     }
     return false;

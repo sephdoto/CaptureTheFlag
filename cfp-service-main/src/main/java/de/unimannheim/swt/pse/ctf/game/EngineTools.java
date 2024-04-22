@@ -112,7 +112,7 @@ public class EngineTools extends AI_Tools {
    */
   public static boolean teamGotMovesLeft(GameState gameState, int teamIndex) {
     for (int i = gameState.getTeams()[teamIndex].getPieces().length - 1; i >= 0; i--) {
-      if (getPossibleMoves(gameState, gameState.getTeams()[teamIndex].getPieces()[i].getId()).size()
+      if (getPossibleMoves(gameState, gameState.getTeams()[teamIndex].getPieces()[i]).size()
           > 0) return true;
     }
     return false;
@@ -236,14 +236,7 @@ public class EngineTools extends AI_Tools {
    * @param String pieceID
    * @return ArrayList<int[]> that contains all valid positions a piece could move to
    */
-  public static ArrayList<int[]> getPossibleMoves(GameState gameState, String pieceID) {
-    Piece piece =
-        Arrays.stream(
-                gameState.getTeams()[Integer.parseInt(pieceID.split(":")[1].split("_")[0])]
-                    .getPieces())
-            .filter(p -> p.getId().equals(pieceID))
-            .findFirst()
-            .get();
+  public static ArrayList<int[]> getPossibleMoves(GameState gameState, Piece piece) {
     ArrayList<int[]> possibleMoves = new ArrayList<int[]>();
     ArrayList<int[]> dirMap = new ArrayList<int[]>();
     if (piece.getDescription().getMovement().getDirections() == null) {
@@ -285,7 +278,7 @@ public class EngineTools extends AI_Tools {
   static int valueOf(GameState gs, int teamID) {
     int result = 0;
     for (Piece p : gs.getTeams()[teamID].getPieces()) {
-      result += getPossibleMoves(gs, p.getId()).size();
+      result += getPossibleMoves(gs, p).size();
     }
     return result;
   }

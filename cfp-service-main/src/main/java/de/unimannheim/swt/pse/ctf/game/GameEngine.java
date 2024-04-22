@@ -261,7 +261,14 @@ public class GameEngine implements Game {
   @Override
   public boolean isValidMove(Move move) {
     if (isStarted()) {
-      return EngineTools.getPossibleMoves(this.gameState, move.getPieceId()).stream()
+      Piece picked =
+          Arrays.stream(
+              gameState.getTeams()[Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0])]
+                  .getPieces())
+          .filter(p -> p.getId().equals(move.getPieceId()))
+          .findFirst()
+          .get();
+      return EngineTools.getPossibleMoves(this.gameState, picked).stream()
           .anyMatch(i -> i[0] == move.getNewPosition()[0] && i[1] == move.getNewPosition()[1]);
     }
     return false;
@@ -530,7 +537,7 @@ public class GameEngine implements Game {
       boolean canMove = false;
       for (int j = 0; !canMove && j < gameState.getTeams()[i].getPieces().length; j++) {
         // if there are possible moves
-        if (EngineTools.getPossibleMoves(gameState, gameState.getTeams()[i].getPieces()[j].getId())
+        if (EngineTools.getPossibleMoves(gameState, gameState.getTeams()[i].getPieces()[j])
                 .size()
             > 0) {
           canMove = true;
