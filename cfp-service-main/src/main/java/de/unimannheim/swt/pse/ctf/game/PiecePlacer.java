@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.DoubleSummaryStatistics;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -28,7 +29,7 @@ import de.unimannheim.swt.pse.ctf.game.state.Team;
  */
 public class PiecePlacer {
   int spacedOutSideSteps = 10;
-  int spacedOutRepetitions = Runtime.getRuntime().availableProcessors();
+  int spacedOutRepetitions = 1/*Runtime.getRuntime().availableProcessors()*/;
   GameState gameState;
   //boundaries = a teams rectangular partition of the map, in those boundaries the starter pieces will be placed
   int[][] boundaries;
@@ -57,7 +58,7 @@ public class PiecePlacer {
         placePiecesSymmetrical();
         break;
       case spaced_out:
-        placePiecesSpaced();
+        placePiecesSpaced(new HashSet<Piece>(), false);
         break;
       case defensive:
         placePiecesDefensive();
@@ -110,24 +111,22 @@ public class PiecePlacer {
    * @author sistumpf
    * @param GameState gameState
    */
-  void placePiecesSpaced() {
+  void placePiecesSpaced(HashSet<Piece> strongestPieces, boolean shuffle) {
     ExecutorService executorService = Executors.newFixedThreadPool(spacedOutRepetitions);
     List<Callable<GameState>> tasks = new LinkedList<>();
     for (int i = 0; i < this.spacedOutRepetitions; i++) {
       final int mod = i;
       tasks.add(
           () -> {
-            return hillClimbingSpacedPlaced((Integer.MAX_VALUE / this.spacedOutRepetitions) * mod, mod * this.spacedOutSideSteps, EngineTools.deepCopyGameState(gameState));
+            return hillClimbingSpacedPlaced((Integer.MAX_VALUE / this.spacedOutRepetitions) * mod, mod * this.spacedOutSideSteps, EngineTools.deepCopyGameState(gameState), strongestPieces, shuffle);
           });
     }
-    
     ArrayList<GameState> stateList = new ArrayList<GameState>();
     try {
       List<Future<GameState>> futures = executorService.invokeAll(tasks);
       for(int i=0; i<futures.size(); i++)
         stateList.add(futures.get(i).get());
     } catch (InterruptedException | ExecutionException e) { e.printStackTrace(); }
-    
     for(int i=0; i<stateList.size(); i++)
     stateList.sort(new Comparator<GameState>() {
       @Override
@@ -140,8 +139,33 @@ public class PiecePlacer {
     executorService.shutdown();
   }
   
-  private void placePiecesDefensive() {
-    
+  void placePiecesDefensive() {
+    HashSet<Piece> strongestPieces = new HashSet<Piece>();
+    for(Team team : gameState.getTeams()) {
+      ArrayList<Piece> piecesByStrength = new ArrayList<Piece>();
+      piecesByStrength.addAll(Arrays.asList(team.getPieces()));
+      piecesByStrength.sort(new Comparator<Piece>() {
+        @Override
+        public int compare(Piece p1, Piece p2) {
+          return p2.getDescription().getAttackPower() - p1.getDescription().getAttackPower();
+        }
+      });
+      //place strongest 8 pieces around the base
+      for(int i=0; i<piecesByStrength.size(); i++) {
+        if(i<8) {
+          int[] newPos = respawnPiecePosition(team.getBase(), this.nextBaseDirection(team));
+          piecesByStrength.get(i).setPosition(newPos);
+          gameState.getGrid()[newPos[0]][newPos[1]] = piecesByStrength.get(i).getId();
+          strongestPieces.add(piecesByStrength.get(i));
+        } else {
+          piecesByStrength.get(i).setPosition(new int[] {-1,-1});
+        }
+      }
+    }
+      //shuffle pieces
+    placePiecesSpaced(strongestPieces, true);
+      //place remaining pieces spaced out
+    placePiecesSpaced(strongestPieces, false);
   }
   
   ////////////////////////////////////////////////////
@@ -154,21 +178,109 @@ public class PiecePlacer {
    * @param gameState
    * @return
    */
-  GameState hillClimbingSpacedPlaced(int randomModifier, int steps, GameState gameState) {
-    randomPlacement(gameState, randomModifier);
+  GameState hillClimbingSpacedPlaced(int randomModifier, int steps, GameState gameState, HashSet<Piece> strongestPieces, boolean shuffle) {
+    strongestPieces = updateReferences(gameState, strongestPieces);
+    if(!shuffle)
+      randomPlacement(gameState, randomModifier, strongestPieces);
     for (Team team : gameState.getTeams()) {
       int[] sideSteps = new int[] {steps};
-      for(ReferenceMove bestNeighbour = getBestNeighbour(gameState, Integer.parseInt(team.getId()), sideSteps);
+      for(ReferenceMove bestNeighbour = getBestNeighbour(gameState, strongestPieces, shuffle, Integer.parseInt(team.getId()), sideSteps);
           bestNeighbour.getPiece() != null;
-          bestNeighbour = getBestNeighbour(gameState, Integer.parseInt(team.getId()), sideSteps)) {
-        gameState.getGrid()[bestNeighbour.getNewPosition()[0]][bestNeighbour.getNewPosition()[1]]
-            = bestNeighbour.getPiece().getId();
-        gameState.getGrid()[bestNeighbour.getPiece().getPosition()[0]][bestNeighbour.getPiece().getPosition()[1]]
-            = "";
-        bestNeighbour.getPiece().setPosition(bestNeighbour.getNewPosition());
+          bestNeighbour = getBestNeighbour(gameState, strongestPieces, shuffle, Integer.parseInt(team.getId()), sideSteps)) {
+        if(gameState.getGrid()[bestNeighbour.getNewPosition()[0]][bestNeighbour.getNewPosition()[1]].equals("")) {
+          gameState.getGrid()[bestNeighbour.getNewPosition()[0]][bestNeighbour.getNewPosition()[1]]
+              = bestNeighbour.getPiece().getId();
+          gameState.getGrid()[bestNeighbour.getPiece().getPosition()[0]][bestNeighbour.getPiece().getPosition()[1]]
+              = "";
+          bestNeighbour.getPiece().setPosition(bestNeighbour.getNewPosition());
+        } else {
+          int[] oldPos = bestNeighbour.getPiece().getPosition();
+          int[] newPos = bestNeighbour.getNewPosition();
+          Piece occupant =
+              Arrays.stream(
+                      gameState.getTeams()[Integer.parseInt(team.getId())]
+                          .getPieces())
+                  .filter(p -> p.getId().equals(gameState.getGrid()[newPos[0]][newPos[1]]))
+                  .findFirst()
+                  .get();
+          bestNeighbour.getPiece().setPosition(newPos);
+          occupant.setPosition(oldPos);
+          gameState.getGrid()[newPos[0]][newPos[1]] = bestNeighbour.getPiece().getId();
+          gameState.getGrid()[oldPos[0]][oldPos[1]] = occupant.getId();
+        }
       }
     }
     return gameState;
+  }
+  
+  /**
+   * After deep copying a gameState the piece references in ignoreThese are not correct anymore.
+   * This method "updates" the references by creating a new Set with the right references.
+   * @param gameState
+   * @param ignoreThese
+   * @return
+   */
+  HashSet<Piece> updateReferences(GameState gameState, HashSet<Piece> ignoreThese){
+    HashSet<Piece> newIgnores = new HashSet<Piece>();
+    for(Piece piece : ignoreThese) {
+      int team = Integer.parseInt(piece.getId().split(":")[1].split("_")[0]);
+      for(Piece compare : gameState.getTeams()[team].getPieces())
+        if(piece.getId().equals(compare.getId())) {
+          newIgnores.add(compare);
+        }
+    }
+      
+    return newIgnores;
+  }
+  
+  /**
+   * Returns the best neighbour.
+   * Depending on shuffle, the best neighbour is either the truly best neighbour or the best neighbour with pieces from
+   * strongestPieces shuffled positions.
+   *
+   * @author sistumpf
+   * @param GameState to analyze
+   * @param Team to analyze
+   * @return move that leads to the best neighbour
+   */
+  ReferenceMove getBestNeighbour(GameState gs, HashSet<Piece> strongestPieces, boolean shuffle, int teamID, int[] spacedOutSideSteps) {
+    if(!shuffle)
+      return getBestNeighbour(gs, strongestPieces, teamID, spacedOutSideSteps);
+    return getShuffledNeighbour(gs, strongestPieces, teamID, spacedOutSideSteps);
+  }
+  
+
+  ReferenceMove getShuffledNeighbour(GameState gs, HashSet<Piece> shuffleThese, int teamID, int[] spacedOutSideSteps) {
+    gs.setCurrentTeam(teamID);
+    ReferenceMove bestMove = new ReferenceMove(null, new int[] {0,0});
+    int bestPossibleMoves = numberPossibleMoves(gs, teamID);
+    for(Piece piece : shuffleThese) {
+      int[] oldPos = piece.getPosition().clone();
+      for(Piece other : shuffleThese) {
+        if(piece == other ||
+            Integer.parseInt(piece.getTeamId()) != teamID ||
+            !piece.getTeamId().equals(other.getTeamId())) continue;
+        int[] newPos = other.getPosition().clone();
+        /* The only uses for grid in EngineTools is to check what occupies a position and if an opponent is weaker.
+         * Switching two pieces of the same team changes nothing, so the grid doesn't need to be modified here. */
+        piece.setPosition(newPos);
+        other.setPosition(oldPos);
+        int currentPossibleMoves = numberPossibleMoves(gs, teamID);
+        if(currentPossibleMoves > bestPossibleMoves) {
+          bestMove.setNewPosition(newPos);
+          bestMove.setPiece(piece);
+          bestPossibleMoves = currentPossibleMoves;
+        } else if (currentPossibleMoves == bestPossibleMoves && spacedOutSideSteps[0] > 0) {
+          bestMove.setNewPosition(newPos);
+          bestMove.setPiece(piece);
+          bestPossibleMoves = currentPossibleMoves;
+          spacedOutSideSteps[0]--;
+        }
+        piece.setPosition(oldPos);
+        other.setPosition(newPos);
+      }
+    }
+    return bestMove;
   }
   
   /**
@@ -179,42 +291,43 @@ public class PiecePlacer {
    * @param Team to analyze
    * @return move that leads to the best neighbour
    */
-  ReferenceMove getBestNeighbour(GameState gs, int teamID, int[] spacedOutSideSteps) {
+  ReferenceMove getBestNeighbour(GameState gs, HashSet<Piece> ignoreThese, int teamID, int[] spacedOutSideSteps) {
+    boolean skipSomePieces = ignoreThese.size() > 0;
+    gs.setCurrentTeam(teamID);
     ReferenceMove bestMove = new ReferenceMove(null, new int[] {0,0});
     int bestPossibleMoves = numberPossibleMoves(gs, teamID);
-    for (int i = 0; i < gs.getTeams()[teamID].getPieces().length; i++) {
-      gs.setCurrentTeam(teamID);
-      int[] oldPos = new int[2];
+    for (Piece piece : gs.getTeams()[teamID].getPieces()) {
+      if(skipSomePieces)
+        if(ignoreThese.contains(piece))
+          continue;
+      int[] oldPos = piece.getPosition().clone();
       for (int y = boundaries[teamID][0]; y <= boundaries[teamID][1]; y++) {
         for (int x = boundaries[teamID][2]; x <= boundaries[teamID][3]; x++) {
-          oldPos[0] = gs.getTeams()[teamID].getPieces()[i].getPosition()[0]; 
-          oldPos[1] = gs.getTeams()[teamID].getPieces()[i].getPosition()[1];
-          
           if (gs.getGrid()[y][x].equals("")) {
-            gs.getGrid()[y][x] = gs.getTeams()[teamID].getPieces()[i].getId();
+            gs.getGrid()[y][x] = piece.getId();
             gs.getGrid()[oldPos[0]][oldPos[1]] = "";
-            gs.getTeams()[teamID].getPieces()[i].setPosition(new int[] {y, x});
+            piece.setPosition(new int[] {y, x});
             int currentPossibleMoves = numberPossibleMoves(gs, teamID);
             if(currentPossibleMoves > bestPossibleMoves) {
               bestMove.setNewPosition(new int[] {y,x});
-              bestMove.setPiece(gs.getTeams()[teamID].getPieces()[i]);
+              bestMove.setPiece(piece);
               bestPossibleMoves = currentPossibleMoves;
             } else if (currentPossibleMoves == bestPossibleMoves && spacedOutSideSteps[0] > 0) {
               bestMove.setNewPosition(new int[] {y,x});
-              bestMove.setPiece(gs.getTeams()[teamID].getPieces()[i]);
+              bestMove.setPiece(piece);
               bestPossibleMoves = currentPossibleMoves;
               spacedOutSideSteps[0]--;
             }
-            gs.getGrid()[oldPos[0]][oldPos[1]] = gs.getTeams()[teamID].getPieces()[i].getId();
+            gs.getGrid()[oldPos[0]][oldPos[1]] = piece.getId();
             gs.getGrid()[y][x] = "";
-            gs.getTeams()[teamID].getPieces()[i].setPosition(oldPos);
+            piece.setPosition(oldPos);
            }
         }
       }
     }
     return bestMove;
   }
-
+  
   /**
    * Calculates the number of possible moves to be made on a GameState.
    * 
@@ -373,9 +486,13 @@ public class PiecePlacer {
    * @author ysiebenh, sistumpf
    * @param modifier to modify the seeded random
    */
-  void randomPlacement(GameState gameState, int modifier) {
+  void randomPlacement(GameState gameState, int modifier, HashSet<Piece> ignoreThese) {
+    boolean skipSomePieces = ignoreThese.size() > 0;
     for (int team=0; team<gameState.getTeams().length; team++) {
       for (Piece p : gameState.getTeams()[team].getPieces()) {
+        if(skipSomePieces)
+          if(ignoreThese.contains(p))
+            continue;
         int newY = 0;
         int newX = 0;
         do {

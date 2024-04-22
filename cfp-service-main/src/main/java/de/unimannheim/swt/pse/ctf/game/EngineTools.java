@@ -380,7 +380,8 @@ public class EngineTools extends AI_Tools {
   static void updateGrid(GameState gs) {
     for (Team team : gs.getTeams()) {
       for (Piece piece : team.getPieces()) {
-        gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = piece.getId();
+        if(!positionOutOfBounds(gs.getGrid(), piece.getPosition()))
+          gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = piece.getId();
       }
     }
   }
