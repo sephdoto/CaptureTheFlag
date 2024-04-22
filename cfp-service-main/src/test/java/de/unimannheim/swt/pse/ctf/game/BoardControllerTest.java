@@ -8,6 +8,7 @@ import de.unimannheim.swt.pse.ctf.game.exceptions.TooManyPiecesException;
 import de.unimannheim.swt.pse.ctf.game.map.MapTemplate;
 import de.unimannheim.swt.pse.ctf.game.map.PlacementType;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
+import de.unimannheim.swt.pse.ctf.game.state.Piece;
 import de.unimannheim.swt.pse.ctf.game.state.Team;
 
 class BoardControllerTest {
@@ -25,6 +26,64 @@ class BoardControllerTest {
       bordi.initializeTeam(i, template);
   }
 
+  @Test
+  void testTooManyPieces() {
+    //test if it works for no blocks
+    GameState state = TestValues.getTestState();
+    MapTemplate template = TestValues.getTestTemplate();
+    int teams = 2;
+    template.setTeams(teams);
+    template.setGridSize(new int[] {100, 100});
+    template.setBlocks(0);
+    state.setTeams(new Team[teams]);
+    bordi = new BoardController(state, template);
+    for(int i=0; i<teams; i++)
+      bordi.initializeTeam(i, template);
+    
+    bordi.gameState.getTeams()[0].setPieces(new Piece[(50*100)-1]);
+    assertTrue(bordi.allPiecesPlacable());
+    bordi.gameState.getTeams()[0].setPieces(new Piece[(50*100)]);
+    assertFalse(bordi.allPiecesPlacable());
+    
+    //test if it works for more than 2 players
+    state = TestValues.getTestState();
+    template = TestValues.getTestTemplate();
+    teams = 4;
+    template.setTeams(teams);
+    template.setGridSize(new int[] {100, 100});
+    int blocks = 100;
+    template.setBlocks(blocks);
+    state.setTeams(new Team[teams]);
+    bordi = new BoardController(state, template);
+    for(int i=0; i<teams; i++)
+      bordi.initializeTeam(i, template);
+    
+    bordi.gameState.getTeams()[0].setPieces(new Piece[(50*50)-1-blocks]);
+    assertTrue(bordi.allPiecesPlacable());
+    bordi.gameState.getTeams()[0].setPieces(new Piece[(50*50)]);
+    bordi.gameState.getTeams()[1].setPieces(new Piece[(50*50)]);
+    bordi.gameState.getTeams()[2].setPieces(new Piece[(50*50)]);
+    bordi.gameState.getTeams()[3].setPieces(new Piece[(50*50)]);
+    assertFalse(bordi.allPiecesPlacable());
+    
+    //Test if blocks can obscure the view
+    state = TestValues.getTestState();
+    template = TestValues.getTestTemplate();
+    teams = 1;
+    template.setTeams(teams);
+    template.setGridSize(new int[] {100, 100});
+    blocks = 9999;
+    template.setBlocks(blocks);
+    state.setTeams(new Team[teams]);
+    bordi = new BoardController(state, template);
+    for(int i=0; i<teams; i++)
+      bordi.initializeTeam(i, template);
+    bordi.gameState.getTeams()[0].setPieces(new Piece[0]);
+    assertTrue(bordi.allPiecesPlacable());
+    bordi.gameState.getTeams()[0].setPieces(new Piece[1]);
+    assertFalse(bordi.allPiecesPlacable());
+  }
+  
   @Test
   void testPlacePiecesDefensive() throws TooManyPiecesException {
     bordi.initPieces(PlacementType.defensive);

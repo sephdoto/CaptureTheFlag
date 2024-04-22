@@ -249,7 +249,34 @@ public class BoardController {
    * @throws TooManyPiecesException
    */
   void initPieces(PlacementType placement) throws TooManyPiecesException {
-    //TODO implement too many pieces checks
+    if(!allPiecesPlacable())
+      throw new TooManyPiecesException("Some pieces could not be placed, there might be too many blocks or too many pieces");
     new PiecePlacer(gameState, this.boundaries).placePieces(placement);
+  }
+
+  /**
+   * A simple check if all pieces are placable.
+   * Each Teams bounding box gets checked for empty spaces, if there are less empty spaces than pieces an exception gets thrown.
+   * Might be a little slow for huge grids but ensures reliable results.
+   * Tests with calculating the remaining free fields were inconsistent due to the random placement of the blocks and
+   * not floor(n^2/4) teams per grid. It resulted in telling there are free fields, when they were on a not used partition,
+   * making the free fields useless.
+   * This might be improved in the future as the block placement can be calculated, but it is ok for now.
+   * 
+   * @author sistumpf
+   * @return true if all pieces can be placed
+   * @throws TooManyPiecesException if not all pieces can be placed
+   */
+  boolean allPiecesPlacable() {
+    for(int team=0; team<this.boundaries.length; team++) {
+      int pieces = this.gameState.getTeams()[team].getPieces().length;
+      for(int y=this.boundaries[team][0]; y<=this.boundaries[team][1]; y++)
+        for(int x=this.boundaries[team][2]; pieces > 0 && x<=this.boundaries[team][3]; x++)
+          if(this.gameState.getGrid()[y][x].equals(""))
+            pieces--;
+      if(pieces > 0)
+        return false;
+    }
+    return true;
   }
 }
