@@ -26,6 +26,11 @@ import javafx.scene.paint.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Implementation of the {@link Game} interface from Team CFP14
+ *
+ * @author sistumpf and rsyed
+ */
 public class GameEngine implements Game {
 
   // **************************************************
@@ -71,7 +76,13 @@ public class GameEngine implements Game {
   // **************************************************
   // END of Alt Mode Data
   // **************************************************
-
+  /**
+   * Method creates a game based on the MapTemplate given to it For logic see design and flow
+   * documents
+   *
+   * @author rsyed
+   * @param template the {@link MapTemplate} you want to want to use for the game
+   */
   @Override
   public GameState create(MapTemplate template) {
     this.copyOfTemplate = template; // Template Copy Box
@@ -80,10 +91,10 @@ public class GameEngine implements Game {
     gameState = new GameState();
     gameState.setTeams(new Team[template.getTeams()]);
 
-    //inits the grid with blocks and bases
+    // inits the grid with blocks and bases
     new BoardController(gameState, template);
-    
-    initAltGameModeLogic(template); // Inits Alt Game mode support
+    // Inits Alt Game mode support
+    initAltGameModeLogic(template);
 
     return gameState;
   }
@@ -97,6 +108,7 @@ public class GameEngine implements Game {
    *       team at random
    * </ul>
    *
+   * @author rsyed
    * @param teamId Team ID
    * @return Team
    * @throws NoMoreTeamSlots No more team slots available
@@ -110,30 +122,10 @@ public class GameEngine implements Game {
     Team tempTeam = new BoardController(this.gameState).initializeTeam(slot, copyOfTemplate);
     // Method above sets Flags, Pieces in the Team object, which is already a part of this.gameState
 
-    teamToInteger.put(
-        teamId, slot); // initial save in two dictionaries.I know its stupid but we can remove one
+    teamToInteger.put(teamId, slot);
     integerToTeam.put(slot, teamId);
 
-    // **************************************************
-    // Init the Game State here with the Team
-    // **************************************************
-    // TODO Base, Pieces, Flag
-    // test code
-
-    // **************************************************
-    // End of Init the Game State
-    // **************************************************
-
-    // **************************************************
-    // Slot Full Check
-    // **************************************************
-    // TODO this method below ALSO has to set the map in the game state with all the pieces, blocks,
-    // bases etc on the map! Code needs to be finished
-    canWeStartTheGameUwU(); // Method also checks for alt game logic
-
-    // **************************************************
-    // End of is Slot Full Check
-    // **************************************************
+    canWeStartTheGameUwU();
 
     return tempTeam;
   }
@@ -184,7 +176,8 @@ public class GameEngine implements Game {
     if (isStarted()) {
       Piece picked =
           Arrays.stream(
-                  gameState.getTeams()[Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0])]
+                  gameState
+                      .getTeams()[Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0])]
                       .getPieces())
               .filter(p -> p.getId().equals(move.getPieceId()))
               .findFirst()
@@ -196,7 +189,7 @@ public class GameEngine implements Game {
   }
 
   /**
-   * Checks whether the Game SESSION is started based on the current {@link GameState}.
+   * Checks whether the Game is started based on the current {@link GameState}.
    *
    * @author rsyed
    * @return true if game is started, false is over
@@ -231,11 +224,10 @@ public class GameEngine implements Game {
       for (Team team : this.gameState.getTeams()) {
         if (team != null) {
           winners.add(integerToTeam.get(Integer.parseInt(team.getId())));
-          LOG.info("Winner was " + integerToTeam.get(Integer.parseInt(team.getId())));
         }
       }
     }
-   
+
     return winners.toArray(new String[winners.size()]);
   }
 
@@ -330,7 +322,7 @@ public class GameEngine implements Game {
   }
 
   /**
-   * Helper method to start logic for TimeLimitedGame.
+   * This method inits some variables and logic to start logic for TimeLimitedGame.
    *
    * @author rsyed
    */
@@ -341,7 +333,7 @@ public class GameEngine implements Game {
   }
 
   /**
-   * Helper method to start logic for MoveTimeLimitedGame. Do not call
+   * This method inits some variables and logic for MoveTimeLimitedGame
    *
    * @author rsyed
    */
@@ -556,7 +548,7 @@ public class GameEngine implements Game {
    * @author rsyed
    */
   private void setGameOver() {
-    this.gameState.setCurrentTeam(-1);  //Sets current team to -1 to indicate game has ended
+    this.gameState.setCurrentTeam(-1); // Sets current team to -1 to indicate game has ended
     this.endDate = new Date();
   }
 
@@ -578,28 +570,18 @@ public class GameEngine implements Game {
 
   /**
    * Checks if we can start the game. Call this after adding a team to the game
-   *
+   * @throws GameOver if there are too many pieces compared to the map size
    * @author rsyed
    */
   private void canWeStartTheGameUwU() {
     if (getRemainingTeamSlots() == 0) {
-
-      // **************************************************
-      // Make the game Grid
-      // **************************************************
-      
       BoardController boardController = new BoardController(this.gameState);
-      //Bases and Blocks are placed in the BordController constructor
+      // Bases and Blocks are placed in the BordController constructor
       try {
         boardController.initPieces(copyOfTemplate.getPlacement()); // Inits pieces on the grid
       } catch (TooManyPiecesException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+        throw new GameOver();
       }
-      // **************************************************
-      // End of making the game Grid
-      // **************************************************
-
       setRandomStartingTeam();
       startAltGameController();
       this.startedDate = new Date();
@@ -619,7 +601,7 @@ public class GameEngine implements Game {
    * Helper method returns HEX Codes for colors
    *
    * @author rsyed
-   * @return
+   * @return String containing a randomized color as a HEX Code
    */
   static String getRandColor() {
     Random rand = new Random();
