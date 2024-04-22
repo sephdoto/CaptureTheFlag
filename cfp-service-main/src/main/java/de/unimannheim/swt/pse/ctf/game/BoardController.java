@@ -103,7 +103,7 @@ public class BoardController {
     // initializing the team
     Team team = new Team();
     team.setId(Integer.toString(teamID));
-    team.setColor(NewGameEngine.getRandColor());
+    team.setColor(GameEngine.getRandColor());
     team.setFlags(template.getFlags());
     team.setBase(findBase(""+teamID));
     

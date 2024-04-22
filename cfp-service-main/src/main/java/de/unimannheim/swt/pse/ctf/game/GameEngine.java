@@ -26,7 +26,7 @@ import javafx.scene.paint.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NewGameEngine implements Game {
+public class GameEngine implements Game {
 
   // **************************************************
   // Fields
@@ -50,7 +50,7 @@ public class NewGameEngine implements Game {
   // Nice to haves
   // **************************************************
   private MapTemplate copyOfTemplate; // Saves a copy of the template
-  private static final Logger LOG = LoggerFactory.getLogger(NewGameEngine.class);
+  private static final Logger LOG = LoggerFactory.getLogger(GameEngine.class);
 
   // **************************************************
   // END of Nice to haves

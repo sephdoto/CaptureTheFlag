@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 //import de.unimannheim.swt.pse.ctf.game.state.Piece;
 
 class GameEngineTest {
-  static NewGameEngine gameEngine;
+  static GameEngine gameEngine;
 
   /**
    * @author sistumpf
