@@ -6,6 +6,7 @@ import org.ctf.shared.client.service.RestClientLayer;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.constants.Constants.Port;
+import org.ctf.shared.state.data.map.MapTemplate;
 
 /**
  * Defines the Step Builder Pattern which must be used to create an object of the Client Class
@@ -85,7 +86,18 @@ public class ClientStepBuilder {
      *
      * @param selector True for Enabling Save, False for disabled
      */
-    BuildStep enableSaveGame(boolean selector);
+    CreatorOrJoinerStep enableSaveGame(boolean selector);
+  }
+
+  public static interface CreatorOrJoinerStep {
+    /**
+     * Method to enable if the AI Game will be logged players
+     *
+     * @param selector True for Enabling Save, False for disabled
+     */
+    BuildStep createGameMode(MapTemplate mapTemplate, String teamName);
+
+    BuildStep joinerGameMode(String GameID, String teamName);
   }
 
   /** Build Step */
@@ -101,12 +113,18 @@ public class ClientStepBuilder {
           PortSelectionStep,
           PlayerTypeSelectionStep,
           LoggerEnabler,
+          CreatorOrJoinerStep,
           BuildStep {
     private CommLayerInterface comm;
     private String host;
     private String port;
     private AI ai;
     private boolean enableSave;
+    private MapTemplate mapTemplate;
+    private String teamName;
+    private String gameSessionGiven;
+    private boolean joinerMode;
+    private boolean creatorMode;
 
     /**
      * Sets the underlying layer in use by the Client
@@ -191,8 +209,26 @@ public class ClientStepBuilder {
      * @param selector True for Enabling Save, False for Disabled
      */
     @Override
-    public BuildStep enableSaveGame(boolean selector) {
+    public CreatorOrJoinerStep enableSaveGame(boolean selector) {
       this.enableSave = selector;
+      return this;
+    }
+
+    @Override
+    public BuildStep createGameMode(MapTemplate mapTemplate, String teamName) {
+      this.mapTemplate = mapTemplate;
+      this.teamName = teamName;
+      this.creatorMode = true;
+      this.joinerMode = false;
+      return this;
+    }
+
+    @Override
+    public BuildStep joinerGameMode(String GameID, String teamName) {
+      this.gameSessionGiven = GameID;
+      this.teamName = teamName;
+      this.joinerMode = true;
+      this.creatorMode = false;
       return this;
     }
 
@@ -201,6 +237,10 @@ public class ClientStepBuilder {
       Client client;
       if (!ai.equals(AI.HUMAN)) {
         client = new AIClient(comm, host, port, ai, enableSave);
+      } else if (creatorMode && !ai.equals(AI.HUMAN)) {
+        client = new AIClient(comm, host, port, ai, enableSave, mapTemplate, teamName);
+      } else if (joinerMode && !ai.equals(AI.HUMAN)) {
+        client = new AIClient(comm, host, port, ai, enableSave, gameSessionGiven, teamName);
       } else {
         client = new Client(comm, host, port);
       }

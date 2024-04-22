@@ -131,7 +131,6 @@ public class AIPlayerSimulator {
         """;
 
     Gson gson = new Gson();
-    MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     Client javaClient1 =
         ClientStepBuilder.newBuilder()
             .enableRestLayer(false)
@@ -139,13 +138,14 @@ public class AIPlayerSimulator {
             .onPort("8888")
             .AIPlayerSelector(AI.MCTS)
             .enableSaveGame(false)
+            .createGameMode(gson.fromJson(jsonPayload, MapTemplate.class), "Seph1")
             .build();
 
-    javaClient1.createGame(template);
+   javaClient1.createGame(gson.fromJson(jsonPayload, MapTemplate.class));
     GameID = javaClient1.getCurrentGameSessionID();
     System.out.println(GameID + " Is set");
     javaClient1.joinGame("AIOne");
-    System.out.println("joined");
+    System.out.println("joined"); 
     ((AIClient) javaClient1).runHandler();
   }
 
@@ -163,9 +163,10 @@ public class AIPlayerSimulator {
             .onPort("8888")
             .AIPlayerSelector(AI.MCTS)
             .enableSaveGame(false)
+            .joinerGameMode(GameID, "Seph2")
             .build();
     javaClient2.joinExistingGame("localhost", "8888", GameID, "AITwo");
-    System.out.println("joined");
+    System.out.println("joined"); 
     ((AIClient) javaClient2).runHandler();
   } 
 

@@ -579,5 +579,8 @@ public class Client implements GameClientInterface {
   public int getLastTeamTurn() {
     return lastTeamTurn;
   }
-
+  
+  public ServerDetails getServerDetails(){
+    return this.serverInfo;
+  }
 }
