@@ -68,6 +68,8 @@ public class MapEditorScene extends Scene {
 	private boolean spinnerchange = false;
 	private boolean boxchange = false;
 	private Text text = new Text("");
+	private GamePane visual;
+	private StackPane test;
 
 	public MapEditorScene(HomeSceneController hsc) {
 		super(new VBox(), 1000, 500);
@@ -79,8 +81,7 @@ public class MapEditorScene extends Scene {
 		try {
 			if (defaultMap.exists()) {
 				tmpTemplate = JSON_Tools.readMapTemplate(defaultMap);
-//				MapPreview mp = new MapPreview(tmpTemplate);
-//				GameState gamestate = mp.getGameState();
+				
 			} else {
 				tmpTemplate = createExampleTemplate();
 				System.out.println("Fehler: Default Template konnte nicht geladen werden!"
@@ -146,13 +147,15 @@ public class MapEditorScene extends Scene {
 
 		sep.getChildren().add(leftroot);
 		//sep.getChildren().add(CreateMapGrid());
-		StackPane test = new StackPane();
+		test = new StackPane();
 		test.setStyle("-fx-border-color: rgba(255,255,255,1); -fx-border-width: 2px;" + "-fx-background-color: 	rgb(25,25,25);"
 				+ "-fx-background-radius: 20px; -fx-border-radius: 20px;" + "-fx-alignment: top-center;");
 		
 		
-		GamePane visual = new GamePane(CreateTextGameStates.createTestGameState1());
-		//GamePane visual = new GamePane(mp.getGameState());
+		//GamePane visual = new GamePane(CreateTextGameStates.createTestGameState1());
+		MapPreview mp = new MapPreview(tmpTemplate);
+		GameState gamestate = mp.getGameState();
+		 visual = new GamePane(mp.getGameState());
 		
 		test.getChildren().add(visual);
 		test.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
@@ -872,6 +875,11 @@ public class MapEditorScene extends Scene {
 			options[1] = createFigurChooser();
 			left.getChildren().clear();
 			left.getChildren().add(options[0]);
+			this.test.getChildren().remove(visual);
+			MapPreview mp = new MapPreview(tmpTemplate);
+			GameState gamestate = mp.getGameState();
+			visual = new GamePane(gamestate);
+			this.test.getChildren().add(visual);
 		});
 		default2Item.setOnAction(event -> {
 			File defaultMap = new File("src" + File.separator + "main" + File.separator + "java" + File.separator
@@ -936,7 +944,14 @@ public class MapEditorScene extends Scene {
 			submit.setStyle("-fx-text-fill: white;" + "-fx-background-color: rgba(0,0,0,0.4);"
 					+ "-fx-border-color: #FFCCE5; -fx-border-width: 2px;");
 		});
-		submit.setOnAction(e -> printTemplate());
+		submit.setOnAction(e -> {
+			try {
+				JSON_Tools.saveMapTemplateAsFile("test", tmpTemplate);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
 		submit.setFont(Font.font("System", FontWeight.BOLD, 14));
 		return submit;
 	}
