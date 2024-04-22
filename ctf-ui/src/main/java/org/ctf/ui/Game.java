@@ -110,6 +110,9 @@ public class Game {
 				c.deselect();
 			}
 		}
+		for(CostumFigurePain c: cb.getFigures().values()) {
+			c.setUnattacble();
+		}
 		for (BackgroundCellV2 c : cb.getCells().values()) {
 			for (int[] pos : possibleMoves) {
 				if (c.x == pos[0] && c.y == pos[1]) {
@@ -117,6 +120,7 @@ public class Game {
 					if (!c.isOccupied()) {
 						c.showPossibleMove();
 					} else if (c.isOccupied()) {
+						System.out.println("Attackble: " + c.x + ", c.y");
 						c.getChild().setAttacable();
 					}
 				}
