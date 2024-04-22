@@ -18,8 +18,8 @@ cache:
 
 include:
   - local: cfp-service-main/.gitlab-ci.yml
-  - local: ctf-ui/.gitlab-ci.yml
-  - local: shared/.gitlab-ci.yml
+#  - local: ctf-ui/.gitlab-ci.yml
+#  - local: shared/.gitlab-ci.yml
 
 
 .test-module:
@@ -44,15 +44,15 @@ build-server-module:
   - .cfp-module
   - .build-module
 
-build-ui-module:
-  extends:
-  - .ui-module
-  - .build-module
+#build-ui-module:
+#  extends:
+#  - .ui-module
+#  - .build-module
 
-build-shared-module:
-  extends:
-  - .shared-module
-  - .build-module
+#build-shared-module:
+#  extends:
+#  - .shared-module
+#  - .build-module
 
 # TEST JOBS
 test-server-module:
@@ -60,12 +60,12 @@ test-server-module:
   - .cfp-module
   - .build-module
 
-test-ui-module:
-  extends:
-    - .ui-module
-    - .test-module
+#test-ui-module:
+#  extends:
+#    - .ui-module
+#    - .test-module
 
-test-shared-module:
-  extends:
-   - .shared-module
-   - .test-module
+#test-shared-module:
+#  extends:
+#   - .shared-module
+#   - .test-module
