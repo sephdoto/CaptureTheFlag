@@ -181,6 +181,7 @@ public class GamePane extends HBox {
 			Piece[] pieces = currenTeam.getPieces();
 			for(Piece piece: pieces) {
 				CostumFigurePain pieceRep = new CostumFigurePain(piece);
+				pieceRep.showTeamColor(teamColor);
 				figures.put(piece.getId(), pieceRep);
 				//allFigures.add(pieceRep);
 				int x = piece.getPosition()[0];

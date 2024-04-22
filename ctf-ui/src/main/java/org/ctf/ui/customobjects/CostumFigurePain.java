@@ -15,11 +15,13 @@ import org.ctf.shared.state.Piece;
 import javafx.event.EventHandler;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 import test.CreateTextGameStates;
@@ -31,7 +33,6 @@ import test.CreateTextGameStates;
 public class CostumFigurePain extends Pane {
 	//Achtung: DIe Position von dem Piece, das zu einem Costumfigurepain gehört kann abweichen von der Position
 	//des CostumFigurePain, da das Piece sich während des Spiels bew
-	//Game game;
 	String teamID;
 	Piece piece;
 	String type;
@@ -83,13 +84,15 @@ public class CostumFigurePain extends Pane {
 	 * creates a Shadow which can be used to highlight the currently selected Figure
 	 * @param ImageView
 	 */
-	public void showShadow(Color col) {
+	public void showTeamColor(String colorString) {
+		Color col = Color.valueOf(colorString);
 		DropShadow borderGlow = new DropShadow();
         borderGlow.setColor(col);
         borderGlow.setOffsetX(0f);
         borderGlow.setOffsetY(0f);
         vw.setEffect(borderGlow);
 	}
+	
 	
 	public void performAttackClick() {
 		int[] xk = { posX, posY };
@@ -99,14 +102,11 @@ public class CostumFigurePain extends Pane {
 	
 	
 	public void performSelectClick() {
-		if(Game.getCurrent() != null) {
-			Game.getCurrent().disableShadow();				}
 	System.out.println("Hallo: " + posX + ", " + posY);
-	showShadow(Color.BLACK);
+	parent.showSelected();
 	showPieceInformationWhenClicked();
 	Game.setCurrent(CostumFigurePain.this);
 	Game.showPossibleMoves();
-	
 	}
 	
 	public void showPieceInformationWhenClicked() {
@@ -132,11 +132,6 @@ public class CostumFigurePain extends Pane {
 		this.setPickOnBounds(true);
 		Tooltip.install(this, tooltip);
 	}
-	
-	public void disableShadow() {
-		vw.setEffect(null);
-	}
-	
 	
 	public void setImage() {
 		if(ImageLoader.getImageByName(type) != null) {
@@ -195,11 +190,12 @@ public class CostumFigurePain extends Pane {
 
 	public void setAttacable() {
 		this.attacable = true;
-		showShadow(Color.RED);
+		parent.showattackCircle();
+		
 	}
 	
 	public void setUnattacble() {
-		this.disableShadow();
+		parent.deselect();
 		this.attacable = false;
 	}
 }
