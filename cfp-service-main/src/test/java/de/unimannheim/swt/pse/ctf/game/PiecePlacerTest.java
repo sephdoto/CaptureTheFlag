@@ -22,7 +22,7 @@ class PiecePlacerTest {
   void testDefensivePlacement() {
     GameState gameState = TestValues.getTestState();
     MapTemplate mt = TestValues.getTestTemplate();
-    mt.setGridSize(new int[] {20,10});
+    mt.setGridSize(new int[] {10,10});
     mt.setTeams(3);
     mt.getPieces()[0].setCount(1);
     mt.getPieces()[1].setCount(1);
@@ -34,11 +34,11 @@ class PiecePlacerTest {
     PiecePlacer pp = new PiecePlacer(bc.gameState, bc.boundaries);
     pp.placePieces(PlacementType.defensive);
     EngineTools.updateGrid(pp.gameState);
-    printGrid(pp.gameState);
-    for(int team=0; team < pp.gameState.getTeams().length; team++) {
-      System.out.println("team " + team + " got " + getNumberPossibleMoves(pp, team) + " possible moves");
-    }
-    System.out.println("total: " + getGameStatePossibleMoves(pp));
+//    printGrid(pp.gameState);
+//    for(int team=0; team < pp.gameState.getTeams().length; team++) {
+//      System.out.println("team " + team + " got " + getNumberPossibleMoves(pp, team) + " possible moves");
+//    }
+//    System.out.println("total: " + getGameStatePossibleMoves(pp));
   }
   
   @Test
