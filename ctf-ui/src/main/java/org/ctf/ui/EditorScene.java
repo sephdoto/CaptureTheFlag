@@ -37,13 +37,17 @@ public class EditorScene extends Scene {
 	StackPane root;
 	Parent[] options;
 	StackPane leftPane;
+	StackPane visualRoot;
 	SpinnerValueFactory<Integer> valueFactory;
+	TemplateEngine engine;
+	boolean spinnerchange = false;
 	
 	public EditorScene(HomeSceneController hsc, double width, double height) {
 		super(new StackPane(), width, height);
 		this.hsc = hsc;
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
 		this.root = (StackPane) this.getRoot();
+		engine = new TemplateEngine(this);
 		options = new Parent[3];
 		options[0] = createMapChooser();
 		options[1] = createFigureChooser();
@@ -72,8 +76,8 @@ public class EditorScene extends Scene {
 		leftPane.getChildren().add(options[0]);
 		leftControl.getChildren().add(leftPane);
 		sep.getChildren().add(leftControl);
-		
-		sep.getChildren().add(createVisual());
+		createVisual();
+		sep.getChildren().add(visualRoot);
 		mainBox.getChildren().add(sep);
 		
 	}
@@ -118,19 +122,27 @@ public class EditorScene extends Scene {
 		controlgrid.add(createText(mapRoot, "Turn Time", 30), 2, 1);
 		controlgrid.add(createText(mapRoot, "Game Time", 30), 2, 2);
 		controlgrid.add(createText(mapRoot, "Placement", 30), 2, 3);
-		Spinner<Integer> rowsSpinner = createMapSpinner(mapRoot, 1, 100, 10);
+		Spinner<Integer> rowsSpinner = createMapSpinner(mapRoot, 1, 100, engine.tmpTemplate.getGridSize()[0]);
+		createChangeListener(rowsSpinner,"Rows");
 		controlgrid.add(rowsSpinner, 1,0);
-		Spinner<Integer> colSpinner = createMapSpinner(mapRoot, 1, 100, 10);
+		Spinner<Integer> colSpinner = createMapSpinner(mapRoot, 1, 100, engine.tmpTemplate.getGridSize()[1]);
+		createChangeListener(colSpinner,"Cols");
 		controlgrid.add(colSpinner, 1,1);
-		Spinner<Integer> teamSpinner = createMapSpinner(mapRoot, 2, 50, 2);
+		Spinner<Integer> teamSpinner = createMapSpinner(mapRoot, 2, 50, engine.tmpTemplate.getTeams());
+		createChangeListener(teamSpinner,"Teams");
 		controlgrid.add(teamSpinner, 1,2);
-		Spinner<Integer> flagSpinner = createMapSpinner(mapRoot, 1, 100, 2);
+		Spinner<Integer> flagSpinner = createMapSpinner(mapRoot, 1, 100, engine.tmpTemplate.getTeams());
+		createChangeListener(flagSpinner,"Flags");
 		controlgrid.add(flagSpinner, 1,3);
-		Spinner<Integer> blockSpinner = createMapSpinner(mapRoot, 0, 500, 5);
+		Spinner<Integer> blockSpinner = createMapSpinner(mapRoot, 0, 500, engine.tmpTemplate.getBlocks());
+		createChangeListener(blockSpinner,"Blocks");
 		controlgrid.add(blockSpinner, 3,0);
-		Spinner<Integer> turnTimeSpinner = createMapSpinner(mapRoot, -1, 600, 60);
+		Spinner<Integer> turnTimeSpinner = createMapSpinner(mapRoot, -1, 600, engine.tmpTemplate.getMoveTimeLimitInSeconds());
+		createChangeListener(turnTimeSpinner,"TurnTime");
 		controlgrid.add(turnTimeSpinner, 3,1);
-		Spinner<Integer> gameTimeSpinner = createMapSpinner(mapRoot, -1, 600, 60);
+		int init = (engine.tmpTemplate.getTotalTimeLimitInSeconds()==-1)?-1:engine.tmpTemplate.getTotalTimeLimitInSeconds()/60;
+		Spinner<Integer> gameTimeSpinner = createMapSpinner(mapRoot, -1, 600, init);
+		createChangeListener(gameTimeSpinner,"GameTime");
 		controlgrid.add(gameTimeSpinner, 3,2);
 		controlgrid.add(createPlacementBox(mapRoot), 3, 3);
 		
@@ -249,7 +261,7 @@ public class EditorScene extends Scene {
 	private Button createSubmit() {
 		Button submit = createControlButton("Submit");
 		submit.setOnAction(e -> {
-			hsc.switchtoHomeScreen(e);
+			engine.printTemplate();
 		});
 		return submit;
 	}
@@ -399,14 +411,38 @@ public class EditorScene extends Scene {
 		return addButton;
 	}
 	
-	private StackPane createVisual() {
-		StackPane visualRoot = new StackPane();
+	private void createVisual() {
+		visualRoot = new StackPane();
 		visualRoot.getStyleClass().add("option-pane");
 		visualRoot.setPadding(new Insets(10));
 		visualRoot.prefWidthProperty().bind(root.widthProperty().multiply(0.45));
 		visualRoot.prefHeightProperty().bind(root.heightProperty().multiply(0.75));
-		GamePane visual = new GamePane(CreateTextGameStates.createTestGameState1());
-		visualRoot.getChildren().add(visual);
-		return visualRoot;
+		//GamePane visual = new GamePane(CreateTextGameStates.createTestGameState1());
+		updateVisualRoot();
+		//visualRoot.getChildren().add(visual);
+		
+	}
+	
+	private void createChangeListener(Spinner<Integer> spinner,String event) {
+		spinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
+			if (spinnerchange) {
+				spinnerchange = false;
+				return;
+			}
+			if(engine.handleSpinnerEvent(event, spinner, old, newValue)) {
+				updateVisualRoot();
+			};
+			
+		});
+	}
+	public void setSpinnerChange(boolean value) {
+		this.spinnerchange = value;
+	}
+	
+	private void updateVisualRoot() {
+		MapPreview mp = new MapPreview(engine.tmpTemplate);
+		visualRoot.getChildren().clear();
+		visualRoot.getChildren().add(new GamePane(mp.getGameState())); 
+		
 	}
 }
