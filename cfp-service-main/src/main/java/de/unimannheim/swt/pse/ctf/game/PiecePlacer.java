@@ -82,28 +82,30 @@ public class PiecePlacer {
     private void placePiecesSymmetrical() {
       for (Team team : gameState.getTeams()) {
         int facing = nextBaseDirection(team);
+        int maxPieces = team.getPieces().length;
+        int pieces = team.getPieces().length;
+        
         //place first 3 pieces in front of base
-        int piece = 0;
-        for (; piece < team.getPieces().length && piece<3; piece++) {
-          int[] newPos = posInFrontOfBase(team.getBase(), facing, piece);
-          if(safeToPlace(Integer.parseInt(team.getId()), newPos)) placePiece(team, piece, newPos);
+        for (int i=0; maxPieces - pieces < maxPieces && i<3; i++) {
+          int[] newPos = posInFrontOfBase(team.getBase(), facing, i);
+          if(safeToPlace(Integer.parseInt(team.getId()), newPos)) placePiece(team, maxPieces - pieces--, newPos);
         }
+        
         //place to the sides of the base, till boundaries are hit
-        for(int boundsHit=0; boundsHit<2 && piece<team.getPieces().length; piece++) {
-          int reach = (piece-1)/2;
-          int[] newPos = AI_Tools.updatePos(team.getBase().clone(), this.directions[4+facing][(piece+boundsHit)%2], reach);
+        for(int boundsHit=0, i=0; boundsHit<2 && maxPieces - pieces < maxPieces; i++) {
+          int[] newPos = AI_Tools.updatePos(team.getBase().clone(), this.directions[4+facing][i%2], i/2);
           if(safeToPlace(Integer.parseInt(team.getId()), newPos)) {
-            placePiece(team, piece, newPos);
+            placePiece(team, maxPieces-pieces--, newPos);
             boundsHit = 0;
-          }else {
-            piece--;
+          }else if(positionOutOfBounds(Integer.parseInt(team.getId()), newPos)) {
             boundsHit++;
           }
         }
+        
         //place remaining pieces with respawn piece logic
-        for(; piece<team.getPieces().length; piece++) {
+        while(maxPieces-pieces<maxPieces) {
           int[] newPos = respawnPiecePosition(team.getBase(), facing);
-          if(safeToPlace(Integer.parseInt(team.getId()), newPos)) placePiece(team, piece, newPos);
+          if(safeToPlace(Integer.parseInt(team.getId()), newPos)) placePiece(team, maxPieces-pieces--, newPos);
         }
       }
     }
@@ -443,9 +445,9 @@ public class PiecePlacer {
      * places a piece, given by its index in the team.pieces array, on the position newPos.
      * 
      * @author sistumpf
-     * @param team
-     * @param piece
-     * @param newPos
+     * @param team the team to take the piece from
+     * @param piece the pieces place in team array
+     * @param newPos the new position to place the piece on
      */
     private void placePiece(Team team, int piece, int[] newPos) {
       team.getPieces()[piece].setPosition(newPos);
@@ -456,8 +458,8 @@ public class PiecePlacer {
      * Checks if a position is not out of bounds and the position is empty (no pieces/bases/grids)
      * 
      * @author sistumpf
-     * @param newPos
-     * @return
+     * @param newPos a position to check if a piece could be placed there
+     * @return true if a piece can be placed safely on the new position
      */
     private boolean safeToPlace(int team, int[] newPos) {
       return !positionOutOfBounds(team, newPos) && 

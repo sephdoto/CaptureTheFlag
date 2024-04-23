@@ -180,10 +180,10 @@ class PiecePlacerTest {
   void testPlacePiecesSymmetrical() {
     GameState gs = TestValues.getTestState();
     MapTemplate mt = TestValues.getTestTemplate();
-    mt.setGridSize(new int[] {30,30});
-    mt.setTeams(3);
+    mt.setGridSize(new int[] {15,15});
+    mt.setTeams(2);
 //    mt.getPieces()[0].setCount(45);
-    gs.setTeams(new Team[3]);
+    gs.setTeams(new Team[2]);
     BoardController bc = new BoardController(gs, mt);
     for(int i=0; i<bc.gameState.getTeams().length; i++)
       bc.initializeTeam(i, mt);
