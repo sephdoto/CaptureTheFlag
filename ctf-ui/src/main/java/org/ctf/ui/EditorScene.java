@@ -263,6 +263,7 @@ public class EditorScene extends Scene {
 		Button submit = createControlButton("Submit");
 		submit.setOnAction(e -> {
 			engine.printTemplate();
+			
 		});
 		return submit;
 	}
@@ -442,13 +443,17 @@ public class EditorScene extends Scene {
 	}
 	
 	private void createChangeListener(Spinner<Integer> spinner,String event) {
+		
+		
 		spinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
 			if (spinnerchange) {
 				spinnerchange = false;
 				return;
 			}
 			if(engine.handleSpinnerEvent(event, spinner, old, newValue)) {
+				spinner.setDisable(true);
 				updateVisualRoot();
+				spinner.setDisable(false);
 			};
 			
 		});

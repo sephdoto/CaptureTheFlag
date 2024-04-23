@@ -133,7 +133,7 @@ public class TemplateEngine {
 	}
 	public void setPlacement(String value) {
 		switch (value) {
-		case "Symmetrical":
+		case "Symmetric":
 			tmpTemplate.setPlacement(PlacementType.symmetrical);
 			break;
 		case "Spaced Out":
@@ -143,6 +143,15 @@ public class TemplateEngine {
 			tmpTemplate.setPlacement(PlacementType.defensive);
 			break;
 		default:
+		}
+	}
+	
+	public void saveTemplate() {
+		try {
+			JSON_Tools.saveMapTemplateAsFile("test", tmpTemplate);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 	}
 }
