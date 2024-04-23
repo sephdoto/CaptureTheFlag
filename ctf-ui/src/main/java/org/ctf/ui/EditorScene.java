@@ -41,8 +41,10 @@ public class EditorScene extends Scene {
 	StackPane visualRoot;
 	SpinnerValueFactory<Integer> valueFactory;
 	TemplateEngine engine;
+	ComboBox<String> customFigureBox;
 	boolean spinnerchange = false;
-	
+	boolean boxchange = false;
+
 	public EditorScene(HomeSceneController hsc, double width, double height) {
 		super(new StackPane(), width, height);
 		this.hsc = hsc;
@@ -56,10 +58,10 @@ public class EditorScene extends Scene {
 		createLayout();
 
 	}
-	
+
 	private void createLayout() {
 		root.getStyleClass().add("join-root");
-		
+
 		VBox mainBox = new VBox();
 		root.getChildren().add(mainBox);
 		mainBox.getChildren().add(createHeader());
@@ -80,9 +82,9 @@ public class EditorScene extends Scene {
 		createVisual();
 		sep.getChildren().add(visualRoot);
 		mainBox.getChildren().add(sep);
-		
+
 	}
-	
+
 	private ImageView createHeader() {
 		Image mp = new Image(getClass().getResourceAsStream("EditorImage.png"));
 		ImageView mpv = new ImageView(mp);
@@ -99,7 +101,7 @@ public class EditorScene extends Scene {
 		});
 		return mpv;
 	}
-	
+
 	private VBox createMapChooser() {
 		VBox mapRoot = new VBox();
 		mapRoot.setSpacing(10);
@@ -119,37 +121,40 @@ public class EditorScene extends Scene {
 		controlgrid.add(createText(mapRoot, "Collums", 30), 0, 1);
 		controlgrid.add(createText(mapRoot, "Teams", 30), 0, 2);
 		controlgrid.add(createText(mapRoot, "Flags", 30), 0, 3);
-		controlgrid.add(createText(mapRoot, "Blocks", 30), 2,0 );
+		controlgrid.add(createText(mapRoot, "Blocks", 30), 2, 0);
 		controlgrid.add(createText(mapRoot, "Turn Time", 30), 2, 1);
 		controlgrid.add(createText(mapRoot, "Game Time", 30), 2, 2);
 		controlgrid.add(createText(mapRoot, "Placement", 30), 2, 3);
 		Spinner<Integer> rowsSpinner = createMapSpinner(mapRoot, 1, 100, engine.tmpTemplate.getGridSize()[0]);
-		createChangeListener(rowsSpinner,"Rows");
-		controlgrid.add(rowsSpinner, 1,0);
+		createChangeListener(rowsSpinner, "Rows", false);
+		controlgrid.add(rowsSpinner, 1, 0);
 		Spinner<Integer> colSpinner = createMapSpinner(mapRoot, 1, 100, engine.tmpTemplate.getGridSize()[1]);
-		createChangeListener(colSpinner,"Cols");
-		controlgrid.add(colSpinner, 1,1);
+		createChangeListener(colSpinner, "Cols", false);
+		controlgrid.add(colSpinner, 1, 1);
 		Spinner<Integer> teamSpinner = createMapSpinner(mapRoot, 2, 50, engine.tmpTemplate.getTeams());
-		createChangeListener(teamSpinner,"Teams");
-		controlgrid.add(teamSpinner, 1,2);
+		createChangeListener(teamSpinner, "Teams", false);
+		controlgrid.add(teamSpinner, 1, 2);
 		Spinner<Integer> flagSpinner = createMapSpinner(mapRoot, 1, 100, engine.tmpTemplate.getTeams());
-		createChangeListener(flagSpinner,"Flags");
-		controlgrid.add(flagSpinner, 1,3);
+		createChangeListener(flagSpinner, "Flags", false);
+		controlgrid.add(flagSpinner, 1, 3);
 		Spinner<Integer> blockSpinner = createMapSpinner(mapRoot, 0, 500, engine.tmpTemplate.getBlocks());
-		createChangeListener(blockSpinner,"Blocks");
-		controlgrid.add(blockSpinner, 3,0);
-		Spinner<Integer> turnTimeSpinner = createMapSpinner(mapRoot, -1, 600, engine.tmpTemplate.getMoveTimeLimitInSeconds());
-		createChangeListener(turnTimeSpinner,"TurnTime");
-		controlgrid.add(turnTimeSpinner, 3,1);
-		int init = (engine.tmpTemplate.getTotalTimeLimitInSeconds()==-1)?-1:engine.tmpTemplate.getTotalTimeLimitInSeconds()/60;
+		createChangeListener(blockSpinner, "Blocks", false);
+		controlgrid.add(blockSpinner, 3, 0);
+		Spinner<Integer> turnTimeSpinner = createMapSpinner(mapRoot, -1, 600,
+				engine.tmpTemplate.getMoveTimeLimitInSeconds());
+		createChangeListener(turnTimeSpinner, "TurnTime", false);
+		controlgrid.add(turnTimeSpinner, 3, 1);
+		int init = (engine.tmpTemplate.getTotalTimeLimitInSeconds() == -1) ? -1
+				: engine.tmpTemplate.getTotalTimeLimitInSeconds() / 60;
 		Spinner<Integer> gameTimeSpinner = createMapSpinner(mapRoot, -1, 600, init);
-		createChangeListener(gameTimeSpinner,"GameTime");
-		controlgrid.add(gameTimeSpinner, 3,2);
+		createChangeListener(gameTimeSpinner, "GameTime", false);
+		controlgrid.add(gameTimeSpinner, 3, 2);
 		controlgrid.add(createPlacementBox(mapRoot), 3, 3);
-		
+
 		mapRoot.getChildren().add(controlgrid);
 		return mapRoot;
 	}
+
 	private VBox createFigureChooser() {
 		VBox pieceRoot = new VBox();
 		pieceRoot.setSpacing(10);
@@ -168,27 +173,34 @@ public class EditorScene extends Scene {
 		controlgrid.add(createText(pieceRoot, "Pawn", 30), 0, 0);
 		controlgrid.add(createText(pieceRoot, "Knight", 30), 0, 1);
 		controlgrid.add(createText(pieceRoot, "Bishop", 30), 0, 2);
-		controlgrid.add(createText(pieceRoot, "Rook", 30), 2,0 );
+		controlgrid.add(createText(pieceRoot, "Rook", 30), 2, 0);
 		controlgrid.add(createText(pieceRoot, "Queen", 30), 2, 1);
 		controlgrid.add(createText(pieceRoot, "King", 30), 2, 2);
-		Spinner<Integer> pawnSpinner = createMapSpinner(pieceRoot, 0, 500, 10);
-		controlgrid.add(pawnSpinner, 1,0);
-		Spinner<Integer> knightSpinner = createMapSpinner(pieceRoot, 0, 500, 2);
-		controlgrid.add(knightSpinner, 1,1);
-		Spinner<Integer> bishopSpinner = createMapSpinner(pieceRoot, 0, 500, 2);
-		controlgrid.add(bishopSpinner, 1,2);
-		Spinner<Integer> rookSpinner = createMapSpinner(pieceRoot, 0, 500, 2);
-		controlgrid.add(rookSpinner, 3,0);
-		Spinner<Integer> queenSpinner = createMapSpinner(pieceRoot, 0, 500, 1);
-		controlgrid.add(queenSpinner, 3,1);
-		Spinner<Integer> kingSpinner = createMapSpinner(pieceRoot, 0, 500, 1);
-		controlgrid.add(kingSpinner, 3,2);			
+		Spinner<Integer> pawnSpinner = createMapSpinner(pieceRoot, 0, 500, engine.getPieceCount("Pawn"));
+		createChangeListener(pawnSpinner, "Pawn", false);
+		controlgrid.add(pawnSpinner, 1, 0);
+		Spinner<Integer> knightSpinner = createMapSpinner(pieceRoot, 0, 500, engine.getPieceCount("Knight"));
+		createChangeListener(knightSpinner, "Knight", false);
+		controlgrid.add(knightSpinner, 1, 1);
+		Spinner<Integer> bishopSpinner = createMapSpinner(pieceRoot, 0, 500, engine.getPieceCount("Bishop"));
+		createChangeListener(bishopSpinner, "Bishop", false);
+		controlgrid.add(bishopSpinner, 1, 2);
+		Spinner<Integer> rookSpinner = createMapSpinner(pieceRoot, 0, 500, engine.getPieceCount("Rook"));
+		createChangeListener(rookSpinner, "Rook", false);
+		controlgrid.add(rookSpinner, 3, 0);
+		Spinner<Integer> queenSpinner = createMapSpinner(pieceRoot, 0, 500, engine.getPieceCount("Queen"));
+		createChangeListener(queenSpinner, "Queen", false);
+		controlgrid.add(queenSpinner, 3, 1);
+		Spinner<Integer> kingSpinner = createMapSpinner(pieceRoot, 0, 500, engine.getPieceCount("King"));
+		createChangeListener(kingSpinner, "King", false);
+		controlgrid.add(kingSpinner, 3, 2);
 		pieceRoot.getChildren().add(controlgrid);
-		
+
 		pieceRoot.getChildren().add(createHeaderText(pieceRoot, "Custom Figures", 18));
 		pieceRoot.getChildren().add(createFigureBar(pieceRoot));
 		return pieceRoot;
 	}
+
 	private VBox createFigureCustomizer() {
 		VBox customRoot = new VBox();
 		customRoot.setSpacing(10);
@@ -209,19 +221,26 @@ public class EditorScene extends Scene {
 		controlgrid.add(createText(customRoot, "Strength", 30), 2, 0);
 		controlgrid.add(createText(customRoot, "Directions", 30), 2, 1);
 		controlgrid.add(createText(customRoot, "Value", 30), 2, 2);
-		controlgrid.add(createNameField(customRoot), 1, 0);
+		TextField namefield = (createNameField(customRoot));
+		controlgrid.add(namefield, 1, 0);
 		controlgrid.add(createShapeBox(customRoot), 1, 1);
 		Spinner<Integer> strenghthSpinner = createMapSpinner(customRoot, 0, 500, 0);
 		controlgrid.add(strenghthSpinner, 3, 0);
-		controlgrid.add(createDirectionsBox(customRoot), 3, 1);
+
 		Spinner<Integer> valueSpinner = createMapSpinner(customRoot, 0, 500, 0);
+
+		ComboBox<String> directionsBox = createDirectionsBox(customRoot, valueSpinner);
+		valueSpinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
+			engine.handleDirectionValue(directionsBox,newValue);
+		});
+		controlgrid.add(directionsBox, 3, 1);
 		controlgrid.add(valueSpinner, 3, 2);
-		controlgrid.add(createAddButton(customRoot), 1, 2);
+		controlgrid.add(createAddButton(customRoot, namefield, strenghthSpinner), 1, 2);
 		customRoot.getChildren().add(controlgrid);
-		
+
 		return customRoot;
 	}
-	
+
 	private StackPane createLeftPane() {
 		StackPane pane = new StackPane();
 		pane.getStyleClass().add("option-pane");
@@ -231,7 +250,7 @@ public class EditorScene extends Scene {
 
 		return pane;
 	}
-	
+
 	private HBox createControlBar() {
 		HBox controlBar = new HBox();
 		controlBar.setSpacing(10);
@@ -241,16 +260,15 @@ public class EditorScene extends Scene {
 		controlBar.getChildren().add(createSubmit());
 		return controlBar;
 	}
-	
-	
+
 	private Button createControlButton(String label) {
 		Button but = new Button(label);
 		but.getStyleClass().add("leave-button");
 		but.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
-		but.prefHeightProperty().bind(but.widthProperty().multiply(0.25));		
+		but.prefHeightProperty().bind(but.widthProperty().multiply(0.25));
 		return but;
 	}
-	
+
 	private Button createExit() {
 		Button exit = createControlButton("Leave");
 		exit.setOnAction(e -> {
@@ -258,15 +276,16 @@ public class EditorScene extends Scene {
 		});
 		return exit;
 	}
-	
+
 	private Button createSubmit() {
 		Button submit = createControlButton("Submit");
 		submit.setOnAction(e -> {
 			engine.printTemplate();
-			
+
 		});
 		return submit;
 	}
+
 	private MenuButton createMenuButton() {
 		MenuButton mb = new MenuButton("Edit Map");
 		mb.getStyleClass().add("custom-menu-button");
@@ -294,8 +313,9 @@ public class EditorScene extends Scene {
 		});
 		return mb;
 	}
+
 	private MenuButton createMapMenuButton() {
-		MenuButton mb = new MenuButton("Load Map");		
+		MenuButton mb = new MenuButton("Load Map");
 		mb.getStyleClass().add("custom-menu-button");
 		mb.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		mb.prefHeightProperty().bind(mb.widthProperty().multiply(0.25));
@@ -303,41 +323,43 @@ public class EditorScene extends Scene {
 		MenuItem default2Item = new MenuItem("Map Two");
 		mb.getItems().addAll(default1Item, default2Item);
 		default1Item.setOnAction(event -> {
-			
+
 		});
 		default2Item.setOnAction(event -> {
-			
+
 		});
 		return mb;
 	}
-	private Text createHeaderText(VBox vBox,String label,int divider) {
+
+	private Text createHeaderText(VBox vBox, String label, int divider) {
 		Text leftheader = new Text(label);
 		leftheader.getStyleClass().add("custom-header");
-		leftheader.fontProperty()
-				.bind(Bindings.createObjectBinding(() -> Font.font("Century Gothic",vBox.getWidth() / divider), vBox.widthProperty()));
+		leftheader.fontProperty().bind(Bindings.createObjectBinding(
+				() -> Font.font("Century Gothic", vBox.getWidth() / divider), vBox.widthProperty()));
 		return leftheader;
 	}
-	
-	private Text createText(VBox vBox,String label,int divider) {
+
+	private Text createText(VBox vBox, String label, int divider) {
 		Text text = new Text(label);
 		text.getStyleClass().add("custom-info-label");
-		text.fontProperty()
-				.bind(Bindings.createObjectBinding(() -> Font.font("Century Gothic",vBox.getWidth() / divider), vBox.widthProperty()));
+		text.fontProperty().bind(Bindings.createObjectBinding(
+				() -> Font.font("Century Gothic", vBox.getWidth() / divider), vBox.widthProperty()));
 		return text;
 	}
-	private Spinner<Integer> createMapSpinner(VBox parent,int min,int max,int cur) {
-		 this.valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(min, max, cur);
-		 Spinner<Integer> spinner = new Spinner<>(valueFactory);
-		 spinner.getStyleClass().add("spinner");
-		 spinner.setEditable(true);
-		 //spinner.setStyle("-fx-background-color: rgb(15,15,15);");
-		 spinner.prefWidthProperty().bind(parent.widthProperty().multiply(0.25));
-		 spinner.prefHeightProperty().bind(spinner.widthProperty().multiply(0.25));
-		 return spinner;
-		
+
+	private Spinner<Integer> createMapSpinner(VBox parent, int min, int max, int cur) {
+		this.valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(min, max, cur);
+		Spinner<Integer> spinner = new Spinner<>(valueFactory);
+		spinner.getStyleClass().add("spinner");
+		spinner.setEditable(true);
+		// spinner.setStyle("-fx-background-color: rgb(15,15,15);");
+		spinner.prefWidthProperty().bind(parent.widthProperty().multiply(0.25));
+		spinner.prefHeightProperty().bind(spinner.widthProperty().multiply(0.25));
+		return spinner;
+
 	}
-	
-	private ComboBox<String> createPlacementBox(VBox vBox){
+
+	private ComboBox<String> createPlacementBox(VBox vBox) {
 		ObservableList<String> options = FXCollections.observableArrayList("Symmetric", "Spaced Out", "Defensive");
 		ComboBox<String> placementBox = new ComboBox<>(options);
 		switch (engine.tmpTemplate.getPlacement()) {
@@ -362,17 +384,20 @@ public class EditorScene extends Scene {
 		placementBox.prefHeightProperty().bind(placementBox.widthProperty().multiply(0.25));
 		return placementBox;
 	}
-	private ComboBox<String> createFigureBox(VBox vBox){
-		ObservableList<String> options = FXCollections.observableArrayList("Custom 1");
-		ComboBox<String> placementBox = new ComboBox<>(options);
-		placementBox.setValue(options.get(0));
-		placementBox.getStyleClass().add("custom-combo-box-2");
-		placementBox.prefWidthProperty().bind(vBox.widthProperty().multiply(0.4));
-		placementBox.prefHeightProperty().bind(placementBox.widthProperty().multiply(0.6));
-		return placementBox;
+
+	private ComboBox<String> createFigureBox(VBox vBox) {
+
+		customFigureBox = new ComboBox<>();
+		engine.fillCustomBox(customFigureBox);
+		// placementBox.setValue(options.get(0));
+		customFigureBox.getStyleClass().add("custom-combo-box-2");
+		customFigureBox.prefWidthProperty().bind(vBox.widthProperty().multiply(0.4));
+		customFigureBox.prefHeightProperty().bind(customFigureBox.widthProperty().multiply(0.6));
+		return customFigureBox;
 	}
-	private ComboBox<String> createShapeBox(VBox vBox){
-		ObservableList<String> options = FXCollections.observableArrayList("None","L-Shape");
+
+	private ComboBox<String> createShapeBox(VBox vBox) {
+		ObservableList<String> options = FXCollections.observableArrayList("None", "L-Shape");
 		ComboBox<String> shapeBox = new ComboBox<>(options);
 		shapeBox.setValue(options.get(0));
 		shapeBox.getStyleClass().add("custom-combo-box-2");
@@ -380,18 +405,21 @@ public class EditorScene extends Scene {
 		shapeBox.prefHeightProperty().bind(shapeBox.widthProperty().multiply(0.25));
 		return shapeBox;
 	}
-	private ComboBox<String> createDirectionsBox(VBox vBox){
+
+	private ComboBox<String> createDirectionsBox(VBox vBox, Spinner<Integer> vaSpinner) {
 		ObservableList<String> options = FXCollections.observableArrayList("Left", "Right", "Up", "Down", "Up-Left",
 				"Up-Right", "Down-Left", "Down-Right");
 		ComboBox<String> directionBox = new ComboBox<>(options);
+		directionBox.setOnAction(e -> {
+			engine.handleDirection(directionBox.getValue(), vaSpinner);
+		});
 		directionBox.setValue(options.get(0));
 		directionBox.getStyleClass().add("custom-combo-box-2");
 		directionBox.prefWidthProperty().bind(vBox.widthProperty().multiply(0.25));
 		directionBox.prefHeightProperty().bind(directionBox.widthProperty().multiply(0.25));
 		return directionBox;
 	}
-	
-	
+
 	private HBox createFigureBar(VBox vBox) {
 		HBox chooseBar = new HBox();
 		chooseBar.setAlignment(Pos.CENTER);
@@ -402,9 +430,16 @@ public class EditorScene extends Scene {
 		chooseBar.getChildren().add(createFigureBox(vBox));
 		Spinner<Integer> customSpinner = createMapSpinner(vBox, 0, 100, 10);
 		chooseBar.getChildren().add(customSpinner);
+		customFigureBox.setOnAction(e -> {
+			boxchange = true;
+			int customcount = engine.getPieceCount(customFigureBox.getValue());
+			customSpinner.getValueFactory().setValue(customcount);
+		});
+		createChangeListener(customSpinner, "custom", true);
+
 		return chooseBar;
 	}
-	
+
 	private TextField createNameField(VBox vbox) {
 		TextField textField = new TextField();
 		textField.getStyleClass().add("custom-search-field");
@@ -416,8 +451,8 @@ public class EditorScene extends Scene {
 		});
 		return textField;
 	}
-	
-	private Button createAddButton(VBox vbox) {
+
+	private Button createAddButton(VBox vbox, TextField name, Spinner<Integer> strength) {
 		Button addButton = new Button("Add");
 		addButton.getStyleClass().add("join-button");
 		addButton.prefWidthProperty().bind(vbox.widthProperty().multiply(0.25));
@@ -425,47 +460,56 @@ public class EditorScene extends Scene {
 //		addButton.fontProperty().bind(Bindings.createObjectBinding(
 //				() -> Font.font("Century Gothic", addButton.getHeight() * 0.35), addButton.heightProperty()));
 		addButton.setOnAction(e -> {
-			
+			engine.addpiece(name, strength);
 		});
 		return addButton;
 	}
-	
+
 	private void createVisual() {
 		visualRoot = new StackPane();
 		visualRoot.getStyleClass().add("option-pane");
 		visualRoot.setPadding(new Insets(10));
 		visualRoot.prefWidthProperty().bind(root.widthProperty().multiply(0.45));
 		visualRoot.prefHeightProperty().bind(root.heightProperty().multiply(0.75));
-		//GamePane visual = new GamePane(CreateTextGameStates.createTestGameState1());
+		// GamePane visual = new GamePane(CreateTextGameStates.createTestGameState1());
 		updateVisualRoot();
-		//visualRoot.getChildren().add(visual);
-		
+		// visualRoot.getChildren().add(visual);
+
 	}
-	
-	private void createChangeListener(Spinner<Integer> spinner,String event) {
-		
-		
+
+	private void createChangeListener(Spinner<Integer> spinner, String event, boolean custom) {
 		spinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
 			if (spinnerchange) {
 				spinnerchange = false;
 				return;
 			}
-			if(engine.handleSpinnerEvent(event, spinner, old, newValue)) {
+			if (custom && boxchange) {
+				boxchange = false;
+				return;
+			}
+			if (engine.handleSpinnerEvent(event, spinner, old, newValue)) {
 				spinner.setDisable(true);
 				updateVisualRoot();
 				spinner.setDisable(false);
-			};
-			
+			}
+			;
+
 		});
 	}
+
 	public void setSpinnerChange(boolean value) {
 		this.spinnerchange = value;
 	}
-	
+
 	private void updateVisualRoot() {
-		MapPreview mp = new MapPreview(engine.tmpTemplate);
-		visualRoot.getChildren().clear();
-		visualRoot.getChildren().add(new GamePane(mp.getGameState())); 
-		
+//		MapPreview mp = new MapPreview(engine.tmpTemplate);
+//		visualRoot.getChildren().clear();
+//		visualRoot.getChildren().add(new GamePane(mp.getGameState()));
+
 	}
+
+	public ComboBox<String> getCustomFigureBox() {
+		return customFigureBox;
+	}
+
 }
