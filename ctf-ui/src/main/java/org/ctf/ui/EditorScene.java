@@ -328,6 +328,7 @@ public class EditorScene extends Scene {
 		 this.valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(min, max, cur);
 		 Spinner<Integer> spinner = new Spinner<>(valueFactory);
 		 spinner.getStyleClass().add("spinner");
+		 spinner.setEditable(true);
 		 //spinner.setStyle("-fx-background-color: rgb(15,15,15);");
 		 spinner.prefWidthProperty().bind(parent.widthProperty().multiply(0.25));
 		 spinner.prefHeightProperty().bind(spinner.widthProperty().multiply(0.25));
