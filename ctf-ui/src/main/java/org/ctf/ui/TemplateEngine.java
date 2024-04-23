@@ -10,6 +10,7 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.data.map.Movement;
 import org.ctf.shared.state.data.map.PieceDescription;
+import org.ctf.shared.state.data.map.PlacementType;
 import org.ctf.shared.tools.JSON_Tools;
 import org.ctf.shared.tools.JSON_Tools.IncompleteMapTemplateException;
 
@@ -129,5 +130,19 @@ public class TemplateEngine {
 	public static void main(String[] args) {
 		//TemplateEngine engine = new TemplateEngine(new Edi);
 		//engine.printTemplate();
+	}
+	public void setPlacement(String value) {
+		switch (value) {
+		case "Symmetrical":
+			tmpTemplate.setPlacement(PlacementType.symmetrical);
+			break;
+		case "Spaced Out":
+			tmpTemplate.setPlacement(PlacementType.spaced_out);
+			break;
+		case "Defensive":
+			tmpTemplate.setPlacement(PlacementType.defensive);
+			break;
+		default:
+		}
 	}
 }

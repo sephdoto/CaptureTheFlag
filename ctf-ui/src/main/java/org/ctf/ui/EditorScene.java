@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.data.map.PlacementType;
 import org.ctf.shared.tools.JSON_Tools;
 import org.ctf.shared.tools.JSON_Tools.IncompleteMapTemplateException;
 import org.ctf.ui.controllers.MapPreview;
@@ -337,7 +338,23 @@ public class EditorScene extends Scene {
 	private ComboBox<String> createPlacementBox(VBox vBox){
 		ObservableList<String> options = FXCollections.observableArrayList("Symmetric", "Spaced Out", "Defensive");
 		ComboBox<String> placementBox = new ComboBox<>(options);
-		placementBox.setValue(options.get(0));
+		switch (engine.tmpTemplate.getPlacement()) {
+		case symmetrical:
+			placementBox.setValue("Symmetric");
+			break;
+		case spaced_out:
+			placementBox.setValue("Spaced Out");
+			break;
+		case defensive:
+			placementBox.setValue("Defenisve");
+			;
+			break;
+		default:
+		}
+		placementBox.setOnAction(e -> {
+			engine.setPlacement(placementBox.getValue());
+			updateVisualRoot();
+		});
 		placementBox.getStyleClass().add("custom-combo-box-2");
 		placementBox.prefWidthProperty().bind(vBox.widthProperty().multiply(0.25));
 		placementBox.prefHeightProperty().bind(placementBox.widthProperty().multiply(0.25));
