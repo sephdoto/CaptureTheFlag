@@ -42,7 +42,8 @@ public class GameEngine implements Game {
   // **************************************************
   private GameState gameState; // MAIN Data Store for GameEngine
   private Date startedDate = null;
-  private Date endDate; // Setting this Ends the game
+  private Date endDate; 
+  private boolean weDoneZo; // Setting this to true signals End game
   private Clock currentTime;
   private Map<Integer, String> integerToTeam;
   private Map<String, Integer> teamToInteger;
@@ -88,6 +89,7 @@ public class GameEngine implements Game {
     this.copyOfTemplate = template; // Template Copy Box
     this.integerToTeam = Collections.synchronizedMap(new HashMap<>());
     this.teamToInteger = Collections.synchronizedMap(new HashMap<>());
+    this.weDoneZo = false;
     gameState = new GameState();
     gameState.setTeams(new Team[template.getTeams()]);
 
@@ -207,7 +209,7 @@ public class GameEngine implements Game {
    */
   @Override
   public boolean isGameOver() {
-    return (getEndDate() != null);
+    return (this.weDoneZo);
   }
 
   /**
@@ -412,6 +414,16 @@ public class GameEngine implements Game {
     }
   }
 
+   /**
+     * Tells the client if the game is Time Limited
+     *
+     * @return Turn time limit in seconds (<= 0 if none)
+     */
+  @Override
+  public int getTurnTimeLimit() {
+    return copyOfTemplate.getTotalTimeLimitInSeconds();
+  }
+
   /**
    * Handler which should be called incase the moves are time limited in the game While the trigger
    * is active AND Teams are full, Checks if current time is after the time the turn should end. If
@@ -469,6 +481,7 @@ public class GameEngine implements Game {
   private void setWhenGameShouldEnd() {
     this.gameShouldEndBy =
         Clock.fixed(Clock.offset(currentTime, totalGameTime).instant(), ZoneId.systemDefault());
+    this.endDate = Date.from(gameShouldEndBy.instant());
   }
 
   /**
@@ -548,7 +561,10 @@ public class GameEngine implements Game {
    */
   private void setGameOver() {
     this.gameState.setCurrentTeam(-1); // Sets current team to -1 to indicate game has ended
-    this.endDate = new Date();
+    if(this.endDate == null){
+      this.endDate = new Date();
+    }
+    this.weDoneZo = true;
   }
 
   /**
@@ -613,4 +629,5 @@ public class GameEngine implements Game {
   // **************************************************
   // End of Private Internal Methods
   // **************************************************
+
 }

@@ -11,7 +11,7 @@ import de.unimannheim.swt.pse.ctf.game.state.Team;
 import java.util.Date;
 
 /**
- * The interface that your game engine has to implement
+ * The interface that your game engine has to implement.
  *
  * The game engine is supposed to implement logic (rules) that cover all fields in {@link MapTemplate} (e.g., time limitations etc.).
  *
@@ -126,4 +126,11 @@ public interface Game {
      * @return End date of game
      */
     Date getEndDate();
+
+    /**
+     * Turn time limit in seconds (<= 0 if none)
+     *
+     * @return
+     */
+    int getTurnTimeLimit();
 }
