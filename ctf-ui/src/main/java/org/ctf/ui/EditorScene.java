@@ -511,7 +511,6 @@ public class EditorScene extends Scene {
 //				() -> Font.font("Century Gothic", addButton.getHeight() * 0.35), addButton.heightProperty()));
 		addButton.setOnAction(e -> {
 			engine.addpiece(name, strength);
-			inform(name.getText() +" was added succesfully!");
 		});
 		return addButton;
 	}

@@ -243,6 +243,10 @@ public class TemplateEngine {
 		return result;
 	}
 	public void addpiece(TextField nameField,Spinner<Integer> strengthSpinner) {
+		if(pieces.keySet().contains(nameField.getText())) {
+			editorscene.inform(nameField.getText()+ " already exists!");
+			return;
+		}
 		Directions directions = genrateMovementCopy();
 		PieceDescription result = new PieceDescription();
 		Movement movement = new Movement();
@@ -252,7 +256,7 @@ public class TemplateEngine {
 		result.setAttackPower(strengthSpinner.getValueFactory().getValue());
 		pieces.put(result.getType(), result);
 		editorscene.getCustomFigureBox().getItems().add(result.getType());
-		System.out.println("Hinzugefügt");
+		editorscene.inform(nameField.getText() +" was added succesfully!");
 	}
 	
 	public void handleDirection(String value,Spinner<Integer> vaSpinner) {

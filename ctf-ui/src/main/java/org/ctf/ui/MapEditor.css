@@ -115,6 +115,7 @@
 .custom-info-label {
 	 -fx-fill: white;
 	  -fx-font-family: "Century Gothic", sans-serif;
+	  -fx-text-alignment: center;
 }
 .spinner {
    -fx-control-inner-background: rgba(10,40,50,1); 
