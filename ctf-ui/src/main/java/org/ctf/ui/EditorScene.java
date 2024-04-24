@@ -8,6 +8,7 @@ import org.ctf.shared.state.data.map.PlacementType;
 import org.ctf.shared.tools.JSON_Tools;
 import org.ctf.shared.tools.JSON_Tools.IncompleteMapTemplateException;
 import org.ctf.ui.controllers.MapPreview;
+import org.ctf.ui.customobjects.PopUpPane;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
@@ -84,14 +85,15 @@ public class EditorScene extends Scene {
 		leftPane.getChildren().add(options[0]);
 		leftControl.getChildren().add(leftPane);
 		createInfotext();
-		StackPane test = new StackPane();
-		test.getChildren().add(infoText);
-		leftControl.getChildren().add(test);
+		StackPane textPane = new StackPane();
+		textPane.getChildren().add(infoText);
+		leftControl.getChildren().add(textPane);
 		sep.getChildren().add(leftControl);
 		createVisual();
 		sep.getChildren().add(visualRoot);
 		mainBox.getChildren().add(sep);
-
+		
+		
 	}
 
 	private ImageView createHeader() {
@@ -313,7 +315,7 @@ public class EditorScene extends Scene {
 		Button submit = createControlButton("Submit");
 		submit.setOnAction(e -> {
 			engine.printTemplate();
-
+			root.getChildren().add(new PopUpPane(this, 0.4, 0.4));
 		});
 		return submit;
 	}
