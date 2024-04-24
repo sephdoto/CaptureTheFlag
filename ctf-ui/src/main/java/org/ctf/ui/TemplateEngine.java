@@ -28,16 +28,16 @@ public class TemplateEngine {
 
 	public TemplateEngine(EditorScene editorscene) {
 		this.editorscene = editorscene;
-		loadTemplate(Constants.mapTemplateFolder + "10x10_2teams_example.json");
+		loadTemplate("10x10_2teams_example.json");
 		tmpMovement.setDirections(new Directions());
 		initializePieces();
 	}
 
-	public void loadTemplate(String path) {
-		File defaultMap = new File(path);
+	public void loadTemplate(String name) {
+		File map = new File(Constants.mapTemplateFolder + name);
 		try {
-			if (defaultMap.exists()) {
-				tmpTemplate = JSON_Tools.readMapTemplate(defaultMap);
+			if (map.exists()) {
+				tmpTemplate = JSON_Tools.readMapTemplate(map);
 			} else {
 				System.out.println("Fehler: Default Template konnte nicht geladen werden!"
 						+ "Es wurde ein alternatives Template geladen.");
@@ -113,7 +113,7 @@ public class TemplateEngine {
 	 * 
 	 * 
 	 */
-	private void initializePieces() {
+	public void initializePieces() {
 		ArrayList<String> usedTypes = new ArrayList<String>();
 		for (PieceDescription piece : tmpTemplate.getPieces()) {
 			pieces.put(piece.getType(), piece);

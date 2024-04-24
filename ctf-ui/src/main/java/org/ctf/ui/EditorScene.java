@@ -43,6 +43,7 @@ public class EditorScene extends Scene {
 	TemplateEngine engine;
 	ComboBox<String> customFigureBox;
 	MenuButton mapMenuButton;
+	MenuButton mb;
 	boolean spinnerchange = false;
 	boolean boxchange = false;
 
@@ -289,7 +290,7 @@ public class EditorScene extends Scene {
 	}
 
 	private MenuButton createMenuButton() {
-		MenuButton mb = new MenuButton("Edit Map");
+		mb = new MenuButton("Edit Map");
 		mb.getStyleClass().add("custom-menu-button");
 		mb.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		mb.prefHeightProperty().bind(mb.widthProperty().multiply(0.25));
@@ -329,7 +330,14 @@ public class EditorScene extends Scene {
 	private void addMapItem(String mapName,MenuButton mapMenuButton) {
 		MenuItem item = new MenuItem(mapName);
 		item.setOnAction(e -> {
-			
+			engine.loadTemplate(mapName);
+			engine.initializePieces();
+			options[0] = createMapChooser();
+			options[1] = createFigureChooser();
+			leftPane.getChildren().clear();
+			leftPane.getChildren().add(options[0]);
+			mb.setText("Edit Map");
+			updateVisualRoot();
 		});
 		mapMenuButton.getItems().add(item);
 	}
@@ -431,8 +439,9 @@ public class EditorScene extends Scene {
 			chooseBar.setSpacing(spacing);
 		});
 		chooseBar.getChildren().add(createFigureBox(vBox));
-		Spinner<Integer> customSpinner = createMapSpinner(vBox, 0, 100, 10);
+		Spinner<Integer> customSpinner = createMapSpinner(vBox, 0, 100, 0);
 		chooseBar.getChildren().add(customSpinner);
+		//customFigureBox.setValue("Choose Custom Piece");
 		customFigureBox.setOnAction(e -> {
 			boxchange = true;
 			int customcount = engine.getPieceCount(customFigureBox.getValue());
@@ -481,12 +490,15 @@ public class EditorScene extends Scene {
 	}
 
 	private void createChangeListener(Spinner<Integer> spinner, String event, boolean custom) {
+		
 		spinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
+			System.out.println("Change!!");
 			if (spinnerchange) {
 				spinnerchange = false;
 				return;
 			}
 			if (custom && boxchange) {
+				System.out.println("boxchange!");
 				boxchange = false;
 				return;
 			}
@@ -505,9 +517,9 @@ public class EditorScene extends Scene {
 	}
 
 	private void updateVisualRoot() {
-//		MapPreview mp = new MapPreview(engine.tmpTemplate);
-//		visualRoot.getChildren().clear();
-//		visualRoot.getChildren().add(new GamePane(mp.getGameState()));
+		MapPreview mp = new MapPreview(engine.tmpTemplate);
+		visualRoot.getChildren().clear();
+		visualRoot.getChildren().add(new GamePane(mp.getGameState()));
 
 	}
 
