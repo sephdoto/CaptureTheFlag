@@ -117,7 +117,7 @@ public class MCTSSimulation {
               }
             ],
             "placement": "symmetrical",
-            "totalTimeLimitInSeconds": -1,
+            "totalTimeLimitInSeconds": 5,
             "moveTimeLimitInSeconds": -1
           }
         """;
@@ -181,6 +181,7 @@ public class MCTSSimulation {
     javaClient4.getSessionFromServer();
     javaClient5.getSessionFromServer();
     System.out.println(gson.toJson(javaClient.getCurrentState()));
+    System.out.println(gson.toJson(javaClient.getCurrentSession()));
     newAna.addGameState(javaClient.getCurrentState());
     AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS);
     AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS);

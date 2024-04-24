@@ -19,9 +19,13 @@ public class GameSessionResponse {
     )
     private Date gameStarted;
     @Schema(
-            description = "the date the game ended"
+            description = "the date the game ended (or ends if game time is over)"
     )
     private Date gameEnded;
+    @Schema(
+            description = "the turn time set in seconds (<= 0 if none)"
+    )
+    private int turnTimeLimit;
     @Schema(
             description = "true if game is over, false otherwise"
     )
@@ -69,5 +73,13 @@ public class GameSessionResponse {
 
     public void setGameEnded(Date gameEnded) {
         this.gameEnded = gameEnded;
+    }
+
+    public int getTurnTimeLimit() {
+        return turnTimeLimit;
+    }
+
+    public void setTurnTimeLimit(int turnTimeLimit) {
+        this.turnTimeLimit = turnTimeLimit;
     }
 }
