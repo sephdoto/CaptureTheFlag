@@ -9,6 +9,7 @@ import org.ctf.shared.tools.JSON_Tools;
 import org.ctf.shared.tools.JSON_Tools.IncompleteMapTemplateException;
 import org.ctf.ui.controllers.MapPreview;
 
+import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -31,6 +32,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import test.CreateTextGameStates;
 
 public class EditorScene extends Scene {
@@ -44,6 +46,7 @@ public class EditorScene extends Scene {
 	ComboBox<String> customFigureBox;
 	MenuButton mapMenuButton;
 	MenuButton mb;
+	Text infoText;
 	boolean spinnerchange = false;
 	boolean boxchange = false;
 
@@ -80,6 +83,8 @@ public class EditorScene extends Scene {
 		leftPane = createLeftPane();
 		leftPane.getChildren().add(options[0]);
 		leftControl.getChildren().add(leftPane);
+		createInfotext();
+		leftControl.getChildren().add(infoText);
 		sep.getChildren().add(leftControl);
 		createVisual();
 		sep.getChildren().add(visualRoot);
@@ -103,7 +108,29 @@ public class EditorScene extends Scene {
 		});
 		return mpv;
 	}
+	
+	private void createInfotext() {
+		infoText = new Text("");
+		infoText.getStyleClass().add("custom-info-label");
+		leftPane.widthProperty().addListener((obs,oldVal,newVal) -> {
+			double size = newVal.doubleValue()*0.035;
+			infoText.setFont(Font.font("Century Gothic",size));
+		});		
+	}
 
+	private void inform(String info) {
+		infoText.setText(info);
+		FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), infoText);
+		fadeTransition.setDelay(Duration.seconds(1));
+		fadeTransition.setFromValue(1.0);
+		fadeTransition.setToValue(0.0);
+		fadeTransition.setOnFinished(event -> {
+			infoText.setText("");
+			infoText.setOpacity(1);
+		});
+		fadeTransition.play();
+	}
+	
 	private VBox createMapChooser() {
 		VBox mapRoot = new VBox();
 		mapRoot.setSpacing(10);
@@ -464,6 +491,11 @@ public class EditorScene extends Scene {
 			double newFontSize = newVal.doubleValue() * 0.4;
 			textField.setFont(new Font(newFontSize));
 		});
+		 textField.textProperty().addListener((observable, oldValue, newValue) -> {
+	            if (newValue.length() > 15) {
+	                textField.setText(oldValue); // Wenn die Länge überschritten wird, wird der Text auf den vorherigen Wert zurückgesetzt
+	            }
+	        });
 		return textField;
 	}
 
@@ -476,6 +508,7 @@ public class EditorScene extends Scene {
 //				() -> Font.font("Century Gothic", addButton.getHeight() * 0.35), addButton.heightProperty()));
 		addButton.setOnAction(e -> {
 			engine.addpiece(name, strength);
+			inform(name.getText() +" was added succesfully!");
 		});
 		return addButton;
 	}
