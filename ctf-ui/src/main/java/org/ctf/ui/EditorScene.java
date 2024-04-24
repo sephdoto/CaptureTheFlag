@@ -42,6 +42,7 @@ public class EditorScene extends Scene {
 	SpinnerValueFactory<Integer> valueFactory;
 	TemplateEngine engine;
 	ComboBox<String> customFigureBox;
+	MenuButton mapMenuButton;
 	boolean spinnerchange = false;
 	boolean boxchange = false;
 
@@ -255,7 +256,8 @@ public class EditorScene extends Scene {
 		HBox controlBar = new HBox();
 		controlBar.setSpacing(10);
 		controlBar.getChildren().add(createMenuButton());
-		controlBar.getChildren().add(createMapMenuButton());
+		mapMenuButton = createMapMenuButton();
+		controlBar.getChildren().add(mapMenuButton);
 		controlBar.getChildren().add(createExit());
 		controlBar.getChildren().add(createSubmit());
 		return controlBar;
@@ -319,16 +321,17 @@ public class EditorScene extends Scene {
 		mb.getStyleClass().add("custom-menu-button");
 		mb.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		mb.prefHeightProperty().bind(mb.widthProperty().multiply(0.25));
-		MenuItem default1Item = new MenuItem("Map One");
-		MenuItem default2Item = new MenuItem("Map Two");
-		mb.getItems().addAll(default1Item, default2Item);
-		default1Item.setOnAction(event -> {
-
-		});
-		default2Item.setOnAction(event -> {
-
-		});
+		for(String mapName : engine.getTemplateNames()) {
+			addMapItem(mapName, mb);
+		}		
 		return mb;
+	}
+	private void addMapItem(String mapName,MenuButton mapMenuButton) {
+		MenuItem item = new MenuItem(mapName);
+		item.setOnAction(e -> {
+			
+		});
+		mapMenuButton.getItems().add(item);
 	}
 
 	private Text createHeaderText(VBox vBox, String label, int divider) {

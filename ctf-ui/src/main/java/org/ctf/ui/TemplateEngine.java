@@ -28,13 +28,13 @@ public class TemplateEngine {
 
 	public TemplateEngine(EditorScene editorscene) {
 		this.editorscene = editorscene;
-		loadStartingTemplate();
+		loadTemplate(Constants.mapTemplateFolder + "10x10_2teams_example.json");
 		tmpMovement.setDirections(new Directions());
 		initializePieces();
 	}
 
-	public void loadStartingTemplate() {
-		File defaultMap = new File(Constants.mapTemplateFolder + "10x10_2teams_example.json");
+	public void loadTemplate(String path) {
+		File defaultMap = new File(path);
 		try {
 			if (defaultMap.exists()) {
 				tmpTemplate = JSON_Tools.readMapTemplate(defaultMap);
@@ -318,5 +318,13 @@ public class TemplateEngine {
 			System.out.println("Unknown");
 			break;
 		}
+	}
+	
+	public String[] getTemplateNames(){
+		File templateFolder = new File(Constants.mapTemplateFolder);
+		if(templateFolder.isDirectory()) {
+			return templateFolder.list();
+			}		
+		return new String[0];
 	}
 }
