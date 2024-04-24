@@ -28,13 +28,13 @@ public class TemplateEngine {
 
 	public TemplateEngine(EditorScene editorscene) {
 		this.editorscene = editorscene;
-		loadTemplate("10x10_2teams_example.json");
+		loadTemplate("10x10_2teams_example");
 		tmpMovement.setDirections(new Directions());
 		initializePieces();
 	}
 
 	public void loadTemplate(String name) {
-		File map = new File(Constants.mapTemplateFolder + name);
+		File map = new File(Constants.mapTemplateFolder + name +".json");
 		try {
 			if (map.exists()) {
 				tmpTemplate = JSON_Tools.readMapTemplate(map);
@@ -134,7 +134,7 @@ public class TemplateEngine {
 			setter.accept(old);
 			editorscene.setSpinnerChange(true);
 			spinner.getValueFactory().setValue(old);
-			System.out.println("Zu wenig Platz");
+			editorscene.inform("There is not enough space!");
 		}
 		return isvalid;
 	}
@@ -183,7 +183,7 @@ public class TemplateEngine {
 			if (newV==0&&tmpTemplate.getPieces().length == 1) {
 				editorscene.setSpinnerChange(true);
 				spinner.getValueFactory().setValue(old);
-				System.out.println("Mindestens eine Figur noetig");
+				editorscene.inform("You need at least one Figure!");
 				return false;
 			
 			}
@@ -196,8 +196,8 @@ public class TemplateEngine {
 				betterUpdateCount(type, old);
 				editorscene.setSpinnerChange(true);
 				spinner.getValueFactory().setValue(old);
-				System.out.println("Nicht genug Platz fuer " + newV + " " + type + " je Team");
-			
+				 
+			editorscene.inform(("There is not enough space for that many figures!"));
 		}
 		return true;
 	}
@@ -323,7 +323,11 @@ public class TemplateEngine {
 	public String[] getTemplateNames(){
 		File templateFolder = new File(Constants.mapTemplateFolder);
 		if(templateFolder.isDirectory()) {
-			return templateFolder.list();
+			String[] names = templateFolder.list();
+			for(int i=0;i<names.length;i++) {
+				names[i] =   names[i].substring(0, names[i].length()-5);
+			}
+			return names;
 			}		
 		return new String[0];
 	}

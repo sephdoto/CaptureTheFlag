@@ -84,7 +84,9 @@ public class EditorScene extends Scene {
 		leftPane.getChildren().add(options[0]);
 		leftControl.getChildren().add(leftPane);
 		createInfotext();
-		leftControl.getChildren().add(infoText);
+		StackPane test = new StackPane();
+		test.getChildren().add(infoText);
+		leftControl.getChildren().add(test);
 		sep.getChildren().add(leftControl);
 		createVisual();
 		sep.getChildren().add(visualRoot);
@@ -118,7 +120,7 @@ public class EditorScene extends Scene {
 		});		
 	}
 
-	private void inform(String info) {
+	public void inform(String info) {
 		infoText.setText(info);
 		FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), infoText);
 		fadeTransition.setDelay(Duration.seconds(1));
@@ -276,7 +278,7 @@ public class EditorScene extends Scene {
 		pane.setPadding(new Insets(10));
 		pane.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
 		pane.prefHeightProperty().bind(pane.widthProperty().multiply(0.5));
-
+		
 		return pane;
 	}
 
@@ -363,8 +365,9 @@ public class EditorScene extends Scene {
 			options[1] = createFigureChooser();
 			leftPane.getChildren().clear();
 			leftPane.getChildren().add(options[0]);
-			mb.setText("Edit Map");
+			mb.setText("Edit Map");			
 			updateVisualRoot();
+			inform(mapName + "was loaded.");
 		});
 		mapMenuButton.getItems().add(item);
 	}
@@ -391,7 +394,7 @@ public class EditorScene extends Scene {
 		spinner.getStyleClass().add("spinner");
 		spinner.setEditable(true);
 		// spinner.setStyle("-fx-background-color: rgb(15,15,15);");
-		spinner.prefWidthProperty().bind(parent.widthProperty().multiply(0.25));
+		spinner.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
 		spinner.prefHeightProperty().bind(spinner.widthProperty().multiply(0.25));
 		return spinner;
 
