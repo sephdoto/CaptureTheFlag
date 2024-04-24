@@ -60,6 +60,7 @@ public class Client implements GameClientInterface {
   private String currentGameSessionID;
   private GameSessionResponse gameResponse;
   private String[] winners;
+  private int turnTimeLimit;
 
   // Block for Team Data
   private String teamSecret;
@@ -290,6 +291,11 @@ public class Client implements GameClientInterface {
       this.gameOver = gameSessionResponse.isGameOver();
     } catch (NullPointerException e) {
       System.out.println("Game hasnt ended yet");
+    }
+    try {
+      this.turnTimeLimit = gameSessionResponse.getTurnTimeLimit();
+    } catch (NullPointerException e) {
+      System.out.println("There is no Turn Time Limit");
     }
     try {
       this.winners = gameSessionResponse.getWinner();
