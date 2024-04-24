@@ -293,10 +293,12 @@ public class GameSessionController {
         sessionResponse.setId(sessionId);
         sessionResponse.setGameStarted(game.getStartedDate());
         sessionResponse.setGameEnded(game.getEndDate());
+        sessionResponse.setTurnTimeLimit(game.getTurnTimeLimit());
         sessionResponse.setGameOver(game.isGameOver());
         sessionResponse.setWinner(game.getWinner());
 
         return sessionResponse;
     }
 }
+
 

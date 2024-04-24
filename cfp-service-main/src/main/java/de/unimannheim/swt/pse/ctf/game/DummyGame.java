@@ -92,4 +92,9 @@ public class DummyGame implements Game {
     public Date getEndDate() {
         return null;
     }
+
+    @Override
+    public int getTurnTimeLimit() {
+        return 0;
+    }
 }
