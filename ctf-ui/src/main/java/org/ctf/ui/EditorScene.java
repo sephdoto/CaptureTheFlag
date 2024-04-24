@@ -441,10 +441,13 @@ public class EditorScene extends Scene {
 		chooseBar.getChildren().add(createFigureBox(vBox));
 		Spinner<Integer> customSpinner = createMapSpinner(vBox, 0, 100, 0);
 		chooseBar.getChildren().add(customSpinner);
-		//customFigureBox.setValue("Choose Custom Piece");
+		customFigureBox.setValue("Choose Custom Piece");
 		customFigureBox.setOnAction(e -> {
 			boxchange = true;
 			int customcount = engine.getPieceCount(customFigureBox.getValue());
+			if(customSpinner.getValue()==customcount) {
+				boxchange = false;
+			}
 			customSpinner.getValueFactory().setValue(customcount);
 		});
 		createChangeListener(customSpinner, "custom", true);
