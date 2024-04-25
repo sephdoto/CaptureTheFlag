@@ -12,6 +12,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.ctf.shared.ai.AI_Constants;
 import org.ctf.shared.ai.AI_Tools;
+import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.ai.random.RandomAI;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
@@ -293,7 +294,7 @@ public class MCTS_TestDouble {
       for (int j = 0; !canMove && j < node.gameState.getTeams()[i].getPieces().length; j++) {
         // only if a move can be made no exception is thrown
         try {
-          RandomAI.pickMoveComplex(node.gameState);
+          RandomAI.pickMoveComplex(node.gameState, new ReferenceMove(null, new int[] {0,0}));
           canMove = true;
         } catch (Exception e) {
         }

@@ -85,7 +85,7 @@ public class MCTS {
    * @return the node to simulate on
    */
   TreeNode selectAndExpand(TreeNode node, double C) {
-    while (isTerminal(node.gameState) == -1) {
+    while (isTerminal(node.gameState, node.operateOn) == -1) {
       if (!isFullyExpanded(node)) {
         expansionCounter.incrementAndGet();
         return expand(node);
@@ -108,7 +108,7 @@ public class MCTS {
     for (int i = 0; i < parent.children.length; i++) {
       if (parent.children[i] == null) {
         TreeNode child = parent.clone(parent.copyGameState());
-        oneMove(child, parent, false);
+        oneMove(child, parent, false, child.operateOn);
         parent.children[i] = child;
         return child;
       }
@@ -164,7 +164,8 @@ public class MCTS {
    */
   int[] simulate(TreeNode simulateOn) {
     simulationCounter.incrementAndGet();
-    int isTerminal = isTerminal(simulateOn.gameState);
+    ReferenceMove change = new ReferenceMove(null, new int[] {0,0});
+    int isTerminal = isTerminal(simulateOn.gameState, change);
     int[] winners = new int[this.teams];
     int count = AI_Constants.MAX_STEPS;
     if (isTerminal >= 0) {
@@ -173,9 +174,10 @@ public class MCTS {
     }
 
     simulateOn = simulateOn.clone(simulateOn.copyGameState());
+    simulateOn.operateOn = change;
 
-    for (; count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn.gameState)) {
-      oneMove(simulateOn, simulateOn, true);
+    for (; count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn.gameState, change)) {
+      oneMove(simulateOn, simulateOn, true, change);
       removeTeamCheck(simulateOn.gameState);
     }
     if (isTerminal < 0) {
@@ -286,7 +288,7 @@ public class MCTS {
    * @param a node to check if it is terminal
    * @return -1: the game is not in a terminal state 0 - Integer.MAX_VALUE: winner team id -2: error
    */
-  public int isTerminal(GameState gameState) {
+  public int isTerminal(GameState gameState, ReferenceMove change) {
     int teamsLeft = 0;
     for (int i = 0; i < gameState.getTeams().length; i++) {
       if (gameState.getTeams()[i] != null) {
@@ -301,7 +303,7 @@ public class MCTS {
       for (int j = 0; !canMove && j < gameState.getTeams()[i].getPieces().length; j++) {
         // only if a move can be made no exception is thrown
         try {
-          RandomAI.pickMoveComplex(gameState);
+          RandomAI.pickMoveComplex(gameState, change);
           canMove = true;
         } catch (Exception e) {
         }
@@ -382,14 +384,14 @@ public class MCTS {
    * @param original node, the move made gets removed from it
    * @return a child node containing the simulation result
    */
-  void oneMove(TreeNode alter, TreeNode original, boolean simulate) {
+  void oneMove(TreeNode alter, TreeNode original, boolean simulate, ReferenceMove change) {
     if(!simulate) {
     alterGameState(alter.gameState, new ReferenceMove(alter.gameState, getAndRemoveMoveHeuristic(original)));
     alter.initPossibleMovesAndChildren();
     }
     else {
       try {
-        alterGameState(alter.gameState, RandomAI.pickMoveComplex(alter.gameState));
+        alterGameState(alter.gameState, RandomAI.pickMoveComplex(alter.gameState, change));
       } catch (NoMovesLeftException | InvalidShapeException e) {
         e.printStackTrace();
       }

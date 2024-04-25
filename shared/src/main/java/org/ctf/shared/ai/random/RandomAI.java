@@ -37,13 +37,13 @@ public class RandomAI extends AI_Tools {
                 (Math.random()
                     * getReach(
                         picked.getDescription().getMovement().getDirections(), randomDirection));
-        move = checkMoveValidity(gameState, picked, randomDirection, reach);
+        move = checkMoveValidity(gameState, picked, randomDirection, reach, new ReferenceMove(null, new int[] {0,0}));
       } else {
         move =
             getRandomShapeMove(
-                getShapeMoves(gameState, picked, new ArrayList<int[]>()), picked);
+                getShapeMoves(gameState, picked, new ArrayList<int[]>()), picked, new ReferenceMove(null, new int[] {0,0}));
       }
-    } while (move == null);
+    } while (move.getPiece() == null);
     return move.toMove();
   }
 
@@ -58,7 +58,7 @@ public class RandomAI extends AI_Tools {
    * @throws NoMovesLeftException
    * @throws InvalidShapeException
    */
-  public static ReferenceMove pickMoveComplex(GameState gameState)
+  public static ReferenceMove pickMoveComplex(GameState gameState, ReferenceMove change)
       throws NoMovesLeftException, InvalidShapeException {
     ArrayList<Piece> piecesCurrentTeam =
         new ArrayList<Piece>(
@@ -70,9 +70,9 @@ public class RandomAI extends AI_Tools {
       Piece picked = piecesCurrentTeam.get(random);
 
       if (picked.getDescription().getMovement().getDirections() != null) { // move if Directions
-        dirMap = createDirectionMap(gameState, picked, dirMap);
+        dirMap = createDirectionMap(gameState, picked, dirMap, change);
         if (dirMap.size() > 0) {
-          return getDirectionMove(dirMap, picked, gameState);
+          return getDirectionMove(dirMap, picked, gameState, change);
         } else {
           piecesCurrentTeam.remove(random);
           continue;
@@ -80,7 +80,7 @@ public class RandomAI extends AI_Tools {
       } else { // Move if Shape
         dirMap = getShapeMoves(gameState, picked, dirMap);
         if (dirMap.size() > 0) {
-          return getRandomShapeMove(dirMap, picked);
+          return getRandomShapeMove(dirMap, picked, change);
         } else {
           piecesCurrentTeam.remove(random);
           continue;

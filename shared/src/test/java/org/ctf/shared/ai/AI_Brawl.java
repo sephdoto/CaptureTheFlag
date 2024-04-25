@@ -20,12 +20,12 @@ public class AI_Brawl {
   void mctsVSmcts2() {
     GameState playOn = TestValues.getTestState();
     playOn.setCurrentTeam(0);
-    int milisForMove = 100;
+    int milisForMove = 5000;
     int roundCounter = 0;
 
     while (true) {
       org.ctf.shared.ai.mcts.TreeNode root =
-          new org.ctf.shared.ai.mcts.TreeNode(null, playOn, null);
+          new org.ctf.shared.ai.mcts.TreeNode(null, playOn, null, new ReferenceMove(null, new int[] {0,0}));
       root.printGrid();
 
       org.ctf.shared.ai.mcts.MCTS mcts = new org.ctf.shared.ai.mcts.MCTS(root);
@@ -37,8 +37,8 @@ public class AI_Brawl {
       mcts.alterGameState(playOn, new ReferenceMove(playOn, move));
       mcts.removeTeamCheck(playOn);
 
-      if (mcts.isTerminal(playOn) != -1) break;
-      else System.out.println("ISTERMINAL??? " + mcts.isTerminal(playOn));
+      if (mcts.isTerminal(playOn, new ReferenceMove(null, new int[] {0,0})) != -1) break;
+      else System.out.println("ISTERMINAL??? " + mcts.isTerminal(playOn, new ReferenceMove(null, new int[] {0,0})));
       org.ctf.shared.ai.mcts2.TreeNode root2 =
           new org.ctf.shared.ai.mcts2.TreeNode(null, playOn, null);
       root2.printGrids();
@@ -49,8 +49,8 @@ public class AI_Brawl {
       mcts.alterGameState(playOn, new ReferenceMove(playOn, move));
       mcts.removeTeamCheck(playOn);
 
-      if (mcts.isTerminal(playOn) != -1) break;
-      else System.out.println("ISTERMINAL??? " + mcts.isTerminal(playOn));
+      if (mcts.isTerminal(playOn, new ReferenceMove(null, new int[] {0,0})) != -1) break;
+      else System.out.println("ISTERMINAL??? " + mcts.isTerminal(playOn, new ReferenceMove(null, new int[] {0,0})));
     }
 
     //    org.ctf.ai.mcts2.TreeNode root2 = new org.ctf.ai.mcts2.TreeNode(null, playOn, null);

@@ -41,7 +41,7 @@ class ObjectMemoryAnalyzer {
   
   @Test
   void testTreeNodeOldMemory() {
-    org.ctf.shared.ai.mcts.TreeNode oldNode = new org.ctf.shared.ai.mcts.TreeNode(null, TestValues.getTestState(), null);
+    org.ctf.shared.ai.mcts.TreeNode oldNode = new org.ctf.shared.ai.mcts.TreeNode(null, TestValues.getTestState(), null, new ReferenceMove(null, new int[] {0,0}));
     System.out.println(GraphLayout.parseInstance(oldNode).toFootprint());
 
 
@@ -52,14 +52,14 @@ class ObjectMemoryAnalyzer {
     GameState test = TestValues.getTestState();
     //warm up jit compiler
     for(int i=0; i<1000; i++) {
-      RandomAI.pickMoveComplex(test);
+      RandomAI.pickMoveComplex(test, new ReferenceMove(null, new int[] {0,0}));
     }
     
     long timeigs = 0;
     int sims = 100000;
     for(int i=0; i<sims; i++) {
       long time = System.nanoTime();
-      RandomAI.pickMoveComplex(test);
+      RandomAI.pickMoveComplex(test, new ReferenceMove(null, new int[] {0,0}));
       timeigs+=(System.nanoTime() - time);
     }
     System.out.println((timeigs/sims) + " nonos im durchschnitt");
