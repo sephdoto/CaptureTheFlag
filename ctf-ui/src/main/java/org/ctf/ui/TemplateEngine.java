@@ -168,9 +168,9 @@ public class TemplateEngine {
 		}
 	}
 
-	public void saveTemplate() {
+	public void saveTemplate(String name) {
 		try {
-			JSON_Tools.saveMapTemplateAsFile("test", tmpTemplate);
+			JSON_Tools.saveMapTemplateAsFile(name, tmpTemplate);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -324,15 +324,17 @@ public class TemplateEngine {
 		}
 	}
 	
-	public String[] getTemplateNames(){
+	public ArrayList<String> getTemplateNames(){
 		File templateFolder = new File(Constants.mapTemplateFolder);
 		if(templateFolder.isDirectory()) {
 			String[] names = templateFolder.list();
 			for(int i=0;i<names.length;i++) {
 				names[i] =   names[i].substring(0, names[i].length()-5);
 			}
-			return names;
+			ArrayList<String> result = new ArrayList<String>();
+			result.addAll(Arrays.asList(names));
+			return result;
 			}		
-		return new String[0];
+		return new ArrayList<String>();
 	}
 }

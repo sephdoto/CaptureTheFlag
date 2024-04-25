@@ -315,7 +315,8 @@ public class EditorScene extends Scene {
 		Button submit = createControlButton("Submit");
 		submit.setOnAction(e -> {
 			engine.printTemplate();
-			root.getChildren().add(new PopUpPane(this, 0.4, 0.4));
+			//root.getChildren().add(new PopUpPane(this, 0.4, 0.4));
+			root.getChildren().add(new ComponentCreator(this).createSubmitWindow());
 		});
 		return submit;
 	}
@@ -374,7 +375,7 @@ public class EditorScene extends Scene {
 		mapMenuButton.getItems().add(item);
 	}
 
-	private Text createHeaderText(VBox vBox, String label, int divider) {
+	public Text createHeaderText(VBox vBox, String label, int divider) {
 		Text leftheader = new Text(label);
 		leftheader.getStyleClass().add("custom-header");
 		leftheader.fontProperty().bind(Bindings.createObjectBinding(
@@ -565,6 +566,12 @@ public class EditorScene extends Scene {
 
 	public ComboBox<String> getCustomFigureBox() {
 		return customFigureBox;
+	}
+	public TemplateEngine getEngine() {
+		return this.engine;
+	}
+	public StackPane getRootPane() {
+		return this.root;
 	}
 
 }
