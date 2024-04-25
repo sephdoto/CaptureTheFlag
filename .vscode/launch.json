@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ScheduledTasks",
+            "request": "launch",
+            "mainClass": "org.ctf.shared.client.ScheduledTasks",
+            "projectName": "shared"
+        },
+        {
+            "type": "java",
             "name": "MCTSSimulation",
             "request": "launch",
             "mainClass": "org.ctf.shared.client.MCTSSimulation",

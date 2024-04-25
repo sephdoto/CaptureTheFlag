@@ -9,13 +9,13 @@ import org.ctf.shared.constants.Constants.Port;
 import org.ctf.shared.state.data.map.MapTemplate;
 
 /**
- * Defines the Step Builder Pattern which must be used to create an object of the Client Class
+ * Defines the Step Builder Pattern which must be used to create an object of the AIClient Class
  *
  * @author rsyed
  */
-public class ClientStepBuilder {
+public class AIClientStepBuilder {
 
-  private ClientStepBuilder() {}
+  private AIClientStepBuilder() {}
 
   /** Starter method for the builder */
   public static LayerSelectionStep newBuilder() {
@@ -53,16 +53,29 @@ public class ClientStepBuilder {
      *
      * @param port example String "9999" etc
      */
-    LoggerEnabler onPort(String port);
+    PlayerTypeSelectionStep onPort(String port);
 
     /**
      * Method for setting the port using a Constant ENUM from Constants.Port
      *
      * @param port example String "9999" etc
      */
-    LoggerEnabler onPort(Port def);
+    PlayerTypeSelectionStep onPort(Port def);
   }
 
+  /**
+   * Fourth and last customization. Selects what kind of player the client is going to take input
+   * from
+   */
+  public static interface PlayerTypeSelectionStep {
+    /**
+     * Method which creates an instance of AIClient.java. Extension has build in support for AI
+     * players
+     *
+     * @param num Exp: Constants.AI.MCTS, Constants.AI.MCTS.RANDOM, etc
+     */
+    LoggerEnabler AIPlayerSelector(Constants.AI num);
+  }
 
   public static interface LoggerEnabler {
     /**
@@ -70,14 +83,24 @@ public class ClientStepBuilder {
      *
      * @param selector True for Enabling Save, False for disabled
      */
-    BuildStep enableSaveGame(boolean selector);
+    CreatorOrJoinerStep enableSaveGame(boolean selector);
   }
 
+  public static interface CreatorOrJoinerStep {
+    /**
+     * Method to enable if the AI Game will be logged players
+     *
+     * @param selector True for Enabling Save, False for disabled
+     */
+    BuildStep createGameMode(MapTemplate mapTemplate, String teamName);
+
+    BuildStep joinerGameMode(String GameID, String teamName);
+  }
 
   /** Build Step */
   public static interface BuildStep {
 
-    public Client build();
+    public AIClient build();
   }
 
   /** Builder class itself where code gets implemented and the object creation happens */
@@ -85,12 +108,20 @@ public class ClientStepBuilder {
       implements LayerSelectionStep,
           HostStep,
           PortSelectionStep,
+          PlayerTypeSelectionStep,
           LoggerEnabler,
+          CreatorOrJoinerStep,
           BuildStep {
     private CommLayerInterface comm;
     private String host;
     private String port;
+    private AI ai;
     private boolean enableSave;
+    private MapTemplate mapTemplate;
+    private String teamName;
+    private String gameSessionGiven;
+    private boolean joinerMode;
+    private boolean creatorMode;
 
     /**
      * Sets the underlying layer in use by the Client
@@ -118,11 +149,21 @@ public class ClientStepBuilder {
      * Step for port input as String
      *
      * @param port to connect to as String. Example "8888"
-     * @return 
      */
     @Override
-    public LoggerEnabler onPort(String port) {
+    public PlayerTypeSelectionStep onPort(String port) {
       this.port = port;
+      return this;
+    }
+
+    /**
+     * Step for AI Selection for the layer
+     *
+     * @param ai the AI enum to specify the AI the Client is going to use. Example AI.MCTS
+     */
+    @Override
+    public LoggerEnabler AIPlayerSelector(AI ai) {
+      this.ai = ai;
       return this;
     }
 
@@ -141,10 +182,9 @@ public class ClientStepBuilder {
      * Port.DEFAULT for 8888
      *
      * @param def an Enum
-     * @return 
      */
     @Override
-    public LoggerEnabler onPort(Port def) {
+    public PlayerTypeSelectionStep onPort(Port def) {
       this.port = def.toString();
       return this;
     }
@@ -153,18 +193,40 @@ public class ClientStepBuilder {
      * Option Presented if AI Client is selected. Enables the game to be saved as a SavedGame
      *
      * @param selector True for Enabling Save, False for Disabled
-     * @return 
      */
     @Override
-    public Steps enableSaveGame(boolean selector) {
+    public CreatorOrJoinerStep enableSaveGame(boolean selector) {
       this.enableSave = selector;
       return this;
     }
 
+    @Override
+    public BuildStep createGameMode(MapTemplate mapTemplate, String teamName) {
+      this.mapTemplate = mapTemplate;
+      this.teamName = teamName;
+      this.creatorMode = true;
+      this.joinerMode = false;
+      return this;
+    }
 
     @Override
-    public Client build() {
-      return new Client(comm, host, port, enableSave);
+    public BuildStep joinerGameMode(String GameID, String teamName) {
+      this.gameSessionGiven = GameID;
+      this.teamName = teamName;
+      this.creatorMode = false;
+      this.joinerMode = true;
+      return this;
+    }
+
+    @Override
+    public AIClient build() {
+      AIClient client;
+      if (creatorMode) {
+        client = new AIClient(comm, host, port, enableSave, ai, mapTemplate, teamName);
+      } else { // (joinerMode) 
+        client = new AIClient(comm, host, port, enableSave, ai, gameSessionGiven, teamName);
+      } 
+      return client;
     }
   }
 }

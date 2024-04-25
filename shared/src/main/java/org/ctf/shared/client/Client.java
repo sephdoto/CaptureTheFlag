@@ -5,6 +5,9 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import org.ctf.shared.client.lib.GameClientInterface;
 import org.ctf.shared.client.lib.ServerChecker;
@@ -88,6 +91,10 @@ public class Client implements GameClientInterface {
   public boolean moveTimeLimitedGameTrigger = false;
   public boolean timeLimitedGameTrigger = false;
   public Clock turnEndsBy;
+
+  //Services
+  ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
+  ExecutorService executor = Executors.newFixedThreadPool(3);
 
   /**
    * Constructor to set the IP and port on object creation
@@ -448,7 +455,7 @@ public class Client implements GameClientInterface {
 
   /**
    * Method is called while parsing JoinGameResponse to set variables incase the server
-   * implementation supports the right implementation of the joinServerResponse Modifies
+   * implementation supports the right implementation of the joinServerResponse. Modifies
    * turnSupportFlag to true incase it is supported. False if not
    *
    * @param joinGameResponse the object from which the data is read

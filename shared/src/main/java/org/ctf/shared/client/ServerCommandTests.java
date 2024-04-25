@@ -58,6 +58,8 @@ public class ServerCommandTests {
     // tests();
   }
 
+  
+
   public static void TimeTest() {
     SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy/HH/mm/ss", Locale.ENGLISH);
     Date startDate = new Date();

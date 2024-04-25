@@ -4,7 +4,6 @@ import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.client.lib.Analyzer;
-import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.service.CommLayerInterface;
 import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
@@ -27,12 +26,8 @@ public class AIClient extends Client {
   public boolean joinerMode;
   public String gameCreatedSessionID;
 
-  AIClient(CommLayerInterface comm, String IP, String port) {
-    super(comm, IP, port);
-  }
-
-  AIClient(CommLayerInterface comm, String IP, String port, AI selected, Boolean enableSaveGame) {
-    this(comm, IP, port);
+  AIClient(CommLayerInterface comm, String IP, String port, Boolean enableSaveGame, AI selected) {
+    super(comm, IP, port, enableSaveGame);
     this.selectedPlayer = selected;
     this.enableSaveGame = enableSaveGame;
   }
@@ -42,13 +37,11 @@ public class AIClient extends Client {
       CommLayerInterface comm,
       String IP,
       String port,
-      AI selected,
       Boolean enableSaveGame,
+      AI selected,
       MapTemplate mapTemplate,
       String constructorSetTeamName) {
-    this(comm, IP, port);
-    this.selectedPlayer = selected;
-    this.enableSaveGame = enableSaveGame;
+    this(comm, IP, port, enableSaveGame, selected);
     this.sessionMapTemplate = mapTemplate;
     this.constructorSetTeamName = constructorSetTeamName;
     this.creatorMode = true;
@@ -60,13 +53,11 @@ public class AIClient extends Client {
       CommLayerInterface comm,
       String IP,
       String port,
-      AI selected,
       Boolean enableSaveGame,
+      AI selected,
       String gameIDString,
       String constructorSetTeamName) {
-    this(comm, IP, port);
-    this.selectedPlayer = selected;
-    this.enableSaveGame = enableSaveGame;
+    this(comm, IP, port, enableSaveGame, selected);
     this.alreadyCreatedSessionID = gameIDString;
     this.constructorSetTeamName = constructorSetTeamName;
     this.creatorMode = false;
@@ -103,22 +94,22 @@ public class AIClient extends Client {
                 // checks if game has a start date and no end date
                 boolean running = true;
                 boolean playmode = true;
-                 while (running) {
-                 /* if (creatorMode) {
-                    createGame(sessionMapTemplate);
-                    gameCreatedSessionID = getCurrentGameSessionID();
-                    joinGame(constructorSetTeamName);
-                    creatorMode = false;
-                    playmode = true;
-                  }
+                while (running) {
+                  /* if (creatorMode) {
+                                     createGame(sessionMapTemplate);
+                                     gameCreatedSessionID = getCurrentGameSessionID();
+                                     joinGame(constructorSetTeamName);
+                                     creatorMode = false;
+                                     playmode = true;
+                                   }
 
-                  if (joinerMode) {
-                    Thread.sleep(300);
-                    this.joinExistingGame("localhost", "8888", this.alreadyCreatedSessionID, "AITwo");
-                    joinerMode = false;
-                    playmode = true;
-                  }
- */
+                                   if (joinerMode) {
+                                     Thread.sleep(300);
+                                     this.joinExistingGame("localhost", "8888", this.alreadyCreatedSessionID, "AITwo");
+                                     joinerMode = false;
+                                     playmode = true;
+                                   }
+                  */
                   if ((this.getEndDate() == null) && (this.getStartDate() != null) && playmode) {
                     pullData();
 

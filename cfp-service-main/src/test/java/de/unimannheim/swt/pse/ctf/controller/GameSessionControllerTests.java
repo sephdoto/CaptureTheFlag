@@ -58,7 +58,7 @@ public class GameSessionControllerTests {
         JoinGameResponse joinGameResponse1 = restTemplate.postForObject("http://localhost:" + port + "/api/gamesession/{gameSessionId}/join",
                 team1, JoinGameResponse.class, gameSessionId);
         JoinGameRequest team2 = new JoinGameRequest();
-        team1.setTeamId("team2");
+        team2.setTeamId("team2");
         JoinGameResponse joinGameResponse2 = restTemplate.postForObject("http://localhost:" + port + "/api/gamesession/{gameSessionId}/join",
                 team2, JoinGameResponse.class, gameSessionId);
 
@@ -97,3 +97,4 @@ public class GameSessionControllerTests {
         return mapTemplate;
     }
 }
+
