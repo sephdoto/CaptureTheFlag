@@ -12,6 +12,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.ctf.shared.ai.AI_Constants;
 import org.ctf.shared.ai.AI_Tools;
+import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
+import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.ai.random.RandomAI;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
@@ -105,7 +108,7 @@ public class MCTS {
     for (int i = 0; i < parent.children.length; i++) {
       if (parent.children[i] == null) {
         TreeNode child = parent.clone(parent.copyGameState());
-        oneMove(child, parent);
+        oneMove(child, parent, false);
         parent.children[i] = child;
         return child;
       }
@@ -172,7 +175,7 @@ public class MCTS {
     simulateOn = simulateOn.clone(simulateOn.copyGameState());
 
     for (; count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn.gameState)) {
-      oneMove(simulateOn, simulateOn);
+      oneMove(simulateOn, simulateOn, true);
       removeTeamCheck(simulateOn.gameState);
     }
     if (isTerminal < 0) {
@@ -379,9 +382,18 @@ public class MCTS {
    * @param original node, the move made gets removed from it
    * @return a child node containing the simulation result
    */
-  void oneMove(TreeNode alter, TreeNode original) {
-    alterGameState(alter.gameState, getAndRemoveMoveHeuristic(original));
+  void oneMove(TreeNode alter, TreeNode original, boolean simulate) {
+    if(!simulate) {
+    alterGameState(alter.gameState, new ReferenceMove(alter.gameState, getAndRemoveMoveHeuristic(original)));
     alter.initPossibleMovesAndChildren();
+    }
+    else {
+      try {
+        alterGameState(alter.gameState, RandomAI.pickMoveComplex(alter.gameState));
+      } catch (NoMovesLeftException | InvalidShapeException e) {
+        e.printStackTrace();
+      }
+    }
   }
 
   /**
@@ -468,13 +480,9 @@ public class MCTS {
    * @param gameState
    * @param move
    */
-  public void alterGameState(GameState gameState, Move move) {
+  public void alterGameState(GameState gameState, ReferenceMove move) {
     String occupant = gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]];
-    Piece picked =
-        Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream()
-            .filter(p -> p.getId().equals(move.getPieceId()))
-            .findFirst()
-            .get();
+    Piece picked = move.getPiece();
     int[] oldPos = picked.getPosition();
 
     gameState.getGrid()[oldPos[0]][oldPos[1]] = "";
@@ -485,7 +493,7 @@ public class MCTS {
           Arrays.asList(gameState.getTeams()[occupantTeam].getPieces()).stream()
               .filter(p -> !p.getId().equals(occupant))
               .toArray(Piece[]::new));
-      gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
+      gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPiece().getId();
       picked.setPosition(move.getNewPosition());
     } else if (occupant.contains("b:")) {
       int occupantTeam = AI_Tools.getOccupantTeam(gameState.getGrid(), move.getNewPosition());
@@ -496,10 +504,10 @@ public class MCTS {
               gameState, gameState.getTeams()[gameState.getCurrentTeam()].getBase()));
       gameState.getGrid()[picked.getPosition()[0]][picked.getPosition()[1]] = picked.getId();
     } else {
-      gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
+      gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPiece().getId();
       picked.setPosition(move.getNewPosition());
     }
-    gameState.setLastMove(move);
+    gameState.setLastMove(move.toMove());
     AI_Tools.toNextTeam(gameState);
   }
 

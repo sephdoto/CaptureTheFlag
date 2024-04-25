@@ -40,10 +40,15 @@ class ObjectMemoryAnalyzer {
   }
   
   @Test
-  void testTreeNodeOldMemory() throws NoMovesLeftException, InvalidShapeException, InterruptedException {
+  void testTreeNodeOldMemory() {
     org.ctf.shared.ai.mcts.TreeNode oldNode = new org.ctf.shared.ai.mcts.TreeNode(null, TestValues.getTestState(), null);
-//    System.out.println(GraphLayout.parseInstance(oldNode).toFootprint());
+    System.out.println(GraphLayout.parseInstance(oldNode).toFootprint());
 
+
+  }
+  
+  //@Test
+  void testRandomAIspeed() throws NoMovesLeftException, InvalidShapeException, InterruptedException {
     GameState test = TestValues.getTestState();
     //warm up jit compiler
     for(int i=0; i<1000; i++) {

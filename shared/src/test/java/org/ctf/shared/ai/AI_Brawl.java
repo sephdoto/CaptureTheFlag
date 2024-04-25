@@ -34,7 +34,7 @@ public class AI_Brawl {
       move = mcts.getMove(milisForMove, AI_Constants.C);
 
       System.out.println("\nMCTS Round " + ++roundCounter + ":\n" + mcts.printResults(move));
-      mcts.alterGameState(playOn, move);
+      mcts.alterGameState(playOn, new ReferenceMove(playOn, move));
       mcts.removeTeamCheck(playOn);
 
       if (mcts.isTerminal(playOn) != -1) break;
@@ -46,7 +46,7 @@ public class AI_Brawl {
       move = mcts2.getMove(milisForMove, AI_Constants.C);
       System.out.println(
           "\nMCTS_TWOOOOO Round " + ++roundCounter + ":\n" + mcts2.printResults(move));
-      mcts.alterGameState(playOn, move);
+      mcts.alterGameState(playOn, new ReferenceMove(playOn, move));
       mcts.removeTeamCheck(playOn);
 
       if (mcts.isTerminal(playOn) != -1) break;
