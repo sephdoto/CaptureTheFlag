@@ -64,7 +64,6 @@ public class RandomAI extends AI_Tools {
         new ArrayList<Piece>(
             Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()));
     ArrayList<int[]> dirMap = new ArrayList<int[]>();
-    ArrayList<int[]> shapeMoves = new ArrayList<int[]>();
 
     while (piecesCurrentTeam.size() > 0) {
       int random = (int) (Math.random() * piecesCurrentTeam.size());
@@ -79,9 +78,9 @@ public class RandomAI extends AI_Tools {
           continue;
         }
       } else { // Move if Shape
-        shapeMoves = getShapeMoves(gameState, picked, shapeMoves);
-        if (shapeMoves.size() > 0) {
-          return getRandomShapeMove(shapeMoves, picked);
+        dirMap = getShapeMoves(gameState, picked, dirMap);
+        if (dirMap.size() > 0) {
+          return getRandomShapeMove(dirMap, picked);
         } else {
           piecesCurrentTeam.remove(random);
           continue;

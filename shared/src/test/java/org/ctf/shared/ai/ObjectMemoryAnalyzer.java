@@ -2,6 +2,7 @@ package org.ctf.shared.ai;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.contains;
+import java.util.ArrayList;
 import java.util.HashMap;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
@@ -39,7 +40,7 @@ class ObjectMemoryAnalyzer {
   }
   
   @Test
-  void testTreeNodeOldMemory() throws NoMovesLeftException, InvalidShapeException {
+  void testTreeNodeOldMemory() throws NoMovesLeftException, InvalidShapeException, InterruptedException {
     org.ctf.shared.ai.mcts.TreeNode oldNode = new org.ctf.shared.ai.mcts.TreeNode(null, TestValues.getTestState(), null);
 //    System.out.println(GraphLayout.parseInstance(oldNode).toFootprint());
 
@@ -50,13 +51,14 @@ class ObjectMemoryAnalyzer {
     }
     
     long timeigs = 0;
-    int sims = 1000;
+    int sims = 100000;
     for(int i=0; i<sims; i++) {
       long time = System.nanoTime();
       RandomAI.pickMoveComplex(test);
       timeigs+=(System.nanoTime() - time);
     }
     System.out.println((timeigs/sims) + " nonos im durchschnitt");
+    Thread.sleep(2000);
   }
   
 //  @Test

@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.stream.Stream;
 import org.ctf.shared.state.GameState;
-import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.data.map.Directions;
 import org.ctf.shared.state.data.map.ShapeType;
@@ -391,8 +390,7 @@ public class AI_Tools {
    * @return false if any obstacle is in between or the target position is not on the grid
    */
   public static boolean sightLine(GameState gameState, int[] newPos, int direction, int reach) {
-    --reach;
-    for (; reach > 0; reach--) {
+    for (--reach; reach > 0; reach--) {
       newPos = updatePos(newPos, direction, -1);
       try {
         if (gameState.getGrid()[newPos[0]][newPos[1]].equals("")) {
