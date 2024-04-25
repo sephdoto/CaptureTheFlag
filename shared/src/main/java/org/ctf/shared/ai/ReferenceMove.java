@@ -1,6 +1,7 @@
-package org.ctf.shared.ai.mcts2;
+package org.ctf.shared.ai;
 
 import java.util.Arrays;
+import org.ctf.shared.ai.mcts2.ReferenceGameState;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;

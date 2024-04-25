@@ -35,13 +35,13 @@ public class AI_ToolsTest {
   void testGetRandomShapeMove() {
     Move move1 = new Move();
     ArrayList<int[]> moveList = new ArrayList<int[]>();
-    move1.setNewPosition(null);
-    move1.setPieceId(null);
+    move1.setNewPosition(new int[] {0,0});
+    move1.setPieceId("");
     moveList.add(move1.getNewPosition());
 
     assertEquals(
         move1.getNewPosition(), RandomAI.getRandomShapeMove(moveList, null).getNewPosition());
-    assertEquals(move1.getPieceId(), RandomAI.getRandomShapeMove(moveList, null).getPieceId());
+    assertEquals(move1.getPieceId(), RandomAI.getRandomShapeMove(moveList, null).toMove().getPieceId());
   }
 
   @Test

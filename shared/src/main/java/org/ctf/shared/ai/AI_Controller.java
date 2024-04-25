@@ -36,7 +36,7 @@ public class AI_Controller {
     int milis = 1000;
     switch (this.ai) {
       case RANDOM:
-        return RandomAI.pickMoveComplex(gameState);
+        return RandomAI.pickMoveComplex(gameState).toMove();
       case MCTS:
       org.ctf.shared.ai.mcts.TreeNode root = new org.ctf.shared.ai.mcts.TreeNode(null, gameState, null);
       org.ctf.shared.ai.mcts.MCTS mcts = new org.ctf.shared.ai.mcts.MCTS(root); 
@@ -52,7 +52,7 @@ public class AI_Controller {
         System.out.println(mcts2.printResults(move2));
         return move2;  
       default:
-        return RandomAI.pickMoveComplex(gameState);
+        return RandomAI.pickMoveComplex(gameState).toMove();
     }
   }
 }

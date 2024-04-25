@@ -20,7 +20,7 @@ public class AI_Brawl {
   void mctsVSmcts2() {
     GameState playOn = TestValues.getTestState();
     playOn.setCurrentTeam(0);
-    int milisForMove = 10000;
+    int milisForMove = 100;
     int roundCounter = 0;
 
     while (true) {

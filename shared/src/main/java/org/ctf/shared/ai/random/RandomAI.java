@@ -3,6 +3,7 @@ package org.ctf.shared.ai.random;
 import java.util.ArrayList;
 import java.util.Arrays;
 import org.ctf.shared.ai.AI_Tools;
+import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
@@ -25,8 +26,7 @@ public class RandomAI extends AI_Tools {
    */
   @Deprecated
   public static Move pickMoveSimple(GameState gameState) throws InvalidShapeException {
-    Move move = new Move();
-
+    ReferenceMove move = null;
     Piece[] pieces = gameState.getTeams()[gameState.getCurrentTeam()].getPieces();
     do {
       Piece picked = pieces[(int) (Math.random() * pieces.length)];
@@ -41,10 +41,10 @@ public class RandomAI extends AI_Tools {
       } else {
         move =
             getRandomShapeMove(
-                getShapeMoves(gameState, picked, new ArrayList<int[]>()), picked.getId());
+                getShapeMoves(gameState, picked, new ArrayList<int[]>()), picked);
       }
     } while (move == null);
-    return move;
+    return move.toMove();
   }
 
   /**
@@ -58,14 +58,13 @@ public class RandomAI extends AI_Tools {
    * @throws NoMovesLeftException
    * @throws InvalidShapeException
    */
-  public static Move pickMoveComplex(GameState gameState)
+  public static ReferenceMove pickMoveComplex(GameState gameState)
       throws NoMovesLeftException, InvalidShapeException {
     ArrayList<Piece> piecesCurrentTeam =
         new ArrayList<Piece>(
             Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()));
     ArrayList<int[]> dirMap = new ArrayList<int[]>();
     ArrayList<int[]> shapeMoves = new ArrayList<int[]>();
-    Move move = new Move();
 
     while (piecesCurrentTeam.size() > 0) {
       int random = (int) (Math.random() * piecesCurrentTeam.size());
@@ -82,7 +81,7 @@ public class RandomAI extends AI_Tools {
       } else { // Move if Shape
         shapeMoves = getShapeMoves(gameState, picked, shapeMoves);
         if (shapeMoves.size() > 0) {
-          return getRandomShapeMove(shapeMoves, picked.getId());
+          return getRandomShapeMove(shapeMoves, picked);
         } else {
           piecesCurrentTeam.remove(random);
           continue;
@@ -90,9 +89,6 @@ public class RandomAI extends AI_Tools {
       }
     }
 
-    if (piecesCurrentTeam.size() == 0)
-      throw new NoMovesLeftException(gameState.getTeams()[gameState.getCurrentTeam()].getId());
-
-    return move;
+  throw new NoMovesLeftException(gameState.getTeams()[gameState.getCurrentTeam()].getId());
   }
 }

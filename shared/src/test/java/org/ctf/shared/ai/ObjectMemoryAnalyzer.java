@@ -1,15 +1,20 @@
 package org.ctf.shared.ai;
 
-//import static org.junit.jupiter.api.Assertions.*;
-//import static org.mockito.ArgumentMatchers.contains;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.contains;
 import java.util.HashMap;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.Team;
-//import org.junit.jupiter.api.Test;
-//import org.openjdk.jol.info.ClassLayout;
+import org.junit.jupiter.api.Test;
+import org.openjdk.jol.info.ClassLayout;
 import org.openjdk.jol.info.GraphLayout;
-//import org.openjdk.jol.vm.VM;
+import org.openjdk.jol.vm.VM;
+
+import org.ctf.shared.ai.AI_Controller;
+import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
+import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.shared.ai.random.RandomAI;
 
 /**
  * This class is mainly used to test the memory usage of implemented Objects
@@ -31,6 +36,27 @@ class ObjectMemoryAnalyzer {
 //    mcts.getMove(10000, AI_Constants.C);
     
 //    System.out.println(GraphLayout.parseInstance(mcts).toFootprint());
+  }
+  
+  @Test
+  void testTreeNodeOldMemory() throws NoMovesLeftException, InvalidShapeException {
+    org.ctf.shared.ai.mcts.TreeNode oldNode = new org.ctf.shared.ai.mcts.TreeNode(null, TestValues.getTestState(), null);
+//    System.out.println(GraphLayout.parseInstance(oldNode).toFootprint());
+
+    GameState test = TestValues.getTestState();
+    //warm up jit compiler
+    for(int i=0; i<1000; i++) {
+      RandomAI.pickMoveComplex(test);
+    }
+    
+    long timeigs = 0;
+    int sims = 1000;
+    for(int i=0; i<sims; i++) {
+      long time = System.nanoTime();
+      RandomAI.pickMoveComplex(test);
+      timeigs+=(System.nanoTime() - time);
+    }
+    System.out.println((timeigs/sims) + " nonos im durchschnitt");
   }
   
 //  @Test

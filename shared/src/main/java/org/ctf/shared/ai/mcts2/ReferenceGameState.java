@@ -1,5 +1,6 @@
 package org.ctf.shared.ai.mcts2;
 
+import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.Team;

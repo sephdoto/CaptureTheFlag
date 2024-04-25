@@ -209,7 +209,7 @@ public class AI_Tools {
       dirMap = AI_Tools.createDirectionMap(gameState, piece, dirMap);
       for (int[] entry : dirMap) {
         for (int reach = entry[1]; reach > 0; reach--) {
-          Move move = new Move();
+          ReferenceMove move = null;
           try {
             move = AI_Tools.checkMoveValidity(gameState, piece, entry[0], reach);
           } catch (Exception e) {
@@ -230,11 +230,8 @@ public class AI_Tools {
    * @param pieceId
    * @return randomly picked move
    */
-  public static Move getRandomShapeMove(ArrayList<int[]> positionArrayList, String pieceId) {
-    Move move = new Move();
-    move.setPieceId(pieceId);
-    move.setNewPosition(positionArrayList.get((int) (positionArrayList.size() * Math.random())));
-    return move;
+  public static ReferenceMove getRandomShapeMove(ArrayList<int[]> positionArrayList, Piece piece) {
+    return new ReferenceMove(piece, positionArrayList.get((int) (positionArrayList.size() * Math.random())));
   }
 
   /**
@@ -328,13 +325,13 @@ public class AI_Tools {
    * @param gameState
    * @return a valid move
    */
-  public static Move getDirectionMove(ArrayList<int[]> dirMap, Piece piece, GameState gameState) {
+  public static ReferenceMove getDirectionMove(ArrayList<int[]> dirMap, Piece piece, GameState gameState) {
     int randomDir = (int) (dirMap.size() * Math.random());
     int reach;
 
     while (true) {
       reach = (int) (Math.random() * dirMap.get(randomDir)[1] + 1);
-      Move newPos = checkMoveValidity(gameState, piece, dirMap.get(randomDir)[0], reach);
+      ReferenceMove newPos = checkMoveValidity(gameState, piece, dirMap.get(randomDir)[0], reach);
       if (newPos != null) return newPos;
       dirMap.get(randomDir)[1] = reach - 1;
       continue;
@@ -366,7 +363,7 @@ public class AI_Tools {
    * @return a Move instance with the piece and its new position
    * @return null if the piece can't occupy the position or the position is not in the grid
    */
-  public static Move checkMoveValidity(GameState gameState, Piece piece, int direction, int reach) {
+  public static ReferenceMove checkMoveValidity(GameState gameState, Piece piece, int direction, int reach) {
     int[] pos = new int[] {piece.getPosition()[0], piece.getPosition()[1]};
     updatePos(pos, direction, reach);
 
@@ -375,10 +372,7 @@ public class AI_Tools {
     } else if (!sightLine(gameState, new int[] {pos[0], pos[1]}, direction, reach)) {
       return null;
     } else {
-      Move move = new Move();
-      move.setPieceId(piece.getId());
-      move.setNewPosition(pos);
-      return move;
+      return new ReferenceMove(piece, pos);
     }
   }
 
