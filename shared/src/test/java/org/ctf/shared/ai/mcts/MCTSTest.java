@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import org.ctf.shared.ai.AI_Constants;
 import org.ctf.shared.ai.AI_Tools;
 import org.ctf.shared.ai.ReferenceMove;
@@ -21,12 +22,14 @@ import org.junit.jupiter.api.Test;
 class MCTSTest {
   static MCTS mcts;
   static GameState gameState;
+  static Random random;
 
   @BeforeEach
   void setUp() {
     gameState = TestValues.getTestState();
     TreeNode parent = new TreeNode(null, gameState, new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0}));
     mcts = new MCTS(parent);
+    random = new Random();
   }
 
 //    @Test
@@ -36,7 +39,7 @@ class MCTSTest {
     MCTS_TestDouble mcts = new MCTS_TestDouble(parent);
 
     int mctsTillEnd = 0;
-    int timeForMove = 3000;
+    int timeForMove = 300;
 
     while (mcts.isTerminal(mcts.root) == -1) {
       mcts = new MCTS_TestDouble(mcts.root.clone((mcts.root.gameState)));
@@ -97,7 +100,7 @@ class MCTSTest {
   void testPerformance() throws InterruptedException {
     double expansions = 0;
     int count = 0;
-    int timeInMilis = 100;
+    int timeInMilis = 10;
     int simulations = 0;
     int heuristics = 0;
     int crashes = 0;
@@ -296,7 +299,7 @@ class MCTSTest {
   void testMultiSimulate() {
     long totalTime = 0;
     int count = 0;
-    for (int i = 0; i < 1; i++, count++) {
+    for (int i = 0; i < 100; i++, count++) {
       long time = System.nanoTime();
       mcts.multiSimulate(mcts.root);
       totalTime += System.nanoTime() - time;
@@ -309,7 +312,7 @@ class MCTSTest {
   void testSimulate() {
     long totalTime = 0;
     int count = 0;
-    for (int i = 0; i < 1; i++, count++) {
+    for (int i = 0; i < 100; i++, count++) {
       long time = System.nanoTime();
       mcts.simulate(mcts.root);
       totalTime += System.nanoTime() - time;

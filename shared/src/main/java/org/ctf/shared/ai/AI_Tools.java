@@ -3,6 +3,7 @@ package org.ctf.shared.ai;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
@@ -225,7 +226,7 @@ public class AI_Tools {
    */
   public static ReferenceMove getRandomShapeMove(ArrayList<int[]> positionArrayList, Piece piece, ReferenceMove change) {
     change.setPiece(piece);
-    change.setNewPosition(positionArrayList.get((int) (positionArrayList.size() * Math.random())));
+    change.setNewPosition(positionArrayList.get(ThreadLocalRandom.current().nextInt(positionArrayList.size())));
     return change;
   }
 
@@ -321,11 +322,11 @@ public class AI_Tools {
    * @return a valid move
    */
   public static ReferenceMove getDirectionMove(ArrayList<int[]> dirMap, Piece piece, GameState gameState, ReferenceMove change) {
-    int randomDir = (int) (dirMap.size() * Math.random());
+    int randomDir = ThreadLocalRandom.current().nextInt(dirMap.size());
     int reach;
     
     while (true) {
-      reach = (int) (Math.random() * dirMap.get(randomDir)[1] + 1);
+      reach = ThreadLocalRandom.current().nextInt(dirMap.get(randomDir)[1]) + 1;
       change = checkMoveValidity(gameState, piece, dirMap.get(randomDir)[0], reach, change);
       if (change.getPiece() != null) return change;
       dirMap.get(randomDir)[1] = reach - 1;

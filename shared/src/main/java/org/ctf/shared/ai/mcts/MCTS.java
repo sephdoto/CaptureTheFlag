@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.ctf.shared.ai.AI_Constants;
 import org.ctf.shared.ai.AI_Tools;
@@ -25,7 +25,6 @@ import org.ctf.shared.state.Team;
  * @author sistumpf
  */
 public class MCTS {
-  Random rand;
   int teams;
   int maxDistance;
   public TreeNode root;
@@ -36,7 +35,7 @@ public class MCTS {
 
   public MCTS(TreeNode root) {
     this.root = root;
-    this.rand = new Random();
+//    this.rand = new Random();
     simulationCounter = new AtomicInteger();
     heuristicCounter = new AtomicInteger();
     expansionCounter = new AtomicInteger();
@@ -263,7 +262,7 @@ public class MCTS {
    * @return a random chosen move out of an ArrayList containing possible moves.
    */
   int[] pickRandomMove(ArrayList<int[]> moveList) {
-    return moveList.get(rand.nextInt(moveList.size()));
+    return moveList.get(ThreadLocalRandom.current().nextInt(moveList.size()));
   }
 
   /**
@@ -433,8 +432,8 @@ public class MCTS {
     Piece key =
         (Piece)
             parent.possibleMoves.keySet()
-                .toArray()[rand.nextInt(parent.possibleMoves.keySet().size())];
-    int randomMove = rand.nextInt(parent.possibleMoves.get(key).size());
+                .toArray()[ThreadLocalRandom.current().nextInt(parent.possibleMoves.keySet().size())];
+    int randomMove = ThreadLocalRandom.current().nextInt(parent.possibleMoves.get(key).size());
 
     return createMoveDeleteIndex(parent, key, randomMove);
   }

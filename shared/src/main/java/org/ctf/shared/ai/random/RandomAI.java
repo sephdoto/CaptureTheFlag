@@ -2,6 +2,8 @@ package org.ctf.shared.ai.random;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import org.ctf.shared.ai.AI_Tools;
 import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.state.GameState;
@@ -66,15 +68,15 @@ public class RandomAI extends AI_Tools {
     ArrayList<int[]> dirMap = new ArrayList<int[]>();
 
     while (piecesCurrentTeam.size() > 0) {
-      int random = (int) (Math.random() * piecesCurrentTeam.size());
-      Piece picked = piecesCurrentTeam.get(random);
+      int randomInt = ThreadLocalRandom.current().nextInt(piecesCurrentTeam.size());
+      Piece picked = piecesCurrentTeam.get(randomInt);
 
       if (picked.getDescription().getMovement().getDirections() != null) { // move if Directions
         dirMap = createDirectionMap(gameState, picked, dirMap, change);
         if (dirMap.size() > 0) {
           return getDirectionMove(dirMap, picked, gameState, change);
         } else {
-          piecesCurrentTeam.remove(random);
+          piecesCurrentTeam.remove(randomInt);
           continue;
         }
       } else { // Move if Shape
@@ -82,7 +84,7 @@ public class RandomAI extends AI_Tools {
         if (dirMap.size() > 0) {
           return getRandomShapeMove(dirMap, picked, change);
         } else {
-          piecesCurrentTeam.remove(random);
+          piecesCurrentTeam.remove(randomInt);
           continue;
         }
       }

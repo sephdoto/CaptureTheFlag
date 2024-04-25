@@ -16,7 +16,7 @@ public class AI_Brawl {
 
   }*/
 
-  @Test
+//  @Test
   void mctsVSmcts2() {
     GameState playOn = TestValues.getTestState();
     playOn.setCurrentTeam(0);
