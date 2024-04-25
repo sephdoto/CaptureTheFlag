@@ -242,7 +242,7 @@ public class ClientStepBuilder {
       } else if (joinerMode && !ai.equals(AI.HUMAN)) {
         client = new AIClient(comm, host, port, ai, enableSave, gameSessionGiven, teamName);
       } else {
-        client = new Client(comm, host, port);
+        client = new Client(comm, host, port, false);
       }
       return client;
     }
