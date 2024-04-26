@@ -200,7 +200,7 @@ public class CretaeGameScreenV2 extends Scene {
 	
 	private TextField createTextfield(String prompt) {
 		TextField searchField = new TextField();
-		searchField.getStyleClass().add("custom-search-field");
+		searchField.getStyleClass().add("custom-search-field2");
 		searchField.setPromptText(prompt);
 		searchField.prefHeightProperty().bind(searchField.widthProperty().multiply(0.2));
 		searchField.heightProperty().addListener((obs, oldVal, newVal) -> {

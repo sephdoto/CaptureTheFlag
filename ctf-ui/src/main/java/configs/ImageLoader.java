@@ -11,9 +11,13 @@ public class ImageLoader {
 	
 	private static Image defauImage;
 	
-	private static final String WORRIOR = "RealWarrior.png";
+	private static final String ROOK = "R2D2.png";
+	private static final String QUEEN = "Yoda.png";
+	private static final String BISHOP = "LukeSkywalker.png";
+	private static final String Knight = "BobaFett.png";
+	
 	private static final String DEFAULTIMAGE = "Gorilla.JPG";
-	private static final String BASE = "xy.jpg";
+	
 	
 	
 	//public static final String BASE = ""
@@ -25,11 +29,15 @@ public class ImageLoader {
 	 */
 	public static void loadImages() {
 		images = new HashMap<>();
-		Image worriorImage = initImage(WORRIOR);
-		images.put("WarriorV1", worriorImage);
+		Image r2d2 = initImage(ROOK);
+		images.put("Rook", r2d2);
+		Image yoda = initImage(QUEEN);
+		images.put("Queen", yoda);
+		Image luke = initImage(BISHOP);
+		images.put("Bishop", luke);
 		defauImage = initImage(DEFAULTIMAGE);
-		Image hexagon = initImage(BASE);
-		images.put("base", hexagon);
+		Image boba = initImage(Knight);
+		images.put("Knight", boba);
 	}
 
 	/**

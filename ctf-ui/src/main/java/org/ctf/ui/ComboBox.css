@@ -48,6 +48,19 @@
 	-fx-border-radius: 20px;
 	-fx-alignment: top-center;
 }
+.custom-search-field2 {
+	 -fx-prompt-text-fill: white; 
+    -fx-text-fill: white;
+    -fx-background-color: rgba(53,89,119,0.4);
+    -fx-border-color: white; -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px; 
+     -fx-font-family: "Century Gothic", sans-serif;
+}
+.custom-search-field2:focused {
+    -fx-border-color: blue;
+    -fx-border-width: 2px;
+}
 
 
 
