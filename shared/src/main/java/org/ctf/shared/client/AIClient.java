@@ -33,7 +33,7 @@ public class AIClient extends Client {
   }
 
   // Creator mode Constructor
-  AIClient(
+  public AIClient(
       CommLayerInterface comm,
       String IP,
       String port,
@@ -49,7 +49,7 @@ public class AIClient extends Client {
   }
 
   // Joiner mode Constructor
-  AIClient(
+  public AIClient(
       CommLayerInterface comm,
       String IP,
       String port,

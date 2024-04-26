@@ -63,12 +63,10 @@ public class Client implements GameClientInterface {
   public GameSessionResponse gameResponse;
   public String[] winners;
   public int turnTimeLimit;
-  public boolean gameTimeLimitedToken;
-  public boolean moveTimeLimtedToken;
 
   // Block for Team Data
   public String teamSecret;
-  public String teamName; // Team name we request from the Server
+  public String requestedTeamName; // Team name we request from the Server
   public String teamID; // TeamID we get from the server for current team recognition
   public String teamNumber; // Is set when the server tells you what number it assigned you
   public String teamColor;
@@ -77,10 +75,7 @@ public class Client implements GameClientInterface {
   public Date startDate;
   public Date endDate;
   public int moveTimeLeft;
-  public Duration turnTime;
-  public Clock gameShouldEndBy;
-  public int timeLeftInTheGame;
-  public Duration timeLimDuration;
+  public int gameTimeLeft;
   public int lastTeamTurn;
   public long refreshTime = 300L;
 
@@ -90,7 +85,7 @@ public class Client implements GameClientInterface {
   protected boolean turnSupportFlag; // is enabled when the team ID recieved in response is an INT
   public boolean moveTimeLimitedGameTrigger = false;
   public boolean timeLimitedGameTrigger = false;
-  public Clock turnEndsBy;
+
 
   //Services
   ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
@@ -109,7 +104,6 @@ public class Client implements GameClientInterface {
     this.currentState = new GameState();
     this.currentSession = new GameSession();
     this.comm = comm;
-    gameTimeLimitedToken = true;
     setServer(IP, port);
   }
 
@@ -150,6 +144,7 @@ public class Client implements GameClientInterface {
    */
   @Override
   public void joinGame(String teamName) {
+    this.requestedTeamName = teamName;
     joinGameParser(joinGameCaller(teamName));
   }
 
@@ -220,7 +215,8 @@ public class Client implements GameClientInterface {
    */
   @Override
   public void giveUp() {
-    comm.giveUp(currentServer, teamID, teamSecret);
+   // System.out.println(requestedTeamName + " wants to give up");
+    comm.giveUp(currentServer, requestedTeamName, teamSecret);
   }
 
   /**
@@ -265,7 +261,6 @@ public class Client implements GameClientInterface {
     this.currentServer = shortURL + "/" + currentGameSessionID;
     try {
       this.startDate = gameSessionResponse.getGameStarted();
-      checkForTimeLimitedGame();
     } catch (NullPointerException e) {
       System.out.println("Game hasnt started yet");
     }
@@ -290,7 +285,19 @@ public class Client implements GameClientInterface {
       System.out.println("No Game ID is set yet");
     }
     try {
-      this.turnTimeLimit = gameSessionResponse.getTurnTimeLimit();
+      this.turnTimeLimit = gameSessionResponse.getRemainingGameTimeInSeconds();
+      if(turnTimeLimit > 0){
+        this.timeLimitedGameTrigger = true;
+      }
+   
+    } catch (NullPointerException e) {
+      System.out.println("There is no Turn Time Limit");
+    }
+    try {
+      this.moveTimeLeft = gameSessionResponse.getRemainingMoveTimeInSeconds();
+      if(moveTimeLeft > 0){
+        this.moveTimeLimitedGameTrigger = true;
+      }
     } catch (NullPointerException e) {
       System.out.println("There is no Turn Time Limit");
     }
@@ -298,7 +305,6 @@ public class Client implements GameClientInterface {
 
   public JoinGameResponse joinGameCaller(String teamName) {
     JoinGameResponse response = new JoinGameResponse();
-    this.teamName = teamName;
     try {
       response = comm.joinGame(currentServer, teamName);
     } catch (SessionNotFound e) {
@@ -313,6 +319,7 @@ public class Client implements GameClientInterface {
 
   public void joinGameParser(JoinGameResponse joinGameResponse) {
     checkProperResponse(joinGameResponse);
+
     this.teamID = joinGameResponse.getTeamId(); // This is the INT Parseable ID from the server
     this.teamSecret = joinGameResponse.getTeamSecret();
     try {
@@ -410,8 +417,8 @@ public class Client implements GameClientInterface {
    * @author rsyed
    */
   public void pullData() {
-    this.getSessionFromServer();
-    this.getStateFromServer();
+    getSessionFromServer();
+    getStateFromServer();
   }
 
   /**
@@ -474,67 +481,17 @@ public class Client implements GameClientInterface {
   // **************************************************
 
   // **************************************************
-  // Start of Alt Game Logic
+  // Start of Alt Game Data Getters
   // **************************************************
 
-  /**
-   * Init for TimeLimited Game Method is called while parsing JoinGameResponse to check if the game
-   * is a TimeLimitedGame. Takes a token and consumes it so the check is only done ONCE when the
-   * game has started
-   */
-  public void checkForTimeLimitedGame() {
-    if (this.startDate != null && gameTimeLimitedToken) {
-      if (this.startDate != null && this.endDate != null && !isGameOver()) {
-        this.timeLimitedGameTrigger = true;
-        // Sets the Duration
-        this.timeLimDuration =
-            Duration.ofSeconds(
-                TimeUnit.SECONDS.convert(
-                    Math.abs(endDate.getTime() - startDate.getTime()), TimeUnit.MILLISECONDS));
-
-        this.gameTimeLimitedToken = false;
-      }
-      this.gameTimeLimitedToken = false;
-    }
-  }
-
-  /**
-   * Init for MoveTimeLimitedGame Method is called while parsing JoinGameResponse to check if the
-   * game is a MoveTimeLimitedGame Takes a token and consumes it so the check is only done ONCE when
-   * the game has started
-   */
-  public void checkForMoveTimeGame() {
-    if (this.startDate != null && this.turnTimeLimit > 0 && moveTimeLimtedToken) {
-      moveTimeLimitedGameTrigger = true;
-      this.turnTime = Duration.ofSeconds(turnTimeLimit);
-      this.moveTimeLimtedToken = false;
-    }
-    this.moveTimeLimtedToken = false;
-  }
-
-  // TODO Implement this Method
   public int getRemainingMoveTimeInSeconds() {
-
-    return 0; // Dummy Return
+    return this.moveTimeLeft;
   }
 
-  /**
-   * Checks how much time is left for the game
-   *
-   * @author rsyed
-   * @return -1 if no total game time limit set, 0 if over, > 0 if seconds remain
-   */
   public int getRemainingGameTimeInSeconds() {
-    if (!this.timeLimitedGameTrigger) {
-      return -1;
-    }
-    if (isGameOver()) {
-      return 0;
-    } else {
-      return Math.toIntExact(
-          Duration.between(currentTime.instant(), endDate.toInstant()).getSeconds());
-    }
+    return this.gameTimeLeft;
   }
+
 
   /**
    * Main CONTROLLER for Client. Call when either a game is created or a game is joined
@@ -587,7 +544,6 @@ public class Client implements GameClientInterface {
               while (running) {
                 try {
                   pullData();
-                  // TODO Additional Logic once Professor updates the server
                   Thread.sleep(this.refreshTime);
                 } catch (InterruptedException e) {
                   throw new Error("Something went wrong in the Client Thread");
@@ -595,17 +551,6 @@ public class Client implements GameClientInterface {
               }
             });
     gameThread.start();
-  }
-
-  public void setWhenGameShouldEnd() {
-    this.gameShouldEndBy =
-        Clock.offset(
-            Clock.fixed(getStartDate().toInstant(), ZoneId.systemDefault()), timeLimDuration);
-  }
-
-  public void increaseTurnTimer() {
-    this.turnEndsBy =
-        Clock.fixed(Clock.offset(currentTime, turnTime).instant(), ZoneId.systemDefault());
   }
 
   // **************************************************

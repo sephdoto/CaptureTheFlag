@@ -133,43 +133,43 @@ public class MCTSSimulation {
             .enableSaveGame(false)
             .createGameMode(null, "Seph1")
             .build();
-
-    AIClient javaClient2 =
-        AIClientStepBuilder.newBuilder()
-            .enableRestLayer(false)
-            .onLocalHost()
-            .onPort("8888")
-            .AIPlayerSelector(AI.MCTS)
-            .enableSaveGame(false)
-            .createGameMode(null, "Seph2")
-            .build();
-    AIClient javaClient3 =
-        AIClientStepBuilder.newBuilder()
-            .enableRestLayer(false)
-            .onLocalHost()
-            .onPort("8888")
-            .AIPlayerSelector(AI.MCTS)
-            .enableSaveGame(false)
-            .createGameMode(null, "Seph3")
-            .build();
-    AIClient javaClient4 =
-        AIClientStepBuilder.newBuilder()
-            .enableRestLayer(false)
-            .onLocalHost()
-            .onPort("8888")
-            .AIPlayerSelector(AI.MCTS)
-            .enableSaveGame(false)
-            .createGameMode(null, "Seph4")
-            .build();
-    AIClient javaClient5 =
-        AIClientStepBuilder.newBuilder()
-            .enableRestLayer(false)
-            .onLocalHost()
-            .onPort("8888")
-            .AIPlayerSelector(AI.MCTS)
-            .enableSaveGame(false)
-            .createGameMode(null, "Seph5")
-            .build();
+           
+            AIClient javaClient2 =
+            AIClientStepBuilder.newBuilder()
+                .enableRestLayer(false)
+                .onLocalHost()
+                .onPort("8888")
+                .AIPlayerSelector(AI.MCTS)
+                .enableSaveGame(false)
+                .createGameMode(null, "Seph2")
+                .build();
+                AIClient javaClient3 =
+                AIClientStepBuilder.newBuilder()
+                    .enableRestLayer(false)
+                    .onLocalHost()
+                    .onPort("8888")
+                    .AIPlayerSelector(AI.MCTS)
+                    .enableSaveGame(false)
+                    .createGameMode(null, "Seph3")
+                    .build();
+                    AIClient javaClient4 =
+                    AIClientStepBuilder.newBuilder()
+                        .enableRestLayer(false)
+                        .onLocalHost()
+                        .onPort("8888")
+                        .AIPlayerSelector(AI.MCTS)
+                        .enableSaveGame(false)
+                        .createGameMode(null, "Seph4")
+                        .build();
+                        AIClient javaClient5 =
+                        AIClientStepBuilder.newBuilder()
+                            .enableRestLayer(false)
+                            .onLocalHost()
+                            .onPort("8888")
+                            .AIPlayerSelector(AI.MCTS)
+                            .enableSaveGame(false)
+                            .createGameMode(null, "Seph5")
+                            .build();
     javaClient.createGame(template);
     javaClient.joinGame("Team 1");
     javaClient2.joinExistingGame(
@@ -238,7 +238,7 @@ public class MCTSSimulation {
           System.out.println(newAna.writeOut());
           break;
         }
-        if (javaClient.getCurrentTeamTurn() == -1) {
+       if (javaClient.getCurrentTeamTurn() == -1) {
           javaClient.getStateFromServer();
           System.out.println(gson.toJson(javaClient.getCurrentState()));
           javaClient.getSessionFromServer();
@@ -251,7 +251,7 @@ public class MCTSSimulation {
           System.out.println(gson.toJson(javaClient2.getWinners()));
           newAna.writeOut();
           break;
-        }
+        } 
         // System.out.println(gson.toJson(javaClient.getGrid()));
       } catch (NoMovesLeftException e) {
         e.printStackTrace();

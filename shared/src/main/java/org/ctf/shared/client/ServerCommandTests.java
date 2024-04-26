@@ -40,7 +40,7 @@ public class ServerCommandTests {
   public static void main(String[] args) {
 
     // Uncomment to do invidivual tests
-    // testConnection();
+     testConnection();
     // testStart();
     // joinTest();
     // copierCheck();
@@ -240,14 +240,21 @@ public class ServerCommandTests {
             ],
             "placement": "symmetrical",
             "totalTimeLimitInSeconds": -1,
-            "moveTimeLimitInSeconds": 3
+            "moveTimeLimitInSeconds": -1
           }
         """;
 
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
-    GameSessionRequest request = new GameSessionRequest();
-    request.setTemplate(test);
+    Client test1Client = ClientStepBuilder.newBuilder().enableRestLayer(false).onLocalHost().onPort("8888").enableSaveGame(false).build();
+    test1Client.createGame(test);
+    test1Client.joinGame("Seph1");
+    Client test2Client = ClientStepBuilder.newBuilder().enableRestLayer(false).onLocalHost().onPort("8888").enableSaveGame(false).build();
+    test2Client.joinExistingGame("localhost", "8888", test1Client.currentGameSessionID, "Seph2");
+    test1Client.pullData();
+    test2Client.pullData();
+    System.out.println(test1Client.currentTeamTurn);
+    test1Client.giveUp();
   }
 
   public static void joinTest() {

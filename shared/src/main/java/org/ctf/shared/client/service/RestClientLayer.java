@@ -2,6 +2,7 @@ package org.ctf.shared.client.service;
 
 import java.net.URISyntaxException;
 import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.exceptions.ForbiddenMove;
 import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
@@ -111,6 +112,7 @@ public class RestClientLayer implements CommLayerInterface {
    * @param teamID
    * @param teamSecret
    * @param move
+   * @throws Accepted (200)
    * @throws ForbiddenMove (403)
    * @throws SessionNotFound (404)
    * @throws InvalidMove (409)
@@ -127,18 +129,18 @@ public class RestClientLayer implements CommLayerInterface {
       throw new URLError("Check URL");
     }
     int code = result.getStatusCode().value();
-    if (code != 200) {
-      if (code == 403) {
-        throw new ForbiddenMove();
-      } else if (code == 404) {
-        throw new SessionNotFound();
-      } else if (code == 409) {
-        throw new InvalidMove();
-      } else if (code == 410) {
-        throw new GameOver();
-      } else if (code == 500) {
-        throw new UnknownError();
-      }
+    if (code == 200) {
+      throw new Accepted();
+    } else if (code == 403) {
+      throw new ForbiddenMove();
+    } else if (code == 404) {
+      throw new SessionNotFound();
+    } else if (code == 409) {
+      throw new InvalidMove();
+    } else if (code == 410) {
+      throw new GameOver();
+    } else if (code == 500) {
+      throw new UnknownError();
     }
   }
 
