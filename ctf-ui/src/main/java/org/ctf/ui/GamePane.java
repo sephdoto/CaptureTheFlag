@@ -17,6 +17,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
+import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -33,7 +34,7 @@ import javafx.util.Duration;
  * This class represents the GameBoard on which the figures are placed
  * it is realized y using a GridPane and resizable for any kind of map
  */
-public class GamePane extends HBox {
+public class GamePane extends HBox{
 	
 	String[][] map;
 	final GameState state;
@@ -42,7 +43,6 @@ public class GamePane extends HBox {
 	int cols;
 	final VBox vBox;
 	int anzTeams;
-	//ArrayList<CostumFigurePain> allFigures = new ArrayList<CostumFigurePain>();
 	HashMap<String, CostumFigurePain> figures = new HashMap<String, CostumFigurePain>();
 	HashMap<Integer, BackgroundCellV2> cells = new HashMap<Integer, BackgroundCellV2>();
 	 GridPane gridPane;
@@ -56,13 +56,22 @@ public class GamePane extends HBox {
 		vBox.alignmentProperty().set(Pos.CENTER);
 		alignmentProperty().set(Pos.CENTER);
 		paddingProperty().set(new Insets(20));
+		//setFillHeight(true);
+//		 double paddingValue = 0.05;
+//	      paddingProperty().bind(Bindings.createObjectBinding(
+//	            () -> new Insets(getWidth() * paddingValue, 
+//	                             getHeight() * paddingValue, 
+//	                             getWidth() * paddingValue, 
+//	                             getHeight() * paddingValue),
+//	            widthProperty(), heightProperty()));
 		 gridPane = new GridPane();
+		// gridPane.setFillWidth(true);
 
 		//gridPane.setGridLinesVisible(true);
 		//gridPane.setAlignment(Pos.CENTER);
 
 		 NumberBinding binding = Bindings.min(widthProperty().divide(cols), heightProperty().divide(rows));
-		// gridPane.setMinSize(300, 300);
+		//gridPane.setMinSize(300, 300);
 		vBox.prefWidthProperty().bind(binding.multiply(cols));
 		vBox.prefHeightProperty().bind(binding.multiply(rows));
 		vBox.setMaxSize(Control.USE_PREF_SIZE, Control.USE_PREF_SIZE);
@@ -181,7 +190,7 @@ public class GamePane extends HBox {
 			Piece[] pieces = currenTeam.getPieces();
 			for(Piece piece: pieces) {
 				CostumFigurePain pieceRep = new CostumFigurePain(piece);
-				pieceRep.showTeamColor(teamColor);
+				pieceRep.showTeamColor("red");//
 				figures.put(piece.getId(), pieceRep);
 				//allFigures.add(pieceRep);
 				int x = piece.getPosition()[0];

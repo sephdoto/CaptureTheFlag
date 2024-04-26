@@ -29,7 +29,7 @@ public class BackgroundCellV2 extends Pane {
 
 	public BackgroundCellV2(int x, int y) {
 		testColor = Color.rgb(173, 216, 230, 0.5);
-		this.setStyle("-fx-background-color: white;" + "-fx-border-color: black; " + "-fx-border-width: 1.5px ");
+		this.setStyle("-fx-background-color: white;" + "-fx-border-color: black; " + "-fx-border-width: 1px ");
 		this.x = x;
 		this.y = y;
 		this.occupied = false;
@@ -104,7 +104,7 @@ public class BackgroundCellV2 extends Pane {
 	}
 	
 	public void showattackCircle() {
-		this.setStyle("-fx-background-color: red;" + "-fx-border-color: black; " + "-fx-border-width: 1.5px ");
+		this.setStyle("-fx-background-color: red;" + "-fx-border-color: black; " + "-fx-border-width: 1px ");
 	}
 	
 	public void showPossibleMove() {
@@ -118,7 +118,7 @@ public class BackgroundCellV2 extends Pane {
 		rc2.setFill(testColor);
 	}
 	public void deselect() {
-		this.setStyle("-fx-background-color: white;" + "-fx-border-color: black; " + "-fx-border-width: 1.5px ");
+		this.setStyle("-fx-background-color: white;" + "-fx-border-color: black; " + "-fx-border-width: 1px ");
 		this.active = false;
 		rc.setFill(Color.WHITE);
 		rc2.setFill(Color.WHITE);

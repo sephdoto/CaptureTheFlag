@@ -30,8 +30,6 @@ public class ImageLoader {
 		defauImage = initImage(DEFAULTIMAGE);
 		Image hexagon = initImage(BASE);
 		images.put("base", hexagon);
-		
-		
 	}
 
 	/**

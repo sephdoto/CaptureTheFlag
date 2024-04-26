@@ -103,10 +103,10 @@ public class CostumFigurePain extends Pane {
 	
 	public void performSelectClick() {
 	System.out.println("Hallo: " + posX + ", " + posY);
-	parent.showSelected();
 	showPieceInformationWhenClicked();
 	Game.setCurrent(CostumFigurePain.this);
 	Game.showPossibleMoves();
+	parent.showSelected();
 	}
 	
 	public void showPieceInformationWhenClicked() {

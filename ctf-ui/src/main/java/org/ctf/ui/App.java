@@ -67,7 +67,8 @@ public class App extends Application {
 			ssc.switchToMapEditorScene(mainStage);
 		});
 		HomeScreenButton i2 = new HomeScreenButton("CREATE GAME", () -> {
-			CreateGameScreen.initCreateGameScreen(mainStage);
+			//CreateGameScreen.initCreateGameScreen(mainStage);
+			ssc.switchToCreateGameScene(mainStage);
 		});
 		HomeScreenButton i3 = new HomeScreenButton("JOIN GAME", () -> {
 			new HomeSceneController().switchToJoinScene(mainStage);

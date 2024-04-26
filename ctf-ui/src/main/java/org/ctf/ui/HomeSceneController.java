@@ -22,14 +22,7 @@ public class HomeSceneController {
   private Scene scene;
   private HBox root;
 
-  public void switchtoScene2() throws IOException {
-    root = FXMLLoader.load(getClass().getResource("LoadMapScene.fxml"));
-    stage = App.getStage();
-    if (root instanceof Pane) root.getChildren().add(0, createBackButtonMenuBar());
-    scene = new Scene(root);
-    stage.setScene(scene);
-    stage.setMaximized(true);
-  }
+ 
 
   @FXML
   public void switchtoHomeScreen(ActionEvent e) {
@@ -39,17 +32,12 @@ public class HomeSceneController {
     stage.setScene(scene);
   }
 
-  public MenuBar createBackButtonMenuBar() {
-    MenuItem backButton = new MenuItem("back");
-    backButton.setOnAction(
-        e -> {
-          this.switchtoHomeScreen(e);
-        });
-    Menu fileMenu = new Menu("<-");
-    fileMenu.getItems().add(0, backButton);
-    MenuBar mn = new MenuBar();
-    mn.getMenus().add(fileMenu);
-    return mn;
+  public void switchToWaitGameScene(Stage stage) {
+	  stage.setScene(new WaitingScene(this, stage.getWidth(), stage.getHeight()));
+  }
+  
+  public void switchToCreateGameScene(Stage stage) {
+	  stage.setScene(new CretaeGameScreenV2(this, stage.getWidth(), stage.getHeight()));
   }
   
   public void switchToJoinScene (Stage stage) {
@@ -58,5 +46,8 @@ public class HomeSceneController {
   
   public void switchToMapEditorScene (Stage stage) {
 	  stage.setScene(new EditorScene(this, stage.getWidth(), stage.getHeight()));
+  }
+  public Stage getStage() {
+	  return stage;
   }
 }
