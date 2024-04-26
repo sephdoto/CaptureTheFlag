@@ -41,7 +41,8 @@ public class MapPreview {
           ClientStepBuilder.newBuilder()
               .enableRestLayer(false)
               .onLocalHost()
-              .onPort("8888").enableSaveGame(false)
+              .onPort("8888")
+              .enableSaveGame(false)
               .build();
       if (i == 0) {
         clients[0].createGame(mapTemplate); // Creates a session with the first client
