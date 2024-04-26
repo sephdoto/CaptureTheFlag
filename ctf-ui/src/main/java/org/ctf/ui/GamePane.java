@@ -7,6 +7,7 @@ import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.Team;
 import org.ctf.ui.customobjects.BackgroundCellV2;
+import org.ctf.ui.customobjects.BaseRep;
 import org.ctf.ui.customobjects.BlockRepV3;
 import org.ctf.ui.customobjects.CostumFigurePain;
 
@@ -44,6 +45,7 @@ public class GamePane extends HBox{
 	final VBox vBox;
 	int anzTeams;
 	HashMap<String, CostumFigurePain> figures = new HashMap<String, CostumFigurePain>();
+	HashMap<Integer, BaseRep> bases = new HashMap<Integer, BaseRep>();
 	HashMap<Integer, BackgroundCellV2> cells = new HashMap<Integer, BackgroundCellV2>();
 	 GridPane gridPane;
 	
@@ -110,6 +112,12 @@ public class GamePane extends HBox{
 			newField.removeFigure();
 		}
 		newField.addFigure(mover);
+	}
+	
+	public void enableBaseColors(WaitingScene waitingscene) {
+		for(BaseRep b: bases.values()) {
+			b.setScene(waitingscene);
+		}
 	}
 	
 //	public void showTransition(CostumFigurePain pain, BackgroundCellV2 old, BackgroundCellV2 neu) {
@@ -186,7 +194,9 @@ public class GamePane extends HBox{
 			int baseX = currenTeam.getBase()[0];
 			int baseY = currenTeam.getBase()[1];
 			String teamColor = currenTeam.getColor();
-			cells.get(generateKey(baseX, baseY)).addBasis(currenTeam.getFlags(),teamColor, currenTeam.getId());
+			BaseRep b = new BaseRep(currenTeam.getFlags(),teamColor, currenTeam.getId());
+			bases.put(i, b);
+			cells.get(generateKey(baseX, baseY)).addBasis(b);
 			Piece[] pieces = currenTeam.getPieces();
 			for(Piece piece: pieces) {
 				CostumFigurePain pieceRep = new CostumFigurePain(piece);

@@ -2,6 +2,10 @@ package org.ctf.ui;
 
 import java.util.Iterator;
 
+import org.ctf.ui.customobjects.BaseRep;
+import org.ctf.ui.customobjects.CostumFigurePain;
+
+import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.Event;
@@ -37,6 +41,7 @@ public class WaitingScene extends Scene {
 	StackPane right;
 	Text text;
 	VBox testBox;
+	GamePane gm;
 	private  ObjectProperty<Color> sceneColorProperty = 
 		        new SimpleObjectProperty<>(Color.BLUE);
 
@@ -48,7 +53,7 @@ public class WaitingScene extends Scene {
 		createLayout();
 		 this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
 	        this.setOnMouseClicked(e->{
-	            if(e.getButton().equals(MouseButton.PRIMARY)){
+	            if(e.getButton().equals(MouseButton.SECONDARY)){
 	                MyCustomColorPicker myCustomColorPicker = new MyCustomColorPicker();
 	                myCustomColorPicker.setCurrentColor(sceneColorProperty.get());
 
@@ -57,61 +62,88 @@ public class WaitingScene extends Scene {
 	                itemColor.setHideOnClick(false);
 	                sceneColorProperty.bind(myCustomColorPicker.customColorProperty());
 	                ContextMenu contextMenu = new ContextMenu(itemColor);
-	                contextMenu.setOnHiding(t->sceneColorProperty.unbind());
+	                contextMenu.setHideOnEscape(true);
+	                
+	                contextMenu.setOnHiding(t->{sceneColorProperty.unbind();
+	                
+	               System.out.println("hihihi");
+	                for(CostumFigurePain m : gm.getFigures().values() ) {
+	                		m.unbind();
+	                	}});
 	                contextMenu.show(this.getWindow(),e.getScreenX(),e.getScreenY());
 	            }
 	        });
 	}
 	
+	
+	public void showColorChooser(double d, double e, BaseRep r) {
+		  MyCustomColorPicker myCustomColorPicker = new MyCustomColorPicker();
+          myCustomColorPicker.setCurrentColor(sceneColorProperty.get());
+
+          CustomMenuItem itemColor = new CustomMenuItem(myCustomColorPicker);
+          itemColor.getStyleClass().add("custom-menu-item");
+          itemColor.setHideOnClick(false);
+          sceneColorProperty.bind(myCustomColorPicker.customColorProperty());
+          for(CostumFigurePain p : gm.getFigures().values()) {
+        	  	if(p.getTeamID().equals(r.getTeamID())) {
+        		  p.showTeamColorWhenSelecting(sceneColorProperty);
+        	  	}
+        		  
+          }
+          r.showColor(sceneColorProperty);
+          ContextMenu contextMenu = new ContextMenu(itemColor);
+          contextMenu.setOnHiding(t->{sceneColorProperty.unbind();
+          
+          System.out.println("hihihi");
+           for(CostumFigurePain m : gm.getFigures().values() ) {
+           		m.unbind();
+           		sceneColorProperty = new SimpleObjectProperty<>(Color.BLUE);
+           	}});
+          contextMenu.show(this.getWindow(),d,e);
+	}
+	
+	
 	private void createLayout(){
-		 testBox = new VBox();
-		 Rectangle rect = new Rectangle(400,400);
-	        rect.fillProperty().bind(sceneColorProperty);
-	        root.getChildren().add(rect);
-		 createColorPicker();
-		root.getChildren().add(testBox);
+		root.getChildren().add(createShowMapPane("p2"));
+//		 Rectangle rect = new Rectangle(400,400);
+//	        rect.fillProperty().bind(sceneColorProperty);
+//	        root.getChildren().add(rect);
 	}
 	
-	private void createFigure() {
-		  final SVGPath svg = new SVGPath();
-	        svg.setContent("M70,50 L90,50 L120,90 L150,50 L170,50"
-	            + "L210,90 L180,120 L170,110 L170,200 L70,200 L70,110 L60,120 L30,90"
-	            + "L70,50");
-	        svg.setStroke(Color.DARKGREY);
-	        svg.setStrokeWidth(2);
-	        svg.setEffect(new DropShadow());
-	       // svg.setFill(colorPicker.getValue());
+	private ImageView createHeader() {
+		Image mp = new Image(getClass().getResourceAsStream("multiplayerlogo.png"));
+		ImageView mpv = new ImageView(mp);
+		mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.8));
+		mpv.setPreserveRatio(true);
+		root.widthProperty().addListener(e -> {
+			if (root.getWidth() > 1000) {
+				mpv.fitWidthProperty().unbind();
+				mpv.setFitWidth(800);
+			} else if (root.getWidth() <= 1000) {
+				mpv.fitWidthProperty().unbind();
+				mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.8));
+			}
+		});
+		return mpv;
 	}
 	
-	private ColorPicker createColorPicker() {
-		ColorPicker colorPicker = new ColorPicker() {
-	        @Override
-	        public void hide() {
-	            super.hide();
-	            testBox.getChildren().remove(this);
-	            
-	        }
-	    };
-
-	    colorPicker.setValue(Color.BLUE);
-	    colorPicker.setVisible(false);
-	    colorPicker.getStyleClass().add("color-palette");
-	   
-	
-	    Label label = new Label("Series name");
-
-	    label.textFillProperty().bind(colorPicker.valueProperty());
-
-	    testBox.getChildren().add(label);
-
-	    label.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-
-	        testBox.getChildren().add(colorPicker);
-	        colorPicker.show();
-	       // colorPicker.layoutYProperty().bind(label.heightProperty());
-	    });
-	        return colorPicker;
+	private StackPane createShowMapPane(String name) {
+		StackPane showMapBox = new StackPane();
+		showMapBox.getStyleClass().add("option-pane");
+		showMapBox.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
+		//showMapBox.setStyle("-fx-background-color: white");
+		showMapBox.prefHeightProperty().bind(showMapBox.widthProperty());
+		showMapBox.getStyleClass().add("show-GamePane");
+		org.ctf.shared.state.GameState state = StroeMaps.getMap(name);
+		gm = new GamePane(state);
+		gm.enableBaseColors(this);
+		showMapBox.getChildren().add(gm);
+		return showMapBox;
 	}
+	
+	
+	
+	
 	
 	
 

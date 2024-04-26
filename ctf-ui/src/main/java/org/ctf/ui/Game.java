@@ -110,7 +110,7 @@ public class Game {
 				c.deselect();
 			}
 		}
-		for(CostumFigurePain c: cb.getFigures().values()) {
+		for (CostumFigurePain c : cb.getFigures().values()) {
 			c.setUnattacble();
 		}
 		for (BackgroundCellV2 c : cb.getCells().values()) {
@@ -129,13 +129,15 @@ public class Game {
 	}
 
 	public static void deselectFigure() {
-		for (BackgroundCellV2 c : cb.getCells().values()) {
-			c.deselect();
+		if (cb != null) {
+			for (BackgroundCellV2 c : cb.getCells().values()) {
+				c.deselect();
+			}
+			for (CostumFigurePain cf : cb.getFigures().values()) {
+				cf.setUnattacble();
+			}
+			currentPlayer = null;
 		}
-		for (CostumFigurePain cf : cb.getFigures().values()) {
-			cf.setUnattacble();
-		}
-		currentPlayer = null;
 	}
 
 	public static CostumFigurePain getCurrent() {

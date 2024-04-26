@@ -76,9 +76,9 @@ public class BackgroundCellV2 extends Pane {
 		
 	}
 
-	public void addBasis(int flags, String color, String teamID) {
+	public void addBasis(BaseRep r) {
 		occupied = true;
-		BaseRep basis = new BaseRep(flags, color, teamID);
+		BaseRep basis = r;
 		base.getChildren().clear();
 		base.getChildren().add(basis);
 	}

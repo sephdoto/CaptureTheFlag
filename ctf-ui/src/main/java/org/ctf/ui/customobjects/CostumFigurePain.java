@@ -12,6 +12,8 @@ import java.util.ArrayList;
 
 
 import org.ctf.shared.state.Piece;
+
+import javafx.beans.property.ObjectProperty;
 import javafx.event.EventHandler;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
@@ -43,6 +45,7 @@ public class CostumFigurePain extends Pane {
 	boolean active;
 	boolean attacable;
 	BackgroundCellV2 parent;
+	DropShadow borderGlow;
 	
 
 	ArrayList<int[]> possibleMoves;
@@ -86,11 +89,25 @@ public class CostumFigurePain extends Pane {
 	 */
 	public void showTeamColor(String colorString) {
 		Color col = Color.valueOf(colorString);
-		DropShadow borderGlow = new DropShadow();
+		borderGlow = new DropShadow();
         borderGlow.setColor(col);
         borderGlow.setOffsetX(0f);
         borderGlow.setOffsetY(0f);
         vw.setEffect(borderGlow);
+	}
+	public void showTeamColorWhenSelecting(ObjectProperty<Color> sceneColorProperty) {
+		borderGlow = new DropShadow();
+        borderGlow.colorProperty().bind(sceneColorProperty);
+        borderGlow.setOffsetX(0f);
+        borderGlow.setOffsetY(0f);
+        vw.setEffect(borderGlow);
+	}
+	
+	public void unbind() {
+		if(borderGlow.colorProperty() != null) {
+		borderGlow.colorProperty().unbind();
+		}
+		System.out.println("hallo ich bin aus team" + teamID);
 	}
 	
 	

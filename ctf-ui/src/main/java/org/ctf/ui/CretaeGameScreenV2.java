@@ -4,20 +4,27 @@ import org.ctf.shared.state.GameState;
 
 import configs.ImageLoader;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -31,13 +38,15 @@ public class CretaeGameScreenV2 extends Scene {
 	StackPane right;
 	Text info;
 	HBox sep;
+	
+
 
 	public CretaeGameScreenV2(HomeSceneController hsc, double width, double height) {
 		super(new StackPane(), width, height);
 		this.hsc = hsc;
 		this.getStylesheets().add(getClass().getResource("ComboBox.css").toExternalForm());
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
-		
+		this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
 		this.root = (StackPane) this.getRoot();
 		createLayout();
 	}
@@ -110,6 +119,7 @@ public class CretaeGameScreenV2 extends Scene {
 		});
 		return mpv;
 	}
+	
 	
 	private VBox createLeftcontent() {
 		VBox leftBox = new VBox();
