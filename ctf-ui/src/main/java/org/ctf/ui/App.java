@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.ctf.ui.customobjects.*;
 
+import configs.ImageLoader;
 import javafx.animation.FadeTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -35,6 +36,7 @@ public class App extends Application {
 
 	public void start(Stage stage) {
 		mainStage = stage;
+		ImageLoader.loadImages();
 		Scene lockscreen = new Scene(createLockScreen(), 1000, 500);
 		startScene = new Scene(createParent());
 		lockscreen.setOnKeyPressed(e -> {

@@ -1,10 +1,13 @@
 package org.ctf.ui;
 
+import java.util.Iterator;
+
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,9 +15,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.PopupWindow;
+import javafx.stage.Window;
+import javafx.scene.Node;
 
 
 public class WaitingScene extends Scene {
@@ -36,7 +43,7 @@ public class WaitingScene extends Scene {
 	private void createLayout(){
 		 testBox = new VBox();
 		
-createColorPicker();
+		 createColorPicker();
 		root.getChildren().add(testBox);
 	}
 	
@@ -68,7 +75,19 @@ createColorPicker();
 
 	    colorPicker.setValue(Color.BLUE);
 	    colorPicker.setVisible(false);
-
+	    colorPicker.getStyleClass().add("color-palette");
+	    colorPicker.showingProperty().addListener((obs,b,b1)->{
+	        if(b1){
+	            PopupWindow popupWindow = getPopupWindow();
+	            Node popup = popupWindow.getScene().getRoot().getChildrenUnmodifiable().get(0);
+	            popup.lookupAll(".color-rect").stream()
+	                .forEach(rect->{
+	                    Color c = (Color)((Rectangle)rect).getFill();
+	                    Tooltip.install(rect.getParent(), new Tooltip("Custom tip for "+c.toString()));
+	                });
+	        }
+	    });
+	
 	    Label label = new Label("Series name");
 
 	    label.textFillProperty().bind(colorPicker.valueProperty());
@@ -81,15 +100,33 @@ createColorPicker();
 	        colorPicker.show();
 	       // colorPicker.layoutYProperty().bind(label.heightProperty());
 	    });
-
-
-	        
-	        colorPicker.setOnAction(new EventHandler() {
-	            public void handle(Event t) {
-	                //text.setFill(colorPicker.getValue());               
-	            }
-	        });
 	        return colorPicker;
-	        
 	}
+	
+	private StackPane ColorPickertest() {
+		// Erstelle einen ColorPicker
+        ColorPicker colorPicker = new ColorPicker(Color.WHITE);
+
+        // Verstecke die ChoiceBox des ColorPickers
+        colorPicker.setOpacity(0); // Setze die Opazität auf 0, um die ChoiceBox unsichtbar zu machen
+
+        // Füge der Farbpalette einen Rahmen hinzu
+        Rectangle colorPaletteBorder = new Rectangle(200, 200, Color.TRANSPARENT); // Anpassen der Größe nach Bedarf
+        colorPaletteBorder.setStroke(Color.BLACK); // Farbe des Rahmens
+
+        // Erstelle ein StackPane und füge die Farbpalette und den Rahmen hinzu
+        StackPane root = new StackPane(colorPicker, colorPaletteBorder);
+        return root;
+	}
+	private PopupWindow getPopupWindow() {
+	    @SuppressWarnings("deprecation") final Iterator<Window> windows = (Iterator<Window>) Window.getWindows();
+	    while (windows.hasNext()) {
+	        final Window window = windows.next();
+	        if (window instanceof PopupWindow) {
+	            return (PopupWindow)window;
+	        }
+	    }
+	    return null;
+	}
+	
 }

@@ -15,8 +15,7 @@ public class ImageLoader {
 	private static final String QUEEN = "Yoda.png";
 	private static final String BISHOP = "LukeSkywalker.png";
 	private static final String Knight = "BobaFett.png";
-	
-	private static final String DEFAULTIMAGE = "Gorilla.JPG";
+	private static final String DEFAULTIMAGE = "RealWarrior.png";
 	
 	
 	

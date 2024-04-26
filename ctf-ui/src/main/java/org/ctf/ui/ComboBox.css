@@ -61,6 +61,14 @@
     -fx-border-color: blue;
     -fx-border-width: 2px;
 }
+ 
+
+.color-palette .hyperlink, .color-palette .separator {
+    visibility: hidden;
+}
+.color-palette {
+    -fx-padding: 15 15 -30 15;
+}
 
 
 
