@@ -3,12 +3,9 @@ package org.ctf.shared.client;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-
 import de.unimannheim.swt.pse.ctf.CtfApplication;
 import java.io.IOException;
 import org.ctf.shared.ai.AI_Controller;
@@ -274,24 +271,17 @@ public class RestClientTests {
         "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
     javaClient.pullData();
     javaClient2.pullData();
-    Gson gson = new Gson();
-   // System.out.println(gson.toJson(javaClient.getCurrentState()));
     try {
-      if (javaClient2.isItMyTurn()) {
-        javaClient2.giveUp();
-      } else {
+      if (javaClient.isItMyTurn()) {
         javaClient.giveUp();
       }
+      if (javaClient2.isItMyTurn()) {
+        javaClient2.giveUp();
+      }
     } catch (Exception e) {
-      e.printStackTrace();
-    } 
-      javaClient.pullData();
-      javaClient2.pullData();
-
-  
-      System.out.println(gson.toJson(javaClient.getCurrentState()));
-  }   
-
+      fail();
+    }
+  }
 
   @Test
   void testIsGameOver() {

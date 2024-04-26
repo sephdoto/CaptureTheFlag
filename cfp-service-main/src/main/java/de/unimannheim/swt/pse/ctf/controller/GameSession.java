@@ -20,7 +20,6 @@ public class GameSession {
 
   private final Game game;
   private final Map<String, String> teamSecrets;
-  private static final Logger LOG = LoggerFactory.getLogger(GameSession.class); // REMOVE THIS LATER
 
   public GameSession(Game game) {
     this.game = game;
@@ -52,11 +51,6 @@ public class GameSession {
    * @return true if team secret is valid, false otherwise
    */
   public boolean isAllowed(String teamId, String teamSecret) {
-    Iterator it = this.teamSecrets.keySet().iterator();
-    while(it.hasNext()){
-        LOG.info("Keys " + it.next());
-    }
-    LOG.info("giveUp request from " + teamId);
     return this.teamSecrets.containsKey(teamId)
         && StringUtils.equals(this.teamSecrets.get(teamId), teamSecret);
   }

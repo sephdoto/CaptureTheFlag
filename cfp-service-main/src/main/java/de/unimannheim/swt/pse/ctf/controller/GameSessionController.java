@@ -245,7 +245,6 @@ public class GameSessionController {
       @Parameter(description = "existing game session id") @PathVariable String sessionId,
       @RequestBody GiveupRequest giveupRequest) {
     LOG.info("giveUp request");
-    LOG.info("giveUp request from " + giveupRequest.getTeamId());
 
     GameSession gameSession = this.gameSessions.get(sessionId);
     if (gameSession == null) {

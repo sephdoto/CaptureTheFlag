@@ -126,9 +126,9 @@ public class GameEngine implements Game {
 
     teamToInteger.put(teamId, slot);
     integerToTeam.put(slot, teamId);
-    tempTeam.setId(teamId);
-    canWeStartTheGameUwU();
 
+    canWeStartTheGameUwU();
+    tempTeam.setId(teamId);
     return tempTeam;
   }
 
@@ -157,9 +157,6 @@ public class GameEngine implements Game {
    */
   @Override
   public void giveUp(String teamId) {
-    LOG.info("team called " + teamId);
-    LOG.info("team in map " + (teamToInteger.get(teamId)));
-
     if (teamToInteger.get(teamId)
         == this.gameState
             .getCurrentTeam()) { // test is also in controller but doppelt gemoppelt hält besser
@@ -267,12 +264,10 @@ public class GameEngine implements Game {
   @Override
   public GameState getCurrentGameState() {
     GameState retGameState = EngineTools.deepCopyGameState(gameState);
-    //LOG.info("Data1 : " + gameState.getCurrentTeam());
-    //LOG.info("Data2 : " + integerToTeam.get(gameState.getCurrentTeam()));
-
+    if (gameState.getCurrentTeam() != -1)
     retGameState.getTeams()[retGameState.getCurrentTeam()].setId(
-       integerToTeam.get(retGameState.getCurrentTeam()));
-    return retGameState;
+        integerToTeam.get(retGameState.getCurrentTeam()));
+    return this.gameState;
   }
 
   /**
@@ -630,7 +625,7 @@ public class GameEngine implements Game {
    * @author rsyed
    */
   private void setRandomStartingTeam() {
-    this.gameState.setCurrentTeam((int) (Math.random() * teamsLeft()));
+    this.gameState.setCurrentTeam((int) (Math.random() * this.gameState.getTeams().length));
   }
 
   /**

@@ -2,13 +2,10 @@ package org.ctf.shared.client;
 
 import com.google.gson.Gson;
 import java.time.Clock;
-import java.time.Duration;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import org.ctf.shared.client.lib.GameClientInterface;
 import org.ctf.shared.client.lib.ServerChecker;
 import org.ctf.shared.client.lib.ServerDetails;
@@ -21,7 +18,6 @@ import org.ctf.shared.state.data.exceptions.ForbiddenMove;
 import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.exceptions.NoMoreTeamSlots;
-import org.ctf.shared.state.data.exceptions.NoProperSupport;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.shared.state.data.exceptions.URLError;
 import org.ctf.shared.state.data.map.MapTemplate;
@@ -86,8 +82,7 @@ public class Client implements GameClientInterface {
   public boolean moveTimeLimitedGameTrigger = false;
   public boolean timeLimitedGameTrigger = false;
 
-
-  //Services
+  // Services
   ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
   ExecutorService executor = Executors.newFixedThreadPool(3);
 
@@ -215,7 +210,7 @@ public class Client implements GameClientInterface {
    */
   @Override
   public void giveUp() {
-   // System.out.println(requestedTeamName + " wants to give up");
+    // System.out.println(requestedTeamName + " wants to give up");
     comm.giveUp(currentServer, requestedTeamName, teamSecret);
   }
 
@@ -286,16 +281,16 @@ public class Client implements GameClientInterface {
     }
     try {
       this.turnTimeLimit = gameSessionResponse.getRemainingGameTimeInSeconds();
-      if(turnTimeLimit > 0){
+      if (turnTimeLimit > 0) {
         this.timeLimitedGameTrigger = true;
       }
-   
+
     } catch (NullPointerException e) {
       System.out.println("There is no Turn Time Limit");
     }
     try {
       this.moveTimeLeft = gameSessionResponse.getRemainingMoveTimeInSeconds();
-      if(moveTimeLeft > 0){
+      if (moveTimeLeft > 0) {
         this.moveTimeLimitedGameTrigger = true;
       }
     } catch (NullPointerException e) {
@@ -391,15 +386,14 @@ public class Client implements GameClientInterface {
    */
   protected boolean isItMyTurn() {
     getStateFromServer();
-    try {
-      if (Integer.parseInt(this.teamID) == currentTeamTurn) {
-        return true;
-      } else {
-        return false;
-      }
-    } catch (Exception e) {
-      throw new NoProperSupport();
+    int index = 0;
+    for (int i = 0; i < this.currentState.getTeams().length; i++) {
+      if (!this.currentState.getTeams()[i].getId().equals("" + i)){
+        index = i;
+        this.currentState.getTeams()[i].setId("" + i);
+      } 
     }
+    return this.currentState.getCurrentTeam() == index;
   }
 
   /**
@@ -491,7 +485,6 @@ public class Client implements GameClientInterface {
   public int getRemainingGameTimeInSeconds() {
     return this.gameTimeLeft;
   }
-
 
   /**
    * Main CONTROLLER for Client. Call when either a game is created or a game is joined
