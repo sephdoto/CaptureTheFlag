@@ -275,7 +275,7 @@ public class RestClientTests {
     javaClient.pullData();
     javaClient2.pullData();
     Gson gson = new Gson();
-    System.out.println(gson.toJson(javaClient.getCurrentState()));
+   // System.out.println(gson.toJson(javaClient.getCurrentState()));
     try {
       if (javaClient2.isItMyTurn()) {
         javaClient2.giveUp();

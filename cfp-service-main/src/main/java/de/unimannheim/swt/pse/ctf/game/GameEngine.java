@@ -126,7 +126,7 @@ public class GameEngine implements Game {
 
     teamToInteger.put(teamId, slot);
     integerToTeam.put(slot, teamId);
-
+    tempTeam.setId(teamId);
     canWeStartTheGameUwU();
 
     return tempTeam;
@@ -159,7 +159,7 @@ public class GameEngine implements Game {
   public void giveUp(String teamId) {
     LOG.info("team called " + teamId);
     LOG.info("team in map " + (teamToInteger.get(teamId)));
-    
+
     if (teamToInteger.get(teamId)
         == this.gameState
             .getCurrentTeam()) { // test is also in controller but doppelt gemoppelt hält besser
@@ -266,7 +266,13 @@ public class GameEngine implements Game {
    */
   @Override
   public GameState getCurrentGameState() {
-    return this.gameState;
+    GameState retGameState = EngineTools.deepCopyGameState(gameState);
+    //LOG.info("Data1 : " + gameState.getCurrentTeam());
+    //LOG.info("Data2 : " + integerToTeam.get(gameState.getCurrentTeam()));
+
+    retGameState.getTeams()[retGameState.getCurrentTeam()].setId(
+       integerToTeam.get(retGameState.getCurrentTeam()));
+    return retGameState;
   }
 
   /**
@@ -363,11 +369,10 @@ public class GameEngine implements Game {
     } else {
       try {
         return Math.toIntExact(
-          Duration.between(currentTime.instant(), gameShouldEndBy.instant()).getSeconds());
+            Duration.between(currentTime.instant(), gameShouldEndBy.instant()).getSeconds());
       } catch (Exception e) {
-       return 0;
+        return 0;
       }
-     
     }
   }
 
@@ -419,11 +424,10 @@ public class GameEngine implements Game {
     } else {
       try {
         return Math.toIntExact(
-          Duration.between(currentTime.instant(), turnEndsBy.instant()).getSeconds());
+            Duration.between(currentTime.instant(), turnEndsBy.instant()).getSeconds());
       } catch (Exception e) {
         return 0;
       }
-      
     }
   }
 
@@ -610,6 +614,9 @@ public class GameEngine implements Game {
         boardController.initPieces(copyOfTemplate.getPlacement()); // Inits pieces on the grid
       } catch (TooManyPiecesException e) {
         throw new GameOver();
+      }
+      for (int i = 0; i < gameState.getTeams().length; i++) {
+        gameState.getTeams()[i].setId("" + i);
       }
       setRandomStartingTeam();
       startAltGameController();

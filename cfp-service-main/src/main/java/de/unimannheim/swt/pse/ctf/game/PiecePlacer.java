@@ -80,24 +80,25 @@ public class PiecePlacer {
      * @author sistumpf
      */
     private void placePiecesSymmetrical() {
-      for (Team team : gameState.getTeams()) {
-        int facing = nextBaseDirection(team);
+      for (int n=0; n<gameState.getTeams().length; n++) {
+        Team team = gameState.getTeams()[n];
+        int facing = nextBaseDirection(n);
         int maxPieces = team.getPieces().length;
         int pieces = team.getPieces().length;
         
         //place first 3 pieces in front of base
         for (int i=0; maxPieces - pieces < maxPieces && i<3; i++) {
           int[] newPos = posInFrontOfBase(team.getBase(), facing, i);
-          if(safeToPlace(Integer.parseInt(team.getId()), newPos)) placePiece(team, maxPieces - pieces--, newPos);
+          if(safeToPlace(n, newPos)) placePiece(team, maxPieces - pieces--, newPos);
         }
         
         //place to the sides of the base, till boundaries are hit
         for(int boundsHit=0, i=0; boundsHit<2 && maxPieces - pieces < maxPieces; i++) {
           int[] newPos = AI_Tools.updatePos(team.getBase().clone(), this.directions[4+facing][i%2], i/2);
-          if(safeToPlace(Integer.parseInt(team.getId()), newPos)) {
+          if(safeToPlace(n, newPos)) {
             placePiece(team, maxPieces-pieces--, newPos);
             boundsHit = 0;
-          }else if(positionOutOfBounds(Integer.parseInt(team.getId()), newPos)) {
+          }else if(positionOutOfBounds(n, newPos)) {
             boundsHit++;
           }
         }
@@ -105,7 +106,7 @@ public class PiecePlacer {
         //place remaining pieces with respawn piece logic
         while(maxPieces-pieces<maxPieces) {
           int[] newPos = respawnPiecePosition(team.getBase(), facing);
-          if(safeToPlace(Integer.parseInt(team.getId()), newPos)) placePiece(team, maxPieces-pieces--, newPos);
+          if(safeToPlace(n, newPos)) placePiece(team, maxPieces-pieces--, newPos);
         }
       }
     }
@@ -159,7 +160,8 @@ public class PiecePlacer {
      */
     private void placePiecesDefensive() {
       LinkedHashSet<Piece> strongestPieces = new LinkedHashSet<Piece>();
-      for(Team team : gameState.getTeams()) {
+      for(int n=0; n<gameState.getTeams().length; n++) {
+        Team team = gameState.getTeams()[n];
         ArrayList<Piece> piecesByStrength = new ArrayList<Piece>();
         piecesByStrength.addAll(Arrays.asList(team.getPieces()));
         piecesByStrength.sort(new Comparator<Piece>() {
@@ -171,7 +173,7 @@ public class PiecePlacer {
         //place strongest 8 pieces around the base
         for(int i=0; i<piecesByStrength.size(); i++) {
           if(i<8) {
-            int[] newPos = respawnPiecePosition(team.getBase(), this.nextBaseDirection(team));
+            int[] newPos = respawnPiecePosition(team.getBase(), this.nextBaseDirection(n));
             piecesByStrength.get(i).setPosition(newPos);
             gameState.getGrid()[newPos[0]][newPos[1]] = piecesByStrength.get(i).getId();
             strongestPieces.add(piecesByStrength.get(i));
@@ -204,11 +206,11 @@ public class PiecePlacer {
       strongestPieces = updateReferences(gameState, strongestPieces);
       if(!shuffle)
         randomPlacement(gameState, randomModifier, strongestPieces);
-      for (Team team : gameState.getTeams()) {
+      for (int n=0; n<gameState.getTeams().length; n++) {
         int[] sideSteps = new int[] {steps};
-        for(ReferenceMove bestNeighbour = getBestNeighbour(gameState, strongestPieces, shuffle, Integer.parseInt(team.getId()), sideSteps);
+        for(ReferenceMove bestNeighbour = getBestNeighbour(gameState, strongestPieces, shuffle, n, sideSteps);
             bestNeighbour.getPiece() != null;
-            bestNeighbour = getBestNeighbour(gameState, strongestPieces, shuffle, Integer.parseInt(team.getId()), sideSteps)) {
+            bestNeighbour = getBestNeighbour(gameState, strongestPieces, shuffle, n, sideSteps)) {
           if(gameState.getGrid()[bestNeighbour.getNewPosition()[0]][bestNeighbour.getNewPosition()[1]].equals("")) {
             gameState.getGrid()[bestNeighbour.getNewPosition()[0]][bestNeighbour.getNewPosition()[1]]
                 = bestNeighbour.getPiece().getId();
@@ -220,7 +222,7 @@ public class PiecePlacer {
             int[] newPos = bestNeighbour.getNewPosition();
             Piece occupant =
                 Arrays.stream(
-                    gameState.getTeams()[Integer.parseInt(team.getId())]
+                    gameState.getTeams()[n]
                         .getPieces())
                 .filter(p -> p.getId().equals(gameState.getGrid()[newPos[0]][newPos[1]]))
                 .findFirst()
@@ -501,11 +503,11 @@ public class PiecePlacer {
      * @param enemyBase
      * @return 0 - left; 1 - right; 2 - up; 3 - down
      */
-    private int nextBaseDirection(Team we) {
-      int[] ourBase = we.getBase();
+    private int nextBaseDirection(int n) {
+      int[] ourBase = gameState.getTeams()[n].getBase();
       HashMap<Double, Integer> distances = new HashMap<Double, Integer>();
       for(int team=0; team<gameState.getTeams().length; team++) {
-        if(team == Integer.parseInt(we.getId())) continue;
+        if(team == n) continue;
         int[] enemyBase = gameState.getTeams()[team].getBase();
         distances.put(Math.sqrt(Math.pow(ourBase[1] - enemyBase[1], 2) + Math.pow(ourBase[0] - enemyBase[0], 2)), team);
         //      System.out.println("Distance to team " + team + " = " + Math.sqrt(Math.pow(ourBase[1] - enemyBase[1], 2) + Math.pow(ourBase[0] - enemyBase[0], 2)));
