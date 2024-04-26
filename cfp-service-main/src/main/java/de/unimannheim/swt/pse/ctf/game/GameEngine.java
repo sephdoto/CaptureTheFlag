@@ -361,8 +361,13 @@ public class GameEngine implements Game {
     if (isGameOver()) {
       return 0;
     } else {
-      return Math.toIntExact(
+      try {
+        return Math.toIntExact(
           Duration.between(currentTime.instant(), gameShouldEndBy.instant()).getSeconds());
+      } catch (Exception e) {
+       return 0;
+      }
+     
     }
   }
 
@@ -412,8 +417,13 @@ public class GameEngine implements Game {
     if (isGameOver()) {
       return 0;
     } else {
-      return Math.toIntExact(
+      try {
+        return Math.toIntExact(
           Duration.between(currentTime.instant(), turnEndsBy.instant()).getSeconds());
+      } catch (Exception e) {
+        return 0;
+      }
+      
     }
   }
 
