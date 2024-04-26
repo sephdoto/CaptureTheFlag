@@ -57,12 +57,12 @@
     -fx-text-fill: black; 
 }
 .join-root {
-	 -fx-background-color: black;
+	 -fx-background-color: #202F3B;
 }
 .option-pane {
 	-fx-border-color: rgba(255,255,255,1);
 	 -fx-border-width: 2px;
-	 -fx-background-color: rgb(25,25,25);
+	 -fx-background-color: #475865;
 	 -fx-background-radius: 20px; 
 	 -fx-border-radius: 20px;
 	 -fx-alignment: top-center;
