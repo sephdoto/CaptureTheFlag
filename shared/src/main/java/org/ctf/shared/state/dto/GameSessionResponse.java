@@ -6,7 +6,6 @@ import java.util.Date;
 
 /**
  * This class is used to represent the state of a game session.
- * @author Marcus Kessel
  */
 public class GameSessionResponse {
 
@@ -23,9 +22,13 @@ public class GameSessionResponse {
     )
     private Date gameEnded;
     @Schema(
-            description = "the turn time set in seconds (<= 0 if none)"
+            description = "if no total game time limit set, 0 if over, > 0 if seconds remain"
     )
-    private int turnTimeLimit;
+    private int remainingGameTimeInSeconds;
+    @Schema(
+            description = "-1 if no move time limit set, 0 if over, > 0 if seconds remain"
+    )
+    private int remainingMoveTimeInSeconds;
     @Schema(
             description = "true if game is over, false otherwise"
     )
@@ -75,11 +78,19 @@ public class GameSessionResponse {
         this.gameEnded = gameEnded;
     }
 
-    public int getTurnTimeLimit() {
-        return turnTimeLimit;
+    public int getRemainingGameTimeInSeconds() {
+        return remainingGameTimeInSeconds;
     }
 
-    public void setTurnTimeLimit(int turnTimeLimit) {
-        this.turnTimeLimit = turnTimeLimit;
+    public void setRemainingGameTimeInSeconds(int remainingGameTimeInSeconds) {
+        this.remainingGameTimeInSeconds = remainingGameTimeInSeconds;
+    }
+
+    public int getRemainingMoveTimeInSeconds() {
+        return remainingMoveTimeInSeconds;
+    }
+
+    public void setRemainingMoveTimeInSeconds(int remainingMoveTimeInSeconds) {
+        this.remainingMoveTimeInSeconds = remainingMoveTimeInSeconds;
     }
 }

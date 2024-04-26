@@ -14,6 +14,7 @@ import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.exceptions.ForbiddenMove;
 import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
@@ -142,6 +143,7 @@ public class CommLayer implements CommLayerInterface {
    * @param teamID
    * @param teamSecret
    * @param move
+   * @throws Accepted (200)
    * @throws ForbiddenMove (403)
    * @throws SessionNotFound (404)
    * @throws InvalidMove (409)
@@ -165,18 +167,18 @@ public class CommLayer implements CommLayerInterface {
     } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
       throw new URLError("Check URL");
     }
-    if (response.statusCode() != 200) {
-      if (response.statusCode() == 403) {
-        throw new ForbiddenMove();
-      } else if (response.statusCode() == 404) {
-        throw new SessionNotFound();
-      } else if (response.statusCode() == 409) {
-        throw new InvalidMove();
-      } else if (response.statusCode() == 410) {
-        throw new GameOver();
-      } else if (response.statusCode() == 500) {
-        throw new UnknownError();
-      }
+    if (response.statusCode() == 200) {
+      throw new Accepted();
+    } else if (response.statusCode() == 403) {
+      throw new ForbiddenMove();
+    } else if (response.statusCode() == 404) {
+      throw new SessionNotFound();
+    } else if (response.statusCode() == 409) {
+      throw new InvalidMove();
+    } else if (response.statusCode() == 410) {
+      throw new GameOver();
+    } else if (response.statusCode() == 500) {
+      throw new UnknownError();
     }
   }
 

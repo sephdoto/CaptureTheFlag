@@ -11,7 +11,7 @@ public class AIPlayerSimulator {
   public static void main(String[] args) {
     startPlayer1();
     startPlayer2();
-/*     try {
+    /*     try {
       Thread.sleep(1000000);
     } catch (InterruptedException e) {
       // TODO Auto-generated catch block
@@ -131,43 +131,42 @@ public class AIPlayerSimulator {
         """;
 
     Gson gson = new Gson();
-    Client javaClient1 =
-        ClientStepBuilder.newBuilder()
+    AIClient javaClient1 =
+        AIClientStepBuilder.newBuilder()
             .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
             .AIPlayerSelector(AI.MCTS)
             .enableSaveGame(false)
-            .createGameMode(gson.fromJson(jsonPayload, MapTemplate.class), "Seph1")
+            .createGameMode(null, "Seph1")
             .build();
 
-   javaClient1.createGame(gson.fromJson(jsonPayload, MapTemplate.class));
+    javaClient1.createGame(gson.fromJson(jsonPayload, MapTemplate.class));
     GameID = javaClient1.getCurrentGameSessionID();
     System.out.println(GameID + " Is set");
     javaClient1.joinGame("AIOne");
-    System.out.println("joined"); 
+    System.out.println("joined");
     ((AIClient) javaClient1).runHandler();
   }
 
   public static void startPlayer2() {
-     try {
+    try {
       Thread.sleep(2000);
     } catch (InterruptedException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
-    } 
-     Client javaClient2 =
-        ClientStepBuilder.newBuilder()
+    }
+    AIClient javaClient2 =
+        AIClientStepBuilder.newBuilder()
             .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
             .AIPlayerSelector(AI.MCTS)
             .enableSaveGame(false)
-            .joinerGameMode(GameID, "Seph2")
+            .createGameMode(null, "Seph2")
             .build();
     javaClient2.joinExistingGame("localhost", "8888", GameID, "AITwo");
-    System.out.println("joined"); 
+    System.out.println("joined");
     ((AIClient) javaClient2).runHandler();
-  } 
-
+  }
 }

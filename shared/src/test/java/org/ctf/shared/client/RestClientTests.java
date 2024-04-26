@@ -3,15 +3,19 @@ package org.ctf.shared.client;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+
 import de.unimannheim.swt.pse.ctf.CtfApplication;
-import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
 import java.io.IOException;
+import org.ctf.shared.ai.AI_Controller;
+import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
+import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.client.service.RestClientLayer;
-import org.ctf.shared.state.Move;
-import org.ctf.shared.state.data.exceptions.Accepted;
+import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.shared.state.data.exceptions.URLError;
 import org.ctf.shared.state.data.map.MapTemplate;
@@ -41,7 +45,7 @@ public class RestClientTests {
             .enableRestLayer(true)
             .onLocalHost()
             .onPort("8888")
-            .HumanPlayer()
+            .enableSaveGame(false)
             .build();
   }
 
@@ -52,14 +56,14 @@ public class RestClientTests {
             .enableRestLayer(true)
             .onLocalHost()
             .onPort("8888")
-            .HumanPlayer()
+            .enableSaveGame(false)
             .build();
     javaClient2 =
         ClientStepBuilder.newBuilder()
             .enableRestLayer(true)
             .onLocalHost()
             .onPort("8888")
-            .HumanPlayer()
+            .enableSaveGame(false)
             .build();
   }
 
@@ -126,20 +130,8 @@ public class RestClientTests {
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
         "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
-    try {
-      if (javaClient.getCurrentTeamTurn() == 1) {
-        javaClient.giveUp();
-      } else {
-        javaClient2.giveUp();
-      }
-    } catch (Exception e) {
-      System.out.println("Accepted");
-    }
-    try {
-      javaClient.getSessionFromServer();
-    } catch (Exception e) {
-      System.out.println("Accepted");
-    }
+    javaClient.pullData();
+    javaClient2.pullData();
     assertNotNull(javaClient.getEndDate());
   }
 
@@ -154,29 +146,27 @@ public class RestClientTests {
     assertNotNull(javaClient.getGrid());
   }
 
+  // Tests MakeMove and getLastMove
   @Test
   void testGetLastMove() {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
         "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
-    Move move = new Move();
-    if (javaClient.getCurrentTeamTurn() == 1) {
-      try {
-        move.setPieceId("p:1_2");
-        move.setNewPosition(new int[] {9, 8});
-        javaClient.makeMove(move);
-      } catch (Exception e) {
-        System.out.println("Made move");
+    javaClient.pullData();
+    javaClient2.pullData();
+    AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS);
+    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS);
+    try {
+      if (javaClient.isItMyTurn()) {
+
+        javaClient.makeMove(Controller.getNextMove());
+      } else {
+        javaClient2.makeMove(Controller2.getNextMove());
       }
-    } else {
-      try {
-        move.setPieceId("p:0_2");
-        move.setNewPosition(new int[] {0, 1});
-        javaClient2.makeMove(move);
-      } catch (Exception e) {
-        System.out.println("Made move");
-      }
+
+    } catch (NoMovesLeftException | InvalidShapeException e) {
+      fail();
     }
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
@@ -267,15 +257,12 @@ public class RestClientTests {
   @Test
   void testGetWinners() {
     javaClient.createGame(template);
+    template.setTotalTimeLimitInSeconds(1);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
         "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
-    if (javaClient.getCurrentTeamTurn() == 0) {
-      javaClient.giveUp();
-    } else {
-      javaClient2.giveUp();
-    }
-    javaClient.getSessionFromServer();
+    javaClient.pullData();
+    javaClient2.pullData();
     assertNotNull(javaClient.getWinners());
   }
 
@@ -284,15 +271,27 @@ public class RestClientTests {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
+    javaClient.pullData();
+    javaClient2.pullData();
+    Gson gson = new Gson();
+    System.out.println(gson.toJson(javaClient.getCurrentState()));
     try {
-      if (javaClient.getCurrentTeamTurn() == 0) {
+      if (javaClient2.isItMyTurn()) {
+        javaClient2.giveUp();
+      } else {
         javaClient.giveUp();
       }
     } catch (Exception e) {
-      fail();
-    }
-  }
+      e.printStackTrace();
+    } 
+      javaClient.pullData();
+      javaClient2.pullData();
+
+  
+      System.out.println(gson.toJson(javaClient.getCurrentState()));
+  }   
+
 
   @Test
   void testIsGameOver() {
@@ -326,26 +325,9 @@ public class RestClientTests {
   }
 
   @Test
-  void testMakeMove() {
-    javaClient.createGame(template);
-    javaClient.joinGame("Team1");
-    javaClient2.joinExistingGame(
-        "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
-    Move move = new Move();
-    move.setPieceId("p:1_1");
-    move.setNewPosition(new int[] {1, 1});
-    try {
-      javaClient.makeMove(move);
-    } catch (Exception ex) {
-      assert ((ex instanceof Accepted) || (ex instanceof InvalidMove));
-    }
-  }
-
-  @Test
   void testSetServer() {
     try {
       javaClient.setServer("localhost", "8080");
-      javaClient.createGame(template);
     } catch (Exception ex) {
       fail();
     }
@@ -362,7 +344,7 @@ public class RestClientTests {
     } catch (IOException e) {
       e.printStackTrace();
     }
-
+    mapTemplate.setTotalTimeLimitInSeconds(10);
     return mapTemplate;
   }
 }

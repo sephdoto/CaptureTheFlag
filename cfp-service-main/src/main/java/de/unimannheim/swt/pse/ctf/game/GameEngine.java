@@ -42,7 +42,7 @@ public class GameEngine implements Game {
   // **************************************************
   private GameState gameState; // MAIN Data Store for GameEngine
   private Date startedDate = null;
-  private Date endDate; 
+  private Date endDate;
   private boolean weDoneZo; // Setting this to true signals End game
   private Clock currentTime;
   private Map<Integer, String> integerToTeam;
@@ -157,6 +157,9 @@ public class GameEngine implements Game {
    */
   @Override
   public void giveUp(String teamId) {
+    LOG.info("team called " + teamId);
+    LOG.info("team in map " + (teamToInteger.get(teamId)));
+    
     if (teamToInteger.get(teamId)
         == this.gameState
             .getCurrentTeam()) { // test is also in controller but doppelt gemoppelt hält besser
@@ -358,8 +361,13 @@ public class GameEngine implements Game {
     if (isGameOver()) {
       return 0;
     } else {
-      return Math.toIntExact(
+      try {
+        return Math.toIntExact(
           Duration.between(currentTime.instant(), gameShouldEndBy.instant()).getSeconds());
+      } catch (Exception e) {
+       return 0;
+      }
+     
     }
   }
 
@@ -409,16 +417,21 @@ public class GameEngine implements Game {
     if (isGameOver()) {
       return 0;
     } else {
-      return Math.toIntExact(
+      try {
+        return Math.toIntExact(
           Duration.between(currentTime.instant(), turnEndsBy.instant()).getSeconds());
+      } catch (Exception e) {
+        return 0;
+      }
+      
     }
   }
 
-   /**
-     * Tells the client if the game is Time Limited
-     *
-     * @return Turn time limit in seconds (<= 0 if none)
-     */
+  /**
+   * Tells the client if the game is Time Limited
+   *
+   * @return Turn time limit in seconds (<= 0 if none)
+   */
   @Override
   public int getTurnTimeLimit() {
     return copyOfTemplate.getTotalTimeLimitInSeconds();
@@ -561,7 +574,7 @@ public class GameEngine implements Game {
    */
   private void setGameOver() {
     this.gameState.setCurrentTeam(-1); // Sets current team to -1 to indicate game has ended
-    if(this.endDate == null){
+    if (this.endDate == null) {
       this.endDate = new Date();
     }
     this.weDoneZo = true;
@@ -585,6 +598,7 @@ public class GameEngine implements Game {
 
   /**
    * Checks if we can start the game. Call this after adding a team to the game
+   *
    * @throws GameOver if there are too many pieces compared to the map size
    * @author rsyed
    */
