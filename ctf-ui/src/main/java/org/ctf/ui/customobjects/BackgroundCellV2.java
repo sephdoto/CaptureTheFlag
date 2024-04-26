@@ -29,7 +29,7 @@ public class BackgroundCellV2 extends Pane {
 
 	public BackgroundCellV2(int x, int y) {
 		testColor = Color.rgb(173, 216, 230, 0.5);
-		this.setStyle("-fx-background-color: white;" + "-fx-border-color: black; " + "-fx-border-width: 1px ");
+		this.setStyle("-fx-background-color: baa98e;" + "-fx-border-color: black; " + "-fx-border-width: 1px ");
 		this.x = x;
 		this.y = y;
 		this.occupied = false;
@@ -43,7 +43,7 @@ public class BackgroundCellV2 extends Pane {
 		rc.radiusProperty().bind(Bindings.divide(widthProperty(), 6));
 		rc.centerXProperty().bind(widthProperty().divide(2));
 		rc.centerYProperty().bind(widthProperty().divide(2));
-		rc.setFill(Color.WHITE);
+		rc.setFill(null);
 		base.getChildren().add(rc);
 	}
 	public void createCircle2() {
@@ -51,7 +51,7 @@ public class BackgroundCellV2 extends Pane {
 		rc2.radiusProperty().bind(Bindings.divide(widthProperty(), 3));
 		rc2.centerXProperty().bind(widthProperty().divide(2));
 		rc2.centerYProperty().bind(widthProperty().divide(2));
-		rc2.setFill(Color.WHITE);
+		rc2.setFill(null);
 		base.getChildren().add(rc2);
 	}
 
