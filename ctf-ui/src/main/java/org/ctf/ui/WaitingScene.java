@@ -2,15 +2,21 @@ package org.ctf.ui;
 
 import java.util.Iterator;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -29,8 +35,10 @@ public class WaitingScene extends Scene {
 	StackPane root;
 	StackPane left;
 	StackPane right;
-	Text text;;
+	Text text;
 	VBox testBox;
+	private  ObjectProperty<Color> sceneColorProperty = 
+		        new SimpleObjectProperty<>(Color.BLUE);
 
 	public WaitingScene(HomeSceneController hsc, double width, double height) {
 		super(new StackPane(), width, height);
@@ -38,20 +46,32 @@ public class WaitingScene extends Scene {
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
 		this.root = (StackPane) this.getRoot();
 		createLayout();
+		 this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
+	        this.setOnMouseClicked(e->{
+	            if(e.getButton().equals(MouseButton.PRIMARY)){
+	                MyCustomColorPicker myCustomColorPicker = new MyCustomColorPicker();
+	                myCustomColorPicker.setCurrentColor(sceneColorProperty.get());
+
+	                CustomMenuItem itemColor = new CustomMenuItem(myCustomColorPicker);
+	                itemColor.getStyleClass().add("custom-menu-item");
+	                itemColor.setHideOnClick(false);
+	                sceneColorProperty.bind(myCustomColorPicker.customColorProperty());
+	                ContextMenu contextMenu = new ContextMenu(itemColor);
+	                contextMenu.setOnHiding(t->sceneColorProperty.unbind());
+	                contextMenu.show(this.getWindow(),e.getScreenX(),e.getScreenY());
+	            }
+	        });
 	}
 	
 	private void createLayout(){
 		 testBox = new VBox();
-		
+		 Rectangle rect = new Rectangle(400,400);
+	        rect.fillProperty().bind(sceneColorProperty);
+	        root.getChildren().add(rect);
 		 createColorPicker();
 		root.getChildren().add(testBox);
 	}
 	
-	
-	private void createImage() {
-		Image mp = new Image(getClass().getResourceAsStream("multiplayerlogo.png"));
-		ImageView mpv = new ImageView(mp);
-	}
 	private void createFigure() {
 		  final SVGPath svg = new SVGPath();
 	        svg.setContent("M70,50 L90,50 L120,90 L150,50 L170,50"
@@ -76,17 +96,7 @@ public class WaitingScene extends Scene {
 	    colorPicker.setValue(Color.BLUE);
 	    colorPicker.setVisible(false);
 	    colorPicker.getStyleClass().add("color-palette");
-	    colorPicker.showingProperty().addListener((obs,b,b1)->{
-	        if(b1){
-	            PopupWindow popupWindow = getPopupWindow();
-	            Node popup = popupWindow.getScene().getRoot().getChildrenUnmodifiable().get(0);
-	            popup.lookupAll(".color-rect").stream()
-	                .forEach(rect->{
-	                    Color c = (Color)((Rectangle)rect).getFill();
-	                    Tooltip.install(rect.getParent(), new Tooltip("Custom tip for "+c.toString()));
-	                });
-	        }
-	    });
+	   
 	
 	    Label label = new Label("Series name");
 
@@ -103,30 +113,7 @@ public class WaitingScene extends Scene {
 	        return colorPicker;
 	}
 	
-	private StackPane ColorPickertest() {
-		// Erstelle einen ColorPicker
-        ColorPicker colorPicker = new ColorPicker(Color.WHITE);
-
-        // Verstecke die ChoiceBox des ColorPickers
-        colorPicker.setOpacity(0); // Setze die Opazität auf 0, um die ChoiceBox unsichtbar zu machen
-
-        // Füge der Farbpalette einen Rahmen hinzu
-        Rectangle colorPaletteBorder = new Rectangle(200, 200, Color.TRANSPARENT); // Anpassen der Größe nach Bedarf
-        colorPaletteBorder.setStroke(Color.BLACK); // Farbe des Rahmens
-
-        // Erstelle ein StackPane und füge die Farbpalette und den Rahmen hinzu
-        StackPane root = new StackPane(colorPicker, colorPaletteBorder);
-        return root;
-	}
-	private PopupWindow getPopupWindow() {
-	    @SuppressWarnings("deprecation") final Iterator<Window> windows = (Iterator<Window>) Window.getWindows();
-	    while (windows.hasNext()) {
-	        final Window window = windows.next();
-	        if (window instanceof PopupWindow) {
-	            return (PopupWindow)window;
-	        }
-	    }
-	    return null;
-	}
 	
+
+	 
 }
