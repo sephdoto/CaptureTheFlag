@@ -11,6 +11,10 @@ public class Move {
     )
     private String pieceId;
     @Schema(
+            description = "unique identifier of the team that makes the move"
+    )
+    private String teamId;
+    @Schema(
             description = "new position of the piece on the board (grid)"
     )
     private int[] newPosition;
@@ -34,5 +38,13 @@ public class Move {
 
     public void setNewPosition(int[] newPosition) {
         this.newPosition = newPosition;
+    }
+
+    public String getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(String teamId) {
+        this.teamId = teamId;
     }
 }
