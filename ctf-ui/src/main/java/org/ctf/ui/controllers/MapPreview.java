@@ -8,7 +8,7 @@ import org.ctf.shared.state.data.map.MapTemplate;
 /**
  * Controller which gets a GameState from server to display as a map preview
  *
- * @author rsyed
+ * @author rsyed & ysiebenh
  */
 public class MapPreview {
 
@@ -30,7 +30,7 @@ public class MapPreview {
    * slow.
    *
    * @return GameState object containing all data from the server (including blocks and placement)
-   * @author rsyed
+   * @author rsyed & ysiebenh
    */
   public GameState getGameState() {
     Client[] clients = new Client[mapTemplate.getTeams()];
@@ -41,8 +41,7 @@ public class MapPreview {
           ClientStepBuilder.newBuilder()
               .enableRestLayer(false)
               .onLocalHost()
-              .onPort("8888")
-              .HumanPlayer()
+              .onPort("8888").enableSaveGame(false)
               .build();
       if (i == 0) {
         clients[0].createGame(mapTemplate); // Creates a session with the first client
