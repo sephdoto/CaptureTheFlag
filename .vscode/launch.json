@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ImageToolsTest",
+            "request": "launch",
+            "mainClass": "org.ctf.ui.controllers.ImageToolsTest",
+            "projectName": "ctf-ui"
+        },
+        {
+            "type": "java",
+            "name": "ImageTools",
+            "request": "launch",
+            "mainClass": "org.ctf.ui.controllers.ImageTools",
+            "projectName": "ctf-ui"
+        },
+        {
+            "type": "java",
             "name": "ScheduledTasks",
             "request": "launch",
             "mainClass": "org.ctf.shared.client.ScheduledTasks",
