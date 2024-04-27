@@ -54,7 +54,7 @@ public class RestClientLayer implements CommLayerInterface {
       throw new URLError("Check URL");
     }
     int code = result.getStatusCode().value();
-    if (code != 200) {
+    if (code == 200) {
       throw new Accepted();
     } else if (code == 404) {
       throw new UnknownError();
@@ -97,7 +97,7 @@ public class RestClientLayer implements CommLayerInterface {
       throw new URLError("Check URL");
     }
     int code = result.getStatusCode().value();
-    if (code != 200) {
+    if (code == 200) {
       throw new Accepted();
     } else if (code == 404) {
       throw new SessionNotFound();
@@ -179,7 +179,7 @@ public class RestClientLayer implements CommLayerInterface {
       throw new URLError("Check URL");
     }
     int code = result.getStatusCode().value();
-    if (code != 200) {
+    if (code == 200) {
       throw new Accepted();
     } else if (code == 403) {
       throw new ForbiddenMove();
@@ -214,7 +214,7 @@ public class RestClientLayer implements CommLayerInterface {
       throw new URLError("Check URL");
     }
     int code = result.getStatusCode().value();
-    if (code != 200) {
+    if (code == 200) {
       throw new Accepted();
     } else if (code == 404) {
       throw new SessionNotFound();
@@ -246,7 +246,7 @@ public class RestClientLayer implements CommLayerInterface {
     }
 
     int code = result.getStatusCode().value();
-    if (code != 200) {
+    if (code == 200) {
       throw new Accepted();
     } else if (code == 404) {
       throw new SessionNotFound();
@@ -275,7 +275,7 @@ public class RestClientLayer implements CommLayerInterface {
       throw new URLError("Check URL");
     }
     int code = result.getStatusCode().value();
-    if (code != 200) {
+    if (code == 200) {
       throw new Accepted();
     } else if (code == 404) {
       throw new SessionNotFound();
