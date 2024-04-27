@@ -69,8 +69,6 @@ public class GamePane extends HBox{
 		 gridPane = new GridPane();
 		// gridPane.setFillWidth(true);
 
-		//gridPane.setGridLinesVisible(true);
-		//gridPane.setAlignment(Pos.CENTER);
 
 		 NumberBinding binding = Bindings.min(widthProperty().divide(cols), heightProperty().divide(rows));
 		//gridPane.setMinSize(300, 300);
@@ -119,35 +117,11 @@ public class GamePane extends HBox{
 			b.setScene(waitingscene);
 		}
 	}
-	
-//	public void showTransition(CostumFigurePain pain, BackgroundCellV2 old, BackgroundCellV2 neu) {
-//		TranslateTransition transition = new TranslateTransition(Duration.seconds(20), pain);
-//		transition.setFromX(0); 
-//	    transition.setFromY(0);
-//        transition.setToX(neu.getLayoutX() - neu.base.widthProperty().divide(2).doubleValue() ); 
-//        transition.setToY(neu.getLayoutY() -  neu.base.heightProperty().divide(2).doubleValue()); 
-//        transition.play();
-//        
-//        transition.setOnFinished(e -> {
-//        	pain.toFront();
-//        	 neu.addFigure(pain);
-//            StackPane.setAlignment(pain, javafx.geometry.Pos.CENTER);
-//        });
-//    }
+
 	
 	public int generateKey(int x, int y) {
 		return (x+y)*(x+y+1) / 2 + x;
 	}
-	
-	//Setzt das Game für alle Zellen und Figuren
-//	public void setGame(Game game) {
-//		for(CostumFigurePain cm : figures.values()) {
-//			cm.setGame(game); 
-//		}
-//		for(BackgroundCellV2 cl: cells.values()) {
-//			cl.setGame(game);
-//		}
-//	}
 	
 	public HashMap<String, CostumFigurePain> getFigures() {
 		return figures;
