@@ -24,8 +24,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-
-import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.ui.controllers.MapPreview;
 
 public class EditorScene extends Scene {
@@ -623,12 +621,12 @@ public class EditorScene extends Scene {
    * @author rsyed: Bug fixes
    */
   private void updateVisualRoot() {
-    MapPreview mp = new MapPreview(engine.tmpTemplate);
-    visualRoot.getChildren().clear();
     try {
+      MapPreview mp = new MapPreview(engine.tmpTemplate);
+      visualRoot.getChildren().clear();
       visualRoot.getChildren().add(new GamePane(mp.getGameState()));
-    } catch (Accepted e) {
-      e.getMessage();
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 

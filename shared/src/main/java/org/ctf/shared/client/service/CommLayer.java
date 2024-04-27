@@ -89,14 +89,13 @@ public class CommLayer implements CommLayerInterface {
     } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
       throw new URLError("Check URL");
     }
-    if (response.statusCode() == 200) {
-      throw new Accepted();
-    } else if (response.statusCode() == 404) {
-      throw new UnknownError();
-    } else if (response.statusCode() == 500) {
-      throw new URLError("URL Error");
+    if (response.statusCode() != 200) {
+      if (response.statusCode() == 404) {
+        throw new UnknownError();
+      } else if (response.statusCode() == 500) {
+        throw new URLError("URL Error");
+      }
     }
-
     return gson.fromJson(response.body(), GameSessionResponse.class);
   }
 
@@ -132,14 +131,14 @@ public class CommLayer implements CommLayerInterface {
     } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
       throw new URLError("Check URL");
     }
-    if (response.statusCode() == 200) {
-      throw new Accepted();
-    } else if (response.statusCode() == 404) {
-      throw new SessionNotFound();
-    } else if (response.statusCode() == 429) {
-      throw new NoMoreTeamSlots();
-    } else if (response.statusCode() == 500) {
-      throw new UnknownError();
+    if (response.statusCode() != 200) {
+      if (response.statusCode() == 404) {
+        throw new SessionNotFound();
+      } else if (response.statusCode() == 429) {
+        throw new NoMoreTeamSlots();
+      } else if (response.statusCode() == 500) {
+        throw new UnknownError();
+      }
     }
 
     return gson.fromJson(response.body(), JoinGameResponse.class);
@@ -178,18 +177,18 @@ public class CommLayer implements CommLayerInterface {
     } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
       throw new URLError("Check URL");
     }
-    if (response.statusCode() == 200) {
-      throw new Accepted();
-    } else if (response.statusCode() == 403) {
-      throw new ForbiddenMove();
-    } else if (response.statusCode() == 404) {
-      throw new SessionNotFound();
-    } else if (response.statusCode() == 409) {
-      throw new InvalidMove();
-    } else if (response.statusCode() == 410) {
-      throw new GameOver();
-    } else if (response.statusCode() == 500) {
-      throw new UnknownError();
+    if (response.statusCode() != 200) {
+      if (response.statusCode() == 403) {
+        throw new ForbiddenMove();
+      } else if (response.statusCode() == 404) {
+        throw new SessionNotFound();
+      } else if (response.statusCode() == 409) {
+        throw new InvalidMove();
+      } else if (response.statusCode() == 410) {
+        throw new GameOver();
+      } else if (response.statusCode() == 500) {
+        throw new UnknownError();
+      }
     }
   }
 
@@ -227,16 +226,16 @@ public class CommLayer implements CommLayerInterface {
     } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
       throw new URLError("Check URL");
     }
-    if (response.statusCode() == 200) {
-      throw new Accepted();
-    } else if (response.statusCode() == 403) {
-      throw new ForbiddenMove();
-    } else if (response.statusCode() == 404) {
-      throw new SessionNotFound();
-    } else if (response.statusCode() == 410) {
-      throw new GameOver();
-    } else if (response.statusCode() == 500) {
-      throw new UnknownError();
+    if (response.statusCode() != 200) {
+      if (response.statusCode() == 403) {
+        throw new ForbiddenMove();
+      } else if (response.statusCode() == 404) {
+        throw new SessionNotFound();
+      } else if (response.statusCode() == 410) {
+        throw new GameOver();
+      } else if (response.statusCode() == 500) {
+        throw new UnknownError();
+      }
     }
   }
 
@@ -269,12 +268,12 @@ public class CommLayer implements CommLayerInterface {
       throw new URLError("Check URL");
     }
 
-    if (response.statusCode() == 200) {
-      throw new Accepted();
-    } else if (response.statusCode() == 404) {
-      throw new SessionNotFound();
-    } else if (response.statusCode() == 500) {
-      throw new UnknownError();
+    if (response.statusCode() != 200) {
+      if (response.statusCode() == 404) {
+        throw new SessionNotFound();
+      } else if (response.statusCode() == 500) {
+        throw new UnknownError();
+      }
     }
 
     return gson.fromJson(response.body(), GameSessionResponse.class);
@@ -302,12 +301,12 @@ public class CommLayer implements CommLayerInterface {
       throw new URLError("Check URL");
     }
 
-    if (response.statusCode() == 200) {
-      throw new Accepted();
-    } else if (response.statusCode() == 404) {
-      throw new SessionNotFound();
-    } else if (response.statusCode() == 500) {
-      throw new UnknownError();
+    if (response.statusCode() != 200) {
+      if (response.statusCode() == 404) {
+        throw new SessionNotFound();
+      } else if (response.statusCode() == 500) {
+        throw new UnknownError();
+      }
     }
   }
 
@@ -338,12 +337,12 @@ public class CommLayer implements CommLayerInterface {
       throw new URLError("Check URL");
     }
 
-    if (response.statusCode() == 200) {
-      throw new Accepted();
-    } else if (response.statusCode() == 404) {
-      throw new SessionNotFound();
-    } else if (response.statusCode() == 500) {
-      throw new UnknownError();
+    if (response.statusCode() != 200) {
+      if (response.statusCode() == 404) {
+        throw new SessionNotFound();
+      } else if (response.statusCode() == 500) {
+        throw new UnknownError();
+      }
     }
 
     return gson.fromJson(response.body(), GameState.class);

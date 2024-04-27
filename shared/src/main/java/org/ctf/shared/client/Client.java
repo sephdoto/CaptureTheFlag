@@ -127,7 +127,6 @@ public class Client implements GameClientInterface {
    * the MapTemplate parameter. Throws exceptions on acception and incase errors occour
    *
    * @param map
-   * @throws Accepted (200)
    * @throws UnknownError (500)
    * @throws URLError (404)
    * @author rsyed
@@ -140,7 +139,6 @@ public class Client implements GameClientInterface {
    * Method joins the requested game session
    *
    * @param teamName
-   * @throws Accepted (200)
    * @throws SessionNotFound
    * @throws NoMoreTeamSlots
    * @throws UnknownError
@@ -156,7 +154,6 @@ public class Client implements GameClientInterface {
    * Method makes a move in the game
    *
    * @param Move
-   * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws ForbiddenMove (403)
    * @throws InvalidMove (409)
@@ -174,7 +171,6 @@ public class Client implements GameClientInterface {
    * consumption Throws exceptions listed incase of acceptance or errors. Functions as a REFRESH
    * COMMAND for GAMESTATE
    *
-   * @throws Accepted (200)
    * @throws SessionNotFound
    * @throws UnknownError
    * @throws URLError (404)
@@ -189,7 +185,6 @@ public class Client implements GameClientInterface {
    * Requests the server to return the current state of the session and parses it Throws exceptions
    * depending on what happens. Functions as a REFRESH command for SESSION INFO
    *
-   * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws UnknownError (500)
    * @throws URLError (404)
@@ -204,7 +199,6 @@ public class Client implements GameClientInterface {
    * Requests the server to delete the current session. Returns the server reponse which are HTTP
    * status codes thrown as exceptions.
    *
-   * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws UnknownError (500)
    * @throws URLError (404)
@@ -218,7 +212,6 @@ public class Client implements GameClientInterface {
   /**
    * Used to send a give up request to the current session. Throws exceptions depending on errors
    *
-   * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws ForbiddenMove (403)
    * @throws GameOver (410)
@@ -239,7 +232,6 @@ public class Client implements GameClientInterface {
    * @param port
    * @param gameSessionID
    * @param teamName
-   * @throws Accepted (200)
    * @throws SessionNotFound
    * @throws NoMoreTeamSlots
    * @throws UnknownError
@@ -274,8 +266,6 @@ public class Client implements GameClientInterface {
     gsr.setTemplate(map);
     try {
       this.gameResponse = comm.createGameSession(currentServer, gsr);
-    } catch (Accepted e) {
-      throw new Accepted("Accepted by the Server");
     } catch (URLError e) {
       throw new URLError("Something wrong with the server. Try to fix using setServer");
     } catch (UnknownError e) {
@@ -346,7 +336,6 @@ public class Client implements GameClientInterface {
    *
    * @param teamName with feteched Data from server
    * @return {@link JoinGameResponse} with returned data from the server
-   * @throws Accepted (200)
    * @throws SessionNotFound
    * @throws NoMoreTeamSlots
    * @throws UnknownError
@@ -356,8 +345,6 @@ public class Client implements GameClientInterface {
     JoinGameResponse response = new JoinGameResponse();
     try {
       response = comm.joinGame(currentServer, teamName);
-    } catch (Accepted e) {
-      throw new Accepted("We good!");
     } catch (SessionNotFound e) {
       throw new SessionNotFound("SessionID is wrong / Server is not there");
     } catch (NoMoreTeamSlots e) {
@@ -392,7 +379,6 @@ public class Client implements GameClientInterface {
    * @param teamID Team Name for the request. Read from the Client
    * @param teamSecret Team Secret for the Request. Read from the Client
    * @param move Move requested. Needs to be given by the UI
-   * @throws Accepted
    * @throws SessionNotFound
    * @throws ForbiddenMove
    * @throws InvalidMove
@@ -408,8 +394,6 @@ public class Client implements GameClientInterface {
       moveReq.setPieceId(move.getPieceId());
       moveReq.setNewPosition(move.getNewPosition());
       comm.makeMove(currentServer, moveReq);
-    } catch (Accepted e) {
-      throw new Accepted();
     } catch (SessionNotFound e) {
       throw new SessionNotFound();
     } catch (ForbiddenMove e) {
@@ -431,7 +415,6 @@ public class Client implements GameClientInterface {
    * @param teamID Team Name for the request. Read from the Client
    * @param teamSecret Team Secret for the Request. Read from the Client
    * @param move Move requested. Needs to be given by the UI
-   * @throws Accepted
    * @throws SessionNotFound
    * @throws UnknownError
    * @author rsyed
@@ -440,8 +423,6 @@ public class Client implements GameClientInterface {
     GameState gameState = new GameState();
     try {
       gameState = comm.getCurrentGameState(currentServer);
-    } catch (Accepted e) {
-      throw new Accepted("We good");
     } catch (SessionNotFound e) {
       throw new SessionNotFound("Session isnt available for this request");
     } catch (UnknownError e) {
@@ -459,7 +440,6 @@ public class Client implements GameClientInterface {
    * Called from the getGameSession method. Requests the server specific/set in the Client object to
    * send the current {@link GameSessionResponse}.
    *
-   * @throws Accepted
    * @throws SessionNotFound
    * @throws UnknownError
    * @author rsyed
@@ -468,8 +448,6 @@ public class Client implements GameClientInterface {
     GameSessionResponse gameSessionResponse = new GameSessionResponse();
     try {
       gameSessionResponse = comm.getCurrentSessionState(currentServer);
-    } catch (Accepted e) {
-      throw new Accepted();
     } catch (SessionNotFound e) {
       throw new SessionNotFound("Session isnt available for this request");
     } catch (UnknownError e) {
