@@ -3,6 +3,7 @@ package org.ctf.ui.controllers;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.map.MapTemplate;
 
 /**
@@ -32,7 +33,7 @@ public class MapPreview {
    * @return GameState object containing all data from the server (including blocks and placement)
    * @author rsyed & ysiebenh
    */
-  public GameState getGameState() {
+  public GameState getGameState() throws Accepted {
     Client[] clients = new Client[mapTemplate.getTeams()];
 
     // Init all clients
