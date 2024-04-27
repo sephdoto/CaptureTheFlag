@@ -21,18 +21,33 @@ import org.ctf.shared.tools.JSON_Tools.MapNotFoundException;
 public class AI_Controller {
   AI ai;
   GameState gameState;
+  boolean active;
   
   public AI_Controller(GameState gameState, AI ai) {
+    if(gameState.getCurrentTeam() < 0)
+      return;
     this.ai = ai;
     this.gameState = gameState;
+    this.active = true;
   }
   
   public void update(GameState gameState) {
     this.gameState = gameState;
+    if(gameState.getCurrentTeam() < 0) {
+      this.active = false;
+      shutDown();
+    }
+  }
+  
+  public void shutDown() {
+    System.out.println("AI Shit down");
   }
   
   public Move getNextMove()
       throws NoMovesLeftException, InvalidShapeException {
+    if(!this.active)
+      return null;
+    
     int milis = 1000;
     switch (this.ai) {
       case RANDOM:
