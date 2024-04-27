@@ -2,6 +2,7 @@ package org.ctf.shared.constants;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 /**
  * Constants class to hold control variables
@@ -33,10 +34,23 @@ public class Constants {
           + "ressources"
           + File.separator;
   
+  /**
+   * This Enum contains all songs and their locations.
+   * Songs in easterEggs wont be returned by getRandom.
+   * 
+   * @author sistumpf
+   */
   public static enum Music {
-    ELEVATOR("theelevatorbossanova.mp3"), THE_CLONES_THEME("TheClonesTheme-Lofi.mp3");
+    ELEVATOR("theelevatorbossanova.mp3"), 
+    THE_CLONES_THEME("TheClonesTheme-Lofi.mp3"),
+    VODE_AN("VodeAn-Lofi.mp3");
 
     private final String text;
+    private static final ArrayList<Music> easterEggs = new ArrayList<Music>();
+    
+    static {
+      easterEggs.add(ELEVATOR);
+    }
     
     Music(final String text){
       this.text = text;
@@ -47,7 +61,11 @@ public class Constants {
     }
     
     public static Music getRandom() {
-      return values()[(int)(Math.random() * values().length)];
+      Music music;
+      do {
+        music = values()[(int)(Math.random() * values().length)];
+      } while (easterEggs.contains(music));
+      return music;
     }
   }
   
