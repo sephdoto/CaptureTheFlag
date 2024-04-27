@@ -22,8 +22,15 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+
+import java.nio.file.Paths;
+
+import org.ctf.shared.constants.Constants;
+import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.ui.controllers.MapPreview;
 
 public class EditorScene extends Scene {
@@ -40,20 +47,38 @@ public class EditorScene extends Scene {
   Text infoText;
   boolean spinnerchange = false;
   boolean boxchange = false;
+  MediaPlayer mediaPlayer;
 
-  public EditorScene(HomeSceneController hsc, double width, double height) {
-    super(new StackPane(), width, height);
-    this.hsc = hsc;
-    this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
-    this.root = (StackPane) this.getRoot();
-    engine = new TemplateEngine(this);
-    options = new Parent[3];
-    options[0] = createMapChooser();
-    options[1] = createFigureChooser();
-    options[2] = createFigureCustomizer();
-    createLayout();
-  }
+	public EditorScene(HomeSceneController hsc, double width, double height) {
+		super(new StackPane(), width, height);
+		music();
+		this.hsc = hsc;
+		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
+		this.root = (StackPane) this.getRoot();
+		engine = new TemplateEngine(this);
+		options = new Parent[3];
+		options[0] = createMapChooser();
+		options[1] = createFigureChooser();
+		options[2] = createFigureCustomizer();
+		createLayout();
 
+	}
+	
+	/**
+	 *  plays music in the background 
+	 * 	@author ysiebenh
+	 */
+	
+	private void music() {
+		String s = Paths.get(Constants.toUIResources + "theelevatorbossanova.mp3").toUri().toString();
+		Media h = new Media(s);
+		mediaPlayer = new MediaPlayer(h);
+		mediaPlayer.setVolume(0.4);
+		mediaPlayer.play();
+	}
+	
+	
+	
   private void createLayout() {
     root.getStyleClass().add("join-root");
 
@@ -621,12 +646,12 @@ public class EditorScene extends Scene {
    * @author rsyed: Bug fixes
    */
   private void updateVisualRoot() {
+    MapPreview mp = new MapPreview(engine.tmpTemplate);
+    visualRoot.getChildren().clear();
     try {
-      MapPreview mp = new MapPreview(engine.tmpTemplate);
-      visualRoot.getChildren().clear();
       visualRoot.getChildren().add(new GamePane(mp.getGameState()));
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (Accepted e) {
+      e.getMessage();
     }
   }
 

@@ -25,8 +25,13 @@ public class Constants {
           + "maptemplates"
           + File.separator;
 
-
-
+  public static String toUIResources = Paths.get("").toAbsolutePath().toString().split("cfp14")[0]
+          + "cfp14"
+          + File.separator
+          + "ctf-ui"
+          + File.separator
+          + "ressources"
+          + File.separator;
   /**
    * Constants needed to make the base URI of the restClient
    *
