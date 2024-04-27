@@ -135,18 +135,8 @@ public class GamePane extends HBox{
 //        });
 //    }
 	
-	/**
-	 * 
-	 * generates a unique key using the Cantor pairing function @see <a
-	 * href=”https://en.wikipedia.org/wiki/Pairing_function#Cantor_pairing_function”>Wikipedia_PairingFunction</a>
-	 * 
-	 * @author ysiebenh
-	 * @param x
-	 * @param y
-	 * @return
-	 */
 	public int generateKey(int x, int y) {
-		return (int) ( 0.5 * (x + y)*(x+y+1) + y);
+		return (x+y)*(x+y+1) / 2 + x;
 	}
 	
 	//Setzt das Game für alle Zellen und Figuren

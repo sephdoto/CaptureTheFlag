@@ -4,8 +4,6 @@ import java.util.Iterator;
 
 import org.ctf.ui.customobjects.BaseRep;
 import org.ctf.ui.customobjects.CostumFigurePain;
-
-import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.ObjectProperty;
@@ -58,27 +56,7 @@ public class WaitingScene extends Scene {
 		this.root = (StackPane) this.getRoot();
 		createLayout();
 		 this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
-	        this.setOnMouseClicked(e->{
-	            if(e.getButton().equals(MouseButton.SECONDARY)){
-	                MyCustomColorPicker myCustomColorPicker = new MyCustomColorPicker();
-	                myCustomColorPicker.setCurrentColor(sceneColorProperty.get());
-
-	                CustomMenuItem itemColor = new CustomMenuItem(myCustomColorPicker);
-	                itemColor.getStyleClass().add("custom-menu-item");
-	                itemColor.setHideOnClick(false);
-	                sceneColorProperty.bind(myCustomColorPicker.customColorProperty());
-	                ContextMenu contextMenu = new ContextMenu(itemColor);
-	                contextMenu.setHideOnEscape(true);
-	                
-	                contextMenu.setOnHiding(t->{sceneColorProperty.unbind();
-	                
-	               System.out.println("hihihi");
-	                for(CostumFigurePain m : gm.getFigures().values() ) {
-	                		m.unbind();
-	                	}});
-	                contextMenu.show(this.getWindow(),e.getScreenX(),e.getScreenY());
-	            }
-	        });
+	       
 	}
 	
 	
@@ -103,9 +81,16 @@ public class WaitingScene extends Scene {
           System.out.println("hihihi");
            for(CostumFigurePain m : gm.getFigures().values() ) {
            		m.unbind();
-           		sceneColorProperty = new SimpleObjectProperty<>(Color.BLUE);
            	}});
           contextMenu.show(this.getWindow(),d,e);
+	}
+	
+	private void createAddButtons() {
+		
+	}
+	
+	private void createAddHumanButton() {
+		
 	}
 	
 	
