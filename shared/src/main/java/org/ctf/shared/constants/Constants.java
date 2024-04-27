@@ -32,6 +32,25 @@ public class Constants {
           + File.separator
           + "ressources"
           + File.separator;
+  
+  public static enum Music {
+    ELEVATOR("theelevatorbossanova.mp3"), THE_CLONES_THEME("TheClonesTheme-Lofi.mp3");
+
+    private final String text;
+    
+    Music(final String text){
+      this.text = text;
+    }
+    
+    public String getLocation() {
+      return  "music" + File.separator + text;
+    }
+    
+    public static Music getRandom() {
+      return values()[(int)(Math.random() * values().length)];
+    }
+  }
+  
   /**
    * Constants needed to make the base URI of the restClient
    *

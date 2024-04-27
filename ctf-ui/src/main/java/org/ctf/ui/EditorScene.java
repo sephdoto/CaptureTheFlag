@@ -70,15 +70,15 @@ public class EditorScene extends Scene {
 	 */
 	
 	private void music() {
-		String s = Paths.get(Constants.toUIResources + "theelevatorbossanova.mp3").toUri().toString();
-		Media h = new Media(s);
-		mediaPlayer = new MediaPlayer(h);
-		mediaPlayer.setVolume(0.4);
-		mediaPlayer.setCycleCount(100);
-		mediaPlayer.play();
+	  String s = Paths.get(Constants.toUIResources + Constants.Music.getRandom().getLocation()).toUri().toString();
+	  Media h = new Media(s);
+	  mediaPlayer = new MediaPlayer(h);
+	  mediaPlayer.setVolume(0.4);
+	  mediaPlayer.setCycleCount(100);
+	  mediaPlayer.play();
 	}
-	
-	
+
+
 	
   private void createLayout() {
     root.getStyleClass().add("join-root");
