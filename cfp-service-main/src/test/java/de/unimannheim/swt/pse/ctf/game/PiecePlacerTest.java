@@ -196,9 +196,9 @@ class PiecePlacerTest {
   void testNextBaseDirection() {
     BoardController bc = new BoardController(TestValues.getTestState(), TestValues.getTestTemplate());
 //    bc.gameState.getTeams()[0].setBase(new int[] {9,5});
-    int dir = getNextBaseDirection(new PiecePlacer(bc.gameState, null), bc.gameState.getTeams()[0]);
+    int dir = getNextBaseDirection(new PiecePlacer(bc.gameState, null), 0);
     assertEquals(3, dir);
-    dir = getNextBaseDirection(new PiecePlacer(bc.gameState, null), bc.gameState.getTeams()[1]);
+    dir = getNextBaseDirection(new PiecePlacer(bc.gameState, null), 1);
     assertEquals(2, dir);
     
     GameState gs = TestValues.getTestState();
@@ -210,18 +210,18 @@ class PiecePlacerTest {
     while(--teams>=0) bc.initializeTeam(teams, mt);
     bc.gameState.getTeams()[2].setBase(new int[] {4, 2});
     
-    dir = getNextBaseDirection(new PiecePlacer(bc.gameState, null), bc.gameState.getTeams()[0]);
+    dir = getNextBaseDirection(new PiecePlacer(bc.gameState, null), 0);
     assertEquals(3, dir);
-    dir = getNextBaseDirection(new PiecePlacer(bc.gameState, null), bc.gameState.getTeams()[1]);
+    dir = getNextBaseDirection(new PiecePlacer(bc.gameState, null), 1);
     assertEquals(0, dir);
   }
 
   /////////////////////////////////////////////
   // test methods to access private methods  //
   /////////////////////////////////////////////
-  int getNextBaseDirection(PiecePlacer pp, Team team) {    
+  int getNextBaseDirection(PiecePlacer pp, int team) {    
     try {
-    Method privateMethod = pp.getClass().getDeclaredMethod("nextBaseDirection", Team.class);
+    Method privateMethod = pp.getClass().getDeclaredMethod("nextBaseDirection", int.class);
     privateMethod.setAccessible(true);
       return (Integer)privateMethod.invoke(pp, team);
     } catch(Exception e) {e.printStackTrace();}

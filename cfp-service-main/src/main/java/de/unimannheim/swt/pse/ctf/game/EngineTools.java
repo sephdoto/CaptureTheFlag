@@ -264,19 +264,36 @@ public class EngineTools extends AI_Tools {
    * @author rsyed
    * @return
    */
-  public static GameState deepCopyGameState(GameState gs) {
-    ObjectMapper mapper = new ObjectMapper();
-    GameState re = new GameState();
-    try {
-      re = mapper.readValue(mapper.writeValueAsString(gs), GameState.class);
-    } catch (JsonGenerationException e) {
-      System.out.println("Error in deepCopyGameState JSON Method");
-    } catch (JsonMappingException e) {
-      System.out.println("Error in deepCopyGameState JSON Method");
-    } catch (IOException e) {
-      System.out.println("Error in deepCopyGameState JSON Method");
+  public static GameState deepCopyGameState(GameState gameState) {
+    GameState newState = new GameState();
+    newState.setCurrentTeam(gameState.getCurrentTeam());
+    newState.setLastMove(gameState.getLastMove());
+    Team[] teams = new Team[gameState.getTeams().length];
+    for(int i=0; i<teams.length; i++) {
+      if(gameState.getTeams()[i] == null)
+        continue;
+      teams[i] = new Team();
+      teams[i].setBase(gameState.getTeams()[i].getBase());
+      teams[i].setFlags(gameState.getTeams()[i].getFlags());
+      teams[i].setId(gameState.getTeams()[i].getId());
+      Piece[] pieces = new Piece[gameState.getTeams()[i].getPieces().length];
+      for(int j=0; j<pieces.length; j++) {
+        pieces[j] = new Piece();
+        pieces[j].setDescription(gameState.getTeams()[i].getPieces()[j].getDescription());
+        pieces[j].setId(gameState.getTeams()[i].getPieces()[j].getId() + "");
+        pieces[j].setTeamId(gameState.getTeams()[i].getPieces()[j].getTeamId() + "");
+        pieces[j].setPosition(gameState.getTeams()[i].getPieces()[j].getPosition().clone());
+      }
+      teams[i].setPieces(pieces);
+    }        
+    newState.setTeams(teams);
+    String[][] grid = new String[gameState.getGrid().length][];
+    for(int i = 0; i < gameState.getGrid().length; i++) {
+      grid[i] = new String[gameState.getGrid()[i].length];
+      System.arraycopy(gameState.getGrid()[i], 0, grid[i], 0, gameState.getGrid()[i].length);
     }
-    return re;
+    newState.setGrid(grid);
+    return newState;
   }
 
   /**

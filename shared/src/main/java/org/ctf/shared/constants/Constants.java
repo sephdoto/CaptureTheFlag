@@ -42,8 +42,9 @@ public class Constants {
    */
   public static enum Music {
     ELEVATOR("theelevatorbossanova.mp3"), 
-    THE_CLONES_THEME("TheClonesTheme-Lofi.mp3"),
-    VODE_AN("VodeAn-Lofi.mp3");
+    THE_CLONES_THEME("TheClonesTheme-Lofi.mp3"),    //https://www.youtube.com/watch?v=8jXK8fVR8u0
+    VODE_AN("VodeAn-Lofi.mp3"),                     //https://www.youtube.com/watch?v=RTv0DGRCyqY
+    MERKELWAVE("EverythingIsPossible-Merkelwave.mp3");  //https://www.youtube.com/watch?v=stFm0ng7DR8
 
     private final String text;
     private static final ArrayList<Music> easterEggs = new ArrayList<Music>();
