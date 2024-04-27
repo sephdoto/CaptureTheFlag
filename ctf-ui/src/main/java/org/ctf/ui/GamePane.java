@@ -137,7 +137,9 @@ public class GamePane extends HBox{
 	
 	
 	public int generateKey(int x, int y) {
-		return x* 31 + y;
+		double a = (double)x;
+		double b = (double) y;
+		return (int) ( 0.5 * (x + y)*(x+y+1) + y);
 	}
 	
 	//Setzt das Game für alle Zellen und Figuren

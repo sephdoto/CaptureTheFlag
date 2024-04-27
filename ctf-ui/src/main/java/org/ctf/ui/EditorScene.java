@@ -74,6 +74,7 @@ public class EditorScene extends Scene {
 		Media h = new Media(s);
 		mediaPlayer = new MediaPlayer(h);
 		mediaPlayer.setVolume(0.4);
+		mediaPlayer.setCycleCount(100);
 		mediaPlayer.play();
 	}
 	
