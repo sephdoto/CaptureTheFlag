@@ -135,10 +135,17 @@ public class GamePane extends HBox{
 //        });
 //    }
 	
-	
+	/**
+	 * 
+	 * generates a unique key using the Cantor pairing function @see <a
+	 * href=”https://en.wikipedia.org/wiki/Pairing_function#Cantor_pairing_function”>Wikipedia_PairingFunction</a>
+	 * 
+	 * @author ysiebenh
+	 * @param x
+	 * @param y
+	 * @return
+	 */
 	public int generateKey(int x, int y) {
-		double a = (double)x;
-		double b = (double) y;
 		return (int) ( 0.5 * (x + y)*(x+y+1) + y);
 	}
 	
