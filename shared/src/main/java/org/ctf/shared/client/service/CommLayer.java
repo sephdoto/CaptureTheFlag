@@ -44,7 +44,12 @@ public class CommLayer implements CommLayerInterface {
   private HttpRequest request;
   private HttpResponse<String> ret;
 
-  /** Creates a Layer Object which can then be used to communicate with the Server */
+  /**
+   * Class constructor. Uses a SingleThreadExecutor to insure that the commands are done
+   * sequentially to minimize chances of data inconsistency.
+   *
+   * @author rsyed
+   */
   public CommLayer() {
     gson = new Gson();
     executor = Executors.newSingleThreadExecutor();
@@ -64,8 +69,10 @@ public class CommLayer implements CommLayerInterface {
    * @param URL
    * @param map
    * @returns GameSessionResponse
-   * @throws UnknownError (500)
+   * @throws Accepted (200)
    * @throws URLError (404)
+   * @throws UnknownError (500)
+   * @author rsyed
    */
   @Override
   public GameSessionResponse createGameSession(String URL, GameSessionRequest gsr) {
@@ -82,12 +89,12 @@ public class CommLayer implements CommLayerInterface {
     } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
       throw new URLError("Check URL");
     }
-    if (response.statusCode() != 200) {
-      if (response.statusCode() == 404) {
-        throw new UnknownError();
-      } else if (response.statusCode() == 500) {
-        throw new URLError("URL Error");
-      }
+    if (response.statusCode() == 200) {
+      throw new Accepted();
+    } else if (response.statusCode() == 404) {
+      throw new UnknownError();
+    } else if (response.statusCode() == 500) {
+      throw new URLError("URL Error");
     }
 
     return gson.fromJson(response.body(), GameSessionResponse.class);
@@ -100,11 +107,13 @@ public class CommLayer implements CommLayerInterface {
    * @param URL "http://localhost:9999/api/gamesession/{sessionID}"
    * @param teamName
    * @return JoinGameResponse
+   * @throws Accepted (200)
    * @throws URISyntaxException
    * @throws SessionNotFound (404)
    * @throws NoMoreTeamSlots (429)
    * @throws UnknownError (500)
    * @throws URLError (404)
+   * @author rsyed
    */
   @Override
   public JoinGameResponse joinGame(String URL, String teamName) {
@@ -123,15 +132,16 @@ public class CommLayer implements CommLayerInterface {
     } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
       throw new URLError("Check URL");
     }
-    if (response.statusCode() != 200) {
-      if (response.statusCode() == 404) {
-        throw new SessionNotFound();
-      } else if (response.statusCode() == 429) {
-        throw new NoMoreTeamSlots();
-      } else if (response.statusCode() == 500) {
-        throw new UnknownError();
-      }
+    if (response.statusCode() == 200) {
+      throw new Accepted();
+    } else if (response.statusCode() == 404) {
+      throw new SessionNotFound();
+    } else if (response.statusCode() == 429) {
+      throw new NoMoreTeamSlots();
+    } else if (response.statusCode() == 500) {
+      throw new UnknownError();
     }
+
     return gson.fromJson(response.body(), JoinGameResponse.class);
   }
 
@@ -150,6 +160,7 @@ public class CommLayer implements CommLayerInterface {
    * @throws GameOver (410)
    * @throws UnknownError (500)
    * @throws URLError (404)
+   * @author rsyed
    */
   @Override
   public void makeMove(String URL, MoveRequest moveReq) {
@@ -190,11 +201,13 @@ public class CommLayer implements CommLayerInterface {
    * @param URL
    * @param teamID
    * @param teamSecret
+   * @throws Accepted (200)
    * @throws ForbiddenMove (403)
    * @throws SessionNotFound (404)
    * @throws GameOver (410)
    * @throws UnknownError (500)
    * @throws URLError (404)
+   * @author rsyed
    */
   @Override
   public void giveUp(String URL, String teamID, String teamSecret) {
@@ -214,16 +227,16 @@ public class CommLayer implements CommLayerInterface {
     } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
       throw new URLError("Check URL");
     }
-    if (response.statusCode() != 200) {
-      if (response.statusCode() == 403) {
-        throw new ForbiddenMove();
-      } else if (response.statusCode() == 404) {
-        throw new SessionNotFound();
-      } else if (response.statusCode() == 410) {
-        throw new GameOver();
-      } else if (response.statusCode() == 500) {
-        throw new UnknownError();
-      }
+    if (response.statusCode() == 200) {
+      throw new Accepted();
+    } else if (response.statusCode() == 403) {
+      throw new ForbiddenMove();
+    } else if (response.statusCode() == 404) {
+      throw new SessionNotFound();
+    } else if (response.statusCode() == 410) {
+      throw new GameOver();
+    } else if (response.statusCode() == 500) {
+      throw new UnknownError();
     }
   }
 
@@ -234,9 +247,11 @@ public class CommLayer implements CommLayerInterface {
    *
    * @param URL
    * @return GameSessionResponse
+   * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws UnknownError (500)
    * @throws URLError (404)
+   * @author rsyed
    */
   @Override
   public GameSessionResponse getCurrentSessionState(String URL) {
@@ -254,12 +269,12 @@ public class CommLayer implements CommLayerInterface {
       throw new URLError("Check URL");
     }
 
-    if (response.statusCode() != 200) {
-      if (response.statusCode() == 404) {
-        throw new SessionNotFound();
-      } else if (response.statusCode() == 500) {
-        throw new UnknownError();
-      }
+    if (response.statusCode() == 200) {
+      throw new Accepted();
+    } else if (response.statusCode() == 404) {
+      throw new SessionNotFound();
+    } else if (response.statusCode() == 500) {
+      throw new UnknownError();
     }
 
     return gson.fromJson(response.body(), GameSessionResponse.class);
@@ -270,9 +285,11 @@ public class CommLayer implements CommLayerInterface {
    * server reponse which are HTTP status codes thrown as exceptions.
    *
    * @param URL
+   * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws UnknownError (500)
    * @throws URLError (404)
+   * @author rsyed
    */
   @Override
   public void deleteCurrentSession(String URL) {
@@ -285,24 +302,25 @@ public class CommLayer implements CommLayerInterface {
       throw new URLError("Check URL");
     }
 
-    if (response.statusCode() != 200) {
-      if (response.statusCode() == 404) {
-        throw new SessionNotFound();
-      } else if (response.statusCode() == 500) {
-        throw new UnknownError();
-      }
+    if (response.statusCode() == 200) {
+      throw new Accepted();
+    } else if (response.statusCode() == 404) {
+      throw new SessionNotFound();
+    } else if (response.statusCode() == 500) {
+      throw new UnknownError();
     }
   }
 
   /**
-   * Requests the session, specified in the URL, to return its GameState. Returns the GameState
-   * object as well as the HTTP status codes which are thrown as exceptions
+   * Requests the server to delete the current session which is specified in the URL. Returns the
+   * server reponse which are HTTP status codes thrown as exceptions.
    *
    * @param URL
-   * @return GameState
-   * @throws SessionNotFound
-   * @throws UnknownError
+   * @throws Accepted (200)
+   * @throws SessionNotFound (404)
+   * @throws UnknownError (500)
    * @throws URLError (404)
+   * @author rsyed
    */
   @Override
   public GameState getCurrentGameState(String URL) {
@@ -320,12 +338,12 @@ public class CommLayer implements CommLayerInterface {
       throw new URLError("Check URL");
     }
 
-    if (response.statusCode() != 200) {
-      if (response.statusCode() == 404) {
-        throw new SessionNotFound();
-      } else if (response.statusCode() == 500) {
-        throw new UnknownError();
-      }
+    if (response.statusCode() == 200) {
+      throw new Accepted();
+    } else if (response.statusCode() == 404) {
+      throw new SessionNotFound();
+    } else if (response.statusCode() == 500) {
+      throw new UnknownError();
     }
 
     return gson.fromJson(response.body(), GameState.class);
