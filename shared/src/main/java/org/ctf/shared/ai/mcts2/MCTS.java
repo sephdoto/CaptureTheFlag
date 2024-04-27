@@ -12,6 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.ctf.shared.ai.AI_Constants;
+import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.state.Team;

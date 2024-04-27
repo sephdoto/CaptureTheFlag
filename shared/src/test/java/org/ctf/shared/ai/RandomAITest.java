@@ -138,7 +138,7 @@ class RandomAITest {
 
     int[] move = new int[] {};
     try {
-      move = RandomAI.pickMoveComplex(gameState).getNewPosition();
+      move = RandomAI.pickMoveComplex(gameState, new ReferenceMove(null, new int[] {0,0})).getNewPosition();
     } catch (InvalidShapeException e) {
       fail("All shapes are valid");
     }
@@ -173,7 +173,7 @@ class RandomAITest {
     gameState.getGrid()[8][0] = pawn.getId();                               //little guy gets sacrificed
 
     try {
-      assertArrayEquals(new int[] {8,0}, RandomAI.pickMoveComplex(gameState).getNewPosition());		//only 1 move possible, capture the pawn!
+      assertArrayEquals(new int[] {8,0}, RandomAI.pickMoveComplex(gameState, new ReferenceMove(null, new int[] {0,0})).getNewPosition());		//only 1 move possible, capture the pawn!
     } catch (InvalidShapeException e) {
       fail("All shapes are valid");
     }
@@ -204,7 +204,7 @@ class RandomAITest {
     gameState.getTeams()[0].setPieces(new Piece[] {rook});					//add rook to team0's pieces
     gameState.getGrid()[8][0] = rook.getId();								//big guy stands rock solid
 
-    Exception nml = assertThrows(NoMovesLeftException.class, () -> RandomAI.pickMoveComplex(gameState));
+    Exception nml = assertThrows(NoMovesLeftException.class, () -> RandomAI.pickMoveComplex(gameState, new ReferenceMove(null, new int[] {0,0})));
     String expectedMessage = "Team "+gameState.getCurrentTeam()+" can not move.";
     String actualMessage = nml.getMessage();
 
@@ -233,7 +233,7 @@ class RandomAITest {
     newGameState.getGrid()[6][5] = "b";
     newGameState.getGrid()[6][6] = "b";										//enclose queen with blocks, no valid moves left
 
-    Exception nml = assertThrows(NoMovesLeftException.class, () -> RandomAI.pickMoveComplex(newGameState));
+    Exception nml = assertThrows(NoMovesLeftException.class, () -> RandomAI.pickMoveComplex(newGameState, new ReferenceMove(null, new int[] {0,0})));
     String expectedMessage = "Team "+newGameState.getCurrentTeam()+" can not move.";
     String actualMessage = nml.getMessage();
 
@@ -263,7 +263,7 @@ class RandomAITest {
     newGameState.getGrid()[7][7] = "b";										//only valid move now is 6,6
 
     try {
-      assertArrayEquals(new int[] {6,6}, RandomAI.pickMoveComplex(newGameState).getNewPosition());		//only 1 move possible, onto a free field
+      assertArrayEquals(new int[] {6,6}, RandomAI.pickMoveComplex(newGameState, new ReferenceMove(null, new int[] {0,0})).getNewPosition());		//only 1 move possible, onto a free field
     } catch (InvalidShapeException e) {
       fail("All shapes are valid");
     }

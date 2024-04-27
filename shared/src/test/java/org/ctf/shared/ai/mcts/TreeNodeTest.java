@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.Arrays;
 import org.ctf.shared.ai.TestValues;
 import org.ctf.shared.ai.AI_Tools;
+import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.state.GameState;
 import org.junit.jupiter.api.Test;
 
@@ -14,8 +15,8 @@ class TreeNodeTest {
 
   @Test
   void testGetNK() {
-    TreeNode parent = new TreeNode(null, TestValues.getTestState(), new int[] {90,10});
-    TreeNode child = new TreeNode(parent, TestValues.getTestState(), new int[] {0,10});
+    TreeNode parent = new TreeNode(null, TestValues.getTestState(), new int[] {90,10}, new ReferenceMove(null, new int[] {0,0}));
+    TreeNode child = new TreeNode(parent, TestValues.getTestState(), new int[] {0,10}, new ReferenceMove(null, new int[] {0,0}));
     child.gameState.setCurrentTeam(0);
     
     assertEquals(100, parent.getNK());
@@ -24,8 +25,8 @@ class TreeNodeTest {
 
   @Test
   void testGetV() {
-    TreeNode parent = new TreeNode(null, TestValues.getTestState(), new int[] {90,10});
-    TreeNode child = new TreeNode(parent, TestValues.getTestState(), new int[] {0,10});
+    TreeNode parent = new TreeNode(null, TestValues.getTestState(), new int[] {90,10}, new ReferenceMove(null, new int[] {0,0}));
+    TreeNode child = new TreeNode(parent, TestValues.getTestState(), new int[] {0,10}, new ReferenceMove(null, new int[] {0,0}));
     child.gameState.setCurrentTeam(0);
     
     assertEquals((float)90/100., Math.round(parent.getV()*100)/100.);
@@ -37,7 +38,7 @@ class TreeNodeTest {
 
   @Test
   void testGetUCT() {
-    TreeNode parent = new TreeNode(null, TestValues.getTestState(), new int[] {3,3});
+    TreeNode parent = new TreeNode(null, TestValues.getTestState(), new int[] {3,3}, new ReferenceMove(null, new int[] {0,0}));
     parent.gameState.setCurrentTeam(0);
     TreeNode child1 = parent.clone(AI_Tools.toNextTeam(parent.copyGameState()));
     child1.wins = new int[] {2,1};
@@ -54,7 +55,7 @@ class TreeNodeTest {
 
   @Test
   void testClone() {
-    TreeNode parent = new TreeNode(null, TestValues.getTestState(), null);
+    TreeNode parent = new TreeNode(null, TestValues.getTestState(), null, new ReferenceMove(null, new int[] {0,0}));
     
     TreeNode clone = parent.clone(parent.copyGameState());
     
@@ -64,19 +65,42 @@ class TreeNodeTest {
   }
 
   @Test
-  void testCopyGameState() {
-    TreeNode parent = new TreeNode(null, TestValues.getTestState(), null);
-    GameState copy = parent.copyGameState();
+  void testCopyGameState() throws InterruptedException {
+    TreeNode parent = new TreeNode(null, TestValues.getTestState(), null, new ReferenceMove(null, new int[] {0,0}));
+    /*parent.gameState.setGrid(new String[1000][1000]);
+    for(int i=0; i<1000; i++)
+      for(int j=0; j<1000; j++)
+        parent.gameState.getGrid()[i][j] = "";
+    ExecutorService es = Executors.newFixedThreadPool(1);
+    List<Callable<GameState>> tasks = new LinkedList<>();
+    for (int i = 0; i < 1; i++) {
+      tasks.add(
+          () -> {
+            return parent.copyGameState();
+          });
+    }
+    */
+    GameState grr = parent.copyGameState();
+    //WARM UP
+    /*for(int i=0; i<10000; i++) {
+      grr = parent.copyGameState();
+      es.invokeAll(tasks);
+    }
     
-    assertNotEquals(parent.gameState, copy);
-    assertArrayEquals(parent.gameState.getTeams()[0].getPieces()[0].getPosition(), copy.getTeams()[0].getPieces()[0].getPosition());
+    long time = System.nanoTime();
+    es.invokeAll(tasks);
+    System.out.println((System.nanoTime() - time) / 1000 + " µs");
+    */
+    
+    assertNotEquals(parent.gameState, grr);
+    assertArrayEquals(parent.gameState.getTeams()[0].getPieces()[0].getPosition(), grr.getTeams()[0].getPieces()[0].getPosition());
     parent.gameState.getTeams()[0].getPieces()[0].setPosition(new int[] {100,100});
-    assertFalse(Arrays.equals(parent.gameState.getTeams()[0].getPieces()[0].getPosition(), copy.getTeams()[0].getPieces()[0].getPosition()));
+    assertFalse(Arrays.equals(parent.gameState.getTeams()[0].getPieces()[0].getPosition(), grr.getTeams()[0].getPieces()[0].getPosition()));
   }
 
   @Test
   void testCompareTo() {
-    TreeNode parent = new TreeNode(null, TestValues.getTestState(), new int[] {3,3});
+    TreeNode parent = new TreeNode(null, TestValues.getTestState(), new int[] {3,3}, new ReferenceMove(null, new int[] {0,0}));
     TreeNode child1 = parent.clone(AI_Tools.toNextTeam(parent.copyGameState()));
     
     assertTrue(parent.compareTo(child1) == 0);

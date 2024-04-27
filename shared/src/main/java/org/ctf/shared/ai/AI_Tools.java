@@ -3,9 +3,9 @@ package org.ctf.shared.ai;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 import org.ctf.shared.state.GameState;
-import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.data.map.Directions;
 import org.ctf.shared.state.data.map.ShapeType;
@@ -181,7 +181,7 @@ public class AI_Tools {
         .filter(p -> p.getId().equals(pieceId))
         .findFirst()
         .get();
-    return getPossibleMoves(gameState, piece, possibleMoves);
+    return getPossibleMoves(gameState, piece, possibleMoves, new ReferenceMove(null, new int[] {0,0}));
   }
   
   /**
@@ -192,10 +192,11 @@ public class AI_Tools {
    * @param gameState
    * @param piece
    * @param ArrayList<int[]> possibleMoves, will be cleared and filled
+   * @param change a Reference move that gets altered instead of creating and abandoning a new object
    * @return ArrayList<int[]> that contains all valid positions a piece could move to
    */
   public static ArrayList<int[]> getPossibleMoves(
-      GameState gameState, Piece piece, ArrayList<int[]> possibleMoves) {
+      GameState gameState, Piece piece, ArrayList<int[]> possibleMoves, ReferenceMove change) {
     possibleMoves.clear();
     ArrayList<int[]> dirMap = new ArrayList<int[]>();
     if (piece.getDescription().getMovement().getDirections() == null) {
@@ -206,17 +207,11 @@ public class AI_Tools {
       }
 
     } else {
-      dirMap = AI_Tools.createDirectionMap(gameState, piece, dirMap);
+      dirMap = AI_Tools.createDirectionMap(gameState, piece, dirMap, change);
       for (int[] entry : dirMap) {
         for (int reach = entry[1]; reach > 0; reach--) {
-          Move move = new Move();
-          try {
-            move = AI_Tools.checkMoveValidity(gameState, piece, entry[0], reach);
-          } catch (Exception e) {
-            System.out.println(2);
-            move = AI_Tools.checkMoveValidity(gameState, piece, entry[0], reach);
-          }
-          if (move != null) possibleMoves.add(move.getNewPosition());
+          change = AI_Tools.checkMoveValidity(gameState, piece, entry[0], reach, change);
+          if (change.getPiece() != null) possibleMoves.add(change.getNewPosition());
         }
       }
     }
@@ -227,14 +222,14 @@ public class AI_Tools {
    * Selects and returns a random Move from an ArrayList which only contains valid Moves.
    *
    * @param positionArrayList
-   * @param pieceId
+   * @param piece
+   * @param change a Reference move that gets altered instead of creating and abandoning a new object
    * @return randomly picked move
    */
-  public static Move getRandomShapeMove(ArrayList<int[]> positionArrayList, String pieceId) {
-    Move move = new Move();
-    move.setPieceId(pieceId);
-    move.setNewPosition(positionArrayList.get((int) (positionArrayList.size() * Math.random())));
-    return move;
+  public static ReferenceMove getRandomShapeMove(ArrayList<int[]> positionArrayList, Piece piece, ReferenceMove change) {
+    change.setPiece(piece);
+    change.setNewPosition(positionArrayList.get(ThreadLocalRandom.current().nextInt(positionArrayList.size())));
+    return change;
   }
 
   /**
@@ -242,7 +237,8 @@ public class AI_Tools {
    *
    * @param gameState
    * @param piece
-   * @return ArrayList containing all valid moves
+   * @return positions an ArrayList containing all valid moves
+   * @param change a Reference move that gets altered instead of creating and abandoning a new object
    * @throws InvalidShapeException if the Shape is not yet implemented here
    */
   public static ArrayList<int[]> getShapeMoves(
@@ -296,15 +292,16 @@ public class AI_Tools {
    * @param gameState
    * @param picked
    * @param dirMap, will be cleared and filled
+   * @param change a Reference move that gets altered instead of creating and abandoning a new object
    * @return ArrayList<int[direction,reach]>
    */
   public static ArrayList<int[]> createDirectionMap(
-      GameState gameState, Piece picked, ArrayList<int[]> dirMap) {
+      GameState gameState, Piece picked, ArrayList<int[]> dirMap, ReferenceMove change) {
     dirMap.clear();
     for (int i = 0; i < 8; i++) {
       int reach = getReach(picked.getDescription().getMovement().getDirections(), i);
       if (reach > 0) {
-        if (validDirection(gameState, picked, i)) {
+        if (validDirection(gameState, picked, i, change)) {
           dirMap.add(new int[] {i, reach});
         } else {
           continue;
@@ -326,16 +323,17 @@ public class AI_Tools {
    * @param dirMap
    * @param piece
    * @param gameState
+   * @param change a Reference move that gets altered instead of creating and abandoning a new object
    * @return a valid move
    */
-  public static Move getDirectionMove(ArrayList<int[]> dirMap, Piece piece, GameState gameState) {
-    int randomDir = (int) (dirMap.size() * Math.random());
+  public static ReferenceMove getDirectionMove(ArrayList<int[]> dirMap, Piece piece, GameState gameState, ReferenceMove change) {
+    int randomDir = ThreadLocalRandom.current().nextInt(dirMap.size());
     int reach;
-
+    
     while (true) {
-      reach = (int) (Math.random() * dirMap.get(randomDir)[1] + 1);
-      Move newPos = checkMoveValidity(gameState, piece, dirMap.get(randomDir)[0], reach);
-      if (newPos != null) return newPos;
+      reach = ThreadLocalRandom.current().nextInt(dirMap.get(randomDir)[1]) + 1;
+      change = checkMoveValidity(gameState, piece, dirMap.get(randomDir)[0], reach, change);
+      if (change.getPiece() != null) return change;
       dirMap.get(randomDir)[1] = reach - 1;
       continue;
     }
@@ -348,10 +346,11 @@ public class AI_Tools {
    * @param gameState
    * @param piece
    * @param direction
+   * @param change a Reference move that gets altered instead of creating and abandoning a new object
    * @return false if there are no possible moves in this direction, true otherwise.
    */
-  public static boolean validDirection(GameState gameState, Piece piece, int direction) {
-    return checkMoveValidity(gameState, piece, direction, 1) != null;
+  public static boolean validDirection(GameState gameState, Piece piece, int direction, ReferenceMove change) {
+    return checkMoveValidity(gameState, piece, direction, 1, change).getPiece() != null;
   }
 
   /**
@@ -363,22 +362,23 @@ public class AI_Tools {
    * @param piece
    * @param direction
    * @param reach
+   * @param change a Reference move that gets altered instead of creating and abandoning a new object
    * @return a Move instance with the piece and its new position
    * @return null if the piece can't occupy the position or the position is not in the grid
    */
-  public static Move checkMoveValidity(GameState gameState, Piece piece, int direction, int reach) {
+  public static ReferenceMove checkMoveValidity(GameState gameState, Piece piece, int direction, int reach, ReferenceMove change) {
     int[] pos = new int[] {piece.getPosition()[0], piece.getPosition()[1]};
     updatePos(pos, direction, reach);
-
+    change.setPiece(null);
+    
     if (!validPos(pos, piece, gameState)) {
-      return null;
+      return change;
     } else if (!sightLine(gameState, new int[] {pos[0], pos[1]}, direction, reach)) {
-      return null;
+      return change;
     } else {
-      Move move = new Move();
-      move.setPieceId(piece.getId());
-      move.setNewPosition(pos);
-      return move;
+      change.setNewPosition(pos);
+      change.setPiece(piece);
+      return change;
     }
   }
 
@@ -397,8 +397,7 @@ public class AI_Tools {
    * @return false if any obstacle is in between or the target position is not on the grid
    */
   public static boolean sightLine(GameState gameState, int[] newPos, int direction, int reach) {
-    --reach;
-    for (; reach > 0; reach--) {
+    for (--reach; reach > 0; reach--) {
       newPos = updatePos(newPos, direction, -1);
       try {
         if (gameState.getGrid()[newPos[0]][newPos[1]].equals("")) {
@@ -489,7 +488,7 @@ public class AI_Tools {
   }
 
   /**
-   * Checks if a position on the grid contains an empty String.
+   * Checks if a position on the grid contains an empty String.move.getPiece()
    *
    * @param grid
    * @param pos

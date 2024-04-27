@@ -25,7 +25,8 @@ import org.junit.jupiter.api.Test;
  */
 public class AI_ToolsTest {
   static GameState gameState;
-
+  static ReferenceMove operateOn = new ReferenceMove(null, new int[] {0,0});
+  
   @BeforeEach
   void setUp() {
     gameState = TestValues.getTestState();
@@ -35,13 +36,13 @@ public class AI_ToolsTest {
   void testGetRandomShapeMove() {
     Move move1 = new Move();
     ArrayList<int[]> moveList = new ArrayList<int[]>();
-    move1.setNewPosition(null);
-    move1.setPieceId(null);
+    move1.setNewPosition(new int[] {0,0});
+    move1.setPieceId("");
     moveList.add(move1.getNewPosition());
 
     assertEquals(
-        move1.getNewPosition(), RandomAI.getRandomShapeMove(moveList, null).getNewPosition());
-    assertEquals(move1.getPieceId(), RandomAI.getRandomShapeMove(moveList, null).getPieceId());
+        move1.getNewPosition(), RandomAI.getRandomShapeMove(moveList, null, operateOn).getNewPosition());
+    assertEquals(move1.getPieceId(), RandomAI.getRandomShapeMove(moveList, null, operateOn).toMove().getPieceId());
   }
 
   @Test
@@ -84,13 +85,13 @@ public class AI_ToolsTest {
     dirMap.add(new int[] {3, 2}); // the rook can move 2 fields down
     assertArrayEquals(
         dirMap.toArray(),
-        AI_Tools.createDirectionMap(gameState, picked, new ArrayList<int[]>()).toArray());
+        AI_Tools.createDirectionMap(gameState, picked, new ArrayList<int[]>(), operateOn).toArray());
 
     gameState.getGrid()[6][4] = "b"; // completely enclosing the rook on 7,4
     picked = gameState.getTeams()[1].getPieces()[2]; // rook on 7,4
     assertEquals(
         new ArrayList<int[]>(),
-        AI_Tools.createDirectionMap(gameState, picked, new ArrayList<int[]>()));
+        AI_Tools.createDirectionMap(gameState, picked, new ArrayList<int[]>(), operateOn));
   }
 
   @Test
@@ -99,7 +100,7 @@ public class AI_ToolsTest {
     ArrayList<int[]> dirMap = new ArrayList<int[]>();
     dirMap.add(new int[] {2, 5}); // rook can only move to one field ()
     int[] onlyPosition = new int[] {6, 3}; // the only possible Position is 6,3
-    int[] newPosition = RandomAI.getDirectionMove(dirMap, rook, gameState).getNewPosition();
+    int[] newPosition = RandomAI.getDirectionMove(dirMap, rook, gameState, operateOn).getNewPosition();
 
     assertArrayEquals(onlyPosition, newPosition);
   }
@@ -114,31 +115,31 @@ public class AI_ToolsTest {
 
     assertFalse(
         RandomAI.validDirection(
-            gameState, rook, 0)); // a piece on the left doesn't allow the movement to the left
+            gameState, rook, 0, operateOn)); // a piece on the left doesn't allow the movement to the left
     assertFalse(
         RandomAI.validDirection(
-            gameState, rook, 1)); // a piece on the right doesn't allow the movement to the right
+            gameState, rook, 1, operateOn)); // a piece on the right doesn't allow the movement to the right
     assertTrue(
         RandomAI.validDirection(
-            gameState, rook, 2)); // there's a free position above, this direction is accessible
+            gameState, rook, 2, operateOn)); // there's a free position above, this direction is accessible
     assertTrue(
         RandomAI.validDirection(
-            gameState, rook, 3)); // there's a free position below, this direction is accessible
-    assertTrue(
-        RandomAI.validDirection(
-            gameState, rook,
-            4)); // there's a free position above-left, this direction is accessible
+            gameState, rook, 3, operateOn)); // there's a free position below, this direction is accessible
     assertTrue(
         RandomAI.validDirection(
             gameState, rook,
-            5)); // there's a free position above-right, this direction is accessible
+            4, operateOn)); // there's a free position above-left, this direction is accessible
     assertTrue(
         RandomAI.validDirection(
             gameState, rook,
-            6)); // there's a free position below-left, this direction is accessible
+            5, operateOn)); // there's a free position above-right, this direction is accessible
+    assertTrue(
+        RandomAI.validDirection(
+            gameState, rook,
+            6, operateOn)); // there's a free position below-left, this direction is accessible
     assertFalse(
         RandomAI.validDirection(
-            gameState, rook, 7)); // there's a piece below-right, this direction is not accessible
+            gameState, rook, 7, operateOn)); // there's a piece below-right, this direction is not accessible
   }
 
   /**
@@ -152,28 +153,28 @@ public class AI_ToolsTest {
 
     assertNull(
         RandomAI.checkMoveValidity(
-            gameState, rook, 0, 2)); // rook cannot walk over another same team rook
+            gameState, rook, 0, 2, operateOn).getPiece()); // rook cannot walk over another same team rook
     assertNull(
         RandomAI.checkMoveValidity(
-            gameState, rook, 1, 1)); // rook cannot walk onto another same team rook
+            gameState, rook, 1, 1, operateOn).getPiece()); // rook cannot walk onto another same team rook
     assertNotNull(
         RandomAI.checkMoveValidity(
-            gameState, rook, 2, 1)); // rook can walk on the empty space above
+            gameState, rook, 2, 1, operateOn).getPiece()); // rook can walk on the empty space above
     assertNull(
-        RandomAI.checkMoveValidity(gameState, rook, 2, 3)); // rook cannot jump over the block above
+        RandomAI.checkMoveValidity(
+            gameState, rook, 2, 3, operateOn).getPiece()); // rook cannot jump over the block above
     assertNotNull(
         RandomAI.checkMoveValidity(
-            gameState, rook, 3, 1)); // rook can walk on the empty space below
+            gameState, rook, 3, 1, operateOn).getPiece()); // rook can walk on the empty space below
     assertNotNull(
         RandomAI.checkMoveValidity(
-            gameState, rook, 6, 1)); // piece could go to the empty field below-left
+            gameState, rook, 6, 1, operateOn).getPiece()); // piece could go to the empty field below-left
     assertNull(
         RandomAI.checkMoveValidity(
-            gameState, rook2, 4,
-            4)); // piece could not walk over a block to the empty field above-left 3,1
+            gameState, rook2, 4, 4, operateOn).getPiece()); // piece could not walk over a block to the empty field above-left 3,1
     assertNull(
         RandomAI.checkMoveValidity(
-            gameState, rook2, 4, 0)); // piece could not walk onto its own position
+            gameState, rook2, 4, 0, operateOn).getPiece()); // piece could not walk onto its own position
   }
 
   @Test

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.stream.Stream;
+import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.state.Move;

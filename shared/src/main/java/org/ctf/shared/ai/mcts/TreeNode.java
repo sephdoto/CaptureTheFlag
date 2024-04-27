@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
 import org.ctf.shared.ai.AI_Tools;
+import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.Team;
@@ -15,16 +16,18 @@ import org.ctf.shared.state.Team;
  * @author sistumpf
  */
 public class TreeNode implements Comparable<TreeNode> {
-  TreeNode parent;
+  public TreeNode parent;
   TreeNode[] children;
   IdentityHashMap<Piece, ArrayList<int[]>> possibleMoves;
   GameState gameState;
   int[] wins;
-
-  public TreeNode(TreeNode parent, GameState gameState, int[] wins) {
+  ReferenceMove operateOn;
+  
+  public TreeNode(TreeNode parent, GameState gameState, int[] wins, ReferenceMove operateOn) {
     this.parent = parent;
     this.gameState = gameState;
     this.wins = wins != null ? wins : new int[gameState.getTeams().length];
+    this.operateOn = operateOn;
     initPossibleMovesAndChildren();
   }
   
@@ -35,7 +38,7 @@ public class TreeNode implements Comparable<TreeNode> {
     this.possibleMoves = new IdentityHashMap<Piece, ArrayList<int[]>>();
     int children = 0;
     for(Piece p : gameState.getTeams()[gameState.getCurrentTeam()].getPieces()) {
-      ArrayList<int[]> movesPieceP = AI_Tools.getPossibleMoves(gameState, p, new ArrayList<int[]>());
+      ArrayList<int[]> movesPieceP = AI_Tools.getPossibleMoves(gameState, p, new ArrayList<int[]>(), operateOn);
       if(movesPieceP.size() > 0) {
         possibleMoves.put(p, movesPieceP);
         children += possibleMoves.get(p).size();
@@ -75,7 +78,7 @@ public class TreeNode implements Comparable<TreeNode> {
     * @return a copy of the current node
     */
    public TreeNode clone(GameState newState) {
-     TreeNode treeNode = new TreeNode(this, newState, Arrays.copyOf(wins, wins.length));
+     TreeNode treeNode = new TreeNode(this, newState, Arrays.copyOf(wins, wins.length), operateOn);
      return treeNode;
    }
 
@@ -100,17 +103,20 @@ public class TreeNode implements Comparable<TreeNode> {
        for(int j=0; j<pieces.length; j++) {
          pieces[j] = new Piece();
          pieces[j].setDescription(gameState.getTeams()[i].getPieces()[j].getDescription());
-         pieces[j].setId(gameState.getTeams()[i].getPieces()[j].getId());
-         pieces[j].setTeamId(gameState.getTeams()[i].getPieces()[j].getTeamId());
-         pieces[j].setPosition(new int[] {gameState.getTeams()[i].getPieces()[j].getPosition()[0],gameState.getTeams()[i].getPieces()[j].getPosition()[1]});
+         pieces[j].setId(gameState.getTeams()[i].getPieces()[j].getId() + "");
+         pieces[j].setTeamId(gameState.getTeams()[i].getPieces()[j].getTeamId() + "");
+         pieces[j].setPosition(gameState.getTeams()[i].getPieces()[j].getPosition().clone());
        }
        teams[i].setPieces(pieces);
      }        
      newState.setTeams(teams);
-     String[][] newGrid = new String[gameState.getGrid().length][gameState.getGrid()[0].length];
-     for(int i=0; i<gameState.getGrid().length; i++)
-       newGrid[i] = gameState.getGrid()[i].clone();
-     newState.setGrid(newGrid);
+     String[][] grid = new String[gameState.getGrid().length][];
+     for(int i = 0; i < gameState.getGrid().length; i++) {
+       grid[i] = new String[gameState.getGrid()[i].length];
+       System.arraycopy(gameState.getGrid()[i], 0, grid[i], 0, gameState.getGrid()[i].length);
+     }
+     newState.setGrid(grid);
+     
      return newState;
    }
 
@@ -138,7 +144,7 @@ public class TreeNode implements Comparable<TreeNode> {
    public void printGrid() {
      for(String[] s : gameState.getGrid()) {
        for(String ss : s) {
-         System.out.print((ss == "" ? "x" : ss) + " ");
+         System.out.print((ss == "" ? " . " : ss) + " ");
        }
        System.out.println();
      }
