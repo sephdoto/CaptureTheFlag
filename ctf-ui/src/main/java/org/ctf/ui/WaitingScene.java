@@ -6,10 +6,14 @@ import org.ctf.ui.customobjects.BaseRep;
 import org.ctf.ui.customobjects.CostumFigurePain;
 
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
@@ -22,6 +26,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -31,6 +36,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.PopupWindow;
 import javafx.stage.Window;
+import javafx.util.Duration;
 import javafx.scene.Node;
 
 
@@ -104,11 +110,101 @@ public class WaitingScene extends Scene {
 	
 	
 	private void createLayout(){
-		root.getChildren().add(createShowMapPane("p2"));
-//		 Rectangle rect = new Rectangle(400,400);
-//	        rect.fillProperty().bind(sceneColorProperty);
-//	        root.getChildren().add(rect);
+		HBox main = new HBox();
+		main.setAlignment(Pos.CENTER);
+		main.setSpacing(main.heightProperty().doubleValue() * 0.09);
+		main.heightProperty().addListener((obs, oldVal, newVal) -> {
+			double spacing = newVal.doubleValue() * 0.2;
+			main.setSpacing(spacing);
+		});
+		main.prefWidthProperty().bind(this.widthProperty());
+		main.getChildren().add(createLeft());
+		VBox middleBox = new VBox();
+		middleBox.getChildren().add(createHeader());
+		middleBox.getChildren().add(createTopCenter());
+		middleBox.heightProperty().addListener((obs, oldVal, newVal) -> {
+			double spacing = newVal.doubleValue() * 0.04;
+			middleBox.setSpacing(spacing);
+		});
+		middleBox.getChildren().add(createShowMapPane("p2"));
+		middleBox.setAlignment(Pos.TOP_CENTER);
+		//middleBox.setStyle("-fx-background-color:red");
+		
+		middleBox.prefHeightProperty().bind(this.heightProperty());
+		main.getChildren().add(middleBox);
+		main.getChildren().add(createLeft());
+		root.setStyle("-fx-background-color:black");
+		root.getChildren().add(main);
+		
+		
+		
 	}
+	private VBox createLeft() {
+		VBox left = new VBox();
+		left.heightProperty().addListener((obs, oldVal, newVal) -> {
+			double spacing = newVal.doubleValue() * 0.1;
+			left.setPadding(new Insets(spacing, 0, 0, 0));
+		});
+		VBox labels = new VBox();
+		labels.setSpacing(30);
+		labels.getChildren().add(createInfoLabel("port" , "1234565656"));
+		labels.getChildren().add(createInfoLabel("Server-ID" , "1234"));
+		left.getChildren().add(labels);
+//		Image mp = new Image(getClass().getResourceAsStream("ct2.png"));
+//		ImageView mpv = new ImageView(mp);
+//		left.getChildren().add(mpv);
+		return left;
+	}
+	
+	private VBox waitingBox() {
+		 final Label    status   = new Label("Waiting for Players");
+		 status.getStyleClass().add("des-label2");
+		    final Timeline timeline = new Timeline(
+		      new KeyFrame(Duration.ZERO, new EventHandler() {
+		        @Override public void handle(Event event) {
+		          String statusText = status.getText();
+		          status.setText(
+		            ("Waiting for Players . . .".equals(statusText))
+		              ? "Waiting for Players ." 
+		              : statusText + " ."
+		          );
+		        }
+		      }),  
+		      new KeyFrame(Duration.millis(1000))
+		    );
+		    timeline.setCycleCount(Timeline.INDEFINITE);
+		    timeline.play();
+		    VBox layout = new VBox();
+		    layout.prefWidthProperty().bind(this.widthProperty().multiply(0.17));
+		    //layout.setStyle("-fx-background-color: blue");
+		    layout.getChildren().addAll(status);
+		   
+		    return layout;
+	}
+	
+	private HBox createTopCenter() {
+		HBox captureLoadingLabel = new HBox();
+		captureLoadingLabel.setAlignment(Pos.CENTER);
+		captureLoadingLabel.prefWidthProperty().bind(this.widthProperty().multiply(0.5));
+		captureLoadingLabel.getChildren().add(waitingBox());
+		return captureLoadingLabel;
+		
+	}
+	
+	
+	
+	private VBox createInfoLabel(String header, String content) {
+		VBox labelBox = new VBox();
+		labelBox.getStyleClass().add("info-vbox");
+		Label headerLabel = new Label(header);
+		headerLabel.getStyleClass().add("des-label");
+		Label numberLabel = new Label(content);
+		numberLabel.getStyleClass().add("number-label");
+		labelBox.getChildren().addAll(headerLabel,numberLabel);
+		return labelBox;
+		
+	}
+	
 	
 	private ImageView createHeader() {
 		Image mp = new Image(getClass().getResourceAsStream("multiplayerlogo.png"));
@@ -132,7 +228,7 @@ public class WaitingScene extends Scene {
 		showMapBox.getStyleClass().add("option-pane");
 		showMapBox.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
 		//showMapBox.setStyle("-fx-background-color: white");
-		showMapBox.prefHeightProperty().bind(showMapBox.widthProperty());
+		showMapBox.prefHeightProperty().bind(this.heightProperty().multiply(0.65));
 		showMapBox.getStyleClass().add("show-GamePane");
 		org.ctf.shared.state.GameState state = StroeMaps.getMap(name);
 		gm = new GamePane(state);

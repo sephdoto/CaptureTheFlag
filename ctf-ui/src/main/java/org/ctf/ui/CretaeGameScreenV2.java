@@ -134,7 +134,6 @@ public class CretaeGameScreenV2 extends Scene {
 		serverInfoBox.getStyleClass().add("option-pane");
 		serverInfoBox.prefWidthProperty().bind(left.widthProperty());
 		serverInfoBox.setAlignment(Pos.TOP_CENTER);
-		//serverInfoBox.setPadding(new Insets(20));
 		serverInfoBox.setSpacing(left.heightProperty().doubleValue() * 0.09);
 		serverInfoBox.heightProperty().addListener((obs, oldVal, newVal) -> {
 			double spacing = newVal.doubleValue() * 0.09;
