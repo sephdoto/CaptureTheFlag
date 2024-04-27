@@ -40,7 +40,7 @@ class ObjectMemoryAnalyzer {
 //    System.out.println(GraphLayout.parseInstance(mcts).toFootprint());
   }
   
-  @Test
+//  @Test
   void testTreeNodeOldMemory() {
     org.ctf.shared.ai.mcts.TreeNode oldNode = new org.ctf.shared.ai.mcts.TreeNode(null, TestValues.getTestState(), null, new ReferenceMove(null, new int[] {0,0}));
     System.out.println(GraphLayout.parseInstance(oldNode).toFootprint());

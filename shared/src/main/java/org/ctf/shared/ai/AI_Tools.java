@@ -192,6 +192,7 @@ public class AI_Tools {
    * @param gameState
    * @param piece
    * @param ArrayList<int[]> possibleMoves, will be cleared and filled
+   * @param change a Reference move that gets altered instead of creating and abandoning a new object
    * @return ArrayList<int[]> that contains all valid positions a piece could move to
    */
   public static ArrayList<int[]> getPossibleMoves(
@@ -221,7 +222,8 @@ public class AI_Tools {
    * Selects and returns a random Move from an ArrayList which only contains valid Moves.
    *
    * @param positionArrayList
-   * @param pieceId
+   * @param piece
+   * @param change a Reference move that gets altered instead of creating and abandoning a new object
    * @return randomly picked move
    */
   public static ReferenceMove getRandomShapeMove(ArrayList<int[]> positionArrayList, Piece piece, ReferenceMove change) {
@@ -235,7 +237,8 @@ public class AI_Tools {
    *
    * @param gameState
    * @param piece
-   * @return ArrayList containing all valid moves
+   * @return positions an ArrayList containing all valid moves
+   * @param change a Reference move that gets altered instead of creating and abandoning a new object
    * @throws InvalidShapeException if the Shape is not yet implemented here
    */
   public static ArrayList<int[]> getShapeMoves(
@@ -289,6 +292,7 @@ public class AI_Tools {
    * @param gameState
    * @param picked
    * @param dirMap, will be cleared and filled
+   * @param change a Reference move that gets altered instead of creating and abandoning a new object
    * @return ArrayList<int[direction,reach]>
    */
   public static ArrayList<int[]> createDirectionMap(
@@ -319,6 +323,7 @@ public class AI_Tools {
    * @param dirMap
    * @param piece
    * @param gameState
+   * @param change a Reference move that gets altered instead of creating and abandoning a new object
    * @return a valid move
    */
   public static ReferenceMove getDirectionMove(ArrayList<int[]> dirMap, Piece piece, GameState gameState, ReferenceMove change) {
@@ -341,6 +346,7 @@ public class AI_Tools {
    * @param gameState
    * @param piece
    * @param direction
+   * @param change a Reference move that gets altered instead of creating and abandoning a new object
    * @return false if there are no possible moves in this direction, true otherwise.
    */
   public static boolean validDirection(GameState gameState, Piece piece, int direction, ReferenceMove change) {
@@ -356,6 +362,7 @@ public class AI_Tools {
    * @param piece
    * @param direction
    * @param reach
+   * @param change a Reference move that gets altered instead of creating and abandoning a new object
    * @return a Move instance with the piece and its new position
    * @return null if the piece can't occupy the position or the position is not in the grid
    */
@@ -481,7 +488,7 @@ public class AI_Tools {
   }
 
   /**
-   * Checks if a position on the grid contains an empty String.
+   * Checks if a position on the grid contains an empty String.move.getPiece()
    *
    * @param grid
    * @param pos

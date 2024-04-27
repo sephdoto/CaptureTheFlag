@@ -15,6 +15,7 @@ import org.ctf.shared.ai.AI_Tools;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.ai.ReferenceMove;
+import org.ctf.shared.ai.TestValues;
 import org.ctf.shared.ai.random.RandomAI;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
@@ -25,13 +26,13 @@ import org.ctf.shared.state.Team;
  * @author sistumpf
  */
 public class MCTS {
+  static int count;
   int teams;
   int maxDistance;
   public TreeNode root;
   public AtomicInteger simulationCounter;
   public AtomicInteger heuristicCounter;
   public AtomicInteger expansionCounter;
-  ExecutorService executorService;
 
   public MCTS(TreeNode root) {
     this.root = root;
@@ -46,7 +47,6 @@ public class MCTS {
                 Math.sqrt(
                     Math.pow(root.gameState.getGrid().length, 2)
                         + Math.pow(root.gameState.getGrid()[0].length, 2)));
-    this.executorService = Executors.newFixedThreadPool(AI_Constants.numThreads);
   }
 
   /**
@@ -71,7 +71,6 @@ public class MCTS {
     // Hier werden wichtige Daten zur Auswahl ausgegeben
     //      printResults(bestChild);
 
-    this.executorService.shutdown();
     return (bestChild.gameState.getLastMove());
   }
 
@@ -116,12 +115,14 @@ public class MCTS {
   }
 
   /**
+   * !! This method is removed for now to make this MCTS more resource efficient and because of the long Thread starting times. 
+   * It was not viable to start the Threads, as it took (almost) longer than calling simulate() !!
    * Simulates a certain amount of simulations simultaneously.
    *
    * @param simulateOn
    * @return an array containing a number of wins for the team at position teamId
    */
-  int[] multiSimulate(TreeNode simulateOn) {
+  /*int[] multiSimulate(TreeNode simulateOn) {
     int[] winners = new int[simulateOn.gameState.getTeams().length];
 
     try {
@@ -151,7 +152,7 @@ public class MCTS {
     }
 
     return winners;
-  }
+  }*/
 
   /**
    * Simulates a game from a specific node to finish (or a maximum step value of Constants.MAX_STEPS
@@ -285,6 +286,7 @@ public class MCTS {
    * Checks if a game is in a terminal state.
    *
    * @param a node to check if it is terminal
+   * @param change a Reference move that gets altered instead of creating and abandoning a new object
    * @return -1: the game is not in a terminal state 0 - Integer.MAX_VALUE: winner team id -2: error
    */
   public int isTerminal(GameState gameState, ReferenceMove change) {
@@ -381,6 +383,7 @@ public class MCTS {
    *
    * @param alter node, this nodes GameState is altered
    * @param original node, the move made gets removed from it
+   * @param change a Reference move that gets altered instead of creating and abandoning a new object
    * @return a child node containing the simulation result
    */
   void oneMove(TreeNode alter, TreeNode original, boolean simulate, ReferenceMove change) {

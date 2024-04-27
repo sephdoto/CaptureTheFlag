@@ -16,7 +16,7 @@ import org.ctf.shared.state.Team;
  * @author sistumpf
  */
 public class TreeNode implements Comparable<TreeNode> {
-  TreeNode parent;
+  public TreeNode parent;
   TreeNode[] children;
   IdentityHashMap<Piece, ArrayList<int[]>> possibleMoves;
   GameState gameState;
@@ -110,10 +110,13 @@ public class TreeNode implements Comparable<TreeNode> {
        teams[i].setPieces(pieces);
      }        
      newState.setTeams(teams);
-     String[][] newGrid = new String[gameState.getGrid().length][gameState.getGrid()[0].length];
-     for(int i=0; i<gameState.getGrid().length; i++)
-       newGrid[i] = gameState.getGrid()[i].clone();
-     newState.setGrid(newGrid);
+     String[][] grid = new String[gameState.getGrid().length][];
+     for(int i = 0; i < gameState.getGrid().length; i++) {
+       grid[i] = new String[gameState.getGrid()[i].length];
+       System.arraycopy(gameState.getGrid()[i], 0, grid[i], 0, gameState.getGrid()[i].length);
+     }
+     newState.setGrid(grid);
+     
      return newState;
    }
 

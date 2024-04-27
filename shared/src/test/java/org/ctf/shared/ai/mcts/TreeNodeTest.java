@@ -65,14 +65,37 @@ class TreeNodeTest {
   }
 
   @Test
-  void testCopyGameState() {
+  void testCopyGameState() throws InterruptedException {
     TreeNode parent = new TreeNode(null, TestValues.getTestState(), null, new ReferenceMove(null, new int[] {0,0}));
-    GameState copy = parent.copyGameState();
+    /*parent.gameState.setGrid(new String[1000][1000]);
+    for(int i=0; i<1000; i++)
+      for(int j=0; j<1000; j++)
+        parent.gameState.getGrid()[i][j] = "";
+    ExecutorService es = Executors.newFixedThreadPool(1);
+    List<Callable<GameState>> tasks = new LinkedList<>();
+    for (int i = 0; i < 1; i++) {
+      tasks.add(
+          () -> {
+            return parent.copyGameState();
+          });
+    }
+    */
+    GameState grr = parent.copyGameState();
+    //WARM UP
+    /*for(int i=0; i<10000; i++) {
+      grr = parent.copyGameState();
+      es.invokeAll(tasks);
+    }
     
-    assertNotEquals(parent.gameState, copy);
-    assertArrayEquals(parent.gameState.getTeams()[0].getPieces()[0].getPosition(), copy.getTeams()[0].getPieces()[0].getPosition());
+    long time = System.nanoTime();
+    es.invokeAll(tasks);
+    System.out.println((System.nanoTime() - time) / 1000 + " µs");
+    */
+    
+    assertNotEquals(parent.gameState, grr);
+    assertArrayEquals(parent.gameState.getTeams()[0].getPieces()[0].getPosition(), grr.getTeams()[0].getPieces()[0].getPosition());
     parent.gameState.getTeams()[0].getPieces()[0].setPosition(new int[] {100,100});
-    assertFalse(Arrays.equals(parent.gameState.getTeams()[0].getPieces()[0].getPosition(), copy.getTeams()[0].getPieces()[0].getPosition()));
+    assertFalse(Arrays.equals(parent.gameState.getTeams()[0].getPieces()[0].getPosition(), grr.getTeams()[0].getPieces()[0].getPosition()));
   }
 
   @Test

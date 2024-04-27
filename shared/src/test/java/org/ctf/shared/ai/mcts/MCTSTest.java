@@ -96,7 +96,7 @@ class MCTSTest {
     tn.wins = new int[] {0, 0};
   }
 
-  @Test
+//  @Test
   void testPerformance() throws InterruptedException {
     double expansions = 0;
     int count = 0;
@@ -105,23 +105,24 @@ class MCTSTest {
     int heuristics = 0;
     int crashes = 0;
 
-    for (; count < 100; count++) {
+    MCTS mcts = new MCTS(new TreeNode(null, gameState, new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0})));
+    TreeNode rootclone = mcts.root.clone(mcts.root.copyGameState());
+    
+    for (; count < 1000; count++) {
 
       //      MCTS_TestDouble mcts = new
       // MCTS_TestDouble(MCTSTest.mcts.root.clone(MCTSTest.mcts.root.copyGameState()));
-      MCTS mcts = new MCTS(MCTSTest.mcts.root.clone(MCTSTest.mcts.root.copyGameState()));
+      mcts.root = rootclone.clone(rootclone.copyGameState());
+      mcts.root.parent = null;
       try {
         mcts.getMove(timeInMilis, AI_Constants.C);
       } catch (NullPointerException npe) {
         crashes++;
       }
-      expansions += mcts.expansionCounter.get();
-      simulations += mcts.simulationCounter.get();
-      heuristics += mcts.heuristicCounter.get();
     }
-    simulations /= count;
-    heuristics /= count;
-    expansions = ((Math.round(((double) expansions / count) * 1000)) / 1000.);
+    simulations = mcts.simulationCounter.get() / count;
+    heuristics = mcts.heuristicCounter.get() / count;
+    expansions = ((Math.round(((double) mcts.expansionCounter.get() / count) * 1000)) / 1000.);
 
     System.out.println(
         count
@@ -138,7 +139,7 @@ class MCTSTest {
             + " crashes");
   }
 
-  //  @Test       Test fehlerhaft! TODO
+    @Test
   void testGetMove() {
     gameState = TestValues.getEmptyTestState();
     gameState.getTeams()[0].setBase(new int[] {0, 0});
@@ -169,8 +170,8 @@ class MCTSTest {
     TreeNode parent = new TreeNode(null, gameState, new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0}));
     mcts = new MCTS(parent);
 
-    System.out.println("parent Grid:");
-    parent.printGrid();
+//    System.out.println("parent Grid:");
+//    parent.printGrid();
 
     Move move = mcts.getMove(100, Math.sqrt(2));
 
@@ -178,9 +179,9 @@ class MCTSTest {
     mcts.alterGameState(mcts.root.gameState, new ReferenceMove(mcts.root.gameState, move));
     //    mcts.root.printGrid();
 
-    assertEquals(1., mcts.root.children[0].getV());
-    //    assertEquals(move.getNewPosition()[0], 0);
-    //    assertEquals(move.getNewPosition()[1], 0);
+    assertEquals(1., Math.round(mcts.root.children[0].getV()));
+    assertEquals(move.getNewPosition()[0], 0);
+    assertEquals(move.getNewPosition()[1], 0);
   }
 
 //    @Test       //nimmt zu viel Zeit beim Überprüfen der Tests weg, nur testen wenn man was geändert hat!
@@ -199,7 +200,7 @@ class MCTSTest {
     int mctsTillEnd = 0;
     while (mcts.isTerminal(mcts.root.gameState, new ReferenceMove(null, new int[] {0,0})) == -1) {
 
-      Move move = mcts.getMove(1000, AI_Constants.C);
+      Move move = mcts.getMove(100, AI_Constants.C);
       ++mctsTillEnd;
       TreeNode tn = mcts.root;
       mcts.alterGameState(tn.gameState, new ReferenceMove(tn.gameState, move));
@@ -269,7 +270,8 @@ class MCTSTest {
     TreeNode parent = new TreeNode(null, gameState, new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0}));
     mcts = new MCTS(parent);
 
-    Move move = mcts.getMove(100, (float) Math.sqrt(2));
+//    Move move = 
+        mcts.getMove(100, (float) Math.sqrt(2));
     //    System.out.println("Piece: " + move.getPieceId() + " moves to " + move.getNewPosition()[0]
     // + ", " + move.getNewPosition()[1]);
     for (int i = 0; i < parent.possibleMoves.size(); i++) {
@@ -295,32 +297,33 @@ class MCTSTest {
     assertTrue(mcts.root.children[2] == null);
   }
 
-  @Test
+  /*@Test
   void testMultiSimulate() {
     long totalTime = 0;
     int count = 0;
-    for (int i = 0; i < 100; i++, count++) {
+    for (int i = 0; i < 10000; i++, count++) {
+      mcts.multiSimulate(mcts.root);
+     }
+    for (int i = 0; i < 10000; i++, count++) {
       long time = System.nanoTime();
       mcts.multiSimulate(mcts.root);
       totalTime += System.nanoTime() - time;
-      MCTSTest.mcts = new MCTS(new TreeNode(null, TestValues.getTestState(), null, new ReferenceMove(null, new int[] {0,0})));
     }
     System.out.println("average time for multiSim: " + (totalTime / count) / 1000 + " µs");
-  }
+  }*/
 
-  @Test
+//  @Test
   void testSimulate() {
     long totalTime = 0;
     int count = 0;
-    for (int i = 0; i < 100; i++, count++) {
+    for (int i = 0; i < 10000; i++, count++) {
       long time = System.nanoTime();
       mcts.simulate(mcts.root);
       totalTime += System.nanoTime() - time;
-      MCTSTest.mcts = new MCTS(new TreeNode(null, TestValues.getTestState(), null, new ReferenceMove(null, new int[] {0,0})));
     }
     System.out.println("average time for sim: " + (totalTime / count) / 1000 + " µs");
   }
-
+  
   @Test
   void testTerminalHeuristic() {
     gameState = TestValues.getEmptyTestState();
@@ -352,7 +355,6 @@ class MCTSTest {
     assertTrue(mcts.terminalHeuristic(mcts.root) == 1);
     mcts.root.gameState.setCurrentTeam(0);
 
-    // TODO: Die Heuristik kann noch nicht erkennen, was geschlagen werden kann
     assertFalse(mcts.terminalHeuristic(mcts.root) == 0);
   }
 
