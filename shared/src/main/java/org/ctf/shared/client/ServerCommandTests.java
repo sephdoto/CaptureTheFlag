@@ -250,11 +250,11 @@ public class ServerCommandTests {
     test1Client.createGame(test);
     test1Client.joinGame("Seph1");
     Client test2Client = ClientStepBuilder.newBuilder().enableRestLayer(false).onLocalHost().onPort("8888").enableSaveGame(false).build();
-    test2Client.joinExistingGame("localhost", "8888", test1Client.currentGameSessionID, "Seph2");
-    test1Client.pullData();
-    test2Client.pullData();
+   // test2Client.joinExistingGame("localhost", "8888", test1Client.currentGameSessionID, "Seph2");
+    test1Client.startGameController();
+    //test2Client.startGameController();
     System.out.println(test1Client.currentTeamTurn);
-    test1Client.giveUp();
+   // test1Client.giveUp();
   }
 
   public static void joinTest() {
@@ -373,12 +373,8 @@ public class ServerCommandTests {
     Gson gson = new Gson();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     CommLayer comm = new CommLayer();
-    AutomatedClient client = new AutomatedClient(comm, "localhost", "8888");
-    // client.setServer("localhost", "8888");
-    client.AutomatedCreateAndJoinTask(template, "Seph1");
 
-    AutomatedClient client2 = new AutomatedClient(comm, "localhost", "8888");
-    // client.setServer("localhost", "8888");
+   /*  // client.setServer("localhost", "8888");
     try {
       Thread.sleep(2000);
 
@@ -386,7 +382,7 @@ public class ServerCommandTests {
     } catch (InterruptedException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
-    }
+    } */
   }
 
   /*  Client javaClient2 =

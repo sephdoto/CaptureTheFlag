@@ -212,6 +212,8 @@ public class GameEngine implements Game {
     return (this.weDoneZo);
   }
 
+
+  //TODO There is a small bug with this method if you join one team and give up
   /**
    * If the game is over a String Array containing all winner IDs is returned. This method relies on
    * the fact that loser teams get set to null in the gameState.teams Array.

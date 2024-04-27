@@ -6,17 +6,19 @@ import org.ctf.shared.state.data.map.MapTemplate;
 
 public class AIPlayerSimulator {
 
-  private static String GameID;
+  public static String GameID;
 
   public static void main(String[] args) {
     startPlayer1();
     startPlayer2();
-    /*     try {
-      Thread.sleep(1000000);
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } */
+  }
+
+  public static void setGameID(String id) {
+    GameID = id;
+  }
+
+  public static String getGameID(){
+    return GameID;
   }
 
   public static void startPlayer1() {
@@ -131,6 +133,7 @@ public class AIPlayerSimulator {
         """;
 
     Gson gson = new Gson();
+    MapTemplate mapTemplate = gson.fromJson(jsonPayload, MapTemplate.class);
     AIClient javaClient1 =
         AIClientStepBuilder.newBuilder()
             .enableRestLayer(false)
@@ -138,15 +141,16 @@ public class AIPlayerSimulator {
             .onPort("8888")
             .AIPlayerSelector(AI.MCTS)
             .enableSaveGame(false)
-            .createGameMode(null, "Seph1")
+            .createGameMode(mapTemplate, "Seph1")
             .build();
 
-    javaClient1.createGame(gson.fromJson(jsonPayload, MapTemplate.class));
-    GameID = javaClient1.getCurrentGameSessionID();
-    System.out.println(GameID + " Is set");
-    javaClient1.joinGame("AIOne");
-    System.out.println("joined");
-    ((AIClient) javaClient1).runHandler();
+    // javaClient1.startAutomation();
+    javaClient1.createGame(mapTemplate);
+    javaClient1.joinGame("Seph1");
+    //System.out.println("Session ID " + javaClient1.getSessionIDfromAI());
+
+    setGameID(javaClient1.getSessionIDfromAI());
+    System.out.println(getGameID() + " Is set");
   }
 
   public static void startPlayer2() {
@@ -163,10 +167,9 @@ public class AIPlayerSimulator {
             .onPort("8888")
             .AIPlayerSelector(AI.MCTS)
             .enableSaveGame(false)
-            .createGameMode(null, "Seph2")
+            .joinerGameMode(getGameID(), "Seph2")
             .build();
-    javaClient2.joinExistingGame("localhost", "8888", GameID, "AITwo");
-    System.out.println("joined");
-    ((AIClient) javaClient2).runHandler();
+
+    javaClient2.startAutomation();
   }
 }

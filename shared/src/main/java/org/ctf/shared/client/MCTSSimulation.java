@@ -143,7 +143,7 @@ public class MCTSSimulation {
                 .enableSaveGame(false)
                 .createGameMode(null, "Seph2")
                 .build();
-                AIClient javaClient3 =
+         /*        AIClient javaClient3 =
                 AIClientStepBuilder.newBuilder()
                     .enableRestLayer(false)
                     .onLocalHost()
@@ -169,36 +169,36 @@ public class MCTSSimulation {
                             .AIPlayerSelector(AI.MCTS)
                             .enableSaveGame(false)
                             .createGameMode(null, "Seph5")
-                            .build();
+                            .build(); */
     javaClient.createGame(template);
     javaClient.joinGame("Team 1");
     javaClient2.joinExistingGame(
         "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 2");
-    javaClient3.joinExistingGame(
+    /* javaClient3.joinExistingGame(
         "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 3");
     javaClient4.joinExistingGame(
         "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 4");
     javaClient5.joinExistingGame(
-        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 5");
+        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 5"); */
     Analyzer newAna = new Analyzer();
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
-    javaClient3.getStateFromServer();
+    /* javaClient3.getStateFromServer();
     javaClient4.getStateFromServer();
-    javaClient5.getStateFromServer();
+    javaClient5.getStateFromServer(); */
     javaClient.getSessionFromServer();
     javaClient2.getSessionFromServer();
-    javaClient3.getSessionFromServer();
+ /*    javaClient3.getSessionFromServer();
     javaClient4.getSessionFromServer();
-    javaClient5.getSessionFromServer();
+    javaClient5.getSessionFromServer(); */
     System.out.println(gson.toJson(javaClient.getCurrentState()));
     System.out.println(gson.toJson(javaClient.getCurrentSession()));
     newAna.addGameState(javaClient.getCurrentState());
     AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS);
     AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS);
-    AI_Controller Controller3 = new AI_Controller(javaClient3.getCurrentState(), AI.MCTS);
+   /*  AI_Controller Controller3 = new AI_Controller(javaClient3.getCurrentState(), AI.MCTS);
     AI_Controller Controller4 = new AI_Controller(javaClient4.getCurrentState(), AI.MCTS);
-    AI_Controller Controller5 = new AI_Controller(javaClient5.getCurrentState(), AI.MCTS);
+    AI_Controller Controller5 = new AI_Controller(javaClient5.getCurrentState(), AI.MCTS); */
     for (int i = 0; i < 50; i++) {
       try {
         if (javaClient.isItMyTurn()) {
@@ -210,7 +210,7 @@ public class MCTSSimulation {
           System.out.println("it was Teams turn " + javaClient2.getLastTeamTurn());
           javaClient2.makeMove(Controller2.getNextMove());
           System.out.println("client 2 made a move");
-        } else if (javaClient3.isItMyTurn()) {
+        }/*  else if (javaClient3.isItMyTurn()) {
           javaClient3.makeMove(Controller3.getNextMove());
           System.out.println("client 3 made a move");
           System.out.println("it was Teams turn " + javaClient3.getLastTeamTurn());
@@ -222,18 +222,18 @@ public class MCTSSimulation {
           javaClient5.makeMove(Controller5.getNextMove());
           System.out.println("client 5 made a move");
           System.out.println("it was Teams turn " + javaClient3.getLastTeamTurn());
-        }
+        } */
         javaClient.getStateFromServer();
         newAna.addMove(javaClient.getLastMove());
         Controller.update(javaClient.getCurrentState());
         javaClient2.getStateFromServer();
         Controller2.update(javaClient2.getCurrentState());
-        javaClient3.getStateFromServer();
+        /* javaClient3.getStateFromServer();
         Controller3.update(javaClient3.getCurrentState());
         javaClient4.getStateFromServer();
         Controller4.update(javaClient4.getCurrentState());
         javaClient5.getStateFromServer();
-        Controller5.update(javaClient5.getCurrentState());
+        Controller5.update(javaClient5.getCurrentState()); */
         if (javaClient.gameOver) {
           System.out.println(newAna.writeOut());
           break;
