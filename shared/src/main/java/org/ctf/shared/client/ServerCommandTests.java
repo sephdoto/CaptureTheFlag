@@ -2,7 +2,6 @@ package org.ctf.shared.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Clock;
@@ -12,7 +11,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-
 import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
@@ -24,7 +22,6 @@ import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.map.MapTemplate;
-import org.ctf.shared.state.dto.GameSessionRequest;
 
 /** Tests for the layer and the responses it gives out. */
 public class ServerCommandTests {
@@ -40,7 +37,7 @@ public class ServerCommandTests {
   public static void main(String[] args) {
 
     // Uncomment to do invidivual tests
-     testConnection();
+    testConnection();
     // testStart();
     // joinTest();
     // copierCheck();
@@ -58,8 +55,6 @@ public class ServerCommandTests {
     // tests();
   }
 
-  
-
   public static void TimeTest() {
     SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy/HH/mm/ss", Locale.ENGLISH);
     Date startDate = new Date();
@@ -74,7 +69,7 @@ public class ServerCommandTests {
         Duration.ofSeconds(
             TimeUnit.SECONDS.convert(
                 Math.abs(endDate.getTime() - startDate.getTime()), TimeUnit.MILLISECONDS));
-                System.out.println(timeLimDuration.toMinutes());
+    System.out.println(timeLimDuration.toMinutes());
   }
 
   public static void tests() {
@@ -244,17 +239,40 @@ public class ServerCommandTests {
           }
         """;
 
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    // Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    Gson gson = new Gson();
     MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
-    Client test1Client = ClientStepBuilder.newBuilder().enableRestLayer(false).onLocalHost().onPort("8888").enableSaveGame(false).build();
+    Client test1Client =
+        ClientStepBuilder.newBuilder()
+            .enableRestLayer(false)
+            .onLocalHost()
+            .onPort("8888")
+            .enableSaveGame(false)
+            .build();
     test1Client.createGame(test);
     test1Client.joinGame("Seph1");
-    Client test2Client = ClientStepBuilder.newBuilder().enableRestLayer(false).onLocalHost().onPort("8888").enableSaveGame(false).build();
-   // test2Client.joinExistingGame("localhost", "8888", test1Client.currentGameSessionID, "Seph2");
-    test1Client.startGameController();
-    //test2Client.startGameController();
-    System.out.println(test1Client.currentTeamTurn);
-   // test1Client.giveUp();
+    Client test2Client =
+        ClientStepBuilder.newBuilder()
+            .enableRestLayer(false)
+            .onLocalHost()
+            .onPort("8888")
+            .enableSaveGame(false)
+            .build();
+    // test2Client.joinExistingGame("localhost", "8888", test1Client.currentGameSessionID, "Seph2");
+    // test1Client.startGameController();
+    // test2Client.startGameController();
+    //  System.out.println(test1Client.currentTeamTurn);
+    // test1Client.giveUp();
+    test1Client.getStateFromServer();
+
+    //System.out.println(gson.toJson(test1Client.getCurrentState().getTeams().length));
+    int counter = 0;
+    for (int i = 0; i < test1Client.getCurrentState().getTeams().length; i++) {
+      if (test1Client.getCurrentState().getTeams()[i] != null) {
+        counter++;
+      }
+    }
+    System.out.println(counter);
   }
 
   public static void joinTest() {
@@ -374,7 +392,7 @@ public class ServerCommandTests {
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     CommLayer comm = new CommLayer();
 
-   /*  // client.setServer("localhost", "8888");
+    /*  // client.setServer("localhost", "8888");
     try {
       Thread.sleep(2000);
 

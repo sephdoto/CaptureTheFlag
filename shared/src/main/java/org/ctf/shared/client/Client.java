@@ -527,6 +527,22 @@ public class Client implements GameClientInterface {
     return lastTeamTurn;
   }
 
+   /**
+   * Method which returns how many teams have joined the session at present
+   *
+   * @author rsyed
+   */
+  public int getCurrentNumberofTeams(){
+    getStateFromServer();
+    int counter = 0;
+    for (int i = 0; i < getCurrentState().getTeams().length; i++) {
+      if (getCurrentState().getTeams()[i] != null) {
+        counter++;
+      }
+    }
+    return counter;
+  }
+
   // **************************************************
   // End of Client Funtional Methods
   // **************************************************
