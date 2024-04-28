@@ -1,11 +1,22 @@
 package org.ctf.ui;
 
 import java.util.Iterator;
+import java.util.Random;
 
 import org.ctf.ui.customobjects.BaseRep;
 import org.ctf.ui.customobjects.CostumFigurePain;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+
+import javafx.animation.Animation;
+import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.ParallelTransition;
+import javafx.animation.PathTransition;
+import javafx.animation.RotateTransition;
+import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -33,9 +44,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
@@ -190,7 +206,8 @@ public class WaitingScene extends Scene {
 			double spacing = newVal.doubleValue() * 0.04;
 			middleBox.setSpacing(spacing);
 		});
-		middleBox.getChildren().add(createShowMapPane("p2"));
+		//middleBox.getChildren().add(createShowMapPane("p2"));
+		//middleBox.getChildren().add(createREctangleAnimation());
 		middleBox.setAlignment(Pos.TOP_CENTER);
 		//middleBox.setStyle("-fx-background-color:red");
 		main.getChildren().add(middleBox);
@@ -211,6 +228,7 @@ public class WaitingScene extends Scene {
 		labels.setSpacing(30);
 		labels.getChildren().add(createInfoLabel("port" , "1234565656"));
 		labels.getChildren().add(createInfoLabel("Server-ID" , "1234"));
+		labels.getChildren().add(createInfoLabel("Session-ID", "2323232"));
 		left.getChildren().add(labels);
 //		Image mp = new Image(getClass().getResourceAsStream("ct2.png"));
 //		ImageView mpv = new ImageView(mp);
@@ -241,9 +259,89 @@ public class WaitingScene extends Scene {
 		    status.fontProperty().bind(waitigFontSize);
 		    //layout.setStyle("-fx-background-color: blue");
 		    layout.getChildren().addAll(status);
-		   
 		    return layout;
 	}
+	
+	private StackPane createREctangleAnimation() {
+		StackPane pane = new StackPane();
+		pane.setPrefWidth(600);
+		pane.setPrefHeight(600);
+		//pane.setStyle("-fx-background-color: blue");
+		Rectangle rect = new Rectangle(300,300,100,100);
+		rect.setArcHeight(50);
+		rect.setArcWidth(50);
+		rect.setFill(Color.RED);
+		pane.getChildren().add(rect);
+		rect.toBack();
+		final Duration time1 = Duration.millis(2000);
+		final Duration time2 = Duration.millis(3000);
+		RotateTransition rt = new RotateTransition(time2);
+		rt.setByAngle(360);
+		rt.setCycleCount(Animation.INDEFINITE);
+		rt.setAutoReverse(true);
+		ScaleTransition s = new ScaleTransition(time1);
+		s.setByX(1.5f);
+		s.setByY(1.5f);
+		rt.setCycleCount(Animation.INDEFINITE);
+		rt.setAutoReverse(true);
+		Circle c = new Circle(200);
+		c.setLayoutX(pane.getLayoutX());
+		c.setLayoutY(pane.getLayoutY());
+		PathTransition p = new PathTransition();
+		p.setNode(rect);
+		p.setPath(c);
+		p.setDuration(Duration.seconds(2));
+		p.setCycleCount(Animation.INDEFINITE);
+		p.setAutoReverse(false);
+		ParallelTransition para = new ParallelTransition(rect,p,s,rt);
+		para.play();
+		pane.toBack();
+		return pane;
+		
+		
+	
+
+	}
+	
+	private void createRainAnimation() {
+		 Random random = new Random();
+	        LinearGradient gradient = new LinearGradient(0, 0, 1, 1, true, null,
+	                new Stop(0, Color.LIGHTBLUE), new Stop(1, Color.DODGERBLUE));
+	       for(int i=0; i<1;i++) {
+	        Timeline timeline = new Timeline(
+	                new KeyFrame(Duration.ZERO, e -> {
+	                    
+	                	  Line drop = new Line();
+	                      drop.setStartX((random.nextDouble()*200 + 500)*-1);
+	                      drop.setStartY((random.nextDouble()*200 + 500)*-1);
+	                      drop.setEndX(50);
+	                      drop.setEndY(50); 
+
+	                      drop.setStroke(gradient);
+	                      drop.setStrokeWidth(2);
+	                      drop.setEffect(new DropShadow(5, Color.GRAY));
+	                    
+	                      root.getChildren().add(drop);
+	                      drop.setLayoutX(getX());
+		                  drop.setLayoutY(getY());
+	                    double speed = 4000;
+
+	                    KeyValue kvX = new KeyValue(drop.translateXProperty(), this.getWidth());
+	                    KeyValue kvY = new KeyValue(drop.translateYProperty(), this.getHeight());
+	                    KeyFrame keyFrame = new KeyFrame(Duration.millis(speed), actionEvent -> {
+	                        root.getChildren().remove(drop);
+	                    }, kvX, kvY);
+	                    Timeline anim = new Timeline(keyFrame);
+	                    drop.toBack();
+	                    anim.play();
+	                }),
+	                new KeyFrame(Duration.seconds(1))
+	        );
+	        timeline.setCycleCount(Animation.INDEFINITE);
+	        timeline.play();
+	       }
+	    }
+	
 	
 	private HBox createTopCenter() {
 		HBox captureLoadingLabel = new HBox();

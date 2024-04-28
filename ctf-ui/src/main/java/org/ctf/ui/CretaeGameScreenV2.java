@@ -1,33 +1,32 @@
 package org.ctf.ui;
 
 import org.ctf.shared.state.GameState;
+import org.ctf.ui.customobjects.PopUpPane;
 
 import configs.ImageLoader;
+import javafx.animation.TranslateTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.event.Event;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.CustomMenuItem;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class CretaeGameScreenV2 extends Scene {
 	HomeSceneController hsc;
@@ -36,9 +35,17 @@ public class CretaeGameScreenV2 extends Scene {
 	StackPane root;
 	StackPane left;
 	StackPane right;
+	TextField serverIPText;
+	TextField portText;
 	Text info;
 	HBox sep;
-	
+	PopUpPane pop;
+	Text inform = new Text();
+	private ObjectProperty<Font> addHumanButtonTextFontSIze = new SimpleObjectProperty<Font>(Font.getDefault());
+	private ObjectProperty<Font> addAiCOmboTextFontSIze = new SimpleObjectProperty<Font>(Font.getDefault());
+	private ObjectProperty<Font> popUpLabel = new SimpleObjectProperty<Font>(Font.getDefault());
+	private ObjectProperty<Font> leaveButtonText = new SimpleObjectProperty<Font>(Font.getDefault());
+	private ObjectProperty<Font> aiPowerText = new SimpleObjectProperty<Font>(Font.getDefault());
 
 
 	public CretaeGameScreenV2(HomeSceneController hsc, double width, double height) {
@@ -50,8 +57,141 @@ public class CretaeGameScreenV2 extends Scene {
 		this.root = (StackPane) this.getRoot();
 		createLayout();
 	}
+	
+	private void createChooserPopup() {
+	 pop = new PopUpPane(this, 0.5, 0.3);
+		root.getChildren().add(pop);
+		VBox top = new VBox();
+		top.heightProperty().addListener((obs, oldVal, newVal) -> {
+			double spacing = newVal.doubleValue() * 0.06;
+			top.setSpacing(spacing);
+		});
+		Label l = new Label("Choose Game Mode");
+		l.prefWidthProperty().bind(pop.widthProperty());
+		l.setAlignment(Pos.CENTER);
+		l.getStyleClass().add("custom-label");
+		l.fontProperty().bind(popUpLabel);
+		top.getChildren().add(l);
+		HBox chooseButtonBox = new HBox();
+		chooseButtonBox.setAlignment(Pos.CENTER);
+		pop.widthProperty().addListener((observable, oldValue, newValue) -> {
+			double newSpacing = newValue.doubleValue() * 0.05; // Beispiel: 5% der Höhe als Spacing
+			chooseButtonBox.setSpacing(newSpacing);
+		});
+		Button human = createAddHumanButton("Play as Human", "user-286.png");
+		human.prefWidthProperty().bind(pop.widthProperty().multiply(0.2));
+		Button ai = createAddAIButton("Play as AI", "robot1.png");
+		ai.prefWidthProperty().bind(human.widthProperty());
+		ai.prefHeightProperty().bind(human.heightProperty());
+		chooseButtonBox.getChildren().addAll(human,ai );
+		top.getChildren().add(chooseButtonBox);
+		HBox centerLeaveButton = new HBox();
+		//centerLeaveButton.setStyle("-fx-background-color: blue");
+		centerLeaveButton.prefHeightProperty().bind(pop.heightProperty().multiply(0.4));
+		centerLeaveButton.setAlignment(Pos.CENTER);
+		centerLeaveButton.getChildren().add(createCancelButton());
+		top.getChildren().add(centerLeaveButton);
+		pop.setContent(top);
+	}
+	
+	private void createAiLevelPopUp(){
+		root.getChildren().remove(pop);
+		portText.setDisable(true);
+		serverIPText.setDisable(true);
+		PopUpPane pop2 = new PopUpPane(this, 0.5, 0.3);
+		VBox top = new VBox();
+		top.heightProperty().addListener((obs, oldVal, newVal) -> {
+			double spacing = newVal.doubleValue() * 0.1;
+			top.setSpacing(spacing);
+		});
+		Label l = new Label("Choose AI");
+		l.prefWidthProperty().bind(pop.widthProperty());
+		l.setAlignment(Pos.CENTER);
+		l.getStyleClass().add("custom-label");
+		l.fontProperty().bind(popUpLabel);
+		top.getChildren().add(l);
+		HBox buttonBox = new HBox();
+		buttonBox.setAlignment(Pos.CENTER);
+		pop2.widthProperty().addListener((observable, oldValue, newValue) -> {
+			double newSpacing = newValue.doubleValue() * 0.03; 
+			double padding = newValue.doubleValue()* 0.03;
+			buttonBox.setSpacing(newSpacing);
+			buttonBox.setPadding(new Insets(0, padding, 0, padding));
+		});
+		buttonBox.getChildren().addAll(createAIPowerButton("easy", "green"), createAIPowerButton("medium", "yellow"),createAIPowerButton("strong", "x"));
+		top.getChildren().add(buttonBox);
+		HBox centerLeaveButton = new HBox();
+		//centerLeaveButton.setStyle("-fx-background-color: blue");
+		centerLeaveButton.prefHeightProperty().bind(pop.heightProperty().multiply(0.2));
+		centerLeaveButton.setAlignment(Pos.CENTER);
+		centerLeaveButton.getChildren().add(createBackButton());
+		top.getChildren().add(centerLeaveButton);
+		pop2.setContent(top);
+		root.getChildren().add(pop2);
+		
+	}
+	
+	
+	private Button createAIPowerButton(String pow, String color) {
+		Button power = new Button(pow);
+		
+		power.fontProperty().bind(aiPowerText);
+		power.getStyleClass().add("ai-button");
+		power.setStyle("-fx-backround-color:" + color);
+		power.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
+		power.prefHeightProperty().bind(power.widthProperty().multiply(0.35));
+		power.setOnAction(e -> {
+			hsc.switchToWaitGameScene(App.getStage());
+		});
+		return power;
+	}
+	
+	
+	private Button createCancelButton() {
+		Button exit = new Button("Cancel");
+		exit.fontProperty().bind(leaveButtonText);
+		exit.getStyleClass().add("leave-button");
+		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
+		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
+		exit.setOnAction(e -> {
+			hsc.switchToCreateGameScene(App.getStage());
+		});
+		portText.setDisable(false);
+		serverIPText.setDisable(false);
+		return exit;
+	}
+	
+	private Button createBackButton() {
+		Button exit = new Button("back");
+		exit.fontProperty().bind(leaveButtonText);
+		exit.getStyleClass().add("leave-button");
+		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
+		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
+		exit.setOnAction(e -> {
+			root.getChildren().add(pop); 
+		});
+		return exit;
+	}
+	
+	private void manageFontSizes() {
+		 widthProperty().addListener(new ChangeListener<Number>()
+		    {
+		        public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth, Number newWidth)
+		        {
+		            addHumanButtonTextFontSIze.set(Font.font(newWidth.doubleValue()/ 70));
+		            addAiCOmboTextFontSIze.set(Font.font(newWidth.doubleValue()/ 60));
+		            popUpLabel.set(Font.font(newWidth.doubleValue()/ 60));
+		            leaveButtonText.set(Font.font(newWidth.doubleValue()/ 80));
+		            aiPowerText.set(Font.font(newWidth.doubleValue()/ 50));
+
+		            
+		            
+		        }
+		    });
+	}
 
 	private void createLayout() {
+		manageFontSizes();
 		ImageLoader.loadImages();
 		StroeMaps.initDefaultMaps();
 		root.getStyleClass().add("join-root");
@@ -73,10 +213,11 @@ public class CretaeGameScreenV2 extends Scene {
 		//mainBox.getChildren().add(createSettings());
 		mainBox.getChildren().add(createLeave());
 		this.widthProperty().addListener((observable, oldValue, newValue) -> {
-			double newSpacing = newValue.doubleValue() * 0.05; // Beispiel: 5% der Höhe als Spacing
+			double newSpacing = newValue.doubleValue() * 0.05; 
 			sep.setSpacing(newSpacing);
 		});
 		left.getChildren().add(createLeftcontent());
+		
 
 
 
@@ -149,10 +290,10 @@ public class CretaeGameScreenV2 extends Scene {
 			double spacing = newVal.doubleValue() * 0.06;
 			enterSeverInfoBox.setSpacing(spacing);
 		});
-		TextField serverIPText = createTextfield("Enter the Server IP");
+		 serverIPText = createTextfield("Enter the Server IP");
 		serverIPText.prefWidthProperty().bind(enterSeverInfoBox.widthProperty().multiply(0.4));
 		enterSeverInfoBox.getChildren().add(serverIPText);
-		TextField portText = createTextfield("Enter the Port");
+		portText = createTextfield("Enter the Port");
 		portText.prefWidthProperty().bind(enterSeverInfoBox.widthProperty().multiply(0.4));
 		enterSeverInfoBox.getChildren().add(portText);
 		serverInfoBox.getChildren().add(enterSeverInfoBox);
@@ -172,8 +313,8 @@ public class CretaeGameScreenV2 extends Scene {
 		});
 		buttonBox.getChildren().add(createChoiceBox(buttonBox));
 		buttonBox.getChildren().add(createCreateButton());
-		
 		leftBox.getChildren().add(buttonBox);
+		
 		return leftBox;
 	}
 	private Button createCreateButton() {
@@ -184,9 +325,71 @@ public class CretaeGameScreenV2 extends Scene {
 		search.fontProperty().bind(Bindings.createObjectBinding(
 				() -> Font.font("Century Gothic", search.getHeight() * 0.4), search.heightProperty()));
 		search.setOnAction(e -> {
+			if(portText.getText().isEmpty() ) {
+				informationmustBeEntered(portText);
+			}
+			if(serverIPText.getText().isEmpty()) {
+				informationmustBeEntered(serverIPText);
+			}
+			if(!portText.getText().isEmpty() && !serverIPText.getText().isEmpty() ) {
+				this.createChooserPopup();
+			}
+			
+	        
+	        
+		});
+		 
+		return search;
+	}
+	
+	private void informationmustBeEntered(TextField t) {
+		t.getStyleClass().add("custom-search-field2-mustEnter");
+		TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(0.05), t);
+        translateTransition.setFromX(-2);
+        translateTransition.setToX(2);
+        translateTransition.setCycleCount(10);
+        translateTransition.setAutoReverse(true);
+        translateTransition.playFromStart();
+        translateTransition.setOnFinished(event -> {
+        	t.getStyleClass().remove("custom-search-field2-mustEnter");
+	        t.getStyleClass().add("custom-search-field2");
+        });
+	}
+	
+	
+	private Button createAddHumanButton(String text, String src) {
+		Button button = new Button(text);
+		button.getStyleClass().add("button25");
+		button.fontProperty().bind(addHumanButtonTextFontSIze);
+		Image mp = new Image(getClass().getResourceAsStream(src));
+		ImageView vw = new ImageView(mp);
+		button.setGraphic(vw);
+        button.setContentDisplay(ContentDisplay.RIGHT);
+        vw.fitWidthProperty().bind(button.widthProperty().divide(5));
+        vw.setPreserveRatio(true);
+        button.setMaxWidth(Double.MAX_VALUE); 
+        button.setOnAction(e -> {
 			hsc.switchToWaitGameScene(App.getStage());
 		});
-		return search;
+        return button;
+	}
+	
+	private Button createAddAIButton(String text, String src) {
+		Button button = new Button(text);
+		button.getStyleClass().add("button25");
+		button.fontProperty().bind(addHumanButtonTextFontSIze);
+		Image mp = new Image(getClass().getResourceAsStream(src));
+		ImageView vw = new ImageView(mp);
+		button.setGraphic(vw);
+        button.setContentDisplay(ContentDisplay.RIGHT);
+        vw.fitWidthProperty().bind(button.widthProperty().divide(8));
+        vw.setPreserveRatio(true);
+        button.setMaxWidth(Double.MAX_VALUE);
+    	button.setOnAction(e -> {
+			createAiLevelPopUp();
+		});
+        return button;
+        
 	}
 	
 	private Text createHeader(VBox leftBox, String text) {
