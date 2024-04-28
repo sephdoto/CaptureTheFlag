@@ -8,7 +8,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.HashSet;
 import org.ctf.shared.constants.Constants;
@@ -26,11 +28,16 @@ public class SoundController {
   private static String linkedSoundsFile;
   
   public static void main(String args[]) throws JSONException, IOException {
-    for(SoundType type : SoundType.values()) {
-      saveSound("Default", type, new File(soundFolderLocation + SoundType.MISC.getLocation() + "Default.mp3"), false);
-    }
+//    for(SoundType type : SoundType.values()) {
+//      saveSound("Default", type, new File(soundFolderLocation + SoundType.CAPTURE.getLocation() + "DefaultTest.mp3"), false);
+//    }
     HashMap<String, AudioObject> audioClips = SoundController.audioClips;
     playSound("Default", SoundType.CAPTURE);
+    String src = "ressources/sounds/capture/ceeb.mp3";
+    AudioClip ac = new AudioClip(Paths.get(src).toAbsolutePath().toUri().toString());
+    
+    ac.play();
+    System.out.println(ac.getVolume() + " " +ac.isPlaying());
   }
 
   static {
@@ -106,16 +113,13 @@ public class SoundController {
   }
   
   private static boolean copyAudioFile(File audioFile, AudioObject audio) {
-    try (InputStream is = new FileInputStream(audioFile)) {
-      OutputStream outstream = new FileOutputStream(new File(soundFolderLocation + audio.getLocation()));
-      byte[] buffer = new byte[4096];
-      int len;
-      while ((len = is.read(buffer)) > 0) {
-        outstream.write(buffer, 0, len);
-      }
-      outstream.close();
-    } catch (IOException ieo) {
-      ieo.printStackTrace();
+    Path sourcePath = audioFile.toPath();
+    Path targetPath = Paths.get(soundFolderLocation + audio.getLocation());
+
+    try {
+      Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+    } catch (IOException e) {
+      e.printStackTrace();
       return false;
     }
     return true;
@@ -126,7 +130,6 @@ public class SoundController {
   }
 
   private static AudioClip getSound(String key) {
-    System.out.println(new File(soundFolderLocation + audioClips.get(key).getLocation()).exists());
     return new AudioClip(new File(soundFolderLocation + audioClips.get(key).getLocation()).toURI().toString());
   }
 }
