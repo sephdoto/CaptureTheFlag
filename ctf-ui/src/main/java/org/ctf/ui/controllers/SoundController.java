@@ -17,7 +17,11 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Constants.SoundType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import javafx.application.Platform;
 import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -28,6 +32,8 @@ public class SoundController {
   private static String linkedSoundsFile;
   
   public static void main(String args[]) throws JSONException, IOException {
+    Platform.startup(() ->{});
+    
 //    for(SoundType type : SoundType.values()) {
 //      saveSound("Default", type, new File(soundFolderLocation + SoundType.CAPTURE.getLocation() + "DefaultTest.mp3"), false);
 //    }
@@ -35,9 +41,15 @@ public class SoundController {
     playSound("Default", SoundType.CAPTURE);
     String src = "ressources/sounds/capture/ceeb.mp3";
     AudioClip ac = new AudioClip(Paths.get(src).toAbsolutePath().toUri().toString());
-    
+    Media h = new Media(Paths.get(src).toAbsolutePath().toUri().toString());
+    MediaPlayer mediaPlayer = new MediaPlayer(h);
+    mediaPlayer.setVolume(1);
+    mediaPlayer.play();
+
     ac.play();
-    System.out.println(ac.getVolume() + " " +ac.isPlaying());
+    System.out.println("isplaying? " +ac.isPlaying());
+    
+    Platform.exit();
   }
 
   static {
