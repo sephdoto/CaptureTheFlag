@@ -33,6 +33,13 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.ui.controllers.MapPreview;
 
+/**
+ * Represents a JavaFX scene for the map editor. It contains
+ * all necessary UI components for loading, customizing, rendering and 
+ * saving map templates.
+ * 
+ * @author aniemesc
+ */
 public class EditorScene extends Scene {
   HomeSceneController hsc;
   StackPane root;
@@ -48,7 +55,15 @@ public class EditorScene extends Scene {
   boolean spinnerchange = false;
   boolean boxchange = false;
   MediaPlayer mediaPlayer;
-
+  
+  /**
+	 * Starts the initialization process of the scene, generates different menu panes
+	 * and connects it to a CSS file.
+	 * @author aniemesc
+	 * @param hsc - HomeSceneController that connects scene to rest of the application
+	 * @param width - double value for width init
+	 * @param height - double value for height init
+	 */
 	public EditorScene(HomeSceneController hsc, double width, double height) {
 		super(new StackPane(), width, height);
 		music();
@@ -79,7 +94,12 @@ public class EditorScene extends Scene {
 	}
 
 
-	
+	/**
+	 * This method creates the basic layout by adding all major top level containers
+	 * to the scene.
+	 * 
+	 * @author aniemesc
+	 */
   private void createLayout() {
     root.getStyleClass().add("join-root");
 
@@ -108,7 +128,11 @@ public class EditorScene extends Scene {
     sep.getChildren().add(visualRoot);
     mainBox.getChildren().add(sep);
   }
-
+  /**
+	 * This Method creates the header Image for the scene.	 
+	 * @author aniemesc
+	 * @return ImageView that gets added to the scene
+	 */
   private ImageView createHeader() {
     Image mp = new Image(getClass().getResourceAsStream("EditorImage.png"));
     ImageView mpv = new ImageView(mp);
@@ -127,7 +151,11 @@ public class EditorScene extends Scene {
             });
     return mpv;
   }
-
+  
+  /**
+	 * Initializes the infoText attribute of the scene.
+	 * @author aniemesc
+	 */
   private void createInfotext() {
     infoText = new Text("");
     infoText.getStyleClass().add("custom-info-label");
@@ -139,7 +167,12 @@ public class EditorScene extends Scene {
               infoText.setFont(Font.font("Century Gothic", size));
             });
   }
-
+  /**
+	 * Presents text input on the UI by setting the infoText attribute
+	 * and playing a FadeTransition.
+	 * @author aniemesc
+	 * @param info - String value that gets presented
+	 */
   public void inform(String info) {
     infoText.setText(info);
     FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), infoText);
@@ -154,6 +187,13 @@ public class EditorScene extends Scene {
     fadeTransition.play();
   }
 
+  /**
+	 * Creates all necessary UI components for the option pane that
+	 * allows users to set general template parameters
+	 * 
+	 * @author aniemesc
+	 * @return VBox - main container of "Edit Map" option
+	 */
   private VBox createMapChooser() {
     VBox mapRoot = new VBox();
     mapRoot.setSpacing(10);
