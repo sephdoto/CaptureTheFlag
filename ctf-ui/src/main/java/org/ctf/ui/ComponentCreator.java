@@ -12,12 +12,29 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+/**
+ * Provides creator methods which can be used to generate UI components needed in
+ * different parts of the application.
+ * 
+ * @author aniemesc
+ */
 public class ComponentCreator {
 	EditorScene editorscene;
 	
+	/**
+	 * Sets the scene of the ComponentCreator.
+	 * @author aniemesc
+	 * @param editorScene - EditorScene object 
+	 */
 	public ComponentCreator(EditorScene editorScene) {
 		this.editorscene = editorScene;
 	}
+	/**
+	 * Generates a Window for submitting a map template in an editor scene.
+	 * 
+	 * @author aniemesc
+	 * @return StackPane for Submitting templates
+	 */
 	public StackPane createSubmitWindow() {
 		PopUpPane popUp = new PopUpPane(editorscene, 0.4, 0.4);
 		//root.setContent(new Button("Hi"));
@@ -50,6 +67,12 @@ public class ComponentCreator {
 		return popUp;
 	}
 	
+	/**
+	 * Genreates the Textfield requiered for the submitting window.
+	 * @author aniemesc
+	 * @param vBox - main container of the submitting window
+	 * @return Textfield that can be added to the main container
+	 */
 	private TextField createNameField(VBox vBox) {
 		TextField nameField = new TextField();
 		nameField.getStyleClass().add("custom-search-field");
@@ -64,6 +87,12 @@ public class ComponentCreator {
 		return nameField;
 	}
 	
+	/**
+	 * Generates the Text required for the submitting window.
+	 * @author aniemesc
+	 * @param vBox - main container of the submitting window
+	 * @return Text that can be added to the main container
+	 */
 	private Text createinfo(VBox vbox) {
 		Text info = new Text("");
 		info.getStyleClass().add("custom-info-label");
@@ -74,6 +103,15 @@ public class ComponentCreator {
 		return info;
 	}
 	
+	/**
+	 * Generates the Button which saves a template in an editor scene.
+	 * @author aniemesc
+	 * @param vBox - main container of the submitting window
+	 * @param popUp - submitting window
+	 * @param info - Text that provides saving information
+	 * @param nameField - TextField of the submitting window
+	 * @return Button used for saving templates
+	 */
 	private Button createSubmit(VBox vBox,PopUpPane popUp,Text info,TextField nameField) {
 		Button submit = new Button("Submit");
 		submit.getStyleClass().add("save-button");
@@ -94,7 +132,13 @@ public class ComponentCreator {
 		return submit;
 	}
 	
-	
+	/**
+	 * Generates the leave button for a submitting window.
+	 * @author aniemesc 
+	 * @param vBox - main container of the submitting window
+	 * @param popUp - submitting window
+	 * @return Button used for closing the submitting window
+	 */
 	private Button createLeave(VBox vBox,PopUpPane popUp) {
 		Button exit = new Button("Abort");
 		exit.getStyleClass().add("leave-button");
