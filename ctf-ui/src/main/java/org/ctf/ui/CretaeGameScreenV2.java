@@ -1,6 +1,10 @@
 package org.ctf.ui;
 
+import org.ctf.shared.client.ServerManager;
+import org.ctf.shared.client.lib.ServerDetails;
+import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.ui.customobjects.PopUpPane;
 
 import configs.ImageLoader;
@@ -37,10 +41,11 @@ public class CretaeGameScreenV2 extends Scene {
 	StackPane right;
 	TextField serverIPText;
 	TextField portText;
-	Text info;
+	String serverIP;
+	String port;
 	HBox sep;
 	PopUpPane pop;
-	Text inform = new Text();
+	ServerManager serverManager;
 	private ObjectProperty<Font> addHumanButtonTextFontSIze = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> addAiCOmboTextFontSIze = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> popUpLabel = new SimpleObjectProperty<Font>(Font.getDefault());
@@ -183,9 +188,6 @@ public class CretaeGameScreenV2 extends Scene {
 		            popUpLabel.set(Font.font(newWidth.doubleValue()/ 60));
 		            leaveButtonText.set(Font.font(newWidth.doubleValue()/ 80));
 		            aiPowerText.set(Font.font(newWidth.doubleValue()/ 50));
-
-		            
-		            
 		        }
 		    });
 	}
@@ -332,16 +334,20 @@ public class CretaeGameScreenV2 extends Scene {
 				informationmustBeEntered(serverIPText);
 			}
 			if(!portText.getText().isEmpty() && !serverIPText.getText().isEmpty() ) {
+				serverIP = serverIPText.getText();
+				port = portText.getText();
+				hsc.setPort(port);
+				hsc.setServerID(serverIP);
+				hsc.createGameSession();
 				this.createChooserPopup();
 			}
-			
-	        
-	        
 		});
 		 
 		return search;
 	}
 	
+	
+
 	private void informationmustBeEntered(TextField t) {
 		t.getStyleClass().add("custom-search-field2-mustEnter");
 		TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(0.05), t);
@@ -485,9 +491,6 @@ public class CretaeGameScreenV2 extends Scene {
 		return c;
 	}
 
-	
-	
-	
 	private StackPane createShowMapPane(String name) {
 		StackPane showMapBox = new StackPane();
 		showMapBox.getStyleClass().add("option-pane");
@@ -499,6 +502,29 @@ public class CretaeGameScreenV2 extends Scene {
 		GamePane gm = new GamePane(state);
 		showMapBox.getChildren().add(gm);
 		return showMapBox;
+	}
+	public String getServerIP() {
+		return serverIP;
+	}
+
+	public void setServerIP(String serverIP) {
+		this.serverIP = serverIP;
+	}
+
+	public String getPort() {
+		return port;
+	}
+
+	public void setPort(String port) {
+		this.port = port;
+	}
+
+	public ServerManager getServerManager() {
+		return serverManager;
+	}
+
+	public void setServerManager(ServerManager serverManager) {
+		this.serverManager = serverManager;
 	}
 }
 

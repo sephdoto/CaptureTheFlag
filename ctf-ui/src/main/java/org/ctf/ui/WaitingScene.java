@@ -69,6 +69,7 @@ public class WaitingScene extends Scene {
 	StackPane right;
 	Text text;
 	VBox testBox;
+	Label howManyTeams;
 	GamePane gm;
 	private  ObjectProperty<Color> sceneColorProperty = 
 		        new SimpleObjectProperty<>(Color.BLUE);
@@ -88,6 +89,13 @@ public class WaitingScene extends Scene {
 		createLayout();
 		 this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
 	       
+	}
+	
+	public void showTeamInformation() {
+		howManyTeams = new Label();
+		int maxteams = 2;     //Add other Methode here
+		
+		
 	}
 	
 	
@@ -226,8 +234,8 @@ public class WaitingScene extends Scene {
 		});
 		VBox labels = new VBox();
 		labels.setSpacing(30);
-		labels.getChildren().add(createInfoLabel("port" , "1234565656"));
-		labels.getChildren().add(createInfoLabel("Server-ID" , "1234"));
+		labels.getChildren().add(createInfoLabel("port" , hsc.getPort()));
+		labels.getChildren().add(createInfoLabel("Server-ID" , hsc.getServerID()));
 		labels.getChildren().add(createInfoLabel("Session-ID", "2323232"));
 		left.getChildren().add(labels);
 //		Image mp = new Image(getClass().getResourceAsStream("ct2.png"));
