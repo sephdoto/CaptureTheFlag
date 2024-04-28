@@ -138,13 +138,12 @@ public class EngineTools extends AI_Tools {
    * @author rsyed
    */
   public static int getNextEmptyTeamSlot(GameState gameState) {
-    int ret = 0;
     for (int i = 0; i < gameState.getTeams().length; i++) {
       if(gameState.getTeams()[i] == null){
-        ret = i;
+        return i;
       }
     }
-    return ret;
+    return -1;
   }
 
   /**

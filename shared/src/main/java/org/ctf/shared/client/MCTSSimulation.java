@@ -197,25 +197,24 @@ public class MCTSSimulation {
     /*  AI_Controller Controller3 = new AI_Controller(javaClient3.getCurrentState(), AI.MCTS);
     AI_Controller Controller4 = new AI_Controller(javaClient4.getCurrentState(), AI.MCTS);
     AI_Controller Controller5 = new AI_Controller(javaClient5.getCurrentState(), AI.MCTS); */
-    for (int i = 0; i < 50; i++) {
+    for (int i = 0; i < 50 && !javaClient.isGameOver(); i++) {
+      javaClient.pullData();
+      javaClient2.pullData();
+      Controller.update(javaClient.getCurrentState());
+      Controller2.update(javaClient2.getCurrentState());
       try {
         if (javaClient.isItMyTurn()) {
           System.out.println("it was Teams turn " + javaClient.getLastTeamTurn());
           javaClient.makeMove(Controller.getNextMove());
           System.out.println("client 1 made a move");
-          javaClient.pullData();
-          javaClient2.pullData();
-          Controller.update(javaClient.getCurrentState());
-          Controller2.update(javaClient2.getCurrentState());
         } else if (javaClient2.isItMyTurn()) {
           System.out.println("it was Teams turn " + javaClient2.getLastTeamTurn());
           javaClient2.makeMove(Controller2.getNextMove());
           System.out.println("client 2 made a move");
-          javaClient2.pullData();
-          javaClient.pullData();
-          Controller.update(javaClient.getCurrentState());
-          Controller2.update(javaClient2.getCurrentState());
-        } /*  else if (javaClient3.isItMyTurn()) {
+        } else {
+          System.out.println("nobodys turn??");
+        }
+        /*  else if (javaClient3.isItMyTurn()) {
             javaClient3.makeMove(Controller3.getNextMove());
             System.out.println("client 3 made a move");
             System.out.println("it was Teams turn " + javaClient3.getLastTeamTurn());

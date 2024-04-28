@@ -28,6 +28,7 @@ public class AI_Controller {
       return;
     this.ai = ai;
     this.gameState = gameState;
+//    normaliseGameState();
     this.active = true;
   }
   
@@ -37,6 +38,7 @@ public class AI_Controller {
       this.active = false;
       shutDown();
     }
+//    normaliseGameState();
   }
   
   public void shutDown() {
@@ -69,5 +71,10 @@ public class AI_Controller {
       default:
         return RandomAI.pickMoveComplex(gameState, new ReferenceMove(null, new int[] {0,0})).toMove();
     }
+  }
+  
+  private void normaliseGameState() {
+    for(int i=0; i<this.gameState.getTeams().length; i++)
+      this.gameState.getTeams()[i].setId(""+i);
   }
 }

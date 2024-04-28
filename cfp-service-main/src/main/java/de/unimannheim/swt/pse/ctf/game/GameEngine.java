@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Predicate;
@@ -87,8 +88,8 @@ public class GameEngine implements Game {
   @Override
   public GameState create(MapTemplate template) {
     this.copyOfTemplate = template; // Template Copy Box
-    this.integerToTeam = Collections.synchronizedMap(new HashMap<>());
-    this.teamToInteger = Collections.synchronizedMap(new HashMap<>());
+    this.integerToTeam = Collections.synchronizedMap(new LinkedHashMap<>());
+    this.teamToInteger = Collections.synchronizedMap(new LinkedHashMap<>());
     this.weDoneZo = false;
     gameState = new GameState();
     gameState.setTeams(new Team[template.getTeams()]);
@@ -223,12 +224,13 @@ public class GameEngine implements Game {
    */
   @Override
   public String[] getWinner() {
+    if(!isGameOver())
+      return new String[] {};
     ArrayList<String> winners = new ArrayList<String>();
     if (this.isGameOver()) {
-      for (Team team : this.gameState.getTeams()) {
-        if (team != null) {
-          winners.add(integerToTeam.get(Integer.parseInt(team.getId())));
-        }
+      for (int i = 0; i < gameState.getTeams().length; i++) {
+        if(gameState.getTeams()[i] != null)
+          winners.add(integerToTeam.get(i));
       }
     }
 
@@ -266,10 +268,11 @@ public class GameEngine implements Game {
   @Override
   public GameState getCurrentGameState() {
     GameState retGameState = EngineTools.deepCopyGameState(gameState);
-    if (gameState.getCurrentTeam() != -1)
-    retGameState.getTeams()[retGameState.getCurrentTeam()].setId(
+    if (retGameState.getCurrentTeam() != -1) {
+      retGameState.getTeams()[retGameState.getCurrentTeam()].setId(
         integerToTeam.get(retGameState.getCurrentTeam()));
-    return this.gameState;
+    }
+    return retGameState;
   }
 
   /**

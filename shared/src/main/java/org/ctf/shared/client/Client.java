@@ -68,7 +68,8 @@ public class Client implements GameClientInterface {
   public String teamID; // TeamID we get from the server for current team recognition
   public String teamNumber; // Is set when the server tells you what number it assigned you
   public String teamColor;
-
+  public int myTeam = -1;        //index of the team this client represents in teams array
+  
   // Block for alt game mode data
   public Date startDate;
   public Date endDate;
@@ -423,6 +424,7 @@ public class Client implements GameClientInterface {
     GameState gameState = new GameState();
     try {
       gameState = comm.getCurrentGameState(currentServer);
+      normaliseGameState(gameState);
     } catch (SessionNotFound e) {
       throw new SessionNotFound("Session isnt available for this request");
     } catch (UnknownError e) {
@@ -465,23 +467,33 @@ public class Client implements GameClientInterface {
   // **************************************************
 
   /**
-   * Refreshes {@link GameState} from the server and then checks if the GameStates currentTeam
-   * matches the one from any {@link TeamID} in the {@link Team} Array
+   * Checks if the {@link GameState}s currentTeam matches this.{@link myTeam}
    *
-   * @throws NumberFormatException if the server does not support proper ID return
    * @return true if its your turn, false if its not
-   * @author rsyed
+   * @author rsyed, sistumpf
    */
   protected boolean isItMyTurn() {
-    getStateFromServer();
-    int index = 0;
-    for (int i = 0; i < this.currentState.getTeams().length; i++) {
-      if (!this.currentState.getTeams()[i].getId().equals("" + i)) {
-        index = i;
-        this.currentState.getTeams()[i].setId("" + i);
-      }
+    if(this.myTeam >= 0)
+      return this.myTeam == this.currentState.getCurrentTeam();
+    return false;
+  }
+  
+  /**
+   * Iterates through the {@link GameState}s teams and replaces their IDs with their index.
+   * If an ID matches this clients name, it gets set as this clients team.
+   * 
+   * @author rsyed, sistumpf
+   */
+  protected void normaliseGameState(GameState gameState) {
+    for (int i = 0; i < gameState.getTeams().length; i++) {
+      if(gameState.getTeams()[i] == null)
+        continue;
+      if (!gameState.getTeams()[i].getId().equals("" + i)) {
+        if(gameState.getTeams()[i].getId().equals(this.requestedTeamName))
+          this.myTeam = i;
+        gameState.getTeams()[i].setId("" + i);
+        }
     }
-    return this.currentState.getCurrentTeam() == index;
   }
 
   /**
