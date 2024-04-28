@@ -1,6 +1,9 @@
 package org.ctf.shared.client;
 
 import com.google.gson.Gson;
+
+import org.ctf.shared.client.lib.ServerDetails;
+import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.state.data.map.MapTemplate;
 
@@ -13,13 +16,6 @@ public class AIPlayerSimulator {
     startPlayer2();
   }
 
-  public static void setGameID(String id) {
-    GameID = id;
-  }
-
-  public static String getGameID(){
-    return GameID;
-  }
 
   public static void startPlayer1() {
     String jsonPayload =
@@ -134,42 +130,35 @@ public class AIPlayerSimulator {
 
     Gson gson = new Gson();
     MapTemplate mapTemplate = gson.fromJson(jsonPayload, MapTemplate.class);
-    AIClient javaClient1 =
+    ServerManager server = new ServerManager(new CommLayer(), new ServerDetails("localhost", "8888") , mapTemplate);
+    server.createGame();
+    GameID = server.getGameSessionID();
+    System.out.println(GameID + " this is the session ID");
+/*     AIClient javaClient1 =
         AIClientStepBuilder.newBuilder()
             .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
             .AIPlayerSelector(AI.MCTS)
             .enableSaveGame(false)
-            .createGameMode(mapTemplate, "Seph1")
+            .gameData(server.getGameSessionID(), "Seph1")
             .build();
 
-    // javaClient1.startAutomation();
-    javaClient1.createGame(mapTemplate);
-    javaClient1.joinGame("Seph1");
-    //System.out.println("Session ID " + javaClient1.getSessionIDfromAI());
+            javaClient1.joinExistingGame("localhost", "8888", server.getGameSessionID(), "seph 1");
+            javaClient1.startGameController(); */
 
-    setGameID(javaClient1.getSessionIDfromAI());
-    System.out.println(getGameID() + " Is set");
+      /*       try {
+              Thread.sleep(15000);
+            } catch (InterruptedException e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+            }  */
+
+      
   }
 
   public static void startPlayer2() {
-    try {
-      Thread.sleep(2000);
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    AIClient javaClient2 =
-        AIClientStepBuilder.newBuilder()
-            .enableRestLayer(false)
-            .onLocalHost()
-            .onPort("8888")
-            .AIPlayerSelector(AI.MCTS)
-            .enableSaveGame(false)
-            .joinerGameMode(getGameID(), "Seph2")
-            .build();
-
-    javaClient2.startAutomation();
+    
+  
   }
 }

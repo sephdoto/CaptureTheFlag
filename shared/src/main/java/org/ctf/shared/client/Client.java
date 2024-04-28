@@ -14,7 +14,6 @@ import org.ctf.shared.client.service.CommLayerInterface;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
-import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.exceptions.ForbiddenMove;
 import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
@@ -68,8 +67,8 @@ public class Client implements GameClientInterface {
   public String teamID; // TeamID we get from the server for current team recognition
   public String teamNumber; // Is set when the server tells you what number it assigned you
   public String teamColor;
-  public int myTeam = -1;        //index of the team this client represents in teams array
-  
+  public int myTeam = -1; // index of the team this client represents in teams array
+
   // Block for alt game mode data
   public Date startDate;
   public Date endDate;
@@ -388,23 +387,25 @@ public class Client implements GameClientInterface {
    * @author rsyed
    */
   public void makeMoverCaller(String teamID, String teamSecret, Move move) {
-    try {
-      MoveRequest moveReq = new MoveRequest();
-      moveReq.setTeamId(teamID);
-      moveReq.setTeamSecret(teamSecret);
-      moveReq.setPieceId(move.getPieceId());
-      moveReq.setNewPosition(move.getNewPosition());
-      comm.makeMove(currentServer, moveReq);
-    } catch (SessionNotFound e) {
-      throw new SessionNotFound();
-    } catch (ForbiddenMove e) {
-      throw new ForbiddenMove();
-    } catch (InvalidMove e) {
-      throw new InvalidMove();
-    } catch (GameOver e) {
-      throw new GameOver();
-    } catch (UnknownError e) {
-      throw new UnknownError();
+    if (move != null) {
+      try {
+        MoveRequest moveReq = new MoveRequest();
+        moveReq.setTeamId(teamID);
+        moveReq.setTeamSecret(teamSecret);
+        moveReq.setPieceId(move.getPieceId());
+        moveReq.setNewPosition(move.getNewPosition());
+        comm.makeMove(currentServer, moveReq);
+      } catch (SessionNotFound e) {
+        throw new SessionNotFound();
+      } catch (ForbiddenMove e) {
+        throw new ForbiddenMove();
+      } catch (InvalidMove e) {
+        throw new InvalidMove();
+      } catch (GameOver e) {
+        throw new GameOver();
+      } catch (UnknownError e) {
+        throw new UnknownError();
+      }
     }
   }
 
@@ -473,26 +474,23 @@ public class Client implements GameClientInterface {
    * @author rsyed, sistumpf
    */
   protected boolean isItMyTurn() {
-    if(this.myTeam >= 0)
-      return this.myTeam == this.currentState.getCurrentTeam();
+    if (this.myTeam >= 0) return this.myTeam == this.currentState.getCurrentTeam();
     return false;
   }
-  
+
   /**
-   * Iterates through the {@link GameState}s teams and replaces their IDs with their index.
-   * If an ID matches this clients name, it gets set as this clients team.
-   * 
+   * Iterates through the {@link GameState}s teams and replaces their IDs with their index. If an ID
+   * matches this clients name, it gets set as this clients team.
+   *
    * @author rsyed, sistumpf
    */
   protected void normaliseGameState(GameState gameState) {
     for (int i = 0; i < gameState.getTeams().length; i++) {
-      if(gameState.getTeams()[i] == null)
-        continue;
+      if (gameState.getTeams()[i] == null) continue;
       if (!gameState.getTeams()[i].getId().equals("" + i)) {
-        if(gameState.getTeams()[i].getId().equals(this.requestedTeamName))
-          this.myTeam = i;
+        if (gameState.getTeams()[i].getId().equals(this.requestedTeamName)) this.myTeam = i;
         gameState.getTeams()[i].setId("" + i);
-        }
+      }
     }
   }
 
@@ -539,12 +537,12 @@ public class Client implements GameClientInterface {
     return lastTeamTurn;
   }
 
-   /**
+  /**
    * Method which returns how many teams have joined the session at present
    *
    * @author rsyed
    */
-  public int getCurrentNumberofTeams(){
+  public int getCurrentNumberofTeams() {
     getStateFromServer();
     int counter = 0;
     for (int i = 0; i < getCurrentState().getTeams().length; i++) {
@@ -642,7 +640,7 @@ public class Client implements GameClientInterface {
    *
    * @author rsyed
    */
-  public void setRefreshTime(long refreshtime){
+  public void setRefreshTime(long refreshtime) {
     this.refreshTime = refreshtime;
   }
 

@@ -90,11 +90,10 @@ public class AIClientStepBuilder {
     /**
      * Method to enable if the AI Game will be logged players
      *
-     * @param selector True for Enabling Save, False for disabled
+     * @param GameID  the game session ID
+     * @param teamName The requested Team name
      */
-    BuildStep createGameMode(MapTemplate mapTemplate, String teamName);
-
-    BuildStep joinerGameMode(String GameID, String teamName);
+    BuildStep gameData(String GameID, String teamName);
   }
 
   /** Build Step */
@@ -120,8 +119,6 @@ public class AIClientStepBuilder {
     private MapTemplate mapTemplate;
     private String teamName;
     private String gameSessionGiven;
-    private boolean joinerMode;
-    private boolean creatorMode;
 
     /**
      * Sets the underlying layer in use by the Client
@@ -201,32 +198,15 @@ public class AIClientStepBuilder {
     }
 
     @Override
-    public BuildStep createGameMode(MapTemplate mapTemplate, String teamName) {
-      this.mapTemplate = mapTemplate;
-      this.teamName = teamName;
-      this.creatorMode = true;
-      this.joinerMode = false;
-      return this;
-    }
-
-    @Override
-    public BuildStep joinerGameMode(String GameID, String teamName) {
+    public BuildStep gameData(String GameID, String teamName) {
       this.gameSessionGiven = GameID;
       this.teamName = teamName;
-      this.creatorMode = false;
-      this.joinerMode = true;
       return this;
     }
 
     @Override
     public AIClient build() {
-      AIClient client;
-      if (creatorMode) {
-        client = new AIClient(comm, host, port, enableSave, ai, mapTemplate, teamName);
-      } else { // (joinerMode) 
-        client = new AIClient(comm, host, port, enableSave, ai, gameSessionGiven, teamName);
-      } 
-      return client;
+      return new AIClient(comm, host, port, enableSave, ai, gameSessionGiven, teamName);
     }
   }
 }

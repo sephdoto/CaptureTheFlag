@@ -16,6 +16,7 @@ import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.client.lib.Analyzer;
 import org.ctf.shared.client.lib.SavedGame;
+import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.state.GameState;
@@ -242,7 +243,12 @@ public class ServerCommandTests {
     // Gson gson = new GsonBuilder().setPrettyPrinting().create();
     Gson gson = new Gson();
     MapTemplate test = gson.fromJson(jsonPayload, MapTemplate.class);
-    Client test1Client =
+    ServerManager server = new ServerManager(new CommLayer(), new ServerDetails("localhost", "8888"), test);
+    System.out.println(server.createGame());
+    System.out.println(server.getGameSessionID());
+    System.out.println(server.deleteGame());
+
+    /* Client test1Client =
         ClientStepBuilder.newBuilder()
             .enableRestLayer(false)
             .onLocalHost()
@@ -257,22 +263,22 @@ public class ServerCommandTests {
             .onLocalHost()
             .onPort("8888")
             .enableSaveGame(false)
-            .build();
+            .build(); */
     // test2Client.joinExistingGame("localhost", "8888", test1Client.currentGameSessionID, "Seph2");
     // test1Client.startGameController();
     // test2Client.startGameController();
     //  System.out.println(test1Client.currentTeamTurn);
     // test1Client.giveUp();
-    test1Client.getStateFromServer();
+    /* test1Client.getStateFromServer(); */
 
     //System.out.println(gson.toJson(test1Client.getCurrentState().getTeams().length));
-    int counter = 0;
+  /*   int counter = 0;
     for (int i = 0; i < test1Client.getCurrentState().getTeams().length; i++) {
       if (test1Client.getCurrentState().getTeams()[i] != null) {
         counter++;
       }
     }
-    System.out.println(counter);
+    System.out.println(counter); */
   }
 
   public static void joinTest() {
