@@ -1,6 +1,8 @@
 package org.ctf.shared.constants;
 
 import java.io.File;
+import java.io.Serializable;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
@@ -10,6 +12,8 @@ import java.util.ArrayList;
  * @author sistumpf
  */
 public class Constants {
+  //TODO: add "jar:" before all path strings. then everything should work, even if in a jar.
+  
   // package map, class JSON_Tools
   public static String mapTemplateFolder =
       Paths.get("").toAbsolutePath().toString().split("cfp14")[0]
@@ -35,12 +39,34 @@ public class Constants {
           + File.separator;
   
   /**
+   * This enum contains the different Sound Types and their locations in the project.
+   */
+  public enum SoundType {
+    MOVE("move"),
+    KILL("kill"), 
+    CAPTURE("capture"), 
+    SELECT("select"), 
+    DESELECT("deselect"), 
+    MISC("misc");
+    
+    private final String location;
+    
+    SoundType(final String location){
+      this.location = location + File.separator;
+    }
+    
+    public String getLocation() {
+      return this.location;
+    }
+  }
+  
+  /**
    * This Enum contains all songs and their locations.
    * Songs in easterEggs wont be returned by getRandom.
    * 
    * @author sistumpf
    */
-  public static enum Music {
+  public enum Music {
     ELEVATOR("theelevatorbossanova.mp3"), 
     THE_CLONES_THEME("TheClonesTheme-Lofi.mp3"),    //https://www.youtube.com/watch?v=8jXK8fVR8u0
     VODE_AN("VodeAn-Lofi.mp3"),                     //https://www.youtube.com/watch?v=RTv0DGRCyqY

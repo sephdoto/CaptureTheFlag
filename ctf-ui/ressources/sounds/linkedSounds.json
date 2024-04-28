@@ -1,0 +1,38 @@
+[
+  {
+    "pieceName": "Default",
+    "location": "capture\\Default.mp3",
+    "type": "CAPTURE",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "location": "deselect\\Default.mp3",
+    "type": "DESELECT",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "location": "select\\Default.mp3",
+    "type": "SELECT",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "location": "kill\\Default.mp3",
+    "type": "KILL",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "location": "move\\Default.mp3",
+    "type": "MOVE",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "location": "misc\\Default.mp3",
+    "type": "MISC",
+    "custom": false
+  }
+]
