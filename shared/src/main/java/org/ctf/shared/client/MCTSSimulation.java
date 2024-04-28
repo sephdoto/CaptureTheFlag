@@ -15,7 +15,7 @@ public class MCTSSimulation {
     String jsonPayload =
         """
         {
-            "gridSize": [10, 10],
+            "gridSize": [20, 20],
             "teams": 2,
             "flags": 1,
             "blocks": 5,
@@ -117,59 +117,55 @@ public class MCTSSimulation {
               }
             ],
             "placement": "symmetrical",
-            "totalTimeLimitInSeconds": 5,
+            "totalTimeLimitInSeconds": -1,
             "moveTimeLimitInSeconds": -1
           }
         """;
 
     Gson gson = new Gson();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
-    AIClient javaClient =
+    Client javaClient =
+        ClientStepBuilder.newBuilder()
+            .enableRestLayer(false)
+            .onLocalHost()
+            .onPort("8888")
+            .enableSaveGame(false)
+            .build();
+
+    Client javaClient2 =
+        ClientStepBuilder.newBuilder()
+            .enableRestLayer(false)
+            .onLocalHost()
+            .onPort("8888")
+            .enableSaveGame(false)
+            .build();
+    /*        AIClient javaClient3 =
+    AIClientStepBuilder.newBuilder()
+        .enableRestLayer(false)
+        .onLocalHost()
+        .onPort("8888")
+        .AIPlayerSelector(AI.MCTS)
+        .enableSaveGame(false)
+        .createGameMode(null, "Seph3")
+        .build();
+        AIClient javaClient4 =
         AIClientStepBuilder.newBuilder()
             .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
             .AIPlayerSelector(AI.MCTS)
             .enableSaveGame(false)
-            .createGameMode(null, "Seph1")
+            .createGameMode(null, "Seph4")
             .build();
-           
-            AIClient javaClient2 =
+            AIClient javaClient5 =
             AIClientStepBuilder.newBuilder()
                 .enableRestLayer(false)
                 .onLocalHost()
                 .onPort("8888")
                 .AIPlayerSelector(AI.MCTS)
                 .enableSaveGame(false)
-                .createGameMode(null, "Seph2")
-                .build();
-         /*        AIClient javaClient3 =
-                AIClientStepBuilder.newBuilder()
-                    .enableRestLayer(false)
-                    .onLocalHost()
-                    .onPort("8888")
-                    .AIPlayerSelector(AI.MCTS)
-                    .enableSaveGame(false)
-                    .createGameMode(null, "Seph3")
-                    .build();
-                    AIClient javaClient4 =
-                    AIClientStepBuilder.newBuilder()
-                        .enableRestLayer(false)
-                        .onLocalHost()
-                        .onPort("8888")
-                        .AIPlayerSelector(AI.MCTS)
-                        .enableSaveGame(false)
-                        .createGameMode(null, "Seph4")
-                        .build();
-                        AIClient javaClient5 =
-                        AIClientStepBuilder.newBuilder()
-                            .enableRestLayer(false)
-                            .onLocalHost()
-                            .onPort("8888")
-                            .AIPlayerSelector(AI.MCTS)
-                            .enableSaveGame(false)
-                            .createGameMode(null, "Seph5")
-                            .build(); */
+                .createGameMode(null, "Seph5")
+                .build(); */
     javaClient.createGame(template);
     javaClient.joinGame("Team 1");
     javaClient2.joinExistingGame(
@@ -181,14 +177,16 @@ public class MCTSSimulation {
     javaClient5.joinExistingGame(
         "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 5"); */
     Analyzer newAna = new Analyzer();
-    javaClient.getStateFromServer();
+    /*  javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
-    /* javaClient3.getStateFromServer();
+    javaClient3.getStateFromServer();
     javaClient4.getStateFromServer();
-    javaClient5.getStateFromServer(); */
+    javaClient5.getStateFromServer();
     javaClient.getSessionFromServer();
-    javaClient2.getSessionFromServer();
- /*    javaClient3.getSessionFromServer();
+    javaClient2.getSessionFromServer();*/
+    javaClient.pullData();
+    javaClient2.pullData();
+    /*    javaClient3.getSessionFromServer();
     javaClient4.getSessionFromServer();
     javaClient5.getSessionFromServer(); */
     System.out.println(gson.toJson(javaClient.getCurrentState()));
@@ -196,7 +194,7 @@ public class MCTSSimulation {
     newAna.addGameState(javaClient.getCurrentState());
     AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS);
     AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS);
-   /*  AI_Controller Controller3 = new AI_Controller(javaClient3.getCurrentState(), AI.MCTS);
+    /*  AI_Controller Controller3 = new AI_Controller(javaClient3.getCurrentState(), AI.MCTS);
     AI_Controller Controller4 = new AI_Controller(javaClient4.getCurrentState(), AI.MCTS);
     AI_Controller Controller5 = new AI_Controller(javaClient5.getCurrentState(), AI.MCTS); */
     for (int i = 0; i < 50; i++) {
@@ -205,29 +203,36 @@ public class MCTSSimulation {
           System.out.println("it was Teams turn " + javaClient.getLastTeamTurn());
           javaClient.makeMove(Controller.getNextMove());
           System.out.println("client 1 made a move");
-
+          javaClient.pullData();
+          javaClient2.pullData();
+          Controller.update(javaClient.getCurrentState());
+          Controller2.update(javaClient2.getCurrentState());
         } else if (javaClient2.isItMyTurn()) {
           System.out.println("it was Teams turn " + javaClient2.getLastTeamTurn());
           javaClient2.makeMove(Controller2.getNextMove());
           System.out.println("client 2 made a move");
-        }/*  else if (javaClient3.isItMyTurn()) {
-          javaClient3.makeMove(Controller3.getNextMove());
-          System.out.println("client 3 made a move");
-          System.out.println("it was Teams turn " + javaClient3.getLastTeamTurn());
-        } else if (javaClient4.isItMyTurn()) {
-          javaClient4.makeMove(Controller4.getNextMove());
-          System.out.println("client 4 made a move");
-          System.out.println("it was Teams turn " + javaClient3.getLastTeamTurn());
-        } else if (javaClient5.isItMyTurn()) {
-          javaClient5.makeMove(Controller5.getNextMove());
-          System.out.println("client 5 made a move");
-          System.out.println("it was Teams turn " + javaClient3.getLastTeamTurn());
-        } */
-        javaClient.getStateFromServer();
+          javaClient2.pullData();
+          javaClient.pullData();
+          Controller.update(javaClient.getCurrentState());
+          Controller2.update(javaClient2.getCurrentState());
+        } /*  else if (javaClient3.isItMyTurn()) {
+            javaClient3.makeMove(Controller3.getNextMove());
+            System.out.println("client 3 made a move");
+            System.out.println("it was Teams turn " + javaClient3.getLastTeamTurn());
+          } else if (javaClient4.isItMyTurn()) {
+            javaClient4.makeMove(Controller4.getNextMove());
+            System.out.println("client 4 made a move");
+            System.out.println("it was Teams turn " + javaClient3.getLastTeamTurn());
+          } else if (javaClient5.isItMyTurn()) {
+            javaClient5.makeMove(Controller5.getNextMove());
+            System.out.println("client 5 made a move");
+            System.out.println("it was Teams turn " + javaClient3.getLastTeamTurn());
+          } */
+        /*  javaClient.getStateFromServer();
         newAna.addMove(javaClient.getLastMove());
         Controller.update(javaClient.getCurrentState());
         javaClient2.getStateFromServer();
-        Controller2.update(javaClient2.getCurrentState());
+        Controller2.update(javaClient2.getCurrentState()); */
         /* javaClient3.getStateFromServer();
         Controller3.update(javaClient3.getCurrentState());
         javaClient4.getStateFromServer();
@@ -238,7 +243,7 @@ public class MCTSSimulation {
           System.out.println(newAna.writeOut());
           break;
         }
-       if (javaClient.getCurrentTeamTurn() == -1) {
+        if (javaClient.getCurrentTeamTurn() == -1) {
           javaClient.getStateFromServer();
           System.out.println(gson.toJson(javaClient.getCurrentState()));
           javaClient.getSessionFromServer();
@@ -251,7 +256,7 @@ public class MCTSSimulation {
           System.out.println(gson.toJson(javaClient2.getWinners()));
           newAna.writeOut();
           break;
-        } 
+        }
         // System.out.println(gson.toJson(javaClient.getGrid()));
       } catch (NoMovesLeftException e) {
         e.printStackTrace();
