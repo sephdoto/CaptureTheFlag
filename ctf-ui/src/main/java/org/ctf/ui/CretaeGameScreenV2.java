@@ -219,6 +219,28 @@ public class CretaeGameScreenV2 extends Scene {
 		return searchField;
 	}
 	
+	private void fitTextfield(TextField tf, Label lbl, double max ) {
+	     double defaultFontSize = 32;
+	     Font defaultFont = Font.font(defaultFontSize);
+        lbl.setFont(defaultFont);
+        lbl.textProperty().addListener((observable, oldValue, newValue) -> {
+            
+            Text tmpText = new Text(newValue);
+            tmpText.setFont(defaultFont);
+
+            double textWidth = tmpText.getLayoutBounds().getWidth();
+            if (textWidth <= max) {
+                lbl.setFont(defaultFont);
+            } else {
+               
+                double newFontSize = defaultFontSize * max / textWidth;
+                lbl.setFont(Font.font(defaultFont.getFamily(), newFontSize));
+            }
+
+        });
+        lbl.textProperty().bind(tf.textProperty());
+	}
+	
 	private  ComboBox<String> createChoiceBox(VBox parent) {
 		ComboBox<String> c = new ComboBox<String>();
 		c.getStyleClass().add("combo-box");
@@ -230,7 +252,7 @@ public class CretaeGameScreenV2 extends Scene {
 	                    setText(null);
 	                } else {
 	                    setText(item);
-	                    setAlignment(javafx.geometry.Pos.CENTER); // Zentriert den Text in der Zelle
+	                    setAlignment(javafx.geometry.Pos.CENTER); 
 	                }
 	            }
 	        });
@@ -242,7 +264,7 @@ public class CretaeGameScreenV2 extends Scene {
 			            setText(null);
 			        } else {
 			            setText(item);
-			            setAlignment(javafx.geometry.Pos.CENTER); // Zentriert den Text in der Zelle
+			            setAlignment(javafx.geometry.Pos.CENTER); 
 			        }
 			    }
 			});

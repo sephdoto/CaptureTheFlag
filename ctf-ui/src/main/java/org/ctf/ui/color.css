@@ -13,7 +13,7 @@
 .des-label2 {
     -fx-text-fill: rgba(128, 128, 128, 0.9);
     -fx-font-family: 'Eras Medium Light';
-    -fx-font-size: 24px;
+    
 }
 .number-label {
      -fx-font-family: 'Courier New', monospace; 
@@ -22,12 +22,23 @@
     -fx-padding: 5px 10px;
     
 }
+.button25{
+	-fx-background-color: rgb(25,25,25); 
+    -fx-text-fill: white; 
+    -fx-font-size: 16px;
+    -fx-font-weight: bold; 
+    -fx-border-color: white; 
+     -fx-background-radius: 20px; 
+    -fx-border-radius: 20px; 
+     -fx-border-width: 2px;   
+}
+
 .info-vbox {
-    -fx-background-color: #000000; /* Schwarzer Hintergrund */
-    -fx-padding: 5px; /* Innenabstand */
-    -fx-border-color: #FFD700; /* Goldener Rahmen */
-    -fx-border-width: 2px; /* Breite des Rahmens */
-    -fx-border-radius: 5px; /* Abrundung der Ecken */
+    -fx-background-color: #000000; 
+    -fx-padding: 5px; 
+    -fx-border-color: #FFD700;
+    -fx-border-width: 2px; 
+    -fx-border-radius: 5px; 
 }
 
 

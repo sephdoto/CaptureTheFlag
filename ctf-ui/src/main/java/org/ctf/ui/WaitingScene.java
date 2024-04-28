@@ -8,6 +8,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -15,9 +17,15 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -48,10 +56,17 @@ public class WaitingScene extends Scene {
 	GamePane gm;
 	private  ObjectProperty<Color> sceneColorProperty = 
 		        new SimpleObjectProperty<>(Color.BLUE);
+	private ObjectProperty<Font> waitigFontSize = new SimpleObjectProperty<Font>(Font.getDefault());
+	private ObjectProperty<Font> serverInfoHeaderFontSize = new SimpleObjectProperty<Font>(Font.getDefault());
+	private ObjectProperty<Font> serverInfoCOntentFontSize = new SimpleObjectProperty<Font>(Font.getDefault());
+	private ObjectProperty<Font> addHumanButtonTextFontSIze = new SimpleObjectProperty<Font>(Font.getDefault());
+	private ObjectProperty<Font> addAiCOmboTextFontSIze = new SimpleObjectProperty<Font>(Font.getDefault());
+	
 
 	public WaitingScene(HomeSceneController hsc, double width, double height) {
 		super(new StackPane(), width, height);
 		this.hsc = hsc;
+		manageFontSizes();
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
 		this.root = (StackPane) this.getRoot();
 		createLayout();
@@ -85,13 +100,77 @@ public class WaitingScene extends Scene {
           contextMenu.show(this.getWindow(),d,e);
 	}
 	
-	private void createAddButtons() {
+	private VBox createAddButtons() {
+		VBox v = new VBox();
+		v.heightProperty().addListener((obs, oldVal, newVal) -> {
+			double spacing = newVal.doubleValue() * 0.04;
+			v.setSpacing(spacing);
+			double padding = newVal.doubleValue() * 0.1;
+			v.setPadding(new Insets(padding, 0, 0, 0));
+		});
+		//v.setStyle("-fx-background-color:red");
+		v.prefWidthProperty().bind(this.widthProperty().multiply(0.2));
+		Button k = createAddHumanButton("add Human-Player","user-286.png");
+		Button b = createAddAIButton("add Bot","robot1.png");
+		b.prefHeightProperty().bind(k.heightProperty());
+		v.getChildren().add(b);
+		v.getChildren().add(k);
+
 		
+		
+		return v;
 	}
 	
-	private void createAddHumanButton() {
-		
+	private Button createAddHumanButton(String text, String src) {
+		Button button = new Button(text);
+		button.getStyleClass().add("button25");
+		button.fontProperty().bind(addHumanButtonTextFontSIze);
+		Image mp = new Image(getClass().getResourceAsStream(src));
+		ImageView vw = new ImageView(mp);
+		button.setGraphic(vw);
+        button.setContentDisplay(ContentDisplay.RIGHT);
+        vw.fitWidthProperty().bind(button.widthProperty().divide(5));
+        vw.setPreserveRatio(true);
+        button.setMaxWidth(Double.MAX_VALUE); 
+        return button;
 	}
+	
+	private Button createAddAIButton(String text, String src) {
+		Button button = new Button(text);
+		button.getStyleClass().add("button25");
+		button.fontProperty().bind(addHumanButtonTextFontSIze);
+		Image mp = new Image(getClass().getResourceAsStream(src));
+		ImageView vw = new ImageView(mp);
+		button.setGraphic(vw);
+        button.setContentDisplay(ContentDisplay.RIGHT);
+        vw.fitWidthProperty().bind(button.widthProperty().divide(8));
+        vw.setPreserveRatio(true);
+        button.setMaxWidth(Double.MAX_VALUE); 
+        return button;
+	}
+	
+	
+	
+	private  ComboBox<String> createChoiceBox(VBox parent) {
+		ComboBox<String> c = new ComboBox<String>();
+		c.getStyleClass().add("combo-box");
+		
+		String[] ais = {"MCTS V1", "MCTS V2"};
+		c.getItems().addAll(ais);
+		 c.setPromptText("Standardtext");
+	        // Listener hinzufügen, um Änderungen zu verfolgen
+	        c.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+	            // Standardtext setzen, wenn ein Element ausgewählt wird
+	            c.setPromptText("Standardtext");
+	        });
+		c.prefWidthProperty().bind(parent.widthProperty().multiply(0.8));
+		c.prefHeightProperty().bind(parent.heightProperty().multiply(0.1));
+		c.setOnAction(event -> {
+		});
+		return c;
+	}
+	
+	
 	
 	
 	private void createLayout(){
@@ -99,7 +178,7 @@ public class WaitingScene extends Scene {
 		main.setAlignment(Pos.CENTER);
 		main.setSpacing(main.heightProperty().doubleValue() * 0.09);
 		main.heightProperty().addListener((obs, oldVal, newVal) -> {
-			double spacing = newVal.doubleValue() * 0.2;
+			double spacing = newVal.doubleValue() * 0.1;
 			main.setSpacing(spacing);
 		});
 		main.prefWidthProperty().bind(this.widthProperty());
@@ -114,10 +193,8 @@ public class WaitingScene extends Scene {
 		middleBox.getChildren().add(createShowMapPane("p2"));
 		middleBox.setAlignment(Pos.TOP_CENTER);
 		//middleBox.setStyle("-fx-background-color:red");
-		
-		middleBox.prefHeightProperty().bind(this.heightProperty());
 		main.getChildren().add(middleBox);
-		main.getChildren().add(createLeft());
+		main.getChildren().add(createAddButtons());
 		root.setStyle("-fx-background-color:black");
 		root.getChildren().add(main);
 		
@@ -161,6 +238,7 @@ public class WaitingScene extends Scene {
 		    timeline.play();
 		    VBox layout = new VBox();
 		    layout.prefWidthProperty().bind(this.widthProperty().multiply(0.17));
+		    status.fontProperty().bind(waitigFontSize);
 		    //layout.setStyle("-fx-background-color: blue");
 		    layout.getChildren().addAll(status);
 		   
@@ -176,35 +254,45 @@ public class WaitingScene extends Scene {
 		
 	}
 	
+	private void manageFontSizes() {
+		 widthProperty().addListener(new ChangeListener<Number>()
+		    {
+		        public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth, Number newWidth)
+		        {
+		            waitigFontSize.set(Font.font(newWidth.doubleValue() / 60));
+		            serverInfoHeaderFontSize.set(Font.font(newWidth.doubleValue()/ 100));
+		            serverInfoCOntentFontSize.set(Font.font(newWidth.doubleValue()/ 65));
+		            addHumanButtonTextFontSIze.set(Font.font(newWidth.doubleValue()/ 70));
+		            addAiCOmboTextFontSIze.set(Font.font(newWidth.doubleValue()/ 60));
+		            
+		        }
+		    });
+	}
+	
 	
 	
 	private VBox createInfoLabel(String header, String content) {
 		VBox labelBox = new VBox();
 		labelBox.getStyleClass().add("info-vbox");
 		Label headerLabel = new Label(header);
+		headerLabel.fontProperty().bind(serverInfoHeaderFontSize);
 		headerLabel.getStyleClass().add("des-label");
 		Label numberLabel = new Label(content);
 		numberLabel.getStyleClass().add("number-label");
+		numberLabel.fontProperty().bind(serverInfoCOntentFontSize);
 		labelBox.getChildren().addAll(headerLabel,numberLabel);
 		return labelBox;
 		
 	}
 	
 	
+	
+	
 	private ImageView createHeader() {
 		Image mp = new Image(getClass().getResourceAsStream("multiplayerlogo.png"));
 		ImageView mpv = new ImageView(mp);
-		mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.8));
+		mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.5));
 		mpv.setPreserveRatio(true);
-		root.widthProperty().addListener(e -> {
-			if (root.getWidth() > 1000) {
-				mpv.fitWidthProperty().unbind();
-				mpv.setFitWidth(800);
-			} else if (root.getWidth() <= 1000) {
-				mpv.fitWidthProperty().unbind();
-				mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.8));
-			}
-		});
 		return mpv;
 	}
 	
