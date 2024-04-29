@@ -24,9 +24,9 @@ public class AI_Controller {
   boolean active;
   
   public AI_Controller(GameState gameState, AI ai) {
+    this.ai = ai;
     if(gameState.getCurrentTeam() < 0)
       return;
-    this.ai = ai;
     this.gameState = gameState;
 //    normaliseGameState();
     this.active = true;
@@ -37,6 +37,8 @@ public class AI_Controller {
     if(gameState.getCurrentTeam() < 0) {
       this.active = false;
       shutDown();
+    } else {
+      this.active = true;
     }
 //    normaliseGameState();
   }
