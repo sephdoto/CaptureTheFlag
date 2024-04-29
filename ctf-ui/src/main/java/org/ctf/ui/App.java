@@ -18,19 +18,23 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.ctf.ui.controllers.MusicPlayer;
 
 /**
  * @author mkrakows
  * @author rsyed (Bug fixer) startpoint for the Gui Application Opens HomeScreen
  * @author aniemesc
+ * @author sistumpf adding background music and sounds
  */
 public class App extends Application {
 	static Stage mainStage;
 	static Scene startScene;
+	static MusicPlayer backgroundMusic;
 	HomeSceneController ssc = new HomeSceneController();
 	FadeTransition startTransition;
 
@@ -49,6 +53,7 @@ public class App extends Application {
 		});
 		stage.setTitle("Capture The Flag Team 14");
 		stage.setScene(lockscreen);
+		backgroundMusic = new MusicPlayer();
 		stage.show();
 	}
 
