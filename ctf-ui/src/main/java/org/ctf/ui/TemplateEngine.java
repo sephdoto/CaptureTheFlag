@@ -337,4 +337,7 @@ public class TemplateEngine {
 			}		
 		return new ArrayList<String>();
 	}
+	public Movement getTmpMovement() {
+		return this.tmpMovement;
+	}
 }

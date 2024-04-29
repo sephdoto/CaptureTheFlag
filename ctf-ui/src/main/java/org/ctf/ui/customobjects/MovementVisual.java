@@ -1,5 +1,9 @@
 package org.ctf.ui.customobjects;
 
+import java.util.function.Consumer;
+
+import org.ctf.ui.TemplateEngine;
+
 import javafx.geometry.Pos;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -9,8 +13,11 @@ import javafx.scene.shape.Circle;
 
 public class MovementVisual extends GridPane {
 	Circle[][] circles = new Circle[11][11];
-	public MovementVisual(VBox root) {
+	TemplateEngine engine;
+
+	public MovementVisual(VBox root, TemplateEngine engine) {
 		super();
+		this.engine = engine;
 		StackPane.setAlignment(this, Pos.CENTER);
 		for (int i = 0; i < 11; i++) {
 			for (int j = 0; j < 11; j++) {
@@ -21,22 +28,93 @@ public class MovementVisual extends GridPane {
 				pane.prefHeightProperty().bind(root.heightProperty().divide(11));
 				this.add(pane, i, j);
 				Circle c = new Circle();
-				c.setFill(Color.BLACK);
+				//c.setFill(Color.BLACK);
+				c.getStyleClass().add("move-circle");
 				c.setOpacity(0);
-				c.radiusProperty().bind(pane.widthProperty().multiply(0.35));
+				c.radiusProperty().bind(pane.widthProperty().multiply(0.3));
 				pane.getChildren().add(c);
 				circles[j][i] = c;
-				if(i==5&&j==5) {
-					c.setFill(Color.RED);
+				if (i == 5 && j == 5) {
+					c.setStyle("-fx-fill: red;");
 					c.setOpacity(1);
 
 				}
-				
+
 			}
 		}
 	}
-	
-	public void updateMovementOptions(String event) {
-		
+
+	public void updateMovementOptions(String direc) {
+
+		switch (direc) {
+		case "Left":
+			Consumer<Integer[]> changeLeft = (arr) -> {
+				circles[5][5+(5-arr[0])].setOpacity((arr[1]==0)?0:0.4);
+			};
+			handle(engine.getTmpMovement().getDirections().getLeft(),changeLeft);
+			break;
+		case "Right":
+			Consumer<Integer[]> changeRight = (arr) -> {
+				circles[5][arr[0]].setOpacity((arr[1]==0)?0:0.4);
+			};
+			handle(engine.getTmpMovement().getDirections().getRight(),changeRight);
+			break;
+		case "Up":
+			Consumer<Integer[]> changeUp = (arr) -> {
+				circles[5+(5-arr[0])][5].setOpacity((arr[1]==0)?0:0.4);
+			};
+			handle(engine.getTmpMovement().getDirections().getUp(),changeUp);
+			break;
+		case "Down":
+			Consumer<Integer[]> changeDown = (arr) -> {
+				circles[arr[0]][5].setOpacity((arr[1]==0)?0:0.4);
+			};
+			handle(engine.getTmpMovement().getDirections().getDown(),changeDown);
+			break;
+		case "Up-Left":
+			Consumer<Integer[]> changeUpLeft = (arr) -> {
+				circles[5+(5-arr[0])][5+(5-arr[0])].setOpacity((arr[1]==0)?0:0.4);
+			};
+			handle(engine.getTmpMovement().getDirections().getUpLeft(),changeUpLeft);
+			break;
+		case "Up-Right":
+			Consumer<Integer[]> changeUpRight = (arr) -> {
+				circles[5+(5-arr[0])][arr[0]].setOpacity((arr[1]==0)?0:0.4);
+			};
+			handle(engine.getTmpMovement().getDirections().getUpRight(),changeUpRight);
+			break;
+		case "Down-Left":
+			Consumer<Integer[]> changeDownLeft = (arr) -> {
+				circles[arr[0]][5+(5-arr[0])].setOpacity((arr[1]==0)?0:0.4);
+			};
+			handle(engine.getTmpMovement().getDirections().getDownLeft(),changeDownLeft);
+			break;
+		case "Down-Right":
+			Consumer<Integer[]> changeDownRight = (arr) -> {
+				circles[arr[0]][arr[0]].setOpacity((arr[1]==0)?0:0.4);
+			};
+			handle(engine.getTmpMovement().getDirections().getDownRight(),changeDownRight);
+			break;
+		default:
+			System.out.println("Unknown");
+			break;
+		}
+	}
+
+	private void handle(int till, Consumer<Integer[]> change) {
+		if (6 + till > circles.length) {
+			return;
+		}
+		for (int i = 6; i < circles.length; i++) {
+			Integer[] arr = {i,0};
+			change.accept(arr);
+			//circles[i][i].setOpacity(0);
+		}
+		for (int i = 6; i < 6 + till; i++) {
+			Integer[] arr = {i,1};
+			change.accept(arr);
+			//circles[i][i].setOpacity(1);
+
+		}
 	}
 }

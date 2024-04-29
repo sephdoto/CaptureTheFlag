@@ -51,6 +51,7 @@ public class EditorScene extends Scene {
 	boolean boxchange = false;
 	MediaPlayer mediaPlayer;
 	VBox directionsContainer;
+	MovementVisual movementVisual;
 
 	/**
 	 * Starts the initialization process of the scene, generates different menu
@@ -306,6 +307,7 @@ public class EditorScene extends Scene {
 		ComboBox<String> directionsBox = createDirectionsBox(customRoot, valueSpinner);
 		valueSpinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
 			engine.handleDirectionValue(directionsBox, newValue);
+			movementVisual.updateMovementOptions(directionsBox.getValue());
 		});
 		controlgrid.add(directionsBox, 3, 1);
 		controlgrid.add(valueSpinner, 3, 2);
@@ -375,16 +377,20 @@ public class EditorScene extends Scene {
 			leftPane.getChildren().clear();
 			leftPane.getChildren().add(options[0]);
 			mb.setText("Edit Map");
+			updateVisualRoot();
 		});
 		figureMenuItem.setOnAction(event -> {
 			leftPane.getChildren().clear();
 			leftPane.getChildren().add(options[1]);
 			mb.setText("Add Pieces");
+			updateVisualRoot();
 		});
 		configMenuItem.setOnAction(event -> {
 			leftPane.getChildren().clear();
 			leftPane.getChildren().add(options[2]);
 			mb.setText("Costum Pieces");
+			visualRoot.getChildren().clear();
+			visualRoot.getChildren().add(directionsContainer);
 		});
 		return mb;
 	}
@@ -605,19 +611,19 @@ public class EditorScene extends Scene {
 	 * @author rsyed: Bug fixes
 	 */
 	private void updateVisualRoot() {
-//		MapPreview mp = new MapPreview(engine.tmpTemplate);
-//		visualRoot.getChildren().clear();
-//		try {
-//			visualRoot.getChildren().add(new GamePane(mp.getGameState()));
-//		} catch (Accepted e) {
-//			e.getMessage();
-//		}
+		MapPreview mp = new MapPreview(engine.tmpTemplate);
+		visualRoot.getChildren().clear();
+		try {
+			visualRoot.getChildren().add(new GamePane(mp.getGameState()));
+		} catch (Accepted e) {
+			e.getMessage();
+		}
 		
 //	  GridPane stack = new GridPane();
 //	  Button but = new Button("hi");
 //	  StackPane.setAlignment(but, Pos.CENTER);
 //	  stack.getChildren().add(but);
-		visualRoot.getChildren().add(directionsContainer);
+		//visualRoot.getChildren().add(directionsContainer);
 	}
 	
 	private void createDirectionsVisual() {
@@ -625,7 +631,8 @@ public class EditorScene extends Scene {
 		directionsContainer.maxWidthProperty().bind(visualRoot.widthProperty().multiply(0.75));
 		directionsContainer.maxHeightProperty().bind(visualRoot.widthProperty().multiply(0.75));
 		StackPane.setAlignment(directionsContainer, Pos.CENTER);
-		directionsContainer.getChildren().add(new MovementVisual(directionsContainer));
+		movementVisual = new MovementVisual(directionsContainer, engine);
+		directionsContainer.getChildren().add(movementVisual);
 		
 	}
 	
