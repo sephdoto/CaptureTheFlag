@@ -218,6 +218,7 @@ public class GameSessionController {
     Move move = new Move();
     move.setPieceId(moveRequest.getPieceId());
     move.setNewPosition(moveRequest.getNewPosition());
+    move.setTeamId(moveRequest.getTeamId());
 
     game.makeMove(move);
   }
