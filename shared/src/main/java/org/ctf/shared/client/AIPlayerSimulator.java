@@ -124,7 +124,7 @@ public class AIPlayerSimulator {
             ],
             "placement": "symmetrical",
             "totalTimeLimitInSeconds": -1,
-            "moveTimeLimitInSeconds": -1
+            "moveTimeLimitInSeconds": 5
           }
         """;
 

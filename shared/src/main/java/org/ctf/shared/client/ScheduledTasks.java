@@ -128,7 +128,7 @@ public class ScheduledTasks {
                     ],
                     "placement": "symmetrical",
                     "totalTimeLimitInSeconds": -1,
-                    "moveTimeLimitInSeconds": -1
+                    "moveTimeLimitInSeconds": 5
                   }
                 """;
             MapTemplate mapTemplate = gson.fromJson(jsonPayload, MapTemplate.class);
@@ -192,19 +192,24 @@ public class ScheduledTasks {
         () -> {
           try {
             System.out.println("running playtask 1");
-            AI_Controller Controller1 = new AI_Controller(client1.getCurrentState(), AI.MCTS);
+            int thinkingTime = 10;
+            if (client1.moveTimeLimitedGameTrigger) {
+              thinkingTime = client1.getRemainingMoveTimeInSeconds() - 1;
+              System.out.println("We had " +thinkingTime + " to think");
+            }
+            AI_Controller controller = new AI_Controller(client1.getCurrentState(), client1.selectedAI, thinkingTime);
             client1.pullData();
-            Controller1.update(client1.getCurrentState());
+            controller.update(client1.getCurrentState());
             /*       client2.pullData();
             Controller2.update(client2.getCurrentState()); */
             if (client1.isItMyTurn()) {
-              client1.makeMove(Controller1.getNextMove());
+              client1.makeMove(controller.getNextMove());
             }
             /* else if (client2.isItMyTurn()) {
               client2.makeMove(Controller2.getNextMove());
             } */
             client1.pullData();
-            Controller1.update(client1.getCurrentState());
+            controller.update(client1.getCurrentState());
             /*   client2.pullData();
             Controller2.update(client2.getCurrentState()); */
             TimeUnit.MILLISECONDS.sleep(1500);
@@ -217,14 +222,19 @@ public class ScheduledTasks {
         () -> {
           try {
             System.out.println("running playtask 2");
-            AI_Controller Controller2 = new AI_Controller(client2.getCurrentState(), AI.MCTS);
+            int thinkingTime = 10;
+            if (client2.moveTimeLimitedGameTrigger) {
+              thinkingTime = client1.getRemainingMoveTimeInSeconds() - 1;
+              System.out.println("We had " + thinkingTime + " to think");
+            }
+            AI_Controller controller2 = new AI_Controller(client2.getCurrentState(), client2.selectedAI, thinkingTime);
             client2.pullData();
-            Controller2.update(client2.getCurrentState());
+            controller2.update(client2.getCurrentState());
             if (client2.isItMyTurn()) {
-              client2.makeMove(Controller2.getNextMove());
+              client2.makeMove(controller2.getNextMove());
             }
             client2.pullData();
-            Controller2.update(client2.getCurrentState());
+            controller2.update(client2.getCurrentState());
             TimeUnit.MILLISECONDS.sleep(1500);
           } catch (InterruptedException | NoMovesLeftException | InvalidShapeException e) {
             e.printStackTrace();

@@ -40,14 +40,20 @@ public class AIClient extends Client {
 
   Runnable joinTask =
       () -> {
-        joinExistingGame(serverInfo.getHost(), serverInfo.getPort(), gameIDString, constructorSetTeamName);
+        joinExistingGame(
+            serverInfo.getHost(), serverInfo.getPort(), gameIDString, constructorSetTeamName);
       };
 
   Runnable playTask =
       () -> {
         try {
           getStateFromServer();
-          AI_Controller controller = new AI_Controller(getCurrentState(), selectedAI);
+          int thinkingTime = 10;
+          if (moveTimeLimitedGameTrigger) {
+            thinkingTime = getRemainingMoveTimeInSeconds() - 1;
+            System.out.println("We had " +thinkingTime + " to think");
+          }
+          AI_Controller controller = new AI_Controller(getCurrentState(), selectedAI, thinkingTime);
           pullData();
           controller.update(getCurrentState());
           if (isItMyTurn()) {
@@ -147,7 +153,7 @@ public class AIClient extends Client {
     scheduler.scheduleWithFixedDelay(playTask, 2, 2, TimeUnit.SECONDS);
   }
 
- /**
+  /**
    * A Watcher thread which calls GameSessionResponse periodically and hands over functionality to
    * GameStartedThread when it has and then terminates itself.
    *
