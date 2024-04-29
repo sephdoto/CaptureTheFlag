@@ -1,2 +1,3 @@
 /target/
 /bin/
+shared/target/classes/org/ctf/shared/constants/Constants.class

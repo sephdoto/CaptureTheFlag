@@ -1,5 +1,8 @@
 package org.ctf.shared.client;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
@@ -17,12 +20,45 @@ import org.ctf.shared.state.data.exceptions.SessionNotFound;
  */
 public class AIClient extends Client {
 
-  public AI selectedPlayer;
+  public AI selectedAI;
   public boolean enableLogging;
   public Analyzer analyzer;
   public String gameIDString;
   public String constructorSetTeamName;
-  AI_Controller controller;
+  public long refreshTime = 1000L;
+  ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
+
+  Runnable refreshTask =
+      () -> {
+        try {
+          pullData();
+          TimeUnit.MILLISECONDS.sleep(refreshTime);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      };
+
+  Runnable joinTask =
+      () -> {
+        joinExistingGame(serverInfo.getHost(), serverInfo.getPort(), gameIDString, constructorSetTeamName);
+      };
+
+  Runnable playTask =
+      () -> {
+        try {
+          getStateFromServer();
+          AI_Controller controller = new AI_Controller(getCurrentState(), selectedAI);
+          pullData();
+          controller.update(getCurrentState());
+          if (isItMyTurn()) {
+            makeMove(controller.getNextMove());
+          }
+          pullData();
+          controller.update(getCurrentState());
+        } catch (NoMovesLeftException | InvalidShapeException e) {
+          throw new UnknownError("Games most likely over");
+        }
+      };
 
   /**
    * Base constructor.
@@ -37,7 +73,7 @@ public class AIClient extends Client {
    */
   AIClient(CommLayerInterface comm, String IP, String port, Boolean enableLogging, AI selected) {
     super(comm, IP, port, enableLogging);
-    this.selectedPlayer = selected;
+    this.selectedAI = selected;
     this.enableLogging = enableLogging;
   }
 
@@ -67,15 +103,6 @@ public class AIClient extends Client {
   }
 
   /**
-   * Starts the Automation of the Client. Call it after object creation
-   *
-   * @author rsyed
-   */
-  public void startAutomation() {
-    AIGameHandler();
-  }
-
-  /**
    * Changes the sessionID which this client object is pointing to. Functions as a join game command
    *
    * @param IP
@@ -92,41 +119,22 @@ public class AIClient extends Client {
     this.currentServer = shortURL + "/" + gameSessionID;
     joinGame(teamName);
     getStateFromServer();
-    controller = new AI_Controller(currentState, selectedPlayer);
+  }
+
+  public void pullData() {
+    getSessionFromServer();
+    getStateFromServer();
   }
 
   /**
-   * Thread checks which mode the AI Client is configured for and calls the handler needed to start
-   * a new thread and then perform the function asked for
+   * Main method to call to start automation
    *
    * @author rsyed
    */
-  public void AIGameHandler() {
-    Thread firsThread =
-        new Thread(
-            () -> {
-              boolean running = true;
-              while (running) {
-                try {
-                  if (isServerActive()) {
-                    joinExistingGame(
-                        serverInfo.getHost(),
-                        serverInfo.getPort(),
-                        gameIDString,
-                        constructorSetTeamName);
-                  }
-                  Thread.sleep(1000);
-                  pullData();
-                  Thread.sleep(1000);
-                  startGameController();
-                  AIPlayerStart();
-                  running = false;
-                } catch (Exception e) {
-                  System.out.println("Error Occured in First handoff");
-                }
-              }
-            });
-    firsThread.start();
+  public void startAIGameController() {
+    // Join Automatically
+    scheduler.schedule(joinTask, 0, TimeUnit.SECONDS);
+    gameStartWatcher();
   }
 
   /**
@@ -136,63 +144,10 @@ public class AIClient extends Client {
    * @author rsyed
    */
   public void AIPlayerStart() {
-
-    Thread gameThread =
-        new Thread(
-            () -> {
-              boolean running = true;
-              while (running) {
-                try {
-
-                  Thread.sleep(500);
-
-                } catch (Exception e) {
-                  throw new Error("Something went wrong in the Client Thread");
-                }
-              }
-            });
-    gameThread.start();
+    scheduler.scheduleWithFixedDelay(playTask, 2, 2, TimeUnit.SECONDS);
   }
 
-  /**
-   * Thead which handles client logic for when game has started. Just pulls data periodically set by
-   * the refesh time var
-   *
-   * @author rsyed
-   */
-  public void gameStartedThread() {
-    Thread gameThread =
-        new Thread(
-            () -> {
-              boolean running = true;
-
-              while (running) {
-                try {
-                  pullData();
-                  controller.update(getCurrentState());
-                    makeMove(controller.getNextMove());
-                  pullData();
-                  controller.update(getCurrentState());
-                  Thread.sleep(2000);
-                } catch (InterruptedException | NoMovesLeftException | InvalidShapeException e) {
-                  throw new Error("Something went wrong in the Client Thread");
-                }
-              }
-            });
-    gameThread.start();
-  }
-
-  /**
-   * Main CONTROLLER for Client. Call when either a game is created or a game is joined Starts the
-   * automatic refreshing of data
-   *
-   * @author rsyed
-   */
-  public void startGameController() {
-    gameStartWatcher();
-  }
-
-  /**
+ /**
    * A Watcher thread which calls GameSessionResponse periodically and hands over functionality to
    * GameStartedThread when it has and then terminates itself.
    *
@@ -206,15 +161,10 @@ public class AIClient extends Client {
               while (running) {
                 try {
                   Long sleep = 1000L;
-                  /*    joinExistingGame(
-                  serverInfo.getHost(),
-                  serverInfo.getPort(),
-                  gameIDString,
-                  constructorSetTeamName); */
                   Thread.sleep(sleep);
-                  this.getSessionFromServer(); // Gets Session from server
+                  getSessionFromServer(); // Gets Session from server
                   if (getStartDate() != null) {
-                    gameStartedThread();
+                    AIPlayerStart();
                     running = false;
                   }
                   Thread.sleep(sleep);

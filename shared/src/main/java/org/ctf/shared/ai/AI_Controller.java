@@ -52,7 +52,7 @@ public class AI_Controller {
     if(!this.active)
       return null;
 
-    int milis = 6000;
+    int milis = 1000;
     switch (this.ai) {
       case RANDOM:
         return RandomAI.pickMoveComplex(gameState, new ReferenceMove(null, new int[] {0,0})).toMove();

@@ -143,19 +143,23 @@ public class ScheduledTasks {
           }
         };
 
-    Client client1 =
-        ClientStepBuilder.newBuilder()
+    AIClient client1 =
+        AIClientStepBuilder.newBuilder()
             .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
+            .AIPlayerSelector(AI.MCTS)
             .enableSaveGame(false)
+            .gameData(GameID, "Team 1")
             .build();
-    Client client2 =
-        ClientStepBuilder.newBuilder()
+    AIClient client2 =
+        AIClientStepBuilder.newBuilder()
             .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
+            .AIPlayerSelector(AI.MCTS)
             .enableSaveGame(false)
+            .gameData(GameID, "Team 2")
             .build();
     Runnable refreshTask =
         () -> {
@@ -183,7 +187,7 @@ public class ScheduledTasks {
         };
 
     // AI_Controller Controller1 = new AI_Controller(client1.getCurrentState(), AI.RANDOM);
-   //  AI_Controller Controller2 = new AI_Controller(client2.getCurrentState(), AI.MCTS);
+    //  AI_Controller Controller2 = new AI_Controller(client2.getCurrentState(), AI.MCTS);
     Runnable playTask =
         () -> {
           try {
@@ -213,7 +217,7 @@ public class ScheduledTasks {
         () -> {
           try {
             System.out.println("running playtask 2");
-            AI_Controller Controller2 = new AI_Controller(client2.getCurrentState(), AI.RANDOM);
+            AI_Controller Controller2 = new AI_Controller(client2.getCurrentState(), AI.MCTS);
             client2.pullData();
             Controller2.update(client2.getCurrentState());
             if (client2.isItMyTurn()) {
@@ -244,7 +248,7 @@ public class ScheduledTasks {
     // scheduler.scheduleWithFixedDelay(refreshTask, 15, 2, TimeUnit.SECONDS);
     scheduler.scheduleWithFixedDelay(playTask, 9, 3, TimeUnit.SECONDS);
     scheduler.scheduleWithFixedDelay(playTask2, 9, 3, TimeUnit.SECONDS);
-    //scheduler.scheduleWithFixedDelay(printGson, 9, 5, TimeUnit.SECONDS);
+    // scheduler.scheduleWithFixedDelay(printGson, 9, 5, TimeUnit.SECONDS);
     // scheduler.scheduleWithFixedDelay(playTask2, 11, 2, TimeUnit.SECONDS);
     /* try {
 
