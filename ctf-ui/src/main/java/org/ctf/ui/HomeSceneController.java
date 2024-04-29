@@ -44,6 +44,9 @@ public class HomeSceneController {
 	public void switchToWaitGameScene(Stage stage) {
 		stage.setScene(new WaitingScene(this, stage.getWidth(), stage.getHeight()));
 	}
+	public void switchToPlayGameScene(Stage stage) {
+		stage.setScene(new PlayGameScreenV2(this, stage.getWidth(), stage.getHeight()));
+	}
 
 	public void switchToCreateGameScene(Stage stage) {
 		stage.setScene(new CretaeGameScreenV2(this, stage.getWidth(), stage.getHeight()));

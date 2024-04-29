@@ -230,7 +230,6 @@ public class CretaeGameScreenV2 extends Scene {
 		exit.getStyleClass().add("leave-button");
 		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
-
 		exit.setOnAction(e -> {
 			hsc.switchtoHomeScreen(e);
 		});

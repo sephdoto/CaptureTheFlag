@@ -17,6 +17,7 @@ import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -111,7 +112,6 @@ public class WaitingScene extends Scene {
         	  	if(p.getTeamID().equals(r.getTeamID())) {
         		  p.showTeamColorWhenSelecting(sceneColorProperty);
         	  	}
-        		  
           }
           r.showColor(sceneColorProperty);
           ContextMenu contextMenu = new ContextMenu(itemColor);
@@ -139,9 +139,6 @@ public class WaitingScene extends Scene {
 		b.prefHeightProperty().bind(k.heightProperty());
 		v.getChildren().add(b);
 		v.getChildren().add(k);
-
-		
-		
 		return v;
 	}
 	
@@ -216,6 +213,8 @@ public class WaitingScene extends Scene {
 		});
 		//middleBox.getChildren().add(createShowMapPane("p2"));
 		//middleBox.getChildren().add(createREctangleAnimation());
+		middleBox.getChildren().add(createLeave());
+		middleBox.getChildren().add(createCreateButton());
 		middleBox.setAlignment(Pos.TOP_CENTER);
 		//middleBox.setStyle("-fx-background-color:red");
 		main.getChildren().add(middleBox);
@@ -388,10 +387,7 @@ public class WaitingScene extends Scene {
 		numberLabel.fontProperty().bind(serverInfoCOntentFontSize);
 		labelBox.getChildren().addAll(headerLabel,numberLabel);
 		return labelBox;
-		
 	}
-	
-	
 	
 	
 	private ImageView createHeader() {
@@ -400,6 +396,31 @@ public class WaitingScene extends Scene {
 		mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.5));
 		mpv.setPreserveRatio(true);
 		return mpv;
+	}
+	
+	private Button createLeave() {
+		Button exit = new Button("Leave");
+		exit.getStyleClass().add("leave-button");
+		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
+		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
+		exit.setOnAction(e -> {
+			hsc.switchtoHomeScreen(e);
+		});
+		return exit;
+	}
+	
+	private Button createCreateButton() {
+		Button search = new Button("Create");
+		search.getStyleClass().add("leave-button");
+		search.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
+		search.prefHeightProperty().bind(search.widthProperty().multiply(0.25));
+		search.fontProperty().bind(Bindings.createObjectBinding(
+				() -> Font.font("Century Gothic", search.getHeight() * 0.4), search.heightProperty()));
+		search.setOnAction(e -> {
+			
+		});
+
+		return search;
 	}
 	
 	private StackPane createShowMapPane(String name) {
