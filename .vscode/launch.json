@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "SoundController",
+            "request": "launch",
+            "mainClass": "org.ctf.ui.controllers.SoundController",
+            "projectName": "ctf-ui"
+        },
+        {
+            "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "org.ctf.ui.App",
+            "projectName": "ctf-ui"
+        },
+        {
+            "type": "java",
             "name": "AIPlayer1",
             "request": "launch",
             "mainClass": "org.ctf.shared.client.AIPlayer1",
@@ -53,7 +67,7 @@
             "mainClass": "de.unimannheim.swt.pse.ctf.CtfApplication",
             "projectName": "ctf",
             "noDebug": false,
-            "__progressId": "9ea99d8a-9246-4fc8-b6d2-1166df9d87db",
+            "__progressId": "ffd51a66-b801-45d8-8d17-dc2a8807bbf0",
             "__origin": "internal"
         },
         {

@@ -49,8 +49,8 @@ public class ImageTools {
 
   /**
    * Saves the {@link BufferedImage} object which was passed to it. Returns a boolean for
-   * confirmation. True on success, false on failure.
-   * Saves the file with the current Time stamp as name
+   * confirmation. True on success, false on failure. Saves the file with the current Time stamp as
+   * name
    *
    * @param saveThis The buffered Image object to save
    * @author rsyed

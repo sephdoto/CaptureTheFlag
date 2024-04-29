@@ -1,10 +1,8 @@
 package org.ctf.ui.controllers;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.File;
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.OutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -13,30 +11,27 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.HashSet;
-import org.ctf.shared.constants.Constants;
-import org.ctf.shared.constants.Constants.SoundType;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import javafx.application.Platform;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
+import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Constants.SoundType;
 import org.json.JSONArray;
 import org.json.JSONException;
-
 
 public class SoundController {
   private static HashMap<String, AudioObject> audioClips;
   private static String soundFolderLocation;
   private static String linkedSoundsFile;
-  
+
   public static void main(String args[]) throws JSONException, IOException {
-    Platform.startup(() ->{});
-    
-//    for(SoundType type : SoundType.values()) {
-//      saveSound("Default", type, new File(soundFolderLocation + SoundType.CAPTURE.getLocation() + "DefaultTest.mp3"), false);
-//    }
+    Platform.startup(() -> {});
+
+    //    for(SoundType type : SoundType.values()) {
+    //      saveSound("Default", type, new File(soundFolderLocation +
+    // SoundType.CAPTURE.getLocation() + "DefaultTest.mp3"), false);
+    //    }
     HashMap<String, AudioObject> audioClips = SoundController.audioClips;
     playSound("Default", SoundType.CAPTURE);
     String src = "ressources/sounds/capture/ceeb.mp3";
@@ -47,8 +42,8 @@ public class SoundController {
     mediaPlayer.play();
 
     ac.play();
-    System.out.println("isplaying? " +ac.isPlaying());
-    
+    System.out.println("isplaying? " + ac.isPlaying());
+
     Platform.exit();
   }
 
@@ -60,24 +55,24 @@ public class SoundController {
 
   /**
    * Loads all in linkedSounds.json referenced sounds into {@link audioClips}.
-   * 
+   *
    * @author sistumpf
    */
   private static void initAudioClips() {
     audioClips = new HashMap<String, AudioObject>();
     JSONArray jarray = null;
     try {
-    jarray = readSoundJSON();
-    } catch(Exception e) {
+      jarray = readSoundJSON();
+    } catch (Exception e) {
       e.printStackTrace();
       return;
     }
-    
-    for(int i=0; i<jarray.length(); i++) {
+
+    for (int i = 0; i < jarray.length(); i++) {
       try {
         AudioObject sound = new AudioObject(jarray.getJSONObject(i));
         audioClips.put(sound.getPieceName() + sound.getSoundType(), sound);
-      } catch(JSONException je) {
+      } catch (JSONException je) {
         je.printStackTrace();
       }
     }
@@ -86,34 +81,32 @@ public class SoundController {
   private static JSONArray readSoundJSON() throws JSONException, IOException {
     try {
       return new JSONArray(Files.readString(Paths.get(linkedSoundsFile), StandardCharsets.UTF_8));
-    } catch(Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
       return new JSONArray();
     }
   }
-  
-  private static void saveSoundJSON(HashSet<AudioObject> audioObjects) throws IOException, JSONException {
-    Gson gson = new GsonBuilder().setPrettyPrinting().create(); 
+
+  private static void saveSoundJSON(HashSet<AudioObject> audioObjects)
+      throws IOException, JSONException {
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
     byte[] contentBytes = gson.toJson(audioObjects).getBytes();
     File file = new File(linkedSoundsFile);
     Files.write(file.toPath(), contentBytes);
-
   }
 
   public static boolean saveSound(String pieceName, SoundType type, File sound, boolean custom) {
     AudioObject audio = new AudioObject(pieceName, type, custom);
-    if(!copyAudioFile(sound, audio))
-      return false;
+    if (!copyAudioFile(sound, audio)) return false;
     return addToJSON(audio);
   }
-  
+
   private static boolean addToJSON(AudioObject audio) {
     JSONArray jarray = null;
     try {
       jarray = readSoundJSON();
       HashSet<AudioObject> set = new HashSet<AudioObject>();
-      for(int i=0; i<jarray.length(); i++)
-        set.add(new AudioObject(jarray.getJSONObject(i)));
+      for (int i = 0; i < jarray.length(); i++) set.add(new AudioObject(jarray.getJSONObject(i)));
       set.add(audio);
       saveSoundJSON(set);
     } catch (Exception e) {
@@ -123,7 +116,7 @@ public class SoundController {
     initAudioClips();
     return true;
   }
-  
+
   private static boolean copyAudioFile(File audioFile, AudioObject audio) {
     Path sourcePath = audioFile.toPath();
     Path targetPath = Paths.get(soundFolderLocation + audio.getLocation());
@@ -138,10 +131,11 @@ public class SoundController {
   }
 
   public static void playSound(String piece, SoundType type) {
-    getSound(piece+type.toString()).play();
+    getSound(piece + type.toString()).play();
   }
 
   private static AudioClip getSound(String key) {
-    return new AudioClip(new File(soundFolderLocation + audioClips.get(key).getLocation()).toURI().toString());
+    return new AudioClip(
+        new File(soundFolderLocation + audioClips.get(key).getLocation()).toURI().toString());
   }
 }

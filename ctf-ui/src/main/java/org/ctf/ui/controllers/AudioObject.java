@@ -4,7 +4,6 @@ import java.io.File;
 import org.ctf.shared.constants.Constants.SoundType;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONString;
 
 class AudioObject {
   private String pieceName;
@@ -25,7 +24,9 @@ class AudioObject {
       this.location = jobject.getString("location");
       this.type = SoundType.valueOf(jobject.getString("type"));
       this.custom = jobject.getBoolean("custom");
-    } catch (JSONException e) { e.printStackTrace(); }
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
   }
 
   public String getLocation() {
@@ -43,15 +44,16 @@ class AudioObject {
   public boolean getCustom() {
     return this.custom;
   }
-  
+
   @Override
   public int hashCode() {
     return (this.type.getLocation() + this.location).hashCode();
   }
-  
+
   @Override
   public boolean equals(Object object) {
-    return (this.type + this.location).equals(((AudioObject)object).getSoundType() + ((AudioObject)object).getLocation());
+    return (this.type + this.location)
+        .equals(((AudioObject) object).getSoundType() + ((AudioObject) object).getLocation());
   }
 
   public JSONObject toJSONObject() {
@@ -61,7 +63,7 @@ class AudioObject {
       jobject.put("location", this.location);
       jobject.put("type", this.type);
       jobject.put("custom", this.custom);
-    } catch(JSONException e) {
+    } catch (JSONException e) {
       e.printStackTrace();
     }
     return jobject;
