@@ -583,14 +583,14 @@ public class ServerCommandTests {
             .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
-            .HumanPlayer()
+            .enableSaveGame(false)
             .build();
     Client javaClient2 =
         ClientStepBuilder.newBuilder()
             .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
-            .HumanPlayer()
+            .enableSaveGame(false)
             .build();
     javaClient.createGame(template);
     javaClient.joinGame("0");
@@ -646,11 +646,7 @@ public class ServerCommandTests {
         Controller.update(javaClient.getCurrentState());
         javaClient2.getStateFromServer();
         Controller2.update(javaClient2.getCurrentState());
-        // System.out.println(gson.toJson(javaClient.getGrid()));
-      } catch (NoMovesLeftException e) {
-        e.printStackTrace();
-      } catch (InvalidShapeException e) {
-
+        // System.out.println(gson.toJson(javaClient.getGrid()))
         e.printStackTrace();
       }
     }
@@ -775,14 +771,14 @@ public class ServerCommandTests {
             .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
-            .AIPlayerSelector(AI.RANDOM)
+            .enableSaveGame(false)
             .build();
     Client javaClient2 =
         ClientStepBuilder.newBuilder()
             .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
-            .AIPlayerSelector(AI.RANDOM)
+            .enableSaveGame(false)
             .build();
     javaClient.createGame(template);
     javaClient.joinGame("0");
