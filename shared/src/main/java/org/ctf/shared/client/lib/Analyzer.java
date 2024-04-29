@@ -30,7 +30,7 @@ public class Analyzer {
       DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd-hhmmss");
       String fileName = localDateTime.format(df);
       FileOutputStream fileOutStream =
-          new FileOutputStream(Constants.dataBankPath + fileName + ".txt");
+          new FileOutputStream(Constants.saveGameFolder + fileName + ".txt");
 
       ObjectOutputStream objectOutStream = new ObjectOutputStream(fileOutStream);
 
@@ -48,7 +48,7 @@ public class Analyzer {
   public SavedGame readFile() {
     SavedGame returnObject = new SavedGame();
     try {
-      final JFileChooser fc = new JFileChooser(Constants.dataBankPath);
+      final JFileChooser fc = new JFileChooser(Constants.saveGameFolder);
       fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
       fc.showOpenDialog(null);
       FileInputStream fileInput = new FileInputStream(fc.getSelectedFile());
@@ -72,7 +72,7 @@ public class Analyzer {
   @SuppressWarnings("unchecked")
   public boolean readFile(String name) {
     try {
-      FileInputStream fileInput = new FileInputStream(Constants.dataBankPath + name);
+      FileInputStream fileInput = new FileInputStream(Constants.saveGameFolder + name);
       ObjectInputStream objectInput = new ObjectInputStream(fileInput);
 
       this.savedGame = (SavedGame) objectInput.readObject();

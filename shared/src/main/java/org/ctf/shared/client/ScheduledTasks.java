@@ -182,8 +182,8 @@ public class ScheduledTasks {
           client2.joinExistingGame("localhost", "8888", GameID, "Team 2");
         };
 
-    // AI_Controller Controller1 = new AI_Controller(client1.getCurrentState(), AI.MCTS);
-
+    // AI_Controller Controller1 = new AI_Controller(client1.getCurrentState(), AI.RANDOM);
+   //  AI_Controller Controller2 = new AI_Controller(client2.getCurrentState(), AI.MCTS);
     Runnable playTask =
         () -> {
           try {
@@ -213,7 +213,7 @@ public class ScheduledTasks {
         () -> {
           try {
             System.out.println("running playtask 2");
-            AI_Controller Controller2 = new AI_Controller(client2.getCurrentState(), AI.MCTS);
+            AI_Controller Controller2 = new AI_Controller(client2.getCurrentState(), AI.RANDOM);
             client2.pullData();
             Controller2.update(client2.getCurrentState());
             if (client2.isItMyTurn()) {
@@ -240,11 +240,11 @@ public class ScheduledTasks {
     scheduler.schedule(CreateGame, 1, TimeUnit.SECONDS);
     scheduler.schedule(joinTask, 3, TimeUnit.SECONDS);
     scheduler.schedule(joinTask2, 5, TimeUnit.SECONDS);
-    scheduler.schedule(refreshTask, 11, TimeUnit.SECONDS);
+    scheduler.schedule(refreshTask, 8, TimeUnit.SECONDS);
     // scheduler.scheduleWithFixedDelay(refreshTask, 15, 2, TimeUnit.SECONDS);
-    scheduler.scheduleWithFixedDelay(playTask, 14, 3, TimeUnit.SECONDS);
-    scheduler.scheduleWithFixedDelay(playTask2, 14, 2, TimeUnit.SECONDS);
-    scheduler.scheduleWithFixedDelay(printGson, 9, 5, TimeUnit.SECONDS);
+    scheduler.scheduleWithFixedDelay(playTask, 9, 3, TimeUnit.SECONDS);
+    scheduler.scheduleWithFixedDelay(playTask2, 9, 3, TimeUnit.SECONDS);
+    //scheduler.scheduleWithFixedDelay(printGson, 9, 5, TimeUnit.SECONDS);
     // scheduler.scheduleWithFixedDelay(playTask2, 11, 2, TimeUnit.SECONDS);
     /* try {
 
