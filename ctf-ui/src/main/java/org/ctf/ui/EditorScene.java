@@ -22,9 +22,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+
+import java.nio.file.Paths;
+
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.ui.controllers.MapPreview;
 import org.ctf.ui.customobjects.MovementVisual;
@@ -64,6 +69,7 @@ public class EditorScene extends Scene {
 	 */
 	public EditorScene(HomeSceneController hsc, double width, double height) {
 		super(new StackPane(), width, height);
+		music();
 		this.hsc = hsc;
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
 		this.root = (StackPane) this.getRoot();
@@ -76,6 +82,20 @@ public class EditorScene extends Scene {
 
 	}
 
+	/**
+	 * plays music in the background
+	 * 
+	 * @author ysiebenh
+	 */
+
+	private void music() {
+		String s = Paths.get(Constants.toUIResources + Constants.Music.getRandom().getLocation()).toUri().toString();
+		Media h = new Media(s);
+		mediaPlayer = new MediaPlayer(h);
+		mediaPlayer.setVolume(0.4);
+		mediaPlayer.setCycleCount(100);
+		mediaPlayer.play();
+	}
 
 	/**
 	 * This method creates the basic layout by adding all major top level containers

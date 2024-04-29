@@ -38,7 +38,6 @@ public class Constants {
           + "ressources"
           + File.separator;
   
-  public static double soundVolume = 0.4;
   /**
    * This enum contains the different Sound Types and their locations in the project.
    */
@@ -61,7 +60,6 @@ public class Constants {
     }
   }
   
-  public static double musicVolume = 0.4;
   /**
    * This Enum contains all songs and their locations.
    * Songs in easterEggs wont be returned by getRandom.
@@ -72,15 +70,13 @@ public class Constants {
     ELEVATOR("theelevatorbossanova.mp3"), 
     THE_CLONES_THEME("TheClonesTheme-Lofi.mp3"),    //https://www.youtube.com/watch?v=8jXK8fVR8u0
     VODE_AN("VodeAn-Lofi.mp3"),                     //https://www.youtube.com/watch?v=RTv0DGRCyqY
-    MERKELWAVE("EverythingIsPossible-Merkelwave.mp3"),  //https://www.youtube.com/watch?v=stFm0ng7DR8
-    STARTUP("startup.mp3");                         //https://www.youtube.com/watch?v=Am4wYTiHHx8
-    
+    MERKELWAVE("EverythingIsPossible-Merkelwave.mp3");  //https://www.youtube.com/watch?v=stFm0ng7DR8
+
     private final String text;
     private static final ArrayList<Music> easterEggs = new ArrayList<Music>();
     
     static {
       easterEggs.add(ELEVATOR);
-      easterEggs.add(STARTUP);
     }
     
     Music(final String text){
