@@ -53,11 +53,11 @@ public class Constants {
           + File.separator
           + "ctf-ui"
           + File.separator
-          + "ressources"
+          + "resources"
           + File.separator;
 
   public static double soundVolume = 0.4;
-
+  public static String soundFileTypes = ".wav";
   /** This enum contains the different Sound Types and their locations in the project. */
   public enum SoundType {
     MOVE("move"),

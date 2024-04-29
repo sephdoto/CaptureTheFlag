@@ -1,0 +1,38 @@
+[
+  {
+    "pieceName": "Default",
+    "location": "move\\Default.wav",
+    "type": "MOVE",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "location": "misc\\Default.wav",
+    "type": "MISC",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "location": "kill\\Default.wav",
+    "type": "KILL",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "location": "select\\Default.wav",
+    "type": "SELECT",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "location": "capture\\Default.wav",
+    "type": "CAPTURE",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "location": "deselect\\Default.wav",
+    "type": "DESELECT",
+    "custom": false
+  }
+]
