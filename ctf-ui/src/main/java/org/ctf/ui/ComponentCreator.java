@@ -183,8 +183,7 @@ public class ComponentCreator {
 				if(i==5&&j==5) {
 					c.setFill(Color.RED);
 					c.setOpacity(1);
-//					Button but = new Button();
-//					pane.getChildren().add(but);
+
 				}
 				
 			}

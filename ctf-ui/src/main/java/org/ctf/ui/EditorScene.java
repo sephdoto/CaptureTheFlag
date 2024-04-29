@@ -32,6 +32,7 @@ import java.nio.file.Paths;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.ui.controllers.MapPreview;
+import org.ctf.ui.customobjects.MovementVisual;
 
 /**
  * Represents a JavaFX scene for the map editor. It contains all necessary UI
@@ -54,6 +55,7 @@ public class EditorScene extends Scene {
 	boolean spinnerchange = false;
 	boolean boxchange = false;
 	MediaPlayer mediaPlayer;
+	VBox directionsContainer;
 
 	/**
 	 * Starts the initialization process of the scene, generates different menu
@@ -585,6 +587,7 @@ public class EditorScene extends Scene {
 		visualRoot.prefWidthProperty().bind(root.widthProperty().multiply(0.45));
 		visualRoot.prefHeightProperty().bind(root.heightProperty().multiply(0.75));
 		// GamePane visual = new GamePane(CreateTextGameStates.createTestGameState1());
+		createDirectionsVisual();
 		updateVisualRoot();
 		// visualRoot.getChildren().add(visual);
 
@@ -622,28 +625,30 @@ public class EditorScene extends Scene {
 	 * @author rsyed: Bug fixes
 	 */
 	private void updateVisualRoot() {
-		MapPreview mp = new MapPreview(engine.tmpTemplate);
-		visualRoot.getChildren().clear();
-		try {
-			visualRoot.getChildren().add(new GamePane(mp.getGameState()));
-		} catch (Accepted e) {
-			e.getMessage();
-		}
-//		VBox neu = new VBox();
-//		ComponentCreator co = new ComponentCreator(this);
-
-		// neu.setMaxSize(350, 350);
-//		neu.maxWidthProperty().bind(visualRoot.widthProperty().multiply(0.75));
-//		neu.maxHeightProperty().bind(visualRoot.widthProperty().multiply(0.75));
-//		StackPane.setAlignment(neu, Pos.CENTER);
-//		neu.getChildren().add(co.createCustomVisual(neu));
+//		MapPreview mp = new MapPreview(engine.tmpTemplate);
+//		visualRoot.getChildren().clear();
+//		try {
+//			visualRoot.getChildren().add(new GamePane(mp.getGameState()));
+//		} catch (Accepted e) {
+//			e.getMessage();
+//		}
+		
 //	  GridPane stack = new GridPane();
 //	  Button but = new Button("hi");
 //	  StackPane.setAlignment(but, Pos.CENTER);
 //	  stack.getChildren().add(but);
-//		visualRoot.getChildren().add(neu);
+		visualRoot.getChildren().add(directionsContainer);
 	}
-
+	
+	private void createDirectionsVisual() {
+		this.directionsContainer = new VBox();
+		directionsContainer.maxWidthProperty().bind(visualRoot.widthProperty().multiply(0.75));
+		directionsContainer.maxHeightProperty().bind(visualRoot.widthProperty().multiply(0.75));
+		StackPane.setAlignment(directionsContainer, Pos.CENTER);
+		directionsContainer.getChildren().add(new MovementVisual(directionsContainer));
+		
+	}
+	
 	public ComboBox<String> getCustomFigureBox() {
 		return customFigureBox;
 	}
