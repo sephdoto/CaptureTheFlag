@@ -1,6 +1,7 @@
-package org.ctf.shared.tools;
+package org.ctf.shared.wave;
 
 import static org.junit.jupiter.api.Assertions.*;
+import org.ctf.shared.wave.WaveGrid;
 import org.junit.jupiter.api.Test;
 
 class TileTest {

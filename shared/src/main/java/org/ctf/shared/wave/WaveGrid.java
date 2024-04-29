@@ -1,4 +1,4 @@
-package org.ctf.shared.tools;
+package org.ctf.shared.wave;
 
 import java.util.ArrayList;
 
