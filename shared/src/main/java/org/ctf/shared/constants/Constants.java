@@ -14,6 +14,28 @@ import java.util.ArrayList;
 public class Constants {
   //TODO: add "jar:" before all path strings. then everything should work, even if in a jar.
   
+  // to shared.resources folder
+  public static String sharedResourcesFolder =
+      Paths.get("").toAbsolutePath().toString().split("cfp14")[0]
+          + "cfp14"
+          + File.separator
+          + "shared"
+          + File.separator
+          + "src"
+          + File.separator
+          + "main"
+          + File.separator
+          + "java"
+          + File.separator
+          + "org"
+          + File.separator
+          + "ctf"
+          + File.separator
+          + "shared"
+          + File.separator
+          + "resources"
+          + File.separator;
+          
   // package map, class JSON_Tools
   public static String mapTemplateFolder =
       Paths.get("").toAbsolutePath().toString().split("cfp14")[0]
