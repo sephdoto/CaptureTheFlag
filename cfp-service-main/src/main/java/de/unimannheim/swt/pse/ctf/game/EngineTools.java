@@ -1,27 +1,20 @@
 package de.unimannheim.swt.pse.ctf.game;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.game.state.GameState;
 import de.unimannheim.swt.pse.ctf.game.state.Move;
 import de.unimannheim.swt.pse.ctf.game.state.Piece;
 import de.unimannheim.swt.pse.ctf.game.state.Team;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.stream.Stream;
 
-/**
- * This class contains useful methods for the GameEngine.
- */
+/** This class contains useful methods for the GameEngine. */
 public class EngineTools extends AI_Tools {
   /**
-   * A given move is made on the GameState.
-   * Only updates the Team array, the Grid and the last move.
+   * A given move is made on the GameState. Only updates the Team array, the Grid and the last move.
    * Checks for removing teams are not made here.
-   * 
+   *
    * @author sistumpf
    * @param gameState
    * @param move
@@ -60,7 +53,7 @@ public class EngineTools extends AI_Tools {
 
     gameState.setLastMove(move);
   }
-  
+
   /**
    * Starting from the current team, the following teams which cannot move get removed.
    *
@@ -69,13 +62,11 @@ public class EngineTools extends AI_Tools {
    * @return true if only one team is left
    */
   public static boolean removeMovelessTeams(GameState gameState) {
-    for(int i=0; i < gameState.getTeams().length && gameState.getTeams()[i] != null; i++) {
-      if(gameState.getTeams()[i].getFlags() <= 0)
-        removeTeam(gameState, i);
-      else if(gameState.getTeams()[i].getPieces().length == 0)
-        removeTeam(gameState, i);
+    for (int i = 0; i < gameState.getTeams().length && gameState.getTeams()[i] != null; i++) {
+      if (gameState.getTeams()[i].getFlags() <= 0) removeTeam(gameState, i);
+      else if (gameState.getTeams()[i].getPieces().length == 0) removeTeam(gameState, i);
     }
-    
+
     while (numberOfTeamsLeft(gameState) > 1
         && !teamGotMovesLeft(gameState, gameState.getCurrentTeam())) {
       removeTeam(gameState, gameState.getCurrentTeam()); // removed and set to null
@@ -107,8 +98,8 @@ public class EngineTools extends AI_Tools {
    */
   public static boolean teamGotMovesLeft(GameState gameState, int teamIndex) {
     for (int i = gameState.getTeams()[teamIndex].getPieces().length - 1; i >= 0; i--) {
-      if (getPossibleMoves(gameState, gameState.getTeams()[teamIndex].getPieces()[i]).size()
-          > 0) return true;
+      if (getPossibleMoves(gameState, gameState.getTeams()[teamIndex].getPieces()[i]).size() > 0)
+        return true;
     }
     return false;
   }
@@ -131,15 +122,16 @@ public class EngineTools extends AI_Tools {
   }
 
   /**
-   * Returns a GameStates next valid (null) team.
-   * !! only use when teams join, otherwise the output might not be correct !!
+   * Returns a GameStates next valid (null) team. !! only use when teams join, otherwise the output
+   * might not be correct !!
+   *
    * @param gameState
    * @return next Team == null
    * @author rsyed
    */
   public static int getNextEmptyTeamSlot(GameState gameState) {
     for (int i = 0; i < gameState.getTeams().length; i++) {
-      if(gameState.getTeams()[i] == null){
+      if (gameState.getTeams()[i] == null) {
         return i;
       }
     }
@@ -147,7 +139,8 @@ public class EngineTools extends AI_Tools {
   }
 
   /**
-   * Removes a certain team from the GameState. team is the place of the team in the GameState.getTeams Array.
+   * Removes a certain team from the GameState. team is the place of the team in the
+   * GameState.getTeams Array.
    *
    * @param gameState
    * @param team
@@ -268,15 +261,14 @@ public class EngineTools extends AI_Tools {
     newState.setCurrentTeam(gameState.getCurrentTeam());
     newState.setLastMove(gameState.getLastMove());
     Team[] teams = new Team[gameState.getTeams().length];
-    for(int i=0; i<teams.length; i++) {
-      if(gameState.getTeams()[i] == null)
-        continue;
+    for (int i = 0; i < teams.length; i++) {
+      if (gameState.getTeams()[i] == null) continue;
       teams[i] = new Team();
       teams[i].setBase(gameState.getTeams()[i].getBase());
       teams[i].setFlags(gameState.getTeams()[i].getFlags());
       teams[i].setId(gameState.getTeams()[i].getId());
       Piece[] pieces = new Piece[gameState.getTeams()[i].getPieces().length];
-      for(int j=0; j<pieces.length; j++) {
+      for (int j = 0; j < pieces.length; j++) {
         pieces[j] = new Piece();
         pieces[j].setDescription(gameState.getTeams()[i].getPieces()[j].getDescription());
         pieces[j].setId(gameState.getTeams()[i].getPieces()[j].getId() + "");
@@ -284,10 +276,10 @@ public class EngineTools extends AI_Tools {
         pieces[j].setPosition(gameState.getTeams()[i].getPieces()[j].getPosition().clone());
       }
       teams[i].setPieces(pieces);
-    }        
+    }
     newState.setTeams(teams);
     String[][] grid = new String[gameState.getGrid().length][];
-    for(int i = 0; i < gameState.getGrid().length; i++) {
+    for (int i = 0; i < gameState.getGrid().length; i++) {
       grid[i] = new String[gameState.getGrid()[i].length];
       System.arraycopy(gameState.getGrid()[i], 0, grid[i], 0, gameState.getGrid()[i].length);
     }
@@ -303,7 +295,7 @@ public class EngineTools extends AI_Tools {
   static void updateGrid(GameState gs) {
     for (Team team : gs.getTeams()) {
       for (Piece piece : team.getPieces()) {
-        if(!positionOutOfBounds(gs.getGrid(), piece.getPosition()))
+        if (!positionOutOfBounds(gs.getGrid(), piece.getPosition()))
           gs.getGrid()[piece.getPosition()[0]][piece.getPosition()[1]] = piece.getId();
       }
     }

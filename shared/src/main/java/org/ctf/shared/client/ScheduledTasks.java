@@ -1,16 +1,252 @@
 package org.ctf.shared.client;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
+import com.google.gson.Gson;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import org.ctf.shared.ai.AI_Controller;
+import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
+import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.shared.client.lib.ServerDetails;
+import org.ctf.shared.client.service.CommLayer;
+import org.ctf.shared.constants.Constants.AI;
+import org.ctf.shared.state.data.map.MapTemplate;
 
 public class ScheduledTasks {
+  static String GameID;
+
   public static void main(String[] args) {
-    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
-    try {
+    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
+    Gson gson = new Gson();
+
+    Runnable CreateGame =
+        () -> {
+          try {
+            String jsonPayload =
+                """
+                {
+                    "gridSize": [20, 20],
+                    "teams": 2,
+                    "flags": 1,
+                    "blocks": 5,
+                    "pieces": [
+                      {
+                        "type": "Pawn",
+                        "attackPower": 1,
+                        "count": 10,
+                        "movement": {
+                          "directions": {
+                            "left": 0,
+                            "right": 0,
+                            "up": 1,
+                            "down": 0,
+                            "upLeft": 1,
+                            "upRight": 1,
+                            "downLeft": 0,
+                            "downRight": 0
+                          }
+                        }
+                      },
+                      {
+                        "type": "Rook",
+                        "attackPower": 5,
+                        "count": 2,
+                        "movement": {
+                          "directions": {
+                            "left": 2,
+                            "right": 2,
+                            "up": 2,
+                            "down": 2,
+                            "upLeft": 0,
+                            "upRight": 0,
+                            "downLeft": 0,
+                            "downRight": 0
+                          }
+                        }
+                      },
+                      {
+                        "type": "Knight",
+                        "attackPower": 3,
+                        "count": 2,
+                        "movement": {
+                          "shape": {
+                            "type": "lshape"
+                          }
+                        }
+                      },
+                      {
+                        "type": "Bishop",
+                        "attackPower": 3,
+                        "count": 2,
+                        "movement": {
+                          "directions": {
+                            "left": 0,
+                            "right": 0,
+                            "up": 0,
+                            "down": 0,
+                            "upLeft": 2,
+                            "upRight": 2,
+                            "downLeft": 2,
+                            "downRight": 2
+                          }
+                        }
+                      },
+                      {
+                        "type": "Queen",
+                        "attackPower": 5,
+                        "count": 1,
+                        "movement": {
+                          "directions": {
+                            "left": 2,
+                            "right": 2,
+                            "up": 2,
+                            "down": 2,
+                            "upLeft": 2,
+                            "upRight": 2,
+                            "downLeft": 2,
+                            "downRight": 2
+                          }
+                        }
+                      },
+                      {
+                        "type": "King",
+                        "attackPower": 1,
+                        "count": 1,
+                        "movement": {
+                          "directions": {
+                            "left": 1,
+                            "right": 1,
+                            "up": 1,
+                            "down": 1,
+                            "upLeft": 1,
+                            "upRight": 1,
+                            "downLeft": 1,
+                            "downRight": 1
+                          }
+                        }
+                      }
+                    ],
+                    "placement": "symmetrical",
+                    "totalTimeLimitInSeconds": -1,
+                    "moveTimeLimitInSeconds": -1
+                  }
+                """;
+            MapTemplate mapTemplate = gson.fromJson(jsonPayload, MapTemplate.class);
+            ServerManager server =
+                new ServerManager(
+                    new CommLayer(), new ServerDetails("localhost", "8888"), mapTemplate);
+            server.createGame();
+            GameID = server.getGameSessionID();
+            System.out.println(GameID);
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+        };
+
+    Client client1 =
+        ClientStepBuilder.newBuilder()
+            .enableRestLayer(false)
+            .onLocalHost()
+            .onPort("8888")
+            .enableSaveGame(false)
+            .build();
+    Client client2 =
+        ClientStepBuilder.newBuilder()
+            .enableRestLayer(false)
+            .onLocalHost()
+            .onPort("8888")
+            .enableSaveGame(false)
+            .build();
+    Runnable refreshTask =
+        () -> {
+          try {
+            client1.getSessionFromServer();
+            client1.getStateFromServer();
+            client2.getSessionFromServer();
+            client2.getStateFromServer();
+            // System.out.println(gson.toJson(client1.getCurrentState()));
+            TimeUnit.MILLISECONDS.sleep(300);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+        };
+    Runnable joinTask =
+        () -> {
+          // client1.getSessionFromServer();
+          client1.joinExistingGame("localhost", "8888", GameID, "Team 1");
+        };
+
+    Runnable joinTask2 =
+        () -> {
+          // client1.getSessionFromServer();
+          client2.joinExistingGame("localhost", "8888", GameID, "Team 2");
+        };
+
+    // AI_Controller Controller1 = new AI_Controller(client1.getCurrentState(), AI.MCTS);
+
+    Runnable playTask =
+        () -> {
+          try {
+            System.out.println("running playtask 1");
+            AI_Controller Controller1 = new AI_Controller(client1.getCurrentState(), AI.MCTS);
+            client1.pullData();
+            Controller1.update(client1.getCurrentState());
+            /*       client2.pullData();
+            Controller2.update(client2.getCurrentState()); */
+            if (client1.isItMyTurn()) {
+              client1.makeMove(Controller1.getNextMove());
+            }
+            /* else if (client2.isItMyTurn()) {
+              client2.makeMove(Controller2.getNextMove());
+            } */
+            client1.pullData();
+            Controller1.update(client1.getCurrentState());
+            /*   client2.pullData();
+            Controller2.update(client2.getCurrentState()); */
+            TimeUnit.MILLISECONDS.sleep(1500);
+          } catch (InterruptedException | NoMovesLeftException | InvalidShapeException e) {
+            e.printStackTrace();
+          }
+        };
+
+    Runnable playTask2 =
+        () -> {
+          try {
+            System.out.println("running playtask 2");
+            AI_Controller Controller2 = new AI_Controller(client2.getCurrentState(), AI.MCTS);
+            client2.pullData();
+            Controller2.update(client2.getCurrentState());
+            if (client2.isItMyTurn()) {
+              client2.makeMove(Controller2.getNextMove());
+            }
+            client2.pullData();
+            Controller2.update(client2.getCurrentState());
+            TimeUnit.MILLISECONDS.sleep(1500);
+          } catch (InterruptedException | NoMovesLeftException | InvalidShapeException e) {
+            e.printStackTrace();
+          }
+        };
+
+    Runnable printGson =
+        () -> {
+          try {
+            System.out.println(gson.toJson(client1.getCurrentState()));
+            TimeUnit.MILLISECONDS.sleep(300);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+        };
+
+    scheduler.schedule(CreateGame, 1, TimeUnit.SECONDS);
+    scheduler.schedule(joinTask, 3, TimeUnit.SECONDS);
+    scheduler.schedule(joinTask2, 5, TimeUnit.SECONDS);
+    scheduler.schedule(refreshTask, 11, TimeUnit.SECONDS);
+    // scheduler.scheduleWithFixedDelay(refreshTask, 15, 2, TimeUnit.SECONDS);
+    scheduler.scheduleWithFixedDelay(playTask, 14, 3, TimeUnit.SECONDS);
+    scheduler.scheduleWithFixedDelay(playTask2, 14, 2, TimeUnit.SECONDS);
+    scheduler.scheduleWithFixedDelay(printGson, 9, 5, TimeUnit.SECONDS);
+    // scheduler.scheduleWithFixedDelay(playTask2, 11, 2, TimeUnit.SECONDS);
+    /* try {
 
       Callable<Integer> task2 =
           new Callable<Integer>() {
@@ -64,6 +300,6 @@ public class ScheduledTasks {
       scheduler.shutdown();
     } catch (Exception e) {
       // TODO: handle exception
-    }
+    } */
   }
 }
