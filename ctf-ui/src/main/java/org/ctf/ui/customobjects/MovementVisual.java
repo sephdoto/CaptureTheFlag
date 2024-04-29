@@ -108,13 +108,10 @@ public class MovementVisual extends GridPane {
 		for (int i = 6; i < circles.length; i++) {
 			Integer[] arr = {i,0};
 			change.accept(arr);
-			//circles[i][i].setOpacity(0);
 		}
 		for (int i = 6; i < 6 + till; i++) {
 			Integer[] arr = {i,1};
 			change.accept(arr);
-			//circles[i][i].setOpacity(1);
-
 		}
 	}
 }
