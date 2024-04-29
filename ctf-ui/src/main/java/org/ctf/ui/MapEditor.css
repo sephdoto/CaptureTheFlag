@@ -166,6 +166,9 @@
 .spinner .increment-arrow, .spinner .decrement-arrow {
     -fx-background-color: #333; 
 }
+.move-circle{
+	 -fx-fill: rgb(53,89,119);
+}
 
 
 
