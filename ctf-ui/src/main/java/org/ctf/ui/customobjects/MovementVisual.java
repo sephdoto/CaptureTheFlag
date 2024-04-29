@@ -11,10 +11,23 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+/**
+ * Displays a visual representation for the movement options for a custom 
+ * piece in the map editor. Consists of a grid of StackPanes and a connection
+ * to a TemplateEngine to update current move option.
+ * 
+ * @author aniemesc
+ */
 public class MovementVisual extends GridPane {
 	Circle[][] circles = new Circle[11][11];
 	TemplateEngine engine;
 
+	/**
+	 * Initializes basic grid  
+	 * @author aniemesc 
+	 * @param root - VBox container within the editor scene
+	 * @param engine - TemplateEngine
+	 */
 	public MovementVisual(VBox root, TemplateEngine engine) {
 		super();
 		this.engine = engine;
@@ -44,8 +57,13 @@ public class MovementVisual extends GridPane {
 		}
 	}
 
+	/**
+	 * Creates Consumer Objects used for updating the grid. Consumers change 
+	 * opacity of circle objects according to String value .
+	 * @author aniemesc
+	 * @param direc - String value for direction
+	 */
 	public void updateMovementOptions(String direc) {
-
 		switch (direc) {
 		case "Left":
 			Consumer<Integer[]> changeLeft = (arr) -> {
@@ -100,7 +118,13 @@ public class MovementVisual extends GridPane {
 			break;
 		}
 	}
-
+	
+	/**
+	 * Updates grid by executing consumer.
+	 * @author aniemesc
+	 * @param till - int value equal to (length of grid/2)
+	 * @param change - Consumer that takes grid coordinate and opacity value
+	 */
 	private void handle(int till, Consumer<Integer[]> change) {
 		if (6 + till > circles.length) {
 			return;
