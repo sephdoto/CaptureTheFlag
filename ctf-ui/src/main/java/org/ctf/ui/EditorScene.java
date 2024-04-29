@@ -343,11 +343,16 @@ public class EditorScene extends Scene {
 		but.getStyleClass().add("leave-button");
 		but.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		but.prefHeightProperty().bind(but.widthProperty().multiply(0.25));
+		but.prefHeightProperty().addListener((obs, oldv, newV) -> {
+			double size = newV.doubleValue() * 0.5;
+			but.setFont(Font.font("Century Gothic", size));
+		});
 		return but;
 	}
 
 	private Button createExit() {
 		Button exit = createControlButton("Leave");
+		
 		exit.setOnAction(e -> {
 			hsc.switchtoHomeScreen(e);
 		});
@@ -356,6 +361,7 @@ public class EditorScene extends Scene {
 
 	private Button createSubmit() {
 		Button submit = createControlButton("Submit");
+		
 		submit.setOnAction(e -> {
 			engine.printTemplate();
 			// root.getChildren().add(new PopUpPane(this, 0.4, 0.4));
@@ -369,6 +375,11 @@ public class EditorScene extends Scene {
 		mb.getStyleClass().add("custom-menu-button");
 		mb.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		mb.prefHeightProperty().bind(mb.widthProperty().multiply(0.25));
+//		mb.prefHeightProperty().addListener((obs, oldv, newV) -> {
+//			System.out.println("hey");
+//			double size = newV.doubleValue() * 0.5;
+//			mb.setFont(Font.font("Century Gothic", size));
+//		});
 		MenuItem mapMenuItem = new MenuItem("Edit Map");
 		MenuItem figureMenuItem = new MenuItem("Add Pieces");
 		MenuItem configMenuItem = new MenuItem("Costum Pieces");
