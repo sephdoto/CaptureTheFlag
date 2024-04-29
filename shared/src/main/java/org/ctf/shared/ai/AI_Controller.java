@@ -22,16 +22,16 @@ public class AI_Controller {
   AI ai;
   GameState gameState;
   boolean active;
-  
+
   public AI_Controller(GameState gameState, AI ai) {
     this.ai = ai;
     if(gameState.getCurrentTeam() < 0)
       return;
     this.gameState = gameState;
-//    normaliseGameState();
+    //    normaliseGameState();
     this.active = true;
   }
-  
+
   public void update(GameState gameState) {
     this.gameState = gameState;
     if(gameState.getCurrentTeam() < 0) {
@@ -40,32 +40,32 @@ public class AI_Controller {
     } else {
       this.active = true;
     }
-//    normaliseGameState();
+    //    normaliseGameState();
   }
-  
+
   public void shutDown() {
     System.out.println("AI Shit down");
   }
-  
+
   public Move getNextMove()
       throws NoMovesLeftException, InvalidShapeException {
     if(!this.active)
       return null;
-    
+
     int milis = 1000;
     switch (this.ai) {
       case RANDOM:
         return RandomAI.pickMoveComplex(gameState, new ReferenceMove(null, new int[] {0,0})).toMove();
       case MCTS:
-      org.ctf.shared.ai.mcts.TreeNode root = new org.ctf.shared.ai.mcts.TreeNode(null, gameState, null, new ReferenceMove(null, new int[] {0,0}));
-      org.ctf.shared.ai.mcts.MCTS mcts = new org.ctf.shared.ai.mcts.MCTS(root); 
+        org.ctf.shared.ai.mcts.TreeNode root = new org.ctf.shared.ai.mcts.TreeNode(null, gameState, null, new ReferenceMove(null, new int[] {0,0}));
+        org.ctf.shared.ai.mcts.MCTS mcts = new org.ctf.shared.ai.mcts.MCTS(root); 
         Move move = mcts.getMove(milis, AI_Constants.C);
         mcts.root.printGrid();
         System.out.println(mcts.printResults(move));
         return move;
       case MCTS_IMPROVED:
-      org.ctf.shared.ai.mcts2.TreeNode root2 = new org.ctf.shared.ai.mcts2.TreeNode(null, gameState, null);
-      org.ctf.shared.ai.mcts2.MCTS mcts2 = new org.ctf.shared.ai.mcts2.MCTS(root2);
+        org.ctf.shared.ai.mcts2.TreeNode root2 = new org.ctf.shared.ai.mcts2.TreeNode(null, gameState, null);
+        org.ctf.shared.ai.mcts2.MCTS mcts2 = new org.ctf.shared.ai.mcts2.MCTS(root2);
         Move move2 = mcts2.getMove(milis, AI_Constants.C);
         mcts2.root.printGrids();
         System.out.println(mcts2.printResults(move2));
@@ -74,7 +74,7 @@ public class AI_Controller {
         return RandomAI.pickMoveComplex(gameState, new ReferenceMove(null, new int[] {0,0})).toMove();
     }
   }
-  
+
   private void normaliseGameState() {
     for(int i=0; i<this.gameState.getTeams().length; i++)
       this.gameState.getTeams()[i].setId(""+i);
