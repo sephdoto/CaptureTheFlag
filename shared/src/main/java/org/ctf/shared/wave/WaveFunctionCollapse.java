@@ -1,6 +1,5 @@
 package org.ctf.shared.wave;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -10,26 +9,36 @@ import org.ctf.shared.constants.Constants;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
+
 /**
+ * The class to call when creating a background with the wave function collapse algorithm. How to
+ * use: 
+ * <p>
+ * - Create a new instance of WaveFunctionCollapse with the String[][] grid representing the map as
+ *  input 
+ * </p>
+ * <p>
+ * - Call the getBackground method to get the finished image
+ * </p>
  * @author ysiebenh
  */
 public class WaveFunctionCollapse {
   private int[][] grid;
   private boolean collapsed = false;
-  
+  private BufferedImage background;
+
   /**
-   * Constructor that parses the String grid (created by the GameEngine) into an integer which the
+   * Constructor that parses the String[][] grid (created by the GameEngine) into an integer which the
    * algorithm is going to use internally to keep track which image goes where.
    * 
    * @param grid
    */
   public WaveFunctionCollapse(String[][] grid) {
     int[][] intGrid = new int[grid.length][grid[0].length];
-    for(int y = 0; y < grid.length; y++) {
-      for(int x = 0; x < grid[y].length; x++) {
+    for (int y = 0; y < grid.length; y++) {
+      for (int x = 0; x < grid[y].length; x++) {
         intGrid[y][x] = grid[y][x].equals("") ? 0 : 1;
       }
     }
@@ -38,19 +47,20 @@ public class WaveFunctionCollapse {
 
   /**
    * The actual wave function collapse algorithm takes place here.
+   * 
    * @param grid
    * @return
    */
-  public int[][] generateBackground(int[][] grid){
-    
-    //TODO add backtracking
+  public int[][] generateBackground(int[][] grid) {
+
+    // TODO add backtracking
     long nowMillis = System.currentTimeMillis();
-    
-    WaveGrid wGrid = new WaveGrid(grid,5);
+
+    WaveGrid wGrid = new WaveGrid(grid, 5);
     while (!collapsed) {
       LinkedList<Tile> possibleTiles = new LinkedList<Tile>();
       ArrayList<Tile> tileCopy = new ArrayList<Tile>(wGrid.tiles);
-      
+
       tileCopy.sort(new Comparator<Tile>() {
         @Override
         public int compare(Tile a, Tile b) {
@@ -83,9 +93,17 @@ public class WaveFunctionCollapse {
       thisTile.setValue(thisTile.options.get((int) (Math.random() * thisTile.options.size())));
 
     }
-    System.out.println(" generateBackground took " + (System.currentTimeMillis() - nowMillis) + "ms");
+
+    try {
+      background = gridToImg(wGrid.grid);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    System.out
+        .println(" generateBackground took " + (System.currentTimeMillis() - nowMillis) + "ms");
     return wGrid.grid;
-    
+
   }
   
   
@@ -108,8 +126,9 @@ public class WaveFunctionCollapse {
           case 0:
             break;
           case 1:
-            //file = ImageIO.read(new File(Constants.toUIResources + "black.png"));
-            file = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"p1.png"));
+            // file = ImageIO.read(new File(Constants.toUIResources + "black.png"));
+            file = ImageIO
+                .read(new File(Constants.toUIResources + "pictures" + File.separator + "p1.png"));
             break;
           case 2:
             //file = ImageIO.read(new File(Constants.toUIResources + "white.png"));
@@ -152,8 +171,6 @@ public class WaveFunctionCollapse {
   
   /**
    * Getter for the grid. 
-   * Use this to get the grid after creating the WaveFunctionCollapse object
-   * 
    * @return
    */
   public int[][] getGrid() {
@@ -161,8 +178,10 @@ public class WaveFunctionCollapse {
   }
   
   /**
-   * used in the gridToImg method to turn pngs around. Taken from StackOverFlow 
-   * @see <a href="https://stackoverflow.com/questions/37758061/rotate-a-buffered-image-in-java">Stackoverflow</a>
+   * used in the gridToImg method to turn pngs around. Taken from StackOverFlow
+   * 
+   * @see <a href=
+   *      "https://stackoverflow.com/questions/37758061/rotate-a-buffered-image-in-java">Stackoverflow</a>
    * 
    * @param img the image to be rotated
    * @param angle the angle by which it wants to be rotated
@@ -192,5 +211,15 @@ public class WaveFunctionCollapse {
     g2d.dispose();
 
     return rotated;
+  }
+
+  /**
+   * Getter for the Background image. Call this method after creating the WaveFunctionCollapse
+   * object to get the finished background
+   * 
+   * @return
+   */
+  public BufferedImage getBackground() {
+    return background;
   }
 }

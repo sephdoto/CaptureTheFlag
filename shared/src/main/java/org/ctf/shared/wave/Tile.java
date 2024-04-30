@@ -1,8 +1,10 @@
 package org.ctf.shared.wave;
 
 import java.util.ArrayList;
+
 /**
  * Representation of a single Tile in the Grid.
+ * 
  * @author ysiebenh
  */
 public class Tile {
@@ -10,20 +12,20 @@ public class Tile {
   // **************************************************
   // Fields
   // **************************************************
-  
+
   private int value;
   ArrayList<Integer> options;
   private int x;
   private int y;
   private WaveGrid parentGrid;
-  boolean collapsed; //TODO implement properly
+  boolean collapsed; // TODO implement properly
   int index;
   TileType ruleSet;
-  
+
   // **************************************************
   // Constructor
   // **************************************************
-  
+
   Tile(int value, int x, int y, ArrayList<Integer> options, WaveGrid parentGrid) {
     this.value = value;
     this.x = x;
@@ -31,16 +33,17 @@ public class Tile {
     this.options = options;
     this.parentGrid = parentGrid;
   }
+  
   // **************************************************
   // Package methods
   // **************************************************
-  
+
   void removeFromOptions(int r, Tile t) {
     if (t != null) {
       t.options.remove(Integer.valueOf(r));
     }
   }
-  
+
   void addRules(TileType[] rules) {
     ruleSet = rules[value];
   }
@@ -58,10 +61,10 @@ public class Tile {
     this.ruleSet = this.parentGrid.rules[value];
     this.parentGrid.updateEntropy(this);
     this.options = new ArrayList<Integer>();
-    }
+  }
   
   Tile getUpperNeighbor() {
-    if(this.y == 0) {
+    if (this.y == 0) {
       return null;
     }
     int location = (this.y - 1) * this.parentGrid.grid[0].length + this.x;
@@ -74,7 +77,7 @@ public class Tile {
   }
 
   Tile getRightNeighbor() {
-    if(this.x == this.parentGrid.grid[0].length-1) {
+    if (this.x == this.parentGrid.grid[0].length - 1) {
       return null;
     }
     int location = (this.y) * this.parentGrid.grid[0].length + this.x + 1;
@@ -87,7 +90,7 @@ public class Tile {
   }
 
   Tile getLowerNeighbor() {
-    if(this.y == this.parentGrid.grid.length-1) {
+    if (this.y == this.parentGrid.grid.length - 1) {
       return null;
     }
     int location = (this.y + 1) * this.parentGrid.grid[0].length + this.x;
@@ -100,7 +103,7 @@ public class Tile {
   }
 
   Tile getLeftNeighbor() {
-    if(this.x == 0) {
+    if (this.x == 0) {
       return null;
     }
     int location = (this.y) * this.parentGrid.grid[0].length + this.x - 1;

@@ -8,21 +8,21 @@ package org.ctf.shared.wave;
  */
 
 public class TileType {
-  
+
   // **************************************************
   // Fields
   // **************************************************
-  
+
   int type;
   final int TYPEMAX = 5; // this needs to be adjusted to the number of possible tiles
   String up;
   String right;
   String down;
   String left;
-  int[] notCompatibleUp ;
+  int[] notCompatibleUp;
   int[] notCompatibleRight;
   int[] notCompatibleDown;
-  int[] notCompatibleLeft ;
+  int[] notCompatibleLeft;
   
   // **************************************************
   // Constructors
@@ -37,7 +37,7 @@ public class TileType {
     hardRules();
     generateRules();
   }
-  
+
   private TileType() {
     notCompatibleUp = new int[TYPEMAX];
     notCompatibleRight = new int[TYPEMAX];
@@ -49,19 +49,19 @@ public class TileType {
   // **************************************************
   // Package methods
   // **************************************************
-  
+
   static TileType[] generateRuleSet() {
     TileType[] rules = new TileType[6];
-    for(int i = 0; i <= 5; i++) {
+    for (int i = 0; i <= 5; i++) {
       rules[i] = new TileType(i);
     }
     return rules;
   }
-  
+
   // **************************************************
   // Private methods
   // **************************************************
-  
+
   private void generateRules() {
     TileType[] types = new TileType[5 + 1];
     for (int i = 0; i <= 5; i++) {
