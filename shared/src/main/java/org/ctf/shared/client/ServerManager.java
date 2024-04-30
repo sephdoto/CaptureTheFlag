@@ -51,9 +51,9 @@ public class ServerManager {
     try {
       gSessionResponse = comm.createGameSession(currentServer, gsr);
     } catch (Exception e) {
-     return false;
+      return false;
     }
-   
+
     if (gSessionResponse.getId() != null) {
       this.gameSessionID = gSessionResponse.getId();
     }
@@ -77,11 +77,17 @@ public class ServerManager {
    * @author rsyed
    */
   public int getCurrentNumberofTeams() {
-    GameState gameState = comm.getCurrentGameState(currentServer + "/" + gameSessionID);
     int counter = 0;
-    for (int i = 0; i < gameState.getTeams().length; i++) {
-      if (gameState.getTeams()[i] != null) {
-        counter++;
+    if (isServerActive()) {
+      try {
+        GameState gameState = comm.getCurrentGameState(currentServer + "/" + gameSessionID);
+        for (int i = 0; i < gameState.getTeams().length; i++) {
+          if (gameState.getTeams()[i] != null) {
+            counter++;
+          }
+        }
+      } catch (Exception e) {
+        return 0;
       }
     }
     return counter;
