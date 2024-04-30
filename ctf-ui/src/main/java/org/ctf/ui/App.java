@@ -24,6 +24,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.ctf.ui.controllers.MusicPlayer;
+import org.ctf.ui.controllers.SettingsSetter;
 
 /**
  * @author mkrakows
@@ -40,6 +41,8 @@ public class App extends Application {
 
 	public void start(Stage stage) {
 		mainStage = stage;
+		SettingsSetter.saveCustomSettings();
+		SettingsSetter.loadCustomSettings();
 		ImageLoader.loadImages();
 		Scene lockscreen = new Scene(createLockScreen(), 1000, 500);
 		startScene = new Scene(createParent());

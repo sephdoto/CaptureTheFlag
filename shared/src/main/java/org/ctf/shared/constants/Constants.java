@@ -11,10 +11,43 @@ import java.util.ArrayList;
  */
 public class Constants {
   // TODO: add "jar:" before all path strings. then everything should work, even if in a jar.
+  static String jar = "";//"jar:";
+  
+
+  ///////////////////////////////////////////////////////
+  //             User changeable things                //
+  ///////////////////////////////////////////////////////
+  
+  public static double soundVolume = 0.4;
+  public static double musicVolume = 0.4;
+
+  /**
+   * This enum contains the above mentioned variables.
+   * It safes them with their name to put in the settings.json file.
+   * 
+   * @author sistumpf
+   */
+  public enum UserChangeable {
+    soundVolume("soundVolume"),
+    musicVolume("musicVolume");
+    
+    
+    private final String name;
+    private UserChangeable(final String name) {
+      this.name = name;
+    }
+    
+    public String getString() {return this.name;};
+  }
+  
+  
+  ///////////////////////////////////////////////////////
+  //                      Strings                      //
+  ///////////////////////////////////////////////////////
 
   // to shared.resources folder
   public static String sharedResourcesFolder =
-      Paths.get("").toAbsolutePath().toString().split("cfp14")[0]
+      jar + Paths.get("").toAbsolutePath().toString().split("cfp14")[0]
           + "cfp14"
           + File.separator
           + "shared"
@@ -36,7 +69,6 @@ public class Constants {
 
   // Default folder for saving games for AI Analysis
   public static String saveGameFolder = sharedResourcesFolder + "savegames" + File.separator;
-
   // package map, class JSON_Tools
   public static String mapTemplateFolder = sharedResourcesFolder + "maptemplates" + File.separator;
 
@@ -46,40 +78,30 @@ public class Constants {
    * @author rsyed
    */
   public static String testTemplate = mapTemplateFolder + "serverTester.json";
-
   public static String toUIResources =
-      Paths.get("").toAbsolutePath().toString().split("cfp14")[0]
+      jar + Paths.get("").toAbsolutePath().toString().split("cfp14")[0]
           + "cfp14"
           + File.separator
           + "ctf-ui"
           + File.separator
           + "resources"
           + File.separator;
-
-  public static double soundVolume = 0.4;
   public static String soundFileTypes = ".wav";
-  /** This enum contains the different Sound Types and their locations in the project. */
-  public enum SoundType {
-    MOVE("move"),
-    KILL("kill"),
-    CAPTURE("capture"),
-    SELECT("select"),
-    DESELECT("deselect"),
-    MISC("misc");
 
-    private final String location;
+  /**
+   * Constants needed to make the base URI of the restClient
+   *
+   * @author rsyed
+   */
+  public static final String remoteIP = "localhost";
+  public static final String remotePort = "8888";
+  public static final String remoteBinder = "/api/";
 
-    SoundType(final String location) {
-      this.location = location + File.separator;
-    }
-
-    public String getLocation() {
-      return this.location;
-    }
-  }
-
-  public static double musicVolume = 0.4;
-
+  
+  ///////////////////////////////////////////////////////
+  //                       ENUMS                       //
+  ///////////////////////////////////////////////////////
+  
   /**
    * This Enum contains all songs and their locations. Songs in easterEggs wont be returned by
    * getRandom.
@@ -95,7 +117,7 @@ public class Constants {
     STARTUP("startup.mp3"); // https://www.youtube.com/watch?v=Am4wYTiHHx8
 
     private final String text;
-    private static final ArrayList<Music> easterEggs = new ArrayList<Music>();
+    private static ArrayList<Music> easterEggs = new ArrayList<Music>();
 
     static {
       easterEggs.add(ELEVATOR);
@@ -118,17 +140,31 @@ public class Constants {
       return music;
     }
   }
-
-  /**
-   * Constants needed to make the base URI of the restClient
+  
+  /** 
+   * This enum contains the different Sound Types and their locations in the project.
    *
-   * @author rsyed
+   * @author sistumpf
    */
-  public static final String remoteIP = "localhost";
+  public enum SoundType {
+    MOVE("move"),
+    KILL("kill"),
+    CAPTURE("capture"),
+    SELECT("select"),
+    DESELECT("deselect"),
+    MISC("misc");
 
-  public static final String remotePort = "8888";
-  public static final String remoteBinder = "/api/";
+    private final String location;
 
+    SoundType(final String location) {
+      this.location = location + File.separator;
+    }
+
+    public String getLocation() {
+      return this.location;
+    }
+  }
+  
   /**
    * Enums for AI Client
    *
