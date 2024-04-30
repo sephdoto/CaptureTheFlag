@@ -12,8 +12,36 @@
 
 .des-label2 {
     -fx-text-fill: rgba(128, 128, 128, 0.9);
-    -fx-font-family: 'Eras Medium Light';
-    
+    -fx-font-family: 'Eras Medium Light'; 
+}
+
+.des-timer {
+    -fx-text-fill: rgba(255,255,255,1);
+    -fx-font-family: 'Eras Medium Light'; 
+}
+
+.timer-box{
+	 -fx-background-color: rgb(25,25,25);
+	  -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0.5, 0, 0); 
+}
+
+
+
+.timer-label {
+    -fx-font-family: "Courier New", monospace;
+    -fx-font-size: 28px;
+    -fx-text-fill: #FFD700;
+   -fx-background-color: rgb(25,25,25);
+   -fx-border-color: rgba(255,255,255,1);
+	 -fx-border-width: 2px;
+	  -fx-background-radius: 10px; 
+	 -fx-border-radius: 10px;
+    -fx-alignment: center;
+}
+
+.play-pane {
+	 -fx-background-color: #475865;
+	 -fx-alignment: top-center;
 }
 .number-label {
      -fx-font-family: 'Courier New', monospace; 

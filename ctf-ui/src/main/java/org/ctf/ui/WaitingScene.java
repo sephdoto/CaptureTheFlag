@@ -417,7 +417,7 @@ public class WaitingScene extends Scene {
 		search.fontProperty().bind(Bindings.createObjectBinding(
 				() -> Font.font("Century Gothic", search.getHeight() * 0.4), search.heightProperty()));
 		search.setOnAction(e -> {
-			
+			hsc.switchToPlayGameScene(App.getStage());
 		});
 
 		return search;

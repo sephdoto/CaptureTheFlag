@@ -47,8 +47,18 @@ public class GamePane extends HBox{
 	HashMap<String, CostumFigurePain> figures = new HashMap<String, CostumFigurePain>();
 	HashMap<Integer, BaseRep> bases = new HashMap<Integer, BaseRep>();
 	HashMap<Integer, BackgroundCellV2> cells = new HashMap<Integer, BackgroundCellV2>();
-	 GridPane gridPane;
+	GridPane gridPane;
 	
+	public GridPane getGridPane() {
+		return gridPane;
+	}
+
+
+	public void setGridPane(GridPane gridPane) {
+		this.gridPane = gridPane;
+	}
+
+
 	public GamePane(GameState state) {
 		this.state = state;
 		this.map = state.getGrid();
@@ -58,14 +68,7 @@ public class GamePane extends HBox{
 		vBox.alignmentProperty().set(Pos.CENTER);
 		alignmentProperty().set(Pos.CENTER);
 		paddingProperty().set(new Insets(20));
-		//setFillHeight(true);
-//		 double paddingValue = 0.05;
-//	      paddingProperty().bind(Bindings.createObjectBinding(
-//	            () -> new Insets(getWidth() * paddingValue, 
-//	                             getHeight() * paddingValue, 
-//	                             getWidth() * paddingValue, 
-//	                             getHeight() * paddingValue),
-//	            widthProperty(), heightProperty()));
+		
 		 gridPane = new GridPane();
 		// gridPane.setFillWidth(true);
 
