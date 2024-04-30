@@ -14,6 +14,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -84,7 +85,7 @@ public class App extends Application {
 		HomeScreenButton i3 = new HomeScreenButton("JOIN GAME", () -> {
 			ssc.switchToJoinScene(mainStage);
 		});
-		HomeScreenButton i4 = new HomeScreenButton("Settings", () -> {
+		HomeScreenButton i4 = new HomeScreenButton("SETTINGS", () -> {
 			
 			root.getChildren().add(new ComponentCreator(startScene).createSettingsWindow(root));
 		});

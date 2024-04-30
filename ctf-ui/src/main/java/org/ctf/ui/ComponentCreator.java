@@ -1,5 +1,6 @@
 package org.ctf.ui;
 
+import org.ctf.shared.constants.Constants;
 import org.ctf.ui.customobjects.PopUpPane;
 
 import javafx.beans.binding.Bindings;
@@ -7,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -199,12 +201,30 @@ public class ComponentCreator {
 	}
 	
 	public StackPane createSettingsWindow(StackPane root) {
-		PopUpPane popUp = new PopUpPane(scene, 0.5, 0.6);
+		PopUpPane popUp = new PopUpPane(scene, 0.5, 0.5);
 		VBox vbox = new VBox();
 		vbox.setAlignment(Pos.TOP_CENTER);
 		vbox.setPadding(new Insets(10));
 		vbox.setSpacing(15);
 		vbox.getChildren().add(createHeaderText(vbox, "Settings", 12));
+		
+		//valueBox.getChildren().add();
+		//soundValue.getChildren().add(createHeaderText(vbox, "Sound Volume", 18));
+		GridPane grid = new GridPane();
+		grid.setVgap(15);
+		grid.setHgap(15);
+		grid.add(createHeaderText(vbox, "Music Volume", 18), 0, 0);
+		grid.add(createHeaderText(vbox, "Sound Volume", 18), 0, 1);
+		Slider musicSlider = createSlider(Constants.musicVolume);
+		grid.add(musicSlider, 1, 0);
+		Slider soundSlider = createSlider(Constants.soundVolume);
+		grid.add(soundSlider, 1, 1);
+		vbox.getChildren().add(grid);
+		vbox.widthProperty().addListener((obs, oldv, newV) -> {
+			double size = newV.doubleValue() * 0.2;
+			VBox.setMargin(grid, new Insets(15, size, 15, size));
+		});
+		VBox.setMargin(grid, new Insets(15, 50, 15, 50));
 		vbox.getChildren().add(createLeaveSettings(vbox, popUp, root));
 		popUp.setContent(vbox);
 		return popUp;
@@ -239,5 +259,15 @@ public class ComponentCreator {
 		leftheader.fontProperty().bind(Bindings.createObjectBinding(
 				() -> Font.font("Century Gothic", vBox.getWidth() / divider), vBox.widthProperty()));
 		return leftheader;
+	}
+	
+	private Slider createSlider(double value) {
+		Slider slider = new Slider();
+		slider.getStyleClass().add("mySlider");
+		slider.setMin(0);
+		slider.setMax(1);
+		slider.setValue(value);
+		slider.setBlockIncrement(0.1);
+		return slider;
 	}
 }
