@@ -78,6 +78,9 @@ public class Constants {
    * @author rsyed
    */
   public static String testTemplate = mapTemplateFolder + "serverTester.json";
+  public static String clientTestingTemplate = mapTemplateFolder + "10x10_2teams_example.json";
+  public static String clientTimeLimitedTemplate = mapTemplateFolder + "10x10_2teams_example_timeLimited.json";
+  public static String clientMoveTimeLimitedTemplate = mapTemplateFolder + "10x10_2teams_example_moveTimeLimited.json";
   public static String toUIResources =
       jar + Paths.get("").toAbsolutePath().toString().split("cfp14")[0]
           + "cfp14"

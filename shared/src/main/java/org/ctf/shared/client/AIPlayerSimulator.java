@@ -134,6 +134,7 @@ public class AIPlayerSimulator {
     server.createGame();
     GameID = server.getGameSessionID();
     System.out.println(GameID + " this is the session ID");
+   
 /*     AIClient javaClient1 =
         AIClientStepBuilder.newBuilder()
             .enableRestLayer(false)
@@ -147,12 +148,14 @@ public class AIPlayerSimulator {
             javaClient1.joinExistingGame("localhost", "8888", server.getGameSessionID(), "seph 1");
             javaClient1.startGameController(); */
 
-      /*       try {
+             try {
               Thread.sleep(15000);
+              System.out.println(server.isServerActive());
+              System.out.println(server.getCurrentNumberofTeams());
             } catch (InterruptedException e) {
               // TODO Auto-generated catch block
               e.printStackTrace();
-            }  */
+            }  
 
       
   }

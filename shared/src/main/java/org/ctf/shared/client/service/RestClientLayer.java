@@ -2,7 +2,6 @@ package org.ctf.shared.client.service;
 
 import java.net.URISyntaxException;
 import org.ctf.shared.state.GameState;
-import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.exceptions.ForbiddenMove;
 import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
@@ -40,7 +39,6 @@ public class RestClientLayer implements CommLayerInterface {
    * @param URL
    * @param map
    * @returns GameSessionResponse
-   * @throws Accepted (200)
    * @throws URLError (404)
    * @throws UnknownError (500)
    * @author rsyed
@@ -54,12 +52,12 @@ public class RestClientLayer implements CommLayerInterface {
       throw new URLError("Check URL");
     }
     int code = result.getStatusCode().value();
-    if (code == 200) {
-      throw new Accepted();
-    } else if (code == 404) {
-      throw new UnknownError();
-    } else if (code == 500) {
-      throw new URLError("URL Error");
+    if (code != 200) {
+      if (code == 404) {
+        throw new UnknownError();
+      } else if (code == 500) {
+        throw new URLError("URL Error");
+      }
     }
 
     return result.getBody();
@@ -72,7 +70,6 @@ public class RestClientLayer implements CommLayerInterface {
    * @param URL "http://localhost:9999/api/gamesession/{sessionID}"
    * @param teamName
    * @return JoinGameResponse
-   * @throws Accepted (200)
    * @throws URISyntaxException
    * @throws SessionNotFound (404)
    * @throws NoMoreTeamSlots (429)
@@ -97,14 +94,14 @@ public class RestClientLayer implements CommLayerInterface {
       throw new URLError("Check URL");
     }
     int code = result.getStatusCode().value();
-    if (code == 200) {
-      throw new Accepted();
-    } else if (code == 404) {
-      throw new SessionNotFound();
-    } else if (code == 429) {
-      throw new NoMoreTeamSlots();
-    } else if (code == 500) {
-      throw new UnknownError();
+    if (code != 200) {
+      if (code == 404) {
+        throw new SessionNotFound();
+      } else if (code == 429) {
+        throw new NoMoreTeamSlots();
+      } else if (code == 500) {
+        throw new UnknownError();
+      }
     }
     return result.getBody();
   }
@@ -117,7 +114,6 @@ public class RestClientLayer implements CommLayerInterface {
    * @param teamID
    * @param teamSecret
    * @param move
-   * @throws Accepted (200)
    * @throws ForbiddenMove (403)
    * @throws SessionNotFound (404)
    * @throws InvalidMove (409)
@@ -135,18 +131,18 @@ public class RestClientLayer implements CommLayerInterface {
       throw new URLError("Check URL");
     }
     int code = result.getStatusCode().value();
-    if (code == 200) {
-      throw new Accepted();
-    } else if (code == 403) {
-      throw new ForbiddenMove();
-    } else if (code == 404) {
-      throw new SessionNotFound();
-    } else if (code == 409) {
-      throw new InvalidMove();
-    } else if (code == 410) {
-      throw new GameOver();
-    } else if (code == 500) {
-      throw new UnknownError();
+    if (code != 200) {
+      if (code == 403) {
+        throw new ForbiddenMove();
+      } else if (code == 404) {
+        throw new SessionNotFound();
+      } else if (code == 409) {
+        throw new InvalidMove();
+      } else if (code == 410) {
+        throw new GameOver();
+      } else if (code == 500) {
+        throw new UnknownError();
+      }
     }
   }
 
@@ -158,7 +154,6 @@ public class RestClientLayer implements CommLayerInterface {
    * @param URL
    * @param teamID
    * @param teamSecret
-   * @throws Accepted (200)
    * @throws ForbiddenMove (403)
    * @throws SessionNotFound (404)
    * @throws GameOver (410)
@@ -179,16 +174,16 @@ public class RestClientLayer implements CommLayerInterface {
       throw new URLError("Check URL");
     }
     int code = result.getStatusCode().value();
-    if (code == 200) {
-      throw new Accepted();
-    } else if (code == 403) {
-      throw new ForbiddenMove();
-    } else if (code == 404) {
-      throw new SessionNotFound();
-    } else if (code == 410) {
-      throw new GameOver();
-    } else if (code == 500) {
-      throw new UnknownError();
+    if (code != 200) {
+      if (code == 403) {
+        throw new ForbiddenMove();
+      } else if (code == 404) {
+        throw new SessionNotFound();
+      } else if (code == 410) {
+        throw new GameOver();
+      } else if (code == 500) {
+        throw new UnknownError();
+      }
     }
   }
 
@@ -199,7 +194,6 @@ public class RestClientLayer implements CommLayerInterface {
    *
    * @param URL
    * @return GameSessionResponse
-   * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws UnknownError (500)
    * @throws URLError (404)
@@ -214,12 +208,12 @@ public class RestClientLayer implements CommLayerInterface {
       throw new URLError("Check URL");
     }
     int code = result.getStatusCode().value();
-    if (code == 200) {
-      throw new Accepted();
-    } else if (code == 404) {
-      throw new SessionNotFound();
-    } else if (code == 500) {
-      throw new UnknownError();
+    if (code != 200) {
+      if (code == 404) {
+        throw new SessionNotFound();
+      } else if (code == 500) {
+        throw new UnknownError();
+      }
     }
 
     return result.getBody();
@@ -230,7 +224,6 @@ public class RestClientLayer implements CommLayerInterface {
    * server reponse which are HTTP status codes thrown as exceptions.
    *
    * @param URL
-   * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws UnknownError (500)
    * @throws URLError (404)
@@ -246,12 +239,12 @@ public class RestClientLayer implements CommLayerInterface {
     }
 
     int code = result.getStatusCode().value();
-    if (code == 200) {
-      throw new Accepted();
-    } else if (code == 404) {
-      throw new SessionNotFound();
-    } else if (code == 500) {
-      throw new UnknownError();
+    if (code != 200) {
+      if (code == 404) {
+        throw new SessionNotFound();
+      } else if (code == 500) {
+        throw new UnknownError();
+      }
     }
   }
 
@@ -260,7 +253,6 @@ public class RestClientLayer implements CommLayerInterface {
    * server reponse which are HTTP status codes thrown as exceptions.
    *
    * @param URL
-   * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws UnknownError (500)
    * @throws URLError (404)
@@ -275,12 +267,12 @@ public class RestClientLayer implements CommLayerInterface {
       throw new URLError("Check URL");
     }
     int code = result.getStatusCode().value();
-    if (code == 200) {
-      throw new Accepted();
-    } else if (code == 404) {
-      throw new SessionNotFound();
-    } else if (code == 500) {
-      throw new UnknownError();
+    if (code != 200) {
+      if (code == 404) {
+        throw new SessionNotFound();
+      } else if (code == 500) {
+        throw new UnknownError();
+      }
     }
     return result.getBody();
   }

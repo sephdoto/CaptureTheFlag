@@ -11,6 +11,7 @@ import java.io.IOException;
 import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
@@ -32,18 +33,20 @@ public class ClientTest {
   static Client javaClient;
   static Client javaClient2;
   final MapTemplate template = createGameTemplate();
-
+  ServerManager server = new ServerManager(comm, new ServerDetails("localhost", "9998"), null);
+  
   @BeforeAll
   static void setup() {
-    String[] args = new String[] {};
+    String[] args = new String[] {"--server.port=9998"};
     CtfApplication.main(args);
     javaClient =
         ClientStepBuilder.newBuilder()
             .enableRestLayer(false)
             .onLocalHost()
-            .onPort("8888")
+            .onPort("9998")
             .enableSaveGame(false)
             .build();
+            
   }
 
   @BeforeEach
@@ -52,16 +55,17 @@ public class ClientTest {
         ClientStepBuilder.newBuilder()
             .enableRestLayer(false)
             .onLocalHost()
-            .onPort("8888")
+            .onPort("9998")
             .enableSaveGame(false)
             .build();
     javaClient2 =
         ClientStepBuilder.newBuilder()
             .enableRestLayer(false)
             .onLocalHost()
-            .onPort("8888")
+            .onPort("9998")
             .enableSaveGame(false)
             .build();
+    
   }
 
   @Test
@@ -117,7 +121,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "9998", javaClient.getCurrentGameSessionID(), "Team2");
     assertNotNull(javaClient.getCurrentTeamTurn());
   }
 
@@ -127,7 +131,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "9998", javaClient.getCurrentGameSessionID(), "Team2");
     try {
       if (javaClient.getCurrentTeamTurn() == 1) {
         javaClient.giveUp();
@@ -150,7 +154,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "9998", javaClient.getCurrentGameSessionID(), "Team2");
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
     assertNotNull(javaClient.getGrid());
@@ -161,27 +165,24 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "9998", javaClient.getCurrentGameSessionID(), "Team2");
     javaClient.pullData();
     javaClient2.pullData();
-    AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS);
-    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS);
+    AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS, 0);
+    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS,0);
     try {
       if (javaClient.isItMyTurn()) {
-        javaClient2.giveUp();
-        //javaClient.makeMove(Controller.getNextMove());
+        javaClient.makeMove(Controller.getNextMove());
       } else {
         javaClient2.makeMove(Controller2.getNextMove());
       }
-
+      javaClient.pullData();
+      javaClient2.pullData();
     } catch (NoMovesLeftException | InvalidShapeException e) {
       fail();
     }
-    javaClient.getStateFromServer();
-    javaClient2.getStateFromServer();
     assertNotNull(javaClient.getLastMove());
     assertNotNull(javaClient2.getLastMove());
-    javaClient.deleteSession();
   }
 
   @Test
@@ -189,7 +190,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "9998", javaClient.getCurrentGameSessionID(), "Team2");
     try {
       javaClient.getSessionFromServer();
       javaClient2.getSessionFromServer();
@@ -205,7 +206,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "9998", javaClient.getCurrentGameSessionID(), "Team2");
     try {
       javaClient.getSessionFromServer();
       javaClient.getStateFromServer();
@@ -222,7 +223,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "9998", javaClient.getCurrentGameSessionID(), "Team2");
     try {
       javaClient.getSessionFromServer();
       javaClient2.getSessionFromServer();
@@ -236,7 +237,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "9998", javaClient.getCurrentGameSessionID(), "Team2");
     assertNotNull(javaClient.getTeamColor());
   }
 
@@ -259,7 +260,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "9998", javaClient.getCurrentGameSessionID(), "Team2");
     javaClient.getStateFromServer();
     assertNotNull(javaClient.getTeams());
   }
@@ -270,7 +271,7 @@ public class ClientTest {
     template.setTotalTimeLimitInSeconds(1);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "9998", javaClient.getCurrentGameSessionID(), "Team2");
     javaClient.pullData();
     javaClient2.pullData();
     assertNotNull(javaClient.getWinners());
@@ -281,7 +282,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "9998", javaClient.getCurrentGameSessionID(), "Team2");
     if (javaClient.isItMyTurn()) {
       javaClient.giveUp();
     }
@@ -292,7 +293,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "9998", javaClient.getCurrentGameSessionID(), "Team2");
     try {
       javaClient.getSessionFromServer();
       javaClient.getStateFromServer();
@@ -307,7 +308,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "9998", javaClient.getCurrentGameSessionID(), "Team2");
     assertNotNull(javaClient2.getTeamSecret());
   }
 
@@ -326,8 +327,8 @@ public class ClientTest {
         "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
     javaClient.pullData();
     javaClient2.pullData();
-    AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS);
-    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS);
+    AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS,0);
+    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS,0);
     try {
       if (javaClient.isItMyTurn()) {
 
@@ -348,7 +349,7 @@ public class ClientTest {
   @Test
   void testSetServer() {
     try {
-      javaClient.setServer("localhost", "8888");
+      javaClient.setServer("localhost", "9998");
       javaClient.createGame(template);
     } catch (Exception ex) {
       fail();
