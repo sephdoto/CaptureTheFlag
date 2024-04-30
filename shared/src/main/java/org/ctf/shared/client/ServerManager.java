@@ -1,7 +1,9 @@
 package org.ctf.shared.client;
 
+import org.ctf.shared.client.lib.ServerChecker;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.service.CommLayerInterface;
+import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.dto.GameSessionRequest;
 import org.ctf.shared.state.dto.GameSessionResponse;
@@ -33,7 +35,6 @@ public class ServerManager {
     this.serverDetails = serverDetails;
     this.currentServer =
         "http://" + serverDetails.getHost() + ":" + serverDetails.getPort() + "/api/gamesession";
-        
   }
 
   /**
@@ -46,11 +47,44 @@ public class ServerManager {
     GameSessionRequest gsr = new GameSessionRequest();
     gsr.setTemplate(map);
     new GameSessionRequest().setTemplate(map);
-    GameSessionResponse gSessionResponse = comm.createGameSession(currentServer, gsr);
+    GameSessionResponse gSessionResponse = new GameSessionResponse();
+    try {
+      gSessionResponse = comm.createGameSession(currentServer, gsr);
+    } catch (Exception e) {
+     return false;
+    }
+   
     if (gSessionResponse.getId() != null) {
       this.gameSessionID = gSessionResponse.getId();
     }
     return gSessionResponse.getId() != null;
+  }
+
+  /**
+   * Checks if server is active through a dummy gameTemplate
+   *
+   * @return true if server is active and ready to make sessions, false if not
+   * @author rsyed
+   */
+  public boolean isServerActive() {
+    return new ServerChecker()
+        .isServerActive(this.serverDetails.getHost(), this.serverDetails.getPort());
+  }
+
+  /**
+   * Method which returns how many teams have joined the session at present
+   *
+   * @author rsyed
+   */
+  public int getCurrentNumberofTeams() {
+    GameState gameState = comm.getCurrentGameState(currentServer + "/" + gameSessionID);
+    int counter = 0;
+    for (int i = 0; i < gameState.getTeams().length; i++) {
+      if (gameState.getTeams()[i] != null) {
+        counter++;
+      }
+    }
+    return counter;
   }
 
   /**
@@ -68,15 +102,16 @@ public class ServerManager {
     return true;
   }
 
-  //Getters and Setters
+  // Getters and Setters
   public String getGameSessionID() {
     return this.gameSessionID;
   }
-  public void setMapTemplate(MapTemplate mapTemplate){
+
+  public void setMapTemplate(MapTemplate mapTemplate) {
     this.map = mapTemplate;
   }
 
-  public void setServer(ServerDetails serverDetails){
+  public void setServer(ServerDetails serverDetails) {
     this.serverDetails = serverDetails;
   }
 }
