@@ -15,6 +15,7 @@ import javafx.application.Platform;
 import javafx.scene.media.AudioClip;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Constants.SoundType;
+import org.ctf.shared.tools.JSON_Tools;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -155,22 +156,6 @@ public class SoundController {
   }
 
   /**
-   * Saves the audioObjects from a HashSet into linkedSounds.json
-   * 
-   * @author sistumpf
-   * @param audioObjects
-   * @throws IOException
-   * @throws JSONException
-   */
-  private static void saveSoundJSON(HashSet<AudioObject> audioObjects)
-      throws IOException, JSONException {
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    byte[] contentBytes = gson.toJson(audioObjects).getBytes();
-    File file = new File(linkedSoundsFile);
-    Files.write(file.toPath(), contentBytes);
-  }
-
-  /**
    * Adds an AudioObject to linkedSounds.json
    * 
    * @author sistumpf
@@ -184,7 +169,7 @@ public class SoundController {
       HashSet<AudioObject> set = new HashSet<AudioObject>();
       for (int i = 0; i < jarray.length(); i++) set.add(new AudioObject(jarray.getJSONObject(i)));
       set.add(audio);
-      saveSoundJSON(set);
+      JSON_Tools.saveObjectAsJSON(linkedSoundsFile, set);
     } catch (Exception e) {
       e.printStackTrace();
       return false;

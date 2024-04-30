@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.tools.JSON_Tools;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,12 +27,12 @@ public class SettingsSetter {
    * @author sistumpf
    */
   public static void loadCustomSettings() {
-    File file = new File(settingsLocation);
-    if(!file.exists()) {
-      saveCustomSettings();
-      return;
-    }
     try {
+      File file = new File(settingsLocation);
+      if(!file.exists()) {
+        saveCustomSettings();
+        return;
+      }
       setCustomSettings(new JSONObject(Files.readString(Paths.get(settingsLocation), StandardCharsets.UTF_8)));
     } catch(JSONException | IOException jse) {
       jse.printStackTrace();
@@ -47,15 +48,12 @@ public class SettingsSetter {
    */
   public static void saveCustomSettings() {
     try {
-      JSONObject settingObject = createJSONObject();
-      byte[] contentBytes = settingObject.toString(2).getBytes();
-      File file = new File(settingsLocation);
-      Files.write(file.toPath(), contentBytes);
+      JSON_Tools.saveObjectAsJSON(settingsLocation, createJSONObject());
     } catch(JSONException | IOException jse) {
       jse.printStackTrace();
     }
   }
-  
+
   /**
    * Returns a JSONObject containing all user changeable settings.
    * Add new changeable things here.
@@ -66,10 +64,10 @@ public class SettingsSetter {
    */
   private static JSONObject createJSONObject() throws JSONException {
     JSONObject settingObject = new JSONObject();
-    
+
     settingObject.put(Constants.UserChangeable.musicVolume.getString(), Constants.musicVolume);
     settingObject.put(Constants.UserChangeable.soundVolume.getString(), Constants.soundVolume);
-    
+
     return settingObject;
   }
 

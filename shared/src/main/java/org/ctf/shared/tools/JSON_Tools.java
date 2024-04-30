@@ -27,23 +27,11 @@ import java.io.File;
  * @author sistumpf
  */
 public class JSON_Tools {
-  /**
-   * Saves a MapTemplate as a file in mapTemplateFolder.
-   * The file Name must be given as mapName, without an ending.
-   * Example: save mapTemplate as template.json:   saveMapTemplateAsFile("template", mapTemplate)
-   * @param mapName
-   * @param mapTemplate
-   * @throws IOException 
-   */
-  public static void saveMapTemplateAsFile(String mapName, MapTemplate mapTemplate) throws IOException {
-    byte[] contentBytes = stringFromMap(mapTemplate).getBytes();
-    File file = new File(Constants.mapTemplateFolder+mapName+".json");
-    Files.write(file.toPath(), contentBytes);
-  }
-
+  
   /**
    * Returns a MapTemplate from a given File. 
    * The File should be choosen in the GameEngine via a FileChooser, so it surely exists.
+   * 
    * @param mapName
    * @return mapTemplate
    * @throws IOException, IncompleteMapTemplateException
@@ -56,11 +44,45 @@ public class JSON_Tools {
       throw new IncompleteMapTemplateException(mapTemplate.getName());
     }
   }
+ 
+  /**
+   * Saves a MapTemplate as a file in mapTemplateFolder.
+   * The file Name must be given as mapName, without an ending.
+   * Example: save mapTemplate as template.json:   saveMapTemplateAsFile("template", mapTemplate)
+   * 
+   * @param mapName
+   * @param mapTemplate
+   * @throws IOException 
+   */
+  public static void saveMapTemplateAsFile(String mapName, MapTemplate mapTemplate) throws IOException {
+    saveObjectAsJSON(Constants.mapTemplateFolder+mapName+".json", mapTemplate);
+  }
+  
+  
+  /**
+   * Saves any given object as a .json file at a given location.
+   * If any other class than Object should be stringified, add another instanceof check and create a tailored contentBytes.
+   * 
+   * @param location
+   * @param object
+   * @throws IOException
+   */
+  public static void saveObjectAsJSON(String location, Object object) throws IOException {
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    byte[] contentBytes = gson.toJson(object).getBytes();
+    
+    if(object instanceof JSONObject)
+      contentBytes = ((JSONObject)object).toString(2).getBytes();
+    
+    File file = new File(location);
+    Files.write(file.toPath(), contentBytes);
+  }
 
   /**
    * Returns a MapTemplate from a given mapName. 
    * The mapName must exist in resources.maptemplates.
    * Example: read template.json from resources.maptemplates:   readMapTemplate("template")
+   * 
    * @param mapName
    * @return mapTemplate
    * @throws MapNotFoundException
@@ -81,6 +103,7 @@ public class JSON_Tools {
 
   /**
    * Creates a MapTemplate instance from a valid JSON String.
+   * 
    * @param jsonString
    * @return MapTemplate
    */
@@ -130,6 +153,7 @@ public class JSON_Tools {
 
   /**
    * Creates a JSON String from an Object
+   * 
    * @param Object
    * @return JSON String
    */
@@ -141,6 +165,7 @@ public class JSON_Tools {
 
   /**
    * Returns a files content as String.
+   * 
    * @param path
    * @throws IOException 
    */
@@ -149,7 +174,7 @@ public class JSON_Tools {
   }
 
   /**
-     * Gets thrown if a MapTemplate that doesn't exist in mapTemplateFolder is accessed.
+   * Gets thrown if a MapTemplate that doesn't exist in mapTemplateFolder is accessed.
    */
   public static class MapNotFoundException extends Exception {
     MapNotFoundException(String mapName){
