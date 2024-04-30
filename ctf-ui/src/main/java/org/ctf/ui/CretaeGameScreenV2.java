@@ -1,7 +1,7 @@
 package org.ctf.ui;
 
-import org.ctf.shared.client.ServerManager;
 import org.ctf.shared.client.lib.ServerDetails;
+import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;

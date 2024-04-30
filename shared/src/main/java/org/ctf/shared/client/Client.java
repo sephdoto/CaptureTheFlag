@@ -473,7 +473,7 @@ public class Client implements GameClientInterface {
    * @return true if its your turn, false if its not
    * @author rsyed, sistumpf
    */
-  protected boolean isItMyTurn() {
+  public boolean isItMyTurn() {
     if (this.myTeam >= 0) return this.myTeam == this.currentState.getCurrentTeam();
     return false;
   }

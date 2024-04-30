@@ -12,6 +12,7 @@ import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.client.lib.ServerDetails;
+import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;

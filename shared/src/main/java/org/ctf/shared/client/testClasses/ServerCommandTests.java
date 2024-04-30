@@ -1,4 +1,4 @@
-package org.ctf.shared.client;
+package org.ctf.shared.client.testClasses;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -14,9 +14,12 @@ import java.util.concurrent.TimeUnit;
 import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.shared.client.Client;
+import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.Analyzer;
 import org.ctf.shared.client.lib.SavedGame;
 import org.ctf.shared.client.lib.ServerDetails;
+import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.state.GameState;

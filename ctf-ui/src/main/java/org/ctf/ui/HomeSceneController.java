@@ -6,8 +6,8 @@ This Class controls what happens when clicking the buttons on the HomeScreen
  */
 import java.io.IOException;
 
-import org.ctf.shared.client.ServerManager;
 import org.ctf.shared.client.lib.ServerDetails;
+import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.state.data.map.MapTemplate;
 

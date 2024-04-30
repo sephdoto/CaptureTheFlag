@@ -1,7 +1,5 @@
-package org.ctf.shared.client;
+package org.ctf.shared.client.lib;
 
-import org.ctf.shared.client.lib.ServerChecker;
-import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.service.CommLayerInterface;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
