@@ -2,8 +2,10 @@ package org.ctf.ui;
 
 import org.ctf.ui.customobjects.PopUpPane;
 
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -24,6 +26,7 @@ import javafx.scene.text.Text;
  */
 public class ComponentCreator {
 	EditorScene editorscene;
+	Scene scene;
 
 	/**
 	 * Sets the scene of the ComponentCreator.
@@ -34,7 +37,10 @@ public class ComponentCreator {
 	public ComponentCreator(EditorScene editorScene) {
 		this.editorscene = editorScene;
 	}
-
+	
+	public ComponentCreator(Scene scene) {
+		this.scene = scene;
+	}
 	/**
 	 * Generates a Window for submitting a map template in an editor scene.
 	 * 
@@ -66,7 +72,7 @@ public class ComponentCreator {
 		});
 		VBox.setMargin(buttonBox, new Insets(25));
 		buttonBox.getChildren().add(createSubmit(vbox, popUp, info, nameField));
-		buttonBox.getChildren().add(createLeave(vbox, popUp));
+		buttonBox.getChildren().add(createLeaveSubmit(vbox, popUp));
 		StackPane.setAlignment(buttonBox, Pos.BOTTOM_CENTER);
 		vbox.getChildren().add(buttonBox);
 		popUp.setContent(vbox);
@@ -149,7 +155,7 @@ public class ComponentCreator {
 	 * @param popUp - submitting window
 	 * @return Button used for closing the submitting window
 	 */
-	private Button createLeave(VBox vBox, PopUpPane popUp) {
+	private Button createLeaveSubmit(VBox vBox, PopUpPane popUp) {
 		Button exit = new Button("Abort");
 		exit.getStyleClass().add("leave-button");
 		exit.setOnAction(e -> {
@@ -190,5 +196,48 @@ public class ComponentCreator {
 		}
 		
 		return grid;
+	}
+	
+	public StackPane createSettingsWindow(StackPane root) {
+		PopUpPane popUp = new PopUpPane(scene, 0.5, 0.6);
+		VBox vbox = new VBox();
+		vbox.setAlignment(Pos.TOP_CENTER);
+		vbox.setPadding(new Insets(10));
+		vbox.setSpacing(15);
+		vbox.getChildren().add(createHeaderText(vbox, "Settings", 12));
+		vbox.getChildren().add(createLeaveSettings(vbox, popUp, root));
+		popUp.setContent(vbox);
+		return popUp;
+	}
+	
+	/**
+	 * Generates the leave button for a settings window.
+	 * 
+	 * @author aniemesc
+	 * @param vBox  - main container of the submitting window
+	 * @param popUp - submitting window
+	 * @return Button used for closing the submitting window
+	 */
+	private Button createLeaveSettings(VBox vBox, PopUpPane popUp,StackPane root) {
+		Button exit = new Button("Leave");
+		exit.getStyleClass().add("leave-button");
+		exit.setOnAction(e -> {
+			root.getChildren().remove(popUp);
+		});
+		exit.prefWidthProperty().bind(vBox.widthProperty().multiply(0.3));
+		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
+		exit.prefHeightProperty().addListener((obs, oldv, newV) -> {
+			double size = newV.doubleValue() * 0.5;
+			exit.setFont(Font.font("Century Gothic", size));
+		});
+		return exit;
+	}
+	
+	public Text createHeaderText(VBox vBox, String label, int divider) {
+		Text leftheader = new Text(label);
+		leftheader.getStyleClass().add("custom-header");
+		leftheader.fontProperty().bind(Bindings.createObjectBinding(
+				() -> Font.font("Century Gothic", vBox.getWidth() / divider), vBox.widthProperty()));
+		return leftheader;
 	}
 }

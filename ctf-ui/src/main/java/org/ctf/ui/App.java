@@ -46,6 +46,7 @@ public class App extends Application {
 		ImageLoader.loadImages();
 		Scene lockscreen = new Scene(createLockScreen(), 1000, 500);
 		startScene = new Scene(createParent());
+		startScene.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
 		lockscreen.setOnKeyPressed(e -> {
 			mainStage.setScene(startScene);
 			startTransition.stop();
@@ -81,9 +82,13 @@ public class App extends Application {
 			ssc.switchToCreateGameScene(mainStage);
 		});
 		HomeScreenButton i3 = new HomeScreenButton("JOIN GAME", () -> {
-			new HomeSceneController().switchToJoinScene(mainStage);
+			ssc.switchToJoinScene(mainStage);
 		});
-		VBox vbox = new VBox(11, i1, i2, i3);
+		HomeScreenButton i4 = new HomeScreenButton("Settings", () -> {
+			
+			root.getChildren().add(new ComponentCreator(startScene).createSettingsWindow(root));
+		});
+		VBox vbox = new VBox(11, i1, i2, i3,i4);
 		vbox.setAlignment(Pos.CENTER);
 		vbox.setMaxWidth(50);
 		root.getChildren().addAll(vw, vbox);
