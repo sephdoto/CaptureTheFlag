@@ -623,8 +623,8 @@ public class ServerCommandTests {
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
     // System.out.println(gson.toJson(javaClient.getCurrentState()));
-    AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS);
-    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS_IMPROVED);
+    AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS,0);
+    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS_IMPROVED,0);
     for (int i = 0; i < 90; i++) {
       try {
         if (javaClient.isItMyTurn()) {
