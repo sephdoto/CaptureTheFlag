@@ -1,6 +1,8 @@
 package org.ctf.shared.client.service;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -38,7 +40,7 @@ import org.ctf.shared.state.dto.MoveRequest;
  */
 public class CommLayer implements CommLayerInterface {
 
-  private Gson gson;
+  private ObjectMapper mapper;
   private ExecutorService executor;
   private HttpClient client;
   private HttpRequest request;
@@ -51,7 +53,8 @@ public class CommLayer implements CommLayerInterface {
    * @author rsyed
    */
   public CommLayer() {
-    gson = new Gson();
+    mapper = new ObjectMapper();
+    mapper.registerModule(new BlackbirdModule());
     executor = Executors.newSingleThreadExecutor();
     client =
         HttpClient.newBuilder()
@@ -83,7 +86,7 @@ public class CommLayer implements CommLayerInterface {
           HttpRequest.newBuilder()
               .uri(new URI(URL))
               .header("Content-Type", "application/json")
-              .POST(BodyPublishers.ofString(gson.toJson(gsr)))
+              .POST(BodyPublishers.ofString(mapper.writeValueAsString(gsr)))
               .build();
       response = client.send(request, BodyHandlers.ofString());
     } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
@@ -96,7 +99,11 @@ public class CommLayer implements CommLayerInterface {
         throw new URLError("URL Error");
       }
     }
-    return gson.fromJson(response.body(), GameSessionResponse.class);
+    try {
+      return mapper.readValue(response.body(), GameSessionResponse.class);
+    } catch (JsonProcessingException e) {
+      throw new UnknownError("Jackson Errored out");
+    }
   }
 
   /**
@@ -125,7 +132,7 @@ public class CommLayer implements CommLayerInterface {
           HttpRequest.newBuilder()
               .uri(new URI(URL + "/join"))
               .header("Content-Type", "application/json")
-              .POST(BodyPublishers.ofString(gson.toJson(joinGameRequest)))
+              .POST(BodyPublishers.ofString(mapper.writeValueAsString(joinGameRequest)))
               .build();
       response = client.send(request, BodyHandlers.ofString());
     } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
@@ -141,7 +148,11 @@ public class CommLayer implements CommLayerInterface {
       }
     }
 
-    return gson.fromJson(response.body(), JoinGameResponse.class);
+    try {
+      return mapper.readValue(response.body(), JoinGameResponse.class);
+    } catch (JsonProcessingException e) {
+      throw new UnknownError("Jackson Errored out");
+    }
   }
 
   /**
@@ -171,7 +182,7 @@ public class CommLayer implements CommLayerInterface {
           HttpRequest.newBuilder()
               .uri(new URI(URL + "/move"))
               .header("Content-Type", "application/json")
-              .POST(BodyPublishers.ofString(gson.toJson(moveReq)))
+              .POST(BodyPublishers.ofString(mapper.writeValueAsString(moveReq)))
               .build();
       response = client.send(request, BodyHandlers.ofString());
     } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
@@ -220,7 +231,7 @@ public class CommLayer implements CommLayerInterface {
           HttpRequest.newBuilder()
               .uri(new URI(URL + "/giveup"))
               .header("Content-Type", "application/json")
-              .POST(BodyPublishers.ofString(gson.toJson(giveUpRequest)))
+              .POST(BodyPublishers.ofString(mapper.writeValueAsString(giveUpRequest)))
               .build();
       response = client.send(request, BodyHandlers.ofString());
     } catch (URISyntaxException | IOException | InterruptedException | NullPointerException e) {
@@ -275,8 +286,11 @@ public class CommLayer implements CommLayerInterface {
         throw new UnknownError();
       }
     }
-
-    return gson.fromJson(response.body(), GameSessionResponse.class);
+    try {
+      return mapper.readValue(response.body(), GameSessionResponse.class);
+    } catch (JsonProcessingException e) {
+      throw new UnknownError("Jackson Errored out");
+    }
   }
 
   /**
@@ -345,7 +359,11 @@ public class CommLayer implements CommLayerInterface {
       }
     }
 
-    return gson.fromJson(response.body(), GameState.class);
+    try {
+      return mapper.readValue(response.body(), GameState.class);
+    } catch (JsonProcessingException e) {
+      throw new UnknownError("Jackson Errored out");
+    }
   }
 
   /*
@@ -376,7 +394,11 @@ public class CommLayer implements CommLayerInterface {
         throw new URLError("URL Error");
       }
     }
-    return gson.fromJson(response.body(), GameSessionResponse.class);
+    try {
+      return mapper.readValue(response.body(), GameSessionResponse.class);
+    } catch (JsonProcessingException e) {
+      throw new UnknownError("Jackson Errored out");
+    }
   }
 
   /**
