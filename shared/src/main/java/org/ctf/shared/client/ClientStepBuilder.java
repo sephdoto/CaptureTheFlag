@@ -3,10 +3,7 @@ package org.ctf.shared.client;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.client.service.CommLayerInterface;
 import org.ctf.shared.client.service.RestClientLayer;
-import org.ctf.shared.constants.Constants;
-import org.ctf.shared.constants.Constants.AI;
 import org.ctf.shared.constants.Constants.Port;
-import org.ctf.shared.state.data.map.MapTemplate;
 
 /**
  * Defines the Step Builder Pattern which must be used to create an object of the Client Class
@@ -63,7 +60,6 @@ public class ClientStepBuilder {
     LoggerEnabler onPort(Port def);
   }
 
-
   public static interface LoggerEnabler {
     /**
      * Method to enable if the AI Game will be logged players
@@ -73,7 +69,6 @@ public class ClientStepBuilder {
     BuildStep enableSaveGame(boolean selector);
   }
 
-
   /** Build Step */
   public static interface BuildStep {
 
@@ -82,11 +77,7 @@ public class ClientStepBuilder {
 
   /** Builder class itself where code gets implemented and the object creation happens */
   private static class Steps
-      implements LayerSelectionStep,
-          HostStep,
-          PortSelectionStep,
-          LoggerEnabler,
-          BuildStep {
+      implements LayerSelectionStep, HostStep, PortSelectionStep, LoggerEnabler, BuildStep {
     private CommLayerInterface comm;
     private String host;
     private String port;
@@ -118,7 +109,7 @@ public class ClientStepBuilder {
      * Step for port input as String
      *
      * @param port to connect to as String. Example "8888"
-     * @return 
+     * @return
      */
     @Override
     public LoggerEnabler onPort(String port) {
@@ -141,7 +132,7 @@ public class ClientStepBuilder {
      * Port.DEFAULT for 8888
      *
      * @param def an Enum
-     * @return 
+     * @return
      */
     @Override
     public LoggerEnabler onPort(Port def) {
@@ -153,14 +144,13 @@ public class ClientStepBuilder {
      * Option Presented if AI Client is selected. Enables the game to be saved as a SavedGame
      *
      * @param selector True for Enabling Save, False for Disabled
-     * @return 
+     * @return
      */
     @Override
     public Steps enableSaveGame(boolean selector) {
       this.enableSave = selector;
       return this;
     }
-
 
     @Override
     public Client build() {

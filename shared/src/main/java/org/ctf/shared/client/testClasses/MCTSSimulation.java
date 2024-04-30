@@ -194,8 +194,8 @@ public class MCTSSimulation {
     System.out.println(gson.toJson(javaClient.getCurrentState()));
     System.out.println(gson.toJson(javaClient.getCurrentSession()));
     newAna.addGameState(javaClient.getCurrentState());
-    AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS);
-    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS);
+    AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS,0);
+    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS,0);
     /*  AI_Controller Controller3 = new AI_Controller(javaClient3.getCurrentState(), AI.MCTS);
     AI_Controller Controller4 = new AI_Controller(javaClient4.getCurrentState(), AI.MCTS);
     AI_Controller Controller5 = new AI_Controller(javaClient5.getCurrentState(), AI.MCTS); */

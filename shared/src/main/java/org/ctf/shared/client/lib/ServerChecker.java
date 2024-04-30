@@ -16,13 +16,12 @@ public class ServerChecker {
   /**
    * Checks if server is active through a dummy gameTemplate
    *
-   * @param ip IP of the server
-   * @param port port of the server
+   * @param serverDetails object holding the IP and Port of the server
    * @return true if server is active and ready to make sessions, false if not
-   * 
-   * @author rsyed 
+   * @author rsyed
    */
-  public boolean isServerActive(String ip, String port) {
+  
+  public boolean isServerActive(ServerDetails serverDetails) {
     String Path = Constants.testTemplate;
     MapTemplate mapTemplate;
     GameSessionResponse gSessionResponse = new GameSessionResponse();
@@ -32,14 +31,27 @@ public class ServerChecker {
       mapTemplate = gson.fromJson(new BufferedReader(new FileReader(Path)), MapTemplate.class);
       GameSessionRequest gsr = new GameSessionRequest();
       gsr.setTemplate(mapTemplate);
-      gSessionResponse = comm.createGameSession("http://" + ip + ":" + port + "/api/gamesession", gsr);
+      gSessionResponse =
+          comm.createGameSession(
+              "http://"
+                  + serverDetails.getHost()
+                  + ":"
+                  + serverDetails.getPort()
+                  + "/api/gamesession",
+              gsr);
     } catch (UnknownError | URLError e) {
       return false;
     } catch (FileNotFoundException e) {
       throw new UnknownError("Test JSON couldnt be found");
     }
     comm.deleteCurrentSession(
-        "http://" + ip + ":" + port + "/api/gamesession" + "/" + gSessionResponse.getId());
+        "http://"
+            + serverDetails.getHost()
+            + ":"
+            + serverDetails.getPort()
+            + "/api/gamesession"
+            + "/"
+            + gSessionResponse.getId());
     return (gSessionResponse.getId() != null) ? true : false;
   }
 }

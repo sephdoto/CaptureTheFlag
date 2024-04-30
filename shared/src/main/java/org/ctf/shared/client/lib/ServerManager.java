@@ -66,7 +66,7 @@ public class ServerManager {
    */
   public boolean isServerActive() {
     return new ServerChecker()
-        .isServerActive(this.serverDetails.getHost(), this.serverDetails.getPort());
+        .isServerActive(this.serverDetails);
   }
 
   /**

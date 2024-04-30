@@ -501,7 +501,7 @@ public class Client implements GameClientInterface {
    * @author rsyed
    */
   protected boolean isServerActive() {
-    return new ServerChecker().isServerActive(this.serverInfo.getHost(), this.serverInfo.getPort());
+    return new ServerChecker().isServerActive(serverInfo);
   }
 
   /**
