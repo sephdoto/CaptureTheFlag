@@ -3,6 +3,7 @@ package org.ctf.ui;
 import org.ctf.shared.state.GameState;
 import org.ctf.ui.customobjects.Timer;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -11,9 +12,13 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -47,13 +52,14 @@ public class PlayGameScreenV2 extends Scene {
 		top.setAlignment(Pos.CENTER);
 		VBox left = new VBox();
 		right = new VBox();
-		right.setAlignment(Pos.CENTER);
+		right.setAlignment(Pos.BOTTOM_CENTER);
 		left.setAlignment(Pos.CENTER);
 		top.prefHeightProperty().bind(this.heightProperty());
 		left.prefHeightProperty().bind(this.heightProperty());
 		left.prefWidthProperty().bind(this.widthProperty().multiply(0.7));
 		left.getChildren().add(createShowMapPane("p1"));
 		top.getChildren().add(left);
+		right.getChildren().add(imageTest());
 		right.getChildren().add(createClockBox());
 		right.setStyle("-fx-background-color: black");
 		right.prefWidthProperty().bind(this.widthProperty().multiply(0.3));
@@ -73,6 +79,7 @@ public class PlayGameScreenV2 extends Scene {
 	}
 	
 	private HBox createClockBox() {
+		
 		HBox timerBox = new HBox();
 		timerBox.setAlignment(Pos.CENTER);
 		timerBox.getStyleClass().add("timer-box");
@@ -106,6 +113,25 @@ public class PlayGameScreenV2 extends Scene {
 		t.fontProperty().bind(timerLabel);
 		timerwithDescrip.getChildren().add(t);
 		return timerwithDescrip;
+	}
+	
+	private HBox imageTest() {
+		HBox h1 = new HBox();
+		h1.setAlignment(Pos.CENTER);
+		StackPane p = new StackPane();
+		Image mp = new Image(getClass().getResourceAsStream("Yoda.png"));
+		Circle c = new Circle();
+		c.radiusProperty().bind(Bindings.divide(widthProperty(), 25));
+		c.setFill(new ImagePattern(mp));
+		Circle c2 = new Circle();
+		c2.radiusProperty().bind(Bindings.divide(widthProperty(), 23));
+		c2.setFill(Color.WHITE);
+		
+		
+		p.getChildren().addAll(c2,c);
+		h1.prefHeightProperty().bind(this.heightProperty().multiply(0.4));
+		h1.getChildren().add(p);
+		return h1;
 	}
 		
 	private StackPane createShowMapPane(String name) {
