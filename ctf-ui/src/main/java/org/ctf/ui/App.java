@@ -57,10 +57,12 @@ public class App extends Application {
 		startScene.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
 		lockscreen.setOnKeyPressed(e -> {
 			mainStage.setScene(startScene);
+			backgroundMusic.startShuffle();
 			startTransition.stop();
 		});
 		lockscreen.setOnMousePressed(e -> {
 			mainStage.setScene(startScene);
+			backgroundMusic.startShuffle();
 			startTransition.stop();
 		});
 		stage.setTitle("Capture The Flag Team 14");

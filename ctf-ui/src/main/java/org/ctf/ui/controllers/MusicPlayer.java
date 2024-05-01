@@ -17,6 +17,11 @@ public class MusicPlayer {
   public MusicPlayer() {
     start();
   }
+  
+  public void startShuffle() {
+    mp.setOnEndOfMedia(infinitePlay(false));
+    mp.setStopTime(mp.getCurrentTime());
+  }
 
   /**
    * This sets the first song as the start up sound/song, then after it ends a random song gets
@@ -26,15 +31,7 @@ public class MusicPlayer {
    */
   public void start() {
     mp = startUpMusic();
-    mp.setOnEndOfMedia(
-        new Runnable() {
-          @Override
-          public void run() {
-            MusicPlayer.this.mp = getMusic();
-            mp.setOnEndOfMedia(this);
-            mp.play();
-          }
-        });
+    mp.setOnEndOfMedia(infinitePlay(true));
     mp.play();
   }
 
@@ -68,5 +65,27 @@ public class MusicPlayer {
     MediaPlayer mediaPlayer = new MediaPlayer(track);
     mediaPlayer.setVolume(Constants.musicVolume);
     return mediaPlayer;
+  }
+  
+  /**
+   * A Runnable to set as onEndOfMedia for a MediaPlayer.
+   * Depending on startScreen the music is playing shuffled or just one start song looped.
+   * 
+   * @param startScreen if true the start screen song gets looped.
+   * @author sistumpf
+   * @param startScreen
+   * @return
+   */
+  private Runnable infinitePlay(boolean startScreen) {
+    Runnable runnable =
+    new Runnable() {
+      @Override
+      public void run() {
+        MusicPlayer.this.mp = startScreen ? startUpMusic() : getMusic();
+        mp.setOnEndOfMedia(this);
+        mp.play();
+      }
+    };
+    return runnable;
   }
 }

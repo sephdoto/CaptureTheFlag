@@ -117,7 +117,7 @@ public class Constants {
     VODE_AN("VodeAn-Lofi.mp3"), // https://www.youtube.com/watch?v=RTv0DGRCyqY
     MERKELWAVE(
         "EverythingIsPossible-Merkelwave.mp3"), // https://www.youtube.com/watch?v=stFm0ng7DR8
-    STARTUP("startup.mp3"); // https://www.youtube.com/watch?v=Am4wYTiHHx8
+    STARTUP("theforcetheme.mp3"); // https://www.youtube.com/watch?v=Am4wYTiHHx8
 
     private final String text;
     private static ArrayList<Music> easterEggs = new ArrayList<Music>();
