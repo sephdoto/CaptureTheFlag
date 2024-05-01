@@ -2,6 +2,9 @@ package org.ctf.ui.controllers;
 
 import org.ctf.shared.client.Client;
 import org.ctf.shared.client.ClientStepBuilder;
+import org.ctf.shared.client.lib.ServerDetails;
+import org.ctf.shared.client.lib.ServerManager;
+import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.map.MapTemplate;
@@ -35,7 +38,9 @@ public class MapPreview {
    */
   public GameState getGameState() throws Accepted {
     Client[] clients = new Client[mapTemplate.getTeams()];
-
+    ServerManager server =
+        new ServerManager(new CommLayer(), new ServerDetails("localhost", "8888"), mapTemplate);
+    server.createGame();
     // Init all clients
     for (int i = 0; i < clients.length; i++) {
       clients[i] =
@@ -44,22 +49,18 @@ public class MapPreview {
               .onLocalHost()
               .onPort("8888")
               .enableSaveGame(false)
+              .disableAutoJoin()
               .build();
-      if (i == 0) {
-        clients[0].createGame(mapTemplate); // Creates a session with the first client
-        clients[0].joinGame("0"); // Creates a session with the first client
-      } else {
-        clients[i].joinExistingGame(
-            "localhost",
-            "8888",
-            clients[0].getCurrentGameSessionID(),
-            Integer.toString(i)); // Joins the other clients for team creation
-        try {
-          Thread.sleep(80);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-          throw new UnknownError("Something went wrong in the thread for Map Preview creation");
-        }
+      clients[i].joinExistingGame(
+          "localhost",
+          "8888",
+          server.getGameSessionID(),
+          Integer.toString(i)); // Joins the other clients for team creation
+      try {
+        Thread.sleep(80);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+        throw new UnknownError("Something went wrong in the thread for Map Preview creation");
       }
     }
 
