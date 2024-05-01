@@ -1,4 +1,9 @@
 
+
+
+			
+			
+			
 .custom-menu-item{
 	 -fx-background-color: #ffffff;
     -fx-background-radius: 10; 
@@ -25,6 +30,12 @@
 	  -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0.5, 0, 0); 
 }
 
+.figure-label{
+   -fx-text-fill: rgb(25,25,25) ;
+    -fx-font-family: 'Eras Medium Light';
+}
+
+
 
 
 .timer-label {
@@ -41,7 +52,6 @@
 
 .play-pane {
 	 -fx-background-color: #475865;
-	 -fx-alignment: top-center;
 }
 .number-label {
      -fx-font-family: 'Courier New', monospace; 

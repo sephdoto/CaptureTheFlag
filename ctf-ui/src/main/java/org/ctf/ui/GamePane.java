@@ -49,15 +49,6 @@ public class GamePane extends HBox{
 	HashMap<Integer, BackgroundCellV2> cells = new HashMap<Integer, BackgroundCellV2>();
 	GridPane gridPane;
 	
-	public GridPane getGridPane() {
-		return gridPane;
-	}
-
-
-	public void setGridPane(GridPane gridPane) {
-		this.gridPane = gridPane;
-	}
-
 
 	public GamePane(GameState state) {
 		this.state = state;
@@ -115,9 +106,9 @@ public class GamePane extends HBox{
 		newField.addFigure(mover);
 	}
 	
-	public void enableBaseColors(WaitingScene waitingscene) {
+	public void enableBaseColors(PlayGameScreenV2 scene) {
 		for(BaseRep b: bases.values()) {
-			b.setScene(waitingscene);
+			b.setScene(scene);
 		}
 	}
 

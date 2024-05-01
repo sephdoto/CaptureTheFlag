@@ -3,6 +3,7 @@ package org.ctf.ui.customobjects;
 import org.ctf.ui.CreateGameScreen;
 import org.ctf.ui.CretaeGameScreenV2;
 import org.ctf.ui.MyCustomColorPicker;
+import org.ctf.ui.PlayGameScreenV2;
 import org.ctf.ui.WaitingScene;
 
 import javafx.beans.binding.Bindings;
@@ -10,6 +11,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
@@ -28,7 +30,7 @@ public class BaseRep extends Pane {
 	int flags;
 	String teamID;
 	String teamColor;
-	WaitingScene scene;
+	PlayGameScreenV2 scene;
 	private final EventHandler<MouseEvent> clickHandler;
 	
 	
@@ -82,7 +84,7 @@ public class BaseRep extends Pane {
 
 	
 
-	public void setScene(WaitingScene scene) {
+	public void setScene(PlayGameScreenV2 scene) {
 		this.scene = scene;
 	}
 	

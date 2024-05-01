@@ -46,6 +46,7 @@ public class HomeSceneController {
 	}
 	public void switchToPlayGameScene(Stage stage) {
 		stage.setScene(new PlayGameScreenV2(this, stage.getWidth(), stage.getHeight()));
+		stage.setFullScreen(true);
 	}
 
 	public void switchToCreateGameScene(Stage stage) {

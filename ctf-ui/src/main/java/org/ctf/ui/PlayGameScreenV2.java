@@ -1,16 +1,24 @@
 package org.ctf.ui;
 
 import org.ctf.shared.state.GameState;
+import org.ctf.ui.customobjects.BaseRep;
+import org.ctf.ui.customobjects.CostumFigurePain;
 import org.ctf.ui.customobjects.Timer;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
@@ -21,6 +29,7 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 public class PlayGameScreenV2 extends Scene {
 	HomeSceneController hsc;
@@ -32,8 +41,17 @@ public class PlayGameScreenV2 extends Scene {
 	GamePane gm;
 	GameState state;
 	VBox right;
+	private static Label idLabel;
+	private static Label typeLabel;
+	private static Label attackPowLabel;
+	private static Label teamLabel;
+	private static Label countLabel;
+	private  ObjectProperty<Color> sceneColorProperty = 
+	        new SimpleObjectProperty<>(Color.BLUE);
 	private ObjectProperty<Font> timerLabel = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> timerDescription = new SimpleObjectProperty<Font>(Font.getDefault());
+	private ObjectProperty<Font> pictureMainDiscription = new SimpleObjectProperty<Font>(Font.getDefault());
+	private ObjectProperty<Font> figureDiscription = new SimpleObjectProperty<Font>(Font.getDefault());
 	
 	
 	public PlayGameScreenV2(HomeSceneController hsc, double width, double height) {
@@ -48,6 +66,7 @@ public class PlayGameScreenV2 extends Scene {
 	
 	
 	public void createLayout() {
+		root.setStyle("-fx-background-color: black");
 		HBox top = new HBox();
 		top.setAlignment(Pos.CENTER);
 		VBox left = new VBox();
@@ -59,12 +78,53 @@ public class PlayGameScreenV2 extends Scene {
 		left.prefWidthProperty().bind(this.widthProperty().multiply(0.7));
 		left.getChildren().add(createShowMapPane("p1"));
 		top.getChildren().add(left);
+		right.getChildren().add(createTopCenter());
 		right.getChildren().add(imageTest());
 		right.getChildren().add(createClockBox());
 		right.setStyle("-fx-background-color: black");
-		right.prefWidthProperty().bind(this.widthProperty().multiply(0.3));
+		//right.prefWidthProperty().bind(this.widthProperty().multiply(0.3));
 		top.getChildren().add(right);
 		root.getChildren().add(top);
+	}
+	
+	
+	private VBox waitingBox(String playerName) {
+		String showString = "team " +  playerName + "s turn";
+		 final Label    status   = new Label(showString);
+		 status.getStyleClass().add("des-label2");
+		    final Timeline timeline = new Timeline(
+		      new KeyFrame(Duration.ZERO, new EventHandler() {
+		        @Override public void handle(Event event) {
+		          String statusText = status.getText();
+		          String s = showString + " . . .";
+		          String s2 = showString + " .";
+		          status.setText(
+		            (s.equals(statusText))
+		              ? s2
+		              : statusText + " ."
+		          );
+		        }
+		      }),  
+		      new KeyFrame(Duration.millis(1000))
+		    );
+		    timeline.setCycleCount(Timeline.INDEFINITE);
+		    timeline.play();
+		    VBox layout = new VBox();
+		    layout.prefWidthProperty().bind(right.widthProperty().multiply(0.55));
+		    status.fontProperty().bind(figureDiscription);
+		    //layout.setStyle("-fx-background-color: blue");
+		    layout.getChildren().addAll(status);
+		    return layout;
+	}
+	
+	private HBox createTopCenter() {
+		HBox captureLoadingLabel = new HBox();
+		captureLoadingLabel.setAlignment(Pos.CENTER);
+		//captureLoadingLabel.setStyle("-fx-background-color: yellow");
+		captureLoadingLabel.prefWidthProperty().bind(right.widthProperty().multiply(0.8));
+		captureLoadingLabel.getChildren().add(waitingBox("3"));
+		return captureLoadingLabel;
+		
 	}
 	
 	private void manageFontSizes() {
@@ -74,8 +134,34 @@ public class PlayGameScreenV2 extends Scene {
 		        {
 		        	timerLabel.set(Font.font(newWidth.doubleValue() / 40));
 		        	timerDescription.set(Font.font(newWidth.doubleValue() / 60));
+		        	pictureMainDiscription.set(Font.font(newWidth.doubleValue() / 30));
+		        	figureDiscription.set(Font.font(newWidth.doubleValue() / 45));
 		        }
 		    });
+	}
+	
+	public void showColorChooser(double d, double e, BaseRep r) {
+		  MyCustomColorPicker myCustomColorPicker = new MyCustomColorPicker();
+        myCustomColorPicker.setCurrentColor(sceneColorProperty.get());
+
+        CustomMenuItem itemColor = new CustomMenuItem(myCustomColorPicker);
+        itemColor.getStyleClass().add("custom-menu-item");
+        itemColor.setHideOnClick(false);
+        sceneColorProperty.bind(myCustomColorPicker.customColorProperty());
+        for(CostumFigurePain p : gm.getFigures().values()) {
+      	  	if(p.getTeamID().equals(r.getTeamID())) {
+      		  p.showTeamColorWhenSelecting(sceneColorProperty);
+      	  	}
+        }
+        r.showColor(sceneColorProperty);
+        ContextMenu contextMenu = new ContextMenu(itemColor);
+        contextMenu.setOnHiding(t->{sceneColorProperty.unbind();
+        
+        System.out.println("hihihi");
+         for(CostumFigurePain m : gm.getFigures().values() ) {
+         		m.unbind();
+         	}});
+        contextMenu.show(this.getWindow(),d,e);
 	}
 	
 	private HBox createClockBox() {
@@ -117,21 +203,71 @@ public class PlayGameScreenV2 extends Scene {
 	
 	private HBox imageTest() {
 		HBox h1 = new HBox();
+		h1.prefHeightProperty().bind(this.heightProperty().multiply(0.7));
+		h1.widthProperty().addListener((observable, oldValue, newValue) -> {
+			double padding = newValue.doubleValue() * 0.08;
+			h1.setPadding(new Insets(padding, padding, padding, padding));
+		});
+		//h1.setStyle("-fx-background-color: red");
 		h1.setAlignment(Pos.CENTER);
+		VBox x = new VBox();
+		x.widthProperty().addListener((observable, oldValue, newValue) -> {
+			double padding = newValue.doubleValue() * 0.05;
+			x.setPadding(new Insets(padding, padding, padding, padding));
+		});
+		x.getStyleClass().add("option-pane");
+		HBox pict = new HBox();
+		//pict.setStyle("-fx-background-color: green");
+		pict.prefHeightProperty().bind(x.heightProperty().multiply(0.1));
+		typeLabel = new Label("Yoda");
+		typeLabel.fontProperty().bind(pictureMainDiscription);
+		typeLabel.setAlignment(Pos.CENTER_LEFT);
+		typeLabel.prefHeightProperty().bind(pict.heightProperty());
+		typeLabel.prefWidthProperty().bind(pict.widthProperty().multiply(0.7));
+		typeLabel.getStyleClass().add("figure-label");
 		StackPane p = new StackPane();
+		p.prefWidthProperty().bind(pict.widthProperty().multiply(0.3));
+		//p.setStyle("-fx-background-color: yellow");
 		Image mp = new Image(getClass().getResourceAsStream("Yoda.png"));
 		Circle c = new Circle();
-		c.radiusProperty().bind(Bindings.divide(widthProperty(), 25));
+		c.radiusProperty().bind(Bindings.divide(widthProperty(), 23));
 		c.setFill(new ImagePattern(mp));
 		Circle c2 = new Circle();
-		c2.radiusProperty().bind(Bindings.divide(widthProperty(), 23));
 		c2.setFill(Color.WHITE);
-		
-		
+		 c2.setStroke(Color.BLACK);
+	      c2.setStrokeWidth(2);
+		c2.radiusProperty().bind(Bindings.divide(widthProperty(), 21));
+		pict.getChildren().addAll(typeLabel,p);
 		p.getChildren().addAll(c2,c);
-		h1.prefHeightProperty().bind(this.heightProperty().multiply(0.4));
-		h1.getChildren().add(p);
+		x.getChildren().add(pict);
+		x.getChildren().add(createDeslabelBox());
+		h1.getChildren().add(x);
 		return h1;
+	}
+	
+	private VBox createDeslabelBox() {
+		VBox deBox = new VBox(10);
+		deBox.heightProperty().addListener((observable, oldValue, newValue) -> {
+			double spacing = newValue.doubleValue() * 0.08;
+			deBox.setSpacing(spacing);
+		});
+		deBox.setAlignment(Pos.BASELINE_LEFT);
+		idLabel = new Label("id: -");
+		handleLabel(idLabel, deBox);
+		teamLabel = new Label("team: -");
+		handleLabel(teamLabel, deBox);
+		attackPowLabel = new Label("attackpower: -");
+		handleLabel(attackPowLabel, deBox);
+		countLabel = new Label("count: - ");
+		handleLabel(countLabel, deBox);
+		deBox.getChildren().addAll(idLabel, teamLabel, attackPowLabel, countLabel);
+		return deBox;
+	}
+	
+	private void handleLabel(Label l, VBox parent) {
+		l.fontProperty().bind(figureDiscription);
+		l.prefWidthProperty().bind(parent.widthProperty());
+		l.getStyleClass().add("figure-label");
 	}
 		
 	private StackPane createShowMapPane(String name) {
@@ -142,8 +278,31 @@ public class PlayGameScreenV2 extends Scene {
 		showMapBox.prefHeightProperty().bind(this.heightProperty());
 		showMapBox.getStyleClass().add("show-GamePane");
 		state = StroeMaps.getMap(name);
-		GamePane gm = new GamePane(state);
+		gm = new GamePane(state);
+		gm.enableBaseColors(this);
 		showMapBox.getChildren().add(gm);
 		return showMapBox;
 	}
+	
+	
+	public static void setIdLabelText(String text) {
+		idLabel.setText(text);
+	}
+
+	public static void setTypeLabelText(String text) {
+		typeLabel.setText(text);
+	}
+
+	public static void setAttackPowLabelText(String text) {
+		attackPowLabel.setText(text);
+	}
+
+	public static void setCountLabelText(String text) {
+		countLabel.setText(text);
+	}
+
+	public static void setTeamLabelText(String text) {
+		teamLabel.setText(text);
+	}
+
 }

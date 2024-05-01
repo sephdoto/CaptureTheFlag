@@ -432,7 +432,7 @@ public class WaitingScene extends Scene {
 		showMapBox.getStyleClass().add("show-GamePane");
 		org.ctf.shared.state.GameState state = StroeMaps.getMap(name);
 		gm = new GamePane(state);
-		gm.enableBaseColors(this);
+		//gm.enableBaseColors(this);
 		showMapBox.getChildren().add(gm);
 		return showMapBox;
 	}

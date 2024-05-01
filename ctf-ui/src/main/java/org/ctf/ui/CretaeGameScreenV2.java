@@ -45,6 +45,7 @@ public class CretaeGameScreenV2 extends Scene {
 	String port;
 	HBox sep;
 	PopUpPane pop;
+	StackPane showMapBox;
 	ServerManager serverManager;
 	private ObjectProperty<Font> addHumanButtonTextFontSIze = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> addAiCOmboTextFontSIze = new SimpleObjectProperty<Font>(Font.getDefault());
@@ -477,16 +478,20 @@ public class CretaeGameScreenV2 extends Scene {
 		c.prefHeightProperty().bind(parent.heightProperty().multiply(0.1));
 		c.setOnAction(event -> {
 			selected = c.getValue();
-			sep.getChildren().remove(right);
-			right = createShowMapPane(selected);
-			sep.getChildren().add(right);
+			showMapBox.getChildren().clear();
+			state = StroeMaps.getMap(selected);
+			GamePane gm = new GamePane(state);
+			showMapBox.getChildren().add(gm);
+			//sep.getChildren().remove(right);
+			//right = createShowMapPane(selected);
+			//sep.getChildren().add(right);
 
 		});
 		return c;
 	}
 
 	private StackPane createShowMapPane(String name) {
-		StackPane showMapBox = new StackPane();
+		 showMapBox = new StackPane();
 		showMapBox.getStyleClass().add("option-pane");
 		showMapBox.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
 		// showMapBox.setStyle("-fx-background-color: white");
