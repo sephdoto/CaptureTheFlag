@@ -322,7 +322,7 @@ public class EditorScene extends Scene {
 		pane.getStyleClass().add("option-pane");
 		pane.setPadding(new Insets(10));
 		pane.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
-		pane.prefHeightProperty().bind(pane.widthProperty().multiply(0.5));
+		pane.prefHeightProperty().bind(pane.widthProperty().multiply(0.55));
 
 		return pane;
 	}
