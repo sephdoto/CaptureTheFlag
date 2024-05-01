@@ -3,7 +3,7 @@ package org.ctf.shared.wave;
 import java.util.ArrayList;
 
 /**
- * Representation of a single Tile in the Grid.
+ * Representation of a single tile in the Grid.
  * 
  * @author ysiebenh
  */
@@ -62,6 +62,10 @@ public class Tile {
     this.parentGrid.updateEntropy(this);
     this.options = new ArrayList<Integer>();
   }
+  
+  // **************************************************
+  // GetNeighbor methods:
+  // **************************************************
   
   Tile getUpperNeighbor() {
     if (this.y == 0) {

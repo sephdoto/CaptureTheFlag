@@ -14,7 +14,6 @@ public class TileType {
   // **************************************************
 
   int type;
-  final int TYPEMAX = 5; // this needs to be adjusted to the number of possible tiles
   String up;
   String right;
   String down;
@@ -30,19 +29,19 @@ public class TileType {
   
   public TileType(int type) {
     this.type = type;
-    notCompatibleUp = new int[TYPEMAX];
-    notCompatibleRight = new int[TYPEMAX];
-    notCompatibleDown = new int[TYPEMAX];
-    notCompatibleLeft = new int[TYPEMAX];
+    notCompatibleUp = new int[WaveFunctionCollapse.IMAGES_AMOUNT];
+    notCompatibleRight = new int[WaveFunctionCollapse.IMAGES_AMOUNT];
+    notCompatibleDown = new int[WaveFunctionCollapse.IMAGES_AMOUNT];
+    notCompatibleLeft = new int[WaveFunctionCollapse.IMAGES_AMOUNT];
     hardRules();
     generateRules();
   }
 
   private TileType() {
-    notCompatibleUp = new int[TYPEMAX];
-    notCompatibleRight = new int[TYPEMAX];
-    notCompatibleDown = new int[TYPEMAX];
-    notCompatibleLeft = new int[TYPEMAX];
+    notCompatibleUp = new int[WaveFunctionCollapse.IMAGES_AMOUNT];
+    notCompatibleRight = new int[WaveFunctionCollapse.IMAGES_AMOUNT];
+    notCompatibleDown = new int[WaveFunctionCollapse.IMAGES_AMOUNT];
+    notCompatibleLeft = new int[WaveFunctionCollapse.IMAGES_AMOUNT];
     hardRules();
   }
   

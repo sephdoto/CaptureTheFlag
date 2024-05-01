@@ -30,7 +30,7 @@ public class WaveGrid {
     this.uniqueImages = images;
     tiles = new ArrayList<Tile>();
     int index = 0;
-    for (int y = 0, i = 0; y < grid.length; y++) {
+    for (int y = 0; y < grid.length; y++) {
       for (int x = 0; x < grid[y].length; x++) {
         Tile thisTile = new Tile(grid[y][x], x, y, new ArrayList<Integer>(), this);
         thisTile.collapsed = grid[y][x] == 0 ? false : true;

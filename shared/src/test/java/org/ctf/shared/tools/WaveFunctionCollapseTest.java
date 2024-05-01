@@ -22,7 +22,7 @@ class WaveFunctionCollapseTest {
       test[0][1] = 5;
       test[1][1] = 4;
       test[1][2] = 2;
-      int[][] grid = wfc.generateBackground(test);
+      wfc.generateBackground(test);
       ImageIO.write(wfc.getBackground(), "png", new File(Constants.toUIResources + "grid.png"));
     } catch (IOException e) {
       // TODO Auto-generated catch block
