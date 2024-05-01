@@ -116,7 +116,6 @@ public class AIClientStepBuilder {
     private String port;
     private AI ai;
     private boolean enableSave;
-    private MapTemplate mapTemplate;
     private String teamName;
     private String gameSessionGiven;
 

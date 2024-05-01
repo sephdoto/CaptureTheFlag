@@ -62,11 +62,27 @@ public class ClientStepBuilder {
 
   public static interface LoggerEnabler {
     /**
-     * Method to enable if the AI Game will be logged players
+     * Method to enable if the Game will be logged
      *
      * @param selector True for Enabling Save, False for disabled
      */
-    BuildStep enableSaveGame(boolean selector);
+    CreateJoinTask enableSaveGame(boolean selector);
+  }
+
+  public static interface CreateJoinTask {
+    /**
+     * Method to enable if the Client will auto join a game
+     *
+     * @param gameID Non null if you want to Autojoin, leave as "" otherwise.
+     */
+    BuildStep disableAutoJoin();
+
+    /**
+     * Method to enable if the Client will auto join a game
+     *
+     * @param gameID Non null if you want to Autojoin, leave as "" otherwise.
+     */
+    BuildStep enableAutoJoin(String gameID, String teamName);
   }
 
   /** Build Step */
@@ -77,11 +93,19 @@ public class ClientStepBuilder {
 
   /** Builder class itself where code gets implemented and the object creation happens */
   private static class Steps
-      implements LayerSelectionStep, HostStep, PortSelectionStep, LoggerEnabler, BuildStep {
+      implements LayerSelectionStep,
+          HostStep,
+          PortSelectionStep,
+          LoggerEnabler,
+          CreateJoinTask,
+          BuildStep {
     private CommLayerInterface comm;
     private String host;
     private String port;
     private boolean enableSave;
+    private boolean enableAutoJoin;
+    private String gameID;
+    private String teamName;
 
     /**
      * Sets the underlying layer in use by the Client
@@ -147,14 +171,40 @@ public class ClientStepBuilder {
      * @return
      */
     @Override
-    public Steps enableSaveGame(boolean selector) {
+    public CreateJoinTask enableSaveGame(boolean selector) {
       this.enableSave = selector;
+      return this;
+    }
+
+    /** Option Presented if Client is not supposed to automatically join a game. */
+    @Override
+    public BuildStep disableAutoJoin() {
+      this.enableAutoJoin = false;
+      return this;
+    }
+
+    /**
+     * Option Presented if Client is supposed to join a game.
+     *
+     * @param gameID game session ID to join
+     * @param teamName Team name to join with
+     * @return
+     */
+    @Override
+    public BuildStep enableAutoJoin(String gameID, String teamName) {
+      this.enableAutoJoin = true;
+      this.gameID = gameID;
+      this.teamName = teamName;
       return this;
     }
 
     @Override
     public Client build() {
-      return new Client(comm, host, port, enableSave);
+      if (enableAutoJoin) {
+        return new Client(comm, host, port, enableSave, gameID, teamName);
+      } else {
+        return new Client(comm, host, port, enableSave);
+      }
     }
   }
 }

@@ -17,17 +17,14 @@ public class SavedGame implements java.io.Serializable {
   private GameState initialState;
   private HashMap<String, Move> lastMovesMap = new HashMap<>();
   private Move lastMove;
-  private int counter;
+  private int counter = 1;
 
   /**
    * Inits the HashMap and the counter
    *
    * @author rsyed
    */
-  public SavedGame() {
-    lastMovesMap = new HashMap<>();
-    counter = 1;
-  }
+  public SavedGame() {}
 
   /**
    * Setter for the {@link GameState} object
@@ -41,24 +38,23 @@ public class SavedGame implements java.io.Serializable {
 
   /**
    * Adder for the {@link Move} object this class is asked to save. Autochecks if its the same as
-   * the one it last saved, saves if different, rejects the save internally otherwise for minimal distraction for the {@link Analyzer} object
+   * the one it last saved, saves if different, rejects the save internally otherwise for minimal
+   * distraction for the {@link Analyzer} object
    *
    * @param move the move to save
    * @author rsyed
    */
   public void addMove(Move move) {
     if (lastMovesMap.isEmpty()) {
-      this.lastMove = move;
       lastMovesMap.put(Integer.toString(counter), move);
       counter++;
-    } else if (move.hashCode() != lastMove.hashCode()) {
+    } else if (move.hashCode() != lastMovesMap.get(Integer.toString(counter - 1)).hashCode()) {
       this.lastMovesMap.put(Integer.toString(counter), move);
       counter++;
-      this.lastMove = move;
     }
   }
 
-   /**
+  /**
    * Getter for the {@link GameState} object this class is asked to save.
    *
    * @return GameState object
@@ -68,7 +64,7 @@ public class SavedGame implements java.io.Serializable {
     return this.initialState;
   }
 
-   /**
+  /**
    * Getter for the HashMap containing all the moves.
    *
    * @return HashMap<String,Move> object

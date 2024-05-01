@@ -3,9 +3,10 @@ package org.ctf.shared.client;
 import com.google.gson.Gson;
 import java.time.Clock;
 import java.util.Date;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import org.ctf.shared.client.lib.Analyzer;
 import org.ctf.shared.client.lib.GameClientInterface;
 import org.ctf.shared.client.lib.ServerChecker;
 import org.ctf.shared.client.lib.ServerDetails;
@@ -48,6 +49,7 @@ public class Client implements GameClientInterface {
   public Gson gson; // Gson object for conversions incase needed
   // Two CommLayers Available CommLayer and RestClientLayer
   public CommLayerInterface comm; // Layer instance which is used for communication
+  public Analyzer analyzer;
 
   // Block for Server Info
   public String currentServer; // Creates URL with Session ID for use later
@@ -68,6 +70,7 @@ public class Client implements GameClientInterface {
   public String teamNumber; // Is set when the server tells you what number it assigned you
   public String teamColor;
   public int myTeam = -1; // index of the team this client represents in teams array
+  public String gameIDtoJoin;
 
   // Block for alt game mode data
   public Date startDate;
@@ -80,13 +83,12 @@ public class Client implements GameClientInterface {
   // Block for booleans
   public boolean gameOver;
   public boolean gameStarted;
-  protected boolean turnSupportFlag; // is enabled when the team ID recieved in response is an INT
+  protected boolean enableLogging;
   public boolean moveTimeLimitedGameTrigger = false;
   public boolean timeLimitedGameTrigger = false;
 
   // Services
   ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
-  ExecutorService executor = Executors.newFixedThreadPool(3);
 
   /**
    * Constructor to set the IP and port on object creation
@@ -102,8 +104,45 @@ public class Client implements GameClientInterface {
     this.currentState = new GameState();
     this.currentSession = new GameSession();
     this.comm = comm;
+    this.enableLogging = enableLogging;
+    if (enableLogging) {
+      analyzer = new Analyzer();
+    }
     setServer(IP, port);
   }
+
+  /**
+   * Second constructor which is called when we want to schedule a joinTask. Joins a game 2 seconds
+   * after object creation, starts watching for game start after 3
+   *
+   * @param gameID Sets the comm layer the client is going to use
+   * @param teamName the IP to connect to Exp "localhost" or "192.xxx.xxx.xxx"
+   * @author rsyed
+   */
+  Client(
+      CommLayerInterface comm,
+      String IP,
+      String port,
+      Boolean enableLogging,
+      String gameID,
+      String teamName) {
+    this(comm, IP, port, enableLogging);
+    this.gameIDtoJoin = gameID;
+    this.requestedTeamName = teamName;
+    scheduler.schedule(joinTask, 2, TimeUnit.SECONDS);
+    scheduler.schedule(joinTask, 3, TimeUnit.SECONDS);
+  }
+
+  Runnable joinTask =
+      () -> {
+        joinExistingGame(
+            serverInfo.getHost(), serverInfo.getPort(), gameIDtoJoin, requestedTeamName);
+      };
+
+  Runnable startWatcher =
+      () -> {
+        startGameController();
+      };
 
   // **************************************************
   // Start of CRUD Call Methods
@@ -600,6 +639,10 @@ public class Client implements GameClientInterface {
                   Thread.sleep(sleep);
                   this.getSessionFromServer(); // Gets Session from server
                   if (getStartDate() != null) {
+                    if (enableLogging) {
+                      getStateFromServer();
+                      analyzer.addGameState(getCurrentState());
+                    }
                     gameStartedThread();
                     running = false;
                   }
@@ -626,6 +669,9 @@ public class Client implements GameClientInterface {
               while (running) {
                 try {
                   pullData();
+                  if (enableLogging) {
+                    analyzer.addMove(getCurrentState().getLastMove());
+                  }
                   Thread.sleep(this.refreshTime);
                 } catch (InterruptedException e) {
                   throw new Error("Something went wrong in the Client Thread");
