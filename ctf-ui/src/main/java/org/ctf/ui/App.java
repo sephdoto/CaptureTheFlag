@@ -19,9 +19,12 @@ import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -107,7 +110,10 @@ public class App extends Application {
 	 * 
 	 */
 	private Parent createLockScreen() {
+		Pane pane = new Pane();
+		createBackground(pane);
 		StackPane layer = new StackPane();
+		layer.getChildren().add(pane);
 		layer.widthProperty().addListener((obs,old,newV) -> {
 			double size = newV.doubleValue()*0.02;
 			layer.setPadding(new Insets(size));
@@ -173,7 +179,18 @@ public class App extends Application {
 		text.fontProperty().bind(
 				Bindings.createObjectBinding(() -> Font.font("Century Gothic",mainStage.getWidth() / 50), mainStage.widthProperty()));
 		layer.getChildren().add(root);
+		
 		return layer;
+	}
+	
+	private void createBackground(Pane layer) {
+		Circle c = new Circle();
+		for(int i =0;i<200;i++) {
+			c = new Circle(Math.random()*1500,Math.random()*1000,0.5+Math.random()*1);
+			c.setFill(Color.WHITE);
+			layer.getChildren().add(c);
+		}
+		  
 	}
 
 	public static void main(String[] args) {
