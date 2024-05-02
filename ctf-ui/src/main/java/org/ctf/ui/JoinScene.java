@@ -1,5 +1,10 @@
 package org.ctf.ui;
 
+import org.ctf.shared.client.Client;
+import org.ctf.shared.client.ClientStepBuilder;
+import org.ctf.shared.client.lib.ServerDetails;
+import org.ctf.shared.client.lib.ServerManager;
+import org.ctf.shared.client.service.CommLayer;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -32,6 +37,9 @@ public class JoinScene extends Scene {
 	StackPane left;
 	StackPane right;
 	Text info;
+	TextField serverIPText;
+	TextField portText;
+	TextField sessionText;
 
 	/**
 	 * This constructor starts the initialization process of the scene and connects
@@ -164,11 +172,11 @@ public class JoinScene extends Scene {
 		});
 		leftBox.getChildren().add(createLeftHeader(leftBox));
 
-		TextField serverIPText = createTextfield("Enter the Server IP");
+		serverIPText = createTextfield("Enter the Server IP");
 		leftBox.getChildren().add(serverIPText);
-		TextField portText = createTextfield("Enter the Port");
+		portText = createTextfield("Enter the Port");
 		leftBox.getChildren().add(portText);
-		TextField sessionText = createTextfield("Enter the Session ID");
+		sessionText = createTextfield("Enter the Session ID");
 		leftBox.getChildren().add(sessionText);
 
 		leftBox.getChildren().add(createSearch());
@@ -243,25 +251,51 @@ public class JoinScene extends Scene {
 	 * @author aniemesc
 	 * @return Button that gets added to the left StackPane
 	 */
-	private Button createSearch() {
-		Button search = new Button("Search");
-		search.getStyleClass().add("leave-button");
-		search.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
-		search.prefHeightProperty().bind(search.widthProperty().multiply(0.25));
-		search.fontProperty().bind(Bindings.createObjectBinding(
-				() -> Font.font("Century Gothic", search.getHeight() * 0.4), search.heightProperty()));
-		search.setOnAction(e -> {
-			right.getChildren().remove(info);
-			right.getChildren().add(createRightContent());
-		});
-		return search;
-	}
+    private Button createSearch() {
+      Button search = new Button("Search");
+      search.getStyleClass().add("leave-button");
+      search.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
+      search.prefHeightProperty().bind(search.widthProperty().multiply(0.25));
+      search.fontProperty().bind(Bindings.createObjectBinding(
+          () -> Font.font("Century Gothic", search.getHeight() * 0.4), search.heightProperty()));
+      search.setOnAction(e -> {
+        
+        try {
+          ServerManager ser = new ServerManager(new CommLayer(), new ServerDetails(serverIPText.getText(), portText.getText()), sessionText.getText());
+         if(!ser.isServerActive()) {
+           info.setText("The Server \n cannot be found!\n Please check the Server IP\n and select the right Port!");
+         } else {
+           info.setText("Server was found!");
+         }
+        } catch (IllegalArgumentException e2) {
+          // TODO: handle exception
+         right.getChildren().clear();
+         info.setText("Please enter a valid \n IP-adress and port!");
+         right.getChildren().add(info);
+        }
+        
+//        right.getChildren().clear();
+//        right.getChildren().add(createRightContent());
+
+       
+
+       
+        
+      });
+       
+//       ser.getCurrentNumberofTeams();
+//       
+//       Client client = ClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost("ip").onPort("port").enableSaveGame(false).enableAutoJoin("session", "teamname").build();
+       
+       
+      return search;
+    }
 
 	/**
 	 * Method that creates styled text that can be used within the scene.
 	 * 
 	 * @author Aaron Niemesch
-	 * @param s - String value input
+	 * @param s       - String value input
 	 * @param divider - int value that defines font ration in relation to scene
 	 * @return Text that can be added to the scene
 	 */
@@ -273,12 +307,12 @@ public class JoinScene extends Scene {
 				() -> Font.font("Century Gothic", right.getWidth() / divider), right.widthProperty()));
 		return info;
 	}
-	
+
 	/**
 	 * Method that creates visual info objects belonging to a game session
 	 * 
 	 * @author aniemesc
-	 * @param id - int value for game ID
+	 * @param id    - int value for game ID
 	 * @param teams - int value for number of waiting teams
 	 * @param space - int value for number of open spots
 	 * @return StackPane that gets added to the right StackPane
@@ -321,12 +355,12 @@ public class JoinScene extends Scene {
 				() -> Font.font("Century Gothic", join.getHeight() * 0.35), join.heightProperty()));
 		return join;
 	}
-	
+
 	/**
 	 * This method creats the layout for the different join options.
 	 * 
 	 * @author aniemsc
-	 * @return GridPane that contains UI components for joining 
+	 * @return GridPane that contains UI components for joining
 	 */
 	private GridPane createButtonOption() {
 		GridPane buttonBox = new GridPane();
@@ -354,7 +388,7 @@ public class JoinScene extends Scene {
 		return buttonBox;
 
 	}
-	
+
 	/**
 	 * This method creates the UI components for choosing an AI client
 	 * 
@@ -379,7 +413,5 @@ public class JoinScene extends Scene {
 		childBox.getChildren().add(aiComboBox);
 		return childBox;
 	}
-	
-	
 
 }
