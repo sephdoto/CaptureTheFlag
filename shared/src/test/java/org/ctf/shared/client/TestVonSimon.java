@@ -11,6 +11,7 @@ public class TestVonSimon {
             .onLocalHost()
             .onPort("8888")
             .enableSaveGame(false)
+            .disableAutoJoin()
             .build();    
     Client javaClient2 =
         ClientStepBuilder.newBuilder()
@@ -18,6 +19,7 @@ public class TestVonSimon {
             .onLocalHost()
             .onPort("8888")
             .enableSaveGame(false)
+            .disableAutoJoin()
             .build();   
     
     

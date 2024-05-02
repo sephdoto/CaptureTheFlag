@@ -34,7 +34,7 @@ public class ClientTest {
   static Client javaClient;
   static Client javaClient2;
   final MapTemplate template = createGameTemplate();
-  ServerManager server = new ServerManager(comm, new ServerDetails("localhost", "9998"), null);
+  ServerManager server = new ServerManager(comm, new ServerDetails("localhost", "9998"), template);
   
   @BeforeAll
   static void setup() {
@@ -46,6 +46,7 @@ public class ClientTest {
             .onLocalHost()
             .onPort("9998")
             .enableSaveGame(false)
+            .disableAutoJoin()
             .build();
             
   }
@@ -58,6 +59,7 @@ public class ClientTest {
             .onLocalHost()
             .onPort("9998")
             .enableSaveGame(false)
+            .disableAutoJoin()
             .build();
     javaClient2 =
         ClientStepBuilder.newBuilder()
@@ -65,6 +67,7 @@ public class ClientTest {
             .onLocalHost()
             .onPort("9998")
             .enableSaveGame(false)
+            .disableAutoJoin()
             .build();
     
   }
