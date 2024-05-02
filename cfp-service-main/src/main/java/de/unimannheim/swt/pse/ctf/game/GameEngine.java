@@ -640,7 +640,7 @@ public class GameEngine implements Game {
    * @return String containing a randomized color as a HEX Code
    */
   static String getRandColor(Team team) {
-    int i=0;
+    int i=1;
     int r = pseudoRandomColorInt(team, i++);
     int g = pseudoRandomColorInt(team, i++);
     int b = pseudoRandomColorInt(team, i++);
@@ -656,7 +656,8 @@ public class GameEngine implements Game {
    * @return random int between 0 and 255
    */
   static int pseudoRandomColorInt(Team team, int modifier) {
-    Random random = new Random(hashTeam(team) + modifier);
+    Random random = new Random(hashTeam(team) * modifier);
+    System.out.println(team.getId() + " " + modifier + random.nextInt(256));
     return random.nextInt(256);
   }
   

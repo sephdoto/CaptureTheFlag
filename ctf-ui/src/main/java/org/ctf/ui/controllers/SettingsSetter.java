@@ -48,7 +48,7 @@ public class SettingsSetter {
    */
   public static void saveCustomSettings() {
     try {
-      JSON_Tools.saveObjectAsJSON(settingsLocation, createJSONObject());
+      JSON_Tools.saveObjectAsJSON(settingsLocation, createJSONObject(), true);
     } catch(JSONException | IOException jse) {
       jse.printStackTrace();
     }

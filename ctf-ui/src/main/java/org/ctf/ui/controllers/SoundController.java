@@ -169,7 +169,7 @@ public class SoundController {
       HashSet<AudioObject> set = new HashSet<AudioObject>();
       for (int i = 0; i < jarray.length(); i++) set.add(new AudioObject(jarray.getJSONObject(i)));
       set.add(audio);
-      JSON_Tools.saveObjectAsJSON(linkedSoundsFile, set);
+      JSON_Tools.saveObjectAsJSON(linkedSoundsFile, set, true);
     } catch (Exception e) {
       e.printStackTrace();
       return false;

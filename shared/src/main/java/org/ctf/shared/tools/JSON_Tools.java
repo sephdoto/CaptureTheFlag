@@ -1,6 +1,7 @@
 package org.ctf.shared.tools;
 
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.Directions;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.data.map.Movement;
@@ -18,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.io.File;
 
 
@@ -27,6 +29,8 @@ import java.io.File;
  * @author sistumpf
  */
 public class JSON_Tools {
+  static String mapTemplates = Constants.mapTemplateFolder + "templates" + File.separator;
+  static String gameStates = Constants.mapTemplateFolder + "gamestates" + File.separator;
   
   /**
    * Returns a MapTemplate from a given File. 
@@ -45,6 +49,11 @@ public class JSON_Tools {
     }
   }
  
+  public static void saveTemplateWithGameState(String mapName, MapTemplate mapTemplate, GameState gameState) throws IOException {
+    saveObjectAsJSON(mapTemplates +mapName+".json", mapTemplate, false);
+    saveObjectAsJSON(gameStates +mapName+".json", gameState, false);
+  }
+  
   /**
    * Saves a MapTemplate as a file in mapTemplateFolder.
    * The file Name must be given as mapName, without an ending.
@@ -55,7 +64,7 @@ public class JSON_Tools {
    * @throws IOException 
    */
   public static void saveMapTemplateAsFile(String mapName, MapTemplate mapTemplate) throws IOException {
-    saveObjectAsJSON(Constants.mapTemplateFolder+mapName+".json", mapTemplate);
+    saveObjectAsJSON(Constants.mapTemplateFolder+mapName+".json", mapTemplate, false);
   }
   
   
@@ -67,8 +76,13 @@ public class JSON_Tools {
    * @param object
    * @throws IOException
    */
-  public static void saveObjectAsJSON(String location, Object object) throws IOException {
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+  public static void saveObjectAsJSON(String location, Object object, boolean prettyprinting) throws IOException {
+    Gson gson;
+    if(prettyprinting)
+      gson = new GsonBuilder().setPrettyPrinting().create();
+    else
+      gson = new GsonBuilder().create();
+    
     byte[] contentBytes = gson.toJson(object).getBytes();
     
     if(object instanceof JSONObject)
@@ -78,6 +92,29 @@ public class JSON_Tools {
     Files.write(file.toPath(), contentBytes);
   }
 
+  public static HashMap<MapTemplate, GameState> getTemplateAndGameState(String name){
+    HashMap<MapTemplate, GameState> mapMap = new HashMap<MapTemplate, GameState> ();
+    try {
+      MapTemplate mapTemplate = readMapTemplate(name);
+      GameState gameState = readGameState(name);
+      mapMap.put(mapTemplate, gameState);
+    } catch(MapNotFoundException e) {
+      e.printStackTrace();
+    }
+    return mapMap;
+  }
+  
+  public static GameState readGameState(String name) throws MapNotFoundException {
+    Path path = Paths.get(gameStates+name+".json");
+    if(!Files.exists(path))
+      throw new MapNotFoundException(name);
+    try {
+      return new GsonBuilder().create().fromJson(fileToString(gameStates+name+".json"), GameState.class);
+    } catch (IOException e) {e.printStackTrace();
+    }
+    return null;
+  }
+  
   /**
    * Returns a MapTemplate from a given mapName. 
    * The mapName must exist in resources.maptemplates.
@@ -90,12 +127,12 @@ public class JSON_Tools {
    */
   @Deprecated
   public static MapTemplate readMapTemplate(String mapName) throws MapNotFoundException {
-    Path path = Paths.get(Constants.mapTemplateFolder+mapName+".json");
+    Path path = Paths.get(mapTemplates+mapName+".json");
     if(!Files.exists(path))
       throw new MapNotFoundException(mapName);
 
     try {
-      return MapFromJson(fileToString(Constants.mapTemplateFolder+mapName+".json"));
+      return MapFromJson(fileToString(mapTemplates+mapName+".json"));
     } catch (IOException e) {e.printStackTrace();}
 
     return null;

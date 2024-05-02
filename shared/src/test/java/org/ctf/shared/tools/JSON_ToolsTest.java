@@ -5,7 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
+import java.util.HashMap;
+import org.ctf.shared.ai.TestValues;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.tools.JSON_Tools.IncompleteMapTemplateException;
@@ -27,7 +28,23 @@ class JSON_ToolsTest {
   String mapString;
   MapTemplate mapTemplate;
 
-
+  @Test
+  //TODO
+  void getTemplateAndGameState() {
+    HashMap map = JSON_Tools.getTemplateAndGameState("test");
+    System.out.println(1);
+  }
+  
+  @Test
+  //TODO
+  void saveTemplateWithGameState() {
+    try {
+      JSON_Tools.saveTemplateWithGameState("test", mapTemplate, TestValues.getTestState());
+    } catch (Exception e) {
+      fail("saving template with gamestate should be possible");
+    }
+  }
+  
   @Test
   void testSaveMapTemplateAsFile() {
     try {
@@ -109,12 +126,16 @@ class JSON_ToolsTest {
     new TypeToken<>() {}.getType(); 
     this.mapTemplate = gson.fromJson(mapString, MapTemplate.class);
     this.mapTemplateFolder = Constants.mapTemplateFolder;
-    Constants.mapTemplateFolder = Paths.get("src" + File.separator + "test" + File.separator +"java" + File.separator + "org" + File.separator + "ctf" + 
-    File.separator +"shared" + File.separator +"tools" + File.separator + "maptemplates").toAbsolutePath().toString() + File.separator;
+//    Constants.mapTemplateFolder = Paths.get("src" + File.separator + "test" + File.separator +"java" + File.separator + "org" + File.separator + "ctf" + 
+//    File.separator +"shared" + File.separator +"tools" + File.separator + "maptemplates").toAbsolutePath().toString() + File.separator;
+//    JSON_Tools.gameStates = Constants.mapTemplateFolder + "gamestates" + File.separator;
+//    JSON_Tools.mapTemplates = Constants.mapTemplateFolder + "templates" + File.separator;
   }
 
   @AfterAll
   void tearDownAfterClass() throws Exception {
     Constants.mapTemplateFolder = mapTemplateFolder;
+    JSON_Tools.gameStates = Constants.mapTemplateFolder + "gamestates" + File.separator;
+    JSON_Tools.mapTemplates = Constants.mapTemplateFolder + "templates" + File.separator;
   }
 }
