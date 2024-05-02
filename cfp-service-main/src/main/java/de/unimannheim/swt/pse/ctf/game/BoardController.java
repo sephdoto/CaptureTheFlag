@@ -103,7 +103,6 @@ public class BoardController {
     // initializing the team
     Team team = new Team();
     team.setId(Integer.toString(teamID));
-    team.setColor(GameEngine.getRandColor());
     team.setFlags(template.getFlags());
     team.setBase(findBase(""+teamID));
     
@@ -113,6 +112,7 @@ public class BoardController {
       pieces[iterator++] = p;
     }
     team.setPieces(pieces);
+    team.setColor(GameEngine.getRandColor(team));
     this.gameState.getTeams()[teamID] = team;
     return team;
   }

@@ -639,14 +639,45 @@ public class GameEngine implements Game {
    * @author rsyed
    * @return String containing a randomized color as a HEX Code
    */
-  static String getRandColor() {
-    Random rand = new Random();
-    int r = rand.nextInt(255);
-    int g = rand.nextInt(255);
-    int b = rand.nextInt(255);
+  static String getRandColor(Team team) {
+    int i=0;
+    int r = pseudoRandomColorInt(team, i++);
+    int g = pseudoRandomColorInt(team, i++);
+    int b = pseudoRandomColorInt(team, i++);
     Color testColor = Color.rgb(r, g, b);
     return testColor.toString();
   }
+  
+  /**
+   * generates a pseudo random int between 0 and 255.
+   * 
+   * @param team which gets turned into a hashed int
+   * @param modifier to modify the random seed.
+   * @return random int between 0 and 255
+   */
+  static int pseudoRandomColorInt(Team team, int modifier) {
+    Random random = new Random(hashTeam(team) + modifier);
+    return random.nextInt(256);
+  }
+  
+  /**
+   * turns a team into a hash code
+   * 
+   * @param team
+   * @return the teams hash code
+   */
+  static int hashTeam(Team team) {
+    StringBuilder sb = new StringBuilder()
+        .append(team.getFlags())
+        .append(team.getId())
+        .append(team.getBase()[0] + team.getBase()[1]);
+    for(Piece piece : team.getPieces())
+      sb.append(piece.getId())
+      .append(piece.getPosition()[0] + piece.getPosition()[1])
+      .append(piece.getDescription().getType());
+    return sb.toString().hashCode();
+  }
+  
   // **************************************************
   // End of Private Internal Methods
   // **************************************************
