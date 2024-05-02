@@ -24,8 +24,15 @@ public class WaveGrid {
   // Constructor
   // **************************************************
 
-  WaveGrid(int[][] grid, int images) {
-    this.grid = grid;
+  public WaveGrid(int[][] grid, int images) {
+    int[][] newGrid = new int[grid.length][grid[0].length];
+    
+    for(int i = 0; i < grid.length; i++) {
+      for(int j = 0; j < grid[i].length; j++) {
+        newGrid[i][j] = grid[i][j];
+      }
+    }
+    this.grid = newGrid;
     this.uniqueImages = images;
     tiles = new ArrayList<Tile>();
     int index = 0;

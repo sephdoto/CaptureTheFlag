@@ -27,6 +27,7 @@ public class ServerManager {
    * @param map An object of {@link MapTemplate}. Is the map it will use to create the Session.
    * @author rsyed
    */
+
   public ServerManager(CommLayerInterface comm, ServerDetails serverDetails, MapTemplate map) {
     this.comm = comm;
     this.map = map;
@@ -34,6 +35,24 @@ public class ServerManager {
     this.currentServer =
         "http://" + serverDetails.getHost() + ":" + serverDetails.getPort() + "/api/gamesession";
   }
+
+   /**
+   * Overloaded Constructor
+   *
+   * @param comm An object of {@link CommLayerInterface}. Either CommLayer or RestClientLayer
+   * @param serverInfo An object of {@link ServerDetails}. Contains URL and Port information
+   * @param map An object of {@link MapTemplate}. Is the map it will use to create the Session.
+   * @author rsyed
+   */
+  public ServerManager(CommLayerInterface comm, ServerDetails serverDetails, String sessionID) {
+    this.comm = comm;
+    this.serverDetails = serverDetails;
+    this.gameSessionID = sessionID;
+    this.currentServer =
+        "http://" + serverDetails.getHost() + ":" + serverDetails.getPort() + "/api/gamesession";
+  }
+
+
 
   /**
    * Creates a game session in the server set in the object.
@@ -118,4 +137,5 @@ public class ServerManager {
   public void setServer(ServerDetails serverDetails) {
     this.serverDetails = serverDetails;
   }
+
 }

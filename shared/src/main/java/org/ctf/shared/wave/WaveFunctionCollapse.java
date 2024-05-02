@@ -13,22 +13,24 @@ import java.util.Comparator;
 import java.util.LinkedList;
 
 /**
- * The class to call when creating a background with the wave function collapse algorithm. How to
- * use: 
+ * Initiate this class when creating a background with the wave function collapse algorithm. How to
+ * use:
  * <p>
  * - Create a new instance of WaveFunctionCollapse with the String[][] grid representing the map as
- *  input 
+ * input
  * </p>
  * <p>
  * - Call the getBackground method to get the finished image
  * </p>
+ * 
  * @author ysiebenh
  */
 public class WaveFunctionCollapse {
   
-  final static int IMAGES_AMOUNT = 28;
+  final public static int IMAGES_AMOUNT = 28;
+  private int iterationsCounter;
   private int[][] grid;
-  private boolean collapsed = false;
+  private boolean collapsed;
   private BufferedImage background;
 
   /**
@@ -38,17 +40,41 @@ public class WaveFunctionCollapse {
    * @param grid
    */
   public WaveFunctionCollapse(String[][] grid) {
-    int[][] intGrid = new int[grid.length][grid[0].length];
-    for (int y = 0; y < grid.length; y++) {
-      for (int x = 0; x < grid[y].length; x++) {
-        intGrid[y][x] = grid[y][x].equals("") ? 0 : 24;
-      }
-    }
+    collapsed = false;
+    int[][] intGrid = stringToInt(grid);
     this.grid = generateBackground(intGrid);
+    //this.grid = generateBackgroundRecursive(new WaveGrid(intGrid, IMAGES_AMOUNT));
+    
+
+    try {
+      background = gridToImg(this.grid);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
-   * The actual wave function collapse algorithm takes place here. 
+   * Generates an integer grid that is three times the size of the original String grid and fills it
+   * with the String values.
+   * 
+   * @param grid
+   * @return
+   */
+  private int[][] stringToInt(String[][] grid) {
+    int[][] intGrid = new int[grid.length * 3][grid[0].length * 3];
+    for (int y = 0; y < grid.length*3; y++) {
+      for (int x = 0; x < grid[0].length*3; x++) {
+        if (grid[y/3][x/3] != null) {
+          intGrid[y][x] = grid[y/3][x/3].equals("") ? 0 : 24;
+        }
+      }
+    }
+    return intGrid;
+  }
+
+  /**
+   * The actual wave function collapse algorithm. Generates a pattern from an initial set of images
+   * and rules.
    * <p>
    * TODO Make this private once the algorithm works perfectly
    * </p>
@@ -57,60 +83,147 @@ public class WaveFunctionCollapse {
    * @return the finished grid
    */
   public int[][] generateBackground(int[][] grid) {
-
+    System.out.println("Iterations:" + iterationsCounter++);
     // TODO add backtracking
-    long nowMillis = System.currentTimeMillis();    // Logging how long the process takes 
-                                                    // TODO remove this later
+    
+    //timing the method TODO remove when done 
+    long nowMillis = System.currentTimeMillis();
 
+    //creating the Grid
     WaveGrid wGrid = new WaveGrid(grid, IMAGES_AMOUNT);         
     
     //The main algorithm:
     while (!collapsed) {
-      LinkedList<Tile> possibleTiles = new LinkedList<Tile>();
-      ArrayList<Tile> tileCopy = new ArrayList<Tile>(wGrid.tiles);
+      LinkedList<Tile> possibleTiles = new LinkedList<Tile>();      
+      ArrayList<Tile> tileCopy = new ArrayList<Tile>(wGrid.tiles); //create a copy of all the tiles 
 
+      //sorting all the tiles by entropy 
       tileCopy.sort(new Comparator<Tile>() {
         @Override
         public int compare(Tile a, Tile b) {
           return Integer.compare(a.options.size(), b.options.size());
         }
       });
+      // removing all tiles with zero options from the copy
       ArrayList<Tile> toRemove = new ArrayList<Tile>();
       for (Tile t : tileCopy) {
-        if (t.options.size() == 0) {
+        if (t.collapsed) {
           toRemove.add(t);
         }
       }
       for (Tile t : toRemove) {
         tileCopy.remove(t);
       }
+      //Done removing tiles
+      
+      //if no more tiles are unplaced boom done 
       if (tileCopy.size() == 0) {
         break;
       }
+      
+      //choosing the tile with the lowest entropy 
       int bestEntropy = tileCopy.get(0).options.size();
       for (Tile t : wGrid.tiles) {
         if (t.options.size() == bestEntropy) {
           possibleTiles.add(t);
         }
       }
+      
+      //if the size of the possible tiles is zero then we are done
       if (possibleTiles.size() == 0) {
         collapsed = true;
         break;
       }
+      
+      //Choosing which tile to collapse and which image to use at random 
       Tile thisTile = possibleTiles.get((int) (Math.random() * possibleTiles.size()));
+      
+      //Backtracking for Dummies: If dead end is reached --> start over
+      if(thisTile.options.size() == 0) {
+        return generateBackground(grid);
+      }
+
       thisTile.setValue(thisTile.options.get((int) (Math.random() * thisTile.options.size())));
     }
 
-    try {
-      background = gridToImg(wGrid.grid);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
+    //timing the method TODO remove later 
     System.out
         .println(" generateBackground took " + (System.currentTimeMillis() - nowMillis) + "ms"); 
     return wGrid.grid;
 
+  }
+  
+  /**
+   * The actual wave function collapse algorithm. Generates a pattern from an initial set of images
+   * and rules. Recursive version.
+   * <p>
+   * TODO Make this private once the algorithm works perfectly
+   * </p>
+   * 
+   * @param grid the initial grid
+   * @return the finished grid
+   */
+  @Deprecated
+  public int[][] generateBackgroundRecursive(WaveGrid wGrid) {
+    System.out.println("Step: " + iterationsCounter++);
+    LinkedList<Tile> possibleTiles = new LinkedList<Tile>();      
+    ArrayList<Tile> tileCopy = new ArrayList<Tile>(wGrid.tiles); //create a copy of all the tiles 
+
+    if(collapsed) return wGrid.grid;
+    //sorting all the tiles by entropy 
+    tileCopy.sort(new Comparator<Tile>() {
+      @Override
+      public int compare(Tile a, Tile b) {
+        return Integer.compare(a.options.size(), b.options.size());
+      }
+    });
+    // removing all tiles with value zero from the copy 
+    ArrayList<Tile> toRemove = new ArrayList<Tile>();
+    for (Tile t : tileCopy) {
+      if (t.options.size() == 0) {
+        if(t.collapsed) {
+          toRemove.add(t);
+        }
+      }
+    }
+    for (Tile t : toRemove) {
+      tileCopy.remove(t);
+    }
+    //Done removing tiles
+    
+    //if no more tiles are unplaced boom done 
+    if (tileCopy.size() == 0) {
+      return wGrid.grid;
+    }
+    
+    //choosing the tile with the lowest entropy 
+    int bestEntropy = tileCopy.get(0).options.size();
+    for (Tile t : wGrid.tiles) {
+      if (t.options.size() == bestEntropy) {
+        possibleTiles.add(t);
+      }
+    }
+    
+    //if the size of the possible tiles is zero then we are done
+    if (possibleTiles.size() == 0) {
+      collapsed = true;
+      return wGrid.grid;
+    }
+    
+    //Choosing which tile to collapse and which image to use at random 
+    Tile thisTile = possibleTiles.get((int) (Math.random() * possibleTiles.size()));
+    
+    //what do we do here? backtrack?
+    if(thisTile.options.size() == 0) {
+      
+    }
+
+    thisTile.setValue(thisTile.options.get((int) (Math.random() * thisTile.options.size())));
+    
+    this.generateBackgroundRecursive(wGrid);
+  
+    
+    return wGrid.grid;
   }
   
   private BufferedImage[] loadImages() throws IOException {
@@ -200,6 +313,7 @@ public class WaveFunctionCollapse {
    * @see <a href=
    *      "https://stackoverflow.com/questions/37758061/rotate-a-buffered-image-in-java">Stackoverflow Reference</a>
    * 
+   * TODO add author to credits
    * @param img the image to be rotated
    * @param angle the angle by which it wants to be rotated
    * @return the rotated image as BufferedImage

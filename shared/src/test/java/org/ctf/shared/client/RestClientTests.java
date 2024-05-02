@@ -44,6 +44,7 @@ public class RestClientTests {
             .onLocalHost()
             .onPort("9999")
             .enableSaveGame(false)
+            .disableAutoJoin()
             .build();
   }
 
@@ -55,6 +56,7 @@ public class RestClientTests {
             .onLocalHost()
             .onPort("9999")
             .enableSaveGame(false)
+            .disableAutoJoin()
             .build();
     javaClient2 =
         ClientStepBuilder.newBuilder()
@@ -62,6 +64,7 @@ public class RestClientTests {
             .onLocalHost()
             .onPort("9999")
             .enableSaveGame(false)
+            .disableAutoJoin()
             .build();
   }
 

@@ -96,7 +96,8 @@ public class TileType {
 
   /**
    * The rules of the tiles are hard-coded for every TileType by assigning a String to every side
-   * that represents which pieces can fit together.
+   * that represents which pieces can fit together. 
+   * The Strings are always read from left to right\top to bottom
    */
   private void hardRules() {
     switch (this.type) {
