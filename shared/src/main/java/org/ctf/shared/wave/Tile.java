@@ -52,6 +52,15 @@ public class Tile {
     return value;
   }
 
+  void undoValue() {
+    this.value = 0;
+    if (this.parentGrid != null) {
+      this.parentGrid.grid[this.y][this.x] = 0;
+    }
+    this.collapsed = false;
+    this.parentGrid.updateEntropy(this);
+  }
+
   void setValue(int value) {
     this.value = value;
     if (this.parentGrid != null) {
