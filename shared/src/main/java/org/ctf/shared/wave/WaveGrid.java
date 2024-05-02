@@ -25,7 +25,6 @@ public class WaveGrid {
   // **************************************************
 
   WaveGrid(int[][] grid, int images) {
-    long nowMillis = System.currentTimeMillis();
     this.grid = grid;
     this.uniqueImages = images;
     tiles = new ArrayList<Tile>();
@@ -40,9 +39,6 @@ public class WaveGrid {
     }
     this.setOptions();
     this.setRules();
-
-    System.out
-        .println(" WaveGrid initializer took " + (System.currentTimeMillis() - nowMillis) + "ms");
   }
 
   // **************************************************

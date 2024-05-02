@@ -26,7 +26,7 @@ import java.util.LinkedList;
  */
 public class WaveFunctionCollapse {
   
-  final static int IMAGES_AMOUNT = 5;
+  final static int IMAGES_AMOUNT = 28;
   private int[][] grid;
   private boolean collapsed = false;
   private BufferedImage background;
@@ -41,7 +41,7 @@ public class WaveFunctionCollapse {
     int[][] intGrid = new int[grid.length][grid[0].length];
     for (int y = 0; y < grid.length; y++) {
       for (int x = 0; x < grid[y].length; x++) {
-        intGrid[y][x] = grid[y][x].equals("") ? 0 : 1;
+        intGrid[y][x] = grid[y][x].equals("") ? 0 : 24;
       }
     }
     this.grid = generateBackground(intGrid);
@@ -113,6 +113,54 @@ public class WaveFunctionCollapse {
 
   }
   
+  private BufferedImage[] loadImages() throws IOException {
+    BufferedImage[] images = new BufferedImage[IMAGES_AMOUNT+1];
+      
+        images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"p1.png"));
+        
+        images[1] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"black.png"));
+        //file = ImageIO
+        //    .read(new File(Constants.toUIResources + "pictures" + File.separator + "p1.png"));
+
+        //file = ImageIO.read(new File(Constants.toUIResources + "white.png"));
+        //file = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"p2.png"));
+        images[2] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r2.png"));
+        images[3] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r2.png")),90);
+        images[4] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r2.png")),180);
+        images[5] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r2.png")),270);
+        //file = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p2.png")),90);
+        images[6] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r3.png")); 
+        images[7] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r3.png")),90);
+        //file = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p2.png")),180);
+        images[8] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r4.png"));
+        images[9] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r4.png")),90);
+        images[10] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r4.png")),180);
+        images[11] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r4.png")),270);
+        //file = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p2.png")),270);
+        images[12] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r5.png"));
+        images[13] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r5.png")),90);
+        images[14] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r5.png")),180);
+        images[15] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r5.png")),270);
+        //file = ImageIO.read(new File(Constants.toUIResources + "waterrock.png"));
+        images[16] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r6.png"));
+        images[17] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r6.png")),90);
+        images[18] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r6.png")),180);
+        images[19] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r6.png")),270);
+        //file = ImageIO.read(new File(Constants.toUIResources + "edgewater.png"));
+        images[20] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r7.png"));
+        images[21] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r7.png")),90);
+        images[22] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r7.png")),180);
+        images[23] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r7.png")),270);
+        //file = ImageIO.read(new File(Constants.toUIResources + "edgeroad.png"));
+        images[24] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r8.png"));
+        //file = ImageIO.read(new File(Constants.toUIResources + "edgerock.png"));
+        images[25] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r9.png"));
+        images[26] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r9.png")),90);
+        images[27] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r9.png")),180);
+        images[28] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r9.png")),270);
+
+    return images;
+  }
   
   /**
    * Parses an integer grid into an image using the png files supplied in UIResources.
@@ -125,51 +173,13 @@ public class WaveFunctionCollapse {
     long nowMillis = System.currentTimeMillis();
     BufferedImage result =
         new BufferedImage(40 * grid[0].length, 40 * grid.length, BufferedImage.TYPE_INT_ARGB);
+    BufferedImage[] files = loadImages();
     for (int y = 0; y < grid.length; y++) {
       for (int x = 0; x < grid[y].length; x++) {
-        BufferedImage file = null;
         int color = grid[y][x];
-        switch (color) {
-          case 0:
-            break;
-          case 1:
-            // file = ImageIO.read(new File(Constants.toUIResources + "black.png"));
-            file = ImageIO
-                .read(new File(Constants.toUIResources + "pictures" + File.separator + "p1.png"));
-            break;
-          case 2:
-            //file = ImageIO.read(new File(Constants.toUIResources + "white.png"));
-            file = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"p2.png"));
-            break;
-          case 3:
-            file = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p2.png")),90);
-            break;
-          case 4: 
-            file = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p2.png")),180);
-            break;
-          case 5: 
-            file = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p2.png")),270);
-            break;
-            /*
-          case 6:
-            file = ImageIO.read(new File(Constants.toUIResources + "waterrock.png"));
-            break;
-          case 7: 
-            file = ImageIO.read(new File(Constants.toUIResources + "edgewater.png"));
-            break;
-          case 8: 
-            file = ImageIO.read(new File(Constants.toUIResources + "edgeroad.png"));
-            break;
-          case 9: 
-            file = ImageIO.read(new File(Constants.toUIResources + "edgerock.png"));
-            break;
-            
-            */
-          default:
-            break;
-        }
+        BufferedImage file = files[color];
         Graphics g = result.getGraphics();
-        g.drawImage(file, x * 40, y * 40, x * 40 + 40, y * 40 + 40, 0, 0, 40, 40, null);
+        g.drawImage(file, x * 40, y * 40, x * 40 + 40, y * 40 + 40, 0, 0, 12, 12, null);
       }
     }
     System.out.println(" generateImageFromGrid took " + (System.currentTimeMillis() - nowMillis) + "ms");
