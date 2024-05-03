@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.shared.state.data.exceptions.URLError;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.dto.GameSessionRequest;
@@ -20,7 +21,6 @@ public class ServerChecker {
    * @return true if server is active and ready to make sessions, false if not
    * @author rsyed
    */
-  
   public boolean isServerActive(ServerDetails serverDetails) {
     String Path = Constants.testTemplate;
     MapTemplate mapTemplate;
@@ -53,5 +53,22 @@ public class ServerChecker {
             + "/"
             + gSessionResponse.getId());
     return (gSessionResponse.getId() != null) ? true : false;
+  }
+
+  public boolean isSessionActive(ServerDetails serverDetails, String sessionID) {
+    CommLayer comm = new CommLayer();
+    try {
+      comm.getCurrentSessionState(
+        "http://"
+            + serverDetails.getHost()
+            + ":"
+            + serverDetails.getPort()
+            + "/api/gamesession"
+            + "/"
+            + sessionID);
+    } catch (SessionNotFound | UnknownError | URLError e) {
+      return false;
+    }
+    return true;
   }
 }

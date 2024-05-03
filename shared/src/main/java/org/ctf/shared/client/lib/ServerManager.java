@@ -88,6 +88,17 @@ public class ServerManager {
         .isServerActive(this.serverDetails);
   }
 
+   /**
+   * Checks if server is active through a dummy gameTemplate
+   *
+   * @return true if server is active and ready to make sessions, false if not
+   * @author rsyed
+   */
+  public boolean isSessionActive() {
+    return new ServerChecker()
+        .isSessionActive(this.serverDetails,this.gameSessionID);
+  }
+
   /**
    * Method which returns how many teams have joined the session at present
    *

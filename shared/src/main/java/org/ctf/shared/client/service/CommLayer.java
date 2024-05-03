@@ -72,7 +72,6 @@ public class CommLayer implements CommLayerInterface {
    * @param URL
    * @param map
    * @returns GameSessionResponse
-   * @throws Accepted (200)
    * @throws URLError (404)
    * @throws UnknownError (500)
    * @author rsyed
@@ -113,7 +112,6 @@ public class CommLayer implements CommLayerInterface {
    * @param URL "http://localhost:9999/api/gamesession/{sessionID}"
    * @param teamName
    * @return JoinGameResponse
-   * @throws Accepted (200)
    * @throws URISyntaxException
    * @throws SessionNotFound (404)
    * @throws NoMoreTeamSlots (429)
@@ -163,7 +161,6 @@ public class CommLayer implements CommLayerInterface {
    * @param teamID
    * @param teamSecret
    * @param move
-   * @throws Accepted (200)
    * @throws ForbiddenMove (403)
    * @throws SessionNotFound (404)
    * @throws InvalidMove (409)
@@ -211,7 +208,6 @@ public class CommLayer implements CommLayerInterface {
    * @param URL
    * @param teamID
    * @param teamSecret
-   * @throws Accepted (200)
    * @throws ForbiddenMove (403)
    * @throws SessionNotFound (404)
    * @throws GameOver (410)
@@ -257,7 +253,6 @@ public class CommLayer implements CommLayerInterface {
    *
    * @param URL
    * @return GameSessionResponse
-   * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws UnknownError (500)
    * @throws URLError (404)
@@ -298,7 +293,6 @@ public class CommLayer implements CommLayerInterface {
    * server reponse which are HTTP status codes thrown as exceptions.
    *
    * @param URL
-   * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws UnknownError (500)
    * @throws URLError (404)
@@ -329,7 +323,6 @@ public class CommLayer implements CommLayerInterface {
    * server reponse which are HTTP status codes thrown as exceptions.
    *
    * @param URL
-   * @throws Accepted (200)
    * @throws SessionNotFound (404)
    * @throws UnknownError (500)
    * @throws URLError (404)
