@@ -20,7 +20,7 @@ public class Constants {
   
   public static double soundVolume = 0.4;
   public static double musicVolume = 0.4;
-
+  public static Enums.Themes theme = Enums.Themes.STARWARS;
 
   
   
@@ -73,6 +73,9 @@ public class Constants {
           + "resources"
           + File.separator;
   public static String soundFileTypes = ".wav";
+  
+  // Folder for music
+  public static String musicFolder = Constants.toUIResources + "music" + File.separator + theme.toString().toLowerCase() + File.separator;
 
   /**
    * Constants needed to make the base URI of the restClient
