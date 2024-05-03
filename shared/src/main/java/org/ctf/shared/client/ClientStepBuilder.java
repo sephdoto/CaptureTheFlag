@@ -3,7 +3,7 @@ package org.ctf.shared.client;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.client.service.CommLayerInterface;
 import org.ctf.shared.client.service.RestClientLayer;
-import org.ctf.shared.constants.Constants.Port;
+import org.ctf.shared.constants.Enums.Port;
 
 /**
  * Defines the Step Builder Pattern which must be used to create an object of the Client Class

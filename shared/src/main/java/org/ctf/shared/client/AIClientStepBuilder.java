@@ -4,8 +4,9 @@ import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.client.service.CommLayerInterface;
 import org.ctf.shared.client.service.RestClientLayer;
 import org.ctf.shared.constants.Constants;
-import org.ctf.shared.constants.Constants.AI;
-import org.ctf.shared.constants.Constants.Port;
+import org.ctf.shared.constants.Enums;
+import org.ctf.shared.constants.Enums.AI;
+import org.ctf.shared.constants.Enums.Port;
 import org.ctf.shared.state.data.map.MapTemplate;
 
 /**
@@ -74,7 +75,7 @@ public class AIClientStepBuilder {
      *
      * @param num Exp: Constants.AI.MCTS, Constants.AI.MCTS.RANDOM, etc
      */
-    LoggerEnabler AIPlayerSelector(Constants.AI num);
+    LoggerEnabler AIPlayerSelector(Enums.AI num);
   }
 
   public static interface LoggerEnabler {

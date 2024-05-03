@@ -2,7 +2,7 @@ package org.ctf.ui.controllers;
 
 import java.io.File;
 import org.ctf.shared.constants.Constants;
-import org.ctf.shared.constants.Constants.SoundType;
+import org.ctf.shared.constants.Enums.SoundType;
 import org.json.JSONException;
 import org.json.JSONObject;
 

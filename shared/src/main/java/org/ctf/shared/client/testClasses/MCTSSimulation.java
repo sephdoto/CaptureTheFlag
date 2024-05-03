@@ -7,7 +7,7 @@ import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.Analyzer;
-import org.ctf.shared.constants.Constants.AI;
+import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.map.MapTemplate;
 

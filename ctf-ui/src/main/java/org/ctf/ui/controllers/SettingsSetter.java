@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums;
 import org.ctf.shared.tools.JSON_Tools;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -65,8 +66,8 @@ public class SettingsSetter {
   private static JSONObject createJSONObject() throws JSONException {
     JSONObject settingObject = new JSONObject();
 
-    settingObject.put(Constants.UserChangeable.musicVolume.getString(), Constants.musicVolume);
-    settingObject.put(Constants.UserChangeable.soundVolume.getString(), Constants.soundVolume);
+    settingObject.put(Enums.UserChangeable.musicVolume.getString(), Constants.musicVolume);
+    settingObject.put(Enums.UserChangeable.soundVolume.getString(), Constants.soundVolume);
 
     return settingObject;
   }
@@ -80,7 +81,7 @@ public class SettingsSetter {
    * @throws JSONException
    */
   private static void setCustomSettings(JSONObject settingObject) throws JSONException {
-    Constants.musicVolume = settingObject.getDouble(Constants.UserChangeable.musicVolume.getString());
-    Constants.soundVolume = settingObject.getDouble(Constants.UserChangeable.soundVolume.getString());
+    Constants.musicVolume = settingObject.getDouble(Enums.UserChangeable.musicVolume.getString());
+    Constants.soundVolume = settingObject.getDouble(Enums.UserChangeable.soundVolume.getString());
   }
 }

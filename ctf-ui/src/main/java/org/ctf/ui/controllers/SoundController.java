@@ -14,7 +14,7 @@ import java.util.HashSet;
 import javafx.application.Platform;
 import javafx.scene.media.AudioClip;
 import org.ctf.shared.constants.Constants;
-import org.ctf.shared.constants.Constants.SoundType;
+import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.shared.tools.JSON_Tools;
 import org.json.JSONArray;
 import org.json.JSONException;

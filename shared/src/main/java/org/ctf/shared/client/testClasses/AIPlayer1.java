@@ -2,7 +2,7 @@ package org.ctf.shared.client.testClasses;
 
 import org.ctf.shared.client.AIClient;
 import org.ctf.shared.client.AIClientStepBuilder;
-import org.ctf.shared.constants.Constants.AI;
+import org.ctf.shared.constants.Enums.AI;
 
 public class AIPlayer1 {
   public static void main(String[] args) {

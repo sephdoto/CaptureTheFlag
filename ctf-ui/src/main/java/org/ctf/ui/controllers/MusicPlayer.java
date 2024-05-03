@@ -4,6 +4,7 @@ import java.nio.file.Paths;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums;
 
 /**
  * This class is used to play music in the background. On creation, it plays a start up sound/song,
@@ -42,7 +43,7 @@ public class MusicPlayer {
    */
   private MediaPlayer getMusic() {
     String trackLocation =
-        Paths.get(Constants.toUIResources + Constants.Music.getRandom().getLocation())
+        Paths.get(Constants.toUIResources + Enums.Music.getRandom().getLocation())
             .toUri()
             .toString();
     Media track = new Media(trackLocation);
@@ -58,7 +59,7 @@ public class MusicPlayer {
    */
   private MediaPlayer startUpMusic() {
     String trackLocation =
-        Paths.get(Constants.toUIResources + Constants.Music.STARTUP.getLocation())
+        Paths.get(Constants.toUIResources + Enums.Music.STARTUP.getLocation())
             .toUri()
             .toString();
     Media track = new Media(trackLocation);
