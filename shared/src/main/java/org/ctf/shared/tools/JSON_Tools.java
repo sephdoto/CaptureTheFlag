@@ -22,8 +22,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.io.File;
 
-
-
 /**
  * Using the  external json and gson library, MapTemplates can be saved as and created from a JSON String.
  * @author sistumpf
@@ -48,7 +46,35 @@ public class JSON_Tools {
       throw new IncompleteMapTemplateException(mapTemplate.getName());
     }
   }
- 
+
+  /**
+   * Returns a gameState and mapTemplate which were saved with the given name.
+   * This method only gets called with existing file names, so using the deprecated method is ok here.
+   * Searches in {@link mapTemplates} and {@link gameStates}
+   * 
+   * @param name the mapTemplate and gameStates name
+   * @return 
+   */
+  public static HashMap<MapTemplate, GameState> getTemplateAndGameState(String name){
+    HashMap<MapTemplate, GameState> mapMap = new HashMap<MapTemplate, GameState> ();
+    try {
+      MapTemplate mapTemplate = readMapTemplate(name);
+      GameState gameState = readGameState(name);
+      mapMap.put(mapTemplate, gameState);
+    } catch(MapNotFoundException e) {
+      e.printStackTrace();
+    }
+    return mapMap;
+  }
+  
+  /**
+   * Saves a MapTemplate and GameState as a file with the given name
+   * 
+   * @param mapName the filename for the mapTemplate and gameState
+   * @param mapTemplate
+   * @param gameState
+   * @throws IOException
+   */
   public static void saveTemplateWithGameState(String mapName, MapTemplate mapTemplate, GameState gameState) throws IOException {
     saveObjectAsJSON(mapTemplates +mapName+".json", mapTemplate, false);
     saveObjectAsJSON(gameStates +mapName+".json", gameState, false);
@@ -92,18 +118,13 @@ public class JSON_Tools {
     Files.write(file.toPath(), contentBytes);
   }
 
-  public static HashMap<MapTemplate, GameState> getTemplateAndGameState(String name){
-    HashMap<MapTemplate, GameState> mapMap = new HashMap<MapTemplate, GameState> ();
-    try {
-      MapTemplate mapTemplate = readMapTemplate(name);
-      GameState gameState = readGameState(name);
-      mapMap.put(mapTemplate, gameState);
-    } catch(MapNotFoundException e) {
-      e.printStackTrace();
-    }
-    return mapMap;
-  }
-  
+  /**
+   * Given a files name (without .json), a gameState is created from the JSON and gets returned.
+   * 
+   * @param name file name without .json
+   * @return a new created GameState 
+   * @throws MapNotFoundException
+   */
   public static GameState readGameState(String name) throws MapNotFoundException {
     Path path = Paths.get(gameStates+name+".json");
     if(!Files.exists(path))
