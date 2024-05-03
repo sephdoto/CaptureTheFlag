@@ -71,7 +71,6 @@ public class Analyzer {
    * @author rsyed
    * @return {@link SavedGame} object
    */
-  @SuppressWarnings("unchecked")
   public SavedGame readFile() {
     SavedGame returnObject = new SavedGame();
     try {
@@ -104,7 +103,6 @@ public class Analyzer {
    * @author rsyed
    * @param name of the file you want to read into this analyzer (without its extension)
    */
-  @SuppressWarnings("unchecked")
   public boolean readFile(String name) {
     try {
       FileInputStream fileInput =
