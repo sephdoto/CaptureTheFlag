@@ -643,7 +643,7 @@ public class GameEngine implements Game {
     int i=1;
     int r = pseudoRandomColorInt(team, i++);
     int g = pseudoRandomColorInt(team, i++);
-    int b = pseudoRandomColorInt(team, i++);
+    int b = pseudoRandomColorInt(team, i);
     Color testColor = Color.rgb(r, g, b);
     return testColor.toString();
   }
@@ -655,9 +655,8 @@ public class GameEngine implements Game {
    * @param modifier to modify the random seed.
    * @return random int between 0 and 255
    */
-  static int pseudoRandomColorInt(Team team, int modifier) {
+  private static int pseudoRandomColorInt(Team team, int modifier) {
     Random random = new Random(hashTeam(team) * modifier);
-    System.out.println(team.getId() + " " + modifier + random.nextInt(256));
     return random.nextInt(256);
   }
   
@@ -667,7 +666,7 @@ public class GameEngine implements Game {
    * @param team
    * @return the teams hash code
    */
-  static int hashTeam(Team team) {
+  private static int hashTeam(Team team) {
     StringBuilder sb = new StringBuilder()
         .append(team.getFlags())
         .append(team.getId())

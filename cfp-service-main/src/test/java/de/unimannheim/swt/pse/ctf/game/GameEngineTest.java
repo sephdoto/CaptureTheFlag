@@ -1,10 +1,9 @@
 package de.unimannheim.swt.pse.ctf.game;
 
-//import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 //import java.sql.Date;
 import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.api.Test;
 //import de.unimannheim.swt.pse.ctf.game.state.GameState;
 //import de.unimannheim.swt.pse.ctf.game.state.Move;
 //import de.unimannheim.swt.pse.ctf.game.state.Piece;
@@ -20,6 +19,17 @@ class GameEngineTest {
 //    gameEngine = new NewGameEngine(TestValues.getTestState(), TestValues.getTestTemplate(), false, true, new Date(System.currentTimeMillis() + 10000000));
   }
 
+  @Test
+  void getRandColor() {
+    String color1 = GameEngine.getRandColor(TestValues.getTestState().getTeams()[0]);
+    String color2 = GameEngine.getRandColor(TestValues.getTestState().getTeams()[0]);
+    String color3 = GameEngine.getRandColor(TestValues.getTestState().getTeams()[1]);
+    
+    assertEquals(color1, color2);
+    assertNotEquals(color1, color3);
+    assertNotEquals(color2, color3);
+  }
+  
   /*@Test
   void testCreate() {
     gameEngine.create(TestValues.getTestTemplate());
