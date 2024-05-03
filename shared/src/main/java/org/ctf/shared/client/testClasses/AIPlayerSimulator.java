@@ -135,6 +135,8 @@ public class AIPlayerSimulator {
     server.createGame();
     GameID = server.getGameSessionID();
     System.out.println(GameID + " this is the session ID");
+    System.out.println(server.isServerActive() + " session is active");
+    System.out.println(server.isSessionActive() + " session is active");
    
 /*     AIClient javaClient1 =
         AIClientStepBuilder.newBuilder()
