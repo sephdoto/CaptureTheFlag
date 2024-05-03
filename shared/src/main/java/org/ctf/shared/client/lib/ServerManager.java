@@ -20,39 +20,31 @@ public class ServerManager {
   public String gameSessionID;
 
   /**
-   * Constructor
+   * Constructor for Manuel. Used in Creating a Game
    *
    * @param comm An object of {@link CommLayerInterface}. Either CommLayer or RestClientLayer
    * @param serverInfo An object of {@link ServerDetails}. Contains URL and Port information
    * @param map An object of {@link MapTemplate}. Is the map it will use to create the Session.
    * @author rsyed
    */
-
   public ServerManager(CommLayerInterface comm, ServerDetails serverDetails, MapTemplate map) {
     this.comm = comm;
     this.map = map;
-    this.serverDetails = serverDetails;
-    this.currentServer =
-        "http://" + serverDetails.getHost() + ":" + serverDetails.getPort() + "/api/gamesession";
+    setServer(serverDetails);
   }
 
-   /**
-   * Overloaded Constructor
+  /**
+   * Overloaded Constructor for Aaron. Used in checking server details.
    *
    * @param comm An object of {@link CommLayerInterface}. Either CommLayer or RestClientLayer
    * @param serverInfo An object of {@link ServerDetails}. Contains URL and Port information
-   * @param map An object of {@link MapTemplate}. Is the map it will use to create the Session.
+   * @param sessionID The session ID this ServerManager should point to for information.
    * @author rsyed
    */
   public ServerManager(CommLayerInterface comm, ServerDetails serverDetails, String sessionID) {
     this.comm = comm;
-    this.serverDetails = serverDetails;
-    this.gameSessionID = sessionID;
-    this.currentServer =
-        "http://" + serverDetails.getHost() + ":" + serverDetails.getPort() + "/api/gamesession";
+    setServer(serverDetails, sessionID);
   }
-
-
 
   /**
    * Creates a game session in the server set in the object.
@@ -84,19 +76,17 @@ public class ServerManager {
    * @author rsyed
    */
   public boolean isServerActive() {
-    return new ServerChecker()
-        .isServerActive(this.serverDetails);
+    return new ServerChecker().isServerActive(this.serverDetails);
   }
 
-   /**
-   * Checks if server is active through a dummy gameTemplate
+  /**
+   * Checks if the specified session returns a response.
    *
-   * @return true if server is active and ready to make sessions, false if not
+   * @return true if server is active and and session is there
    * @author rsyed
    */
   public boolean isSessionActive() {
-    return new ServerChecker()
-        .isSessionActive(this.serverDetails,this.gameSessionID);
+    return new ServerChecker().isSessionActive(this.serverDetails, this.gameSessionID);
   }
 
   /**
@@ -136,6 +126,30 @@ public class ServerManager {
     return true;
   }
 
+  /**
+   * Changes which server this object is pointing to
+   *
+   * @author rsyed
+   */
+  public void setServer(ServerDetails serverDetails) {
+    this.serverDetails = serverDetails;
+    this.currentServer =
+        "http://" + serverDetails.getHost() + ":" + serverDetails.getPort() + "/api/gamesession";
+  }
+
+  /**
+   * Overloaded method. Useful when you want to change which server this object is pointing to as
+   * well as point it to a specific session
+   *
+   * @author rsyed
+   */
+  public void setServer(ServerDetails serverDetails, String sessionID) {
+    this.serverDetails = serverDetails;
+    this.currentServer =
+        "http://" + serverDetails.getHost() + ":" + serverDetails.getPort() + "/api/gamesession";
+    this.gameSessionID = sessionID;
+  }
+
   // Getters and Setters
   public String getGameSessionID() {
     return this.gameSessionID;
@@ -144,9 +158,4 @@ public class ServerManager {
   public void setMapTemplate(MapTemplate mapTemplate) {
     this.map = mapTemplate;
   }
-
-  public void setServer(ServerDetails serverDetails) {
-    this.serverDetails = serverDetails;
-  }
-
 }
