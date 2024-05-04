@@ -30,12 +30,12 @@ public class AIClient extends Client {
   public long refreshTime = 1000L;
   public int controllerThinkingTime = 3;
   public boolean saveToken = true;
-  ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
-
+  ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
+/* 
   Runnable refreshTask =
       () -> {
           pullData();
-      };
+      }; */
 
   Runnable joinTask =
       () -> {
@@ -50,15 +50,15 @@ public class AIClient extends Client {
           
           if (moveTimeLimitedGameTrigger) {
             controllerThinkingTime = getRemainingMoveTimeInSeconds() - 1;
-            System.out.println("We had " + controllerThinkingTime + " to think");
+            //System.out.println("We had " + controllerThinkingTime + " to think");
           }
           AI_Controller controller =
               new AI_Controller(getCurrentState(), selectedAI, controllerThinkingTime);
           pullData();
+          controller.update(getCurrentState());
           if (enableLogging) {
             this.analyzer.addMove(getCurrentState().getLastMove());
           }
-          controller.update(getCurrentState());
           if (isItMyTurn()) {
             makeMove(controller.getNextMove());
           }
@@ -226,6 +226,9 @@ public class AIClient extends Client {
     this.grid = gameState.getGrid();
     this.currentTeamTurn = gameState.getCurrentTeam();
     this.lastMove = gameState.getLastMove();
+    if (enableLogging) {
+      this.analyzer.addMove(gameState.getLastMove());
+    }
     updateLastTeam();
     this.teams = gameState.getTeams();
     this.currentState = gameState;
