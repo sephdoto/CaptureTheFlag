@@ -22,8 +22,9 @@ public class Enums {
    * @author sistumpf
    */
   public enum UserChangeable {
-    soundVolume("soundVolume"),
-    musicVolume("musicVolume");
+    SOUNDVOLUME("soundVolume"),
+    MUSICVOLUME("musicVolume"),
+    THEME("theme");
     
     
     private final String name;

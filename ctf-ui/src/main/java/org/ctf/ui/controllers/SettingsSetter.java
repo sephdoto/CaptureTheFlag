@@ -20,6 +20,17 @@ import org.json.JSONObject;
  */
 public class SettingsSetter {
   private static String settingsLocation = Constants.toUIResources + "settings.json";
+  private static MusicPlayer currentPlayer;
+  
+  /**
+   * Saves a given MusicPlayer as the currentPlayer, so SettingsSetter can modify it.
+   * When changing the Theme, SettingsSetter can change the background music accordingly.
+   * 
+   * @author sistumpf
+   */
+  public static void giveMeTheAux(MusicPlayer currentPlayer) {
+    SettingsSetter.currentPlayer = currentPlayer;
+  }
 
   /**
    * Call this to load custom settings from a settings.json file located at {@link settingsLocation}.
@@ -42,6 +53,7 @@ public class SettingsSetter {
 
   /**
    * Call this to save the current settings into a settings.json file located at {@link settingsLocation}.
+   * Also updates the music if necessary.
    * 
    * @author sistumpf
    * @throws JSONException
@@ -53,6 +65,9 @@ public class SettingsSetter {
     } catch(JSONException | IOException jse) {
       jse.printStackTrace();
     }
+    
+    if(currentPlayer != null && Constants.theme != currentPlayer.theme)
+      currentPlayer.updateTheme();
   }
 
   /**
@@ -66,8 +81,9 @@ public class SettingsSetter {
   private static JSONObject createJSONObject() throws JSONException {
     JSONObject settingObject = new JSONObject();
 
-    settingObject.put(Enums.UserChangeable.musicVolume.getString(), Constants.musicVolume);
-    settingObject.put(Enums.UserChangeable.soundVolume.getString(), Constants.soundVolume);
+    settingObject.put(Enums.UserChangeable.MUSICVOLUME.getString(), Constants.musicVolume);
+    settingObject.put(Enums.UserChangeable.SOUNDVOLUME.getString(), Constants.soundVolume);
+    settingObject.put(Enums.UserChangeable.THEME.getString(), Constants.theme);
 
     return settingObject;
   }
@@ -81,7 +97,8 @@ public class SettingsSetter {
    * @throws JSONException
    */
   private static void setCustomSettings(JSONObject settingObject) throws JSONException {
-    Constants.musicVolume = settingObject.getDouble(Enums.UserChangeable.musicVolume.getString());
-    Constants.soundVolume = settingObject.getDouble(Enums.UserChangeable.soundVolume.getString());
+    Constants.musicVolume = settingObject.getDouble(Enums.UserChangeable.MUSICVOLUME.getString());
+    Constants.soundVolume = settingObject.getDouble(Enums.UserChangeable.SOUNDVOLUME.getString());
+    Constants.theme = Enums.Themes.valueOf(settingObject.getString(Enums.UserChangeable.THEME.getString()));
   }
 }

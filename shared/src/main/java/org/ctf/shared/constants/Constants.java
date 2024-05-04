@@ -75,7 +75,7 @@ public class Constants {
   public static String soundFileTypes = ".wav";
   
   // Folder for music
-  public static String musicFolder = Constants.toUIResources + "music" + File.separator + theme.toString().toLowerCase() + File.separator;
+  public static String musicFolder = Constants.toUIResources + "music" + File.separator;
 
   /**
    * Constants needed to make the base URI of the restClient

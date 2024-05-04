@@ -31,6 +31,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums;
 import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.controllers.SettingsSetter;
 
@@ -49,7 +50,6 @@ public class App extends Application {
 
 	public void start(Stage stage) {
 		mainStage = stage;
-		SettingsSetter.saveCustomSettings();
 		SettingsSetter.loadCustomSettings();
 		ImageLoader.loadImages();
 		Scene lockscreen = new Scene(createLockScreen(), 1000, 500);
@@ -68,6 +68,7 @@ public class App extends Application {
 		stage.setTitle("Capture The Flag Team 14");
 		stage.setScene(lockscreen);
 		backgroundMusic = new MusicPlayer();
+        SettingsSetter.giveMeTheAux(backgroundMusic);
 		stage.show();
 	}
 
