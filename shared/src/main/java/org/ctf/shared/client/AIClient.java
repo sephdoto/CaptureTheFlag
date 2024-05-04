@@ -47,6 +47,7 @@ public class AIClient extends Client {
       () -> {
         try {
           getStateFromServer();
+          
           if (moveTimeLimitedGameTrigger) {
             controllerThinkingTime = getRemainingMoveTimeInSeconds() - 1;
             System.out.println("We had " + controllerThinkingTime + " to think");
@@ -54,6 +55,9 @@ public class AIClient extends Client {
           AI_Controller controller =
               new AI_Controller(getCurrentState(), selectedAI, controllerThinkingTime);
           pullData();
+          if (enableLogging) {
+            this.analyzer.addMove(getCurrentState().getLastMove());
+          }
           controller.update(getCurrentState());
           if (isItMyTurn()) {
             makeMove(controller.getNextMove());
@@ -64,7 +68,7 @@ public class AIClient extends Client {
         } catch (NoMovesLeftException | InvalidShapeException e) {
           throw new UnknownError("Games most likely over");
         } catch (GameOver e) {
-          if (saveToken) {
+          if (saveToken && enableLogging) {
             this.analyzer.writeOut();
             saveToken = false;
           } else {
@@ -160,7 +164,7 @@ public class AIClient extends Client {
    * @author rsyed
    */
   public void AIPlayerStart() {
-    scheduler.scheduleWithFixedDelay(playTask, 2, 2, TimeUnit.SECONDS);
+    scheduler.scheduleWithFixedDelay(playTask, 1, 1, TimeUnit.SECONDS);
   }
 
   /**
@@ -222,9 +226,6 @@ public class AIClient extends Client {
     this.grid = gameState.getGrid();
     this.currentTeamTurn = gameState.getCurrentTeam();
     this.lastMove = gameState.getLastMove();
-    if (enableLogging) {
-      this.analyzer.addMove(gameState.getLastMove());
-    }
     updateLastTeam();
     this.teams = gameState.getTeams();
     this.currentState = gameState;

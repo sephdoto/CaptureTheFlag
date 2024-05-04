@@ -6,6 +6,7 @@ import org.ctf.shared.ai.random.RandomAI;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
+import org.ctf.shared.state.data.exceptions.GameOver;
 
 /**
  * This class requests a GameState from the server, uses one of the implemented AIs to generate the
@@ -41,6 +42,7 @@ public class AI_Controller {
 
   public void shutDown() {
     System.out.println("AI Shit down");
+    throw new GameOver();
   }
 
   public Move getNextMove() throws NoMovesLeftException, InvalidShapeException {
