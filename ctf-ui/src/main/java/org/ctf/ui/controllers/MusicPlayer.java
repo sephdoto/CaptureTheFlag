@@ -65,12 +65,12 @@ public class MusicPlayer {
    * @author sistumpf
    */
   private void fadeInAndOut() {
-    new FadeOutOfExistence(this.mp, 1000).start();
+    new FadeOutOfExistence(this.mp, 2500).start();
     this.mp = getMusic();
     this.mp.setVolume(0);
     this.mp.setOnEndOfMedia(infinitePlay(false));
     this.mp.play();
-    new FadeIntoExistence(this.mp, 3000).start();
+    new FadeIntoExistence(this.mp, 7000).start();
   }
 
   /**

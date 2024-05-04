@@ -3,11 +3,8 @@ package org.ctf.shared.client;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.client.service.CommLayerInterface;
 import org.ctf.shared.client.service.RestClientLayer;
-import org.ctf.shared.constants.Constants;
-import org.ctf.shared.constants.Enums;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.Port;
-import org.ctf.shared.state.data.map.MapTemplate;
 
 /**
  * Defines the Step Builder Pattern which must be used to create an object of the AIClient Class
@@ -70,28 +67,28 @@ public class AIClientStepBuilder {
    */
   public static interface PlayerTypeSelectionStep {
     /**
-     * Method which creates an instance of AIClient.java. Extension has build in support for AI
+     * Method which creates an instance of AIClient.java. Extension has builtin support for AI
      * players
      *
-     * @param num Exp: Constants.AI.MCTS, Constants.AI.MCTS.RANDOM, etc
+     * @param num Exp: AI.MCTS, AI.MCTSRANDOM, etc
      */
-    LoggerEnabler AIPlayerSelector(Enums.AI num);
+    LoggerEnabler AIPlayerSelector(AI num);
   }
 
   public static interface LoggerEnabler {
     /**
      * Method to enable if the AI Game will be logged players
      *
-     * @param selector True for Enabling Save, False for disabled
+     * @param enableSave True for Enabling Save, False for disabled
      */
-    CreatorOrJoinerStep enableSaveGame(boolean selector);
+    CreatorOrJoinerStep enableSaveGame(boolean enableSave);
   }
 
   public static interface CreatorOrJoinerStep {
     /**
      * Method to enable if the AI Game will be logged players
      *
-     * @param GameID  the game session ID
+     * @param GameID the game session ID
      * @param teamName The requested Team name
      */
     BuildStep gameData(String GameID, String teamName);
@@ -181,7 +178,7 @@ public class AIClientStepBuilder {
      * @param def an Enum
      */
     @Override
-    public PlayerTypeSelectionStep onPort(Port def) {
+    public PlayerTypeSelectionStep onPort(org.ctf.shared.constants.Enums.Port def) {
       this.port = def.toString();
       return this;
     }
@@ -189,11 +186,11 @@ public class AIClientStepBuilder {
     /**
      * Option Presented if AI Client is selected. Enables the game to be saved as a SavedGame
      *
-     * @param selector True for Enabling Save, False for Disabled
+     * @param enableSave True for Enabling Save, False for Disabled
      */
     @Override
-    public CreatorOrJoinerStep enableSaveGame(boolean selector) {
-      this.enableSave = selector;
+    public CreatorOrJoinerStep enableSaveGame(boolean enableSave) {
+      this.enableSave = enableSave;
       return this;
     }
 

@@ -16,7 +16,6 @@ import org.ctf.shared.state.Move;
 public class SavedGame implements java.io.Serializable {
   private GameState initialState;
   private HashMap<String, Move> lastMovesMap = new HashMap<>();
-  private Move lastMove;
   private int counter = 1;
 
   /**
@@ -45,13 +44,14 @@ public class SavedGame implements java.io.Serializable {
    * @author rsyed
    */
   public void addMove(Move move) {
-    if (lastMovesMap.isEmpty()) {
-      lastMovesMap.put(Integer.toString(counter), move);
-      counter++;
-    } else if (move.hashCode() != lastMovesMap.get(Integer.toString(counter - 1)).hashCode()) {
-      this.lastMovesMap.put(Integer.toString(counter), move);
-      counter++;
-    }
+    if(move==null) return;
+      if (lastMovesMap.isEmpty()) {
+        lastMovesMap.put(Integer.toString(counter), move);
+        counter++;
+      } else if (move.hashCode() != lastMovesMap.get(Integer.toString(counter - 1)).hashCode()) {
+        this.lastMovesMap.put(Integer.toString(counter), move);
+        counter++;
+      }
   }
 
   /**

@@ -1,6 +1,8 @@
 package org.ctf.shared.state;
 
+import com.google.gson.Gson;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.Arrays;
 
 /**
  * This class represents a move.
@@ -44,5 +46,37 @@ public class Move implements java.io.Serializable {
 
   public void setTeamId(String teamId) {
     this.teamId = teamId;
+  }
+
+  /**
+   * Needed to analyze moves for being same. Used in Analyzer class and SaveGame class
+   *
+   * @author rsyed
+   * @return boolean True if the objects are the same. False if not
+   */
+  @Override
+  public boolean equals(Object o1) {
+    Move temp = (Move) o1;
+    if (temp.pieceId != this.pieceId) {
+      return false;
+    } else if (temp.teamId != this.teamId) {
+      return false;
+    } else if (Arrays.equals(temp.newPosition, this.newPosition)) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  /**
+   * Needed to analyze moves for being same. Used in Analyzer class and SaveGame class
+   *
+   * @author rsyed
+   * @return int representing the string based hash of a move
+   */
+  @Override
+  public int hashCode() {
+    Gson gson = new Gson();
+    return gson.toJson(this).hashCode();
   }
 }

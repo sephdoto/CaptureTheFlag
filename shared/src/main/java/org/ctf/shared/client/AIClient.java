@@ -9,6 +9,8 @@ import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.client.lib.Analyzer;
 import org.ctf.shared.client.service.CommLayerInterface;
 import org.ctf.shared.constants.Enums.AI;
+import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.NoMoreTeamSlots;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
 
@@ -22,20 +24,17 @@ public class AIClient extends Client {
 
   public AI selectedAI;
   public boolean enableLogging;
-  public Analyzer analyzer;
+  public volatile Analyzer analyzer;
   public String gameIDString;
   public String constructorSetTeamName;
   public long refreshTime = 1000L;
+  public int controllerThinkingTime = 3;
+  public boolean saveToken = true;
   ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
 
   Runnable refreshTask =
       () -> {
-        try {
           pullData();
-          TimeUnit.MILLISECONDS.sleep(refreshTime);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
       };
 
   Runnable joinTask =
@@ -48,12 +47,12 @@ public class AIClient extends Client {
       () -> {
         try {
           getStateFromServer();
-          int thinkingTime = 10;
           if (moveTimeLimitedGameTrigger) {
-            thinkingTime = getRemainingMoveTimeInSeconds() - 1;
-            System.out.println("We had " +thinkingTime + " to think");
+            controllerThinkingTime = getRemainingMoveTimeInSeconds() - 1;
+            System.out.println("We had " + controllerThinkingTime + " to think");
           }
-          AI_Controller controller = new AI_Controller(getCurrentState(), selectedAI, thinkingTime);
+          AI_Controller controller =
+              new AI_Controller(getCurrentState(), selectedAI, controllerThinkingTime);
           pullData();
           controller.update(getCurrentState());
           if (isItMyTurn()) {
@@ -61,8 +60,18 @@ public class AIClient extends Client {
           }
           pullData();
           controller.update(getCurrentState());
+
         } catch (NoMovesLeftException | InvalidShapeException e) {
           throw new UnknownError("Games most likely over");
+        } catch (GameOver e) {
+          if (saveToken) {
+            this.analyzer.writeOut();
+            saveToken = false;
+          } else {
+            throw new GameOver();
+          }
+        } catch (NullPointerException e) {
+          System.out.println("nullpointer exception");
         }
       };
 
@@ -81,6 +90,7 @@ public class AIClient extends Client {
     super(comm, IP, port, enableLogging);
     this.selectedAI = selected;
     this.enableLogging = enableLogging;
+    this.analyzer = new Analyzer();
   }
 
   /**
@@ -170,6 +180,10 @@ public class AIClient extends Client {
                   Thread.sleep(sleep);
                   getSessionFromServer(); // Gets Session from server
                   if (getStartDate() != null) {
+                    if (enableLogging) {
+                      getStateFromServer();
+                      analyzer.addGameState(currentState);
+                    }
                     AIPlayerStart();
                     running = false;
                   }
@@ -180,5 +194,39 @@ public class AIClient extends Client {
               }
             });
     watcherThread.start();
+  }
+
+    /**
+   * Called from the getGameState method. Requests the server specific/set in the Client object to
+   * send the current {@link GameState}. Also parses the response and saves data to local variables
+   * for easier consumption by the UI
+   *
+   * @param teamID Team Name for the request. Read from the Client
+   * @param teamSecret Team Secret for the Request. Read from the Client
+   * @param move Move requested. Needs to be given by the UI
+   * @throws SessionNotFound
+   * @throws UnknownError
+   * @author rsyed
+   */
+  @Override
+  public void gameStateHelper() {
+    GameState gameState = new GameState();
+    try {
+      gameState = comm.getCurrentGameState(currentServer);
+      normaliseGameState(gameState);
+    } catch (SessionNotFound e) {
+      throw new SessionNotFound("Session isnt available for this request");
+    } catch (UnknownError e) {
+      throw new UnknownError("Server Error or Setting error");
+    }
+    this.grid = gameState.getGrid();
+    this.currentTeamTurn = gameState.getCurrentTeam();
+    this.lastMove = gameState.getLastMove();
+    if (enableLogging) {
+      this.analyzer.addMove(gameState.getLastMove());
+    }
+    updateLastTeam();
+    this.teams = gameState.getTeams();
+    this.currentState = gameState;
   }
 }

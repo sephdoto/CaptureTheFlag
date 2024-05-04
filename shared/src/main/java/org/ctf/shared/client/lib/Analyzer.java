@@ -47,7 +47,7 @@ public class Analyzer {
   public boolean writeOut() {
     try {
       localDateTime = LocalDateTime.now();
-      DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd-hhmmss");
+      DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss");
       String fileName = localDateTime.format(df);
       FileOutputStream fileOutStream =
           new FileOutputStream(Constants.saveGameFolder + fileName + ".savedgame");
@@ -65,8 +65,8 @@ public class Analyzer {
   }
 
   /**
-   * Reads a .savegame {@link SavedGame} file and returns a Save Essentially provides a
-   * Deserialization function
+   * Reads a .savegame {@link SavedGame} file and returns a SaveGame. Also saves it into the local
+   * attribute. Essentially provides a Deserialization function
    *
    * @author rsyed
    * @return {@link SavedGame} object
@@ -92,7 +92,7 @@ public class Analyzer {
       System.out.println("Class not found");
       obj2.printStackTrace();
     }
-
+    this.savedGame = returnObject;
     return returnObject;
   }
 
