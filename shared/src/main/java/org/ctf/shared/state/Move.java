@@ -1,6 +1,5 @@
 package org.ctf.shared.state;
 
-import com.google.gson.Gson;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Arrays;
 
@@ -49,34 +48,38 @@ public class Move implements java.io.Serializable {
   }
 
   /**
-   * Needed to analyze moves for being same. Used in Analyzer class and SaveGame class
+   * Overriding equals as we need it for hashing and comparing when saving the game for analysis
    *
    * @author rsyed
-   * @return boolean True if the objects are the same. False if not
    */
   @Override
-  public boolean equals(Object o1) {
-    Move temp = (Move) o1;
-    if (temp.pieceId != this.pieceId) {
-      return false;
-    } else if (temp.teamId != this.teamId) {
-      return false;
-    } else if (Arrays.equals(temp.newPosition, this.newPosition)) {
-      return false;
-    } else {
-      return true;
-    }
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
+    Move other = (Move) obj;
+    if (pieceId == null) {
+      if (other.pieceId != null) return false;
+    } else if (!pieceId.equals(other.pieceId)) return false;
+    if (teamId == null) {
+      if (other.teamId != null) return false;
+    } else if (!teamId.equals(other.teamId)) return false;
+    if (!Arrays.equals(newPosition, other.newPosition)) return false;
+    return true;
   }
 
   /**
-   * Needed to analyze moves for being same. Used in Analyzer class and SaveGame class
+   * Overriding hashCode as we need it comparing when saving the game for analysis
    *
    * @author rsyed
-   * @return int representing the string based hash of a move
    */
   @Override
   public int hashCode() {
-    Gson gson = new Gson();
-    return gson.toJson(this).hashCode();
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((pieceId == null) ? 0 : pieceId.hashCode());
+    result = prime * result + ((teamId == null) ? 0 : teamId.hashCode());
+    result = prime * result + Arrays.hashCode(newPosition);
+    return result;
   }
 }
