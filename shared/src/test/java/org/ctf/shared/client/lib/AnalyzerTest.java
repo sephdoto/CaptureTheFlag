@@ -9,6 +9,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
+
+import java.io.File;
 import java.io.IOException;
 import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
@@ -16,6 +18,7 @@ import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.service.RestClientLayer;
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.map.MapTemplate;
@@ -217,7 +220,9 @@ public class AnalyzerTest {
       controller1.update(p1.getCurrentState());
       controller2.update(p2.getCurrentState());
     }
-    //assertTrue(analyzer.writeOut());
+    assertTrue(analyzer.writeOut());
+    File myObj = new File(Constants.saveGameFolder + analyzer.lastFileName + ".savedgame"); 
+    myObj.delete();
   }
 
   private MapTemplate createGameTemplate() {

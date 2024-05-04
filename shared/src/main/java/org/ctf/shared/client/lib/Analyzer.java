@@ -27,6 +27,7 @@ public class Analyzer {
 
   LocalDateTime localDateTime;
   public SavedGame savedGame;
+  public String lastFileName;
 
   /**
    * Main constructor just initialzes the {@link SavedGame} object this Analyzer will use to save
@@ -40,7 +41,8 @@ public class Analyzer {
 
   /**
    * Writes out the currently held {@link SavedGame} object into a file, with its properties as
-   * described in the main javadocs of this class. Essentially provides a Serialization function
+   * described in the main javadocs of this class. The file name is saved into a lastFileName
+   * attribute for ready availibility. Essentially provides a Serialization function
    *
    * @author rsyed
    */
@@ -49,6 +51,7 @@ public class Analyzer {
       localDateTime = LocalDateTime.now();
       DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss");
       String fileName = localDateTime.format(df);
+      this.lastFileName = fileName;
       FileOutputStream fileOutStream =
           new FileOutputStream(Constants.saveGameFolder + fileName + ".savedgame");
 
@@ -154,5 +157,15 @@ public class Analyzer {
    */
   public void addGameState(GameState gameState) {
     this.savedGame.setInitialGameState(gameState);
+  }
+
+   /**
+   * Getter for the last file name this object used while writing out.
+   *
+   * @author rsyed
+   * @return fileName used when writing out the file
+   */
+  public String getLastFileName() {
+    return lastFileName;
   }
 }
