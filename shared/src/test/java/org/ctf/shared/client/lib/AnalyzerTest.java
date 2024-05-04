@@ -147,14 +147,15 @@ public class AnalyzerTest {
   @Test
   void testReadFile() {
     Analyzer analyzer = new Analyzer();
-    assertTrue(analyzer.readFile("analyzerTestDataFile"));
+    boolean b = analyzer.readFile("20240504-220806");
+    assertTrue(b);
     SavedGame gameData = analyzer.getSavedGame();
     Gson gson = new Gson();
-    //System.out.println(gson.toJson(analyzer.savedGame.getMoves().get("1")));
+    
     Move move1 = new Move();
-    move1.setPieceId("p:0_12");
+    move1.setPieceId("p:0_16");
     move1.setTeamId("p1");
-    move1.setNewPosition(new int[]{3,0});
+    move1.setNewPosition(new int[]{6,9});
     assertTrue(move1.getPieceId().toString().equals(gameData.getMoves().get("1").getPieceId().toString()));
     assertTrue(move1.getTeamId().toString().equals(gameData.getMoves().get("1").getTeamId().toString()) );
     assertArrayEquals(move1.getNewPosition(),gameData.getMoves().get("1").getNewPosition());
@@ -216,7 +217,7 @@ public class AnalyzerTest {
       controller1.update(p1.getCurrentState());
       controller2.update(p2.getCurrentState());
     }
-   // assertTrue(analyzer.writeOut());
+    //assertTrue(analyzer.writeOut());
   }
 
   private MapTemplate createGameTemplate() {
