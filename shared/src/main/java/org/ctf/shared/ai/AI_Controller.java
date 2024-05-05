@@ -62,16 +62,16 @@ public class AI_Controller {
         org.ctf.shared.ai.mcts.TreeNode root =
             new org.ctf.shared.ai.mcts.TreeNode(
                 null, gameState, null, new ReferenceMove(null, new int[] {0, 0}));
-        org.ctf.shared.ai.mcts.MCTS mcts = new org.ctf.shared.ai.mcts.MCTS(root);
-        Move move = mcts.getMove(milis, AI_Constants.C);
+        org.ctf.shared.ai.mcts.MCTS mcts = new org.ctf.shared.ai.mcts.MCTS(root, new AI_Config());
+        Move move = mcts.getMove(milis, new AI_Config().C);
         mcts.root.printGrid();
         System.out.println(mcts.printResults(move));
         return move;
       case MCTS_IMPROVED:
         org.ctf.shared.ai.mcts2.TreeNode root2 =
             new org.ctf.shared.ai.mcts2.TreeNode(null, gameState, null);
-        org.ctf.shared.ai.mcts2.MCTS mcts2 = new org.ctf.shared.ai.mcts2.MCTS(root2);
-        Move move2 = mcts2.getMove(milis, AI_Constants.C);
+        org.ctf.shared.ai.mcts2.MCTS mcts2 = new org.ctf.shared.ai.mcts2.MCTS(root2, new AI_Config());
+        Move move2 = mcts2.getMove(milis, new AI_Config().C);
         mcts2.root.printGrids();
         System.out.println(mcts2.printResults(move2));
         return move2;

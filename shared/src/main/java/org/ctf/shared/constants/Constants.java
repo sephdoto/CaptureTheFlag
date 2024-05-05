@@ -47,6 +47,9 @@ public class Constants {
           + "resources"
           + File.separator;
 
+  // to AI config folder
+  public static String aiConfigFolder = sharedResourcesFolder + "ai_configs" + File.separator;
+  
   // Default folder for saving games for AI Analysis
   public static String saveGameFolder = sharedResourcesFolder + "savegames" + File.separator;
   // package map, class JSON_Tools

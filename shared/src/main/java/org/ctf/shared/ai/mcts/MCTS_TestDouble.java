@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.ctf.shared.ai.AI_Constants;
+import org.ctf.shared.ai.AI_Config;
 import org.ctf.shared.ai.AI_Tools;
 import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.ai.random.RandomAI;
@@ -26,6 +26,7 @@ import org.ctf.shared.state.Team;
  * @author sistumpf
  */
 public class MCTS_TestDouble {
+  AI_Config config;
   Random rand;
   int teams;
   int maxDistance;
@@ -35,7 +36,8 @@ public class MCTS_TestDouble {
   public AtomicInteger expansionCounter;
   ExecutorService executorService;
 
-  public MCTS_TestDouble(TreeNode root) {
+  public MCTS_TestDouble(TreeNode root, AI_Config config) {
+    this.config = config;
     this.root = root;
     this.rand = new Random();
     simulationCounter = new AtomicInteger();
@@ -48,7 +50,7 @@ public class MCTS_TestDouble {
                 Math.sqrt(
                     Math.pow(root.gameState.getGrid().length, 2)
                         + Math.pow(root.gameState.getGrid()[0].length, 2)));
-    this.executorService = Executors.newFixedThreadPool(AI_Constants.numThreads);
+    this.executorService = Executors.newFixedThreadPool(config.numThreads);
   }
 
   /**
@@ -123,7 +125,7 @@ public class MCTS_TestDouble {
     try {
       // Create a list of Callable tasks for parallel execution
       List<Callable<int[]>> tasks = new LinkedList<>();
-      for (int i = 0; i < AI_Constants.numThreads; i++) {
+      for (int i = 0; i < config.numThreads; i++) {
         tasks.add(
             () -> {
               return simulate(simulateOn);
@@ -164,7 +166,7 @@ public class MCTS_TestDouble {
     simulationCounter.incrementAndGet();
     int isTerminal = isTerminal(simulateOn);
     int[] winners = new int[this.teams];
-    int count = AI_Constants.MAX_STEPS;
+    int count = config.MAX_STEPS;
     if (isTerminal >= 0) {
       //      winners[isTerminal] += count;
       winners[isTerminal] += 1;
@@ -203,8 +205,8 @@ public class MCTS_TestDouble {
       if (teams[i] == null) continue;
 
       for (Piece p : teams[i].getPieces()) {
-        points[i] += p.getDescription().getAttackPower() * AI_Constants.attackPowerMultiplier;
-        points[i] += 1 * AI_Constants.pieceMultiplier;
+        points[i] += p.getDescription().getAttackPower() * config.attackPowerMultiplier;
+        points[i] += 1 * config.pieceMultiplier;
         for (int j = 0; j < teams.length; j++) {
           if (j == i || teams[j] == null) {
             continue;
@@ -212,16 +214,16 @@ public class MCTS_TestDouble {
           // reward being close to enemy base
           points[i] +=
               (this.maxDistance - distanceToBase(teams[j].getBase(), p.getPosition()))
-                  * AI_Constants.distanceBaseMultiplier;
+                  * config.distanceBaseMultiplier;
         }
 
         if (p.getDescription().getMovement().getDirections() != null) {
           for (int dir = 0; dir < 8; dir++)
             points[i] +=
                 AI_Tools.getReach(p.getDescription().getMovement().getDirections(), dir)
-                    * AI_Constants.directionMultiplier;
+                    * config.directionMultiplier;
         } else {
-          points[i] += 8 * AI_Constants.shapeReachMultiplier;
+          points[i] += 8 * config.shapeReachMultiplier;
         }
       }
 
@@ -235,7 +237,7 @@ public class MCTS_TestDouble {
         }
       }*/
 
-      points[i] += teams[i].getFlags() * AI_Constants.flagMultiplier;
+      points[i] += teams[i].getFlags() * config.flagMultiplier;
     }
 
     int max = 0;
@@ -532,7 +534,7 @@ public class MCTS_TestDouble {
               + root.children[i].getNK()
               + " nodes"
               + ", uct: "
-              + root.children[i].getUCT(AI_Constants.C)
+              + root.children[i].getUCT(config.C)
               + " wins 0 "
               + root.children[i].wins[0]
               + ", wins 1 "

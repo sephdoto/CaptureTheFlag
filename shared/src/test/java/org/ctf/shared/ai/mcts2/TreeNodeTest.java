@@ -1,5 +1,6 @@
 package org.ctf.shared.ai.mcts2;
 
+import org.ctf.shared.ai.AI_Config;
 //import static org.junit.jupiter.api.Assertions.*;
 import org.ctf.shared.ai.TestValues;
 import org.ctf.shared.state.GameState;
@@ -17,7 +18,7 @@ class TreeNodeTest {
    */
   void testUpdating() {
     TreeNode node = new TreeNode(null, TestValues.getTestState(), null);
-    MCTS mcts = new MCTS(node);
+    MCTS mcts = new MCTS(node, new AI_Config());
     for(int i=0; i<50 && mcts.isTerminal(node.gameState) == -1; i++){
       mcts.oneMove(node, node, true);
       mcts.removeTeamCheck(node.gameState);
@@ -77,7 +78,7 @@ class TreeNodeTest {
     
     TreeNode node = new TreeNode(null, gameState, null);
     
-    MCTS mcts = new MCTS(node);
+    MCTS mcts = new MCTS(node, new AI_Config());
     for(; mcts.isTerminal(node.gameState) == -1; ) {
       mcts.oneMove(node, node, true);
 //      node.printGrids();
@@ -117,7 +118,7 @@ class TreeNodeTest {
     }
     TreeNode node = new TreeNode(null, gameState, null);
     
-    MCTS mcts = new MCTS(node);
+    MCTS mcts = new MCTS(node, new AI_Config());
     for(; mcts.isTerminal(node.gameState) == -1; ) {
       mcts.oneMove(node, node, true);
 //      node.printGrids();

@@ -28,10 +28,10 @@ public class AI_Brawl {
           new org.ctf.shared.ai.mcts.TreeNode(null, playOn, null, new ReferenceMove(null, new int[] {0,0}));
       root.printGrid();
 
-      org.ctf.shared.ai.mcts.MCTS mcts = new org.ctf.shared.ai.mcts.MCTS(root);
+      org.ctf.shared.ai.mcts.MCTS mcts = new org.ctf.shared.ai.mcts.MCTS(root, new AI_Config());
       Move move = new Move();
 
-      move = mcts.getMove(milisForMove, AI_Constants.C);
+      move = mcts.getMove(milisForMove, new AI_Config().C);
 
       System.out.println("\nMCTS Round " + ++roundCounter + ":\n" + mcts.printResults(move));
       mcts.alterGameState(playOn, new ReferenceMove(playOn, move));
@@ -42,8 +42,8 @@ public class AI_Brawl {
       org.ctf.shared.ai.mcts2.TreeNode root2 =
           new org.ctf.shared.ai.mcts2.TreeNode(null, playOn, null);
       root2.printGrids();
-      org.ctf.shared.ai.mcts2.MCTS mcts2 = new org.ctf.shared.ai.mcts2.MCTS(root2);
-      move = mcts2.getMove(milisForMove, AI_Constants.C);
+      org.ctf.shared.ai.mcts2.MCTS mcts2 = new org.ctf.shared.ai.mcts2.MCTS(root2, new AI_Config());
+      move = mcts2.getMove(milisForMove, new AI_Config().C);
       System.out.println(
           "\nMCTS_TWOOOOO Round " + ++roundCounter + ":\n" + mcts2.printResults(move));
       mcts.alterGameState(playOn, new ReferenceMove(playOn, move));
