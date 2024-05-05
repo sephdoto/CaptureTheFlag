@@ -179,7 +179,7 @@ public class WaveFunctionCollapse {
       
       //thisTile.setValue(thisTile.options.get((int) (Math.random() * thisTile.options.size())));
       //lastTile.push(thisTile);
-      thisTile.setValue(thisTile.options.get(weightedRandom(thisTile.options.size(), thisTile.getWeights())));
+      thisTile.setValue(thisTile.options.get(randomWithWeights(thisTile.options.size(), thisTile.getWeights())));
     }
     
     //filling in the gaps because the original pattern does not work with corners 
@@ -507,7 +507,7 @@ public class WaveFunctionCollapse {
     return background;
   }
   
-  public static int weightedRandom(int max, int[] weights) {
+  public static int randomWithWeights(int max, int[] weights) {
     int total = 0;
     int value = 0;
     

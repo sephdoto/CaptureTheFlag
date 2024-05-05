@@ -33,11 +33,11 @@ class WaveFunctionCollapseTest {
   }
   
   @Test
-  void weightedRandomTest() {
+  void randomWithWeightsTest() {
     int total = 0;
     for(int i = 0 ; i <= 10000; i++) {
       int y =  (int) (Math.random() * 5) ;
-      int x = WaveFunctionCollapse.weightedRandom(5, new int[] {1,1,1,1,1});
+      int x = WaveFunctionCollapse.randomWithWeights(5, new int[] {1,1,1,1,1});
       total += x;
     }
     
