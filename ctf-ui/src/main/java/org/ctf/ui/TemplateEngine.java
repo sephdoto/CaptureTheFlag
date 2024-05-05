@@ -28,7 +28,7 @@ public class TemplateEngine {
 
 	public TemplateEngine(EditorScene editorscene) {
 		this.editorscene = editorscene;
-		loadTemplate("10x10_2teams_example");
+		loadTemplate("10x10_2teams_example_moveTimeLimited");
 		tmpMovement.setDirections(new Directions());
 		initializePieces();
 	}
@@ -39,8 +39,7 @@ public class TemplateEngine {
 			if (map.exists()) {
 				tmpTemplate = JSON_Tools.readMapTemplate(map);
 			} else {
-				System.out.println("Fehler: Default Template konnte nicht geladen werden!"
-						+ "Es wurde ein alternatives Template geladen.");
+				System.out.println("Fehler: Default Template konnte nicht geladen werden!");
 			}
 
 		} catch (IncompleteMapTemplateException | IOException e) {
