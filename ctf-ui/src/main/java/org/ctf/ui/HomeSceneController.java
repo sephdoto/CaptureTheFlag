@@ -28,6 +28,7 @@ public class HomeSceneController {
 	String serverID;
 	String sessionID;
 	ServerManager serverManager;
+	MapTemplate template;
 	
 	public void switchtoHomeScreen(ActionEvent e) {
 		Scene scene = App.getScene();
@@ -37,9 +38,13 @@ public class HomeSceneController {
 	
 	public void createGameSession() {
 		MapTemplate test = new MapTemplate();
-		//serverManager = new ServerManager(new CommLayer(), new ServerDetails(serverID, port),test );
-		//serverManager.createGame();
+		serverManager = new ServerManager(new CommLayer(), new ServerDetails(serverID, port),test );
+		serverManager.createGame();
 	}
+	
+	
+	
+	
 
 	public void switchToWaitGameScene(Stage stage) {
 		stage.setScene(new WaitingScene(this, stage.getWidth(), stage.getHeight()));
@@ -59,6 +64,9 @@ public class HomeSceneController {
 
 	public void switchToMapEditorScene(Stage stage) {
 		stage.setScene(new EditorScene(this, stage.getWidth(), stage.getHeight()));
+	}
+	public void switchToTestScene(Stage stage) {
+		stage.setScene(new TestScene(this, stage).getScene());
 	}
 
 	public Stage getStage() {

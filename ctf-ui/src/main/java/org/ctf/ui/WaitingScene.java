@@ -7,6 +7,7 @@ import org.ctf.ui.customobjects.BaseRep;
 import org.ctf.ui.customobjects.CostumFigurePain;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
+import configs.GameMode;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
@@ -235,7 +236,7 @@ public class WaitingScene extends Scene {
 		labels.setSpacing(30);
 		labels.getChildren().add(createInfoLabel("port" , hsc.getPort()));
 		labels.getChildren().add(createInfoLabel("Server-ID" , hsc.getServerID()));
-		labels.getChildren().add(createInfoLabel("Session-ID", "2323232"));
+		labels.getChildren().add(createInfoLabel("Session-ID", "23232322222222222222222222222222"));
 		left.getChildren().add(labels);
 //		Image mp = new Image(getClass().getResourceAsStream("ct2.png"));
 //		ImageView mpv = new ImageView(mp);
@@ -418,10 +419,14 @@ public class WaitingScene extends Scene {
 				() -> Font.font("Century Gothic", search.getHeight() * 0.4), search.heightProperty()));
 		search.setOnAction(e -> {
 			hsc.switchToPlayGameScene(App.getStage());
+			//hsc.switchToTestScene(App.getStage());
 		});
 
 		return search;
 	}
+	
+	
+	
 	
 	private StackPane createShowMapPane(String name) {
 		StackPane showMapBox = new StackPane();

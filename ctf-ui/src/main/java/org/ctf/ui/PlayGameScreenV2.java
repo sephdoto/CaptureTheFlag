@@ -22,6 +22,7 @@ import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -41,22 +42,27 @@ public class PlayGameScreenV2 extends Scene {
 	GamePane gm;
 	GameState state;
 	VBox right;
+	private static Circle c;
 	private static Label idLabel;
 	private static Label typeLabel;
 	private static Label attackPowLabel;
 	private static Label teamLabel;
 	private static Label countLabel;
+	StackPane showMapBox;
 	private  ObjectProperty<Color> sceneColorProperty = 
 	        new SimpleObjectProperty<>(Color.BLUE);
 	private ObjectProperty<Font> timerLabel = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> timerDescription = new SimpleObjectProperty<Font>(Font.getDefault());
-	private ObjectProperty<Font> pictureMainDiscription = new SimpleObjectProperty<Font>(Font.getDefault());
+	private static  ObjectProperty<Font> pictureMainDiscription = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> figureDiscription = new SimpleObjectProperty<Font>(Font.getDefault());
+	SimpleObjectProperty<Insets> padding = new SimpleObjectProperty<>(new Insets(10));
 	
 	
 	public PlayGameScreenV2(HomeSceneController hsc, double width, double height) {
 		super(new StackPane(), width, height);
 		this.hsc = hsc;
+		
+
 		manageFontSizes();
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
 		this.root = (StackPane) this.getRoot();
@@ -67,6 +73,9 @@ public class PlayGameScreenV2 extends Scene {
 	
 	public void createLayout() {
 		root.setStyle("-fx-background-color: black");
+		root.paddingProperty().bind(padding);
+		root.prefHeightProperty().bind(this.heightProperty());
+		root.prefWidthProperty().bind(this.widthProperty());
 		HBox top = new HBox();
 		top.setAlignment(Pos.CENTER);
 		VBox left = new VBox();
@@ -82,9 +91,40 @@ public class PlayGameScreenV2 extends Scene {
 		right.getChildren().add(imageTest());
 		right.getChildren().add(createClockBox());
 		right.setStyle("-fx-background-color: black");
-		//right.prefWidthProperty().bind(this.widthProperty().multiply(0.3));
+		right.prefWidthProperty().bind(this.widthProperty().multiply(0.3));
 		top.getChildren().add(right);
 		root.getChildren().add(top);
+		//PullGameStateThreads p = new PullGameStateThreads();
+	}
+	
+	public void redrawGrid(GameState state) {
+		showMapBox.getChildren().clear();
+		gm = new GamePane(state);
+		gm.enableBaseColors(this);
+		showMapBox.getChildren().add(gm);
+		
+	}
+	
+	private VBox createShowMapPane(String name) {
+		VBox outerbox = new VBox();
+		VBox.setVgrow(outerbox, Priority.ALWAYS);
+		outerbox.prefHeightProperty().bind(root.heightProperty());
+		//outerbox.setFillWidth(true);
+		showMapBox = new StackPane();
+		showMapBox.getStyleClass().add("play-pane");
+		//showMapBox.prefWidthProperty().bind(this.widthProperty().multiply(0.7));
+		showMapBox.paddingProperty().bind(padding);
+		showMapBox.prefHeightProperty().bind(outerbox.heightProperty());
+		showMapBox.getStyleClass().add("show-GamePane");
+		state = StroeMaps.getMap(name);
+		gm = new GamePane(state);
+//		gm.prefHeightProperty().bind(this.heightProperty().multiply(0.9));
+//		gm.prefWidthProperty().bind(this.widthProperty().multiply(0.9));
+		gm.enableBaseColors(this);
+		showMapBox.getChildren().add(gm);
+	
+		outerbox.getChildren().add(showMapBox);
+		return outerbox;
 	}
 	
 	
@@ -134,8 +174,9 @@ public class PlayGameScreenV2 extends Scene {
 		        {
 		        	timerLabel.set(Font.font(newWidth.doubleValue() / 40));
 		        	timerDescription.set(Font.font(newWidth.doubleValue() / 60));
-		        	pictureMainDiscription.set(Font.font(newWidth.doubleValue() / 30));
+		        	pictureMainDiscription.set(Font.font(newWidth.doubleValue() / 40));
 		        	figureDiscription.set(Font.font(newWidth.doubleValue() / 45));
+		        	padding.set(new Insets(newWidth.doubleValue()*0.01));
 		        }
 		    });
 	}
@@ -204,6 +245,7 @@ public class PlayGameScreenV2 extends Scene {
 	private HBox imageTest() {
 		HBox h1 = new HBox();
 		h1.prefHeightProperty().bind(this.heightProperty().multiply(0.7));
+		h1.prefWidthProperty().bind(h1.heightProperty().multiply(0.3));
 		h1.widthProperty().addListener((observable, oldValue, newValue) -> {
 			double padding = newValue.doubleValue() * 0.08;
 			h1.setPadding(new Insets(padding, padding, padding, padding));
@@ -211,6 +253,7 @@ public class PlayGameScreenV2 extends Scene {
 		//h1.setStyle("-fx-background-color: red");
 		h1.setAlignment(Pos.CENTER);
 		VBox x = new VBox();
+		
 		x.widthProperty().addListener((observable, oldValue, newValue) -> {
 			double padding = newValue.doubleValue() * 0.05;
 			x.setPadding(new Insets(padding, padding, padding, padding));
@@ -229,7 +272,7 @@ public class PlayGameScreenV2 extends Scene {
 		p.prefWidthProperty().bind(pict.widthProperty().multiply(0.3));
 		//p.setStyle("-fx-background-color: yellow");
 		Image mp = new Image(getClass().getResourceAsStream("Yoda.png"));
-		Circle c = new Circle();
+		c = new Circle();
 		c.radiusProperty().bind(Bindings.divide(widthProperty(), 23));
 		c.setFill(new ImagePattern(mp));
 		Circle c2 = new Circle();
@@ -244,6 +287,27 @@ public class PlayGameScreenV2 extends Scene {
 		h1.getChildren().add(x);
 		return h1;
 	}
+	private void fitText( Label lbl, double max) {
+		double defaultFontSize = 32;
+		Font defaultFont = Font.font(defaultFontSize);
+		lbl.setFont(defaultFont);
+		lbl.textProperty().addListener((observable, oldValue, newValue) -> {
+
+			Text tmpText = new Text(newValue);
+			tmpText.setFont(defaultFont);
+
+			double textWidth = tmpText.getLayoutBounds().getWidth();
+			if (textWidth <= max) {
+				lbl.setFont(defaultFont);
+			} else {
+
+				double newFontSize = defaultFontSize * max / textWidth;
+				lbl.setFont(Font.font(defaultFont.getFamily(), newFontSize));
+			}
+
+		});
+	}
+	
 	
 	private VBox createDeslabelBox() {
 		VBox deBox = new VBox(10);
@@ -270,18 +334,10 @@ public class PlayGameScreenV2 extends Scene {
 		l.getStyleClass().add("figure-label");
 	}
 		
-	private StackPane createShowMapPane(String name) {
-		StackPane showMapBox = new StackPane();
-		showMapBox.getStyleClass().add("play-pane");
-		showMapBox.prefWidthProperty().bind(this.widthProperty().multiply(0.7));
-		
-		showMapBox.prefHeightProperty().bind(this.heightProperty());
-		showMapBox.getStyleClass().add("show-GamePane");
-		state = StroeMaps.getMap(name);
-		gm = new GamePane(state);
-		gm.enableBaseColors(this);
-		showMapBox.getChildren().add(gm);
-		return showMapBox;
+	
+	
+	public static void setFigureImage(Image img) {
+		c.setFill(new ImagePattern(img));
 	}
 	
 	

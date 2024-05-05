@@ -1,5 +1,7 @@
 package org.ctf.ui;
 
+import static org.mockito.ArgumentMatchers.doubleThat;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -11,13 +13,19 @@ import org.ctf.ui.customobjects.BaseRep;
 import org.ctf.ui.customobjects.BlockRepV3;
 import org.ctf.ui.customobjects.CostumFigurePain;
 
+import configs.GameMode;
 import javafx.animation.TranslateTransition;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.NumberBinding;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.scene.layout.ColumnConstraints;
@@ -27,6 +35,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 
@@ -40,56 +49,96 @@ public class GamePane extends HBox{
 	String[][] map;
 	final GameState state;
 	Team[] teams;
-	int rows;
-	int cols;
-	final VBox vBox;
+	double rows;
+	double cols;
+	int currentTeam;
+	public VBox vBox;
 	int anzTeams;
-	HashMap<String, CostumFigurePain> figures = new HashMap<String, CostumFigurePain>();
-	HashMap<Integer, BaseRep> bases = new HashMap<Integer, BaseRep>();
+	 HashMap<String, CostumFigurePain> figures = new HashMap<String, CostumFigurePain>();
+	 HashMap<Integer, BaseRep> bases = new HashMap<Integer, BaseRep>();
 	HashMap<Integer, BackgroundCellV2> cells = new HashMap<Integer, BackgroundCellV2>();
-	GridPane gridPane;
+	public GridPane gridPane;
+	 SimpleObjectProperty<Double> prefWidth = new SimpleObjectProperty<Double>();
+	 SimpleObjectProperty<Double> prefHeight = new SimpleObjectProperty<Double>();
+	 SimpleObjectProperty<Double> minWidth = new SimpleObjectProperty<>(getWidth() / cols);
+     SimpleObjectProperty<Double> minHeight = new SimpleObjectProperty<>(getHeight() / rows);
+
+     SimpleObjectProperty<Double> minSize = new SimpleObjectProperty<>(
+         minWidth.get() < minHeight.get() ? minWidth.get() : minHeight.get()
+     );
+     NumberBinding binding;
+     SimpleObjectProperty<Double> min = new SimpleObjectProperty<Double>();
+    
+
+    
+     
 	
 
 	public GamePane(GameState state) {
+		
+		//this.setStyle("-fx-background-color: yellow");
 		this.state = state;
 		this.map = state.getGrid();
+		this.currentTeam = state.getCurrentTeam();
 		rows = map.length;
 		cols = map[0].length;
 		vBox = new VBox();
+		//vBox.setStyle("-fx-background-color: red");
 		vBox.alignmentProperty().set(Pos.CENTER);
 		alignmentProperty().set(Pos.CENTER);
-		paddingProperty().set(new Insets(20));
+		//paddingProperty().set(new Insets(20));
+		
+		vBox.heightProperty().addListener(new ChangeListener<Number>() {
+			public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth, Number newWidth) {
+					if(Game.getCurrent()!=null) {
+					 Game.getCurrent().performSelectClick();
+					}
+			}
+		});
+		this.widthProperty().addListener(new ChangeListener<Number>() {
+			public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth, Number newWidth) {
+				if(Game.getCurrent()!=null) {
+					//Game.getCurrent().performSelectClick();
+					}
+				 
+			}
+		});
 		
 		 gridPane = new GridPane();
-		// gridPane.setFillWidth(true);
-
-
-		 NumberBinding binding = Bindings.min(widthProperty().divide(cols), heightProperty().divide(rows));
-		//gridPane.setMinSize(300, 300);
-		vBox.prefWidthProperty().bind(binding.multiply(cols));
-		vBox.prefHeightProperty().bind(binding.multiply(rows));
+		 gridPane.setSnapToPixel(false);
+		 gridPane.setStyle("-fx-border-color:black; -fx-border-width: 3px");
+		// gridPane.setGridLinesVisible(true);
+		binding = Bindings.min(widthProperty().divide(cols), heightProperty().divide(rows));
+		NumberBinding roundSize = Bindings.createIntegerBinding(() ->  binding.intValue(), binding);
+		vBox.prefWidthProperty().bind(roundSize.multiply(cols));
+		vBox.prefHeightProperty().bind(roundSize.multiply(rows));
 		vBox.setMaxSize(Control.USE_PREF_SIZE, Control.USE_PREF_SIZE);
 		vBox.setFillWidth(true);
+		
 		VBox.setVgrow(gridPane, Priority.ALWAYS);
-
 		for (int i = 0; i < cols; i++) {
-			final ColumnConstraints columnConstraints = new ColumnConstraints(Control.USE_PREF_SIZE,
+			 ColumnConstraints columnConstraints = new ColumnConstraints(Control.USE_PREF_SIZE,
 					Control.USE_COMPUTED_SIZE, Double.MAX_VALUE);
 			columnConstraints.setHgrow(Priority.SOMETIMES);
+			//columnConstraints.setPercentWidth(getWidth()/rows);
 			gridPane.getColumnConstraints().add(columnConstraints);
 		}
 		for (int j = 0; j < rows; j++) {
-			final RowConstraints rowConstraints = new RowConstraints(Control.USE_PREF_SIZE, Control.USE_COMPUTED_SIZE,
+			 RowConstraints rowConstraints = new RowConstraints(Control.USE_PREF_SIZE, Control.USE_COMPUTED_SIZE,
 					Double.MAX_VALUE);
 			rowConstraints.setVgrow(Priority.SOMETIMES);
+			
 			gridPane.getRowConstraints().add(rowConstraints);
 		}
-		this.fillGrid();
+		
+		vBox.getChildren().add(gridPane);
 		getChildren().add(vBox);
 		HBox.setHgrow(this, Priority.ALWAYS);
+		this.fillGrid();
+		setCurrentTeamActive();
 
 	}
-
+	
 
 	public void moveFigure(int x, int y, CostumFigurePain mover) {
 		mover.getParentCell().removeFigure();
@@ -110,6 +159,15 @@ public class GamePane extends HBox{
 		for(BaseRep b: bases.values()) {
 			b.setScene(scene);
 		}
+	}
+	
+	public  void setCurrentTeamActive() {
+		for (CostumFigurePain c : figures.values()) {
+			if (c.getTeamID().equals(currentTeam)) {
+				c.setActive();
+			}
+		}
+		Game.initializeGame(this, GameMode.Online);
 	}
 
 	
@@ -168,14 +226,14 @@ public class GamePane extends HBox{
 			for(Piece piece: pieces) {
 				CostumFigurePain pieceRep = new CostumFigurePain(piece);
 				pieceRep.showTeamColor("red");//
-				figures.put(piece.getId(), pieceRep);
+			figures.put(piece.getId(), pieceRep);
 				//allFigures.add(pieceRep);
 				int x = piece.getPosition()[0];
 				int y = piece.getPosition()[1];
 				cells.get(generateKey(x, y)).addFigure(pieceRep);
 			}
 		}
-		vBox.getChildren().add(gridPane);
+		
 	}
 	
 	

@@ -4,7 +4,7 @@ package org.ctf.ui.customobjects;
 
 import org.ctf.ui.Game;
 import org.ctf.ui.PlayGameScreen;
-
+import org.ctf.ui.PlayGameScreenV2;
 
 import configs.ImageLoader;
 
@@ -13,8 +13,12 @@ import java.util.ArrayList;
 
 import org.ctf.shared.state.Piece;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.property.ObjectProperty;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
@@ -78,6 +82,7 @@ public class CostumFigurePain extends Pane {
 			if(attacable) {
 				performAttackClick();
 			}
+			//parent.getScene().getWindow().setWidth(parent.getScene().getWidth() + 0.001);
 		}
 	});
 	}
@@ -107,7 +112,6 @@ public class CostumFigurePain extends Pane {
 		if(borderGlow.colorProperty() != null) {
 		borderGlow.colorProperty().unbind();
 		}
-		System.out.println("hallo ich bin aus team" + teamID);
 	}
 	
 	
@@ -127,11 +131,12 @@ public class CostumFigurePain extends Pane {
 	}
 	
 	public void showPieceInformationWhenClicked() {
-		PlayGameScreen.setIdLabelText("id: " + piece.getId());
-		PlayGameScreen.setTypeLabelText("type: "+ piece.getDescription().getType());
-		PlayGameScreen.setAttackPowLabelText("attack power: " + piece.getDescription().getAttackPower());
-		PlayGameScreen.setCountLabelText("count: " + piece.getDescription().getCount());
-		PlayGameScreen.setTeamLabelText("team: " + piece.getTeamId());
+		PlayGameScreenV2.setIdLabelText("id: " + piece.getId());
+		PlayGameScreenV2.setTypeLabelText( piece.getDescription().getType());
+		PlayGameScreenV2.setAttackPowLabelText("attack power: " + piece.getDescription().getAttackPower());
+		PlayGameScreenV2.setCountLabelText("count: " + piece.getDescription().getCount());
+		PlayGameScreenV2.setTeamLabelText("team: " + piece.getTeamId());
+		PlayGameScreenV2.setFigureImage(bImage);
 	}
 	
 	public void showPieceInformationWhenHovering() {
@@ -160,6 +165,22 @@ public class CostumFigurePain extends Pane {
 		vw.fitWidthProperty().bind(this.widthProperty());
 		vw.fitHeightProperty().bind(this.heightProperty());
 		this.getChildren().add(vw);
+	}
+	
+	public void showAnimation() {
+		Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, e -> {
+                    DropShadow dropShadow = new DropShadow();
+                    dropShadow.setColor(Color.YELLOW);
+                    vw.setEffect(dropShadow);
+                }),
+                new KeyFrame(Duration.seconds(0.5)),
+                new KeyFrame(Duration.seconds(1), e -> {
+                    vw.setEffect(null);
+                })
+        );
+        timeline.setCycleCount(Animation.INDEFINITE); 
+        timeline.play();
 	}
 	
 
@@ -214,6 +235,11 @@ public class CostumFigurePain extends Pane {
 	public void setUnattacble() {
 		parent.deselect();
 		this.attacable = false;
+	}
+
+	public void setAlignment(Pos center) {
+		this.setAlignment(center);
+		
 	}
 }
 	
