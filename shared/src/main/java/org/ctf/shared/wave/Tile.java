@@ -51,14 +51,12 @@ public class Tile {
   int getValue() {
     return value;
   }
-
-  void undoValue() {
-    this.value = 0;
+  
+  void setValueSimple(int value) {
+    this.value = value;
     if (this.parentGrid != null) {
-      this.parentGrid.grid[this.y][this.x] = 0;
+      this.parentGrid.grid[this.y][this.x] = value;
     }
-    this.collapsed = false;
-    this.parentGrid.updateEntropy(this);
   }
 
   void setValue(int value) {
@@ -72,10 +70,36 @@ public class Tile {
     this.options = new ArrayList<Integer>();
   }
   
+  int[] getWeights() {
+    int[] weights = new int[options.size()];
+    int i = 0;
+    for(int x : options) {
+      weights[i] = x == 1 ? 1 : 500;
+      if(x == 3 || x == 4 || x == 5 || x == 6 || x == 35 || x == 36) {
+        weights[i] = 200;
+      }
+      if(x == 1) {
+        weights[i] = 200;
+      } 
+      
+      i++;
+    }
+    return weights;
+
+  }
+  
   // **************************************************
   // GetNeighbor methods:
   // **************************************************
   
+  public int getX() {
+    return x;
+  }
+
+  public int getY() {
+    return y;
+  }
+
   Tile getUpperNeighbor() {
     if (this.y == 0) {
       return null;

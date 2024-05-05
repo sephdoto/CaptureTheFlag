@@ -59,18 +59,20 @@ public class WaveGrid {
    * @param t
    */
   void updateEntropy(Tile t) {
+    if (t != null && t.collapsed) {
 
-    for (int r : t.ruleSet.notCompatibleUp) {
-      t.removeFromOptions(r, t.getUpperNeighbor());
-    }
-    for (int r : t.ruleSet.notCompatibleRight) {
-      t.removeFromOptions(r, t.getRightNeighbor());
-    }
-    for (int r : t.ruleSet.notCompatibleDown) {
-      t.removeFromOptions(r, t.getLowerNeighbor());
-    }
-    for (int r : t.ruleSet.notCompatibleLeft) {
-      t.removeFromOptions(r, t.getLeftNeighbor());
+      for (int r : t.ruleSet.notCompatibleUp) {
+        t.removeFromOptions(r, t.getUpperNeighbor());
+      }
+      for (int r : t.ruleSet.notCompatibleRight) {
+        t.removeFromOptions(r, t.getRightNeighbor());
+      }
+      for (int r : t.ruleSet.notCompatibleDown) {
+        t.removeFromOptions(r, t.getLowerNeighbor());
+      }
+      for (int r : t.ruleSet.notCompatibleLeft) {
+        t.removeFromOptions(r, t.getLeftNeighbor());
+      }
     }
   }
   
@@ -87,7 +89,8 @@ public class WaveGrid {
     options = new ArrayList<ArrayList<Integer>>(tiles.size());
     for (int i = 0; i < tiles.size(); i++) {
       options.add(new ArrayList<Integer>());
-      for (int o = 1; o <= uniqueImages; o++) {
+      for (int o = 2; o <= uniqueImages; o++) {
+       
         if (tiles.get(i).getValue() == 0) {
           options.get(i).add(Integer.valueOf(o));
           tiles.get(i).options.add(o);

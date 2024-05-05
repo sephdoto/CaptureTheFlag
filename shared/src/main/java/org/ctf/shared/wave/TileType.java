@@ -1,5 +1,8 @@
 package org.ctf.shared.wave;
 
+import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicIntegerArray;
+
 /**
  * Representation of one unique Tile Type with a unique set of rules and value (the value is saved
  * in "type" here)
@@ -18,10 +21,10 @@ public class TileType {
   String right;
   String down;
   String left;
-  int[] notCompatibleUp;
-  int[] notCompatibleRight;
-  int[] notCompatibleDown;
-  int[] notCompatibleLeft;
+  LinkedList<Integer> notCompatibleUp;
+  LinkedList<Integer> notCompatibleRight;
+  LinkedList<Integer> notCompatibleDown;
+  LinkedList<Integer> notCompatibleLeft;
   
   // **************************************************
   // Constructors
@@ -29,19 +32,19 @@ public class TileType {
   
   public TileType(int type) {
     this.type = type;
-    notCompatibleUp = new int[WaveFunctionCollapse.IMAGES_AMOUNT];
-    notCompatibleRight = new int[WaveFunctionCollapse.IMAGES_AMOUNT];
-    notCompatibleDown = new int[WaveFunctionCollapse.IMAGES_AMOUNT];
-    notCompatibleLeft = new int[WaveFunctionCollapse.IMAGES_AMOUNT];
+    notCompatibleUp = new LinkedList<Integer>();
+    notCompatibleRight = new LinkedList<Integer>();
+    notCompatibleDown = new LinkedList<Integer>();
+    notCompatibleLeft = new LinkedList<Integer>();
     hardRules();
     generateRules();
   }
 
   private TileType() {
-    notCompatibleUp = new int[WaveFunctionCollapse.IMAGES_AMOUNT];
-    notCompatibleRight = new int[WaveFunctionCollapse.IMAGES_AMOUNT];
-    notCompatibleDown = new int[WaveFunctionCollapse.IMAGES_AMOUNT];
-    notCompatibleLeft = new int[WaveFunctionCollapse.IMAGES_AMOUNT];
+    notCompatibleUp = new LinkedList<Integer>();
+    notCompatibleRight = new LinkedList<Integer>();
+    notCompatibleDown = new LinkedList<Integer>();
+    notCompatibleLeft = new LinkedList<Integer>();
     hardRules();
   }
   
@@ -72,19 +75,19 @@ public class TileType {
     for (int i = 1; i <= WaveFunctionCollapse.IMAGES_AMOUNT; i++) {
       for (int j = 1, c = 0; j <= WaveFunctionCollapse.IMAGES_AMOUNT; j++,c++) {
         if (!types[i].up.equals(types[j].down)) {
-          types[i].notCompatibleUp[c] = types[j].type;
+          types[i].notCompatibleUp.add(types[j].type);
         }
         
         if (!types[i].right.equals(types[j].left)) {
-          types[i].notCompatibleRight[c] = types[j].type;
+          types[i].notCompatibleRight.add(types[j].type);
         }
         
         if (!types[i].down.equals(types[j].up)) {
-          types[i].notCompatibleDown[c] = types[j].type;
+          types[i].notCompatibleDown.add(types[j].type);
         }
         
         if (!types[i].left.equals(types[j].right)) {
-          types[i].notCompatibleLeft[c] = types[j].type;
+          types[i].notCompatibleLeft.add(types[j].type);
         }
       }
     }
@@ -93,13 +96,298 @@ public class TileType {
     this.notCompatibleDown = types[type].notCompatibleDown;
     this.notCompatibleLeft = types[type].notCompatibleLeft;
   }
+  
+  /**
+   * The rules of the tiles are hard-coded for every TileType by assigning a String to every side
+   * that represents which pieces can fit together.  This version works for the "circuit" tiles.
+   * The Strings are always to be read from left to right\top to bottom
+   */
+  private void hardRules() {
+    switch (this.type) {
+      case 0:
+        break;
+      case 1:
+        //First image
+        up = "BBB";
+        right = "BBB";
+        down = "BBB";
+        left = "BBB";
+        break;
+      case 2:
+        //second image:
+        up = "GGG";
+        right = "GGG";
+        down = "GGG";
+        left = "GGG";
+        break;
+      case 3:
+        //third image 
+        up = "GGG";
+        right = "GLG";
+        down = "GGG";
+        left = "GGG";
+        break;
+      case 4:
+        up = "GGG";
+        right = "GGG";
+        down = "GLG";
+        left = "GGG";
+        break;
+      case 5: 
+        up = "GGG";
+        right = "GGG";
+        down = "GGG";
+        left = "GLG";
+        break;
+      case 6:
+        up = "GLG";
+        right = "GGG";
+        down = "GGG";
+        left = "GGG";
+        break;
+      case 7:
+        //fourth image
+        up = "GGG";
+        right = "GWG";
+        down = "GGG";
+        left = "GWG";
+        break;
+      case 8:
+        up = "GWG";
+        right = "GGG";
+        down = "GWG";
+        left = "GGG";
+        break;
+      case 9:
+        //fifth image
+        up = "BGG";
+        right = "GLG";
+        down = "BGG";
+        left = "BBB";
+        //notCompatibleLeft.add(Integer.valueOf(11));
+        break;
+      case 10:
+        up = "BBB";
+        right = "BGG";
+        down = "GLG";
+        left = "BGG";
+        //notCompatibleUp.add(Integer.valueOf(12));
+        break;
+      case 11:
+        up = "GGB";
+        right = "BBB";
+        down = "GGB";
+        left = "GLG";
+        //notCompatibleRight.add(Integer.valueOf(9));
+        break;
+      case 12:
+        up = "GLG";
+        right = "GGB";
+        down = "BBB";
+        left = "GGB";
+        //notCompatibleDown.add(Integer.valueOf(10));
+        break;
+      case 13:
+        //sixth image
+        up = "BGG";
+        right = "GGG";
+        down = "GGG";
+        left = "BGG";
+        //notCompatibleLeft.add(Integer.valueOf(14));
+        //notCompatibleUp.add(Integer.valueOf(16));
+        break;
+      case 14:
+        up = "GGB";
+        right = "BGG";
+        down = "GGG";
+        left = "GGG";
+        //notCompatibleUp.add(Integer.valueOf(15));
+        //notCompatibleRight.add(Integer.valueOf(13));
+        break;
+      case 15:
+        up = "GGG";
+        right = "GGB";
+        down = "GGB";
+        left = "GGG";
+        //notCompatibleRight.add(Integer.valueOf(16));
+        //notCompatibleDown.add(Integer.valueOf(14));
+        break;
+      case 16:
+        up = "GGG";
+        right = "GGG";
+        down = "BGG";
+        left = "GGB";
+        //notCompatibleDown.add(Integer.valueOf(13));
+        //notCompatibleLeft.add(Integer.valueOf(15));
+        break;
+      case 17:
+        //seventh image
+        up = "GGG";
+        right = "GLG";
+        down = "GGG";
+        left = "GLG";
+        break;
+      case 18:
+        up = "GLG";
+        right = "GGG";
+        down = "GLG";
+        left = "GGG";
+        break;
+      case 19:
+        //eighth image
+        up = "GWG";
+        right = "GLG";
+        down = "GWG";
+        left = "GLG";
+        break;
+      case 20:
+        up = "GLG";
+        right = "GWG";
+        down = "GLG";
+        left = "GWG";
+        break;
+      case 21:
+        //ninth image
+        up = "GWG";
+        right = "GGG";
+        down = "GLG";
+        left = "GGG";
+        break;
+      case 22:
+        up = "GGG";
+        right = "GWG";
+        down = "GGG";
+        left = "GLG";
+        break;
+      case 23:
+        up = "GLG";
+        right = "GGG";
+        down = "GWG";
+        left = "GGG";
+        break;
+      case 24:
+        up = "GGG";
+        right = "GLG";
+        down = "GGG";
+        left = "GWG";
+        break;
+      case 25:
+        //tenth image:
+        up = "GLG";
+        right = "GLG";
+        down = "GGG";
+        left = "GLG";
+        break;
+      case 26:
+        up = "GLG";
+        right = "GLG";
+        down = "GLG";
+        left = "GGG";
+        break;
+      case 27:
+        up = "GGG";
+        right = "GLG";
+        down = "GLG";
+        left = "GLG";
+        break;
+      case 28:
+        up = "GLG";
+        right = "GGG";
+        down = "GLG";
+        left = "GLG";
+        break;
+      case 29:
+        //eleventh image:
+        up = "GLG";
+        right = "GLG";
+        down = "GLG";
+        left = "GLG";
+        break;
+      case 30:
+        up = "GLG";
+        right = "GLG";
+        down = "GLG";
+        left = "GLG";
+        break;
+      case 31:
+        //twelfth image
+        up = "GLG";
+        right = "GLG";
+        down = "GGG";
+        left = "GGG";
+        break;
+      case 32:
+        up = "GGG";
+        right = "GLG";
+        down = "GLG";
+        left = "GGG";
+        break;
+      case 33:
+        up = "GGG";
+        right = "GGG";
+        down = "GLG";
+        left = "GLG";
+        break;
+      case 34:
+        up = "GLG";
+        right = "GGG";
+        down = "GGG";
+        left = "GLG";
+        break;
+      case 35:
+        //thirteenth image
+        up = "GGG";
+        right = "GLG";
+        down = "GGG";
+        left = "GLG";
+        break;
+      case 36:
+        up = "GLG";
+        right = "GGG";
+        down = "GLG";
+        left = "GGG";
+        break;  
+      case 37:
+        //block
+        up = "BBB";
+        right = "BBB";
+        down = "BBB";
+        left = "BBB";
+        break;
+      case 38:
+        //fourteenth image
+        up = "BGG";
+        right = "GGB";
+        down = "BBB";
+        left = "BBB";
+        break;
+      case 39:
+        up = "BBB";
+        right = "BGG";
+        down = "BGG";
+        left = "BBB";
+        break;
+      case 40:
+        up = "BBB";
+        right = "BBB";
+        down = "GGB";
+        left = "BGG";
+        break;
+      case 41:
+        up = "GGB";
+        right = "BBB";
+        down = "BBB";
+        left = "GGB";
+        break;
+    }
+  }
 
   /**
    * The rules of the tiles are hard-coded for every TileType by assigning a String to every side
-   * that represents which pieces can fit together. 
+   * that represents which pieces can fit together. This version works for the "Rooms" tiles.
    * The Strings are always read from left to right\top to bottom
    */
-  private void hardRules() {
+  private void hardRoomRules() {
     switch (this.type) {
       case 0:
         break;
