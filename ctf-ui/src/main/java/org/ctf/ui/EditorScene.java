@@ -290,6 +290,14 @@ public class EditorScene extends Scene {
     return pieceRoot;
   }
 
+  /**
+   * Creates all necessary UI components for the option pane that allows users to customize 
+   * and add their own pieces. It consists of a grid containing several control 
+   * items and their corresponding labels.
+   * 
+   * @author aniemesc
+   * @return VBox - main container of "Add Pieces" option
+   */
   private VBox createFigureCustomizer() {
     VBox customRoot = new VBox();
     customRoot.setSpacing(10);
@@ -330,7 +338,12 @@ public class EditorScene extends Scene {
 
     return customRoot;
   }
-
+/**
+ * Creates the Container for displaying the different option tabs on 
+ * the left side of the scene.
+ * @author aniemesc
+ * @return StackPane container
+ */
   private StackPane createLeftPane() {
     StackPane pane = new StackPane();
     pane.getStyleClass().add("option-pane");
@@ -341,6 +354,12 @@ public class EditorScene extends Scene {
     return pane;
   }
 
+  /**
+   * Creates the container that displays the menu buttons for loading a map
+   * and switching between option tabs
+   * @author aniemesc
+   * @return HBox container
+   */
   private HBox createControlBar() {
     HBox controlBar = new HBox();
     controlBar.setSpacing(10);
@@ -352,6 +371,12 @@ public class EditorScene extends Scene {
     return controlBar;
   }
 
+  /**
+   * Creates and styles buttons for the scene.
+   * @author aniemesc
+   * @param label - String value for button initialization
+   * @return Button object
+   */
   private Button createControlButton(String label) {
     Button but = new Button(label);
     but.getStyleClass().add("leave-button");
@@ -364,18 +389,26 @@ public class EditorScene extends Scene {
     return but;
   }
 
+  /**
+   * Creates the Leave Button for the scene.
+   * @author aniemesc
+   * @return Button for leaving
+   */
   private Button createExit() {
     Button exit = createControlButton("Leave");
-
     exit.setOnAction(e -> {
       hsc.switchtoHomeScreen(e);
     });
     return exit;
   }
 
+  /**
+   * Creates the Submit Button which opens a submitting window.
+   * @author aniemesc
+   * @return Button for submitting templates
+   */
   private Button createSubmit() {
     Button submit = createControlButton("Submit");
-
     submit.setOnAction(e -> {
       engine.printTemplate();
       // root.getChildren().add(new PopUpPane(this, 0.4, 0.4));
@@ -384,6 +417,12 @@ public class EditorScene extends Scene {
     return submit;
   }
 
+  /**
+   * Creates the MenuButton which allows the user to switch
+   *  between the option tabs "Edit Map","Add Pieces" and "Custom Pieces".
+   * @author aniemesc
+   * @return MenuButton for switching option tabs.
+   */
   private MenuButton createMenuButton() {
     mb = new MenuButton("Edit Map");
     mb.getStyleClass().add("custom-menu-button");
@@ -396,7 +435,7 @@ public class EditorScene extends Scene {
     // });
     MenuItem mapMenuItem = new MenuItem("Edit Map");
     MenuItem figureMenuItem = new MenuItem("Add Pieces");
-    MenuItem configMenuItem = new MenuItem("Costum Pieces");
+    MenuItem configMenuItem = new MenuItem("Custom Pieces");
     mb.getItems().addAll(mapMenuItem, figureMenuItem, configMenuItem);
     mapMenuItem.setOnAction(event -> {
       leftPane.getChildren().clear();
@@ -413,13 +452,19 @@ public class EditorScene extends Scene {
     configMenuItem.setOnAction(event -> {
       leftPane.getChildren().clear();
       leftPane.getChildren().add(options[2]);
-      mb.setText("Costum Pieces");
+      mb.setText("Custom Pieces");
       visualRoot.getChildren().clear();
       visualRoot.getChildren().add(directionsContainer);
     });
     return mb;
   }
 
+  /**
+   * Creates the MenuButton which allows the user to load map templates
+   * into the editor scene.
+   * @author aniemesc
+   * @return MenuButton for loading map templates
+   */
   private MenuButton createMapMenuButton() {
     MenuButton mb = new MenuButton("Load Map");
     mb.getStyleClass().add("custom-menu-button");
@@ -431,6 +476,13 @@ public class EditorScene extends Scene {
     return mb;
   }
 
+  /**
+   * Creates a MenuItem and adds it to the MapMenuButton. When triggered it
+   * causes the corresponding map template to be loaded in the map editor.
+   * @author aniemesc
+   * @param mapName - Name of the maptemplate
+   * @param mapMenuButton - MenuButton to which the MenuItem gets added
+   */
   private void addMapItem(String mapName, MenuButton mapMenuButton) {
     MenuItem item = new MenuItem(mapName);
     item.setOnAction(e -> {
@@ -447,6 +499,13 @@ public class EditorScene extends Scene {
     mapMenuButton.getItems().add(item);
   }
 
+  /**
+   * Creates a custom Text Header.
+   * @param vBox - Container used for resize dependency  
+   * @param label - String value
+   * @param divider - int value that determines the resize ratio
+   * @return
+   */
   public Text createHeaderText(VBox vBox, String label, int divider) {
     Text leftheader = new Text(label);
     leftheader.getStyleClass().add("custom-header");
