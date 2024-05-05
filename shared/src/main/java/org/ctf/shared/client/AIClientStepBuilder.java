@@ -54,9 +54,9 @@ public class AIClientStepBuilder {
     PlayerTypeSelectionStep onPort(String port);
 
     /**
-     * Method for setting the port using a Constant ENUM from Constants.Port
+     * Method for setting the port using a Constant ENUM from Enums.Port
      *
-     * @param port example String "9999" etc
+     * @param def Valid inputs of the form Port.DEFAULT, Port.AICLIENTTEST(9992), etc
      */
     PlayerTypeSelectionStep onPort(Port def);
   }
@@ -81,10 +81,10 @@ public class AIClientStepBuilder {
      *
      * @param enableSave True for Enabling Save, False for disabled
      */
-    CreatorOrJoinerStep enableSaveGame(boolean enableSave);
+    JoinerStep enableSaveGame(boolean enableSave);
   }
 
-  public static interface CreatorOrJoinerStep {
+  public static interface JoinerStep {
     /**
      * Method to enable if the AI Game will be logged players
      *
@@ -107,7 +107,7 @@ public class AIClientStepBuilder {
           PortSelectionStep,
           PlayerTypeSelectionStep,
           LoggerEnabler,
-          CreatorOrJoinerStep,
+          JoinerStep,
           BuildStep {
     private CommLayerInterface comm;
     private String host;
@@ -178,7 +178,7 @@ public class AIClientStepBuilder {
      * @param def an Enum
      */
     @Override
-    public PlayerTypeSelectionStep onPort(org.ctf.shared.constants.Enums.Port def) {
+    public PlayerTypeSelectionStep onPort(Port def) {
       this.port = def.toString();
       return this;
     }
@@ -189,7 +189,7 @@ public class AIClientStepBuilder {
      * @param enableSave True for Enabling Save, False for Disabled
      */
     @Override
-    public CreatorOrJoinerStep enableSaveGame(boolean enableSave) {
+    public JoinerStep enableSaveGame(boolean enableSave) {
       this.enableSave = enableSave;
       return this;
     }

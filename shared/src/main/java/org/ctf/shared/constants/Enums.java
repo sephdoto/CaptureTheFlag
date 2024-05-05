@@ -79,7 +79,8 @@ public class Enums {
    * @author rsyed
    */
   public enum Port {
-    DEFAULT("8888");
+    DEFAULT("8888"),
+    AICLIENTTEST("9992");
 
     public final String label;
 

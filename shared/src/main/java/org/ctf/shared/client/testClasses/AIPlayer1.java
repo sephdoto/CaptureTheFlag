@@ -14,8 +14,8 @@ public class AIPlayer1 {
             .onPort("8888")
             .AIPlayerSelector(AI.MCTS)
             .enableSaveGame(true)
-            .gameData("84af3ba7-af34-4ac0-9247-a3615e378a84", "Team 1")
+            .gameData("1c94fd0a-9d0a-41e8-95be-c6f1c217be53", "Team 1")
             .build();
-    javaClient1.startAIGameController();
+    //javaClient1.startAIGameController();
   }
 }

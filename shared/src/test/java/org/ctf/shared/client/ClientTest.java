@@ -328,7 +328,7 @@ public class ClientTest {
     javaClient.createGame(template);
     javaClient.joinGame("Team1");
     javaClient2.joinExistingGame(
-        "localhost", "8080", javaClient.getCurrentGameSessionID(), "Team2");
+        "localhost", "9998", javaClient.getCurrentGameSessionID(), "Team2");
     javaClient.pullData();
     javaClient2.pullData();
     AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS,0);

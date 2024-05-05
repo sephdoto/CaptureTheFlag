@@ -120,6 +120,7 @@ public class AIClient extends Client {
     this(comm, IP, port, enableLogging, selected);
     this.gameIDString = gameIDString;
     this.constructorSetTeamName = constructorSetTeamName;
+    startAIGameController();
   }
 
   /**
@@ -203,7 +204,7 @@ public class AIClient extends Client {
     /**
    * Called from the getGameState method. Requests the server specific/set in the Client object to
    * send the current {@link GameState}. Also parses the response and saves data to local variables
-   * for easier consumption by the UI
+   * for easier consumption by the UI. Overriden in the AI Client as it needs to update last game more often for analyzer.
    *
    * @param teamID Team Name for the request. Read from the Client
    * @param teamSecret Team Secret for the Request. Read from the Client
