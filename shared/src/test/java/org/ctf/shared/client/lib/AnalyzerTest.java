@@ -150,7 +150,7 @@ public class AnalyzerTest {
   @Test
   void testReadFile() {
     Analyzer analyzer = new Analyzer();
-    boolean b = analyzer.readFile("20240504-220806");
+    boolean b = analyzer.readFile("analyzerTestDataFile");
     assertTrue(b);
     SavedGame gameData = analyzer.getSavedGame();
     Gson gson = new Gson();
