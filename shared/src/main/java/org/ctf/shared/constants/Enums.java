@@ -11,7 +11,9 @@ public class Enums {
    */
   public enum Themes {
     STARWARS,
+    LOTR,
     BAYERN;
+
   }
 
   /**

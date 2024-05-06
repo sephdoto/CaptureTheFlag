@@ -1,6 +1,7 @@
 package org.ctf.shared.wave;
 
 import java.util.ArrayList;
+import org.ctf.shared.constants.Enums;
 
 /**
  * Representation of the grid that the Wave Function Collapse algorithm works with.
@@ -19,12 +20,15 @@ public class WaveGrid {
   public ArrayList<ArrayList<Integer>> options; // saves the options according to the tile grid
   private int uniqueImages; // the amount of different images used
   TileType[] rules;;
+  Enums.Themes theme;
 
   // **************************************************
   // Constructor
   // **************************************************
 
-  public WaveGrid(int[][] grid, int images) {
+  public WaveGrid(int[][] grid, int images, Enums.Themes theme) {
+    
+    this.theme = theme;
     int[][] newGrid = new int[grid.length][grid[0].length];
     
     for(int i = 0; i < grid.length; i++) {
@@ -89,7 +93,8 @@ public class WaveGrid {
     options = new ArrayList<ArrayList<Integer>>(tiles.size());
     for (int i = 0; i < tiles.size(); i++) {
       options.add(new ArrayList<Integer>());
-      for (int o = 2; o <= uniqueImages; o++) {
+      int o = this.theme == Enums.Themes.STARWARS ? 2 : 1;
+      for (; o <= uniqueImages; o++) {
        
         if (tiles.get(i).getValue() == 0) {
           options.get(i).add(Integer.valueOf(o));
@@ -107,7 +112,7 @@ public class WaveGrid {
    * initial grid.
    */
   private void setRules() {
-    rules = TileType.generateRuleSet();
+    rules = TileType.generateRuleSet(this.theme);
     for (Tile t : tiles) {
       t.addRules(rules);
 

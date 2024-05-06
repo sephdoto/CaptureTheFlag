@@ -6,6 +6,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import org.ctf.shared.ai.TestValues;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums;
 import org.ctf.shared.wave.WaveFunctionCollapse;
 import org.ctf.shared.wave.WaveGrid;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ class WaveFunctionCollapseTest {
 
   @Test
   void gridToImgTest() {
-    WaveFunctionCollapse wfc = new WaveFunctionCollapse(TestValues.getTestState().getGrid());
+    WaveFunctionCollapse wfc = new WaveFunctionCollapse(TestValues.getTestState().getGrid(), Enums.Themes.STARWARS);
     
     //WaveFunctionCollapse wfc = new WaveFunctionCollapse(new String[3][3]);
     try {

@@ -6,6 +6,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums;
+import org.ctf.shared.constants.Enums.Themes;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,14 +30,15 @@ import java.util.Stack;
  */
 public class WaveFunctionCollapse {
   
-  final public static int IMAGES_AMOUNT = 36;
-  final public static int IMAGE_SIZE = 14;
+  public static int imagesAmount = 36;
+  public static int imageSize = 14;
   private int iterationsCounter;
   private String[][] ogGrid;
   private int[][] grid;
   private boolean collapsed;
   private BufferedImage background;
   private Stack<WaveGrid> lastStates;
+  private Enums.Themes theme;
   
 
   /**
@@ -44,8 +47,17 @@ public class WaveFunctionCollapse {
    * 
    * @param grid
    */
-  public WaveFunctionCollapse(String[][] grid) {
+  public WaveFunctionCollapse(String[][] grid, Enums.Themes theme) {
     ogGrid = grid;
+    this.theme = theme;
+    if(theme == Enums.Themes.STARWARS) {
+      imagesAmount = 36;
+      imageSize = 14;
+    }
+    else if(theme == Enums.Themes.BAYERN) {
+      imagesAmount = 4;
+      imageSize = 42;
+    }
     lastStates = new Stack<WaveGrid>();
     collapsed = false;
     int[][] intGrid = stringToInt(grid);
@@ -67,43 +79,39 @@ public class WaveFunctionCollapse {
    */
   private int[][] stringToInt(String[][] grid) {
     int[][] intGrid = new int[grid.length * 3][grid[0].length * 3];
+    if(theme == Enums.Themes.STARWARS) {
     for (int y = 0; y < grid.length; y++) {
       for (int x = 0; x < grid[0].length; x++) {
         if(grid[y][x] == null) {
           intGrid[y*3 + 1][x*3 +1] = 0;
-        }
-        else if (grid[y][x].contains("p") ) {
-          intGrid[y*3][x*3] = 1;
-          intGrid[y*3][x*3+1] = 1;
-          intGrid[y*3][x*3+2] = 1;
-          
-          intGrid[y*3+1][x*3] = 1;
-          intGrid[y*3+1][x*3+1] = 1;
-          intGrid[y*3+1][x*3+2] = 1;
-          
-          intGrid[y*3+2][x*3] = 1;
-          intGrid[y*3+2][x*3+1] = 1;
-          intGrid[y*3+2][x*3+2] = 1;
+        } else if (grid[y][x].contains("p")) {
+          intGrid[y * 3][x * 3] = 1;
+          intGrid[y * 3][x * 3 + 1] = 1;
+          intGrid[y * 3][x * 3 + 2] = 1;
+
+          intGrid[y * 3 + 1][x * 3] = 1;
+          intGrid[y * 3 + 1][x * 3 + 1] = 1;
+          intGrid[y * 3 + 1][x * 3 + 2] = 1;
+
+          intGrid[y * 3 + 2][x * 3] = 1;
+          intGrid[y * 3 + 2][x * 3 + 1] = 1;
+          intGrid[y * 3 + 2][x * 3 + 2] = 1;
         }
         /*
-        else if(grid[y][x].equals("b")) {
-          
-          intGrid[y*3][x*3] = 2;
-          intGrid[y*3][x*3+1] = 2;
-          intGrid[y*3][x*3+2] = 2;
-          
-          intGrid[y*3+1][x*3] = 2;
-          intGrid[y*3+1][x*3+1] = 2;
-          intGrid[y*3+1][x*3+2] = 2;
-          
-          intGrid[y*3+2][x*3] = 2;
-          intGrid[y*3+2][x*3+1] = 2;
-          intGrid[y*3+2][x*3+2] = 2;
-        }
-        */
+         * else if(grid[y][x].equals("b")) {
+         * 
+         * intGrid[y*3][x*3] = 2; intGrid[y*3][x*3+1] = 2; intGrid[y*3][x*3+2] = 2;
+         * 
+         * intGrid[y*3+1][x*3] = 2; intGrid[y*3+1][x*3+1] = 2; intGrid[y*3+1][x*3+2] = 2;
+         * 
+         * intGrid[y*3+2][x*3] = 2; intGrid[y*3+2][x*3+1] = 2; intGrid[y*3+2][x*3+2] = 2; }
+         */
       }
     }
-    return intGrid;
+  } else if (theme == Enums.Themes.BAYERN) {
+
+  }
+  return intGrid;
   }
 
   /**
@@ -117,14 +125,9 @@ public class WaveFunctionCollapse {
    * @return the finished grid
    */
   private int[][] generateBackground(int[][] grid) {
-   
-    // TODO add backtracking
-    
-    //timing the method TODO remove when done 
-    long nowMillis = System.currentTimeMillis();
 
     //creating the Grid
-    WaveGrid wGrid = new WaveGrid(grid, IMAGES_AMOUNT);         
+    WaveGrid wGrid = new WaveGrid(grid, imagesAmount, theme);         
     
     //The main algorithm:
     while (!collapsed) {
@@ -182,7 +185,15 @@ public class WaveFunctionCollapse {
       thisTile.setValue(thisTile.options.get(randomWithWeights(thisTile.options.size(), thisTile.getWeights())));
     }
     
-    //filling in the gaps because the original pattern does not work with corners 
+    if(theme == Enums.Themes.STARWARS) {
+      fillTheGaps(wGrid);
+    }
+
+    return wGrid.grid;
+
+  }
+  
+  void fillTheGaps (WaveGrid wGrid) {
     for(Tile t : wGrid.tiles) {
       if (t.getValue() == 0) {
         if (t.getLeftNeighbor() != null && t.getLeftNeighbor().getValue() == 1
@@ -203,12 +214,8 @@ public class WaveFunctionCollapse {
        }
       }
     }
-    //timing the method TODO remove later 
-    System.out
-        .println(" generateBackground took " + (System.currentTimeMillis() - nowMillis) + "ms"); 
-    return wGrid.grid;
-
   }
+
   
   /**
    * The actual wave function collapse algorithm. Generates a pattern from an initial set of images
@@ -222,7 +229,7 @@ public class WaveFunctionCollapse {
    */
   @Deprecated
   public int[][] generateBackgroundRecursive(WaveGrid waveGrid) {
-    WaveGrid wGrid = new WaveGrid(waveGrid.grid, IMAGES_AMOUNT);
+    WaveGrid wGrid = new WaveGrid(waveGrid.grid, imagesAmount, this.theme);
     wGrid.tiles = new ArrayList<Tile>(waveGrid.tiles);
     wGrid.grid = waveGrid.grid;
     System.out.println("Step: " + iterationsCounter++);
@@ -303,8 +310,18 @@ public class WaveFunctionCollapse {
     
   }
   
-  private BufferedImage[] loadImages() throws IOException {
-    BufferedImage[] images = new BufferedImage[IMAGES_AMOUNT+6];
+  private BufferedImage[] loadImages(Enums.Themes theme) throws IOException{
+    if(theme == Enums.Themes.STARWARS) {
+      return loadSWImages();
+    }
+    else if(theme == Enums.Themes.BAYERN) {
+      return loadBayernImages();
+    }
+    else return null;
+  }
+  
+  private BufferedImage[] loadSWImages() throws IOException {
+    BufferedImage[] images = new BufferedImage[imagesAmount+6];
       
         images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c2.png"));
         
@@ -368,9 +385,20 @@ public class WaveFunctionCollapse {
     return images;
   }
   
+  private BufferedImage[] loadBayernImages() throws IOException {
+    BufferedImage[] images = new BufferedImage[imagesAmount+1];
+    images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"p1.png"));
+    images[1] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"Bayern.png"));
+    images[2] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"Bayern.png")),90);
+    images[3] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"Bayern.png")),180);
+    images[4] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"Bayern.png")),270);
+    return images;
+    
+  }
+  
   private BufferedImage[] loadRoomImages() throws IOException {
     //Imageamount = 28
-    BufferedImage[] images = new BufferedImage[IMAGES_AMOUNT+1];
+    BufferedImage[] images = new BufferedImage[imagesAmount+1];
       
         images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"p1.png"));
         
@@ -428,22 +456,26 @@ public class WaveFunctionCollapse {
   private BufferedImage gridToImg(int[][] grid) throws IOException {
     long nowMillis = System.currentTimeMillis();
     BufferedImage result =
-        new BufferedImage(IMAGE_SIZE * grid[0].length, IMAGE_SIZE * grid.length, BufferedImage.TYPE_INT_ARGB);
-    BufferedImage[] files = loadImages();
+        new BufferedImage(imageSize * grid[0].length, imageSize * grid.length, BufferedImage.TYPE_INT_ARGB);
+    BufferedImage[] files = loadImages(this.theme);
     for (int y = 0; y < grid.length; y++) {
       for (int x = 0; x < grid[y].length; x++) {
         int color = grid[y][x];
         BufferedImage file = files[color];
         Graphics g = result.getGraphics();
-        g.drawImage(file, x * IMAGE_SIZE, y * IMAGE_SIZE, x * IMAGE_SIZE + IMAGE_SIZE, y * IMAGE_SIZE + IMAGE_SIZE, 0, 0, IMAGE_SIZE, IMAGE_SIZE, null);
+        g.drawImage(file, x * imageSize, y * imageSize, x * imageSize + imageSize, y * imageSize + imageSize, 0, 0, imageSize, imageSize, null);
       }
     }
     
-    for(int y = 0; y < ogGrid.length; y++) {
-      for(int x = 0; x < ogGrid[y].length; x++) {
-        if(ogGrid[y][x].equals("b")) {
-          Graphics g = result.getGraphics();
-          g.drawImage(files[37], x * IMAGE_SIZE * 3, y * IMAGE_SIZE * 3, x * IMAGE_SIZE * 3 + IMAGE_SIZE * 3, y * IMAGE_SIZE * 3 + IMAGE_SIZE * 3, 0, 0, IMAGE_SIZE * 3, IMAGE_SIZE * 3, null);
+    if (theme == Enums.Themes.STARWARS) {
+      for (int y = 0; y < ogGrid.length; y++) {
+        for (int x = 0; x < ogGrid[y].length; x++) {
+          if (ogGrid[y][x].equals("b")) {
+            Graphics g = result.getGraphics();
+            g.drawImage(files[37], x * imageSize * 3, y * imageSize * 3,
+                x * imageSize * 3 + imageSize * 3, y * imageSize * 3 + imageSize * 3, 0, 0,
+                imageSize * 3, imageSize * 3, null);
+          }
         }
       }
     }

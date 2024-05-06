@@ -2,6 +2,7 @@ package org.ctf.shared.wave;
 
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicIntegerArray;
+import org.ctf.shared.constants.Enums;
 
 /**
  * Representation of one unique Tile Type with a unique set of rules and value (the value is saved
@@ -17,6 +18,7 @@ public class TileType {
   // **************************************************
 
   int type;
+  Enums.Themes theme;
   String up;
   String right;
   String down;
@@ -30,13 +32,14 @@ public class TileType {
   // Constructors
   // **************************************************
   
-  public TileType(int type) {
+  public TileType(int type, Enums.Themes theme) {
     this.type = type;
+    this.theme = theme;
     notCompatibleUp = new LinkedList<Integer>();
     notCompatibleRight = new LinkedList<Integer>();
     notCompatibleDown = new LinkedList<Integer>();
     notCompatibleLeft = new LinkedList<Integer>();
-    hardRules();
+    hardRules(theme);
     generateRules();
   }
 
@@ -45,17 +48,17 @@ public class TileType {
     notCompatibleRight = new LinkedList<Integer>();
     notCompatibleDown = new LinkedList<Integer>();
     notCompatibleLeft = new LinkedList<Integer>();
-    hardRules();
+    hardRules(theme);
   }
   
   // **************************************************
   // Package methods
   // **************************************************
 
-  static TileType[] generateRuleSet() {
-    TileType[] rules = new TileType[WaveFunctionCollapse.IMAGES_AMOUNT+1];
-    for (int i = 0; i <= WaveFunctionCollapse.IMAGES_AMOUNT; i++) {
-      rules[i] = new TileType(i);
+  static TileType[] generateRuleSet(Enums.Themes theme) {
+    TileType[] rules = new TileType[WaveFunctionCollapse.imagesAmount+1];
+    for (int i = 0; i <= WaveFunctionCollapse.imagesAmount; i++) {
+      rules[i] = new TileType(i, theme);
     }
     return rules;
   }
@@ -65,15 +68,15 @@ public class TileType {
   // **************************************************
 
   private void generateRules() {
-    TileType[] types = new TileType[WaveFunctionCollapse.IMAGES_AMOUNT+1];
-    for (int i = 0; i <= WaveFunctionCollapse.IMAGES_AMOUNT; i++) {
+    TileType[] types = new TileType[WaveFunctionCollapse.imagesAmount+1];
+    for (int i = 0; i <= WaveFunctionCollapse.imagesAmount; i++) {
       types[i] = new TileType();
       types[i].type = i;
-      types[i].hardRules();
+      types[i].hardRules(this.theme);
     }
 
-    for (int i = 1; i <= WaveFunctionCollapse.IMAGES_AMOUNT; i++) {
-      for (int j = 1, c = 0; j <= WaveFunctionCollapse.IMAGES_AMOUNT; j++,c++) {
+    for (int i = 1; i <= WaveFunctionCollapse.imagesAmount; i++) {
+      for (int j = 1; j <= WaveFunctionCollapse.imagesAmount; j++) {
         if (!types[i].up.equals(types[j].down)) {
           types[i].notCompatibleUp.add(types[j].type);
         }
@@ -97,12 +100,51 @@ public class TileType {
     this.notCompatibleLeft = types[type].notCompatibleLeft;
   }
   
+  private void hardRules(Enums.Themes theme) {
+    if(theme == Enums.Themes.STARWARS) {
+      hardSWRules();
+    }
+    else if(theme == Enums.Themes.BAYERN) {
+      hardBayernRules();
+    }
+  }
+  
+  private void hardBayernRules() {
+    switch (this.type) {
+      case 0:
+        break;
+      case 1:
+        up = "A";
+        right = "B";
+        down = "C";
+        left = "D";
+        break;
+      case 2:
+        up = "C";
+        right = "E";
+        down = "A";
+        left = "F";
+        break;
+      case 3:
+        up = "G";
+        right = "F";
+        down = "I";
+        left = "E";
+        break;
+      case 4:
+        up = "I";
+        right = "D";
+        down = "G";
+        left = "B";
+        break;
+    }
+  }
   /**
    * The rules of the tiles are hard-coded for every TileType by assigning a String to every side
    * that represents which pieces can fit together.  This version works for the "circuit" tiles.
    * The Strings are always to be read from left to right\top to bottom
    */
-  private void hardRules() {
+  private void hardSWRules() {
     switch (this.type) {
       case 0:
         break;
