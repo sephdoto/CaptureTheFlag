@@ -93,7 +93,7 @@ public class ComponentCreator {
    * @param vBox - main container of the submitting window
    * @return Textfield that can be added to the main container
    */
-  private TextField createNameField(VBox vBox) {
+  public static TextField createNameField(VBox vBox) {
     TextField nameField = new TextField();
     nameField.getStyleClass().add("custom-search-field");
     // nameField.setPromptText("Enter a unique Name");

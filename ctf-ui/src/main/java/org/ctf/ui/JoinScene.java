@@ -5,6 +5,7 @@ import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
+import org.ctf.ui.customobjects.PopUpPane;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -39,6 +40,7 @@ public class JoinScene extends Scene {
   TextField serverIPText;
   TextField portText;
   TextField sessionText;
+  TextField nameField;
 
   /**
    * This constructor starts the initialization process of the scene and connects it to a CSS file.
@@ -84,7 +86,7 @@ public class JoinScene extends Scene {
     mainBox.getChildren().add(sep);
 
     this.widthProperty().addListener((observable, oldValue, newValue) -> {
-      double newSpacing = newValue.doubleValue() * 0.05; // Beispiel: 5% der Höhe als Spacing
+      double newSpacing = newValue.doubleValue() * 0.05;
       sep.setSpacing(newSpacing);
     });
 
@@ -127,7 +129,7 @@ public class JoinScene extends Scene {
     pane.getStyleClass().add("option-pane");
     pane.setPrefSize(250, 250);
     pane.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
-    pane.prefHeightProperty().bind(pane.widthProperty().multiply(0.8));
+    pane.prefHeightProperty().bind(pane.widthProperty().multiply(0.85));
 
     return pane;
   }
@@ -143,7 +145,6 @@ public class JoinScene extends Scene {
     exit.getStyleClass().add("leave-button");
     exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
     exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
-
     exit.setOnAction(e -> {
       hsc.switchtoHomeScreen(e);
     });
@@ -185,7 +186,7 @@ public class JoinScene extends Scene {
    * @author aniemesc
    * @return StackPane that gets added to the right StackPane
    */
-  private VBox createRightContent() {
+  private VBox createRightContent(String id, int teams, String ip, String port) {
     VBox rightBox = new VBox();
     rightBox.setAlignment(Pos.TOP_CENTER);
     rightBox.setPadding(new Insets(20));
@@ -199,8 +200,9 @@ public class JoinScene extends Scene {
     rightHeader.fontProperty().bind(Bindings
         .createObjectBinding(() -> Font.font(right.getWidth() / 18), right.widthProperty()));
     rightBox.getChildren().add(rightHeader);
-    rightBox.getChildren().add(createSessionInfo(12345, 4, 20));
-    rightBox.getChildren().add(createButtonOption());
+    rightBox.getChildren().add(createSessionInfo(Integer.parseInt(id), teams));
+    rightBox.getChildren().add(createButtonOption(id,ip,port));
+    
 
     return rightBox;
   }
@@ -260,8 +262,12 @@ public class JoinScene extends Scene {
         if (!ser.isServerActive()) {
           info.setText(
               "The Server \n cannot be found!\n Please check the Server IP\n and select the right Port!");
+        } else if (!ser.isSessionActive()) {
+          info.setText("The Session is not active!\n" + "Please check your Session ID!");
         } else {
-          info.setText("Server was found!");
+          right.getChildren().clear();
+          right.getChildren().add(createRightContent(sessionText.getText(),
+              ser.getCurrentNumberofTeams(), serverIPText.getText(), portText.getText()));
         }
       } catch (IllegalArgumentException e2) {
         // TODO: handle exception
@@ -269,10 +275,6 @@ public class JoinScene extends Scene {
         info.setText("Please enter a valid \n IP-adress and port!");
         right.getChildren().add(info);
       }
-
-      // right.getChildren().clear();
-      // right.getChildren().add(createRightContent());
-
 
 
     });
@@ -313,7 +315,7 @@ public class JoinScene extends Scene {
    * @param space - int value for number of open spots
    * @return StackPane that gets added to the right StackPane
    */
-  private StackPane createSessionInfo(int id, int teams, int space) {
+  private StackPane createSessionInfo(int id, int teams) {
     StackPane sessionInfoBox = new StackPane();
     sessionInfoBox.getStyleClass().add("session-info");
     sessionInfoBox.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
@@ -328,7 +330,7 @@ public class JoinScene extends Scene {
     Text idtext = createInfoText("Session ID:  " + id, 25);
     textBox.getChildren().add(idtext);
 
-    Text teamText = createInfoText("Teams:  " + teams + "/" + space, 25);
+    Text teamText = createInfoText(teams + " players are waiting in the lobby!", 25);
     textBox.getChildren().add(teamText);
     sessionInfoBox.getChildren().add(textBox);
 
@@ -358,7 +360,7 @@ public class JoinScene extends Scene {
    * @author aniemsc
    * @return GridPane that contains UI components for joining
    */
-  private GridPane createButtonOption() {
+  private GridPane createButtonOption(String id, String ip, String port) {
     GridPane buttonBox = new GridPane();
     buttonBox.setAlignment(Pos.CENTER);
     buttonBox.setHgap(right.widthProperty().doubleValue() * 0.05);
@@ -372,19 +374,17 @@ public class JoinScene extends Scene {
       buttonBox.setVgap(spacing);
     });
     Button playerButton = createJoinButton("Join as Player");
+   playerButton.setOnAction(e -> {
+    this.root.getChildren().add(createJoinWindow(id, ip, port));
+   });
     buttonBox.add(playerButton, 0, 0);
-
     Button aiButton = createJoinButton("Join as AI-Client");
     buttonBox.add(aiButton, 1, 0);
-
-    // Button testButton = createJoinButton("Test");
-    // buttonBox.add(testButton,1,1);
-    buttonBox.add(createAiChooser(), 1, 1);
-
     return buttonBox;
 
   }
-
+  
+  @Deprecated
   /**
    * This method creates the UI components for choosing an AI client
    * 
@@ -408,6 +408,64 @@ public class JoinScene extends Scene {
     aiComboBox.getStyleClass().add("custom-combo-box-2");
     childBox.getChildren().add(aiComboBox);
     return childBox;
+  }
+  /**
+   * Generates a Window for submitting a map template in an editor scene.
+   * 
+   * @author aniemesc
+   * @return StackPane for Submitting templates
+   */
+  public StackPane createJoinWindow(String id,String ip,String port) {
+    PopUpPane popUp = new PopUpPane(this, 0.4, 0.4);
+    VBox vbox = new VBox();
+    vbox.setAlignment(Pos.TOP_CENTER);
+    vbox.setPadding(new Insets(10));
+    vbox.setSpacing(15);
+    Text header = EditorScene.createHeaderText(vbox, "Enter a Team name!", 15);
+    vbox.getChildren().add(header);
+    nameField = ComponentCreator.createNameField(vbox);  
+    vbox.getChildren().add(nameField);
+    HBox buttonBox = new HBox();
+    buttonBox.setAlignment(Pos.CENTER);
+    vbox.widthProperty().addListener((obs, oldv, newV) -> {
+      double size = newV.doubleValue() * 0.05;
+      buttonBox.setSpacing(size);
+    });
+    vbox.heightProperty().addListener((obs, oldv, newV) -> {
+      double size = newV.doubleValue() * 0.1;
+      VBox.setMargin(buttonBox, new Insets(size));
+    });
+    VBox.setMargin(buttonBox, new Insets(25));
+    Button joinButton = createControlButton(vbox,"Join","save-button");
+    joinButton.setOnAction(e -> {
+      if(nameField.getText().equals("")) {
+        CretaeGameScreenV2.informationmustBeEntered(nameField, "custom-search-field", "custom-search-field");
+        return;
+      }     
+      Client client = ClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(ip)
+          .onPort(port).enableSaveGame(false).enableAutoJoin(id, "teamname").build();
+    });
+    Button cancelButton = createControlButton(vbox, "Cancel", "leave-button");
+    cancelButton.setOnAction(e -> {
+      root.getChildren().remove(popUp);
+    });
+    buttonBox.getChildren().addAll(joinButton,cancelButton);
+    StackPane.setAlignment(buttonBox, Pos.BOTTOM_CENTER);
+    vbox.getChildren().add(buttonBox);
+    popUp.setContent(vbox);
+    return popUp;
+  }
+  
+  private Button createControlButton(VBox vBox,String label,String style) {
+    Button joinButton = new Button(label);
+    joinButton.getStyleClass().add(style);
+    joinButton.prefWidthProperty().bind(vBox.widthProperty().multiply(0.25));
+    joinButton.prefHeightProperty().bind(joinButton.widthProperty().multiply(0.25));
+    joinButton.prefHeightProperty().addListener((obs, oldv, newV) -> {
+      double size = newV.doubleValue() * 0.5;
+      joinButton.setFont(Font.font("Century Gothic", size));
+    });
+    return joinButton;
   }
 
 }

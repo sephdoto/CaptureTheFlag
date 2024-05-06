@@ -519,7 +519,7 @@ public class EditorScene extends Scene {
    * @param divider - int value that determines the resize ratio
    * @return
    */
-  public Text createHeaderText(VBox vBox, String label, int divider) {
+  public static Text createHeaderText(VBox vBox, String label, int divider) {
     Text leftheader = new Text(label);
     leftheader.getStyleClass().add("custom-header");
     leftheader.fontProperty().bind(Bindings.createObjectBinding(
