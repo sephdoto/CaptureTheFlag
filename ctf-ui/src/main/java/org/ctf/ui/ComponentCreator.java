@@ -3,6 +3,7 @@ package org.ctf.ui;
 import java.text.DecimalFormat;
 import org.ctf.shared.constants.Constants;
 import org.ctf.ui.controllers.MusicPlayer;
+import org.ctf.ui.controllers.SettingsSetter;
 import org.ctf.ui.customobjects.PopUpPane;
 
 import javafx.beans.binding.Bindings;
@@ -237,9 +238,19 @@ public class ComponentCreator {
 //      VBox.setMargin(grid, new Insets(15, size, 15, size));
 //    });
     VBox.setMargin(grid, new Insets(15, 50, 15, 50));
-    Button exit = createLeaveSettings(vbox);
-    addSaveListener(exit, musicSlider, soundSlider, popUp, root);
-    vbox.getChildren().add(exit);
+    Button save = createControlButton(vbox,"Save");
+    addSaveListener(save, musicSlider, soundSlider, popUp, root);
+    Button cancel = createControlButton(vbox, "Cancel");
+    cancel.setOnAction(e -> {
+      root.getChildren().remove(popUp);
+      SettingsSetter.loadCustomSettings();
+      MusicPlayer.setMusicVolume(Constants.musicVolume);
+    });
+    HBox buttonBox = new HBox();
+    buttonBox.spacingProperty().bind(vbox.widthProperty().multiply(0.05));
+    buttonBox.setAlignment(Pos.CENTER);
+    buttonBox.getChildren().addAll(save,cancel);
+    vbox.getChildren().add(buttonBox);
     popUp.setContent(vbox);
     return popUp;
   }
@@ -252,16 +263,16 @@ public class ComponentCreator {
    * @param popUp - submitting window
    * @return Button used for closing the submitting window
    */
-  private Button createLeaveSettings(VBox vBox) {
-    Button exit = new Button("Leave");
-    exit.getStyleClass().add("leave-button");
-    exit.prefWidthProperty().bind(vBox.widthProperty().multiply(0.3));
-    exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
-    exit.prefHeightProperty().addListener((obs, oldv, newV) -> {
+  private Button createControlButton(VBox vBox,String label) {
+    Button button = new Button(label);
+    button.getStyleClass().add("leave-button");
+    button.prefWidthProperty().bind(vBox.widthProperty().multiply(0.3));
+    button.prefHeightProperty().bind(button.widthProperty().multiply(0.25));
+    button.prefHeightProperty().addListener((obs, oldv, newV) -> {
       double size = newV.doubleValue() * 0.5;
-      exit.setFont(Font.font("Century Gothic", size));
+      button.setFont(Font.font("Century Gothic", size));
     });
-    return exit;
+    return button;
   }
 
   private void addSaveListener(Button exit, Slider musicSlider, Slider soundSlider, PopUpPane popUp,
@@ -270,6 +281,7 @@ public class ComponentCreator {
       root.getChildren().remove(popUp);
       MusicPlayer.setMusicVolume(musicSlider.getValue());
       Constants.soundVolume = soundSlider.getValue();
+      SettingsSetter.saveCustomSettings();
     });
   }
 
