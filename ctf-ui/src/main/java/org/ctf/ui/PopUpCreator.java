@@ -36,6 +36,7 @@ public class PopUpCreator {
 	private ObjectProperty<Font> leaveButtonText = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> aiPowerText = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> aiConfigHeader = new SimpleObjectProperty<Font>(Font.getDefault());
+	private ObjectProperty<Font> configButtonText = new SimpleObjectProperty<Font>(Font.getDefault());
 
 	
 	public PopUpCreator(Scene scene, StackPane root) {
@@ -52,6 +53,7 @@ public class PopUpCreator {
 				aiPowerText.set(Font.font(newWidth.doubleValue() / 50));
 				leaveButtonText.set(Font.font(newWidth.doubleValue() / 80));
 				aiConfigHeader.set(Font.font(newWidth.doubleValue() / 50));
+				configButtonText.set(Font.font(newWidth.doubleValue() / 60));
 			}
 		});
 	}
@@ -147,8 +149,6 @@ public class PopUpCreator {
 	public  PopUpPane createConfigPane(double widht, double hight) {
 		aiconfig = new PopUpPane(scene, widht, hight);
 		StackPane configRoot = new StackPane();
-		//ImageLoader.loadImages();
-		//StroeMaps.initDefaultMaps();
 		configRoot.getStyleClass().add("join-root");
 		configRoot.getChildren().add(createMainBox());
 		VBox mainBox = createMainBox();
@@ -165,7 +165,9 @@ public class PopUpCreator {
 		sep.getChildren().add(leftBoss);
 		sep.getChildren().add(rightBoss);
 		mainBox.getChildren().add(sep);
-		//mainBox.getChildren().add(createLeave());
+		HBox buttomBox = createButtomHBox();
+		buttomBox.getChildren().addAll(createConfigButton("Play and Save"), createConfigButton("Save"),createConfigButton("Leave"));
+		mainBox.getChildren().add(buttomBox);
 		configRoot.getChildren().add(mainBox);
 		aiconfig.setContent(configRoot);
 		return aiconfig;
@@ -173,9 +175,12 @@ public class PopUpCreator {
 	
 	private VBox createMainBox() {
 		VBox mainBox = new VBox();
-		
 		mainBox.setAlignment(Pos.TOP_CENTER);
-		mainBox.setSpacing(50);
+		mainBox.setSpacing(30);
+		aiconfig.widthProperty().addListener((observable, oldValue, newValue) -> {
+			double newSpacing = newValue.doubleValue() * 0.03;
+			mainBox.setSpacing(newSpacing);
+		});
 		return mainBox;
 	}
 	
@@ -203,8 +208,6 @@ public class PopUpCreator {
 		l.fontProperty().bind(aiConfigHeader);
 		l.prefWidthProperty().bind(parent.widthProperty().multiply(0.7));
 		return l;
-		
-		
 	}
 	
 	private HBox createMiddleHBox() {
@@ -217,6 +220,31 @@ public class PopUpCreator {
 		});
 		return sep;
 	}
+	
+	private HBox createButtomHBox() {
+		HBox buttonBox = new HBox();
+		buttonBox.setAlignment(Pos.CENTER);
+		buttonBox.setSpacing(50);
+		aiconfig.widthProperty().addListener((observable, oldValue, newValue) -> {
+			double newSpacing = newValue.doubleValue() * 0.05;
+			buttonBox.setSpacing(newSpacing);
+		});
+		return buttonBox;
+	}
+	
+	private Button createConfigButton(String text) {
+		Button configButton = new Button(text);
+		configButton.fontProperty().bind(configButtonText);
+		configButton.getStyleClass().add("leave-button");
+		configButton.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
+		configButton.prefHeightProperty().bind(configButton.widthProperty().multiply(0.25));
+		configButton.setOnAction(e -> {
+			//hsc.switchToCreateGameScene(App.getStage());
+		});
+		return configButton;
+	}
+	
+	
 	
 
 	

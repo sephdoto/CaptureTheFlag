@@ -46,7 +46,7 @@ import javafx.stage.PopupWindow.AnchorLocation;
 import javafx.util.Duration;
 
 public class CretaeGameScreenV2 extends Scene {
-	CreateAIConfigPopUp configPopUpCreator;
+	
 	HomeSceneController hsc;
 	String selected;
 	static GameState state;
@@ -81,7 +81,7 @@ public class CretaeGameScreenV2 extends Scene {
 		this.getStylesheets().add(getClass().getResource("ComboBox.css").toExternalForm());
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
 		this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
-		configPopUpCreator = new CreateAIConfigPopUp();
+		
 		
 		this.root = (StackPane) this.getRoot();
 		popUpCreator = new PopUpCreator(this, root);
@@ -245,7 +245,7 @@ public class CretaeGameScreenV2 extends Scene {
 		power.setOnAction(e -> {
 			//hsc.switchToWaitGameScene(App.getStage());
 			root.getChildren().remove(aiLevelPopUpPane);
-			root.getChildren().add(configPopUpCreator.createConfigPane(this,0.96,0.96));
+			//root.getChildren().add(configPopUpCreator.createConfigPane(this,0.96,0.96));
 		});
 		return power;
 	}
