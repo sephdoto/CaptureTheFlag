@@ -332,13 +332,13 @@ public class EditorScene extends Scene {
     controlgrid.add(createText(customRoot, "Value", 30), 2, 2);
     TextField namefield = (createNameField(customRoot));
     controlgrid.add(namefield, 1, 0);
-    controlgrid.add(createShapeBox(customRoot), 1, 1);
+    controlgrid.add(createShapeBox(), 1, 1);
     Spinner<Integer> strenghthSpinner = createMapSpinner(0, 500, 0);
     controlgrid.add(strenghthSpinner, 3, 0);
 
     Spinner<Integer> valueSpinner = createMapSpinner(0, 500, 0);
 
-    ComboBox<String> directionsBox = createDirectionsBox(customRoot, valueSpinner);
+    ComboBox<String> directionsBox = createDirectionsBox(valueSpinner);
     valueSpinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
       engine.handleDirectionValue(directionsBox, newValue);
       movementVisual.updateMovementOptions(directionsBox.getValue());
@@ -513,6 +513,7 @@ public class EditorScene extends Scene {
 
   /**
    * Creates a custom Text Header.
+   * @author aniemesc
    * @param vBox - Container used for resize dependency  
    * @param label - String value
    * @param divider - int value that determines the resize ratio
@@ -528,6 +529,7 @@ public class EditorScene extends Scene {
 
   /**
    * Creates a custom Text.
+   * @author aniemesc
    * @param vBox - Container used for resize dependency
    * @param label - String value
    * @param divider - int value that determines the resize ratio
@@ -543,6 +545,7 @@ public class EditorScene extends Scene {
 
   /**
    * Creates and styles a custom spinner object.
+   * @author aniemesc
    * @param min - minimum int value of spinner
    * @param max - maximum int value of spinner
    * @param cur - current int value of spinner
@@ -561,6 +564,7 @@ public class EditorScene extends Scene {
   /**
    * Creates the ComboBox for choosing the placement type of the map template.
    * @param vBox - Container used for resize dependency
+   * @author aniemesc
    * @return ComboBox for placement type
    */
   private ComboBox<String> createPlacementBox(VBox vBox) {
@@ -593,11 +597,15 @@ public class EditorScene extends Scene {
     return placementBox;
   }
 
-  private ComboBox<String> createFigureBox(VBox vBox) {
-
+  /**
+   * Creates and styles the ComboBox responsible for choosing saved 
+   * custom pieces in the "Add Pieces" option tab.
+   * @author aniemesc
+   * @return ComboBox for choosing saved pieces
+   */
+  private ComboBox<String> createFigureBox() {
     customFigureBox = new ComboBox<>();
     engine.fillCustomBox(customFigureBox);
-    // placementBox.setValue(options.get(0));
     customFigureBox.getStyleClass().add("custom-combo-box-2");
     customFigureBox.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
     customFigureBox.prefHeightProperty().bind(customFigureBox.widthProperty().multiply(0.18));
@@ -608,7 +616,13 @@ public class EditorScene extends Scene {
     return customFigureBox;
   }
 
-  private ComboBox<String> createShapeBox(VBox vBox) {
+  /**
+   * Creates and styles the ComboBox responsible for choosing  
+   * a movement shape in the "Configure Pieces" option tab.
+   * @author aniemesc
+   * @return ComboBox for choosing a movement shape
+   */
+  private ComboBox<String> createShapeBox() {
     ObservableList<String> options = FXCollections.observableArrayList("None", "L-Shape");
     ComboBox<String> shapeBox = new ComboBox<>(options);
     shapeBox.setValue(options.get(0));
@@ -622,7 +636,14 @@ public class EditorScene extends Scene {
     return shapeBox;
   }
 
-  private ComboBox<String> createDirectionsBox(VBox vBox, Spinner<Integer> vaSpinner) {
+  /**
+   * Creates and styles the ComboBox responsible for choosing  
+   * a direction in the "Configure Pieces" option tab.
+   * @author aniemesc
+   * @param vaSpinner - spinner object for selecting the corresponding value
+   * @return ComboBox for choosing a direction
+   */
+  private ComboBox<String> createDirectionsBox(Spinner<Integer> vaSpinner) {
     ObservableList<String> options = FXCollections.observableArrayList("Left", "Right", "Up",
         "Down", "Up-Left", "Up-Right", "Down-Left", "Down-Right");
     ComboBox<String> directionBox = new ComboBox<>(options);
@@ -640,6 +661,12 @@ public class EditorScene extends Scene {
     return directionBox;
   }
 
+  /**
+   * Creates the container for the UI components required for adding 
+   * custom pieces in the Add Pieces" option tab.
+   * @param vBox - Container used for resize dependency
+   * @return HBox container
+   */
   private HBox createFigureBar(VBox vBox) {
     HBox chooseBar = new HBox();
     chooseBar.setAlignment(Pos.CENTER);
@@ -647,7 +674,7 @@ public class EditorScene extends Scene {
       double spacing = newVal.doubleValue() * 0.06;
       chooseBar.setSpacing(spacing);
     });
-    chooseBar.getChildren().add(createFigureBox(vBox));
+    chooseBar.getChildren().add(createFigureBox());
     Spinner<Integer> customSpinner = createMapSpinner(0, 100, 0);
     chooseBar.getChildren().add(customSpinner);
     customFigureBox.setValue("Choose Custom Piece");
@@ -660,10 +687,16 @@ public class EditorScene extends Scene {
       customSpinner.getValueFactory().setValue(customcount);
     });
     createChangeListener(customSpinner, "custom", true);
-
     return chooseBar;
   }
 
+  /**
+   * Creates and styles  a TextField for naming custom pieces in 
+   * the "Configure Pieces" option tab.
+   * @author aniemesc
+   * @param vbox - Container used for resize dependency
+   * @return TextField for naming custom pieces
+   */
   private TextField createNameField(VBox vbox) {
     TextField textField = new TextField();
     textField.getStyleClass().add("custom-search-field");
@@ -675,13 +708,21 @@ public class EditorScene extends Scene {
     });
     textField.textProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue.length() > 15) {
-        textField.setText(oldValue); // Wenn die Länge überschritten wird, wird der Text auf den
-        // vorherigen Wert zurückgesetzt
+        textField.setText(oldValue); 
       }
     });
     return textField;
   }
 
+  /**
+   * Creates and styles  a Button for adding custom pieces in 
+   * the "Configure Pieces" option tab.
+   * @author aniemesc
+   * @param vbox - Container used for resize dependency
+   * @param name - TextField containing the name of the piece
+   * @param strength - Spinner containing the strength value of the piece
+   * @return Button for adding custom pieces
+   */
   private Button createAddButton(VBox vbox, TextField name, Spinner<Integer> strength) {
     Button addButton = new Button("Add");
     addButton.getStyleClass().add("join-button");
@@ -696,6 +737,11 @@ public class EditorScene extends Scene {
     return addButton;
   }
 
+  /**
+   * Creates the container for the visual map representation and calls methods 
+   * for initializing its content.
+   * @author aniemesc
+   */
   private void createVisual() {
     visualRoot = new StackPane();
     visualRoot.getStyleClass().add("option-pane");
@@ -706,11 +752,17 @@ public class EditorScene extends Scene {
     createDirectionsVisual();
     updateVisualRoot();
     // visualRoot.getChildren().add(visual);
-
   }
 
+  /**
+   * Creates a custom ChangeListener for Spinner objects that uses the template 
+   * engine to handle events.
+   * @author aniemesc
+   * @param spinner - Spinner that the listener gets added to
+   * @param event - String representation of an event 
+   * @param custom - boolean value that tells you whether the spinner is for custom pieces
+   */
   private void createChangeListener(Spinner<Integer> spinner, String event, boolean custom) {
-
     spinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
       System.out.println("Change!!");
       if (spinnerchange) {
@@ -729,24 +781,29 @@ public class EditorScene extends Scene {
       } ;
     });
   }
-
+  
+  /**
+   * Sets the flag that indicates whether a spinner was recently changed 
+   * @author aniemesc
+   * @param value - boolean value indicating if a spinner was changed 
+   */
   public void setSpinnerChange(boolean value) {
     this.spinnerchange = value;
   }
 
   /**
-   * Method is called when going into the editor scene
-   *
+   * Updates the visual map representation based on the current map template.
+   * @author aniemesc
    * @author rsyed: Bug fixes
    */
   private void updateVisualRoot() {
-//    MapPreview mp = new MapPreview(engine.tmpTemplate);
-//    visualRoot.getChildren().clear();
-//    try {
-//      visualRoot.getChildren().add(new GamePane(mp.getGameState()));
-//    } catch (Accepted e) {
-//      e.getMessage();
-//    }
+    MapPreview mp = new MapPreview(engine.tmpTemplate);
+    visualRoot.getChildren().clear();
+    try {
+      visualRoot.getChildren().add(new GamePane(mp.getGameState()));
+    } catch (Accepted e) {
+      e.getMessage();
+    }
 
     // GridPane stack = new GridPane();
     // Button but = new Button("hi");
@@ -755,6 +812,11 @@ public class EditorScene extends Scene {
     // visualRoot.getChildren().add(directionsContainer);
   }
 
+  /**
+   * Initializes the MovementVisual of the EditorScene used for displaying the 
+   * current movement options of a custom piece
+   * @author aniemesc
+   */
   private void createDirectionsVisual() {
     this.directionsContainer = new VBox();
     directionsContainer.maxWidthProperty().bind(visualRoot.widthProperty().multiply(0.75));
