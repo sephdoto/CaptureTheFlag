@@ -174,10 +174,20 @@ public class TemplateEngine {
     return isvalid;
   }
 
+  /**
+   * Sets the attribute for row number in the tmpTemplate.
+   * @author aniemesc
+   * @param rows - number of rows
+   */
   public void setRows(int rows) {
     tmpTemplate.getGridSize()[0] = rows;
   }
 
+  /**
+   * Sets the attribute for column number in the tmpTemplate.
+   * @author aniemesc
+   * @param rows - number of columns 
+   */
   public void setCols(int cols) {
     tmpTemplate.getGridSize()[1] = cols;
   }
@@ -186,7 +196,12 @@ public class TemplateEngine {
     // TemplateEngine engine = new TemplateEngine(new Edi);
     // engine.printTemplate();
   }
-
+  
+  /**
+   * Updates the Placement attribute of the tmpTemplate according to String value.
+   * @author aniemesc
+   * @param value - String for placement value
+   */
   public void setPlacement(String value) {
     switch (value) {
       case "Symmetric":
@@ -203,6 +218,11 @@ public class TemplateEngine {
     }
   }
 
+  /**
+   * Saves the current template in the map template folder.
+   * @author aniemesc
+   * @param name - String value for the name of the template
+   */
   public void saveTemplate(String name) {
     try {
       JSON_Tools.saveMapTemplateAsFile(name, tmpTemplate);
@@ -212,9 +232,18 @@ public class TemplateEngine {
     }
   }
 
+  /**
+   * Updates the amout of figures in the current template in response to the change of a 
+   * Spinner. If the updated map template is invalid the changes get reversed. It Also checks 
+   * if there is at least 1 piece remaining.
+   * @author aniemesc
+   * @param spinner - Spinner that was changed
+   * @param type - String value for the type of the piece whose amount was changed 
+   * @param old - int value for old amount
+   * @param newV - int value for new amount
+   * @return boolean that indicates whether new template was valid
+   */
   public boolean updatePiece(Spinner<Integer> spinner, String type, int old, int newV) {
-
-
     if (newV == 0 && tmpTemplate.getPieces().length == 1) {
       editorscene.setSpinnerChange(true);
       spinner.getValueFactory().setValue(old);
@@ -222,9 +251,7 @@ public class TemplateEngine {
       return false;
 
     }
-
     betterUpdateCount(type, newV);
-
     boolean isvalid = TemplateChecker.checkTemplate(tmpTemplate);
     System.out.println(isvalid);
     if (!isvalid) {
@@ -237,6 +264,14 @@ public class TemplateEngine {
     return true;
   }
 
+  /**
+   * Updates the pieces attribute and removes pieces from the template
+   * if their amount is 0. Makes sure that pieces get stored properly even 
+   * though they were removed from the template.
+   * @author aniemesc
+   * @param type 
+   * @param newValue
+   */
   public void betterUpdateCount(String type, int newValue) {
     pieces.get(type).setCount(newValue);
     int number = (int) pieces.values().stream().filter(p -> p.getCount() > 0).count();
@@ -249,13 +284,24 @@ public class TemplateEngine {
       }
     }
     tmpTemplate.setPieces(updated);
-
   }
 
+  /**
+   * Returns the amount of pieces of a certain type.
+   * @author aniemesc 
+   * @param type - String value stating the type of the piece
+   * @return int value stating the amount 
+   */
   public int getPieceCount(String type) {
     return pieces.get(type).getCount();
   }
 
+  /**
+   * Fills the comboBox for custom pieces with all existing pieces that are not 
+   * part of the default set.
+   * @author aniemesc
+   * @param customBox - ComboBox for selecting custom pieces
+   */
   public void fillCustomBox(ComboBox<String> customBox) {
     String[] names = {"Pawn", "Knight", "Queen", "Bishop", "Rook", "King"};
     ArrayList<String> defaultPieces = new ArrayList<String>(Arrays.asList(names));
@@ -266,6 +312,11 @@ public class TemplateEngine {
     }
   }
 
+  /**
+   * Generates a Directions object which is a copy of tmpMovement attribute.
+   * @author aniemesc
+   * @return Directions object
+   */
   public Directions genrateMovementCopy() {
     Directions result = new Directions();
     result.setLeft(this.tmpMovement.getDirections().getLeft());

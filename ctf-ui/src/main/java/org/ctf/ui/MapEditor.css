@@ -164,21 +164,21 @@
 .move-circle{
 	 -fx-fill: rgb(53,89,119);
 }
-/* Styling für den Slider mit ID "mySlider" */
+
 .mySlider .track {
-    -fx-background-color: #ddd; /* Hintergrundfarbe der Spur */
+    -fx-background-color: #ddd; 
 }
 
 .mySlider .thumb {
-    -fx-background-color: #007bff; /* Farbe des Schiebereglers */
+    -fx-background-color: #007bff; 
 }
 
 .mySlider .thumb:hover {
-    -fx-background-color: #0056b3; /* Farbe des Schiebereglers bei Hover */
+    -fx-background-color: #0056b3;
 }
 
 .mySlider .thumb:pressed {
-    -fx-background-color: #003e80; /* Farbe des Schiebereglers bei Klick */
+    -fx-background-color: #003e80; 
 }
 
 
