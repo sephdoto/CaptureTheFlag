@@ -330,6 +330,12 @@ public class TemplateEngine {
     return result;
   }
 
+  /**
+   * Adds the current custom piece in the EditorScene to the pieces attribute.
+   * @author aniemesc
+   * @param nameField - TextField that contains the type
+   * @param strengthSpinner - Spinner that contains the attackPower
+   */
   public void addpiece(TextField nameField, Spinner<Integer> strengthSpinner) {
     if (pieces.keySet().contains(nameField.getText())) {
       editorscene.inform(nameField.getText() + " already exists!");
@@ -347,13 +353,19 @@ public class TemplateEngine {
     editorscene.inform(nameField.getText() + " was added succesfully!");
   }
 
+  /**
+   * Sets a Spinner on the value of the current direction.
+   * @author aniemesc
+   * @param value - String stating the direction
+   * @param vaSpinner - Spinner thats need to be set
+   */
   public void handleDirection(String value, Spinner<Integer> vaSpinner) {
     switch (value) {
       case "Left":
         vaSpinner.getValueFactory().setValue(tmpMovement.getDirections().getLeft());
         break;
       case "Right":
-        System.out.println("Test");
+        //System.out.println("Test");
         vaSpinner.getValueFactory().setValue(tmpMovement.getDirections().getRight());
         break;
       case "Up":
@@ -380,6 +392,13 @@ public class TemplateEngine {
     }
   }
 
+  /**
+   * Updates the Directions attribute of the tmpTemplate in response to 
+   * a Spinner change.
+   * @author aniemesc
+   * @param directionsBox - ComboBox containing the current direction
+   * @param newv - int value received from a spinner  
+   */
   public void handleDirectionValue(ComboBox<String> directionsBox, int newv) {
     switch (directionsBox.getValue()) {
       case "Left":
@@ -413,6 +432,11 @@ public class TemplateEngine {
     }
   }
 
+  /**
+   * Returns all names of saved map templates.
+   * @author aniemesc 
+   * @return ArrayList containing the names of all saved map templates
+   */
   public ArrayList<String> getTemplateNames() {
     File templateFolder = new File(Constants.mapTemplateFolder);
     if (templateFolder.isDirectory()) {
@@ -427,6 +451,11 @@ public class TemplateEngine {
     return new ArrayList<String>();
   }
 
+  /**
+   * Returns the Movement object of the current map template.
+   * @author aniemesc
+   * @return Movement object
+   */
   public Movement getTmpMovement() {
     return this.tmpMovement;
   }
