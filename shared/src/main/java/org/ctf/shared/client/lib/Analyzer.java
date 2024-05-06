@@ -144,7 +144,7 @@ public class Analyzer {
    * @author rsyed
    * @return {@link SavedGame}
    */
-  public void addMove(Move move) {
+  public synchronized void addMove(Move move) {
     this.savedGame.addMove(move);
   }
 
@@ -155,7 +155,7 @@ public class Analyzer {
    * @author rsyed
    * @return {@link SavedGame}
    */
-  public void addGameState(GameState gameState) {
+  public synchronized void addGameState(GameState gameState) {
     this.savedGame.setInitialGameState(gameState);
   }
 

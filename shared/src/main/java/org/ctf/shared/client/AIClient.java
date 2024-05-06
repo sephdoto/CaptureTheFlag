@@ -214,7 +214,7 @@ public class AIClient extends Client {
    * @author rsyed
    */
   @Override
-  public void gameStateHelper() {
+  public synchronized void gameStateHelper() {
     GameState gameState = new GameState();
     try {
       gameState = comm.getCurrentGameState(currentServer);

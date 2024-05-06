@@ -10,7 +10,7 @@ public class SaveGameVisualizer {
   public static void main(String[] args) {
     Analyzer analyzer = new Analyzer();
     Gson gson = new Gson();
-    boolean b = analyzer.readFile("20240504-220806");
+    boolean b = analyzer.readFile("20240506-164855");
     System.out.println(b);
     HashMap<String, Move> mappy = analyzer.getSavedGame().getMoves();
     for (HashMap.Entry<String, Move> entry : mappy.entrySet()) {

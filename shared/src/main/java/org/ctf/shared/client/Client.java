@@ -342,7 +342,7 @@ public class Client implements GameClientInterface {
    * @param {@link GameSessionResponse} with feteched Data from server
    * @author rsyed
    */
-  public void gameSessionResponseParser(GameSessionResponse gameSessionResponse) {
+  public synchronized void gameSessionResponseParser(GameSessionResponse gameSessionResponse) {
     this.currentSession = gson.fromJson(gson.toJson(gameSessionResponse), GameSession.class);
     this.currentGameSessionID = gameSessionResponse.getId();
     this.currentServer = shortURL + "/" + currentGameSessionID;
@@ -488,7 +488,7 @@ public class Client implements GameClientInterface {
    * @throws UnknownError
    * @author rsyed
    */
-  public void gameStateHelper() {
+  public synchronized void gameStateHelper() {
     GameState gameState = new GameState();
     try {
       gameState = comm.getCurrentGameState(currentServer);
@@ -554,7 +554,7 @@ public class Client implements GameClientInterface {
    *
    * @author rsyed, sistumpf
    */
-  protected void normaliseGameState(GameState gameState) {
+  protected synchronized void normaliseGameState(GameState gameState) {
     for (int i = 0; i < gameState.getTeams().length; i++) {
       if (gameState.getTeams()[i] == null)
         continue;
