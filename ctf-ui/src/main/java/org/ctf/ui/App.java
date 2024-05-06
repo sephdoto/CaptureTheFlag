@@ -85,6 +85,16 @@ public class App extends Application {
 		ImageView vw = new ImageView(bImage);
 		vw.fitWidthProperty().bind(root.widthProperty());
 		vw.fitHeightProperty().bind(root.heightProperty());
+		Image ctf = new Image(getClass().getResourceAsStream("CaptureTheFlag.png"));
+        ImageView ctfv = new ImageView(ctf);
+        ctfv.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.8));
+        ctfv.setPreserveRatio(true);
+        StackPane.setAlignment(ctfv, Pos.TOP_CENTER);
+        root.widthProperty().addListener((observable, oldValue, newValue) -> {
+          double newPadding = newValue.doubleValue() * 0.05; 
+          root.setPadding(new Insets(newPadding));
+        });
+
 		HomeScreenButton i1 = new HomeScreenButton("CREATE MAP", () -> {
 			ssc.switchToMapEditorScene(mainStage);
 		});
@@ -99,10 +109,10 @@ public class App extends Application {
 			
 			root.getChildren().add(new ComponentCreator(startScene).createSettingsWindow(root));
 		});
-		VBox vbox = new VBox(11, i1, i2, i3,i4);
+		VBox vbox = new VBox(11,i1, i2, i3,i4);
 		vbox.setAlignment(Pos.CENTER);
 		vbox.setMaxWidth(50);
-		root.getChildren().addAll(vw, vbox);
+		root.getChildren().addAll(vw,ctfv, vbox);
 		return root;
 	}
 	/**
