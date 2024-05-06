@@ -16,6 +16,7 @@ import org.openjdk.jol.vm.VM;
 import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.shared.ai.mcts3.ReferenceGameState;
 import org.ctf.shared.ai.random.RandomAI;
 
 /**
@@ -67,20 +68,16 @@ class ObjectMemoryAnalyzer {
     Thread.sleep(2000);
   }
   
-//  @Test
+  @Test
   void testGridMemoryUsage() {
     GameState gameState = TestValues.getTestState();
-    HashMap<int[], Piece> piecePos = new  HashMap<int[], Piece>();
-    for(int i=0; i<gameState.getGrid().length; i++)
-      for(int j=0; j<gameState.getGrid()[i].length; j++)
-        if(gameState.getGrid()[i][j].contains("p:"))
-          for(Team t:gameState.getTeams())
-            for(Piece p: t.getPieces())
-              if(p.getId().equals(gameState.getGrid()[i][j]))
-                  piecePos.put(new int[] {i,j}, p);
+    ReferenceGameState rGameState = new ReferenceGameState(gameState);
+    
+    org.ctf.shared.ai.mcts.TreeNode node = new org.ctf.shared.ai.mcts.TreeNode(null, gameState, null, new ReferenceMove(null, new int[2]));
+    org.ctf.shared.ai.mcts3.TreeNode node3 = new org.ctf.shared.ai.mcts3.TreeNode(null, new ReferenceGameState(gameState), null, new ReferenceMove(null, new int[2]));
 
-    System.out.println(GraphLayout.parseInstance(gameState).toFootprint());
-    System.out.println(GraphLayout.parseInstance(piecePos).toFootprint());
+//    System.out.println(GraphLayout.parseInstance(node).toFootprint());
+//    System.out.println(GraphLayout.parseInstance(node3).toFootprint());
   }
 
 }

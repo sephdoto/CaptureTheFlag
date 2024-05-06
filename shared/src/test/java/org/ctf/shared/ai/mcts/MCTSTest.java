@@ -100,7 +100,7 @@ class MCTSTest {
   void testPerformance() throws InterruptedException {
     double expansions = 0;
     int count = 0;
-    int timeInMilis = 10;
+    int timeInMilis = 10000;
     int simulations = 0;
     int heuristics = 0;
     int crashes = 0;
@@ -108,7 +108,7 @@ class MCTSTest {
     MCTS mcts = new MCTS(new TreeNode(null, gameState, new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0})), new AI_Config());
     TreeNode rootclone = mcts.root.clone(mcts.root.copyGameState());
     
-    for (; count < 1000; count++) {
+    for (; count < 1; count++) {
 
       //      MCTS_TestDouble mcts = new
       // MCTS_TestDouble(MCTSTest.mcts.root.clone(MCTSTest.mcts.root.copyGameState()));

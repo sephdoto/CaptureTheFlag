@@ -33,6 +33,9 @@ public class ReferenceMove {
    * @param move
    */
   public ReferenceMove(GameState gameState, Move move) {
+    if(move == null)
+      return;
+    
     if(move.getPieceId() != null) {
       this.newPosition = move.getNewPosition();
       this.piece =
@@ -63,7 +66,27 @@ public class ReferenceMove {
           .get();
     }
   }
-  
+
+  /**
+   * Alternative constructor for mcts3, does the same as the one above.
+   * 
+   * @param gameState
+   * @param move
+   */
+  public ReferenceMove(org.ctf.shared.ai.mcts3.ReferenceGameState gameState,
+      Move move) {
+    if(move.getPieceId() != null) {
+      this.newPosition = move.getNewPosition();
+      this.piece =
+          Arrays.stream(
+              gameState.getTeams()[Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0])]
+                  .getPieces())
+          .filter(p -> p.getId().equals(move.getPieceId()))
+          .findFirst()
+          .get();
+    }
+  }
+
   /**
    * Converts a ReferenceMove back to a normal Move.
    * @return Move representing this ReferenceMove.
