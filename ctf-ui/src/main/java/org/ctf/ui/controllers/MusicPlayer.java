@@ -12,18 +12,29 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.Themes;
 
 /**
- * This class is used to play music in the background. On creation, it plays a start up sound/song,
- * then the songs get randomly played.
+ * MusicPlayer uses a MediaPlayer to play music in the background. 
+ * On creation, it plays a start up song, then the songs get randomly played.
  *
  * @author sistumpf, ysiebenh
  */
 public class MusicPlayer {
-  MediaPlayer mp;
+  public static MediaPlayer mp;
   Themes theme;
 
   public MusicPlayer() {
     start();
     this.theme = Constants.theme;
+  }
+  
+  /**
+   * Adjusts the music volume in Constants and for the current player.
+   * 
+   * @author sistumpf
+   * @param volume
+   */
+  public static void setMusicVolume(double volume) {
+    Constants.musicVolume = volume;
+    mp.setVolume(volume);
   }
 
   /**
@@ -65,12 +76,12 @@ public class MusicPlayer {
    * @author sistumpf
    */
   private void fadeInAndOut() {
-    new FadeOutOfExistence(this.mp, 2500).start();
-    this.mp = getMusic();
-    this.mp.setVolume(0);
-    this.mp.setOnEndOfMedia(infinitePlay(false));
-    this.mp.play();
-    new FadeIntoExistence(this.mp, 7000).start();
+    new FadeOutOfExistence(mp, 2500).start();
+    mp = getMusic();
+    mp.setVolume(0);
+    mp.setOnEndOfMedia(infinitePlay(false));
+    mp.play();
+    new FadeIntoExistence(mp, 7000).start();
   }
 
   /**
@@ -133,7 +144,7 @@ public class MusicPlayer {
         new Runnable() {
       @Override
       public void run() {
-        MusicPlayer.this.mp = startScreen ? startUpMusic() : getMusic();
+        mp = startScreen ? startUpMusic() : getMusic();
         mp.setOnEndOfMedia(this);
         mp.play();
       }
