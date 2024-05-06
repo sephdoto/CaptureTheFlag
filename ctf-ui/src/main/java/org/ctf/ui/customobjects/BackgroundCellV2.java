@@ -73,31 +73,37 @@ public class BackgroundCellV2 extends Pane {
 	}
 
 	public void addFigure(CostumFigurePain figure) {
+		NumberBinding binding = Bindings.multiply(widthProperty(), 0.5);
+		NumberBinding roundSize = Bindings.createIntegerBinding(() ->  binding.intValue(), binding);
 		base.getChildren().remove(rc);
 		occupied = true;
 		child = figure;
-		child.maxWidthProperty().bind(widthProperty().multiply(0.5));
-		child.maxHeightProperty().bind(widthProperty().multiply(0.5));
+		child.maxWidthProperty().bind(roundSize);
+		child.maxHeightProperty().bind(roundSize);
 		base.getChildren().add(child);
 		figure.setParente(this);
 	}
 	
 
 	public void addBlock() {
+		NumberBinding binding = Bindings.multiply(widthProperty(), 0.5);
+		NumberBinding roundSize = Bindings.createIntegerBinding(() ->  binding.intValue(), binding);
 		occupied = true;
 		BlockRepV3 blocki = new BlockRepV3();
-		blocki.maxWidthProperty().bind(base.widthProperty().multiply(0.5));
-		blocki.maxHeightProperty().bind(base.widthProperty().multiply(0.5));
+		blocki.maxWidthProperty().bind(roundSize);
+		blocki.maxHeightProperty().bind(roundSize);
 		base.getChildren().clear();
 		base.getChildren().add(blocki);
 		
 	}
 
 	public void addBasis(BaseRep r) {
+		NumberBinding binding = Bindings.multiply(widthProperty(), 0.5);
+		NumberBinding roundSize = Bindings.createIntegerBinding(() ->  binding.intValue(), binding);
 		occupied = true;
 		BaseRep basis = r;
-		basis.maxWidthProperty().bind(base.widthProperty().multiply(0.5));
-		basis.maxHeightProperty().bind(base.widthProperty().multiply(0.5));
+		basis.maxWidthProperty().bind(roundSize);
+		basis.maxHeightProperty().bind(roundSize);
 		base.getChildren().clear();
 		base.getChildren().add(basis);
 	}
@@ -105,7 +111,7 @@ public class BackgroundCellV2 extends Pane {
 	
 	
 	public void showattackCircle() {
-		this.setStyle("-fx-background-color: rgb(255, 0, 0, 0.2);" + "-fx-border-color: black; " + "-fx-border-width: 2px");
+		this.setStyle("-fx-background-color: rgb(255, 0, 0, 0.2);" + "-fx-border-color: red; " + "-fx-border-width: 2px");
 		//this.setStyle("-fx-background-color: red;");
 		
 		
@@ -124,7 +130,7 @@ public class BackgroundCellV2 extends Pane {
 	}
 	
 	public void showSelected() {
-		//this.setStyle("-fx-background-color: rgba(173, 216, 230, 0.5);" + "-fx-border-color: black; " + "-fx-border-width: 1.5px ");
+		this.setStyle("-fx-background-color: transparent;" + "-fx-border-color: black; " + "-fx-border-width: 2px ");
 		//rc.setFill(testColor);
 		//rc2.setFill(testColor);
 		createCircle2();

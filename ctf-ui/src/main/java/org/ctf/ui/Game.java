@@ -82,7 +82,7 @@ public class Game {
 			cf.setUnactive();
 			cf.setUnattacble();
 		}
-		PlayGameScreen.resetTimer();
+		//PlayGameScreen.resetTimer();
 	}
 
 	public void deleteTeam(String teamToDelete) {
@@ -131,7 +131,7 @@ public class Game {
 	public static void deselectFigure() {
 		if (cb != null) {
 			for (BackgroundCellV2 c : cb.getCells().values()) {
-				c.deselect();
+ 				c.deselect();
 			}
 			for (CostumFigurePain cf : cb.getFigures().values()) {
 				cf.setUnattacble();

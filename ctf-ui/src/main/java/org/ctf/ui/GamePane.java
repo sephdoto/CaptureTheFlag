@@ -18,6 +18,8 @@ import javafx.animation.TranslateTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.NumberBinding;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -49,8 +51,8 @@ public class GamePane extends HBox{
 	String[][] map;
 	final GameState state;
 	Team[] teams;
-	double rows;
-	double cols;
+int rows;
+	int cols;
 	int currentTeam;
 	public VBox vBox;
 	int anzTeams;
@@ -103,9 +105,11 @@ public class GamePane extends HBox{
 				 
 			}
 		});
+		 IntegerProperty nbC = new SimpleIntegerProperty(cols);
+	     IntegerProperty nbR = new SimpleIntegerProperty(rows);
 		
 		 gridPane = new GridPane();
-		 gridPane.setSnapToPixel(false);
+		 
 		 gridPane.setStyle("-fx-border-color:black; -fx-border-width: 3px");
 		// gridPane.setGridLinesVisible(true);
 		binding = Bindings.min(widthProperty().divide(cols), heightProperty().divide(rows));
@@ -114,7 +118,7 @@ public class GamePane extends HBox{
 		vBox.prefHeightProperty().bind(roundSize.multiply(rows));
 		vBox.setMaxSize(Control.USE_PREF_SIZE, Control.USE_PREF_SIZE);
 		vBox.setFillWidth(true);
-		
+		gridPane.setSnapToPixel(false);
 		VBox.setVgrow(gridPane, Priority.ALWAYS);
 		for (int i = 0; i < cols; i++) {
 			 ColumnConstraints columnConstraints = new ColumnConstraints(Control.USE_PREF_SIZE,

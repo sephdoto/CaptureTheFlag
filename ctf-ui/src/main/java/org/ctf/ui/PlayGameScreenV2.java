@@ -85,7 +85,7 @@ public class PlayGameScreenV2 extends Scene {
 		top.prefHeightProperty().bind(this.heightProperty());
 		left.prefHeightProperty().bind(this.heightProperty());
 		left.prefWidthProperty().bind(this.widthProperty().multiply(0.7));
-		left.getChildren().add(createShowMapPane("p1"));
+		left.getChildren().add(createShowMapPane("p2"));
 		top.getChildren().add(left);
 		right.getChildren().add(createTopCenter());
 		right.getChildren().add(imageTest());

@@ -48,6 +48,7 @@ public class BaseRep extends Pane {
 		label.prefHeightProperty().bind(this.heightProperty());
 		label.setAlignment(Pos.BOTTOM_CENTER);
 		label.setStyle("-fx-background-color: white ; -fx-border-color: black; -fx-font-weight: bold; -fx-shape: 'M  150 0 L75 200 L225 200  z'");
+		//label.setOpacity(0);
 		this.getChildren().add(label);
 		 clickHandler = event -> {
 	            // Rufe die Methode zur Verarbeitung des Mausklicks in einer anderen Klasse auf
@@ -87,6 +88,7 @@ public class BaseRep extends Pane {
 	public void setScene(PlayGameScreenV2 scene) {
 		this.scene = scene;
 	}
+
 	
 	
 }

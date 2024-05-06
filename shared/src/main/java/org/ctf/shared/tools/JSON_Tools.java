@@ -27,7 +27,7 @@ import java.io.File;
  * @author sistumpf
  */
 public class JSON_Tools {
-  static String mapTemplates = Constants.mapTemplateFolder + "templates" + File.separator;
+  public static String mapTemplates = Constants.mapTemplateFolder + "templates" + File.separator;
   static String gameStates = Constants.mapTemplateFolder + "gamestates" + File.separator;
   
   /**

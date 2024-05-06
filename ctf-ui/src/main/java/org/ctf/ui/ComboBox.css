@@ -76,7 +76,8 @@
 }
 
 .ai-button-easy {
-	-fx-background-color: rgb(30,90,30); 
+	-fx-background-color: rgba(53,89,119,0.4); 
+	-fx-alignment: baseline-left;
     -fx-text-fill: white; 
     -fx-font-size: 14px; 
     -fx-font-family: "Century Gothic", sans-serif; 
@@ -88,10 +89,11 @@
 }
 .ai-button-medium {
 	-fx-background-color: rgb(204, 204, 0); 
+	-fx-alignment: baseline-left;
     -fx-text-fill: white; 
     -fx-font-size: 14px; 
     -fx-font-family: "Century Gothic", sans-serif; 
-	 -fx-background-radius: 5px; 
+	-fx-background-radius: 5px; 
     -fx-border-radius: 5px; 
     -fx-border-color: white; 
     -fx-border-width: 2px; 
@@ -99,6 +101,7 @@
 }
 .ai-button-strong {
 	-fx-background-color: red; 
+	-fx-alignment: baseline-left;
     -fx-text-fill: white; 
     -fx-font-size: 14px; 
     -fx-font-family: "Century Gothic", sans-serif; 

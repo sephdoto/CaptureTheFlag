@@ -1,7 +1,7 @@
 package org.ctf.shared.constants;
 
 public class Descriptions {
-  static String describe(String what) {
+  public static String describe(String what) {
     switch(what) {
       //AIs
       case "RANDOM":
