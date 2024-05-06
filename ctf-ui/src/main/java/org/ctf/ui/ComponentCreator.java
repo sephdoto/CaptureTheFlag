@@ -1,6 +1,8 @@
 package org.ctf.ui;
 
+import java.text.DecimalFormat;
 import org.ctf.shared.constants.Constants;
+import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.customobjects.PopUpPane;
 
 import javafx.beans.binding.Bindings;
@@ -29,6 +31,7 @@ import javafx.scene.text.Text;
 public class ComponentCreator {
   EditorScene editorscene;
   Scene scene;
+  public static DecimalFormat df = new DecimalFormat("0.00"); 
 
   /**
    * Sets the scene of the ComponentCreator.
@@ -192,41 +195,51 @@ public class ComponentCreator {
         if (i == 5 && j == 5) {
           c.setFill(Color.RED);
           c.setOpacity(1);
-
         }
-
       }
     }
-
     return grid;
   }
 
   public StackPane createSettingsWindow(StackPane root) {
-    PopUpPane popUp = new PopUpPane(scene, 0.5, 0.5);
+    PopUpPane popUp = new PopUpPane(scene, 0.5, 0.6);
     VBox vbox = new VBox();
     vbox.setAlignment(Pos.TOP_CENTER);
     vbox.setPadding(new Insets(10));
-    vbox.setSpacing(15);
+    vbox.widthProperty().addListener((obs, oldVal, newVal) -> {
+      double size = newVal.doubleValue() * 0.035;
+      vbox.setSpacing(size);
+    });
     vbox.getChildren().add(createHeaderText(vbox, "Settings", 12));
-
-    // valueBox.getChildren().add();
-    // soundValue.getChildren().add(createHeaderText(vbox, "Sound Volume", 18));
     GridPane grid = new GridPane();
     grid.setVgap(15);
     grid.setHgap(15);
     grid.add(createHeaderText(vbox, "Music Volume", 18), 0, 0);
     grid.add(createHeaderText(vbox, "Sound Volume", 18), 0, 1);
-    Slider musicSlider = createSlider(Constants.musicVolume);
+    Text musicValue = createHeaderText(vbox,df.format(Constants.musicVolume), 28);
+    grid.add(musicValue, 2, 0);
+    Text soundValue = createHeaderText(vbox,df.format(Constants.soundVolume), 28);
+    grid.add(soundValue, 2, 1);
+    Slider musicSlider = createSlider(Constants.musicVolume,vbox);
+    musicSlider.valueProperty().addListener((obs, old, newV) -> {
+      MusicPlayer.setMusicVolume(musicSlider.getValue());
+      musicValue.setText(df.format(musicSlider.getValue()));
+    });
     grid.add(musicSlider, 1, 0);
-    Slider soundSlider = createSlider(Constants.soundVolume);
+    Slider soundSlider = createSlider(Constants.soundVolume,vbox);
+    soundSlider.valueProperty().addListener((obs, old, newV) -> {
+      soundValue.setText(df.format(soundSlider.getValue()));
+    });
     grid.add(soundSlider, 1, 1);
     vbox.getChildren().add(grid);
-    vbox.widthProperty().addListener((obs, oldv, newV) -> {
-      double size = newV.doubleValue() * 0.2;
-      VBox.setMargin(grid, new Insets(15, size, 15, size));
-    });
+//    vbox.widthProperty().addListener((obs, oldv, newV) -> {
+//      double size = newV.doubleValue() * 0.2;
+//      VBox.setMargin(grid, new Insets(15, size, 15, size));
+//    });
     VBox.setMargin(grid, new Insets(15, 50, 15, 50));
-    vbox.getChildren().add(createLeaveSettings(vbox, popUp, root));
+    Button exit = createLeaveSettings(vbox);
+    addSaveListener(exit, musicSlider, soundSlider, popUp, root);
+    vbox.getChildren().add(exit);
     popUp.setContent(vbox);
     return popUp;
   }
@@ -239,12 +252,9 @@ public class ComponentCreator {
    * @param popUp - submitting window
    * @return Button used for closing the submitting window
    */
-  private Button createLeaveSettings(VBox vBox, PopUpPane popUp, StackPane root) {
+  private Button createLeaveSettings(VBox vBox) {
     Button exit = new Button("Leave");
     exit.getStyleClass().add("leave-button");
-    exit.setOnAction(e -> {
-      root.getChildren().remove(popUp);
-    });
     exit.prefWidthProperty().bind(vBox.widthProperty().multiply(0.3));
     exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
     exit.prefHeightProperty().addListener((obs, oldv, newV) -> {
@@ -252,6 +262,15 @@ public class ComponentCreator {
       exit.setFont(Font.font("Century Gothic", size));
     });
     return exit;
+  }
+
+  private void addSaveListener(Button exit, Slider musicSlider, Slider soundSlider, PopUpPane popUp,
+      StackPane root) {
+    exit.setOnAction(e -> {
+      root.getChildren().remove(popUp);
+      MusicPlayer.setMusicVolume(musicSlider.getValue());
+      Constants.soundVolume = soundSlider.getValue();
+    });
   }
 
   public Text createHeaderText(VBox vBox, String label, int divider) {
@@ -262,8 +281,9 @@ public class ComponentCreator {
     return leftheader;
   }
 
-  private Slider createSlider(double value) {
+  private Slider createSlider(double value,VBox vBox) {
     Slider slider = new Slider();
+    slider.prefWidthProperty().bind(vBox.widthProperty().multiply(0.3));
     slider.getStyleClass().add("mySlider");
     slider.setMin(0);
     slider.setMax(1);
