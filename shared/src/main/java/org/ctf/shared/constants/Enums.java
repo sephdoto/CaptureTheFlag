@@ -72,7 +72,8 @@ public class Enums {
     HUMAN,
     RANDOM,
     MCTS,
-    MCTS_IMPROVED
+    IMPROVED,
+    EXPERIMENTAL;
   }
 
   /**
