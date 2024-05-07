@@ -3,6 +3,8 @@ package org.ctf.shared.client;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import org.ctf.shared.ai.AI_Config;
 import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
 import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
@@ -23,6 +25,7 @@ import org.ctf.shared.state.data.exceptions.SessionNotFound;
 public class AIClient extends Client {
 
   public AI selectedAI;
+  public AI_Config aiConfig;
   public boolean enableLogging;
   public volatile Analyzer analyzer;
   public String gameIDString;
@@ -31,7 +34,7 @@ public class AIClient extends Client {
   public int controllerThinkingTime = 3;
   public boolean saveToken = true;
   ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
-/* 
+  /*
   Runnable refreshTask =
       () -> {
           pullData();
@@ -47,13 +50,13 @@ public class AIClient extends Client {
       () -> {
         try {
           getStateFromServer();
-          
+
           if (moveTimeLimitedGameTrigger) {
             controllerThinkingTime = getRemainingMoveTimeInSeconds() - 1;
-            //System.out.println("We had " + controllerThinkingTime + " to think");
+            // System.out.println("We had " + controllerThinkingTime + " to think");
           }
           AI_Controller controller =
-              new AI_Controller(getCurrentState(), selectedAI, controllerThinkingTime);
+              new AI_Controller(getCurrentState(), selectedAI, aiConfig, controllerThinkingTime);
           pullData();
           controller.update(getCurrentState());
           if (enableLogging) {
@@ -87,12 +90,14 @@ public class AIClient extends Client {
    * @param port the port the server is at Exp 9999 / 8080 /
    * @param enableLogging tells the client to start logging the moves for later analysis by an AI
    * @param selected the AI Enum which is later used for the by the AI Controller class to call for
+   * @para aiConfig the config file for AI to load
    *     moves
    * @author rsyed
    */
-  AIClient(CommLayerInterface comm, String IP, String port, Boolean enableLogging, AI selected) {
+  AIClient(CommLayerInterface comm, String IP, String port, Boolean enableLogging, AI selected, AI_Config aiConfig) {
     super(comm, IP, port, enableLogging);
     this.selectedAI = selected;
+    this.aiConfig = aiConfig;
     this.enableLogging = enableLogging;
     this.analyzer = new Analyzer();
   }
@@ -115,9 +120,10 @@ public class AIClient extends Client {
       String port,
       Boolean enableLogging,
       AI selected,
+      AI_Config aiConfig,
       String gameIDString,
       String constructorSetTeamName) {
-    this(comm, IP, port, enableLogging, selected);
+    this(comm, IP, port, enableLogging, selected, aiConfig);
     this.gameIDString = gameIDString;
     this.constructorSetTeamName = constructorSetTeamName;
     startAIGameController();
@@ -135,6 +141,7 @@ public class AIClient extends Client {
    * @throws UnknownError
    * @author rsyed
    */
+  @Override
   public void joinExistingGame(String IP, String port, String gameSessionID, String teamName) {
     this.currentServer = "http://" + IP + ":" + port + "/api/gamesession";
     this.currentServer = shortURL + "/" + gameSessionID;
@@ -142,6 +149,7 @@ public class AIClient extends Client {
     getStateFromServer();
   }
 
+  @Override
   public void pullData() {
     getSessionFromServer();
     getStateFromServer();
@@ -164,7 +172,7 @@ public class AIClient extends Client {
    *
    * @author rsyed
    */
-  public void AIPlayerStart() {
+  public void aiPlayerStart() {
     scheduler.scheduleWithFixedDelay(playTask, 1, 1, TimeUnit.SECONDS);
   }
 
@@ -174,6 +182,7 @@ public class AIClient extends Client {
    *
    * @author rsyed
    */
+  @Override
   public void gameStartWatcher() {
     Thread watcherThread =
         new Thread(
@@ -189,7 +198,7 @@ public class AIClient extends Client {
                       getStateFromServer();
                       analyzer.addGameState(currentState);
                     }
-                    AIPlayerStart();
+                    aiPlayerStart();
                     running = false;
                   }
                   Thread.sleep(sleep);
@@ -201,10 +210,11 @@ public class AIClient extends Client {
     watcherThread.start();
   }
 
-    /**
+  /**
    * Called from the getGameState method. Requests the server specific/set in the Client object to
    * send the current {@link GameState}. Also parses the response and saves data to local variables
-   * for easier consumption by the UI. Overriden in the AI Client as it needs to update last game more often for analyzer.
+   * for easier consumption by the UI. Overriden in the AI Client as it needs to update last game
+   * more often for analyzer.
    *
    * @param teamID Team Name for the request. Read from the Client
    * @param teamSecret Team Secret for the Request. Read from the Client

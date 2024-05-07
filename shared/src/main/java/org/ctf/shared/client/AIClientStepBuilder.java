@@ -1,5 +1,6 @@
 package org.ctf.shared.client;
 
+import org.ctf.shared.ai.AI_Config;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.client.service.CommLayerInterface;
 import org.ctf.shared.client.service.RestClientLayer;
@@ -72,7 +73,7 @@ public class AIClientStepBuilder {
      *
      * @param num Exp: AI.MCTS, AI.MCTSRANDOM, etc
      */
-    LoggerEnabler AIPlayerSelector(AI num);
+    LoggerEnabler AIPlayerSelector(AI num, AI_Config aiConfig);
   }
 
   public static interface LoggerEnabler {
@@ -113,6 +114,7 @@ public class AIClientStepBuilder {
     private String host;
     private String port;
     private AI ai;
+    private AI_Config aiConfig;
     private boolean enableSave;
     private String teamName;
     private String gameSessionGiven;
@@ -154,10 +156,12 @@ public class AIClientStepBuilder {
      * Step for AI Selection for the layer
      *
      * @param ai the AI enum to specify the AI the Client is going to use. Example AI.MCTS
+     * @param aiConfig the config file to init the AI with
      */
     @Override
-    public LoggerEnabler AIPlayerSelector(AI ai) {
+    public LoggerEnabler AIPlayerSelector(AI ai, AI_Config aiConfig) {
       this.ai = ai;
+      this.aiConfig = aiConfig;
       return this;
     }
 
@@ -203,7 +207,7 @@ public class AIClientStepBuilder {
 
     @Override
     public AIClient build() {
-      return new AIClient(comm, host, port, enableSave, ai, gameSessionGiven, teamName);
+      return new AIClient(comm, host, port, enableSave, ai, aiConfig, gameSessionGiven, teamName);
     }
   }
 }
