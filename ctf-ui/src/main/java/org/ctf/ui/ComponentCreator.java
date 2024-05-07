@@ -104,6 +104,11 @@ public class ComponentCreator {
       double size = newVal.doubleValue() * 0.45;
       nameField.setFont(Font.font("Century Gothic", size));
     });
+    nameField.textProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue.length() > 20) {
+        nameField.setText(oldValue); 
+      }
+    });
     return nameField;
   }
 
@@ -138,11 +143,17 @@ public class ComponentCreator {
     Button submit = new Button("Submit");
     submit.getStyleClass().add("save-button");
     submit.setOnAction(e -> {
+      if(nameField.getText().equals("")) {
+        CretaeGameScreenV2.informationmustBeEntered(nameField, "custom-search-field", "custom-search-field");
+        return;
+      }     
       if (editorscene.getEngine().getTemplateNames().contains(nameField.getText())) {
         info.setText(nameField.getText() + " already exits!");
       } else {
         editorscene.getEngine().saveTemplate(nameField.getText());
+        editorscene.addMapItem(nameField.getText());
         editorscene.getRootPane().getChildren().remove(popUp);
+        editorscene.inform(nameField.getText()+" was saved!");
       }
     });
     submit.prefWidthProperty().bind(vBox.widthProperty().multiply(0.25));

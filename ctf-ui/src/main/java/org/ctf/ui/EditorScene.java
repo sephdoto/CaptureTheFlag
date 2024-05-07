@@ -376,7 +376,7 @@ public class EditorScene extends Scene {
     HBox controlBar = new HBox();
     controlBar.setSpacing(10);
     controlBar.getChildren().add(createMenuButton());
-    mapMenuButton = createMapMenuButton();
+    createMapMenuButton();
     controlBar.getChildren().add(mapMenuButton);
     controlBar.getChildren().add(createExit());
     controlBar.getChildren().add(createSubmit());
@@ -478,12 +478,12 @@ public class EditorScene extends Scene {
    * @return MenuButton for loading map templates
    */
   private MenuButton createMapMenuButton() {
-    MenuButton mb = new MenuButton("Load Map");
-    mb.getStyleClass().add("custom-menu-button");
-    mb.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
-    mb.prefHeightProperty().bind(mb.widthProperty().multiply(0.25));
+    mapMenuButton = new MenuButton("Load Map");
+    mapMenuButton.getStyleClass().add("custom-menu-button");
+    mapMenuButton.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
+    mapMenuButton.prefHeightProperty().bind(mb.widthProperty().multiply(0.25));
     for (String mapName : engine.getTemplateNames()) {
-      addMapItem(mapName, mb);
+      addMapItem(mapName);
     }
     return mb;
   }
@@ -493,9 +493,8 @@ public class EditorScene extends Scene {
    * causes the corresponding map template to be loaded in the map editor.
    * @author aniemesc
    * @param mapName - Name of the maptemplate
-   * @param mapMenuButton - MenuButton to which the MenuItem gets added
    */
-  private void addMapItem(String mapName, MenuButton mapMenuButton) {
+  public void addMapItem(String mapName) {
     MenuItem item = new MenuItem(mapName);
     item.setOnAction(e -> {
       engine.loadTemplate(mapName);
