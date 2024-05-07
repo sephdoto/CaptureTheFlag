@@ -73,9 +73,10 @@ public class App extends Application {
 	}
 
 	/**
-	 * @author mkrakows creates a new stage and scene with a stackpane as root
-	 *         container. Sets a background image which is bound to the size of the
-	 *         window and 3 custom buttons. {@link costumObjects.HomeScreenButton }
+	 * creates a new stage and scene with a stackpane as root
+     * container. Sets a background image which is bound to the size of the
+     * window and 3 custom buttons. {@link costumObjects.HomeScreenButton }
+	 * @author mkrakows 
 	 * @return Parent
 	 */
 	private Parent createParent() {
@@ -90,112 +91,126 @@ public class App extends Application {
         ctfv.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.8));
         ctfv.setPreserveRatio(true);
         StackPane.setAlignment(ctfv, Pos.TOP_CENTER);
-        root.widthProperty().addListener((observable, oldValue, newValue) -> {
-          double newPadding = newValue.doubleValue() * 0.05; 
-          root.setPadding(new Insets(newPadding));
-        });
+//        root.widthProperty().addListener((observable, oldValue, newValue) -> {
+//          double newPadding = newValue.doubleValue() * 0.05; 
+//          root.setPadding(new Insets(newPadding));
+//        });
 
-		HomeScreenButton i1 = new HomeScreenButton("CREATE MAP", () -> {
+		HomeScreenButton i1 = new HomeScreenButton("CREATE MAP",mainStage, () -> {
 			ssc.switchToMapEditorScene(mainStage);
 		});
-		HomeScreenButton i2 = new HomeScreenButton("CREATE GAME", () -> {
+		HomeScreenButton i2 = new HomeScreenButton("CREATE GAME",mainStage, () -> {
 			//CreateGameScreen.initCreateGameScreen(mainStage);
 			ssc.switchToCreateGameScene(mainStage);
 		});
-		HomeScreenButton i3 = new HomeScreenButton("JOIN GAME", () -> {
+		HomeScreenButton i3 = new HomeScreenButton("JOIN GAME",mainStage,() -> {
 			ssc.switchToJoinScene(mainStage);
 		});
-		HomeScreenButton i4 = new HomeScreenButton("SETTINGS", () -> {
+		HomeScreenButton i4 = new HomeScreenButton("SETTINGS",mainStage, () -> {
 			
 			root.getChildren().add(new ComponentCreator(startScene).createSettingsWindow(root));
 		});
-		VBox vbox = new VBox(11,i1, i2, i3,i4);
-		vbox.setAlignment(Pos.CENTER);
+		VBox vbox = new VBox(ctfv,i1, i2, i3,i4);
+		vbox.spacingProperty().bind(root.heightProperty().multiply(0.02));
+		 root.heightProperty().addListener((observable, oldValue, newValue) -> {	          
+	          double margin = newValue.doubleValue() * 0.1;
+	          VBox.setMargin(i1, new Insets(margin, 0, 0, 0));
+	          VBox.setMargin(ctfv, new Insets(margin, 0, 0, 0));
+	        });	
+
+		StackPane.setAlignment(vbox, Pos.TOP_CENTER);
+		vbox.setAlignment(Pos.TOP_CENTER);
 		vbox.setMaxWidth(50);
-		root.getChildren().addAll(vw,ctfv, vbox);
+		root.getChildren().addAll(vw,vbox);
 		return root;
 	}
-	/**
-	 * method that generates a lockscreen when for the start of the application 
-	 * 
-	 * @author aniemesc
-	 * @return Parent root
-	 * 
-	 */
-	private Parent createLockScreen() {
-		Pane pane = new Pane();
-		createBackground(pane);
-		StackPane layer = new StackPane();
-		layer.getChildren().add(pane);
-		layer.widthProperty().addListener((obs,old,newV) -> {
-			double size = newV.doubleValue()*0.02;
-			layer.setPadding(new Insets(size));
-		});
-		layer.setPadding(new Insets(50));
-		VBox root = new VBox();
-		layer.setStyle("-fx-background-color: black;");
-		root.setAlignment(Pos.CENTER);
-		HBox pictureBox = new HBox();
-		StackPane.setAlignment(pictureBox, Pos.BOTTOM_CENTER);
-		pictureBox.setAlignment(Pos.CENTER);
-		layer.widthProperty().addListener((obs,old,newV) -> {
-			double size = newV.doubleValue()*0.1;
-			pictureBox.setSpacing(size);
-		});
-		Image ctf = new Image(getClass().getResourceAsStream("CaptureTheFlag.png"));
-		ImageView ctfv = new ImageView(ctf);
-		ctfv.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.8));
-		ctfv.setPreserveRatio(true);
-		Image r2d2 = new Image(getClass().getResourceAsStream("R2D2.png"));
-		ImageView r2d2v = new ImageView(r2d2);
-		r2d2v.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.2));
-		r2d2v.setPreserveRatio(true);
-		Image yoda = new Image(getClass().getResourceAsStream("Yoda.png"));
-		ImageView yodav = new ImageView(yoda);
-		yodav.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.2));
-		yodav.setPreserveRatio(true);
-		
-		layer.heightProperty().addListener((obs,old,newV) -> {
-			double size = newV.doubleValue()*0.25;
-			HBox.setMargin(yodav, new Insets(size,0,0,0));
-		});
-		Image luke = new Image(getClass().getResourceAsStream("LukeSkywalker.png"));
-		ImageView lukev = new ImageView(luke);
-		lukev.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.2));
-		lukev.setPreserveRatio(true);
-		pictureBox.getChildren().addAll(r2d2v,yodav,lukev);
-		layer.getChildren().add(pictureBox);
-		
-		FadeTransition ft = new FadeTransition(Duration.millis(5000), ctfv);
-		ft.setFromValue(0.0);
-		ft.setToValue(1.0);
-		ft.play();
-		root.getChildren().add(ctfv);
-
-		Text text = new Text("Press any Key to Start!");
-		layer.heightProperty().addListener((obs,old,newV) -> {
-			double size = newV.doubleValue()*0.6;
-			VBox.setMargin(text, new Insets(size,0,0,0));
-		});
-		text.setStyle("-fx-fill: white ;");
-		text.setOpacity(0);
-		root.getChildren().add(text);
-
-		VBox.setMargin(text, new Insets(150));
-		startTransition = new FadeTransition(Duration.millis(1500), text);
-		startTransition.setFromValue(0.1);
-		startTransition.setToValue(1.0);
-		startTransition.setDelay(Duration.millis(2000));
-		startTransition.setAutoReverse(true); //
-		startTransition.setCycleCount(Timeline.INDEFINITE);
-		startTransition.play();
-		text.fontProperty().bind(
-				Bindings.createObjectBinding(() -> Font.font("Century Gothic",mainStage.getWidth() / 50), mainStage.widthProperty()));
-		layer.getChildren().add(root);
-		
-		return layer;
-	}
 	
+    /**
+     * Generates all UI components required for the lock screen 
+     * of the application.
+     * 
+     * @author aniemesc
+     * @return Root of the lock screen 
+     * 
+     */
+    private Parent createLockScreen() {
+      Pane pane = new Pane();
+      createBackground(pane);
+      StackPane layer = new StackPane();
+      layer.getChildren().add(pane);
+      layer.widthProperty().addListener((obs, old, newV) -> {
+        double size = newV.doubleValue() * 0.02;
+        layer.setPadding(new Insets(size));
+      });
+      layer.setPadding(new Insets(50));
+      VBox root = new VBox();
+      layer.setStyle("-fx-background-color: black;");
+      root.setAlignment(Pos.CENTER);
+      HBox pictureBox = new HBox();
+      StackPane.setAlignment(pictureBox, Pos.BOTTOM_CENTER);
+      pictureBox.setAlignment(Pos.CENTER);
+      layer.widthProperty().addListener((obs, old, newV) -> {
+        double size = newV.doubleValue() * 0.1;
+        pictureBox.setSpacing(size);
+      });
+      Image ctf = new Image(getClass().getResourceAsStream("CaptureTheFlag.png"));
+      ImageView ctfv = new ImageView(ctf);
+      ctfv.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.8));
+      ctfv.setPreserveRatio(true);
+      Image r2d2 = new Image(getClass().getResourceAsStream("R2D2.png"));
+      ImageView r2d2v = new ImageView(r2d2);
+      r2d2v.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.2));
+      r2d2v.setPreserveRatio(true);
+      Image yoda = new Image(getClass().getResourceAsStream("Yoda.png"));
+      ImageView yodav = new ImageView(yoda);
+      yodav.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.2));
+      yodav.setPreserveRatio(true);
+
+      layer.heightProperty().addListener((obs, old, newV) -> {
+        double size = newV.doubleValue() * 0.25;
+        HBox.setMargin(yodav, new Insets(size, 0, 0, 0));
+      });
+      Image luke = new Image(getClass().getResourceAsStream("LukeSkywalker.png"));
+      ImageView lukev = new ImageView(luke);
+      lukev.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.2));
+      lukev.setPreserveRatio(true);
+      pictureBox.getChildren().addAll(r2d2v, yodav, lukev);
+      layer.getChildren().add(pictureBox);
+
+      FadeTransition ft = new FadeTransition(Duration.millis(5000), ctfv);
+      ft.setFromValue(0.0);
+      ft.setToValue(1.0);
+      ft.play();
+      root.getChildren().add(ctfv);
+
+      Text text = new Text("Press any Key to Start!");
+      layer.heightProperty().addListener((obs, old, newV) -> {
+        double size = newV.doubleValue() * 0.6;
+        VBox.setMargin(text, new Insets(size, 0, 0, 0));
+      });
+      text.setStyle("-fx-fill: white ;");
+      text.setOpacity(0);
+      root.getChildren().add(text);
+
+      VBox.setMargin(text, new Insets(150));
+      startTransition = new FadeTransition(Duration.millis(1500), text);
+      startTransition.setFromValue(0.1);
+      startTransition.setToValue(1.0);
+      startTransition.setDelay(Duration.millis(2000));
+      startTransition.setAutoReverse(true); //
+      startTransition.setCycleCount(Timeline.INDEFINITE);
+      startTransition.play();
+      text.fontProperty().bind(Bindings.createObjectBinding(
+          () -> Font.font("Century Gothic", mainStage.getWidth() / 50), mainStage.widthProperty()));
+      layer.getChildren().add(root);
+
+      return layer;
+    }
+	/**
+	 * Creates a background for the lockscreen.
+	 * @author aniemesc
+	 * @param layer - Base container of the lockscreen
+	 */
 	private void createBackground(Pane layer) {
 		Circle c = new Circle();
 		for(int i =0;i<200;i++) {
