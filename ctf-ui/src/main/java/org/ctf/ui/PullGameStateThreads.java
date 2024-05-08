@@ -1,6 +1,6 @@
 package org.ctf.ui;
 
-import org.ctf.shared.client.AutomatedClient;
+
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.shared.state.data.exceptions.URLError;
@@ -9,19 +9,19 @@ import configs.Dialogs;
 
 public class PullGameStateThreads extends Thread {
 	boolean active;
-	AutomatedClient client;
 	GameState currenState;
-	long millis = 1000;
+	long millis = 10000000;
 
-	public PullGameStateThreads(AutomatedClient c) {
-		client = c;
+	public PullGameStateThreads() {
+		active = true;
 		run();
 	}
 
 	public void run() {
 		while (active) {
-			refreshGameState();
-			
+			if(Game.getCurrent() != null) {
+			Game.getCurrent().performSelectClick();
+			}
 			try {
 				Thread.sleep(millis);
 			} catch (InterruptedException e) {
@@ -31,22 +31,7 @@ public class PullGameStateThreads extends Thread {
 		}
 	}
 	
-	public void checkForChanges() {
-		
-	}
 	
-	
-	public void refreshGameState() {
-		try {
-			client.getStateFromServer();
-		} catch (SessionNotFound e) {
-			Dialogs.showExceptionDialog("Session not found", e.getMessage());
-		} catch (UnknownError e) {
-			Dialogs.showExceptionDialog("Unknown Error", e.getMessage());
-		} catch (URLError e) {
-			Dialogs.showExceptionDialog("URL Error", e.getMessage());
-		}
-	}
 	public void setAcive(Game game) {
 		active = true;
 	}

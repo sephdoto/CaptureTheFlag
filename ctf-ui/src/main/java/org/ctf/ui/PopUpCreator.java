@@ -278,7 +278,7 @@ public class PopUpCreator {
 	 * @return Creates the Header of the whole scene with the name AI-Generator
 	 */
 	private ImageView createHeader() {
-		Image mp = new Image(getClass().getResourceAsStream("aiGen.png"));
+		Image mp = new Image(getClass().getResourceAsStream("aiGenerator.png"));
 		ImageView mpv = new ImageView(mp);
 		mpv.fitWidthProperty().bind(aiconfig.widthProperty().multiply(0.6));
 		mpv.setPreserveRatio(true);

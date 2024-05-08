@@ -1,5 +1,6 @@
 package org.ctf.ui.customobjects;
 
+import javafx.geometry.Pos;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
