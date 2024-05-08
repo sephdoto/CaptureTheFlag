@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 import org.ctf.shared.client.lib.Analyzer;
 import org.ctf.shared.client.lib.GameClientInterface;
 import org.ctf.shared.client.lib.ServerChecker;
@@ -30,10 +31,8 @@ import org.ctf.shared.state.dto.JoinGameResponse;
 import org.ctf.shared.state.dto.MoveRequest;
 
 /**
- * Base Client file which is going to use the Translation Layer to talk to the
- * game server Has
- * support for multiple gameSessions and flexible server polling Uses a
- * StepBuilder Class to Create
+ * Base Client file which is going to use the Translation Layer to talk to the game server Has
+ * support for multiple gameSessions and flexible server polling Uses a StepBuilder Class to Create
  * Objects
  *
  * @author rsyed
@@ -41,69 +40,68 @@ import org.ctf.shared.state.dto.MoveRequest;
 public class Client implements GameClientInterface {
 
   // Main DataStore block
-  public volatile GameState currentState;
-  public String[][] grid;
-  public int currentTeamTurn;
-  public Move lastMove;
-  public Team[] teams;
-  public Clock currentTime;
+  protected volatile GameState currentState;
+  protected String[][] grid;
+  protected int currentTeamTurn;
+  protected Move lastMove;
+  protected Team[] teams;
+  protected Clock currentTime;
 
-  public Gson gson; // Gson object for conversions incase needed
+  protected Gson gson; // Gson object for conversions incase needed
   // Two CommLayers Available CommLayer and RestClientLayer
-  public CommLayerInterface comm; // Layer instance which is used for communication
-  public Analyzer analyzer;
+  protected CommLayerInterface comm; // Layer instance which is used for communication
+  protected Analyzer analyzer;
 
   // Block for Server Info
-  public String currentServer; // Creates URL with Session ID for use later
-  public String shortURL;
-  public ServerDetails serverInfo;
+  protected String currentServer; // Creates URL with Session ID for use later
+  protected String shortURL;
+  protected ServerDetails serverInfo;
 
   // Block for session info
-  public GameSession currentSession;
-  public String currentGameSessionID;
-  public GameSessionResponse gameResponse;
-  public String[] winners;
-  public int turnTimeLimit;
+  protected GameSession currentSession;
+  protected String currentGameSessionID;
+  protected GameSessionResponse gameResponse;
+  protected String[] winners;
+  protected int turnTimeLimit;
 
   // Block for Team Data
-  public String teamSecret;
-  public String requestedTeamName; // Team name we request from the Server
-  public String teamID; // TeamID we get from the server for current team recognition
-  public String teamNumber; // Is set when the server tells you what number it assigned you
-  public String teamColor;
-  public int myTeam = -1; // index of the team this client represents in teams array
-  public String gameIDtoJoin;
+  protected String teamSecret;
+  protected String requestedTeamName; // Team name we request from the Server
+  protected String teamID; // TeamID we get from the server for current team recognition
+  protected String teamNumber; // Is set when the server tells you what number it assigned you
+  protected String teamColor;
+  protected int myTeam = -1; // index of the team this client represents in teams array
+  protected String gameIDtoJoin;
 
   // Block for alt game mode data
-  public Date startDate;
-  public Date endDate;
-  public int moveTimeLeft;
-  public int gameTimeLeft;
-  public int lastTeamTurn;
-  public long refreshTime = 300L;
+  protected Date startDate;
+  protected Date endDate;
+  protected int moveTimeLeft;
+  protected int gameTimeLeft;
+  protected int lastTeamTurn;
+  protected long refreshTime = 300L;
 
   // Block for booleans
-  public boolean gameOver;
-  public boolean gameStarted;
+  protected boolean gameOver;
+  protected boolean gameStarted;
   protected boolean enableLogging;
-  public boolean moveTimeLimitedGameTrigger = false;
-  public boolean timeLimitedGameTrigger = false;
+  protected boolean moveTimeLimitedGameTrigger = false;
+  protected boolean timeLimitedGameTrigger = false;
 
   // Services
   ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
+  Logger logger = Logger.getLogger(getClass().getName());
 
   /**
    * Constructor to set the IP and port on object creation
    *
-   * @param comm          Sets the comm layer the client is going to use
-   * @param IP            the IP to connect to Exp "localhost" or
-   *                      "192.xxx.xxx.xxx"
-   * @param port          the port the server is at Exp 9999 / 8080 /
-   * @param enableLogging tells the client to start logging the moves for later
-   *                      analysis by an AI
+   * @param comm Sets the comm layer the client is going to use
+   * @param IP the IP to connect to Exp "localhost" or "192.xxx.xxx.xxx"
+   * @param port the port the server is at Exp 9999 / 8080 /
+   * @param enableLogging tells the client to start logging the moves for later analysis by an AI
    * @author rsyed
    */
-  Client(CommLayerInterface comm, String IP, String port, Boolean enableLogging) {
+  Client(CommLayerInterface comm, String IP, String port, boolean enableLogging) {
     this.gson = new Gson();
     this.currentState = new GameState();
     this.currentSession = new GameSession();
@@ -116,11 +114,10 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Second constructor which is called when we want to schedule a joinTask. Joins
-   * a game 2 seconds
+   * Second constructor which is called when we want to schedule a joinTask. Joins a game 2 seconds
    * after object creation, starts watching for game start after 3
    *
-   * @param gameID   Sets the comm layer the client is going to use
+   * @param gameID Sets the comm layer the client is going to use
    * @param teamName the IP to connect to Exp "localhost" or "192.xxx.xxx.xxx"
    * @author rsyed
    */
@@ -128,7 +125,7 @@ public class Client implements GameClientInterface {
       CommLayerInterface comm,
       String IP,
       String port,
-      Boolean enableLogging,
+      boolean enableLogging,
       String gameID,
       String teamName) {
     this(comm, IP, port, enableLogging);
@@ -138,26 +135,23 @@ public class Client implements GameClientInterface {
     scheduler.schedule(startWatcher, 3, TimeUnit.SECONDS);
   }
 
-  Runnable joinTask = () -> {
-    try {
-      joinExistingGame(
-          serverInfo.getHost(), serverInfo.getPort(), gameIDtoJoin, requestedTeamName);
-    } catch (NoMoreTeamSlots e) {
-      throw new NoMoreTeamSlots();
-    }
+  Runnable joinTask =
+      () -> {
+        try {
+          joinExistingGame(
+              serverInfo.getHost(), serverInfo.getPort(), gameIDtoJoin, requestedTeamName);
+        } catch (NoMoreTeamSlots e) {
+          throw new NoMoreTeamSlots();
+        }
+      };
 
-  };
-
-  Runnable startWatcher = () -> {
-    startGameController();
-  };
+  Runnable startWatcher = Client.this::startGameController;
 
   // **************************************************
   // Start of CRUD Call Methods
   // **************************************************
   /**
-   * Method to set the server which this this object communicates with and save
-   * info into a
+   * Method to set the server which this this object communicates with and save info into a
    * ServerDeatils object. Its automatically called from the Constructor.
    *
    * @param IP
@@ -171,14 +165,12 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Requests the server specified in the current object to create a GameSession
-   * using the map in
-   * the MapTemplate parameter. Throws exceptions on acception and incase errors
-   * occour
+   * Requests the server specified in the current object to create a GameSession using the map in
+   * the MapTemplate parameter. Throws exceptions on acception and incase errors occour
    *
    * @param map
    * @throws UnknownError (500)
-   * @throws URLError     (404)
+   * @throws URLError (404)
    * @author rsyed
    */
   public void createGame(MapTemplate map) {
@@ -205,10 +197,10 @@ public class Client implements GameClientInterface {
    *
    * @param Move
    * @throws SessionNotFound (404)
-   * @throws ForbiddenMove   (403)
-   * @throws InvalidMove     (409)
-   * @throws GameOver        (410)
-   * @throws UnknownError    (500)
+   * @throws ForbiddenMove (403)
+   * @throws InvalidMove (409)
+   * @throws GameOver (410)
+   * @throws UnknownError (500)
    * @author rsyed
    */
   @Override
@@ -217,15 +209,13 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Requests a refresh of the GameState from the server. Parses the data and
-   * makes it available for
-   * consumption Throws exceptions listed incase of acceptance or errors.
-   * Functions as a REFRESH
+   * Requests a refresh of the GameState from the server. Parses the data and makes it available for
+   * consumption Throws exceptions listed incase of acceptance or errors. Functions as a REFRESH
    * COMMAND for GAMESTATE
    *
    * @throws SessionNotFound
    * @throws UnknownError
-   * @throws URLError        (404)
+   * @throws URLError (404)
    * @author rsyed
    */
   @Override
@@ -234,13 +224,12 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Requests the server to return the current state of the session and parses it
-   * Throws exceptions
+   * Requests the server to return the current state of the session and parses it Throws exceptions
    * depending on what happens. Functions as a REFRESH command for SESSION INFO
    *
    * @throws SessionNotFound (404)
-   * @throws UnknownError    (500)
-   * @throws URLError        (404)
+   * @throws UnknownError (500)
+   * @throws URLError (404)
    * @author rsyed
    */
   @Override
@@ -249,13 +238,12 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Requests the server to delete the current session. Returns the server reponse
-   * which are HTTP
+   * Requests the server to delete the current session. Returns the server reponse which are HTTP
    * status codes thrown as exceptions.
    *
    * @throws SessionNotFound (404)
-   * @throws UnknownError    (500)
-   * @throws URLError        (404)
+   * @throws UnknownError (500)
+   * @throws URLError (404)
    * @author rsyed
    */
   @Override
@@ -264,25 +252,23 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Used to send a give up request to the current session. Throws exceptions
-   * depending on errors
+   * Used to send a give up request to the current session. Throws exceptions depending on errors
    *
    * @throws SessionNotFound (404)
-   * @throws ForbiddenMove   (403)
-   * @throws GameOver        (410)
-   * @throws UnknownError    (500)
-   * @throws URLError        (404)
+   * @throws ForbiddenMove (403)
+   * @throws GameOver (410)
+   * @throws UnknownError (500)
+   * @throws URLError (404)
    * @author rsyed
    */
   @Override
   public void giveUp() {
-    // System.out.println(requestedTeamName + " wants to give up");
+    //  logger.info(requestedTeamName + " wants to give up");
     comm.giveUp(currentServer, requestedTeamName, teamSecret);
   }
 
   /**
-   * Changes the sessionID which this client object is pointing to. Functions as a
-   * join game command
+   * Changes the sessionID which this client object is pointing to. Functions as a join game command
    *
    * @param IP
    * @param port
@@ -308,17 +294,15 @@ public class Client implements GameClientInterface {
   // **************************************************
 
   /**
-   * Called from createGame function. Makes a {@link GameSessionRequest} and sends
-   * it over the
-   * {@link Comm} layer to the server. Recieves the response
-   * {@link GameSessionResponse} and returns
+   * Called from createGame function. Makes a {@link GameSessionRequest} and sends it over the
+   * {@link Comm} layer to the server. Recieves the response {@link GameSessionResponse} and returns
    * it
    *
    * @param {@link MapTemplate} used for the Request
    * @return {@link GameSessionResponse} with returned data from the server
    * @author rsyed
    */
-  public GameSessionResponse createGameCaller(MapTemplate map) {
+  protected GameSessionResponse createGameCaller(MapTemplate map) {
     gameResponse = new GameSessionResponse();
     GameSessionRequest gsr = new GameSessionRequest();
     gsr.setTemplate(map);
@@ -333,16 +317,14 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Called from createGameCaller function. Recieves the response
-   * {@link GameSessionResponse} as a
-   * param and converts it into a {@link GameSession} Object as well as parse the
-   * data into
+   * Called from createGameCaller function. Recieves the response {@link GameSessionResponse} as a
+   * param and converts it into a {@link GameSession} Object as well as parse the data into
    * individual variables for easier consumption by the UI
    *
    * @param {@link GameSessionResponse} with feteched Data from server
    * @author rsyed
    */
-  public synchronized void gameSessionResponseParser(GameSessionResponse gameSessionResponse) {
+  protected synchronized void gameSessionResponseParser(GameSessionResponse gameSessionResponse) {
     this.currentSession = gson.fromJson(gson.toJson(gameSessionResponse), GameSession.class);
     this.currentGameSessionID = gameSessionResponse.getId();
     this.currentServer = shortURL + "/" + currentGameSessionID;
@@ -350,36 +332,35 @@ public class Client implements GameClientInterface {
       this.startDate = gameSessionResponse.getGameStarted();
       this.gameStarted = true;
     } catch (NullPointerException e) {
-      System.out.println("Game hasnt started yet");
+      logger.info("Game hasnt started yet");
     }
     try {
       this.endDate = gameSessionResponse.getGameEnded();
     } catch (NullPointerException e) {
-      System.out.println("Game hasnt ended yet");
+      logger.info("Game hasnt ended yet");
     }
     try {
       this.gameOver = gameSessionResponse.isGameOver();
     } catch (NullPointerException e) {
-      System.out.println("Game hasnt ended yet");
+      logger.info("Game hasnt ended yet");
     }
     try {
       this.winners = gameSessionResponse.getWinner();
     } catch (NullPointerException e) {
-      System.out.println("There are no winners");
+      logger.info("There are no winners");
     }
     try {
       this.currentGameSessionID = gameSessionResponse.getId();
     } catch (NullPointerException e) {
-      System.out.println("No Game ID is set yet");
+      logger.info("No Game ID is set yet");
     }
     try {
       this.turnTimeLimit = gameSessionResponse.getRemainingGameTimeInSeconds();
       if (turnTimeLimit > 0) {
         this.timeLimitedGameTrigger = true;
       }
-
     } catch (NullPointerException e) {
-      System.out.println("There is no Turn Time Limit");
+      logger.info("There is no Turn Time Limit");
     }
     try {
       this.moveTimeLeft = gameSessionResponse.getRemainingMoveTimeInSeconds();
@@ -387,13 +368,12 @@ public class Client implements GameClientInterface {
         this.moveTimeLimitedGameTrigger = true;
       }
     } catch (NullPointerException e) {
-      System.out.println("There is no Turn Time Limit");
+      logger.info("There is no Turn Time Limit");
     }
   }
 
   /**
-   * Called from the joinGame function. Recieves the teamName wished for by the
-   * team as a param and
+   * Called from the joinGame function. Recieves the teamName wished for by the team as a param and
    * returns the response from the server as a {@link JoinGameResponse}
    *
    * @param teamName with feteched Data from server
@@ -403,7 +383,7 @@ public class Client implements GameClientInterface {
    * @throws UnknownError
    * @author rsyed
    */
-  public JoinGameResponse joinGameCaller(String teamName) {
+  protected JoinGameResponse joinGameCaller(String teamName) {
     JoinGameResponse response = new JoinGameResponse();
     try {
       response = comm.joinGame(currentServer, teamName);
@@ -418,32 +398,29 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Called from the joinGame function. Recieves the {@link JoinGameResponse} as a
-   * param and parses
-   * the data from the object into individual variables for easier consumption by
-   * the UI
+   * Called from the joinGame function. Recieves the {@link JoinGameResponse} as a param and parses
+   * the data from the object into individual variables for easier consumption by the UI
    *
    * @param {@link GameSessionResponse} with feteched Data from server
    * @author rsyed
    */
-  public void joinGameParser(JoinGameResponse joinGameResponse) {
+  protected void joinGameParser(JoinGameResponse joinGameResponse) {
     this.teamID = joinGameResponse.getTeamId();
     this.teamSecret = joinGameResponse.getTeamSecret();
     try {
       this.teamColor = joinGameResponse.getTeamColor();
     } catch (NullPointerException e) {
-      System.out.println("No Team color has been set");
+      logger.info("No Team color has been set");
     }
   }
 
   /**
-   * Called from the makeMove function. Recieves the teamID, teamSecret and Move
-   * to create a {@link
+   * Called from the makeMove function. Recieves the teamID, teamSecret and Move to create a {@link
    * MoveRequest} and send it over to the server through {@link CommLayer}
    *
-   * @param teamID     Team Name for the request. Read from the Client
+   * @param teamID Team Name for the request. Read from the Client
    * @param teamSecret Team Secret for the Request. Read from the Client
-   * @param move       Move requested. Needs to be given by the UI
+   * @param move Move requested. Needs to be given by the UI
    * @throws SessionNotFound
    * @throws ForbiddenMove
    * @throws InvalidMove
@@ -451,7 +428,7 @@ public class Client implements GameClientInterface {
    * @throws UnknownError
    * @author rsyed
    */
-  public void makeMoverCaller(String teamID, String teamSecret, Move move) {
+  protected void makeMoverCaller(String teamID, String teamSecret, Move move) {
     if (move != null) {
       try {
         MoveRequest moveReq = new MoveRequest();
@@ -475,20 +452,18 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Called from the getGameState method. Requests the server specific/set in the
-   * Client object to
-   * send the current {@link GameState}. Also parses the response and saves data
-   * to local variables
+   * Called from the getGameState method. Requests the server specific/set in the Client object to
+   * send the current {@link GameState}. Also parses the response and saves data to local variables
    * for easier consumption by the UI
    *
-   * @param teamID     Team Name for the request. Read from the Client
+   * @param teamID Team Name for the request. Read from the Client
    * @param teamSecret Team Secret for the Request. Read from the Client
-   * @param move       Move requested. Needs to be given by the UI
+   * @param move Move requested. Needs to be given by the UI
    * @throws SessionNotFound
    * @throws UnknownError
    * @author rsyed
    */
-  public synchronized void gameStateHelper() {
+  protected synchronized void gameStateHelper() {
     GameState gameState = new GameState();
     try {
       gameState = comm.getCurrentGameState(currentServer);
@@ -507,15 +482,14 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Called from the getGameSession method. Requests the server specific/set in
-   * the Client object to
+   * Called from the getGameSession method. Requests the server specific/set in the Client object to
    * send the current {@link GameSessionResponse}.
    *
    * @throws SessionNotFound
    * @throws UnknownError
    * @author rsyed
    */
-  public GameSessionResponse gameSessionCaller() {
+  protected GameSessionResponse gameSessionCaller() {
     GameSessionResponse gameSessionResponse = new GameSessionResponse();
     try {
       gameSessionResponse = comm.getCurrentSessionState(currentServer);
@@ -542,25 +516,21 @@ public class Client implements GameClientInterface {
    * @author rsyed, sistumpf
    */
   public boolean isItMyTurn() {
-    if (this.myTeam >= 0)
-      return this.myTeam == this.currentState.getCurrentTeam();
+    if (this.myTeam >= 0) return this.myTeam == this.currentState.getCurrentTeam();
     return false;
   }
 
   /**
-   * Iterates through the {@link GameState}s teams and replaces their IDs with
-   * their index. If an ID
+   * Iterates through the {@link GameState}s teams and replaces their IDs with their index. If an ID
    * matches this clients name, it gets set as this clients team.
    *
    * @author rsyed, sistumpf
    */
   protected synchronized void normaliseGameState(GameState gameState) {
     for (int i = 0; i < gameState.getTeams().length; i++) {
-      if (gameState.getTeams()[i] == null)
-        continue;
+      if (gameState.getTeams()[i] == null) continue;
       if (!gameState.getTeams()[i].getId().equals("" + i)) {
-        if (gameState.getTeams()[i].getId().equals(this.requestedTeamName))
-          this.myTeam = i;
+        if (gameState.getTeams()[i].getId().equals(this.requestedTeamName)) this.myTeam = i;
         gameState.getTeams()[i].setId("" + i);
       }
     }
@@ -572,38 +542,36 @@ public class Client implements GameClientInterface {
    * @return true if server is active and ready to make sessions, false if not
    * @author rsyed
    */
-  protected boolean isServerActive() {
+  public boolean isServerActive() {
     return new ServerChecker().isServerActive(serverInfo);
   }
 
   /**
-   * Method which can be called anywhere to pull both DTO objects from the server.
-   * Preferred way to
+   * Method which can be called anywhere to pull both DTO objects from the server. Preferred way to
    * pull data from the Server
    *
    * @author rsyed
    */
-  public void pullData() {
+  protected void pullData() {
     getSessionFromServer();
     getStateFromServer();
   }
 
   /**
-   * Helper method which sets an int to keep track of which teams turn it was
-   * before (Derived from
+   * Helper method which sets an int to keep track of which teams turn it was before (Derived from
    * Last Move) Sets the lastTeamTurn int -1 if no last move, 0 to n Otherwise
    *
    * @author rsyed
    */
-  public void updateLastTeam() {
-    this.lastTeamTurn = (lastMove != null)
-        ? Integer.parseInt(lastMove.getPieceId().split(":")[1].split("_")[0])
-        : -1;
+  protected void updateLastTeam() {
+    this.lastTeamTurn =
+        (lastMove != null)
+            ? Integer.parseInt(lastMove.getPieceId().split(":")[1].split("_")[0])
+            : -1;
   }
 
   /**
-   * Method which returns which team made the last move -1 if no last move. 0 to n
-   * otherwise
+   * Method which returns which team made the last move -1 if no last move. 0 to n otherwise
    *
    * @author rsyed
    */
@@ -648,72 +616,71 @@ public class Client implements GameClientInterface {
   // **************************************************
 
   /**
-   * Main CONTROLLER for Client. Call when either a game is created or a game is
-   * joined Starts the
+   * Main CONTROLLER for Client. Call when either a game is created or a game is joined Starts the
    * automatic refreshing of data
    *
    * @author rsyed
    */
-  public void startGameController() {
+  protected void startGameController() {
     gameStartWatcher();
   }
 
   /**
-   * A Watcher thread which calls GameSessionResponse periodically and hands over
-   * functionality to
+   * A Watcher thread which calls GameSessionResponse periodically and hands over functionality to
    * GameStartedThread when it has and then terminates itself.
    *
    * @author rsyed
    */
-  public void gameStartWatcher() {
-    Thread watcherThread = new Thread(
-        () -> {
-          boolean running = true;
-          while (running) {
-            try {
-              Long sleep = 1000L;
-              Thread.sleep(sleep);
-              this.getSessionFromServer(); // Gets Session from server
-              if (getStartDate() != null) {
-                if (enableLogging) {
-                  getStateFromServer();
-                  analyzer.addGameState(getCurrentState());
+  protected void gameStartWatcher() {
+    Thread watcherThread =
+        new Thread(
+            () -> {
+              boolean running = true;
+              while (running) {
+                try {
+                  Long sleep = 1000L;
+                  Thread.sleep(sleep);
+                  this.getSessionFromServer(); // Gets Session from server
+                  if (getStartDate() != null) {
+                    if (enableLogging) {
+                      getStateFromServer();
+                      analyzer.addGameState(getCurrentState());
+                    }
+                    gameStartedThread();
+                    running = false;
+                  }
+                  Thread.sleep(sleep);
+                } catch (InterruptedException e) {
+                  throw new Error("Something went wrong in the Client Thread");
                 }
-                gameStartedThread();
-                running = false;
               }
-              Thread.sleep(sleep);
-            } catch (InterruptedException e) {
-              throw new Error("Something went wrong in the Client Thread");
-            }
-          }
-        });
+            });
     watcherThread.start();
   }
 
   /**
-   * Thead which handles client logic for when game has started. Just pulls data
-   * periodically set by
+   * Thead which handles client logic for when game has started. Just pulls data periodically set by
    * the refesh time var
    *
    * @author rsyed
    */
-  public void gameStartedThread() {
-    Thread gameThread = new Thread(
-        () -> {
-          boolean running = true;
-          while (running) {
-            try {
-              pullData();
-              if (enableLogging) {
-                analyzer.addMove(getCurrentState().getLastMove());
+  protected void gameStartedThread() {
+    Thread gameThread =
+        new Thread(
+            () -> {
+              boolean running = true;
+              while (running) {
+                try {
+                  pullData();
+                  if (enableLogging) {
+                    analyzer.addMove(getCurrentState().getLastMove());
+                  }
+                  Thread.sleep(this.refreshTime);
+                } catch (InterruptedException e) {
+                  throw new Error("Something went wrong in the Client Thread");
+                }
               }
-              Thread.sleep(this.refreshTime);
-            } catch (InterruptedException e) {
-              throw new Error("Something went wrong in the Client Thread");
-            }
-          }
-        });
+            });
     gameThread.start();
   }
 

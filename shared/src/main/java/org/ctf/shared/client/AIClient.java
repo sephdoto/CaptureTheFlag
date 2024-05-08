@@ -3,7 +3,6 @@ package org.ctf.shared.client;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import org.ctf.shared.ai.AI_Config;
 import org.ctf.shared.ai.AI_Controller;
 import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
@@ -24,27 +23,21 @@ import org.ctf.shared.state.data.exceptions.SessionNotFound;
  */
 public class AIClient extends Client {
 
-  public AI selectedAI;
-  public AI_Config aiConfig;
-  public boolean enableLogging;
-  public volatile Analyzer analyzer;
-  public String gameIDString;
-  public String constructorSetTeamName;
-  public long refreshTime = 1000L;
-  public int controllerThinkingTime = 3;
-  public boolean saveToken = true;
-  ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
-  /*
-  Runnable refreshTask =
-      () -> {
-          pullData();
-      }; */
+  private AI selectedAI;
+  private AI_Config aiConfig;
+  private boolean enableLogging;
+  private volatile Analyzer analyzer;
+  private String gameIDString;
+  private String constructorSetTeamName;
+  private long aiClientRefreshTime = 1000L;
+  private int controllerThinkingTime = 3;
+  private boolean saveToken = true;
+  ScheduledExecutorService aiClientScheduler = Executors.newScheduledThreadPool(2);
 
-  Runnable joinTask =
-      () -> {
+  Runnable aiClientJoinTask =
+      () -> 
         joinExistingGame(
             serverInfo.getHost(), serverInfo.getPort(), gameIDString, constructorSetTeamName);
-      };
 
   Runnable playTask =
       () -> {
@@ -53,7 +46,7 @@ public class AIClient extends Client {
 
           if (moveTimeLimitedGameTrigger) {
             controllerThinkingTime = getRemainingMoveTimeInSeconds() - 1;
-            // System.out.println("We had " + controllerThinkingTime + " to think");
+            //  logger.info("We had " + controllerThinkingTime + " to think");
           }
           AI_Controller controller =
               new AI_Controller(getCurrentState(), selectedAI, aiConfig, controllerThinkingTime);
@@ -78,7 +71,7 @@ public class AIClient extends Client {
             throw new GameOver();
           }
         } catch (NullPointerException e) {
-          System.out.println("nullpointer exception");
+           logger.info("nullpointer exception");
         }
       };
 
@@ -90,16 +83,24 @@ public class AIClient extends Client {
    * @param port the port the server is at Exp 9999 / 8080 /
    * @param enableLogging tells the client to start logging the moves for later analysis by an AI
    * @param selected the AI Enum which is later used for the by the AI Controller class to call for
-   * @para aiConfig the config file for AI to load
-   *     moves
+   * @para aiConfig the config file for AI to load moves
    * @author rsyed
    */
-  AIClient(CommLayerInterface comm, String IP, String port, Boolean enableLogging, AI selected, AI_Config aiConfig) {
+  AIClient(
+      CommLayerInterface comm,
+      String IP,
+      String port,
+      boolean enableLogging,
+      AI selected,
+      AI_Config aiConfig) {
     super(comm, IP, port, enableLogging);
     this.selectedAI = selected;
     this.aiConfig = aiConfig;
     this.enableLogging = enableLogging;
-    this.analyzer = new Analyzer();
+    if(enableLogging){
+      this.analyzer = new Analyzer();
+    }
+    
   }
 
   /**
@@ -150,7 +151,7 @@ public class AIClient extends Client {
   }
 
   @Override
-  public void pullData() {
+  protected void pullData() {
     getSessionFromServer();
     getStateFromServer();
   }
@@ -160,9 +161,9 @@ public class AIClient extends Client {
    *
    * @author rsyed
    */
-  public void startAIGameController() {
+  protected void startAIGameController() {
     // Join Automatically
-    scheduler.schedule(joinTask, 0, TimeUnit.SECONDS);
+    aiClientScheduler.schedule(aiClientJoinTask, 0, TimeUnit.SECONDS);
     gameStartWatcher();
   }
 
@@ -172,8 +173,8 @@ public class AIClient extends Client {
    *
    * @author rsyed
    */
-  public void aiPlayerStart() {
-    scheduler.scheduleWithFixedDelay(playTask, 1, 1, TimeUnit.SECONDS);
+  protected void aiPlayerStart() {
+    aiClientScheduler.scheduleWithFixedDelay(playTask, 1, aiClientRefreshTime, TimeUnit.SECONDS);
   }
 
   /**
@@ -183,7 +184,7 @@ public class AIClient extends Client {
    * @author rsyed
    */
   @Override
-  public void gameStartWatcher() {
+  protected void gameStartWatcher() {
     Thread watcherThread =
         new Thread(
             () -> {
@@ -224,7 +225,7 @@ public class AIClient extends Client {
    * @author rsyed
    */
   @Override
-  public synchronized void gameStateHelper() {
+  protected synchronized void gameStateHelper() {
     GameState gameState = new GameState();
     try {
       gameState = comm.getCurrentGameState(currentServer);

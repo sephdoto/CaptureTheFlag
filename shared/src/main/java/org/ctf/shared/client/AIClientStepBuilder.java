@@ -72,8 +72,9 @@ public class AIClientStepBuilder {
      * players
      *
      * @param num Exp: AI.MCTS, AI.MCTSRANDOM, etc
+     * @param aiConfig Object containing settings for the AI to use
      */
-    LoggerEnabler AIPlayerSelector(AI num, AI_Config aiConfig);
+    LoggerEnabler aiPlayerSelector(AI num, AI_Config aiConfig);
   }
 
   public static interface LoggerEnabler {
@@ -89,10 +90,10 @@ public class AIClientStepBuilder {
     /**
      * Method to enable if the AI Game will be logged players
      *
-     * @param GameID the game session ID
+     * @param gameID the game session ID
      * @param teamName The requested Team name
      */
-    BuildStep gameData(String GameID, String teamName);
+    BuildStep gameData(String gameID, String teamName);
   }
 
   /** Build Step */
@@ -159,7 +160,7 @@ public class AIClientStepBuilder {
      * @param aiConfig the config file to init the AI with
      */
     @Override
-    public LoggerEnabler AIPlayerSelector(AI ai, AI_Config aiConfig) {
+    public LoggerEnabler aiPlayerSelector(AI ai, AI_Config aiConfig) {
       this.ai = ai;
       this.aiConfig = aiConfig;
       return this;
@@ -199,8 +200,8 @@ public class AIClientStepBuilder {
     }
 
     @Override
-    public BuildStep gameData(String GameID, String teamName) {
-      this.gameSessionGiven = GameID;
+    public BuildStep gameData(String gameID, String teamName) {
+      this.gameSessionGiven = gameID;
       this.teamName = teamName;
       return this;
     }
