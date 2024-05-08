@@ -16,7 +16,7 @@ public class TreeNode implements Comparable<TreeNode> {
   public TreeNode parent;
   TreeNode[] children;
   IdentityHashMap<Piece, ArrayList<int[]>> possibleMoves;
-  ReferenceGameState gameState;
+  public ReferenceGameState gameState;
   int[] wins;
   ReferenceMove operateOn;
   

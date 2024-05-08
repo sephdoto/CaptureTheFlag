@@ -1,7 +1,8 @@
 package org.ctf.shared.ai;
 
-import org.ctf.shared.ai.mcts.MCTS;
-import org.ctf.shared.ai.mcts.TreeNode;
+import org.ctf.shared.ai.mcts3.MCTS;
+import org.ctf.shared.ai.mcts3.ReferenceGameState;
+import org.ctf.shared.ai.mcts3.TreeNode;
 
 /**
  * Ich brauch die Klasse hier nur temporär für den Profiler.
@@ -12,19 +13,19 @@ public class Profiling {
   public static void main (String[] args) {
     double expansions = 0;
     int count = 0;
-    int timeInMilis = 1000;
+    int timeInMilis = 100;
     int simulations = 0;
     int heuristics = 0;
     int crashes = 0;
 
-    MCTS mcts = new MCTS(new TreeNode(null, TestValues.getTestState(), new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0})), new AI_Config());
-    TreeNode rootclone = mcts.root.clone(mcts.root.copyGameState());
+    MCTS mcts = new MCTS(new TreeNode(null, new ReferenceGameState(TestValues.getTestState()), new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0})), new AI_Config());
+    TreeNode rootclone = mcts.root.clone(mcts.root.gameState.clone());
     
-    for (; count < 50; count++) {
+    for (; count < 100; count++) {
 
       //      MCTS_TestDouble mcts = new
       // MCTS_TestDouble(MCTSTest.mcts.root.clone(MCTSTest.mcts.root.copyGameState()));
-      mcts.root = rootclone.clone(rootclone.copyGameState());
+      mcts.root = rootclone.clone(rootclone.gameState.clone());
       mcts.root.parent = null;
       try {
         mcts.getMove(timeInMilis, new AI_Config().C);

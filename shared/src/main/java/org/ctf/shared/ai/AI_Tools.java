@@ -2,6 +2,7 @@ package org.ctf.shared.ai;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
@@ -17,6 +18,18 @@ import org.ctf.shared.state.data.map.ShapeType;
  */
 public class AI_Tools {
   static Random random = new Random();
+  static HashMap<Integer, int[]> directionModifiers;
+  static{
+    directionModifiers = new HashMap<Integer, int[]>();
+    directionModifiers.put(0, new int[] {0, -1});
+    directionModifiers.put(1, new int[] {0, 1});
+    directionModifiers.put(2, new int[] {-1, 0});
+    directionModifiers.put(3, new int[] {1, 0});
+    directionModifiers.put(4, new int[] {-1, -1});
+    directionModifiers.put(5, new int[] {-1, 1});
+    directionModifiers.put(6, new int[] {1, -1});
+    directionModifiers.put(7, new int[] {1, 1});
+  }
 
   /**
    * Returns the previous teams index in the team array.
@@ -350,7 +363,10 @@ public class AI_Tools {
    * @return false if there are no possible moves in this direction, true otherwise.
    */
   public static boolean validDirection(GameState gameState, Piece piece, int direction, ReferenceMove change) {
-    return checkMoveValidity(gameState, piece, direction, 1, change).getPiece() != null;
+//    return checkMoveValidity(gameState, piece, direction, 1, change).getPiece() != null;
+    int[] pos = new int[] {piece.getPosition()[0], piece.getPosition()[1]};
+    updatePos(pos, direction, 1);
+    return validPos(pos, piece, gameState);
   }
 
   /**
@@ -422,36 +438,9 @@ public class AI_Tools {
    * @return updated position
    */
   public static int[] updatePos(int[] pos, int direction, int reach) {
-    switch (direction) {
-      case 0:
-        pos[1] -= reach;
-        break; // left
-      case 1:
-        pos[1] += reach;
-        break; // right
-      case 2:
-        pos[0] -= reach;
-        break; // up
-      case 3:
-        pos[0] += reach;
-        break; // down
-      case 4:
-        pos[1] -= reach;
-        pos[0] -= reach;
-        break; // left Up
-      case 5:
-        pos[1] += reach;
-        pos[0] -= reach;
-        break; // right Up
-      case 6:
-        pos[1] -= reach;
-        pos[0] += reach;
-        break; // left Down
-      case 7:
-        pos[1] += reach;
-        pos[0] += reach;
-        break; // right Down
-    }
+    int[] modifier = directionModifiers.get(direction);
+    pos[0] += modifier[0] * reach;
+    pos[1] += modifier[1] * reach;
     return pos;
   }
 
@@ -465,13 +454,15 @@ public class AI_Tools {
    */
   public static boolean validPos(int[] pos, Piece piece, GameState gameState) {
     // checks if the position can be occupied
-    if (positionOutOfBounds(gameState.getGrid(), pos)) return false;
-    if (emptyField(gameState.getGrid(), pos)) return true;
-    if (occupiedByBlock(gameState.getGrid(), pos)) return false;
-    if (occupiedBySameTeam(gameState, pos)) return false;
-    if (otherTeamsBase(gameState.getGrid(), pos, piece)) return true;
-    if (occupiedByWeakerOpponent(gameState, pos, piece)) return true;
-
+    try { 
+      if (emptyField(gameState.getGrid(), pos)) return true;
+      if (occupiedByBlock(gameState.getGrid(), pos)) return false;
+      if (occupiedBySameTeam(gameState, pos)) return false;
+      if (otherTeamsBase(gameState.getGrid(), pos, piece)) return true;
+      if (occupiedByWeakerOpponent(gameState, pos, piece)) return true;
+    } catch (IndexOutOfBoundsException iob) {
+      return false;
+    }
     // if opponent is stronger or something unforeseen happens
     return false;
   }

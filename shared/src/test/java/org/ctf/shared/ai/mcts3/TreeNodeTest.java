@@ -82,7 +82,7 @@ class TreeNodeTest {
     MCTS mcts = new MCTS(node, new AI_Config());
     for(int i=0; i<1000 && mcts.isTerminal(node.gameState, new ReferenceMove(null, new int[2])) == -1; i++) {
       mcts.oneMove(node, node, true, new ReferenceMove(null, new int[2]));
-      node.printGrid();
+//      node.printGrid();
     }
   }
   

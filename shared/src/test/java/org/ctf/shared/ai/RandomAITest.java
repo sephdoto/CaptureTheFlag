@@ -48,7 +48,7 @@ class RandomAITest {
 
     int[] move = new int[] {};
     try {
-      move = RandomAI.pickMoveSimple(gameState).getNewPosition();
+      move = RandomAI.pickMoveSimple(gameState, new ReferenceMove(null, new int[2])).getNewPosition();
     } catch (InvalidShapeException e) {
       fail("All shapes are valid");
     }
@@ -80,7 +80,7 @@ class RandomAITest {
     gameState.getGrid()[8][0] = pawn.getId();								//little guy gets sacrificed
 
     try {
-      assertArrayEquals(new int[] {8,0}, RandomAI.pickMoveSimple(gameState).getNewPosition());		//only 1 move possible, capture the pawn!
+      assertArrayEquals(new int[] {8,0}, RandomAI.pickMoveSimple(gameState, new ReferenceMove(null, new int[2])).getNewPosition());		//only 1 move possible, capture the pawn!
     } catch (InvalidShapeException e) {
       fail("All shapes are valid");
     }
@@ -111,7 +111,7 @@ class RandomAITest {
     gameState.getGrid()[7][1] = "b";										//only valid move now is 6,6
 
     try {
-      assertArrayEquals(new int[] {6,6}, RandomAI.pickMoveSimple(gameState).getNewPosition());		//only 1 move possible, onto a free field
+      assertArrayEquals(new int[] {6,6}, RandomAI.pickMoveSimple(gameState, new ReferenceMove(null, new int[2])).getNewPosition());		//only 1 move possible, onto a free field
     } catch (InvalidShapeException e) {
       fail("All shapes are valid");
     }

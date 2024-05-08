@@ -387,6 +387,7 @@ public class MCTS {
     else {
       try {
         alterGameState(alter.gameState, MCTS_Tools.pickMoveComplex(alter.gameState, change));
+//        alterGameState(alter.gameState, MCTS_Tools.pickMoveSimple(alter.gameState, change));
       } catch (NoMovesLeftException | InvalidShapeException e) {
         e.printStackTrace();
       }

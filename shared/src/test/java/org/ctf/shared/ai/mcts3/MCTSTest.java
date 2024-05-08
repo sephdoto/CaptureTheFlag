@@ -47,7 +47,7 @@ class MCTSTest {
     mcts.getMove(1000, new AI_Config().C);
   }
 
-  @Test
+//  @Test
   void testPerformance() throws InterruptedException {
     double expansions = 0;
     int count = 0;

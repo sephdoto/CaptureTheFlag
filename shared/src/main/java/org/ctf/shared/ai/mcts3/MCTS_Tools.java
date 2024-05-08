@@ -2,6 +2,7 @@ package org.ctf.shared.ai.mcts3;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
@@ -20,6 +21,19 @@ import org.ctf.shared.state.data.map.ShapeType;
 public class MCTS_Tools {
   static Random random = new Random();
 
+  static HashMap<Integer, int[]> directionModifiers;
+  static{
+    directionModifiers = new HashMap<Integer, int[]>();
+    directionModifiers.put(0, new int[] {0, -1});
+    directionModifiers.put(1, new int[] {0, 1});
+    directionModifiers.put(2, new int[] {-1, 0});
+    directionModifiers.put(3, new int[] {1, 0});
+    directionModifiers.put(4, new int[] {-1, -1});
+    directionModifiers.put(5, new int[] {-1, 1});
+    directionModifiers.put(6, new int[] {1, -1});
+    directionModifiers.put(7, new int[] {1, 1});
+  }
+  
   /**
    * Returns the previous teams index in the team array.
    *
@@ -356,7 +370,10 @@ public class MCTS_Tools {
    * @return false if there are no possible moves in this direction, true otherwise.
    */
   public static boolean validDirection(ReferenceGameState gameState, Piece piece, int direction, ReferenceMove change) {
-    return checkMoveValidity(gameState, piece, direction, 1, change).getPiece() != null;
+//  return checkMoveValidity(gameState, piece, direction, 1, change).getPiece() != null;
+  int[] pos = new int[] {piece.getPosition()[0], piece.getPosition()[1]};
+  updatePos(pos, direction, 1);
+  return validPos(pos, piece, gameState);
   }
 
   /**
@@ -430,36 +447,9 @@ public class MCTS_Tools {
    * @return updated position
    */
   public static int[] updatePos(int[] pos, int direction, int reach) {
-    switch (direction) {
-      case 0:
-        pos[1] -= reach;
-        break; // left
-      case 1:
-        pos[1] += reach;
-        break; // right
-      case 2:
-        pos[0] -= reach;
-        break; // up
-      case 3:
-        pos[0] += reach;
-        break; // down
-      case 4:
-        pos[1] -= reach;
-        pos[0] -= reach;
-        break; // left Up
-      case 5:
-        pos[1] += reach;
-        pos[0] -= reach;
-        break; // right Up
-      case 6:
-        pos[1] -= reach;
-        pos[0] += reach;
-        break; // left Down
-      case 7:
-        pos[1] += reach;
-        pos[0] += reach;
-        break; // right Down
-    }
+    int[] modifier = directionModifiers.get(direction);
+    pos[0] += modifier[0] * reach;
+    pos[1] += modifier[1] * reach;
     return pos;
   }
 
@@ -473,13 +463,16 @@ public class MCTS_Tools {
    */
   public static boolean validPos(int[] pos, Piece piece, ReferenceGameState gameState) {
     // checks if the position can be occupied
-    if (positionOutOfBounds(gameState.getGrid(), pos)) return false;
-    if (emptyField(gameState.getGrid(), pos)) return true;
-    if (occupiedByBlock(gameState.getGrid(), pos)) return false;
-    if (occupiedBySameTeam(gameState, piece.getPosition(), pos)) return false;
-    if (otherTeamsBase(gameState.getGrid(), pos, piece.getPosition())) return true;
-    if (occupiedByWeakerOpponent(gameState.getGrid().getPosition(pos[1], pos[0]).getPiece(), piece))
-      return true;
+    try {
+      if (emptyField(gameState.getGrid(), pos)) return true;
+      if (occupiedByBlock(gameState.getGrid(), pos)) return false;
+      if (occupiedBySameTeam(gameState, piece.getPosition(), pos)) return false;
+      if (otherTeamsBase(gameState.getGrid(), pos, piece.getPosition())) return true;
+      if (occupiedByWeakerOpponent(gameState.getGrid().getPosition(pos[1], pos[0]).getPiece(), piece))
+        return true;
+    } catch(IndexOutOfBoundsException iob) {
+      return false;
+    }
 
     // if opponent is stronger or something unforeseen happens
     return false;
@@ -569,30 +562,11 @@ public class MCTS_Tools {
    * @return true if the position is occupied by another teams base and a flag can be captured
    */
   public static boolean otherTeamsBase(Grid grid, int[] newPos, int[] oldPos) {
-    //    System.out.println(grid.getPosition(newPos[1], newPos[0]).getObject());
     if (grid.getPosition(newPos[1], newPos[0]).getObject() == GridObjects.base) {
       if (grid.getPosition(oldPos[1], oldPos[0]).getTeamId()
           != grid.getPosition(newPos[1], newPos[0]).getTeamId()) return true;
     }
     return false;
-  }
-
-  /**
-   * This method returns an occupants (piece/base) team. It splits it Id and parses the enclosed
-   * TeamId to Integer.
-   *
-   * @param grid
-   * @param pos
-   * @return the occupants teamID as int
-   */
-  public static int getOccupantTeam(String[][] grid, int[] pos) {
-    int start = grid[pos[0]][pos[1]].indexOf(":") + 1,
-        indexUnderscore = grid[pos[0]][pos[1]].indexOf("_", start);
-    return Integer.parseInt(
-        grid[pos[0]][pos[1]],
-        start,
-        indexUnderscore == -1 ? grid[pos[0]][pos[1]].length() : indexUnderscore,
-        10);
   }
 
   /**
@@ -673,5 +647,39 @@ public class MCTS_Tools {
       throw new NoMovesLeftException(gameState.getTeams()[gameState.getCurrentTeam()].getId());
 
     return null;
+  }
+  
+  /**
+   * I think about implementing this but testing shows that it's worse than complex, even though it shouldn't really be thaaaat bad.
+   * Interesting.
+   * 
+   * @param gameState
+   * @param move
+   * @return random move
+   * @throws InvalidShapeException
+   */
+  public static ReferenceMove pickMoveSimple(ReferenceGameState gameState, ReferenceMove move) throws InvalidShapeException {
+    move.setPiece(null);
+    long time = System.currentTimeMillis();
+    do {
+      Piece picked = gameState.getTeams()[gameState.getCurrentTeam()].getPieces()[(int) (Math.random() * gameState.getTeams()[gameState.getCurrentTeam()].getPieces().length)];
+      if (picked.getDescription().getMovement().getDirections() != null) {
+        int randomDirection = (int) (Math.random() * 8);
+        int reach =
+            (int)
+                (Math.random()
+                    * getReach(
+                        picked.getDescription().getMovement().getDirections(), randomDirection));
+        if(reach > 0)
+          move = checkMoveValidity(gameState, picked, randomDirection, reach, new ReferenceMove(null, new int[] {0,0}));
+      } else {
+        move =
+            getRandomShapeMove(
+                getShapeMoves(gameState, picked, new ArrayList<int[]>()), picked, new ReferenceMove(null, new int[] {0,0}));
+      }
+    } while (move.getPiece() == null);
+    if(System.currentTimeMillis() - time > 2)
+      System.out.println(System.currentTimeMillis() - time);
+    return move;
   }
 }

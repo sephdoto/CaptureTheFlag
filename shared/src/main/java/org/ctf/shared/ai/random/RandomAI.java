@@ -2,12 +2,10 @@ package org.ctf.shared.ai.random;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import org.ctf.shared.ai.AI_Tools;
 import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.state.GameState;
-import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
 
 /**
@@ -27,8 +25,8 @@ public class RandomAI extends AI_Tools {
    * @throws InvalidShapeException
    */
   @Deprecated
-  public static Move pickMoveSimple(GameState gameState) throws InvalidShapeException {
-    ReferenceMove move = null;
+  public static ReferenceMove pickMoveSimple(GameState gameState, ReferenceMove move) throws InvalidShapeException {
+    move.setPiece(null);
     Piece[] pieces = gameState.getTeams()[gameState.getCurrentTeam()].getPieces();
     do {
       Piece picked = pieces[(int) (Math.random() * pieces.length)];
@@ -39,14 +37,15 @@ public class RandomAI extends AI_Tools {
                 (Math.random()
                     * getReach(
                         picked.getDescription().getMovement().getDirections(), randomDirection));
-        move = checkMoveValidity(gameState, picked, randomDirection, reach, new ReferenceMove(null, new int[] {0,0}));
+        if(reach > 0)
+          move = checkMoveValidity(gameState, picked, randomDirection, reach, new ReferenceMove(null, new int[] {0,0}));
       } else {
         move =
             getRandomShapeMove(
                 getShapeMoves(gameState, picked, new ArrayList<int[]>()), picked, new ReferenceMove(null, new int[] {0,0}));
       }
     } while (move.getPiece() == null);
-    return move.toMove();
+    return move;
   }
 
   /**
