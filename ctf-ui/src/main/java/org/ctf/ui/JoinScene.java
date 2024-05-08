@@ -24,6 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 
 /**
  * This class represents a JavaFX scene for Joining remote games. It contains all necessary UI
@@ -92,7 +93,7 @@ public class JoinScene extends Scene {
 
     mainBox.getChildren().add(createLeave());
     left.getChildren().add(createLeftcontent());
-
+   
   }
 
   /**
@@ -148,6 +149,9 @@ public class JoinScene extends Scene {
     exit.setOnAction(e -> {
       hsc.switchtoHomeScreen(e);
     });
+    String test =
+        "MCTS ist ein unglaublich starker KI spiler der alles zerstört falls er nicht aufgehalten wird ";
+    InfoPaneCreator.addInfoPane(exit, hsc.getStage(), test, InfoPaneCreator.BOTTOM);
     return exit;
   }
 
@@ -176,7 +180,8 @@ public class JoinScene extends Scene {
     leftBox.getChildren().add(sessionText);
 
     leftBox.getChildren().add(createSearch());
-
+    
+    
     return leftBox;
   }
 
@@ -200,7 +205,7 @@ public class JoinScene extends Scene {
     rightHeader.fontProperty().bind(Bindings
         .createObjectBinding(() -> Font.font(right.getWidth() / 18), right.widthProperty()));
     rightBox.getChildren().add(rightHeader);
-    rightBox.getChildren().add(createSessionInfo(Integer.parseInt(id), teams));
+    rightBox.getChildren().add(createSessionInfo(id, teams));
     rightBox.getChildren().add(createButtonOption(id,ip,port));
     
 
@@ -271,6 +276,7 @@ public class JoinScene extends Scene {
         }
       } catch (IllegalArgumentException e2) {
         // TODO: handle exception
+        e2.printStackTrace();
         right.getChildren().clear();
         info.setText("Please enter a valid \n IP-adress and port!");
         right.getChildren().add(info);
@@ -315,7 +321,7 @@ public class JoinScene extends Scene {
    * @param space - int value for number of open spots
    * @return StackPane that gets added to the right StackPane
    */
-  private StackPane createSessionInfo(int id, int teams) {
+  private StackPane createSessionInfo(String id, int teams) {
     StackPane sessionInfoBox = new StackPane();
     sessionInfoBox.getStyleClass().add("session-info");
     sessionInfoBox.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
@@ -327,7 +333,7 @@ public class JoinScene extends Scene {
       double spacing = newVal.doubleValue() * 0.03;
       textBox.setSpacing(spacing);
     });
-    Text idtext = createInfoText("Session ID:  " + id, 25);
+    Text idtext = createInfoText("Session ID:  " + id, 80);
     textBox.getChildren().add(idtext);
 
     Text teamText = createInfoText(teams + " players are waiting in the lobby!", 25);
@@ -436,14 +442,25 @@ public class JoinScene extends Scene {
       VBox.setMargin(buttonBox, new Insets(size));
     });
     VBox.setMargin(buttonBox, new Insets(25));
-    Button joinButton = createControlButton(vbox,"Join","save-button");
+    Button joinButton = createControlButton(vbox, "Join", "save-button");
     joinButton.setOnAction(e -> {
-      if(nameField.getText().equals("")) {
-        CretaeGameScreenV2.informationmustBeEntered(nameField, "custom-search-field", "custom-search-field");
+      if (nameField.getText().equals("")) {
+        CretaeGameScreenV2.informationmustBeEntered(nameField, "custom-search-field",
+            "custom-search-field");
         return;
-      }     
-      Client client = ClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(ip)
-          .onPort(port).enableSaveGame(false).enableAutoJoin(id, "teamname").build();
+      } 
+      Client client =
+          ClientStepBuilder.newBuilder()
+          .enableRestLayer(false)
+          .onRemoteHost(ip)
+          .onPort(port)
+          .enableSaveGame(false)
+          .enableAutoJoin(id, "teamname")
+          .build();
+      root.getChildren().remove(popUp);
+      right.getChildren().clear();
+      info.setText("Client hast joined!\n Waiting for the Game to start.");
+      right.getChildren().add(info);
     });
     Button cancelButton = createControlButton(vbox, "Cancel", "leave-button");
     cancelButton.setOnAction(e -> {

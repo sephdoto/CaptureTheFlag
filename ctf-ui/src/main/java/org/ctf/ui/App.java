@@ -45,11 +45,12 @@ public class App extends Application {
 	static Stage mainStage;
 	static Scene startScene;
 	static MusicPlayer backgroundMusic;
-	HomeSceneController ssc = new HomeSceneController();
+	HomeSceneController ssc; 
 	FadeTransition startTransition;
 
 	public void start(Stage stage) {
 		mainStage = stage;
+		ssc = new HomeSceneController(mainStage);
 		SettingsSetter.loadCustomSettings();
 		ImageLoader.loadImages();
 		Scene lockscreen = new Scene(createLockScreen(), 1000, 500);

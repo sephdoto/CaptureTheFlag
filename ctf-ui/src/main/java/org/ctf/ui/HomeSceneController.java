@@ -41,6 +41,9 @@ public class HomeSceneController {
 		stage.setScene(scene);
 	}
 	
+	public HomeSceneController(Stage stage) {
+	  this.stage = stage;
+	}
 	
 	public void createGameSession() {
 		System.out.println("Hallo ch bin der Manger");
@@ -148,4 +151,6 @@ public class HomeSceneController {
 	public void setServerManager(ServerManager serverManager) {
 		this.serverManager = serverManager;
 	}
+	
+	
 }
