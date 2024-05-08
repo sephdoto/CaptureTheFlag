@@ -15,8 +15,8 @@ import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.data.map.Movement;
 import org.ctf.shared.state.data.map.PieceDescription;
 import org.ctf.shared.state.data.map.PlacementType;
-import org.ctf.shared.tools.JSON_Tools;
-import org.ctf.shared.tools.JSON_Tools.IncompleteMapTemplateException;
+import org.ctf.shared.tools.JsonTools;
+import org.ctf.shared.tools.JsonTools.IncompleteMapTemplateException;
 import org.ctf.ui.controllers.MapPreview;
 
 import javafx.animation.FadeTransition;
@@ -80,7 +80,7 @@ public class MapEditorScene extends Scene {
 		File defaultMap = new File(Constants.mapTemplateFolder+"10x10_2teams_example.json");
 		try {
 			if (defaultMap.exists()) {
-				tmpTemplate = JSON_Tools.readMapTemplate(defaultMap);
+				tmpTemplate = JsonTools.readMapTemplate(defaultMap);
 				
 			} else {
 				tmpTemplate = createExampleTemplate();
@@ -866,7 +866,7 @@ public class MapEditorScene extends Scene {
 			File defaultMap = new File("src" + File.separator + "main" + File.separator + "java" + File.separator
 					+ "org" + File.separator + "ctf" + File.separator + "ui" + File.separator + "default.json");
 			try {
-				tmpTemplate = JSON_Tools.readMapTemplate(defaultMap);
+				tmpTemplate = JsonTools.readMapTemplate(defaultMap);
 			} catch (IncompleteMapTemplateException | IOException e) {
 				System.out.println("fail");
 			}
@@ -885,7 +885,7 @@ public class MapEditorScene extends Scene {
 			File defaultMap = new File("src" + File.separator + "main" + File.separator + "java" + File.separator
 					+ "org" + File.separator + "ctf" + File.separator + "ui" + File.separator + "default2.json");
 			try {
-				tmpTemplate = JSON_Tools.readMapTemplate(defaultMap);
+				tmpTemplate = JsonTools.readMapTemplate(defaultMap);
 			} catch (IncompleteMapTemplateException | IOException e) {
 				System.out.println("fail");
 			}
@@ -946,7 +946,7 @@ public class MapEditorScene extends Scene {
 		});
 		submit.setOnAction(e -> {
 			try {
-				JSON_Tools.saveMapTemplateAsFile("test", tmpTemplate);
+				JsonTools.saveMapTemplateAsFile("test", tmpTemplate);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

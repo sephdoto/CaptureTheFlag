@@ -34,9 +34,9 @@ public class PiecePlacer {
   int[][] boundaries;
   //directions: 
   // int[0-3] =    where the team is "facing", if it is 0 - left; 1 - right; 2 - up; 3 - down
-  // int[0-3][] =  positions for AI_Tools.updatePos, encoded as mid-left-right
+  // int[0-3][] =  positions for GameUtilities.updatePos, encoded as mid-left-right
   // int[4-7] =    where the team is "facing", if it is 4 - left; 5 - right; 6 - up; 7 - down
-  // int[4-7][] =  positions for AI_Tools.updatePos, encoded as left-right
+  // int[4-7][] =  positions for GameUtilities.updatePos, encoded as left-right
   int[][] directions = new int[][] {{0,6,4},{1,5,7},{2,4,5},{3,7,6},
     {3,2},{2,3},{0,1},{1,0}};
 
@@ -94,7 +94,7 @@ public class PiecePlacer {
         
         //place to the sides of the base, till boundaries are hit
         for(int boundsHit=0, i=0; boundsHit<2 && maxPieces - pieces < maxPieces; i++) {
-          int[] newPos = AI_Tools.updatePos(team.getBase().clone(), this.directions[4+facing][i%2], i/2);
+          int[] newPos = GameUtilities.updatePos(team.getBase().clone(), this.directions[4+facing][i%2], i/2);
           if(safeToPlace(n, newPos)) {
             placePiece(team, maxPieces-pieces--, newPos);
             boundsHit = 0;
@@ -465,7 +465,7 @@ public class PiecePlacer {
      */
     private boolean safeToPlace(int team, int[] newPos) {
       return !positionOutOfBounds(team, newPos) && 
-          AI_Tools.emptyField(gameState.getGrid(), newPos);
+          GameUtilities.emptyField(gameState.getGrid(), newPos);
     }
 
     /**
@@ -492,7 +492,7 @@ public class PiecePlacer {
      * @return updated position
      */
     private int[] posInFrontOfBase(int[] base, int facing, int midLeftRight) {
-      return AI_Tools.updatePos(base.clone(), this.directions[facing][midLeftRight], 1);
+      return GameUtilities.updatePos(base.clone(), this.directions[facing][midLeftRight], 1);
     }
 
     /**

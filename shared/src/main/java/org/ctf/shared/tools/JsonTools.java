@@ -26,7 +26,7 @@ import java.io.File;
  * Using the  external json and gson library, MapTemplates can be saved as and created from a JSON String.
  * @author sistumpf
  */
-public class JSON_Tools {
+public class JsonTools {
   public static String mapTemplates = Constants.mapTemplateFolder + "templates" + File.separator;
   static String gameStates = Constants.mapTemplateFolder + "gamestates" + File.separator;
   

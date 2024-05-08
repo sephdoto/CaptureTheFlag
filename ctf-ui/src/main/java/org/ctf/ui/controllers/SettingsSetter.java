@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums;
-import org.ctf.shared.tools.JSON_Tools;
+import org.ctf.shared.tools.JsonTools;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -61,7 +61,7 @@ public class SettingsSetter {
    */
   public static void saveCustomSettings() {
     try {
-      JSON_Tools.saveObjectAsJSON(settingsLocation, createJSONObject(), true);
+      JsonTools.saveObjectAsJSON(settingsLocation, createJSONObject(), true);
     } catch(JSONException | IOException jse) {
       jse.printStackTrace();
     }

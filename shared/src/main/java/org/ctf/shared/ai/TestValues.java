@@ -5,8 +5,8 @@ import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.Team;
 import org.ctf.shared.state.data.map.MapTemplate;
-import org.ctf.shared.tools.JSON_Tools;
-import org.ctf.shared.tools.JSON_Tools.MapNotFoundException;
+import org.ctf.shared.tools.JsonTools;
+import org.ctf.shared.tools.JsonTools.MapNotFoundException;
 
 
 /**
@@ -183,7 +183,7 @@ public class TestValues {
   public static MapTemplate getTestTemplate() {
     MapTemplate mt = new MapTemplate();
     try {
-      mt = JSON_Tools.readMapTemplate("10x10_2teams_example");
+      mt = JsonTools.readMapTemplate("10x10_2teams_example");
     } catch (MapNotFoundException e) {e.printStackTrace();}
     return mt;
   }

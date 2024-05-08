@@ -10,7 +10,7 @@ import java.util.Random;
 import java.util.stream.Stream;
 
 /** This class contains useful methods for the GameEngine. */
-public class EngineTools extends AI_Tools {
+public class EngineTools extends GameUtilities {
   /**
    * A given move is made on the GameState. Only updates the Team array, the Grid and the last move.
    * Checks for removing teams are not made here.
@@ -233,15 +233,15 @@ public class EngineTools extends AI_Tools {
       }
 
     } else {
-      dirMap = AI_Tools.createDirectionMap(gameState, piece);
+      dirMap = GameUtilities.createDirectionMap(gameState, piece);
       for (int[] entry : dirMap) {
         for (int reach = entry[1]; reach > 0; reach--) {
           Move move = new Move();
           try {
-            move = AI_Tools.checkMoveValidity(gameState, piece, entry[0], reach);
+            move = GameUtilities.checkMoveValidity(gameState, piece, entry[0], reach);
           } catch (Exception e) {
             System.out.println(2);
-            move = AI_Tools.checkMoveValidity(gameState, piece, entry[0], reach);
+            move = GameUtilities.checkMoveValidity(gameState, piece, entry[0], reach);
           }
           if (move != null) possibleMoves.add(move.getNewPosition());
         }

@@ -52,7 +52,7 @@ public class Constants {
   
   // Default folder for saving games for AI Analysis
   public static String saveGameFolder = sharedResourcesFolder + "savegames" + File.separator;
-  // package map, class JSON_Tools
+  // package map, class JsonTools
   public static String mapTemplateFolder = sharedResourcesFolder + "maptemplates" + File.separator;
 
   /**

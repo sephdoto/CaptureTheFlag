@@ -14,7 +14,7 @@ import org.ctf.shared.constants.Descriptions;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.data.map.Movement;
-import org.ctf.shared.tools.JSON_Tools;
+import org.ctf.shared.tools.JsonTools;
 import org.ctf.ui.customobjects.PopUpPane;
 
 import configs.GameMode;
@@ -511,7 +511,7 @@ public class CretaeGameScreenV2 extends Scene {
 		c.setOnAction(event -> {
 			selected = c.getValue();
 			showMapBox.getChildren().clear();
-			maps = JSON_Tools.getTemplateAndGameState(selected);
+			maps = JsonTools.getTemplateAndGameState(selected);
 			if (!maps.isEmpty()) {
 		            Map.Entry<MapTemplate, GameState> entry = maps.entrySet().iterator().next();
 		            template = entry.getKey();
@@ -524,7 +524,7 @@ public class CretaeGameScreenV2 extends Scene {
 	}
 	
 	public ArrayList<String> getTemplateNames(){
-		File templateFolder = new File(JSON_Tools.mapTemplates);
+		File templateFolder = new File(JsonTools.mapTemplates);
 		if(templateFolder.isDirectory()) {
 			String[] names = templateFolder.list();
 			for(int i=0;i<names.length;i++) {

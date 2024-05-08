@@ -9,8 +9,8 @@ import java.util.HashMap;
 import org.ctf.shared.ai.TestValues;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.data.map.MapTemplate;
-import org.ctf.shared.tools.JSON_Tools.IncompleteMapTemplateException;
-import org.ctf.shared.tools.JSON_Tools.MapNotFoundException;
+import org.ctf.shared.tools.JsonTools.IncompleteMapTemplateException;
+import org.ctf.shared.tools.JsonTools.MapNotFoundException;
 
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -31,7 +31,7 @@ class JSON_ToolsTest {
   @Test
   //TODO
   void getTemplateAndGameState() {
-    HashMap map = JSON_Tools.getTemplateAndGameState("test");
+    HashMap map = JsonTools.getTemplateAndGameState("test");
     System.out.println(1);
   }
   
@@ -39,7 +39,7 @@ class JSON_ToolsTest {
   //TODO
   void saveTemplateWithGameState() {
     try {
-      JSON_Tools.saveTemplateWithGameState("test", mapTemplate, TestValues.getTestState());
+      JsonTools.saveTemplateWithGameState("test", mapTemplate, TestValues.getTestState());
     } catch (Exception e) {
       fail("saving template with gamestate should be possible");
     }
@@ -48,7 +48,7 @@ class JSON_ToolsTest {
   @Test
   void testSaveMapTemplateAsFile() {
     try {
-      JSON_Tools.saveMapTemplateAsFile("test", mapTemplate);
+      JsonTools.saveMapTemplateAsFile("test", mapTemplate);
     } catch (IOException e) {
       fail("MapTemplate konnte nicht gespeichert werden");
     }
@@ -62,7 +62,7 @@ class JSON_ToolsTest {
 
   @Test
   void testStringFromMap() {
-    assertEquals(this.mapString, JSON_Tools.stringFromMap(mapTemplate).replaceAll("\\s", ""));
+    assertEquals(this.mapString, JsonTools.stringFromMap(mapTemplate).replaceAll("\\s", ""));
   }
 
   @Test
@@ -71,20 +71,20 @@ class JSON_ToolsTest {
     File file = new File(Constants.mapTemplateFolder + "10x10_2teams_example.json");
 
     try {
-      JSON_Tools.saveMapTemplateAsFile("incomplete", testTemplate);
+      JsonTools.saveMapTemplateAsFile("incomplete", testTemplate);
     } catch (IOException e) {e.printStackTrace();}
     File incomplete = new File(Constants.mapTemplateFolder + "incomplete.json");
 
     try {
-      testTemplate = JSON_Tools.readMapTemplate(file);
+      testTemplate = JsonTools.readMapTemplate(file);
     } catch (IncompleteMapTemplateException e) {
       fail(e.getMessage());
     } catch (IOException e) {
       fail(e.getMessage());
     }
-    assertEquals(JSON_Tools.stringFromMap(this.mapTemplate), JSON_Tools.stringFromMap(testTemplate));	//Muster und eingelesenes Template stimmen überein
+    assertEquals(JsonTools.stringFromMap(this.mapTemplate), JsonTools.stringFromMap(testTemplate));	//Muster und eingelesenes Template stimmen überein
 
-    Exception imte = assertThrows(IncompleteMapTemplateException.class, () -> JSON_Tools.readMapTemplate(incomplete));
+    Exception imte = assertThrows(IncompleteMapTemplateException.class, () -> JsonTools.readMapTemplate(incomplete));
     String expectedMessage = "The MapTemplate incomplete.json is incomplete and got deleted.";
     String actualMessage = imte.getMessage();
 
@@ -96,14 +96,14 @@ class JSON_ToolsTest {
   void testReadMapTemplateString() {
     MapTemplate testTemplate = null;
     try {
-      testTemplate = JSON_Tools.readMapTemplate("10x10_2teams_example");
+      testTemplate = JsonTools.readMapTemplate("10x10_2teams_example");
     } catch (MapNotFoundException e) {
       fail("einzulesendes MapTemplate existiert nicht");
     }
 
-    assertEquals(JSON_Tools.stringFromMap(this.mapTemplate), JSON_Tools.stringFromMap(testTemplate));	//Muster und eingelesenes Template stimmen überein
+    assertEquals(JsonTools.stringFromMap(this.mapTemplate), JsonTools.stringFromMap(testTemplate));	//Muster und eingelesenes Template stimmen überein
 
-    Exception mnf = assertThrows(MapNotFoundException.class, () -> JSON_Tools.readMapTemplate("DAD"));
+    Exception mnf = assertThrows(MapNotFoundException.class, () -> JsonTools.readMapTemplate("DAD"));
     String expectedMessage = "There is no MapTemplate named DAD in " + Constants.mapTemplateFolder;
     String actualMessage = mnf.getMessage();
 
@@ -113,9 +113,9 @@ class JSON_ToolsTest {
 
   @Test
   void testMapFromJson() {
-    MapTemplate mt = JSON_Tools.MapFromJson(mapString);
+    MapTemplate mt = JsonTools.MapFromJson(mapString);
 
-    assertEquals(JSON_Tools.stringFromMap(mt), JSON_Tools.stringFromMap(this.mapTemplate));
+    assertEquals(JsonTools.stringFromMap(mt), JsonTools.stringFromMap(this.mapTemplate));
   }
 
 
@@ -128,14 +128,14 @@ class JSON_ToolsTest {
     this.mapTemplateFolder = Constants.mapTemplateFolder;
 //    Constants.mapTemplateFolder = Paths.get("src" + File.separator + "test" + File.separator +"java" + File.separator + "org" + File.separator + "ctf" + 
 //    File.separator +"shared" + File.separator +"tools" + File.separator + "maptemplates").toAbsolutePath().toString() + File.separator;
-//    JSON_Tools.gameStates = Constants.mapTemplateFolder + "gamestates" + File.separator;
-//    JSON_Tools.mapTemplates = Constants.mapTemplateFolder + "templates" + File.separator;
+//    JsonTools.gameStates = Constants.mapTemplateFolder + "gamestates" + File.separator;
+//    JsonTools.mapTemplates = Constants.mapTemplateFolder + "templates" + File.separator;
   }
 
   @AfterAll
   void tearDownAfterClass() throws Exception {
     Constants.mapTemplateFolder = mapTemplateFolder;
-    JSON_Tools.gameStates = Constants.mapTemplateFolder + "gamestates" + File.separator;
-    JSON_Tools.mapTemplates = Constants.mapTemplateFolder + "templates" + File.separator;
+    JsonTools.gameStates = Constants.mapTemplateFolder + "gamestates" + File.separator;
+    JsonTools.mapTemplates = Constants.mapTemplateFolder + "templates" + File.separator;
   }
 }

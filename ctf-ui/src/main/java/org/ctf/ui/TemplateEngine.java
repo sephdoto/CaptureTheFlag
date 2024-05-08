@@ -13,8 +13,8 @@ import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.data.map.Movement;
 import org.ctf.shared.state.data.map.PieceDescription;
 import org.ctf.shared.state.data.map.PlacementType;
-import org.ctf.shared.tools.JSON_Tools;
-import org.ctf.shared.tools.JSON_Tools.IncompleteMapTemplateException;
+import org.ctf.shared.tools.JsonTools;
+import org.ctf.shared.tools.JsonTools.IncompleteMapTemplateException;
 
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Spinner;
@@ -54,7 +54,7 @@ public class TemplateEngine {
     File map = new File(Constants.mapTemplateFolder + name + ".json");
     try {
       if (map.exists()) {
-        tmpTemplate = JSON_Tools.readMapTemplate(map);
+        tmpTemplate = JsonTools.readMapTemplate(map);
       } else {
         System.out.println("Fehler: Default Template konnte nicht geladen werden!");
       }
@@ -225,7 +225,7 @@ public class TemplateEngine {
    */
   public void saveTemplate(String name) {
     try {
-      JSON_Tools.saveMapTemplateAsFile(name, tmpTemplate);
+      JsonTools.saveMapTemplateAsFile(name, tmpTemplate);
     } catch (IOException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();

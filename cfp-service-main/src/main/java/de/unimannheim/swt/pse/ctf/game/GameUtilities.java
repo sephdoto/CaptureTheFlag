@@ -8,12 +8,12 @@ import de.unimannheim.swt.pse.ctf.game.state.Move;
 import de.unimannheim.swt.pse.ctf.game.state.Piece;
 
 /**
- * This class contains some of the same methods as AI_Tools from module "shared" but it uses and returns classes from the server.
+ * This class contains some of the same methods as GameUtilities from module "shared" but it uses and returns classes from the server.
  * As the map or state package exists in the shared and ctf module, here the ctf versions are used.
  * This class should only be references from EngineTools, as it contains all the methods used by EngineTools but not by GameEngine.
  * @author sistumpf
  */
-class AI_Tools {
+class GameUtilities {
   /**
    * This method is needed to respawn a piece, it adds all positions in a certain radius around the base to an Array.
    * @param xTrans translations on x-axis

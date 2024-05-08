@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.ctf.shared.constants.Constants;
-import org.ctf.shared.tools.JSON_Tools;
+import org.ctf.shared.tools.JsonTools;
 import org.json.JSONObject;
 
 /**
@@ -104,7 +104,7 @@ public class AIConfig {
     settings.put("distanceBaseMultiplier", this.distanceBaseMultiplier);
     
     try {
-      JSON_Tools.saveObjectAsJSON(Constants.aiConfigFolder + configName + ".json", settings, true);
+      JsonTools.saveObjectAsJSON(Constants.aiConfigFolder + configName + ".json", settings, true);
     } catch (IOException e) {
       e.printStackTrace();
     }
