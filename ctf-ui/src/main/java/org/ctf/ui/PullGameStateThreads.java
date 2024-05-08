@@ -2,10 +2,6 @@ package org.ctf.ui;
 
 
 import org.ctf.shared.state.GameState;
-import org.ctf.shared.state.data.exceptions.SessionNotFound;
-import org.ctf.shared.state.data.exceptions.URLError;
-
-import configs.Dialogs;
 
 public class PullGameStateThreads extends Thread {
 	boolean active;
