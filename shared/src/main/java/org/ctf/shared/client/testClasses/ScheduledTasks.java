@@ -4,9 +4,9 @@ import com.google.gson.Gson;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import org.ctf.shared.ai.AI_Controller;
-import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
-import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.shared.ai.AIController;
+import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
+import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.client.AIClient;
 import org.ctf.shared.client.AIClientStepBuilder;
 import org.ctf.shared.client.lib.ServerDetails;
@@ -189,8 +189,8 @@ public class ScheduledTasks {
           client2.joinExistingGame("localhost", "8888", GameID, "Team 2");
         };
 
-    // AI_Controller Controller1 = new AI_Controller(client1.getCurrentState(), AI.RANDOM);
-    //  AI_Controller Controller2 = new AI_Controller(client2.getCurrentState(), AI.MCTS);
+    // AIController Controller1 = new AIController(client1.getCurrentState(), AI.RANDOM);
+    //  AIController Controller2 = new AIController(client2.getCurrentState(), AI.MCTS);
     Runnable playTask =
         () -> {
           try {
@@ -200,7 +200,7 @@ public class ScheduledTasks {
               thinkingTime = client1.getRemainingMoveTimeInSeconds() - 1;
               System.out.println("We had " +thinkingTime + " to think");
             }
-            AI_Controller controller = new AI_Controller(client1.getCurrentState(), client1.selectedAI, thinkingTime);
+            AIController controller = new AIController(client1.getCurrentState(), client1.selectedAI, thinkingTime);
             client1.pullData();
             controller.update(client1.getCurrentState());
             /*       client2.pullData();
@@ -230,7 +230,7 @@ public class ScheduledTasks {
               thinkingTime = client1.getRemainingMoveTimeInSeconds() - 1;
               System.out.println("We had " + thinkingTime + " to think");
             }
-            AI_Controller controller2 = new AI_Controller(client2.getCurrentState(), client2.selectedAI, thinkingTime);
+            AIController controller2 = new AIController(client2.getCurrentState(), client2.selectedAI, thinkingTime);
             client2.pullData();
             controller2.update(client2.getCurrentState());
             if (client2.isItMyTurn()) {

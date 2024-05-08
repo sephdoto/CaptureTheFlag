@@ -5,7 +5,7 @@ import configs.GameMode;
 import java.util.ArrayList;
 import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
-import org.ctf.shared.ai.AI_Tools;
+import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.exceptions.ForbiddenMove;
@@ -105,7 +105,7 @@ public class Game {
 
 	public static void showPossibleMoves() {
 		String pieceName = currentPlayer.getPiece().getId();
-		possibleMoves = AI_Tools.getPossibleMoves(state, pieceName, possibleMoves);
+		possibleMoves = GameUtilities.getPossibleMoves(state, pieceName, possibleMoves);
 		for (BackgroundCellV2 c : cb.getCells().values()) {
 			if (c != currentPlayer.getParentCell()) {
 				c.deselect();

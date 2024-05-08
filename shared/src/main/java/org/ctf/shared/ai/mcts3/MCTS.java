@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.ctf.shared.ai.AI_Config;
-import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
-import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.shared.ai.AIConfig;
+import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
+import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.ai.random.RandomAI;
 import org.ctf.shared.state.Move;
@@ -17,7 +17,7 @@ import org.ctf.shared.state.Team;
  * @author sistumpf
  */
 public class MCTS {
-  AI_Config config;
+  AIConfig config;
   static int count;
   int teams;
   int maxDistance;
@@ -26,7 +26,7 @@ public class MCTS {
   public AtomicInteger heuristicCounter;
   public AtomicInteger expansionCounter;
 
-  public MCTS(TreeNode root, AI_Config config) {
+  public MCTS(TreeNode root, AIConfig config) {
     this.config = config;
     this.root = root;
 //    this.rand = new Random();
@@ -213,7 +213,7 @@ public class MCTS {
         if (p.getDescription().getMovement().getDirections() != null) {
           for (int dir = 0; dir < 8; dir++)
             points[i] +=
-                MCTS_Tools.getReach(p.getDescription().getMovement().getDirections(), dir)
+                MCTSUtilities.getReach(p.getDescription().getMovement().getDirections(), dir)
                     * config.directionMultiplier;
         } else {
           points[i] += 8 * config.shapeReachMultiplier;
@@ -292,12 +292,12 @@ public class MCTS {
 
     for (int i = gameState.getCurrentTeam();
         teamsLeft > 1;
-        i = MCTS_Tools.toNextTeam(gameState).getCurrentTeam()) {
+        i = MCTSUtilities.toNextTeam(gameState).getCurrentTeam()) {
       boolean canMove = false;
       for (int j = 0; !canMove && j < gameState.getTeams()[i].getPieces().length; j++) {
         // only if a move can be made no exception is thrown
         try {
-          MCTS_Tools.pickMoveComplex(gameState, change);
+          MCTSUtilities.pickMoveComplex(gameState, change);
           canMove = true;
         } catch (Exception e) {
         }
@@ -305,7 +305,7 @@ public class MCTS {
       if (canMove) {
         return -1;
       } else if (!canMove) {
-        MCTS_Tools.removeTeam(gameState, i);
+        MCTSUtilities.removeTeam(gameState, i);
         teamsLeft--;
       }
     }
@@ -386,8 +386,8 @@ public class MCTS {
     }
     else {
       try {
-        alterGameState(alter.gameState, MCTS_Tools.pickMoveComplex(alter.gameState, change));
-//        alterGameState(alter.gameState, MCTS_Tools.pickMoveSimple(alter.gameState, change));
+        alterGameState(alter.gameState, MCTSUtilities.pickMoveComplex(alter.gameState, change));
+//        alterGameState(alter.gameState, MCTSUtilities.pickMoveSimple(alter.gameState, change));
       } catch (NoMovesLeftException | InvalidShapeException e) {
         e.printStackTrace();
       }
@@ -406,11 +406,11 @@ public class MCTS {
     for (Piece piece : parent.possibleMoves.keySet()) {
       for (int i = 0; i < parent.possibleMoves.get(piece).size(); i++) {
         int[] pos = parent.possibleMoves.get(piece).get(i);
-        if (MCTS_Tools.emptyField(parent.gameState.getGrid(), pos)) continue;
-        if (MCTS_Tools.otherTeamsBase(parent.gameState.getGrid(), pos, piece.getPosition())) {
+        if (MCTSUtilities.emptyField(parent.gameState.getGrid(), pos)) continue;
+        if (MCTSUtilities.otherTeamsBase(parent.gameState.getGrid(), pos, piece.getPosition())) {
           return createMoveDeleteIndex(parent, piece, i);
         }
-        if (MCTS_Tools.occupiedByWeakerOpponent(parent.gameState.getGrid().getPosition(pos[1], pos[0]).getPiece(), piece)) {
+        if (MCTSUtilities.occupiedByWeakerOpponent(parent.gameState.getGrid().getPosition(pos[1], pos[0]).getPiece(), piece)) {
           return createMoveDeleteIndex(parent, piece, i);
         }
       }
@@ -466,7 +466,7 @@ public class MCTS {
       if (gameState.getTeams()[i] == null) continue;
       if (gameState.getTeams()[i].getFlags() == 0
           || gameState.getTeams()[i].getPieces().length == 0) {
-        MCTS_Tools.removeTeam(gameState, i--);
+        MCTSUtilities.removeTeam(gameState, i--);
       }
     }
   }
@@ -495,11 +495,11 @@ public class MCTS {
       picked.setPosition(move.getNewPosition());
     } else {
       gameState.getTeams()[occupant.getTeamId()].setFlags(gameState.getTeams()[occupant.getTeamId()].getFlags() -1);
-      picked.setPosition(MCTS_Tools.respawnPiecePosition(gameState.getGrid(), gameState.getTeams()[gameState.getCurrentTeam()].getBase()));
+      picked.setPosition(MCTSUtilities.respawnPiecePosition(gameState.getGrid(), gameState.getTeams()[gameState.getCurrentTeam()].getBase()));
       gameState.getGrid().setPosition(new GridObjectContainer(GridObjects.piece, gameState.getCurrentTeam(), picked), picked.getPosition()[1], picked.getPosition()[0]);
     }
     gameState.setLastMove(move);
-    MCTS_Tools.toNextTeam(gameState);
+    MCTSUtilities.toNextTeam(gameState);
   }
 
   /**

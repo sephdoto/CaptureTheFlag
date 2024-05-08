@@ -2,7 +2,7 @@ package org.ctf.ui;
 
 import java.util.HashMap;
 
-import org.ctf.shared.ai.AI_Config;
+import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.constants.Descriptions;
 import org.ctf.ui.customobjects.PopUpPane;
 
@@ -41,7 +41,7 @@ public class PopUpCreator {
 	private PopUpPane aiorHumanpopup;
 	private Scene scene;
 	private PopUpPane aiconfig;
-	private AI_Config defaultConfig;
+	private AIConfig defaultConfig;
 	private HashMap<String, Integer> multipliers = new HashMap<String, Integer>();
 	private SpinnerValueFactory<Integer> values;
 	private SpinnerValueFactory<Double> values2;
@@ -195,7 +195,7 @@ public class PopUpCreator {
 	 * @return Popupane to custom  Ai
 	 */
 	public  PopUpPane createConfigPane(double widht, double hight) {
-		defaultConfig = new AI_Config();
+		defaultConfig = new AIConfig();
 		createConfigMaps();
 		aiconfig = new PopUpPane(scene, widht, hight);
 		StackPane configRoot = new StackPane();

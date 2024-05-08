@@ -1,9 +1,9 @@
 package org.ctf.shared.client.testClasses;
 
 import com.google.gson.Gson;
-import org.ctf.shared.ai.AI_Controller;
-import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
-import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.shared.ai.AIController;
+import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
+import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.Analyzer;
@@ -194,11 +194,11 @@ public class MCTSSimulation {
     System.out.println(gson.toJson(javaClient.getCurrentState()));
     System.out.println(gson.toJson(javaClient.getCurrentSession()));
     newAna.addGameState(javaClient.getCurrentState());
-    AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS,0);
-    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS,0);
-    /*  AI_Controller Controller3 = new AI_Controller(javaClient3.getCurrentState(), AI.MCTS);
-    AI_Controller Controller4 = new AI_Controller(javaClient4.getCurrentState(), AI.MCTS);
-    AI_Controller Controller5 = new AI_Controller(javaClient5.getCurrentState(), AI.MCTS); */
+    AIController Controller = new AIController(javaClient.getCurrentState(), AI.MCTS,0);
+    AIController Controller2 = new AIController(javaClient2.getCurrentState(), AI.MCTS,0);
+    /*  AIController Controller3 = new AIController(javaClient3.getCurrentState(), AI.MCTS);
+    AIController Controller4 = new AIController(javaClient4.getCurrentState(), AI.MCTS);
+    AIController Controller5 = new AIController(javaClient5.getCurrentState(), AI.MCTS); */
     for (int i = 0; i < 50 && !javaClient.isGameOver(); i++) {
       javaClient.pullData();
       javaClient2.pullData();

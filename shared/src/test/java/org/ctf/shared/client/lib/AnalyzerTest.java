@@ -12,9 +12,9 @@ import de.unimannheim.swt.pse.ctf.CtfApplication;
 
 import java.io.File;
 import java.io.IOException;
-import org.ctf.shared.ai.AI_Controller;
-import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
-import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.shared.ai.AIController;
+import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
+import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.service.RestClientLayer;
@@ -116,8 +116,8 @@ public class AnalyzerTest {
         "p2");
     p1.pullData();
     p2.pullData();
-    AI_Controller controller1 = new AI_Controller(p1.getCurrentState(), AI.RANDOM, 0);
-    AI_Controller controller2 = new AI_Controller(p2.getCurrentState(), AI.RANDOM, 0);
+    AIController controller1 = new AIController(p1.getCurrentState(), AI.RANDOM, 0);
+    AIController controller2 = new AIController(p2.getCurrentState(), AI.RANDOM, 0);
     analyzer.addGameState(p1.getCurrentState());
     for (int i = 0; i < 5; i++) {
       try {
@@ -200,8 +200,8 @@ public class AnalyzerTest {
         "p2");
     p1.pullData();
     p2.pullData();
-    AI_Controller controller1 = new AI_Controller(p1.getCurrentState(), AI.RANDOM, 0);
-    AI_Controller controller2 = new AI_Controller(p2.getCurrentState(), AI.RANDOM, 0);
+    AIController controller1 = new AIController(p1.getCurrentState(), AI.RANDOM, 0);
+    AIController controller2 = new AIController(p2.getCurrentState(), AI.RANDOM, 0);
     analyzer.addGameState(p1.getCurrentState());
     for (int i = 0; i < 5; i++) {
       try {

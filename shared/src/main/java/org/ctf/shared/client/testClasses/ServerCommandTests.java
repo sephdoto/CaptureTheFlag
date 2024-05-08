@@ -11,9 +11,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-import org.ctf.shared.ai.AI_Controller;
-import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
-import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.shared.ai.AIController;
+import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
+import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.Analyzer;
@@ -623,8 +623,8 @@ public class ServerCommandTests {
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
     // System.out.println(gson.toJson(javaClient.getCurrentState()));
-    AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS,0);
-    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS_IMPROVED,0);
+    AIController Controller = new AIController(javaClient.getCurrentState(), AI.MCTS,0);
+    AIController Controller2 = new AIController(javaClient2.getCurrentState(), AI.MCTS_IMPROVED,0);
     for (int i = 0; i < 90; i++) {
       try {
         if (javaClient.isItMyTurn()) {

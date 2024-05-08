@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
-import org.ctf.shared.ai.AI_Config;
-import org.ctf.shared.ai.AI_Tools;
+import org.ctf.shared.ai.AIConfig;
+import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.ai.TestValues;
 import org.ctf.shared.state.GameState;
@@ -28,7 +28,7 @@ class MCTSTest {
   void setUp() {
     gameState = TestValues.getTestState();
     TreeNode parent = new TreeNode(null, gameState, new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0}));
-    mcts = new MCTS(parent, new AI_Config());
+    mcts = new MCTS(parent, new AIConfig());
     random = new Random();
   }
 
@@ -36,15 +36,15 @@ class MCTSTest {
   void bestMctsAlgorithm() {
     gameState = TestValues.getTestState();
     TreeNode parent = new TreeNode(null, gameState, new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0}));
-    MCTS_TestDouble mcts = new MCTS_TestDouble(parent, new AI_Config());
+    MCTS_TestDouble mcts = new MCTS_TestDouble(parent, new AIConfig());
 
     int mctsTillEnd = 0;
     int timeForMove = 300;
 
     while (mcts.isTerminal(mcts.root) == -1) {
-      mcts = new MCTS_TestDouble(mcts.root.clone((mcts.root.gameState)), new AI_Config());
+      mcts = new MCTS_TestDouble(mcts.root.clone((mcts.root.gameState)), new AIConfig());
 
-      Move move = mcts.getMove(timeForMove, new AI_Config().C);
+      Move move = mcts.getMove(timeForMove, new AIConfig().C);
       ++mctsTillEnd;
       TreeNode tn = mcts.root;
       mcts.alterGameState(tn.gameState, move);
@@ -64,8 +64,8 @@ class MCTSTest {
 
       tn = tn.clone((tn.gameState));
 
-      MCTS mcts2 = new MCTS(tn, new AI_Config());
-      move = mcts2.getMove(timeForMove, new AI_Config().C);
+      MCTS mcts2 = new MCTS(tn, new AIConfig());
+      move = mcts2.getMove(timeForMove, new AIConfig().C);
       ++mctsTillEnd;
       tn = mcts2.root;
       mcts2.alterGameState(tn.gameState,  new ReferenceMove(tn.gameState, move));
@@ -81,7 +81,7 @@ class MCTSTest {
 
       clearNodeParentAndChildren(tn);
 
-      mcts = new MCTS_TestDouble(tn, new AI_Config());
+      mcts = new MCTS_TestDouble(tn, new AIConfig());
     }
     System.out.println("\n\nWinner is... " + (mctsTillEnd % 2 != 0 ? "MCTS_TestDouble " : "MCTS"));
   }
@@ -105,7 +105,7 @@ class MCTSTest {
     int heuristics = 0;
     int crashes = 0;
 
-    MCTS mcts = new MCTS(new TreeNode(null, gameState, new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0})), new AI_Config());
+    MCTS mcts = new MCTS(new TreeNode(null, gameState, new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0})), new AIConfig());
     TreeNode rootclone = mcts.root.clone(mcts.root.copyGameState());
     
     for (; count < 1; count++) {
@@ -115,7 +115,7 @@ class MCTSTest {
       mcts.root = rootclone.clone(rootclone.copyGameState());
       mcts.root.parent = null;
       try {
-        mcts.getMove(timeInMilis, new AI_Config().C);
+        mcts.getMove(timeInMilis, new AIConfig().C);
       } catch (NullPointerException npe) {
         crashes++;
       }
@@ -168,7 +168,7 @@ class MCTSTest {
 
     gameState.setCurrentTeam(1);
     TreeNode parent = new TreeNode(null, gameState, new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0}));
-    mcts = new MCTS(parent, new AI_Config());
+    mcts = new MCTS(parent, new AIConfig());
 
 //    System.out.println("parent Grid:");
 //    parent.printGrid();
@@ -195,12 +195,12 @@ class MCTSTest {
 
     gameState = TestValues.getTestState();
     TreeNode parent = new TreeNode(null, gameState, new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0}));
-    mcts = new MCTS(parent, new AI_Config());
+    mcts = new MCTS(parent, new AIConfig());
 
     int mctsTillEnd = 0;
     while (mcts.isTerminal(mcts.root.gameState, new ReferenceMove(null, new int[] {0,0})) == -1) {
 
-      Move move = mcts.getMove(100, new AI_Config().C);
+      Move move = mcts.getMove(100, new AIConfig().C);
       ++mctsTillEnd;
       TreeNode tn = mcts.root;
       mcts.alterGameState(tn.gameState, new ReferenceMove(tn.gameState, move));
@@ -230,7 +230,7 @@ class MCTSTest {
       for (int i = 0; i < tn.children.length; i++) tn.children[i] = null;
       tn.wins = new int[] {0, 0};
 
-      mcts = new MCTS(tn, new AI_Config());
+      mcts = new MCTS(tn, new AIConfig());
     }
     System.out.println(
         "\"testMctsWorks\": random steps till end: "
@@ -268,7 +268,7 @@ class MCTSTest {
     gameState.getGrid()[9][8] = pieces1[0].getId();
 
     TreeNode parent = new TreeNode(null, gameState, new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0}));
-    mcts = new MCTS(parent, new AI_Config());
+    mcts = new MCTS(parent, new AIConfig());
 
 //    Move move = 
         mcts.getMove(100, (float) Math.sqrt(2));
@@ -350,7 +350,7 @@ class MCTSTest {
     gameState.getTeams()[1].setPieces(pieces1);
     gameState.getGrid()[0][1] = pieces0[0].getId();
     gameState.getGrid()[2][0] = pieces1[0].getId();
-    MCTS mcts = new MCTS(new TreeNode(null, gameState, null, new ReferenceMove(null, new int[] {0,0})), new AI_Config());
+    MCTS mcts = new MCTS(new TreeNode(null, gameState, null, new ReferenceMove(null, new int[] {0,0})), new AIConfig());
 
     assertTrue(mcts.terminalHeuristic(mcts.root) == 1);
     mcts.root.gameState.setCurrentTeam(0);
@@ -393,14 +393,14 @@ class MCTSTest {
     gameState.getTeams()[1].setPieces(pieces1);
     gameState.getGrid()[0][1] = pieces0[0].getId();
     gameState.getGrid()[2][0] = pieces1[0].getId();
-    MCTS mcts = new MCTS(new TreeNode(null, gameState, null, new ReferenceMove(null, new int[] {0,0})), new AI_Config());
+    MCTS mcts = new MCTS(new TreeNode(null, gameState, null, new ReferenceMove(null, new int[] {0,0})), new AIConfig());
 
     Move move = mcts.getAndRemoveMoveHeuristic(mcts.root);
     assertEquals(0, move.getNewPosition()[0]);
     assertEquals(0, move.getNewPosition()[1]);
 
     gameState.setCurrentTeam(0);
-    mcts = new MCTS(new TreeNode(null, gameState, null, new ReferenceMove(null, new int[] {0,0})), new AI_Config());
+    mcts = new MCTS(new TreeNode(null, gameState, null, new ReferenceMove(null, new int[] {0,0})), new AIConfig());
     move = mcts.getAndRemoveMoveHeuristic(mcts.root);
     assertEquals(2, move.getNewPosition()[0]);
     assertEquals(0, move.getNewPosition()[1]);
@@ -423,7 +423,7 @@ class MCTSTest {
       d.setUpRight(0);
     }
     TreeNode parent = new TreeNode(null, gameState, new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0}));
-    MCTS mcts = new MCTS(parent, new AI_Config());
+    MCTS mcts = new MCTS(parent, new AIConfig());
 
     assertEquals(1, mcts.isTerminal(mcts.root.gameState, new ReferenceMove(null, new int[] {0,0})));
 
@@ -435,7 +435,7 @@ class MCTSTest {
     gameState = TestValues.getTestState();
     gameState.setCurrentTeam(0);
     TreeNode parent = new TreeNode(null, gameState, new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0}));
-    MCTS mcts = new MCTS(parent, new AI_Config());
+    MCTS mcts = new MCTS(parent, new AIConfig());
 
     assertEquals(-1, mcts.isTerminal(mcts.root.gameState, new ReferenceMove(null, new int[] {0,0})));
   }
@@ -462,10 +462,10 @@ class MCTSTest {
   void testBestChild() {
     mcts.root.children = new TreeNode[2];
     mcts.root.children[0] =
-        new TreeNode(null, AI_Tools.toNextTeam(mcts.root.copyGameState()), new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0}));
+        new TreeNode(null, GameUtilities.toNextTeam(mcts.root.copyGameState()), new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0}));
     mcts.root.children[0].parent = mcts.root;
     mcts.root.children[1] =
-        new TreeNode(null, AI_Tools.toNextTeam(mcts.root.copyGameState()), new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0}));
+        new TreeNode(null, GameUtilities.toNextTeam(mcts.root.copyGameState()), new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0}));
     mcts.root.children[1].parent = mcts.root; // 2 Kindknoten als Kinder von root initialisiert
 
     mcts.root.children[0].wins = new int[] {4, 0}; // Team 0 hat mehr wins als Team 1
@@ -491,10 +491,10 @@ class MCTSTest {
   void testGetRootBest() {
     mcts.root.children = new TreeNode[2];
     mcts.root.children[0] =
-        new TreeNode(null, AI_Tools.toNextTeam(mcts.root.copyGameState()), new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0}));
+        new TreeNode(null, GameUtilities.toNextTeam(mcts.root.copyGameState()), new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0}));
     mcts.root.children[0].parent = mcts.root;
     mcts.root.children[1] =
-        new TreeNode(null, AI_Tools.toNextTeam(mcts.root.copyGameState()), new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0}));
+        new TreeNode(null, GameUtilities.toNextTeam(mcts.root.copyGameState()), new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0}));
     mcts.root.children[1].parent = mcts.root; // 2 Kindknoten als Kinder von root initialisiert
 
     mcts.root.children[0].wins = new int[] {4, 0}; // Team 0 hat mehr wins als Team 1

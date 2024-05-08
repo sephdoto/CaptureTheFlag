@@ -3,7 +3,7 @@ package org.ctf.shared.ai.mcts;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.Arrays;
 import org.ctf.shared.ai.TestValues;
-import org.ctf.shared.ai.AI_Tools;
+import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.state.GameState;
 import org.junit.jupiter.api.Test;
@@ -40,9 +40,9 @@ class TreeNodeTest {
   void testGetUCT() {
     TreeNode parent = new TreeNode(null, TestValues.getTestState(), new int[] {3,3}, new ReferenceMove(null, new int[] {0,0}));
     parent.gameState.setCurrentTeam(0);
-    TreeNode child1 = parent.clone(AI_Tools.toNextTeam(parent.copyGameState()));
+    TreeNode child1 = parent.clone(GameUtilities.toNextTeam(parent.copyGameState()));
     child1.wins = new int[] {2,1};
-    TreeNode child2 = parent.clone(AI_Tools.toNextTeam(parent.copyGameState()));
+    TreeNode child2 = parent.clone(GameUtilities.toNextTeam(parent.copyGameState()));
     child2.wins = new int[] {1,2};
     
     assertEquals(3, child1.getNK());
@@ -101,7 +101,7 @@ class TreeNodeTest {
   @Test
   void testCompareTo() {
     TreeNode parent = new TreeNode(null, TestValues.getTestState(), new int[] {3,3}, new ReferenceMove(null, new int[] {0,0}));
-    TreeNode child1 = parent.clone(AI_Tools.toNextTeam(parent.copyGameState()));
+    TreeNode child1 = parent.clone(GameUtilities.toNextTeam(parent.copyGameState()));
     
     assertTrue(parent.compareTo(child1) == 0);
   

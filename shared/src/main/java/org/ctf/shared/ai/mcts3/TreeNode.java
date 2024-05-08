@@ -35,7 +35,7 @@ public class TreeNode implements Comparable<TreeNode> {
     this.possibleMoves = new IdentityHashMap<Piece, ArrayList<int[]>>();
     int children = 0;
     for(Piece p : gameState.getTeams()[gameState.getCurrentTeam()].getPieces()) {
-      ArrayList<int[]> movesPieceP = MCTS_Tools.getPossibleMoves(gameState, p, new ArrayList<int[]>(), operateOn);
+      ArrayList<int[]> movesPieceP = MCTSUtilities.getPossibleMoves(gameState, p, new ArrayList<int[]>(), operateOn);
       if(movesPieceP.size() > 0) {
         possibleMoves.put(p, movesPieceP);
         children += possibleMoves.get(p).size();
@@ -57,7 +57,7 @@ public class TreeNode implements Comparable<TreeNode> {
     * @return V value for UCT
     */
    public double getV() {
-     int team = MCTS_Tools.getPreviousTeam(gameState);
+     int team = MCTSUtilities.getPreviousTeam(gameState);
      return wins[team] / (double)getNK();
    }
 

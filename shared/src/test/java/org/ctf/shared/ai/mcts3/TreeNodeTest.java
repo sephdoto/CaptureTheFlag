@@ -1,6 +1,6 @@
 package org.ctf.shared.ai.mcts3;
 
-import org.ctf.shared.ai.AI_Config;
+import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.ai.ReferenceMove;
 //import static org.junit.jupiter.api.Assertions.*;
 import org.ctf.shared.ai.TestValues;
@@ -19,7 +19,7 @@ class TreeNodeTest {
    */
   void testUpdating() {
     TreeNode node = new TreeNode(null, new ReferenceGameState(TestValues.getTestState()), null, new ReferenceMove(null, new int[2]));
-    MCTS mcts = new MCTS(node, new AI_Config());
+    MCTS mcts = new MCTS(node, new AIConfig());
     for(int i=0; i<50 && mcts.isTerminal(node.gameState, new ReferenceMove(null, new int[2])) == -1; i++){
       mcts.oneMove(node, node, true, new ReferenceMove(null, new int[2]));
       mcts.removeTeamCheck(node.gameState);
@@ -79,7 +79,7 @@ class TreeNodeTest {
     
     TreeNode node = new TreeNode(null, new ReferenceGameState(gameState), null, new ReferenceMove(null, new int[2]));
     
-    MCTS mcts = new MCTS(node, new AI_Config());
+    MCTS mcts = new MCTS(node, new AIConfig());
     for(int i=0; i<1000 && mcts.isTerminal(node.gameState, new ReferenceMove(null, new int[2])) == -1; i++) {
       mcts.oneMove(node, node, true, new ReferenceMove(null, new int[2]));
 //      node.printGrid();
@@ -119,7 +119,7 @@ class TreeNodeTest {
     }
     TreeNode node = new TreeNode(null, new ReferenceGameState(gameState), null, new ReferenceMove(null, new int[2]));
     
-    MCTS mcts = new MCTS(node, new AI_Config());
+    MCTS mcts = new MCTS(node, new AIConfig());
     for(; mcts.isTerminal(node.gameState, new ReferenceMove(null, new int[2])) == -1; ) {
       mcts.oneMove(node, node, true, new ReferenceMove(null, new int[2]));
 //      node.printGrids();

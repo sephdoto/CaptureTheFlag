@@ -1,4 +1,4 @@
-package org.ctf.shared.ai.mcts3;
+package org.ctf.shared.ai;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,21 +6,18 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
-import org.ctf.shared.ai.ReferenceMove;
-import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
-import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.data.map.Directions;
 import org.ctf.shared.state.data.map.ShapeType;
 
 /**
- * An optimized version of AI_Tools, adjusted to use the new Grid.
+ * This class includes useful methods to analyze and work with GameStates and Moves.
  *
  * @author sistumpf
  */
-public class MCTS_Tools {
+public class GameUtilities {
   static Random random = new Random();
-
   static HashMap<Integer, int[]> directionModifiers;
   static{
     directionModifiers = new HashMap<Integer, int[]>();
@@ -33,14 +30,14 @@ public class MCTS_Tools {
     directionModifiers.put(6, new int[] {1, -1});
     directionModifiers.put(7, new int[] {1, 1});
   }
-  
+
   /**
    * Returns the previous teams index in the team array.
    *
    * @param gameState
    * @return previous teams index
    */
-  public static int getPreviousTeam(ReferenceGameState gameState) {
+  public static int getPreviousTeam(GameState gameState) {
     for (int i = (gameState.getCurrentTeam() - 1) % gameState.getTeams().length;
         ;
         i = (i - 1) % gameState.getTeams().length) {
@@ -52,12 +49,12 @@ public class MCTS_Tools {
   }
 
   /**
-   * Switches a ReferenceGameState current team to the next valid (not null) team.
+   * Switches a GameState current team to the next valid (not null) team.
    *
    * @param gameState
    * @return altered gameState
    */
-  public static ReferenceGameState toNextTeam(ReferenceGameState gameState) {
+  public static GameState toNextTeam(GameState gameState) {
     for (int i = (gameState.getCurrentTeam() + 1) % gameState.getTeams().length;
         ;
         i = (i + 1) % gameState.getTeams().length) {
@@ -69,37 +66,34 @@ public class MCTS_Tools {
   }
 
   /**
-   * Removes a certain team from the ReferenceGameState. team is the place of the team in the
-   * ReferenceGameState.getTeams Array.
-   *TODO statt int team direkt das Team übergeben?
+   * Removes a certain team from the GameState. team is the place of the team in the
+   * GameState.getTeams Array.
    *
    * @param gameState
    * @param team
    */
-  public static void removeTeam(ReferenceGameState gameState, int team) {
-    gameState.getGrid().getGrid()
-        [gameState.getTeams()[team].getBase()[1]] 
-        [gameState.getTeams()[team].getBase()[0]]
-             = null;
-    
+  public static void removeTeam(GameState gameState, int team) {
+    gameState
+            .getGrid()[gameState.getTeams()[team].getBase()[0]][
+            gameState.getTeams()[team].getBase()[1]] =
+        "";
     for (Piece p : gameState.getTeams()[team].getPieces())
-      gameState.getGrid().getGrid()[p.getPosition()[1]][p.getPosition()[0]]
-          = null;
+      gameState.getGrid()[p.getPosition()[0]][p.getPosition()[1]] = "";
     gameState.getTeams()[team] = null;
   }
 
   /**
    * Returns a valid position on which a Piece can safely respawn.
    *
-   * @param grid to generate pseudo random numbers and access the grid
+   * @param gameState to access the grid and generate pseudo random numbers
    * @param basePos the position of the base of the Piece that gets respawned
-   * @return valid position to respawn a piece on, null shouldn't be returned.
+   * @return valid position to respawn a piece on, null shouldn't be returned (compiler needs it).
    */
-  public static int[] respawnPiecePosition(Grid grid, int[] basePos) {
+  public static int[] respawnPiecePosition(GameState gameState, int[] basePos) {
     int[] xTransforms;
     int[] yTransforms;
 
-    for (int distance = 1; distance < grid.getGrid().length; distance++) {
+    for (int distance = 1; distance < gameState.getGrid().length; distance++) {
       xTransforms = fillXTransformations(new int[distance * 8], distance);
       yTransforms = fillYTransformations(new int[distance * 8], distance);
 
@@ -107,17 +101,17 @@ public class MCTS_Tools {
         int x = basePos[1] + xTransforms[clockHand];
         int y = basePos[0] + yTransforms[clockHand];
         int[] newPos = new int[] {y, x};
-        if (positionOutOfBounds(grid, newPos)) continue;
+        if (positionOutOfBounds(gameState.getGrid(), newPos)) continue;
 
-        if (emptyField(grid, newPos)) {
-          for (int i = 1, random = seededRandom(grid, i, xTransforms.length, 0);
+        if (emptyField(gameState.getGrid(), newPos)) {
+          for (int i = 1, random = seededRandom(gameState.getGrid(), i, xTransforms.length, 0);
               ;
-              i++, random = seededRandom(grid, i, xTransforms.length, 0)) {
+              i++, random = seededRandom(gameState.getGrid(), i, xTransforms.length, 0)) {
             x = basePos[1] + xTransforms[random];
             y = basePos[0] + yTransforms[random];
             newPos = new int[] {y, x};
-            if (positionOutOfBounds(grid, newPos)) continue;
-            if (emptyField(grid, newPos)) return newPos;
+            if (positionOutOfBounds(gameState.getGrid(), newPos)) continue;
+            if (emptyField(gameState.getGrid(), newPos)) return newPos;
           }
         }
       }
@@ -175,10 +169,9 @@ public class MCTS_Tools {
    * @param lowerBound, like upperBound but on the lower end and included in the return value
    * @return pseudo random value
    */
-  public static int seededRandom(Grid grid, int modifier, int upperBound, int lowerBound) {
+  public static int seededRandom(String[][] grid, int modifier, int upperBound, int lowerBound) {
     StringBuilder sb = new StringBuilder();
-    Stream.of(grid.getGrid())
-        .forEach(s -> Stream.of(s).forEach(ss -> sb.append(ss == null ? "" : ss.toString())));
+    Stream.of(grid).forEach(s -> Stream.of(s).forEach(ss -> sb.append(ss)));
     int seed = sb.append(modifier).toString().hashCode();
     random.setSeed(seed);
     return random.nextInt(upperBound - lowerBound) + lowerBound;
@@ -193,7 +186,7 @@ public class MCTS_Tools {
    * @return ArrayList<int[]> that contains all valid positions a piece could move to
    */
   public static ArrayList<int[]> getPossibleMoves(
-      ReferenceGameState gameState, String pieceId, ArrayList<int[]> possibleMoves) {
+      GameState gameState, String pieceId, ArrayList<int[]> possibleMoves) {
     Piece piece =
         Arrays.stream(
             gameState.getTeams()[Integer.parseInt(pieceId.split(":")[1].split("_")[0])]
@@ -205,7 +198,7 @@ public class MCTS_Tools {
   }
   
   /**
-   * Given a Piece and a ReferenceGameState containing the Piece, an ArrayList with all valid locations the
+   * Given a Piece and a GameState containing the Piece, an ArrayList with all valid locations the
    * Piece can walk on is returned. The ArrayList contains int[2] values, representing a (y,x)
    * location on the grid.
    *
@@ -216,7 +209,7 @@ public class MCTS_Tools {
    * @return ArrayList<int[]> that contains all valid positions a piece could move to
    */
   public static ArrayList<int[]> getPossibleMoves(
-      ReferenceGameState gameState, Piece piece, ArrayList<int[]> possibleMoves, ReferenceMove change) {
+      GameState gameState, Piece piece, ArrayList<int[]> possibleMoves, ReferenceMove change) {
     possibleMoves.clear();
     ArrayList<int[]> dirMap = new ArrayList<int[]>();
     if (piece.getDescription().getMovement().getDirections() == null) {
@@ -227,10 +220,10 @@ public class MCTS_Tools {
       }
 
     } else {
-      dirMap = createDirectionMap(gameState, piece, dirMap, change);
+      dirMap = GameUtilities.createDirectionMap(gameState, piece, dirMap, change);
       for (int[] entry : dirMap) {
         for (int reach = entry[1]; reach > 0; reach--) {
-          change = checkMoveValidity(gameState, piece, entry[0], reach, change);
+          change = GameUtilities.checkMoveValidity(gameState, piece, entry[0], reach, change);
           if (change.getPiece() != null) possibleMoves.add(change.getNewPosition());
         }
       }
@@ -262,7 +255,7 @@ public class MCTS_Tools {
    * @throws InvalidShapeException if the Shape is not yet implemented here
    */
   public static ArrayList<int[]> getShapeMoves(
-      ReferenceGameState gameState, Piece piece, ArrayList<int[]> positions) throws InvalidShapeException {
+      GameState gameState, Piece piece, ArrayList<int[]> positions) throws InvalidShapeException {
     positions.clear();
     int[] xTransforms;
     int[] yTransforms;
@@ -316,7 +309,7 @@ public class MCTS_Tools {
    * @return ArrayList<int[direction,reach]>
    */
   public static ArrayList<int[]> createDirectionMap(
-      ReferenceGameState gameState, Piece picked, ArrayList<int[]> dirMap, ReferenceMove change) {
+      GameState gameState, Piece picked, ArrayList<int[]> dirMap, ReferenceMove change) {
     dirMap.clear();
     for (int i = 0; i < 8; i++) {
       int reach = getReach(picked.getDescription().getMovement().getDirections(), i);
@@ -334,7 +327,7 @@ public class MCTS_Tools {
   /**
    * Returns a Move from a given HashMap of possible directions and and their reach to move in. This
    * method picks a random dirction-reach pair and returns a Move to this position using {@link
-   * #checkMoveValidity(ReferenceGameState gameState, Piece piece, int direction, int reach)}. If the
+   * #checkMoveValidity(GameState gameState, Piece piece, int direction, int reach)}. If the
    * position is invalid this process is tried again till a valid move is generated. If a random
    * position is invalid the HashMap reach value is lowered to ensure the same position is not
    * picked again. This method assumes the HashMap contains elements and all directions contain at
@@ -346,7 +339,7 @@ public class MCTS_Tools {
    * @param change a Reference move that gets altered instead of creating and abandoning a new object
    * @return a valid move
    */
-  public static ReferenceMove getDirectionMove(ArrayList<int[]> dirMap, Piece piece, ReferenceGameState gameState, ReferenceMove change) {
+  public static ReferenceMove getDirectionMove(ArrayList<int[]> dirMap, Piece piece, GameState gameState, ReferenceMove change) {
     int randomDir = ThreadLocalRandom.current().nextInt(dirMap.size());
     int reach;
     
@@ -369,11 +362,11 @@ public class MCTS_Tools {
    * @param change a Reference move that gets altered instead of creating and abandoning a new object
    * @return false if there are no possible moves in this direction, true otherwise.
    */
-  public static boolean validDirection(ReferenceGameState gameState, Piece piece, int direction, ReferenceMove change) {
-//  return checkMoveValidity(gameState, piece, direction, 1, change).getPiece() != null;
-  int[] pos = new int[] {piece.getPosition()[0], piece.getPosition()[1]};
-  updatePos(pos, direction, 1);
-  return validPos(pos, piece, gameState);
+  public static boolean validDirection(GameState gameState, Piece piece, int direction, ReferenceMove change) {
+//    return checkMoveValidity(gameState, piece, direction, 1, change).getPiece() != null;
+    int[] pos = new int[] {piece.getPosition()[0], piece.getPosition()[1]};
+    updatePos(pos, direction, 1);
+    return validPos(pos, piece, gameState);
   }
 
   /**
@@ -389,7 +382,7 @@ public class MCTS_Tools {
    * @return a Move instance with the piece and its new position
    * @return null if the piece can't occupy the position or the position is not in the grid
    */
-  public static ReferenceMove checkMoveValidity(ReferenceGameState gameState, Piece piece, int direction, int reach, ReferenceMove change) {
+  public static ReferenceMove checkMoveValidity(GameState gameState, Piece piece, int direction, int reach, ReferenceMove change) {
     int[] pos = new int[] {piece.getPosition()[0], piece.getPosition()[1]};
     updatePos(pos, direction, reach);
     change.setPiece(null);
@@ -419,13 +412,11 @@ public class MCTS_Tools {
    * @return true if there is no obstacle in between
    * @return false if any obstacle is in between or the target position is not on the grid
    */
-  public static boolean sightLine(
-      ReferenceGameState gameState, int[] newPos, int direction, int reach) {
-    --reach;
-    for (; reach > 0; reach--) {
-      updatePos(newPos, direction, -1);
+  public static boolean sightLine(GameState gameState, int[] newPos, int direction, int reach) {
+    for (--reach; reach > 0; reach--) {
+      newPos = updatePos(newPos, direction, -1);
       try {
-        if (gameState.getGrid().getGrid()[newPos[0]][newPos[1]] == null) {
+        if (gameState.getGrid()[newPos[0]][newPos[1]].equals("")) {
           continue;
         } else {
           return false;
@@ -454,26 +445,24 @@ public class MCTS_Tools {
   }
 
   /**
-   * Checks if a piece can occupy a given position. Does not check sightLine()
+   * Checks if a piece can occupy a given position.
    *
    * @param pos
    * @param piece
    * @param gameState
    * @return true if the position can be occupied.
    */
-  public static boolean validPos(int[] pos, Piece piece, ReferenceGameState gameState) {
+  public static boolean validPos(int[] pos, Piece piece, GameState gameState) {
     // checks if the position can be occupied
-    try {
+    try { 
       if (emptyField(gameState.getGrid(), pos)) return true;
       if (occupiedByBlock(gameState.getGrid(), pos)) return false;
-      if (occupiedBySameTeam(gameState, piece.getPosition(), pos)) return false;
-      if (otherTeamsBase(gameState.getGrid(), pos, piece.getPosition())) return true;
-      if (occupiedByWeakerOpponent(gameState.getGrid().getPosition(pos[1], pos[0]).getPiece(), piece))
-        return true;
-    } catch(IndexOutOfBoundsException iob) {
+      if (occupiedBySameTeam(gameState, pos)) return false;
+      if (otherTeamsBase(gameState.getGrid(), pos, piece)) return true;
+      if (occupiedByWeakerOpponent(gameState, pos, piece)) return true;
+    } catch (IndexOutOfBoundsException iob) {
       return false;
     }
-
     // if opponent is stronger or something unforeseen happens
     return false;
   }
@@ -485,22 +474,19 @@ public class MCTS_Tools {
    * @param pos
    * @return true if the position is out of bounds
    */
-  public static boolean positionOutOfBounds(Grid grid, int[] pos) {
-    return (pos[0] < 0
-        || pos[1] < 0
-        || pos[0] >= grid.getGrid().length
-        || pos[1] >= grid.getGrid()[0].length);
+  public static boolean positionOutOfBounds(String[][] grid, int[] pos) {
+    return (pos[0] < 0 || pos[1] < 0 || pos[0] >= grid.length || pos[1] >= grid[0].length);
   }
 
   /**
-   * Checks if a position on the grid is empty.
+   * Checks if a position on the grid contains an empty String.move.getPiece()
    *
    * @param grid
    * @param pos
    * @return true if the position is an empty Field "" and can be occupied
    */
-  public static boolean emptyField(Grid grid, int[] pos) {
-    return grid.getPosition(pos[1], pos[0]) == null;
+  public static boolean emptyField(String[][] grid, int[] pos) {
+    return grid[pos[0]][pos[1]].equals("");
   }
 
   /**
@@ -510,45 +496,39 @@ public class MCTS_Tools {
    * @param pos
    * @return true if the position is occupied by a block and cannot be walked on
    */
-  public static boolean occupiedByBlock(Grid grid, int[] pos) {
-    return grid.getPosition(pos[1], pos[0]).getObject() == GridObjects.block;
+  public static boolean occupiedByBlock(String[][] grid, int[] pos) {
+    return grid[pos[0]][pos[1]].equals("b");
   }
 
   /**
-   * Checks if a position on the grid contains a piece.
+   * Checks if a position on the grid is occupied by a piece from the current team.
    *
    * @param grid
    * @param pos
-   * @return true if the position is occupied by a piece
-   */
-  public static boolean occupiedByPiece(Grid grid, int[] pos) {
-    return grid.getPosition(pos[1], pos[0]).getObject() == GridObjects.piece;
-  }
-
-  /**
-   * Checks if a position on the grid is occupied by a piece from the same team as the moving piece.
-   *
-   * @param gameState
-   * @param oldPos to get the moving piece
-   * @param pos
    * @return true if the position is occupied by a Piece of the same Team
    */
-  public static boolean occupiedBySameTeam(ReferenceGameState gameState, int[] oldPos, int[] pos) {
-    return gameState.getGrid().getPosition(oldPos[1], oldPos[0]).getTeamId()
-        == gameState.getGrid().getPosition(pos[1], pos[0]).getTeamId();
+  public static boolean occupiedBySameTeam(GameState gameState, int[] pos) {
+    return gameState.getCurrentTeam() == getOccupantTeam(gameState.getGrid(), pos);
   }
 
   /**
    * Checks if a position on the grid is occupied by a piece with a weaker or the same AttackPower
    * as a given piece.
    *
-   * @param opponent
+   * @param gameState
+   * @param pos
    * @param picked
    * @return true if the position is occupied by a weaker opponent that can be captured
    */
-  public static boolean occupiedByWeakerOpponent(Piece opponent, Piece picked) {
-    if (opponent != null) {
-      return opponent.getDescription().getAttackPower() <= picked.getDescription().getAttackPower();
+  public static boolean occupiedByWeakerOpponent(GameState gameState, int[] pos, Piece picked) {
+    for (Piece p : gameState.getTeams()[getOccupantTeam(gameState.getGrid(), pos)].getPieces()) {
+      if (p.getId().equals(gameState.getGrid()[pos[0]][pos[1]])) {
+        if (p.getDescription().getAttackPower() <= picked.getDescription().getAttackPower()) {
+          return true;
+        } else {
+          return false;
+        }
+      }
     }
     return false;
   }
@@ -557,16 +537,33 @@ public class MCTS_Tools {
    * Checks if a position on the grid is occupied by an opponents base.
    *
    * @param grid
-   * @param newPos
-   * @param oldPos represents the moving piece
+   * @param pos
+   * @param picked
    * @return true if the position is occupied by another teams base and a flag can be captured
    */
-  public static boolean otherTeamsBase(Grid grid, int[] newPos, int[] oldPos) {
-    if (grid.getPosition(newPos[1], newPos[0]).getObject() == GridObjects.base) {
-      if (grid.getPosition(oldPos[1], oldPos[0]).getTeamId()
-          != grid.getPosition(newPos[1], newPos[0]).getTeamId()) return true;
+  public static boolean otherTeamsBase(String[][] grid, int[] pos, Piece picked) {
+    if (grid[pos[0]][pos[1]].contains("b:")) {
+      if (Integer.parseInt(picked.getTeamId()) != getOccupantTeam(grid, pos)) return true;
     }
     return false;
+  }
+
+  /**
+   * This method returns an occupants (piece/base) team. It splits it Id and parses the enclosed
+   * TeamId to Integer.
+   *
+   * @param grid
+   * @param pos
+   * @return the occupants teamID as int
+   */
+  public static int getOccupantTeam(String[][] grid, int[] pos) {
+    int start = grid[pos[0]][pos[1]].indexOf(":") + 1,
+        indexUnderscore = grid[pos[0]][pos[1]].indexOf("_", start);
+    return Integer.parseInt(
+        grid[pos[0]][pos[1]],
+        start,
+        indexUnderscore == -1 ? grid[pos[0]][pos[1]].length() : indexUnderscore,
+        10);
   }
 
   /**
@@ -596,90 +593,25 @@ public class MCTS_Tools {
       case 7:
         return directions.getDownRight();
       default:
-        return 0;
+        return -1;
     }
   }
 
-  /**
-   * Adjusted RandomAI to be used with ReferenceGameStates. Given a GameState, the next move is
-   * randomly chosen. A random piece is chosen out of all pieces, if it is able to move its move is
-   * randomly chosen. If the piece is not able to move a new piece is chosen from the remaining
-   * pieces. If no move is possible a NoMovesLeftException is thrown. If a piece moves in an unknown
-   * Shape an InvalidShapeException is thrown.
-   *
-   * @param gameState
-   * @return a valid random Move
-   * @throws NoMovesLeftException
-   * @throws InvalidShapeException
-   */
-  public static ReferenceMove pickMoveComplex(ReferenceGameState gameState, ReferenceMove operateOn)
-      throws NoMovesLeftException, InvalidShapeException {
-    ArrayList<Piece> piecesCurrentTeam =
-        new ArrayList<Piece>(
-            Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()));
-    ArrayList<int[]> dirMap = new ArrayList<int[]>();
-    ArrayList<int[]> shapeMoves = new ArrayList<int[]>();
+  /** Gets thrown if the current team cannot move. */
+  public static class NoMovesLeftException extends Exception {
+    private static final long serialVersionUID = -5045376294141974451L;
 
-    while (piecesCurrentTeam.size() > 0) {
-      int random = (int) (Math.random() * piecesCurrentTeam.size());
-      Piece picked = piecesCurrentTeam.get(random);
-
-      if (picked.getDescription().getMovement().getDirections() != null) { // move if Directions
-        dirMap = createDirectionMap(gameState, picked, dirMap, operateOn);
-        if (dirMap.size() > 0) {
-          return getDirectionMove(dirMap, picked, gameState, operateOn);
-        } else {
-          piecesCurrentTeam.remove(random);
-          continue;
-        }
-      } else { // Move if Shape
-        shapeMoves = getShapeMoves(gameState, picked, shapeMoves);
-        if (shapeMoves.size() > 0) {
-          return getRandomShapeMove(shapeMoves, picked, operateOn);
-        } else {
-          piecesCurrentTeam.remove(random);
-          continue;
-        }
-      }
+    public NoMovesLeftException(String team) {
+      super("Team " + team + " can not move.");
     }
-
-    if (piecesCurrentTeam.size() == 0)
-      throw new NoMovesLeftException(gameState.getTeams()[gameState.getCurrentTeam()].getId());
-
-    return null;
   }
-  
-  /**
-   * I think about implementing this but testing shows that it's worse than complex, even though it shouldn't really be thaaaat bad.
-   * Interesting.
-   * 
-   * @param gameState
-   * @param move
-   * @return random move
-   * @throws InvalidShapeException
-   */
-  public static ReferenceMove pickMoveSimple(ReferenceGameState gameState, ReferenceMove move) throws InvalidShapeException {
-    move.setPiece(null);
-    long time = System.currentTimeMillis();
-    do {
-      Piece picked = gameState.getTeams()[gameState.getCurrentTeam()].getPieces()[(int) (Math.random() * gameState.getTeams()[gameState.getCurrentTeam()].getPieces().length)];
-      if (picked.getDescription().getMovement().getDirections() != null) {
-        int randomDirection = (int) (Math.random() * 8);
-        int reach =
-            (int)
-                (Math.random()
-                    * getReach(
-                        picked.getDescription().getMovement().getDirections(), randomDirection));
-        if(reach > 0)
-          move = checkMoveValidity(gameState, picked, randomDirection, reach, new ReferenceMove(null, new int[] {0,0}));
-      } else {
-        move =
-            getRandomShapeMove(
-                getShapeMoves(gameState, picked, new ArrayList<int[]>()), picked, new ReferenceMove(null, new int[] {0,0}));
-      }
-    } while (move.getPiece() == null);
-    if(System.currentTimeMillis() - time > 2)
-      System.out.println(System.currentTimeMillis() - time);
-    return move;
+
+  /** Gets thrown if a Shape is not yet implemented in RandomAI. */
+  public static class InvalidShapeException extends Exception {
+    private static final long serialVersionUID = -574558731715073847L;
+
+    public InvalidShapeException(String shape) {
+      super("Unknown shape: " + shape);
+    }
   }
 }

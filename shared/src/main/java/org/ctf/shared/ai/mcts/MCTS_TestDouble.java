@@ -10,8 +10,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.ctf.shared.ai.AI_Config;
-import org.ctf.shared.ai.AI_Tools;
+import org.ctf.shared.ai.AIConfig;
+import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.ai.random.RandomAI;
 import org.ctf.shared.state.GameState;
@@ -26,7 +26,7 @@ import org.ctf.shared.state.Team;
  * @author sistumpf
  */
 public class MCTS_TestDouble {
-  AI_Config config;
+  AIConfig config;
   Random rand;
   int teams;
   int maxDistance;
@@ -36,7 +36,7 @@ public class MCTS_TestDouble {
   public AtomicInteger expansionCounter;
   ExecutorService executorService;
 
-  public MCTS_TestDouble(TreeNode root, AI_Config config) {
+  public MCTS_TestDouble(TreeNode root, AIConfig config) {
     this.config = config;
     this.root = root;
     this.rand = new Random();
@@ -220,7 +220,7 @@ public class MCTS_TestDouble {
         if (p.getDescription().getMovement().getDirections() != null) {
           for (int dir = 0; dir < 8; dir++)
             points[i] +=
-                AI_Tools.getReach(p.getDescription().getMovement().getDirections(), dir)
+                GameUtilities.getReach(p.getDescription().getMovement().getDirections(), dir)
                     * config.directionMultiplier;
         } else {
           points[i] += 8 * config.shapeReachMultiplier;
@@ -291,7 +291,7 @@ public class MCTS_TestDouble {
 
     for (int i = node.gameState.getCurrentTeam();
         teamsLeft > 1;
-        i = AI_Tools.toNextTeam(node.gameState).getCurrentTeam()) {
+        i = GameUtilities.toNextTeam(node.gameState).getCurrentTeam()) {
       boolean canMove = false;
       for (int j = 0; !canMove && j < node.gameState.getTeams()[i].getPieces().length; j++) {
         // only if a move can be made no exception is thrown
@@ -304,7 +304,7 @@ public class MCTS_TestDouble {
       if (canMove) {
         return -1;
       } else if (!canMove) {
-        AI_Tools.removeTeam(node.gameState, i);
+        GameUtilities.removeTeam(node.gameState, i);
         teamsLeft--;
       }
     }
@@ -396,7 +396,7 @@ public class MCTS_TestDouble {
         if (parent.gameState.getGrid()[pos[0]][pos[1]].contains("p:")
             && !parent.gameState.getGrid()[pos[0]][pos[1]].split("p:")[1].split("_")[0].equals(
                 parent.gameState.getCurrentTeam())) {
-          if (AI_Tools.validPos(pos, piece, parent.gameState))
+          if (GameUtilities.validPos(pos, piece, parent.gameState))
             return createMoveDeleteIndex(parent, piece, i);
         }
       }
@@ -438,7 +438,7 @@ public class MCTS_TestDouble {
       if (gameState.getTeams()[i] == null) continue;
       if (gameState.getTeams()[i].getFlags() == 0
           || gameState.getTeams()[i].getPieces().length == 0) {
-        AI_Tools.removeTeam(gameState, i--);
+        GameUtilities.removeTeam(gameState, i--);
       }
     }
   }
@@ -474,7 +474,7 @@ public class MCTS_TestDouble {
       gameState.getTeams()[occupantTeam].setFlags(
           gameState.getTeams()[occupantTeam].getFlags() - 1);
       picked.setPosition(
-          AI_Tools.respawnPiecePosition(
+          GameUtilities.respawnPiecePosition(
               gameState, gameState.getTeams()[gameState.getCurrentTeam()].getBase()));
       gameState.getGrid()[picked.getPosition()[0]][picked.getPosition()[1]] = picked.getId();
     } else {
@@ -482,7 +482,7 @@ public class MCTS_TestDouble {
       picked.setPosition(move.getNewPosition());
     }
     gameState.setLastMove(move);
-    AI_Tools.toNextTeam(gameState);
+    GameUtilities.toNextTeam(gameState);
   }
 
   /**

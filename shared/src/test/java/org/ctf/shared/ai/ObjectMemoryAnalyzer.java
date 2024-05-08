@@ -13,9 +13,9 @@ import org.openjdk.jol.info.ClassLayout;
 import org.openjdk.jol.info.GraphLayout;
 import org.openjdk.jol.vm.VM;
 
-import org.ctf.shared.ai.AI_Controller;
-import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
-import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.shared.ai.AIController;
+import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
+import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.ai.mcts3.ReferenceGameState;
 import org.ctf.shared.ai.random.RandomAI;
 

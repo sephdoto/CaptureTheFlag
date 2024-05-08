@@ -8,9 +8,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
 import java.io.IOException;
-import org.ctf.shared.ai.AI_Controller;
-import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
-import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.shared.ai.AIController;
+import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
+import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.client.service.RestClientLayer;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.state.data.exceptions.Accepted;
@@ -156,8 +156,8 @@ public class RestClientTests {
         "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
     javaClient.pullData();
     javaClient2.pullData();
-    AI_Controller Controller = new AI_Controller(javaClient.getCurrentState(), AI.MCTS, 0);
-    AI_Controller Controller2 = new AI_Controller(javaClient2.getCurrentState(), AI.MCTS, 0);
+    AIController Controller = new AIController(javaClient.getCurrentState(), AI.MCTS, 0);
+    AIController Controller2 = new AIController(javaClient2.getCurrentState(), AI.MCTS, 0);
     try {
       if (javaClient.isItMyTurn()) {
 

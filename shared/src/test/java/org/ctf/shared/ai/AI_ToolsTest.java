@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
-import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
+import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.random.RandomAI;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
@@ -19,7 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test class for original AI_Tools Methods, used in RandomAI
+ * Test class for original GameUtilities Methods, used in RandomAI
  *
  * @author sistumpf
  */
@@ -64,7 +64,7 @@ public class AI_ToolsTest {
 
     ArrayList<int[]> aiToolsShapeMoves = new ArrayList<int[]>();
     try {
-      aiToolsShapeMoves = AI_Tools.getShapeMoves(gameState, knight, new ArrayList<int[]>());
+      aiToolsShapeMoves = GameUtilities.getShapeMoves(gameState, knight, new ArrayList<int[]>());
     } catch (InvalidShapeException e) {
       fail("All shapes are valid");
     }
@@ -85,13 +85,13 @@ public class AI_ToolsTest {
     dirMap.add(new int[] {3, 2}); // the rook can move 2 fields down
     assertArrayEquals(
         dirMap.toArray(),
-        AI_Tools.createDirectionMap(gameState, picked, new ArrayList<int[]>(), operateOn).toArray());
+        GameUtilities.createDirectionMap(gameState, picked, new ArrayList<int[]>(), operateOn).toArray());
 
     gameState.getGrid()[6][4] = "b"; // completely enclosing the rook on 7,4
     picked = gameState.getTeams()[1].getPieces()[2]; // rook on 7,4
     assertEquals(
         new ArrayList<int[]>(),
-        AI_Tools.createDirectionMap(gameState, picked, new ArrayList<int[]>(), operateOn));
+        GameUtilities.createDirectionMap(gameState, picked, new ArrayList<int[]>(), operateOn));
   }
 
   @Test
@@ -196,10 +196,10 @@ public class AI_ToolsTest {
   @Test
   void testOtherTeamsBase() {
     assertTrue(
-        AI_Tools.otherTeamsBase(
+        GameUtilities.otherTeamsBase(
             gameState.getGrid(), new int[] {0, 0}, gameState.getTeams()[1].getPieces()[0]));
     assertFalse(
-        AI_Tools.otherTeamsBase(
+        GameUtilities.otherTeamsBase(
             gameState.getGrid(), new int[] {0, 0}, gameState.getTeams()[0].getPieces()[0]));
   }
 

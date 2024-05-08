@@ -3,7 +3,7 @@ package org.ctf.shared.ai.random;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
-import org.ctf.shared.ai.AI_Tools;
+import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
@@ -14,7 +14,7 @@ import org.ctf.shared.state.Piece;
  *     moves; Complex tries to minimize choosing invalid moves and has noMoreMove checks built in.
  *     Simple is not recommended but could probably be useful in some cases.
  */
-public class RandomAI extends AI_Tools {
+public class RandomAI extends GameUtilities {
   /**
    * Given a GameState, the next move is randomly chosen. Heavily relies on randomness, might be a
    * lot faster or a lot slower than {@link #pickMoveComplex(GameState gameState)}. This Method is

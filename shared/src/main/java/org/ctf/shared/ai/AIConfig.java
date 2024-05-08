@@ -14,7 +14,7 @@ import org.json.JSONObject;
  * 
  * @author sistumpf
  */
-public class AI_Config {
+public class AIConfig {
   public double C;
   // used to calculate UCT
   public int MAX_STEPS;
@@ -39,7 +39,7 @@ public class AI_Config {
   /**
    * Default constructor to set default values.
    */
-  public AI_Config() {
+  public AIConfig() {
     //use default values
     this.C = Math.E / 2;
     this.MAX_STEPS = 100;
@@ -59,7 +59,7 @@ public class AI_Config {
    * 
    * @param configName configs file name without .json
    */
-  public AI_Config(String configName) {
+  public AIConfig(String configName) {
     this();
     
     String jsonConfig;
@@ -83,7 +83,7 @@ public class AI_Config {
   }
   
   public static void main(String[] args) {
-    new AI_Config("TestConfig").saveConfigAs("TestConfigCopy");
+    new AIConfig("TestConfig").saveConfigAs("TestConfigCopy");
   }
   
   /**

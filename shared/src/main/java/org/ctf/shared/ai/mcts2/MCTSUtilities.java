@@ -6,19 +6,19 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.stream.Stream;
 import org.ctf.shared.ai.ReferenceMove;
-import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
-import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
+import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.data.map.Directions;
 import org.ctf.shared.state.data.map.ShapeType;
 
 /**
- * An optimized AI_Tools class, adjusted to use the new Grid class
+ * An optimized GameUtilities class, adjusted to use the new Grid class
  *
  * @author sistumpf
  */
-public class MCTS_Tools {
+public class MCTSUtilities {
   static Random random = new Random();
 
   public static void putNeighbouringPieces(HashSet<Piece> pieceList, Grid grid, int[] center) {

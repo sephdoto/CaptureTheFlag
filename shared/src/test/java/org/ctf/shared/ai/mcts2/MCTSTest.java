@@ -3,7 +3,7 @@ package org.ctf.shared.ai.mcts2;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import org.ctf.shared.ai.AI_Config;
+import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.ai.TestValues;
 import org.ctf.shared.state.GameState;
@@ -24,7 +24,7 @@ class MCTSTest {
   void setUp() {
     gameState = new ReferenceGameState(TestValues.getTestState());
     TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
-    mcts = new MCTS(parent, new AI_Config());
+    mcts = new MCTS(parent, new AIConfig());
   }
   
   void clearNodeParentAndChildren(TreeNode tn) {
@@ -41,7 +41,7 @@ class MCTSTest {
   @Test
   void testMakeEmptyMove() {
     mcts.root.gameState.setLastMove(null);
-    mcts.getMove(1000, new AI_Config().C);
+    mcts.getMove(1000, new AIConfig().C);
   }
 
   @Test
@@ -54,9 +54,9 @@ class MCTSTest {
     int crashes = 0;
 
     for(;count<1; count++) {
-      MCTS mcts = new MCTS(this.mcts.root.clone(new ReferenceGameState(TestValues.getTestState())), new AI_Config());
+      MCTS mcts = new MCTS(this.mcts.root.clone(new ReferenceGameState(TestValues.getTestState())), new AIConfig());
       try {
-        mcts.getMove(timeInMilis, new AI_Config().C);
+        mcts.getMove(timeInMilis, new AIConfig().C);
       } catch(NullPointerException npe) {crashes++;}
       expansions += mcts.expansionCounter.get();
       simulations += mcts.simulationCounter.get();
@@ -88,12 +88,12 @@ class MCTSTest {
 
     int mctsTillEnd = 0;
 
-    MCTS gameMCTS = new MCTS(parent, new AI_Config());
+    MCTS gameMCTS = new MCTS(parent, new AIConfig());
     while(gameMCTS.isTerminal(gameMCTS.root.gameState) == -1) {
       gameMCTS.expansionCounter.set(0);
       gameMCTS.simulationCounter.set(0);
       gameMCTS.heuristicCounter.set(0);
-      Move move = gameMCTS.getMove(1000, new AI_Config().C);
+      Move move = gameMCTS.getMove(1000, new AIConfig().C);
       ++mctsTillEnd;      
       
       System.out.println("\nROUND: " + mctsTillEnd + "\n" + gameMCTS.printResults(move) + "\n");
@@ -159,7 +159,7 @@ class MCTSTest {
 
     gameState.setCurrentTeam(1);
     TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
-    mcts = new MCTS(parent, new AI_Config());
+    mcts = new MCTS(parent, new AIConfig());
 
 //    System.out.println("parent Grid:");
 //    parent.printGrids();
@@ -206,7 +206,7 @@ class MCTSTest {
     gameState.getGrid()[9][8] = pieces1[0].getId();
 
     TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
-    mcts = new MCTS(parent, new AI_Config());
+    mcts = new MCTS(parent, new AIConfig());
 
     mcts.getMove(1000, (float)Math.sqrt(2));
 //    System.out.println("Piece: " + move.getPieceId() + " moves to " + move.getNewPosition()[0] + ", " + move.getNewPosition()[1]);
@@ -245,7 +245,7 @@ class MCTSTest {
     gameState.getGrid()[2][0] = pieces1[0].getId();
 
     TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
-    mcts = new MCTS(parent, new AI_Config());
+    mcts = new MCTS(parent, new AIConfig());
 
     mcts.getMove(1000, (float)Math.sqrt(2));
 //    System.out.println("Piece: " + move.getPieceId() + " moves to " + move.getNewPosition()[0] + ", " + move.getNewPosition()[1]);
@@ -281,7 +281,7 @@ class MCTSTest {
     gameState.getTeams()[1].setPieces(pieces1);
     gameState.getGrid()[0][1] = pieces0[0].getId();
     gameState.getGrid()[2][0] = pieces1[0].getId();
-    MCTS mcts = new MCTS(new TreeNode(null, gameState, null), new AI_Config());
+    MCTS mcts = new MCTS(new TreeNode(null, gameState, null), new AIConfig());
 
     assertTrue(mcts.terminalHeuristic(mcts.root) == 1);
     mcts.root.gameState.setCurrentTeam(0);
@@ -316,15 +316,15 @@ class MCTSTest {
     gameState.getTeams()[1].setPieces(pieces1);
     gameState.getGrid()[0][1] = pieces0[0].getId();
     gameState.getGrid()[2][0] = pieces1[0].getId();
-    MCTS mcts = new MCTS(new TreeNode(null, gameState, null), new AI_Config());
-    mcts.getMove(1000, new AI_Config().C);
+    MCTS mcts = new MCTS(new TreeNode(null, gameState, null), new AIConfig());
+    mcts.getMove(1000, new AIConfig().C);
     mcts.root.initPossibleMovesAndChildren();
     ReferenceMove move = mcts.getAndRemoveMoveHeuristic(mcts.root);
     assertEquals(0, move.getNewPosition()[0]);
     assertEquals(0, move.getNewPosition()[1]);
 
     gameState.setCurrentTeam(0);
-    mcts = new MCTS(new TreeNode(null, gameState, null), new AI_Config());
+    mcts = new MCTS(new TreeNode(null, gameState, null), new AIConfig());
     move = mcts.getAndRemoveMoveHeuristic(mcts.root);
     assertEquals(2, move.getNewPosition()[0]);
     assertEquals(0, move.getNewPosition()[1]);
@@ -408,7 +408,7 @@ class MCTSTest {
       d.setUpRight(0);
     }
     TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
-    MCTS mcts = new MCTS(parent, new AI_Config());
+    MCTS mcts = new MCTS(parent, new AIConfig());
 
 //    parent.printGrids();
     
@@ -422,7 +422,7 @@ class MCTSTest {
     GameState gameState = TestValues.getTestState();
     gameState.setCurrentTeam(0);
     TreeNode parent = new TreeNode(null, gameState, new int[] {0,0});
-    MCTS mcts = new MCTS(parent, new AI_Config());
+    MCTS mcts = new MCTS(parent, new AIConfig());
 
     assertEquals(-1, mcts.isTerminal(mcts.root.gameState));
   }
@@ -451,7 +451,7 @@ class MCTSTest {
       long time = System.nanoTime();
       mcts.multiSimulate(mcts.root);
       totalTime += System.nanoTime() - time;
-      this.mcts = new MCTS(new TreeNode(null, TestValues.getTestState(), null), new AI_Config());
+      this.mcts = new MCTS(new TreeNode(null, TestValues.getTestState(), null), new AIConfig());
     }
     System.out.println("average time for multi sim: " + (totalTime/count)/1000 + " µs" );
   }
@@ -464,7 +464,7 @@ class MCTSTest {
       long time = System.nanoTime();
       mcts.simulate(mcts.root);
       totalTime += System.nanoTime() - time;
-      this.mcts = new MCTS(mcts.root.clone(mcts.root.gameState.clone()), new AI_Config());
+      this.mcts = new MCTS(mcts.root.clone(mcts.root.gameState.clone()), new AIConfig());
     }
     System.out.println("average time for sim: " + (totalTime/count)/1000 + " µs" );
   }
@@ -501,9 +501,9 @@ class MCTSTest {
   @Test
   void testBestChild() {
     mcts.root.children = new TreeNode[2];
-    mcts.root.children[0] = new TreeNode(null, MCTS_Tools.toNextTeam(new ReferenceGameState(TestValues.getTestState())), new int[] {0,0});
+    mcts.root.children[0] = new TreeNode(null, MCTSUtilities.toNextTeam(new ReferenceGameState(TestValues.getTestState())), new int[] {0,0});
     mcts.root.children[0].parent = mcts.root;
-    mcts.root.children[1] = new TreeNode(null, MCTS_Tools.toNextTeam(new ReferenceGameState(TestValues.getTestState())), new int[] {0,0});
+    mcts.root.children[1] = new TreeNode(null, MCTSUtilities.toNextTeam(new ReferenceGameState(TestValues.getTestState())), new int[] {0,0});
     mcts.root.children[1].parent = mcts.root;                                       //2 Kindknoten als Kinder von root initialisiert
 
     mcts.root.children[0].wins = new int[] {4, 0};                                  //Team 0 hat mehr wins als Team 1
@@ -522,9 +522,9 @@ class MCTSTest {
   @Test
   void testGetRootBest() {
     mcts.root.children = new TreeNode[2];
-    mcts.root.children[0] = new TreeNode(null, MCTS_Tools.toNextTeam(new ReferenceGameState(TestValues.getTestState())), new int[] {0,0});
+    mcts.root.children[0] = new TreeNode(null, MCTSUtilities.toNextTeam(new ReferenceGameState(TestValues.getTestState())), new int[] {0,0});
     mcts.root.children[0].parent = mcts.root;
-    mcts.root.children[1] = new TreeNode(null, MCTS_Tools.toNextTeam(new ReferenceGameState(TestValues.getTestState())), new int[] {0,0});
+    mcts.root.children[1] = new TreeNode(null, MCTSUtilities.toNextTeam(new ReferenceGameState(TestValues.getTestState())), new int[] {0,0});
     mcts.root.children[1].parent = mcts.root;                                       //2 Kindknoten als Kinder von root initialisiert
 
     mcts.root.children[0].wins = new int[] {4, 0};                                  //Team 0 hat mehr wins als Team 1

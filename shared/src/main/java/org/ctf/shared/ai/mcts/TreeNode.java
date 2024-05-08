@@ -3,7 +3,7 @@ package org.ctf.shared.ai.mcts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
-import org.ctf.shared.ai.AI_Tools;
+import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
@@ -38,7 +38,7 @@ public class TreeNode implements Comparable<TreeNode> {
     this.possibleMoves = new IdentityHashMap<Piece, ArrayList<int[]>>();
     int children = 0;
     for(Piece p : gameState.getTeams()[gameState.getCurrentTeam()].getPieces()) {
-      ArrayList<int[]> movesPieceP = AI_Tools.getPossibleMoves(gameState, p, new ArrayList<int[]>(), operateOn);
+      ArrayList<int[]> movesPieceP = GameUtilities.getPossibleMoves(gameState, p, new ArrayList<int[]>(), operateOn);
       if(movesPieceP.size() > 0) {
         possibleMoves.put(p, movesPieceP);
         children += possibleMoves.get(p).size();
@@ -60,7 +60,7 @@ public class TreeNode implements Comparable<TreeNode> {
     * @return V value for UCT
     */
    public double getV() {
-     int team = AI_Tools.getPreviousTeam(gameState);
+     int team = GameUtilities.getPreviousTeam(gameState);
      return wins[team] / (double)getNK();
    }
 

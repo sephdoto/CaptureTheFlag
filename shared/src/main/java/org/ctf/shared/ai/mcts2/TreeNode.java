@@ -35,10 +35,10 @@ public class TreeNode implements Comparable<TreeNode> {
 
     IdentityHashMap<Piece, ArrayList<int[]>> impossibleMoves = new IdentityHashMap<Piece, ArrayList<int[]>>();
     int start = gameState.getCurrentTeam();
-    for(MCTS_Tools.toNextTeam(gameState); gameState.getCurrentTeam() != start; MCTS_Tools.toNextTeam(gameState)) {
+    for(MCTSUtilities.toNextTeam(gameState); gameState.getCurrentTeam() != start; MCTSUtilities.toNextTeam(gameState)) {
       for(Piece p : gameState.getTeams()[gameState.getCurrentTeam()].getPieces()) {
         ArrayList<int[]> movesTeamI = new ArrayList<int[]>();
-        impossibleMoves.put(p, MCTS_Tools.getPossibleMovesWithPieceVision(gameState, p, movesTeamI));
+        impossibleMoves.put(p, MCTSUtilities.getPossibleMovesWithPieceVision(gameState, p, movesTeamI));
         impossibleMoves.get(p).addAll(movesTeamI);
       }
     }
@@ -88,7 +88,7 @@ public class TreeNode implements Comparable<TreeNode> {
     IdentityHashMap<Piece, ArrayList<int[]>> impossibleMoves = new IdentityHashMap<Piece, ArrayList<int[]>>();
     for(Piece p : gameState.getTeams()[gameState.getCurrentTeam()].getPieces()) {
       ArrayList<int[]> movesPieceP = new ArrayList<int[]>();
-      impossibleMoves.put(p, MCTS_Tools.getPossibleMovesWithPieceVision(gameState, p, movesPieceP));
+      impossibleMoves.put(p, MCTSUtilities.getPossibleMovesWithPieceVision(gameState, p, movesPieceP));
       if(movesPieceP.size() > 0) {
         possibleMoves.put(p, movesPieceP);
         children += possibleMoves.get(p).size();
@@ -96,11 +96,11 @@ public class TreeNode implements Comparable<TreeNode> {
     }  
 
     int start = gameState.getCurrentTeam();
-    for(MCTS_Tools.toNextTeam(gameState); gameState.getCurrentTeam() != start; MCTS_Tools.toNextTeam(gameState)) {
+    for(MCTSUtilities.toNextTeam(gameState); gameState.getCurrentTeam() != start; MCTSUtilities.toNextTeam(gameState)) {
       for(Piece p : gameState.getTeams()[gameState.getCurrentTeam()].getPieces()) {
         //        System.out.print("\n" + p.getId() + " on " + p.getPosition()[0] + "-" + p.getPosition()[1] + ": "); TODO
         ArrayList<int[]> movesTeamI = new ArrayList<int[]>();
-        impossibleMoves.put(p, MCTS_Tools.getPossibleMovesWithPieceVision(gameState, p, movesTeamI));
+        impossibleMoves.put(p, MCTSUtilities.getPossibleMovesWithPieceVision(gameState, p, movesTeamI));
         impossibleMoves.get(p).addAll(movesTeamI);
         //        impossibleMoves.get(p).forEach(s -> System.out.print(s[0] + "-" + s[1] + ", "));
       }
@@ -140,7 +140,7 @@ public class TreeNode implements Comparable<TreeNode> {
   ArrayList<int[]> getIMpossibleMoves(Piece piece){
     ArrayList<int[]> impossibleMoves = new ArrayList<int[]>();
     if(this.gameState.getGrid().getPosition(piece.getPosition()[1], piece.getPosition()[0]).getPiece().getId().equals(piece.getId()))
-      impossibleMoves.addAll(MCTS_Tools.getPossibleMovesWithPieceVision(gameState, piece, impossibleMoves));
+      impossibleMoves.addAll(MCTSUtilities.getPossibleMovesWithPieceVision(gameState, piece, impossibleMoves));
     return impossibleMoves;
   }
 
@@ -156,7 +156,7 @@ public class TreeNode implements Comparable<TreeNode> {
    * @return V value for UCT
    */
   public double getV() {
-    int team = MCTS_Tools.getPreviousTeam(gameState);
+    int team = MCTSUtilities.getPreviousTeam(gameState);
     return wins[team] / (double)getNK();
   }
 

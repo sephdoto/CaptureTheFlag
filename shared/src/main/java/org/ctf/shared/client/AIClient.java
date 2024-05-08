@@ -3,10 +3,10 @@ package org.ctf.shared.client;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import org.ctf.shared.ai.AI_Config;
-import org.ctf.shared.ai.AI_Controller;
-import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
-import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.shared.ai.AIConfig;
+import org.ctf.shared.ai.AIController;
+import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
+import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.client.lib.Analyzer;
 import org.ctf.shared.client.service.CommLayerInterface;
 import org.ctf.shared.constants.Enums.AI;
@@ -24,7 +24,7 @@ import org.ctf.shared.state.data.exceptions.SessionNotFound;
 public class AIClient extends Client {
 
   private AI selectedAI;
-  private AI_Config aiConfig;
+  private AIConfig aiConfig;
   private boolean enableLogging;
   private volatile Analyzer analyzer;
   private String gameIDString;
@@ -48,8 +48,8 @@ public class AIClient extends Client {
             controllerThinkingTime = getRemainingMoveTimeInSeconds() - 1;
             //  logger.info("We had " + controllerThinkingTime + " to think");
           }
-          AI_Controller controller =
-              new AI_Controller(getCurrentState(), selectedAI, aiConfig, controllerThinkingTime);
+          AIController controller =
+              new AIController(getCurrentState(), selectedAI, aiConfig, controllerThinkingTime);
           pullData();
           controller.update(getCurrentState());
           if (enableLogging) {
@@ -92,7 +92,7 @@ public class AIClient extends Client {
       String port,
       boolean enableLogging,
       AI selected,
-      AI_Config aiConfig) {
+      AIConfig aiConfig) {
     super(comm, IP, port, enableLogging);
     this.selectedAI = selected;
     this.aiConfig = aiConfig;
@@ -121,7 +121,7 @@ public class AIClient extends Client {
       String port,
       Boolean enableLogging,
       AI selected,
-      AI_Config aiConfig,
+      AIConfig aiConfig,
       String gameIDString,
       String constructorSetTeamName) {
     this(comm, IP, port, enableLogging, selected, aiConfig);

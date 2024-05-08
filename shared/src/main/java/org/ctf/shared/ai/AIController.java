@@ -1,7 +1,7 @@
 package org.ctf.shared.ai;
 
-import org.ctf.shared.ai.AI_Tools.InvalidShapeException;
-import org.ctf.shared.ai.AI_Tools.NoMovesLeftException;
+import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
+import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.ai.random.RandomAI;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.state.GameState;
@@ -15,14 +15,14 @@ import org.ctf.shared.state.data.exceptions.GameOver;
  *
  * @author sistumpf
  */
-public class AI_Controller {
-  AI_Config config;
+public class AIController {
+  AIConfig config;
   AI ai;
   GameState gameState;
   boolean active;
   int thinkingTime;
 
-  public AI_Controller(GameState gameState, AI ai, AI_Config config, int thinkingTime) {
+  public AIController(GameState gameState, AI ai, AIConfig config, int thinkingTime) {
     this.ai = ai;
     this.thinkingTime = thinkingTime * 1000;
     if (gameState.getCurrentTeam() < 0)
