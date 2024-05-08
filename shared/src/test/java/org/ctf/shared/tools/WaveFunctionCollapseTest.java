@@ -17,13 +17,17 @@ class WaveFunctionCollapseTest {
 
   @Test
   void gridToImgTest() {
-    WaveFunctionCollapse wfc = new WaveFunctionCollapse(TestValues.getTestState().getGrid(), Enums.Themes.LOTR);
+    WaveFunctionCollapse wfc1 = new WaveFunctionCollapse(TestValues.getTestState().getGrid(), Enums.Themes.LOTR);
+    WaveFunctionCollapse wfc2 = new WaveFunctionCollapse(TestValues.getTestState().getGrid(), Enums.Themes.STARWARS);
+    WaveFunctionCollapse wfc3 = new WaveFunctionCollapse(TestValues.getTestState().getGrid(), Enums.Themes.BAYERN);
     
     //WaveFunctionCollapse wfc = new WaveFunctionCollapse(new String[3][3]);
     try {
  
       //wfc.generateBackgroundRecursive(new WaveGrid(test, WaveFunctionCollapse.IMAGES_AMOUNT));
-      ImageIO.write(wfc.getBackground(), "png", new File(Constants.toUIResources + "grid.png"));
+      ImageIO.write(wfc1.getBackground(), "png", new File(Constants.toUIResources + "gridLOTR.png"));
+      ImageIO.write(wfc2.getBackground(), "png", new File(Constants.toUIResources + "gridSTARWARS.png"));
+      ImageIO.write(wfc3.getBackground(), "png", new File(Constants.toUIResources + "gridBAYERN.png"));
      
       
     } catch (IOException e) {

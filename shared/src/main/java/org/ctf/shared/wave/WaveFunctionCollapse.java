@@ -399,7 +399,7 @@ public class WaveFunctionCollapse {
   private BufferedImage[] loadSWImages() throws IOException {
     BufferedImage[] images = new BufferedImage[imagesAmount+6];
 
-        
+        block =  ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"Block.png"));
         images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c2.png"));
         
         for(int i = 1, c = 1; c <= imagesAmount+4; i++) {
@@ -423,7 +423,7 @@ public class WaveFunctionCollapse {
   
   /**
    * Preloads the images used in the Lord of the Rings pattern. The pattern was originally drawn by
-   * Hermann Hillmann and found on the WaveFunctionCollapse github page.
+   * Hermann Hillmann and found on the WaveFunctionCollapse github page (see header).
    * 
    * @return
    * @throws IOException
