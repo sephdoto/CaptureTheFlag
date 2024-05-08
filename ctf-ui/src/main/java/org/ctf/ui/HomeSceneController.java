@@ -6,6 +6,8 @@ This Class controls what happens when clicking the buttons on the HomeScreen
  */
 import java.io.IOException;
 
+import org.ctf.shared.client.Client;
+import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
@@ -29,6 +31,9 @@ public class HomeSceneController {
 	String sessionID;
 	ServerManager serverManager;
 	MapTemplate template;
+	CretaeGameScreenV2 createGameScreenV2;
+	Client mainClient;
+	String teamName;
 	
 	public void switchtoHomeScreen(ActionEvent e) {
 		Scene scene = App.getScene();
@@ -36,15 +41,47 @@ public class HomeSceneController {
 		stage.setScene(scene);
 	}
 	
+	
 	public void createGameSession() {
-		MapTemplate test = new MapTemplate();
-		serverManager = new ServerManager(new CommLayer(), new ServerDetails(serverID, port),test );
-		serverManager.createGame();
+		System.out.println("Hallo ch bin der Manger");
+		System.out.println(serverID);
+		System.out.println(port);
+		serverManager = new ServerManager(new CommLayer(), new ServerDetails(serverID, port),template);
+		if(serverManager.createGame()) {
+			System.out.println("Session erstellt" );
+		}else {
+			System.out.println("None");
+		}
+	}
+	
+	public void deleteGame() {
+		serverManager.deleteGame();
+	}
+	
+	public void createHumanClient() {
+		sessionID = serverManager.getGameSessionID();
+		System.out.println(teamName);
+		mainClient =
+		ClientStepBuilder.newBuilder()
+		.enableRestLayer(false)
+		.onLocalHost()
+		.onPort(port)
+		.enableSaveGame(false)
+		.enableAutoJoin(sessionID, teamName)
+		.build();
 	}
 	
 	
 	
 	
+
+	public String getTeamName() {
+		return teamName;
+	}
+
+	public void setTeamName(String teamName) {
+		this.teamName = teamName;
+	}
 
 	public void switchToWaitGameScene(Stage stage) {
 		stage.setScene(new WaitingScene(this, stage.getWidth(), stage.getHeight()));
@@ -55,7 +92,8 @@ public class HomeSceneController {
 	}
 
 	public void switchToCreateGameScene(Stage stage) {
-		stage.setScene(new CretaeGameScreenV2(this, stage.getWidth(), stage.getHeight()));
+		createGameScreenV2=  new CretaeGameScreenV2(this, stage.getWidth(), stage.getHeight());
+		stage.setScene(createGameScreenV2);
 	}
 
 	public void switchToJoinScene(Stage stage) {
@@ -67,6 +105,14 @@ public class HomeSceneController {
 	}
 	public void switchToTestScene(Stage stage) {
 		stage.setScene(new TestScene(this, stage).getScene());
+	}
+
+	public MapTemplate getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(MapTemplate template) {
+		this.template = template;
 	}
 
 	public Stage getStage() {

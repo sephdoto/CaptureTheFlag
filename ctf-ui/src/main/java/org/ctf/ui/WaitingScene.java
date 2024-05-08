@@ -117,8 +117,6 @@ public class WaitingScene extends Scene {
           r.showColor(sceneColorProperty);
           ContextMenu contextMenu = new ContextMenu(itemColor);
           contextMenu.setOnHiding(t->{sceneColorProperty.unbind();
-          
-          System.out.println("hihihi");
            for(CostumFigurePain m : gm.getFigures().values() ) {
            		m.unbind();
            	}});
@@ -171,30 +169,6 @@ public class WaitingScene extends Scene {
         return button;
 	}
 	
-	
-	
-	private  ComboBox<String> createChoiceBox(VBox parent) {
-		ComboBox<String> c = new ComboBox<String>();
-		c.getStyleClass().add("combo-box");
-		
-		String[] ais = {"MCTS V1", "MCTS V2"};
-		c.getItems().addAll(ais);
-		 c.setPromptText("Standardtext");
-	        // Listener hinzufügen, um Änderungen zu verfolgen
-	        c.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-	            // Standardtext setzen, wenn ein Element ausgewählt wird
-	            c.setPromptText("Standardtext");
-	        });
-		c.prefWidthProperty().bind(parent.widthProperty().multiply(0.8));
-		c.prefHeightProperty().bind(parent.heightProperty().multiply(0.1));
-		c.setOnAction(event -> {
-		});
-		return c;
-	}
-	
-	
-	
-	
 	private void createLayout(){
 		HBox main = new HBox();
 		main.setAlignment(Pos.CENTER);
@@ -236,7 +210,7 @@ public class WaitingScene extends Scene {
 		labels.setSpacing(30);
 		labels.getChildren().add(createInfoLabel("port" , hsc.getPort()));
 		labels.getChildren().add(createInfoLabel("Server-ID" , hsc.getServerID()));
-		labels.getChildren().add(createInfoLabel("Session-ID", "23232322222222222222222222222222"));
+		labels.getChildren().add(createInfoLabel("Session-ID", hsc.getSessionID()));
 		left.getChildren().add(labels);
 //		Image mp = new Image(getClass().getResourceAsStream("ct2.png"));
 //		ImageView mpv = new ImageView(mp);

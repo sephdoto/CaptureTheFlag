@@ -56,8 +56,10 @@ public class CretaeGameScreenV2 extends Scene {
 	TextField serverIPText;
 	TextField portText;
 	String serverIP;
+	String teamName;
 	String port;
 	HBox sep;
+	TextField enterNamefield;
 	PopUpCreator popUpCreator;
 	PopUpPane aiOrHumanPop;
 	PopUpPane enterNamePopUp;
@@ -105,7 +107,7 @@ public class CretaeGameScreenV2 extends Scene {
 		HBox chooseButtonBox = new HBox();
 		chooseButtonBox.setAlignment(Pos.CENTER);
 		aiOrHumanPop.widthProperty().addListener((observable, oldValue, newValue) -> {
-			double newSpacing = newValue.doubleValue() * 0.05; // Beispiel: 5% der Höhe als Spacing
+			double newSpacing = newValue.doubleValue() * 0.05; 
 			chooseButtonBox.setSpacing(newSpacing);
 		});
 		Button human = createAddHumanButton("Play as Human", "user-286.png");
@@ -124,50 +126,7 @@ public class CretaeGameScreenV2 extends Scene {
 		aiOrHumanPop.setContent(top);
 	}
 	
-	private void createAiLevelPopUp() {
-		root.getChildren().remove(aiOrHumanPop);
-		portText.setDisable(true);
-		serverIPText.setDisable(true);
-		aiLevelPopUpPane = new PopUpPane(this, 0.6, 0.4);
-		VBox top = new VBox();
-		top.heightProperty().addListener((obs, oldVal, newVal) -> {
-			double spacing = newVal.doubleValue() * 0.1;
-			top.setSpacing(spacing);
-		});
-		Label l = new Label("Choose AI");
-		l.prefWidthProperty().bind(aiLevelPopUpPane.widthProperty());
-		l.setAlignment(Pos.CENTER);
-		l.getStyleClass().add("custom-label");
-		l.fontProperty().bind(popUpLabel);
-		top.getChildren().add(l);
-		HBox buttonBox = new HBox();
-		buttonBox.setAlignment(Pos.CENTER);
-		aiLevelPopUpPane.widthProperty().addListener((observable, oldValue, newValue) -> {
-			double newSpacing = newValue.doubleValue() * 0.03;
-			double padding = newValue.doubleValue() * 0.03;
-			buttonBox.setSpacing(newSpacing);
-			buttonBox.setPadding(new Insets(0, padding, 0, padding));
-		});
-		buttonBox.getChildren().addAll(createAIPowerButton("RANDOM", 0.365), createAIPowerButton("MCTS",0.53));
-		HBox buttonBox2 = new HBox();
-		buttonBox2.setAlignment(Pos.CENTER);
-		aiLevelPopUpPane.widthProperty().addListener((observable, oldValue, newValue) -> {
-			double newSpacing = newValue.doubleValue() * 0.03;
-			double padding = newValue.doubleValue() * 0.03;
-			buttonBox2.setSpacing(newSpacing);
-			buttonBox2.setPadding(new Insets(0, padding, 0, padding));
-		});
-		buttonBox2.getChildren().addAll(createAIPowerButton("MCTS-IMPROVED",0.05), createAIPowerButton("EXPERIMENTAL",0.15));
-		top.getChildren().addAll(buttonBox, buttonBox2);
-		HBox centerLeaveButton = new HBox();
-		// centerLeaveButton.setStyle("-fx-background-color: blue");
-		centerLeaveButton.prefHeightProperty().bind(aiOrHumanPop.heightProperty().multiply(0.2));
-		centerLeaveButton.setAlignment(Pos.CENTER);
-		centerLeaveButton.getChildren().add(createBackButton("ai"));
-		top.getChildren().add(centerLeaveButton);
-		aiLevelPopUpPane.setContent(top);
-		root.getChildren().add(aiLevelPopUpPane);
-	}
+	
 	
 	private void createEnterNamePopUp() {
 		enterNamePopUp = new PopUpPane(this, 0.5, 0.3);
@@ -185,10 +144,9 @@ public class CretaeGameScreenV2 extends Scene {
 		top.getChildren().add(l);
 		HBox enterNameBox = new HBox();
 		enterNameBox.setAlignment(Pos.CENTER);
-		
-		TextField t = createTextfield("Your Team Name",0.5);
-		t.prefWidthProperty().bind(enterNameBox.widthProperty().multiply(0.8));
-		enterNameBox.getChildren().add(t);
+		enterNamefield = createTextfield("Your Team Name",0.5);
+		enterNamefield.prefWidthProperty().bind(enterNameBox.widthProperty().multiply(0.8));
+		enterNameBox.getChildren().add(enterNamefield);
 		top.getChildren().add(enterNameBox);
 		HBox centerLeaveButton = new HBox();
 		enterNamePopUp.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -203,52 +161,7 @@ public class CretaeGameScreenV2 extends Scene {
 		root.getChildren().add(enterNamePopUp);
 	}
 
-	private Button createAIPowerButton(String pow, double relSpacing) {
-		Button power = new Button(pow);
-		power.fontProperty().bind(aiPowerText);
-		power.getStyleClass().add("ai-button-easy");
-		Image mp = new Image(getClass().getResourceAsStream("i1.png"));
-		ImageView vw = new ImageView(mp);
-		power.setGraphic(vw);
-		power.setContentDisplay(ContentDisplay.RIGHT);
-		power.widthProperty().addListener((observable, oldValue, newValue) -> {
-			double newSpacing = newValue.doubleValue() * relSpacing; // Beispiel: 5% der Höhe als Spacing
-			power.setGraphicTextGap(newSpacing);
-		});
-		String showAiInfo = Descriptions.describe(pow);
-		
-		Tooltip tooltip = new Tooltip(showAiInfo);
-		Duration delay = new Duration(1);
-		tooltip.setShowDelay(delay);
-		Duration displayTime = new Duration(10000);
-		tooltip.setShowDuration(displayTime);
-		//tooltip.setFont(new Font(15));
-		  final String SQUARE_BUBBLE =
-		            "M24 1h-24v16.981h4v5.019l7-5.019h13z";
-//		tooltip.setStyle(" -fx-background: rgba(200,30,30);\r\n"
-//				+ "    -fx-text-fill: red;\r\n"
-//				+ "    -fx-background-color: rgba(30,30,30,0.8);\r\n"
-//				+ "    -fx-background-radius: 6px;\r\n"
-//				+ "    -fx-background-insets: 0;\r\n"
-//				+ "    -fx-padding: 0.667em 0.75em 0.667em 0.75em; /* 10px */\r\n"
-//				+ "    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.5) , 10, 0.0 , 0 , 3 );\r\n"
-//				+ "    -fx-font-size: em;");
-		 tooltip.setStyle("-fx-font-size: 16px; -fx-shape: \"" + SQUARE_BUBBLE + "\";"
-				 + "    -fx-background-color: rgba(90,50,30,0.8);\r\n");
-        //tooltip.setAnchorLocation(PopUpWindow.AnchorLocation.WINDOW_BOTTOM_LEFT);
-		tooltip.setAnchorLocation(AnchorLocation.CONTENT_TOP_LEFT);
-		Tooltip.install(power, tooltip);
-		vw.fitWidthProperty().bind(power.widthProperty().divide(8));
-		vw.setPreserveRatio(true);
-		power.prefWidthProperty().bind(root.widthProperty().multiply(0.22));
-		power.prefHeightProperty().bind(power.widthProperty().multiply(0.45));
-		power.setOnAction(e -> {
-			//hsc.switchToWaitGameScene(App.getStage());
-			root.getChildren().remove(aiLevelPopUpPane);
-			//root.getChildren().add(configPopUpCreator.createConfigPane(this,0.96,0.96));
-		});
-		return power;
-	}
+	
 	
 	
 
@@ -259,10 +172,12 @@ public class CretaeGameScreenV2 extends Scene {
 		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
 		exit.setOnAction(e -> {
-			hsc.switchToCreateGameScene(App.getStage());
+			//hsc.switchToCreateGameScene(App.getStage());
+			portText.setDisable(false);
+			serverIPText.setDisable(false);
+			root.getChildren().remove(aiOrHumanPop);
 		});
-		portText.setDisable(false);
-		serverIPText.setDisable(false);
+		
 		return exit;
 	}
 
@@ -346,6 +261,8 @@ public class CretaeGameScreenV2 extends Scene {
 		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
 		exit.setOnAction(e -> {
+			hsc.setTeamName(enterNamefield.getText());
+			hsc.createHumanClient();
 			hsc.switchToWaitGameScene(App.getStage());
 		});
 		return exit;
@@ -451,9 +368,9 @@ public class CretaeGameScreenV2 extends Scene {
 				port = portText.getText();
 				hsc.setPort(port);
 				hsc.setServerID(serverIP);
+				hsc.setTemplate(template);
 				hsc.createGameSession();
 				this.createChooserPopup();
-				
 			}
 		});
 
@@ -563,8 +480,7 @@ public class CretaeGameScreenV2 extends Scene {
 	private ComboBox<String> createChoiceBox(VBox parent) {
 		ComboBox<String> c = new ComboBox<String>();
 		c.getStyleClass().add("combo-box");
-		c.getItems().addAll(getTemplateNames());
-		
+		c.getItems().addAll(this.getTemplateNames());
 		c.setCellFactory(param -> new ListCell<String>() {
 			@Override
 			protected void updateItem(String item, boolean empty) {
@@ -606,6 +522,7 @@ public class CretaeGameScreenV2 extends Scene {
 		});
 		return c;
 	}
+	
 	public ArrayList<String> getTemplateNames(){
 		File templateFolder = new File(JSON_Tools.mapTemplates);
 		if(templateFolder.isDirectory()) {
@@ -621,10 +538,9 @@ public class CretaeGameScreenV2 extends Scene {
 	}
 	
 	
-	
 
 	private StackPane createShowMapPane(String name) {
-		 showMapBox = new StackPane();
+		showMapBox = new StackPane();
 		showMapBox.getStyleClass().add("option-pane");
 		showMapBox.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
 		showMapBox.prefHeightProperty().bind(showMapBox.widthProperty());

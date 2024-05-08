@@ -56,7 +56,8 @@ public class Game {
 		Move move = new Move();
 		move.setPieceId(currentPlayer.getPiece().getId());
 		move.setNewPosition(newPos);
-		cb.moveFigure(newPos[0], newPos[1], currentPlayer); //
+		//cb.moveFigure(newPos[0], newPos[1], currentPlayer); //
+		
 		try {
 			// JavaClient.makeMoveRequest(move)
 		} catch (SessionNotFound e) {
