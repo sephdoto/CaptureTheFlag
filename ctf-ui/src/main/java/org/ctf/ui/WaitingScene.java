@@ -93,11 +93,27 @@ public class WaitingScene extends Scene {
 	       
 	}
 	
+	
+	public void createLayout() {
+		VBox mainBox = createMainBox(root);
+	}
+	
+	private VBox createMainBox(StackPane parent) {
+		VBox mainBox = new VBox();
+		mainBox.prefHeightProperty().bind(parent.heightProperty());
+		mainBox.prefWidthProperty().bind(parent.widthProperty());
+		mainBox.setAlignment(Pos.TOP_CENTER);
+		mainBox.setSpacing(30);
+		mainBox.widthProperty().addListener((observable, oldValue, newValue) -> {
+			double newSpacing = newValue.doubleValue() * 0.03;
+			mainBox.setSpacing(newSpacing);
+		});
+		return mainBox;
+	}
+	
 	public void showTeamInformation() {
 		howManyTeams = new Label();
 		int maxteams = 2;     //Add other Methode here
-		
-		
 	}
 	
 	
@@ -131,7 +147,6 @@ public class WaitingScene extends Scene {
 			double padding = newVal.doubleValue() * 0.1;
 			v.setPadding(new Insets(padding, 0, 0, 0));
 		});
-		//v.setStyle("-fx-background-color:red");
 		v.prefWidthProperty().bind(this.widthProperty().multiply(0.2));
 		Button k = createAddHumanButton("add Human-Player","user-286.png");
 		Button b = createAddAIButton("add Bot","robot1.png");
@@ -169,7 +184,7 @@ public class WaitingScene extends Scene {
         return button;
 	}
 	
-	private void createLayout(){
+	private void createLayout2(){
 		HBox main = new HBox();
 		main.setAlignment(Pos.CENTER);
 		main.setSpacing(main.heightProperty().doubleValue() * 0.09);
@@ -196,9 +211,6 @@ public class WaitingScene extends Scene {
 		main.getChildren().add(createAddButtons());
 		root.setStyle("-fx-background-color:black");
 		root.getChildren().add(main);
-		
-		
-		
 	}
 	private VBox createLeft() {
 		VBox left = new VBox();
@@ -216,6 +228,16 @@ public class WaitingScene extends Scene {
 //		ImageView mpv = new ImageView(mp);
 //		left.getChildren().add(mpv);
 		return left;
+	}
+	
+	private HBox createIPandPortBox() {
+		HBox labelBox = new HBox();
+		this.widthProperty().addListener((observable, oldValue, newValue) -> {
+			double newSpacing = newValue.doubleValue() * 0.05;
+			labelBox.setSpacing(newSpacing);
+		});
+		return labelBox;
+		
 	}
 	
 	private VBox waitingBox() {
@@ -267,11 +289,9 @@ public class WaitingScene extends Scene {
 		            serverInfoCOntentFontSize.set(Font.font(newWidth.doubleValue()/ 65));
 		            addHumanButtonTextFontSIze.set(Font.font(newWidth.doubleValue()/ 70));
 		            addAiCOmboTextFontSIze.set(Font.font(newWidth.doubleValue()/ 60));
-		            
 		        }
 		    });
 	}
-	
 	
 	
 	private VBox createInfoLabel(String header, String content) {
@@ -321,29 +341,5 @@ public class WaitingScene extends Scene {
 
 		return search;
 	}
-	
-	
-	
-	
-	private StackPane createShowMapPane(String name) {
-		StackPane showMapBox = new StackPane();
-		showMapBox.getStyleClass().add("option-pane");
-		showMapBox.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
-		//showMapBox.setStyle("-fx-background-color: white");
-		showMapBox.prefHeightProperty().bind(this.heightProperty().multiply(0.65));
-		showMapBox.getStyleClass().add("show-GamePane");
-		org.ctf.shared.state.GameState state = StroeMaps.getMap(name);
-		gm = new GamePane(state);
-		//gm.enableBaseColors(this);
-		showMapBox.getChildren().add(gm);
-		return showMapBox;
-	}
-	
-	
-	
-	
-	
-	
-
 	 
 }

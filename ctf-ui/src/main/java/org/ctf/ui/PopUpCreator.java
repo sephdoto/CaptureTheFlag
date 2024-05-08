@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.constants.Descriptions;
+import org.ctf.shared.constants.Enums.AIConfigs;
 import org.ctf.ui.customobjects.PopUpPane;
 
 import configs.ImageLoader;
@@ -42,7 +43,7 @@ public class PopUpCreator {
 	private Scene scene;
 	private PopUpPane aiconfig;
 	private AIConfig defaultConfig;
-	private HashMap<String, Integer> multipliers = new HashMap<String, Integer>();
+	private HashMap<AIConfigs, Integer> multipliers = new HashMap<AIConfigs, Integer>();
 	private SpinnerValueFactory<Integer> values;
 	private SpinnerValueFactory<Double> values2;
 	private ObjectProperty<Font> popUpLabel = new SimpleObjectProperty<Font>(Font.getDefault());
@@ -114,7 +115,7 @@ public class PopUpCreator {
 			buttonBox.setSpacing(newSpacing);
 			buttonBox.setPadding(new Insets(0, padding, 0, padding));
 		});
-		buttonBox.getChildren().addAll(createAIPowerButton("RANDOM", 0.365), createAIPowerButton("MCTS",0.53));
+		buttonBox.getChildren().addAll(createAIPowerButton(AIConfigs.RANDOM, 0.365,1), createAIPowerButton(AIConfigs.MCTS,0.53,1));
 		HBox buttonBox2 = new HBox();
 		buttonBox2.setAlignment(Pos.CENTER);
 		aiLevelPopUpPane.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -123,7 +124,7 @@ public class PopUpCreator {
 			buttonBox2.setSpacing(newSpacing);
 			buttonBox2.setPadding(new Insets(0, padding, 0, padding));
 		});
-		buttonBox2.getChildren().addAll(createAIPowerButton("MCTS-IMPROVED",0.05), createAIPowerButton("EXPERIMENTAL",0.15));
+		buttonBox2.getChildren().addAll(createAIPowerButton(AIConfigs.MCTS_IMPROVED,0.05,2), createAIPowerButton(AIConfigs.EXPERIMENTAL,0.15,2));
 		top.getChildren().addAll(buttonBox, buttonBox2);
 		HBox centerLeaveButton = new HBox();
 		centerLeaveButton.prefHeightProperty().bind(aiLevelPopUpPane.heightProperty().multiply(0.2));
@@ -161,8 +162,8 @@ public class PopUpCreator {
 	 * @param relSpacing
 	 * @return
 	 */
-	private Button createAIPowerButton(String aiName, double relSpacing) {
-		Button power = new Button(aiName);
+	private Button createAIPowerButton(AIConfigs aiName, double relSpacing, int InfoPanePosition) {
+		Button power = new Button(aiName.toString());
 		power.fontProperty().bind(aiPowerText);
 		power.getStyleClass().add("ai-button-easy");
 		Image mp = new Image(getClass().getResourceAsStream("i1.png"));
@@ -173,7 +174,7 @@ public class PopUpCreator {
 			double newSpacing = newValue.doubleValue() * relSpacing;
 			power.setGraphicTextGap(newSpacing);
 		});
-		String showAiInfo = Descriptions.describe(aiName);
+		InfoPaneCreator.addInfoPane(power, App.getStage(), Descriptions.describe(aiName), InfoPanePosition);
 		vw.fitWidthProperty().bind(power.widthProperty().divide(8));
 		vw.setPreserveRatio(true);
 		power.prefWidthProperty().bind(root.widthProperty().multiply(0.22));
@@ -415,7 +416,7 @@ public class PopUpCreator {
 	 * @param isDouble: if param is double value is set, only one param is a double currently
 	 * @return Hbox: one row
 	 */
-	private HBox createOneRowHBox(VBox parent, String text, int min, int max, int current, boolean isDouble) {
+	private HBox createOneRowHBox(VBox parent, AIConfigs text, int min, int max, int current, boolean isDouble) {
 		HBox oneRow = new HBox();
 		//oneRow.setStyle("-fx-background-color: yellow");
 		oneRow.prefHeightProperty().bind(parent.heightProperty().divide(3));
@@ -423,7 +424,7 @@ public class PopUpCreator {
 		VBox divideRow = new VBox();
 		divideRow.prefWidthProperty().bind(oneRow.widthProperty());
 		divideRow.prefHeightProperty().bind(oneRow.heightProperty());
-		HBox upperpart = createUpperPartOfRow(text, oneRow, divideRow);
+		HBox upperpart = createUpperPartOfRow(text,  divideRow);
 		HBox lowerPart = new HBox();
 		lowerPart.setAlignment(Pos.CENTER);
 		lowerPart.prefHeightProperty().bind(divideRow.heightProperty().divide(2));
@@ -450,16 +451,15 @@ public class PopUpCreator {
 	 * @param divideRow: Vbox in which the whole row is placed
 	 * @return HBox: upper part of the row
 	 */
-	private HBox createUpperPartOfRow(String text, HBox oneRow, VBox divideRow) {
+	private HBox createUpperPartOfRow(AIConfigs text, VBox divideRow) {
 		HBox upperpart = new HBox();
 		upperpart.setAlignment(Pos.CENTER);
-		upperpart.prefHeightProperty().bind(oneRow.heightProperty().divide(2));
+		//upperpart.prefHeightProperty().bind(divideRow.heightProperty().divide(2));
 		upperpart.prefWidthProperty().bind(divideRow.widthProperty().multiply(0.8));
-		upperpart.setAlignment(Pos.CENTER);
-		Label l = new Label(text);
+		Label l = new Label(text.toString());
 		l.getStyleClass().add("spinner-des-label");
 		l.fontProperty().bind(configDescriptionLabel);
-		l.setAlignment(Pos.CENTER_LEFT);
+		l.setAlignment(Pos.CENTER);
 		HBox upperLeft = new HBox();
 		upperLeft.getChildren().add(l);
 		upperLeft.prefWidthProperty().bind(upperpart.widthProperty().multiply(0.7));
@@ -468,6 +468,7 @@ public class PopUpCreator {
 		vw.fitHeightProperty().bind(upperpart.heightProperty().multiply(0.7));
 		vw.fitWidthProperty().bind(upperpart.widthProperty().multiply(0.2));
 		vw.setPreserveRatio(true);
+		InfoPaneCreator.addInfoPane(vw, App.getStage(), Descriptions.describe(text), InfoPaneCreator.BOTTOM);
 		HBox upperRight = new HBox();
 		upperRight.prefWidthProperty().bind(upperpart.widthProperty().multiply(0.1));
 		upperRight.setAlignment(Pos.CENTER_RIGHT);
@@ -507,9 +508,10 @@ public class PopUpCreator {
 	 * @return Double-spinner for one param
 	 */
 	private Spinner<Double> createConfigSpinnerDouble(double min, double max, double cur, HBox parent) {
-	    this.values2 = new SpinnerValueFactory.DoubleSpinnerValueFactory(min, max, cur);
+	    this.values2 = new SpinnerValueFactory.DoubleSpinnerValueFactory(min, max, cur,0.1);
 	    Spinner<Double> spinner = new Spinner<>(values2);
 	    spinner.getStyleClass().add("spinner");
+	    
 	    TextField spinnerText = spinner.getEditor();
 	    spinnerText.fontProperty().bind(spinnerLabel);
 	    spinner.setEditable(true);
@@ -518,23 +520,37 @@ public class PopUpCreator {
 	    return spinner;
 	  }
 	
-	 private void createIntegerSpinnerListener(Spinner<Integer> spinner, String valueToModify) {
+	 private void createIntegerSpinnerListener(Spinner<Integer> spinner, AIConfigs valueToModify) {
 		    spinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
 		    	changeConfigIntValue(valueToModify, newValue);
 		    });
 		  }
 	
-	private void changeConfigIntValue(String s, int newValue) {
-		switch (s) {
-		case "Attack-Power":
+	private void changeConfigIntValue(AIConfigs config, int newValue) {
+		switch (config) {
+		case ATTACK_POWER_MUL:
 			defaultConfig.attackPowerMultiplier= newValue;
-			System.out.println("Attack Power: " + newValue);
+			System.out.println("Attack Power: " + defaultConfig.attackPowerMultiplier);
 			break;
-		case "Pieces":
+		case PIECE_MUL:
 			defaultConfig.pieceMultiplier = newValue;
+			System.out.println("Pice: " + newValue);
 			break;
-		case "Base-Distance":
+		case BASE_DISTANCE_MUL:
 			defaultConfig.distanceBaseMultiplier = newValue;
+			System.out.println("Base : " + newValue);
+			break;
+		case DIRECTION_MUL:
+			defaultConfig.directionMultiplier = newValue;
+			System.out.println("Distance: " + newValue);
+			break;
+		case FLAG_MUL:
+			defaultConfig.flagMultiplier = newValue;
+			System.out.println("Flags: " + newValue);
+			break;
+		case SHAPE_REACH_MUL:
+			defaultConfig.shapeReachMultiplier = newValue;
+			System.out.println("Shape Reach: " + newValue);
 			break;
 		default:
 			break;
@@ -545,12 +561,12 @@ public class PopUpCreator {
 	 * Initializes a Map with the names and default values of all ai-multiplier values to fill the containers faster
 	 */
 	private void createConfigMaps() {
-		multipliers.put("Attack-Power", defaultConfig.attackPowerMultiplier);
-		multipliers.put("Pieces",defaultConfig.pieceMultiplier);
-		multipliers.put("Base-Distance", defaultConfig.distanceBaseMultiplier);
-		multipliers.put("Directions",defaultConfig.directionMultiplier);
-		multipliers.put("Flags", defaultConfig.flagMultiplier);
-		multipliers.put("Shape-Reach", defaultConfig.shapeReachMultiplier);
+		multipliers.put(AIConfigs.ATTACK_POWER_MUL, defaultConfig.attackPowerMultiplier);
+		multipliers.put(AIConfigs.PIECE_MUL,defaultConfig.pieceMultiplier);
+		multipliers.put(AIConfigs.BASE_DISTANCE_MUL, defaultConfig.distanceBaseMultiplier);
+		multipliers.put(AIConfigs.DIRECTION_MUL,defaultConfig.directionMultiplier);
+		multipliers.put(AIConfigs.FLAG_MUL, defaultConfig.flagMultiplier);
+		multipliers.put(AIConfigs.SHAPE_REACH_MUL, defaultConfig.shapeReachMultiplier);
 	}
 	
 	/**
@@ -562,7 +578,7 @@ public class PopUpCreator {
 	 */
 	private void fillColumns(VBox multiplyerLeft, VBox multiplyerRight, VBox hyperparam) {
 		int i=0;
-		for(String multilier: multipliers.keySet()) {
+		for(AIConfigs multilier: multipliers.keySet()) {
 			if(i<3 ){
 				HBox oneRow = createOneRowHBox(multiplyerLeft, multilier, 0, Integer.MAX_VALUE, multipliers.get(multilier),false);
 				multiplyerLeft.getChildren().add(oneRow);
@@ -572,15 +588,13 @@ public class PopUpCreator {
 			}
 			i++;
 		}
-		HBox row1 = createOneRowHBox(hyperparam, "UCT-C", -1, -1,-1 , true);
+		HBox row1 = createOneRowHBox(hyperparam, AIConfigs.C, -1, -1,-1 , true);
 		hyperparam.getChildren().add(row1);
-		HBox row2 = createOneRowHBox(hyperparam, "Max-Steps", 0, Integer.MAX_VALUE, defaultConfig.MAX_STEPS, false);
+		HBox row2 = createOneRowHBox(hyperparam, AIConfigs.MAX_STEPS, 0, Integer.MAX_VALUE, defaultConfig.MAX_STEPS, false);
 		hyperparam.getChildren().add(row2);
-		HBox row3 = createOneRowHBox(hyperparam, "Number of Threads", 1, Integer.MAX_VALUE, defaultConfig.numThreads, false);
+		HBox row3 = createOneRowHBox(hyperparam, AIConfigs.NUM_THREADS, 1, Integer.MAX_VALUE, defaultConfig.numThreads, false);
 		hyperparam.getChildren().add(row3);
 	}
-	
-	
 	
 	
 	

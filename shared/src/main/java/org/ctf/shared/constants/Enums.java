@@ -99,4 +99,38 @@ public class Enums {
       return this.label;
     }
   }
+  
+  
+  	/**
+  	 * Enum for the UI to show COnfig Labels and their Description {@link Descriptions}
+  	 * 
+  	 * @author Manuel Krakowski
+  	 */
+	public enum AIConfigs {
+	  RANDOM("RANDOM"),
+	  MCTS("MCTS"),
+	  MCTS_IMPROVED("MCTS-IMPROVED"),
+	  EXPERIMENTAL("EXPERIMENTAL"),
+	  
+	  C("UCT-C"), 
+	  MAX_STEPS("Max-Steps"),
+	  NUM_THREADS("Number of Threads "),
+	  
+	  ATTACK_POWER_MUL("Attack-Power"),
+	  PIECE_MUL("Pieces"),
+	  FLAG_MUL("Flags"),
+	  DIRECTION_MUL("Directions"),
+	  SHAPE_REACH_MUL("Shape-Reach"),
+	  BASE_DISTANCE_MUL("Base-Distance");
+	 
+	  private final String name;
+
+	  private AIConfigs(final String name) {
+		  this.name = name;
+	  }
+
+	  public String toString() {
+		  return this.name;
+	  }
+	}
 }
