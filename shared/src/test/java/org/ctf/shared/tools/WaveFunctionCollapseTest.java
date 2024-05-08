@@ -17,7 +17,7 @@ class WaveFunctionCollapseTest {
 
   @Test
   void gridToImgTest() {
-    WaveFunctionCollapse wfc = new WaveFunctionCollapse(TestValues.getTestState().getGrid(), Enums.Themes.STARWARS);
+    WaveFunctionCollapse wfc = new WaveFunctionCollapse(TestValues.getTestState().getGrid(), Enums.Themes.LOTR);
     
     //WaveFunctionCollapse wfc = new WaveFunctionCollapse(new String[3][3]);
     try {

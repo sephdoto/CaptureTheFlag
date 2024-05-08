@@ -1,8 +1,7 @@
 package org.ctf.shared.wave;
 
 import java.util.LinkedList;
-import java.util.concurrent.atomic.AtomicIntegerArray;
-import org.ctf.shared.constants.Enums;
+import org.ctf.shared.constants.Enums.Themes;;
 
 /**
  * Representation of one unique Tile Type with a unique set of rules and value (the value is saved
@@ -18,7 +17,7 @@ public class TileType {
   // **************************************************
 
   int type;
-  Enums.Themes theme;
+  Themes theme;
   String up;
   String right;
   String down;
@@ -32,7 +31,7 @@ public class TileType {
   // Constructors
   // **************************************************
   
-  public TileType(int type, Enums.Themes theme) {
+  public TileType(int type, Themes theme) {
     this.type = type;
     this.theme = theme;
     notCompatibleUp = new LinkedList<Integer>();
@@ -55,7 +54,7 @@ public class TileType {
   // Package methods
   // **************************************************
 
-  static TileType[] generateRuleSet(Enums.Themes theme) {
+  static TileType[] generateRuleSet(Themes theme) {
     TileType[] rules = new TileType[WaveFunctionCollapse.imagesAmount+1];
     for (int i = 0; i <= WaveFunctionCollapse.imagesAmount; i++) {
       rules[i] = new TileType(i, theme);
@@ -100,13 +99,316 @@ public class TileType {
     this.notCompatibleLeft = types[type].notCompatibleLeft;
   }
   
-  private void hardRules(Enums.Themes theme) {
-    if(theme == Enums.Themes.STARWARS) {
+  private void hardRules(Themes theme) {
+    if(theme == Themes.STARWARS) {
       hardSWRules();
     }
-    else if(theme == Enums.Themes.BAYERN) {
+    else if(theme == Themes.BAYERN) {
       hardBayernRules();
     }
+    else if(theme == Themes.LOTR) {
+      hardPipeRules();
+    }
+  }
+  /**
+   * The rules of the tiles are hard-coded for every TileType by assigning a String to every side
+   * that represents which pieces can fit together.  This version works for the "circuit" tiles.
+   * The Strings are always to be read from left to right\top to bottom
+   */
+  private void hardLOTRules() {
+    switch(this.type) {
+      case 0: 
+        break;
+      case 1:
+        up = "WWWW";
+        right = "WWWW";
+        down = "WWWW";
+        left = "WWWW";
+        break;
+      case 2:
+        up = "WWWW";
+        right = "WWWW";
+        down = "WWWW";
+        left = "WWWW";
+        break;
+      case 3:
+        up = "WWWW";
+        right = "WWWW";
+        down = "WWWW";
+        left = "WWWW";
+        break;
+      case 4:
+        up = "WLLG";
+        right = "GGGG";
+        down = "WLLG";
+        left = "WWWW";
+        break;
+      case 5:
+        up = "WLLG";
+        right = "GGGG";
+        down = "WLLG";
+        left = "WWWW";
+        break;
+      case 6:
+        up = "GGGG";
+        right = "GRRW";
+        down = "WWWW";
+        left = "GRRW";
+        break;
+      case 7:
+        up = "GGGG";
+        right = "GRRW";
+        down = "WWWW";
+        left = "GRRW";
+        break;
+      case 8:
+        up = "GGGG";
+        right = "GRGG";
+        down = "GGGG";
+        left = "GRGG";
+        break;
+      case 9:
+        up = "GGGG";
+        right = "GRRW";
+        down = "GRRW";
+        left = "GGGG";
+        break;
+      case 10:
+        up = "GGGG";
+        right = "GGGG";
+        down = "WLLG";
+        left = "GRRW";
+        break;
+      case 11:
+        up = "WWWW";
+        right = "WRGG";
+        down = "WRRG";
+        left = "WWWW";
+        break;
+      case 12:
+        up = "WWWW";
+        right = "WWWW";
+        down = "GRRW";
+        left = "WRGG";
+        break;
+      case 13:
+        up = "GRRW";
+        right = "WWWW";
+        down = "GRRW";
+        left = "GGGG";
+        break;
+      case 14:
+        up = "WWWW";
+        right = "WRGG";
+        down = "GGGG";
+        left = "WRGG";
+        break;
+      case 15:
+        up = "WWWW";
+        right = "WRGG";
+        down = "GGGG";
+        left = "WRGG";
+        break;
+      case 16:
+        up = "GGGG";
+        right = "GRGG";
+        down = "GGGG";
+        left = "GRGG";
+        break;
+      case 17:
+        up = "GRRW";
+        right = "WRGG";
+        down = "GGGG";
+        left = "GGGG";
+        break;
+      case 18:
+        up = "WRRG";
+        right = "GGGG";
+        down = "GGGG";
+        left = "WRGG";
+        break;
+      case 19:
+        up = "WLLG";
+        right = "GRRW";
+        down = "WWWW";
+        left = "WWWW";
+        break;
+      case 20:
+        up = "GRRW";
+        right = "WWWW";
+        down = "WWWW";
+        left = "GRRW";
+        break;
+      case 21:
+        up = "GRRW";
+        right = "WWWW";
+        down = "GRRW";
+        left = "GGGG";
+        break;
+      case 22:
+        up = "GRRG";
+        right = "GGGG";
+        down = "GRRG";
+        left = "GGGG";
+        break;
+      case 23:
+        up = "GRRG";
+        right = "GGGG";
+        down = "GRRG";
+        left = "GGGG";
+        break;
+      case 24:
+        up = "GLLG";
+        right = "GGGG";
+        down = "GLLG";
+        left = "GGGG";
+        break;
+      case 25:
+        up = "GGGG";
+        right = "GRRG";
+        down = "GRRG";
+        left = "GGGG";
+        break;
+      case 26:
+        up = "GGGG";
+        right = "GGGG";
+        down = "GLLG";
+        left = "GRRG";
+        break;
+      case 27:
+        up = "GGGG";
+        right = "GLGG";
+        down = "GLLG";
+        left = "GGGG";
+        break;
+      case 28:
+        up = "GGGG";
+        right = "GGGG";
+        down = "GRRG";
+        left = "GLGG";
+        break;
+      case 29:
+        up = "GGGG";
+        right = "GRRG";
+        down = "GGGG";
+        left = "GRRG";
+        break;
+      case 30:
+        up = "GGGG";
+        right = "GRRG";
+        down = "GGGG";
+        left = "GRRG";
+        break;
+      case 31:
+        up = "GGGG";
+        right = "GGGG";
+        down = "GGGG";
+        left = "GGGG";
+        break;
+      case 32:
+        up = "GLLG";
+        right = "GGGG";
+        down = "GLLG";
+        left = "GGGG";
+        break;
+      case 33:
+        up = "GRRG";
+        right = "GRGG";
+        down = "GGGG";
+        left = "GGGG";
+        break;
+      case 34:
+        up = "GLLG";
+        right = "GGGG";
+        down = "GGGG";
+        left = "GLGG";
+        break;
+      case 35:
+        up = "GLLG";
+        right = "GRRG";
+        down = "GGGG";
+        left = "GGGG";
+        break;
+      case 36:
+        up = "GRRG";
+        right = "GGGG";
+        down = "GGGG";
+        left = "GRRG";
+        break;
+      case 37:
+        up = "GGGG";
+        right = "GSSS";
+        down = "GSSS";
+        left = "GGGG";
+        break;
+      case 38:
+        up = "GGGG";
+        right = "GGGG";
+        down = "SSSG";
+        left = "GSSS";
+        break;
+      case 39:
+        up = "SSSS";
+        right = "SSSG";
+        down = "SSSG";
+        left = "SSSS";
+        break;
+      case 40:
+        up = "SSSS";
+        right = "SSSS";
+        down = "GSSS";
+        left = "SSSG";
+        break;
+      case 41:
+        up = "GGGG";
+        right = "GSSS";
+        down = "SSSS";
+        left = "GSSS";
+        break;
+      case 42:
+        up = "GSSS";
+        right = "SSSS";
+        down = "GSSS";
+        left = "GGGG";
+        break;
+      case 43:
+        up = "SSSS";
+        right = "SSSG";
+        down = "GGGG";
+        left = "SSSG";
+        break;
+      case 44:
+        up = "SSSG";
+        right = "GGGG";
+        down = "SSSG";
+        left = "SSSS";
+        break;
+      case 45:
+        up = "GSSS";
+        right = "SSSG";
+        down = "GGGG";
+        left = "GGGG";
+        break;
+      case 46:
+        up = "SSSG";
+        right = "GGGG";
+        down = "GGGG";
+        left = "SSSG";
+        break;
+      case 47:
+        up = "SSSG";
+        right = "GSSS";
+        down = "SSSS";
+        left = "SSSS";
+        break;
+      case 48:
+        up = "GSSS";
+        right = "SSSS";
+        down = "SSSS";
+        left = "GSSS";
+        break;
+    }
+
   }
   
   private void hardBayernRules() {
@@ -139,10 +441,12 @@ public class TileType {
         break;
     }
   }
+
   /**
    * The rules of the tiles are hard-coded for every TileType by assigning a String to every side
-   * that represents which pieces can fit together.  This version works for the "circuit" tiles.
-   * The Strings are always to be read from left to right\top to bottom
+   * that represents which pieces can fit together. This version works for the "circuit" tiles and
+   * is used in the Star Wars theme. The Strings are always to be read from left to right\top to
+   * bottom
    */
   private void hardSWRules() {
     switch (this.type) {
@@ -650,6 +954,30 @@ public class TileType {
         right = "ABA";
         down = "ABA";
         left = "AAA";
+        break;
+      case 6:
+        up = "ABA";
+        right = "ABA";
+        down = "AAA";
+        left = "AAA";
+        break;
+      case 7:
+        up = "AAA";
+        right = "ABA";
+        down = "ABA";
+        left = "AAA";
+        break;
+      case 8:
+        up = "AAA";
+        right = "AAA";
+        down = "ABA";
+        left = "ABA";
+        break;
+      case 9:
+        up = "ABA";
+        right = "AAA";
+        down = "AAA";
+        left = "ABA";
         break;
     }
   }

@@ -1,9 +1,10 @@
 package org.ctf.shared.wave;
 
 import java.util.ArrayList;
+import org.ctf.shared.constants.Enums.Themes;
 
 /**
- * Representation of a single tile in the Grid.
+ * Representation of a single tile in the grid.
  * 
  * @author ysiebenh
  */
@@ -13,14 +14,18 @@ public class Tile {
   // Fields
   // **************************************************
 
-  private int value;
-  ArrayList<Integer> options;
-  private int x;
+  private int value; // the integer value of the image this tile is supposed to represent. 0 if not
+                     // collapsed yet.
+  ArrayList<Integer> options; // all the possible images this tile can still be constrained by the
+                              // tiles around it.
+
+  TileType ruleSet; // stores the rules (i.e. what can go aroung this tile)
+  
+  private int x;   
   private int y;
   private WaveGrid parentGrid;
-  boolean collapsed; // TODO implement properly
-  int index;
-  TileType ruleSet;
+  boolean collapsed; 
+
 
   // **************************************************
   // Constructor
@@ -45,7 +50,12 @@ public class Tile {
   }
 
   void addRules(TileType[] rules) {
-    ruleSet = rules[value];
+    if(value == -1) {
+      ruleSet = rules[0];
+    }
+    else {
+      ruleSet = rules[value];
+    }
   }
 
   int getValue() {
@@ -71,17 +81,57 @@ public class Tile {
   }
   
   int[] getWeights() {
+    if(this.parentGrid.theme == Themes.STARWARS) {
+      return getStarWarsWeights();
+    }
+    else if(this.parentGrid.theme == Themes.LOTR){
+      return getLOTRWeights();
+    } else {
+      int[] weights = new int[options.size()];
+      int i = 0;
+      for(int x : options) {
+        weights[i++] = 1;
+      }
+      return weights;
+    }
+
+  }
+  
+  /**
+   * Hard-codes the weight values for the randomWithWeights method to adjust the likelihood of
+   * individual images appearing in the final image.
+   * 
+   * @return
+   */
+  int[] getLOTRWeights() {
     int[] weights = new int[options.size()];
     int i = 0;
     for(int x : options) {
-      weights[i] = x == 1 ? 1 : 500;
-      if(x == 3 || x == 4 || x == 5 || x == 6 || x == 35 || x == 36) {
-        weights[i] = 200;
-      }
       if(x == 1) {
-        weights[i] = 200;
-      } 
-      
+        weights[i] = 10;     //make the "cracks" appear less often
+      } else {
+        weights[i] = 1;     //default value
+      }
+      i++;
+    }
+    return weights;
+  }
+  
+  /**
+   * Hard-codes the weight values for the randomWithWeights method to adjust the likelihood of
+   * individual images appearing in the final image.
+   * 
+   * @return
+   */
+  int[] getStarWarsWeights() {
+    int[] weights = new int[options.size()];
+    int i = 0;
+    for(int x : options) {
+      if(x == 3 || x == 4 || x == 5 || x == 6 || x == 35 || x == 36) {
+        weights[i] = 2;     //make the "knobs" appear less often
+      } else {
+        weights[i] = 5;     //default value
+      }
       i++;
     }
     return weights;
@@ -89,17 +139,23 @@ public class Tile {
   }
   
   // **************************************************
-  // GetNeighbor methods:
+  // Getters:
   // **************************************************
   
-  public int getX() {
+  int getX() {
     return x;
   }
 
-  public int getY() {
+  int getY() {
     return y;
   }
 
+  /**
+   * Calculates the upper neighbor of this tile according to the tiles array saved in
+   * the WaveGrid object this tile is stored in.
+   * 
+   * @return
+   */
   Tile getUpperNeighbor() {
     if (this.y == 0) {
       return null;
@@ -113,6 +169,12 @@ public class Tile {
     }
   }
 
+  /**
+   * Calculates the right neighbor of this tile according to the tiles array saved in
+   * the WaveGrid object this tile is stored in.
+   * 
+   * @return
+   */
   Tile getRightNeighbor() {
     if (this.x == this.parentGrid.grid[0].length - 1) {
       return null;
@@ -126,6 +188,12 @@ public class Tile {
     }
   }
 
+  /**
+   * Calculates the lower neighbor of this tile according to the tiles array saved in
+   * the WaveGrid object this tile is stored in.
+   * 
+   * @return
+   */
   Tile getLowerNeighbor() {
     if (this.y == this.parentGrid.grid.length - 1) {
       return null;
@@ -139,6 +207,12 @@ public class Tile {
     }
   }
 
+  /**
+   * Calculates the left neighbor of this tile according to the tiles array saved in
+   * the WaveGrid object this tile is stored in.
+   * 
+   * @return
+   */
   Tile getLeftNeighbor() {
     if (this.x == 0) {
       return null;

@@ -1,7 +1,7 @@
 package org.ctf.shared.wave;
 
 import java.util.ArrayList;
-import org.ctf.shared.constants.Enums;
+import org.ctf.shared.constants.Enums.Themes;
 
 /**
  * Representation of the grid that the Wave Function Collapse algorithm works with.
@@ -17,16 +17,14 @@ public class WaveGrid {
   
   public int[][] grid; // saves the grid with the images
   public ArrayList<Tile> tiles; // saves all the tiles in one loooong array
-  public ArrayList<ArrayList<Integer>> options; // saves the options according to the tile grid
-  private int uniqueImages; // the amount of different images used
   TileType[] rules;;
-  Enums.Themes theme;
+  Themes theme;
 
   // **************************************************
   // Constructor
   // **************************************************
 
-  public WaveGrid(int[][] grid, int images, Enums.Themes theme) {
+  public WaveGrid(int[][] grid, int images, Themes theme) {
     
     this.theme = theme;
     int[][] newGrid = new int[grid.length][grid[0].length];
@@ -37,14 +35,11 @@ public class WaveGrid {
       }
     }
     this.grid = newGrid;
-    this.uniqueImages = images;
     tiles = new ArrayList<Tile>();
-    int index = 0;
     for (int y = 0; y < grid.length; y++) {
       for (int x = 0; x < grid[y].length; x++) {
         Tile thisTile = new Tile(grid[y][x], x, y, new ArrayList<Integer>(), this);
-        thisTile.collapsed = grid[y][x] == 0 ? false : true;
-        thisTile.index = index++;
+          thisTile.collapsed = grid[y][x] == 0 ? false : true;
         tiles.add(thisTile);
       }
     }
@@ -58,7 +53,7 @@ public class WaveGrid {
 
 
   /**
-   * Updates the options in the grid when a new tile has been collapsed.
+   * Updates the options in the grid when a new tile has been collapsed. Used in Tile.setValue().
    * 
    * @param t
    */
@@ -85,37 +80,35 @@ public class WaveGrid {
   // **************************************************
   
   /**
-   * adds every single image to the options array (coded as integers 1-x)
+   * adds every single image to the initial set of options (coded as integers 1-x)
    * 
    * @param pictures
    */
   private void setOptions() {
-    options = new ArrayList<ArrayList<Integer>>(tiles.size());
+    
     for (int i = 0; i < tiles.size(); i++) {
-      options.add(new ArrayList<Integer>());
-      int o = this.theme == Enums.Themes.STARWARS ? 2 : 1;
-      for (; o <= uniqueImages; o++) {
-       
-        if (tiles.get(i).getValue() == 0) {
-          options.get(i).add(Integer.valueOf(o));
+
+      if (tiles.get(i).getValue() == 0) {
+        int o = this.theme == Themes.STARWARS ? 2 : 1; // for the Star Wars pattern the first image
+                                                       // isn't used in the algorithm
+        for (; o <= WaveFunctionCollapse.imagesAmount; o++) {
           tiles.get(i).options.add(o);
-        } else {
-          tiles.get(i).collapsed = true;
         }
+      } else {
+        tiles.get(i).collapsed = true;
       }
     }
-  }
+    }
   
 
   /**
-   * Generates the rules for every single piece and adjusting the options accordingly for the
+   * Generates the rules for every single piece and adjusts the options accordingly for the
    * initial grid.
    */
   private void setRules() {
     rules = TileType.generateRuleSet(this.theme);
     for (Tile t : tiles) {
       t.addRules(rules);
-
 
       for (int r : t.ruleSet.notCompatibleUp) {
         t.removeFromOptions(r, t.getUpperNeighbor());

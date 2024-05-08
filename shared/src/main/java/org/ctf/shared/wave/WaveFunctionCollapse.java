@@ -6,7 +6,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import org.ctf.shared.constants.Constants;
-import org.ctf.shared.constants.Enums;
 import org.ctf.shared.constants.Enums.Themes;
 import java.io.File;
 import java.io.IOException;
@@ -16,11 +15,17 @@ import java.util.LinkedList;
 import java.util.Stack;
 
 /**
- * Initiate this class when creating a background with the wave function collapse algorithm. How to
- * use:
+ * Instantiate this class when creating a background with the wave function collapse algorithm. Idea
+ * for the algorithm:
+ * <a href= "https://github.com/mxgmn/WaveFunctionCollapse/tree/master?tab=readme-ov-file">Github
+ * WaveFunctionCollapse</a>. 
+ * 
  * <p>
- * - Create a new instance of WaveFunctionCollapse with the String[][] grid representing the map as
- * input
+ * How to use:
+ * </p>
+ * <p>
+ * - Create a new instance of WaveFunctionCollapse with the String[][] grid representing the map and
+ * the theme as input
  * </p>
  * <p>
  * - Call the getBackground method to get the finished image
@@ -30,36 +35,65 @@ import java.util.Stack;
  */
 public class WaveFunctionCollapse {
   
-  public static int imagesAmount = 36;
-  public static int imageSize = 14;
-  private int iterationsCounter;
-  private String[][] ogGrid;
-  private int[][] grid;
-  private boolean collapsed;
-  private BufferedImage background;
-  private Stack<WaveGrid> lastStates;
-  private Enums.Themes theme;
+
+  // **************************************************
+  // Fields
+  // **************************************************
+
+
+  static int imagesAmount;   // saves the amount of sprites used for background creation
+                                    // (different for each pattern)
+  
+  static int imageSize;      // saves the size of each sprite
+  
+  private String[][] ogGrid;        // saves the original String grid
+  
+  private int[][] grid; // this grid is only filled once the WFC algorithm is fully done and then
+                        // used to parse the Integer representation into a BufferedImage
+  
+  private boolean collapsed;        // Once the WFC algorithm is done this is set to true
+  
+  private BufferedImage background; // the final image
+    
+  private Themes theme;
+  private BufferedImage block;  
+  private BufferedImage base;
   
 
+  // **************************************************
+  // Constructor
+  // **************************************************
+  
   /**
    * Constructor that parses the String[][] grid (created by the GameEngine) into an integer which the
    * algorithm is going to use internally to keep track which image goes where.
    * 
    * @param grid
+   * @param theme 
    */
-  public WaveFunctionCollapse(String[][] grid, Enums.Themes theme) {
+  public WaveFunctionCollapse(String[][] grid, Themes theme) {
     ogGrid = grid;
+    collapsed = false;
+    
     this.theme = theme;
-    if(theme == Enums.Themes.STARWARS) {
+    if(theme == Themes.STARWARS) {
       imagesAmount = 36;
       imageSize = 14;
     }
-    else if(theme == Enums.Themes.BAYERN) {
+    else if(theme == Themes.BAYERN) {
       imagesAmount = 4;
       imageSize = 42;
     }
-    lastStates = new Stack<WaveGrid>();
-    collapsed = false;
+    else if(theme == Themes.LOTR) {
+ 
+      imagesAmount = 9;
+      imageSize = 64;
+      /*
+      imagesAmount = 48;
+      imageSize = 48;
+      */
+    }
+    
     int[][] intGrid = stringToInt(grid);
     this.grid = generateBackground(intGrid);
     //this.grid = generateBackgroundRecursive(new WaveGrid(intGrid, IMAGES_AMOUNT));
@@ -79,46 +113,66 @@ public class WaveFunctionCollapse {
    */
   private int[][] stringToInt(String[][] grid) {
     int[][] intGrid = new int[grid.length * 3][grid[0].length * 3];
-    if(theme == Enums.Themes.STARWARS) {
-    for (int y = 0; y < grid.length; y++) {
-      for (int x = 0; x < grid[0].length; x++) {
-        if(grid[y][x] == null) {
-          intGrid[y*3 + 1][x*3 +1] = 0;
-        } else if (grid[y][x].contains("p")) {
-          intGrid[y * 3][x * 3] = 1;
-          intGrid[y * 3][x * 3 + 1] = 1;
-          intGrid[y * 3][x * 3 + 2] = 1;
 
-          intGrid[y * 3 + 1][x * 3] = 1;
-          intGrid[y * 3 + 1][x * 3 + 1] = 1;
-          intGrid[y * 3 + 1][x * 3 + 2] = 1;
+    // Place the Pieces, Bases and Blocks if we want to use them as input for the algorithm
+    if (theme == Themes.STARWARS) {
+      for (int y = 0; y < grid.length; y++) {
+        for (int x = 0; x < grid[0].length; x++) {
+          if (grid[y][x] == null) {
+            intGrid[y * 3 + 1][x * 3 + 1] = 0;
+          } else if (grid[y][x].contains("p") || grid[y][x].contains("b:")) { //players and base
+            intGrid[y * 3][x * 3] = 1;
+            intGrid[y * 3][x * 3 + 1] = 1;
+            intGrid[y * 3][x * 3 + 2] = 1;
 
-          intGrid[y * 3 + 2][x * 3] = 1;
-          intGrid[y * 3 + 2][x * 3 + 1] = 1;
-          intGrid[y * 3 + 2][x * 3 + 2] = 1;
+            intGrid[y * 3 + 1][x * 3] = 1;
+            intGrid[y * 3 + 1][x * 3 + 1] = 1;
+            intGrid[y * 3 + 1][x * 3 + 2] = 1;
+
+            intGrid[y * 3 + 2][x * 3] = 1;
+            intGrid[y * 3 + 2][x * 3 + 1] = 1;
+            intGrid[y * 3 + 2][x * 3 + 2] = 1;
+          }
+          /*
+           * else if(grid[y][x].equals("b")) {
+           * 
+           * intGrid[y*3][x*3] = 2; intGrid[y*3][x*3+1] = 2; intGrid[y*3][x*3+2] = 2;
+           * 
+           * intGrid[y*3+1][x*3] = 2; intGrid[y*3+1][x*3+1] = 2; intGrid[y*3+1][x*3+2] = 2;
+           * 
+           * intGrid[y*3+2][x*3] = 2; intGrid[y*3+2][x*3+1] = 2; intGrid[y*3+2][x*3+2] = 2; }
+           */
         }
-        /*
-         * else if(grid[y][x].equals("b")) {
-         * 
-         * intGrid[y*3][x*3] = 2; intGrid[y*3][x*3+1] = 2; intGrid[y*3][x*3+2] = 2;
-         * 
-         * intGrid[y*3+1][x*3] = 2; intGrid[y*3+1][x*3+1] = 2; intGrid[y*3+1][x*3+2] = 2;
-         * 
-         * intGrid[y*3+2][x*3] = 2; intGrid[y*3+2][x*3+1] = 2; intGrid[y*3+2][x*3+2] = 2; }
-         */
       }
+    } else if (theme == Themes.LOTR) {
+      intGrid = new int[grid.length*3][grid[0].length*3];
+      for (int y = 0; y < intGrid.length; y++) {
+        for (int x = 0; x < intGrid[0].length; x++) {
+          if (grid[y/3][x/3] == null) {
+            intGrid[y/3][x/3] = 0;
+          }
+          else if (grid[y/3][x/3].contains("p") || grid[y/3][x/3].contains("b:")  ) {            
+            intGrid[y/3*3+2][x] = 1;
+          }
+          else if(grid[y/3][x/3].equals("b")) {
+            intGrid[y][x] = 1;
+          }
+          }
+        }
     }
-  } else if (theme == Enums.Themes.BAYERN) {
-
-  }
-  return intGrid;
+    return intGrid;
   }
 
+  
   /**
-   * The actual wave function collapse algorithm. Generates a pattern from an initial set of images
+   * The Wave Function Collapse algorithm. Generates a pattern from an initial set of images
    * and rules.
    * <p>
-   * TODO Make this private once the algorithm works perfectly
+   * First the algorithm assigns each tile on the grid a distinct set of possible images based on a
+   * set of rules. Then it chooses the tile with the fewest possible options (if there are multiple
+   * a random one is selected) and assigns it one value from its options set (randomly). It does
+   * this until there are no more tiles left. Right now there are no backtracking capabilities which
+   * means sometimes there are still tiles left empty in the end.
    * </p>
    * 
    * @param grid the initial grid
@@ -126,8 +180,7 @@ public class WaveFunctionCollapse {
    */
   private int[][] generateBackground(int[][] grid) {
 
-    //creating the Grid
-    WaveGrid wGrid = new WaveGrid(grid, imagesAmount, theme);         
+    WaveGrid wGrid = new WaveGrid(grid, imagesAmount, theme);       //creating the Grid  
     
     //The main algorithm:
     while (!collapsed) {
@@ -140,9 +193,10 @@ public class WaveFunctionCollapse {
           return Integer.compare(a.options.size(), b.options.size());
         }
       });
-      
-     
-      ArrayList<Tile> toRemove = new ArrayList<Tile>(); // removing all collapsed tiles
+
+      ArrayList<Tile> toRemove = new ArrayList<Tile>(); // removing all collapsed tiles (in two
+                                                        // loops to avoid
+                                                        // ConcurrentModificationException) 
       for (Tile t : tileCopy) {
         if (t.collapsed) {
           toRemove.add(t);
@@ -157,35 +211,37 @@ public class WaveFunctionCollapse {
         break;
       }
 
-      int bestEntropy = tileCopy.get(0).options.size(); // choosing the tile with the lowest entropy
+      int bestEntropy = tileCopy.get(0).options.size(); // storing the lowest options value
       for (Tile t : tileCopy) {
-        if (t.options.size() == bestEntropy) {
+        if (t.options.size() == bestEntropy) { // putting all the tiles with the fewest options into
+                                               // one list
           chosenTiles.add(t);
         }
       }
-      
-      
-      
-      //Choosing which tile to collapse and which image to use at random 
+     
+      //Choosing which tile to collapse at random 
       Tile thisTile = chosenTiles.get((int) (Math.random() * chosenTiles.size()));
 
-      //Backtracking for dummies: If dead end is reached --> start over
-      //Alternative: just skip the tile that doesnt work (current state)
+      // two approaches how to handle a dead end (no possible images left for a particular tile)
       if (thisTile.options.size() == 0) {
-
-        //return generateBackground(grid);
-        
-        thisTile.collapsed = true;
-        continue;
-        
+        if (false && this.theme == Themes.LOTR) {
+          return generateBackground(grid);  // option 1: just start over. works for
+                                            // some patterns. takes wayy too long for others
+         }
+        else {
+          thisTile.collapsed = true;        // option 2: just skip the tile that does not work 
+          continue;
+                                            // option 3 would be backtracking 
+                                            // but I could not get it to work
+        }
       }
-      
-      //thisTile.setValue(thisTile.options.get((int) (Math.random() * thisTile.options.size())));
-      //lastTile.push(thisTile);
+
+      // choose which tile to use at random ( with weights assigned in Tile.getWeights() )
       thisTile.setValue(thisTile.options.get(randomWithWeights(thisTile.options.size(), thisTile.getWeights())));
     }
     
-    if(theme == Enums.Themes.STARWARS) {
+    //see fillTheGaps() description 
+    if(theme == Themes.STARWARS) {
       fillTheGaps(wGrid);
     }
 
@@ -193,24 +249,31 @@ public class WaveFunctionCollapse {
 
   }
   
+  /**
+   * The original circuit pattern did not allow for inner corners and they do not work well with the
+   * pattern when added to the WFC algorithm. Therefore they are placed after the algorithm is
+   * finished only where absolutely necessary. Used in the Star Wars Theme.
+   * 
+   * @param wGrid
+   */
   void fillTheGaps (WaveGrid wGrid) {
     for(Tile t : wGrid.tiles) {
       if (t.getValue() == 0) {
         if (t.getLeftNeighbor() != null && t.getLeftNeighbor().getValue() == 1
             && t.getLowerNeighbor() != null && t.getLowerNeighbor().getValue() == 1) {
-          t.setValueSimple(38);
+          t.setValueSimple(37);
         }
        if (t.getUpperNeighbor() != null && t.getUpperNeighbor().getValue() == 1 
            && t.getLeftNeighbor() != null && t.getLeftNeighbor().getValue() == 1) {
-         t.setValueSimple(39);
+         t.setValueSimple(38);
        }
        if (t.getUpperNeighbor() != null && t.getUpperNeighbor().getValue() == 1 
            && t.getRightNeighbor() != null && t.getRightNeighbor().getValue() == 1) {
-         t.setValueSimple(40);
+         t.setValueSimple(39);
        }
        if (t.getRightNeighbor() != null && t.getRightNeighbor().getValue() == 1 
            && t.getLowerNeighbor() != null && t.getLowerNeighbor().getValue() == 1) {
-         t.setValueSimple(41);
+         t.setValueSimple(40);
        }
       }
     }
@@ -218,21 +281,17 @@ public class WaveFunctionCollapse {
 
   
   /**
-   * The actual wave function collapse algorithm. Generates a pattern from an initial set of images
-   * and rules. Recursive version.
-   * <p>
-   * TODO Make this private once the algorithm works perfectly
-   * </p>
-   * 
+   * Recursive version of the Wave Function Collapse algorithm. Maybe this will be useful to
+   * implement backtracking. For now, deprecated.
+   *
    * @param grid the initial grid
    * @return the finished grid
    */
   @Deprecated
-  public int[][] generateBackgroundRecursive(WaveGrid waveGrid) {
+  private int[][] generateBackgroundRecursive(WaveGrid waveGrid) {
     WaveGrid wGrid = new WaveGrid(waveGrid.grid, imagesAmount, this.theme);
     wGrid.tiles = new ArrayList<Tile>(waveGrid.tiles);
     wGrid.grid = waveGrid.grid;
-    System.out.println("Step: " + iterationsCounter++);
     LinkedList<Tile> possibleTiles = new LinkedList<Tile>();      
     ArrayList<Tile> tileCopy = new ArrayList<Tile>(wGrid.tiles); //create a copy of all the tiles 
     
@@ -310,83 +369,87 @@ public class WaveFunctionCollapse {
     
   }
   
-  private BufferedImage[] loadImages(Enums.Themes theme) throws IOException{
-    if(theme == Enums.Themes.STARWARS) {
+  /**
+   * Controller method used in the gridToImg method to choose which images to load according to the
+   * theme used.
+   * 
+   * @param theme
+   * @return 
+   * @throws IOException
+   */
+  private BufferedImage[] loadImages(Themes theme) throws IOException{
+
+    if(theme == Themes.STARWARS) {
       return loadSWImages();
     }
-    else if(theme == Enums.Themes.BAYERN) {
+    else if(theme == Themes.BAYERN) {
       return loadBayernImages();
+    }
+    else if(theme == Themes.LOTR) {
+      return loadKnotImages();
     }
     else return null;
   }
   
+  /**
+   * Preloads the images used in the Star Wars pattern. The pattern was originally inspired by a pattern called "circuits" designed by 
+   * @return
+   * @throws IOException
+   */
   private BufferedImage[] loadSWImages() throws IOException {
     BufferedImage[] images = new BufferedImage[imagesAmount+6];
-      
+
+        
         images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c2.png"));
         
-        images[1] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c1.png"));
-        images[2] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c2.png"));
-        
-        images[3] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c3.png"));
-        images[4] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c3.png")),90);
-        images[5] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c3.png")),180);
-        images[6] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c3.png")),270);
-
-        images[7] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c4.png")); 
-        images[8] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c4.png")),90);
-       
-        images[9] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c5.png"));
-        images[10] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c5.png")),90);
-        images[11] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c5.png")),180);
-        images[12] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c5.png")),270);
-        
-        images[13] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c6.png"));
-        images[14] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c6.png")),90);
-        images[15] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c6.png")),180);
-        images[16] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c6.png")),270);
-        //file = ImageIO.read(new File(Constants.toUIResources + "waterrock.png"));
-        images[17] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c7.png"));
-        images[18] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c7.png")),90);
-        
-        images[19] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c8.png"));
-        images[20] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c8.png")),90);
-        //file = ImageIO.read(new File(Constants.toUIResources + "edgewater.png"));
-        images[21] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c9.png"));
-        images[22] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c9.png")),90);
-        images[23] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c9.png")),180);
-        images[24] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c9.png")),270);
-
-        images[25] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c10.png"));
-        images[26] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c10.png")),90);
-        images[27] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c10.png")),180);
-        images[28] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c10.png")),270);
-
-        images[29] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c11.png"));
-        images[30] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c11.png")),90);
-
-        images[31] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c12.png"));
-        images[32] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c12.png")),90);
-        images[33] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c12.png")),180);
-        images[34] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c12.png")),270);
-
-        images[35] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c13.png"));
-        images[36] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c13.png")),90);
-        
-        images[37] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"block.png"));
-
-        images[38] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c14.png"));
-        images[39] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c14.png")),90);
-        images[40] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c14.png")),180);
-        images[41] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c14.png")),270);
-         
-
-        
+        for(int i = 1, c = 1; c <= imagesAmount+4; i++) {
+          if(i == 1 || i == 2) {
+            images[c++] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "c" + i + ".png"));
+          }
+          else if(i == 3 || i == 5 || i == 6 || i == 9 || i == 10 || i == 12 || i == 14) {
+            images[c++] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "c" + i + ".png"));
+            images[c++] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "c" + i + ".png")),90);
+            images[c++] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "c" + i + ".png")),180);
+            images[c++] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "c" + i + ".png")),270);
+          }
+          else {
+            images[c++] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "c" + i + ".png")); 
+            images[c++] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "c" + i + ".png")),90);
+           
+          }
+        }
     return images;
   }
   
+  /**
+   * Preloads the images used in the Lord of the Rings pattern. The pattern was originally drawn by
+   * Hermann Hillmann and found on the WaveFunctionCollapse github page.
+   * 
+   * @return
+   * @throws IOException
+   */
+  private BufferedImage[] loadLOTRImages() throws IOException {
+    BufferedImage[] images = new BufferedImage[imagesAmount+1];
+    images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"l1.png"));
+    block = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"tree.png"));
+
+    for(int i = 1; i <= 48; i++) {
+      images[i] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"l" + i + ".png"));
+    }
+    
+    return images;
+  }
+  
+  /**
+   * Preloads the images used in the Bayern pattern. 
+   * 
+   * @return
+   * @throws IOException
+   */
   private BufferedImage[] loadBayernImages() throws IOException {
     BufferedImage[] images = new BufferedImage[imagesAmount+1];
+    block = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"noweed.png"));
+    base = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"Ei.png"));
     images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"p1.png"));
     images[1] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"Bayern.png"));
     images[2] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"Bayern.png")),90);
@@ -396,54 +459,53 @@ public class WaveFunctionCollapse {
     
   }
   
+  @Deprecated
   private BufferedImage[] loadRoomImages() throws IOException {
     //Imageamount = 28
+    
     BufferedImage[] images = new BufferedImage[imagesAmount+1];
-      
-        images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"p1.png"));
-        
+    block = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"tree.png"));
+
+        images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"black.png"));
         images[1] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"black.png"));
-        //file = ImageIO
-        //    .read(new File(Constants.toUIResources + "pictures" + File.separator + "p1.png"));
 
-        //file = ImageIO.read(new File(Constants.toUIResources + "white.png"));
-        //file = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"p2.png"));
-        images[2] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r2.png"));
-        images[3] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r2.png")),90);
-        images[4] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r2.png")),180);
-        images[5] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r2.png")),270);
-        //file = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p2.png")),90);
-        images[6] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r3.png")); 
-        images[7] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r3.png")),90);
-        //file = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p2.png")),180);
-        images[8] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r4.png"));
-        images[9] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r4.png")),90);
-        images[10] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r4.png")),180);
-        images[11] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r4.png")),270);
-        //file = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p2.png")),270);
-        images[12] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r5.png"));
-        images[13] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r5.png")),90);
-        images[14] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r5.png")),180);
-        images[15] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r5.png")),270);
-        //file = ImageIO.read(new File(Constants.toUIResources + "waterrock.png"));
-        images[16] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r6.png"));
-        images[17] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r6.png")),90);
-        images[18] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r6.png")),180);
-        images[19] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r6.png")),270);
-        //file = ImageIO.read(new File(Constants.toUIResources + "edgewater.png"));
-        images[20] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r7.png"));
-        images[21] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r7.png")),90);
-        images[22] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r7.png")),180);
-        images[23] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r7.png")),270);
-        //file = ImageIO.read(new File(Constants.toUIResources + "edgeroad.png"));
-        images[24] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r8.png"));
-        //file = ImageIO.read(new File(Constants.toUIResources + "edgerock.png"));
-        images[25] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r9.png"));
-        images[26] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r9.png")),90);
-        images[27] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r9.png")),180);
-        images[28] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"r9.png")),270);
-
+        for(int i = 2, c = 2; c <= imagesAmount; i++) {
+          if(i == 8) {
+            images[c++] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "r" + i + ".png"));
+          }
+          else if(i == 2 || i == 4 || i == 5 || i == 6 || i == 7 || i == 9) {
+            images[c++] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "r" + i + ".png"));
+            images[c++] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "r" + i + ".png")),90);
+            images[c++] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "r" + i + ".png")),180);
+            images[c++] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "r" + i + ".png")),270);
+          }
+          else {
+            images[c++] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "r" + i + ".png")); 
+            images[c++] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "r" + i + ".png")),90);
+           
+          }
+        }
     return images;
+  }
+  
+  private BufferedImage[] loadKnotImages() throws IOException{
+    BufferedImage[] images = new BufferedImage[imagesAmount+1];
+    block = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"tree.png"));
+
+      images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p1.png"));
+
+      images[1] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p1.png"));
+      images[2] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p2.png"));
+      images[3] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p2.png")),90);
+      images[4] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p2.png")),180);
+      images[5] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p2.png")),270);
+      
+      images[6] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p3.png"));
+      images[7] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p3.png")),90);
+      images[8] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p3.png")),180);
+      images[9] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p3.png")),270);
+      
+      return images;
   }
   
   /**
@@ -454,7 +516,7 @@ public class WaveFunctionCollapse {
    * @throws IOException
    */
   private BufferedImage gridToImg(int[][] grid) throws IOException {
-    long nowMillis = System.currentTimeMillis();
+
     BufferedImage result =
         new BufferedImage(imageSize * grid[0].length, imageSize * grid.length, BufferedImage.TYPE_INT_ARGB);
     BufferedImage[] files = loadImages(this.theme);
@@ -466,21 +528,25 @@ public class WaveFunctionCollapse {
         g.drawImage(file, x * imageSize, y * imageSize, x * imageSize + imageSize, y * imageSize + imageSize, 0, 0, imageSize, imageSize, null);
       }
     }
-    
-    if (theme == Enums.Themes.STARWARS) {
-      for (int y = 0; y < ogGrid.length; y++) {
-        for (int x = 0; x < ogGrid[y].length; x++) {
-          if (ogGrid[y][x].equals("b")) {
-            Graphics g = result.getGraphics();
-            g.drawImage(files[37], x * imageSize * 3, y * imageSize * 3,
-                x * imageSize * 3 + imageSize * 3, y * imageSize * 3 + imageSize * 3, 0, 0,
-                imageSize * 3, imageSize * 3, null);
-          }
+
+
+    for (int y = 0; y < ogGrid.length; y++) {
+      for (int x = 0; x < ogGrid[y].length; x++) {
+        if (ogGrid[y][x].equals("b")) {
+          Graphics g = result.getGraphics();
+          g.drawImage(block, x * imageSize * 3, y * imageSize * 3,
+              x * imageSize * 3 + imageSize * 3, y * imageSize * 3 + imageSize * 3, 0, 0,
+              42, 42, null);
+        }
+        if (ogGrid[y][x].contains("b:") && theme == Themes.BAYERN) {
+          Graphics g = result.getGraphics();
+          g.drawImage(base, x * imageSize * 3, y * imageSize * 3,
+              x * imageSize * 3 + imageSize * 3, y * imageSize * 3 + imageSize * 3, 0, 0,
+              126, 126, null);
         }
       }
     }
-
-    System.out.println(" generateImageFromGrid took " + (System.currentTimeMillis() - nowMillis) + "ms");
+    
     return result;
   }
   
@@ -493,7 +559,7 @@ public class WaveFunctionCollapse {
   }
   
   /**
-   * used in the gridToImg method to turn pngs around. Taken from StackOverFlow
+   * Used in the gridToImg method to turn pngs around. Taken from StackOverFlow
    * 
    * @see <a href=
    *      "https://stackoverflow.com/questions/37758061/rotate-a-buffered-image-in-java">Stackoverflow Reference</a>
