@@ -32,7 +32,7 @@ public class BackgroundCellV2 extends Pane {
 
 	public BackgroundCellV2(int x, int y) {
 		testColor = Color.rgb(173, 216, 230, 0.7);
-		this.setStyle( "-fx-border-color: black; " + "-fx-border-width: 2px ");
+		this.setStyle( "-fx-border-color: black; " + "-fx-border-width: 1.2px ");
 	//	this.setStyle( "-fx-background-color: rgb(173, 216, 230, 0.3)");
 
 		this.x = x;
@@ -111,7 +111,7 @@ public class BackgroundCellV2 extends Pane {
 	
 	
 	public void showattackCircle() {
-		this.setStyle("-fx-background-color: rgb(255, 0, 0, 0.2);" + "-fx-border-color: red; " + "-fx-border-width: 2px");
+		this.setStyle("-fx-background-color: rgb(255, 0, 0, 0.2);" + "-fx-border-color: red; " + "-fx-border-width: 1.2px");
 		//this.setStyle("-fx-background-color: red;");
 		
 		
@@ -130,7 +130,7 @@ public class BackgroundCellV2 extends Pane {
 	}
 	
 	public void showSelected() {
-		this.setStyle("-fx-background-color: transparent;" + "-fx-border-color: black; " + "-fx-border-width: 2px ");
+		this.setStyle("-fx-background-color: transparent;" + "-fx-border-color: black; " + "-fx-border-width: 1.2px ");
 		//rc.setFill(testColor);
 		//rc2.setFill(testColor);
 		createCircle2();

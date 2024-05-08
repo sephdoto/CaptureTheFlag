@@ -110,7 +110,7 @@ int rows;
 		
 		 gridPane = new GridPane();
 		 
-		 gridPane.setStyle("-fx-border-color:black; -fx-border-width: 3px");
+		//gridPane.setStyle("-fx-border-color:black; -fx-border-width: 3px");
 		// gridPane.setGridLinesVisible(true);
 		binding = Bindings.min(widthProperty().divide(cols), heightProperty().divide(rows));
 		NumberBinding roundSize = Bindings.createIntegerBinding(() ->  binding.intValue(), binding);
