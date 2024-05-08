@@ -437,7 +437,7 @@ public class TemplateEngine {
    * @author aniemesc 
    * @return ArrayList containing the names of all saved map templates
    */
-  public ArrayList<String> getTemplateNames() {
+  public static ArrayList<String> getTemplateNames() {
     File templateFolder = new File(Constants.mapTemplateFolder);
     if (templateFolder.isDirectory()) {
       String[] names = templateFolder.list();
