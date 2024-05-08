@@ -1,13 +1,10 @@
 package org.ctf.ui;
 
 import java.util.HashMap;
-
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.constants.Descriptions;
 import org.ctf.shared.constants.Enums.AIConfigs;
 import org.ctf.ui.customobjects.PopUpPane;
-
-import configs.ImageLoader;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -21,20 +18,16 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.stage.PopupWindow.AnchorLocation;
-import javafx.util.Duration;
-
 
 /**
- * @author Manuel Krakowski
- * Creates the PopUpPanes to choose an AI an and custom it if possible
+ * @author Manuel Krakowski Creates the PopUpPanes to choose an AI an and custom
+ *         it if possible
  */
 public class PopUpCreator {
 	private StackPane root;
@@ -43,6 +36,9 @@ public class PopUpCreator {
 	private Scene scene;
 	private PopUpPane aiconfig;
 	private AIConfig defaultConfig;
+	PopUpPane saveConfig;
+	private HomeSceneController hsc;
+	TextField enterConfigNamefield;
 	private HashMap<AIConfigs, Integer> multipliers = new HashMap<AIConfigs, Integer>();
 	private SpinnerValueFactory<Integer> values;
 	private SpinnerValueFactory<Double> values2;
@@ -53,16 +49,19 @@ public class PopUpCreator {
 	private ObjectProperty<Font> configButtonText = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> configDescriptionLabel = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> spinnerLabel = new SimpleObjectProperty<Font>(Font.getDefault());
+	private ObjectProperty<Font> enterNameButtonText = new SimpleObjectProperty<Font>(Font.getDefault());
+	private ObjectProperty<Font> saveConfigLavel = new SimpleObjectProperty<Font>(Font.getDefault());
 
-
-	public PopUpCreator(Scene scene, StackPane root) {
+	public PopUpCreator(Scene scene, StackPane root, HomeSceneController hsc) {
+		this.hsc = hsc;
 		this.scene = scene;
 		this.root = root;
 		manageFontSizes();
 	}
+
 	/**
-	 * @author Manuel Krakowski
-	 * fits the size of all text that is displayed to teh size of the screen
+	 * @author Manuel Krakowski fits the size of all text that is displayed to teh
+	 *         size of the screen
 	 */
 	private void manageFontSizes() {
 		root.widthProperty().addListener(new ChangeListener<Number>() {
@@ -75,19 +74,22 @@ public class PopUpCreator {
 				configButtonText.set(Font.font(newWidth.doubleValue() / 60));
 				configDescriptionLabel.set(Font.font(newWidth.doubleValue() / 50));
 				spinnerLabel.set(Font.font(newWidth.doubleValue() / 70));
-
+				saveConfigLavel.set(Font.font(newWidth.doubleValue() / 35));
+				enterNameButtonText.set(Font.font(newWidth.doubleValue() / 60));
 			}
 		});
 	}
-	
-	
+
 	/**
-	 * @author Manuel Krakowski
-	 * Creates a PopupPane in which the user can choose one of 4 different AIs
+	 * @author Manuel Krakowski Creates a PopupPane in which the user can choose one
+	 *         of 4 different AIs
 	 * 
-	 * @param aiOrHuman: PopUpPane that is shown before this one, can be used to go back to it
-	 * @param portText: text which should be disabled in case of the create game screen
-	 * @param serverIPText: text which should be disabled in case of the create game screen
+	 * @param aiOrHuman:    PopUpPane that is shown before this one, can be used to
+	 *                      go back to it
+	 * @param portText:     text which should be disabled in case of the create game
+	 *                      screen
+	 * @param serverIPText: text which should be disabled in case of the create game
+	 *                      screen
 	 * @return PopUpPane that should be shown
 	 */
 	public PopUpPane createAiLevelPopUp(PopUpPane aiOrHuman, TextField portText, TextField serverIPText) {
@@ -95,7 +97,7 @@ public class PopUpCreator {
 		root.getChildren().remove(aiorHumanpopup);
 		portText.setDisable(true);
 		serverIPText.setDisable(true);
-		aiLevelPopUpPane = new PopUpPane(scene, 0.6, 0.4); 
+		aiLevelPopUpPane = new PopUpPane(scene, 0.6, 0.4);
 		VBox top = new VBox();
 		top.heightProperty().addListener((obs, oldVal, newVal) -> {
 			double spacing = newVal.doubleValue() * 0.1;
@@ -115,7 +117,8 @@ public class PopUpCreator {
 			buttonBox.setSpacing(newSpacing);
 			buttonBox.setPadding(new Insets(0, padding, 0, padding));
 		});
-		buttonBox.getChildren().addAll(createAIPowerButton(AIConfigs.RANDOM, 0.365,1), createAIPowerButton(AIConfigs.MCTS,0.53,1));
+		buttonBox.getChildren().addAll(createAIPowerButton(AIConfigs.RANDOM, 0.365, 1),
+				createAIPowerButton(AIConfigs.MCTS, 0.53, 1));
 		HBox buttonBox2 = new HBox();
 		buttonBox2.setAlignment(Pos.CENTER);
 		aiLevelPopUpPane.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -124,7 +127,8 @@ public class PopUpCreator {
 			buttonBox2.setSpacing(newSpacing);
 			buttonBox2.setPadding(new Insets(0, padding, 0, padding));
 		});
-		buttonBox2.getChildren().addAll(createAIPowerButton(AIConfigs.MCTS_IMPROVED,0.05,2), createAIPowerButton(AIConfigs.EXPERIMENTAL,0.15,2));
+		buttonBox2.getChildren().addAll(createAIPowerButton(AIConfigs.MCTS_IMPROVED, 0.05, 2),
+				createAIPowerButton(AIConfigs.EXPERIMENTAL, 0.15, 2));
 		top.getChildren().addAll(buttonBox, buttonBox2);
 		HBox centerLeaveButton = new HBox();
 		centerLeaveButton.prefHeightProperty().bind(aiLevelPopUpPane.heightProperty().multiply(0.2));
@@ -135,11 +139,10 @@ public class PopUpCreator {
 		root.getChildren().add(aiLevelPopUpPane);
 		return aiLevelPopUpPane;
 	}
-	
-	
+
 	/**
-	 * @author Manuel Krakowski
-	 * Creates a back button, which can be used to go back to the PopUpPane which was shown before the CHooseAi PopupPane
+	 * @author Manuel Krakowski Creates a back button, which can be used to go back
+	 *         to the PopUpPane which was shown before the CHooseAi PopupPane
 	 * @param text
 	 */
 	private Button createBackButton() {
@@ -149,16 +152,16 @@ public class PopUpCreator {
 		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
 		exit.setOnAction(e -> {
-				root.getChildren().remove(aiLevelPopUpPane);
-				root.getChildren().add(aiorHumanpopup);
+			root.getChildren().remove(aiLevelPopUpPane);
+			root.getChildren().add(aiorHumanpopup);
 		});
 		return exit;
 	}
-	
+
 	/**
-	 * @author Manuel Krakowski
-	 * Creates a button containing the name of the AI and an image 
-	 * @param pow: Name of the Ai
+	 * @author Manuel Krakowski Creates a button containing the name of the AI and
+	 *         an image
+	 * @param pow:       Name of the Ai
 	 * @param relSpacing
 	 * @return
 	 */
@@ -180,22 +183,26 @@ public class PopUpCreator {
 		power.prefWidthProperty().bind(root.widthProperty().multiply(0.22));
 		power.prefHeightProperty().bind(power.widthProperty().multiply(0.45));
 		power.setOnAction(e -> {
-			//hsc.switchToWaitGameScene(App.getStage());
+			// hsc.switchToWaitGameScene(App.getStage());
 			root.getChildren().remove(aiorHumanpopup);
-			root.getChildren().add(createConfigPane(1,1));
+			root.getChildren().add(createConfigPane(1, 1));
 		});
 		return power;
 	}
 
 	
+
+	
+
 	/**
-	 * @author Manuel Krakowski
-	 * Creates the pane in that a user can customize an AI with all its components
-	 * @param widht relative with in relation to the scene 
+	 * @author Manuel Krakowski Creates the pane in that a user can customize an AI
+	 *         with all its components
+	 * @param widht relative with in relation to the scene
 	 * @param hight relative height in relation to the scene
-	 * @return Popupane to custom  Ai
+	 * @return Popupane to custom Ai
 	 */
-	public  PopUpPane createConfigPane(double widht, double hight) {
+	public PopUpPane createConfigPane(double widht, double hight) {
+		root.getChildren().remove(aiLevelPopUpPane);
 		defaultConfig = new AIConfig();
 		createConfigMaps();
 		aiconfig = new PopUpPane(scene, widht, hight);
@@ -209,11 +216,11 @@ public class PopUpCreator {
 		leftBoss.getChildren().add(createHeader(leftBoss, "Heuristic Multipliers"));
 		VBox rightBoss = createRightVBox(sep);
 		rightBoss.getChildren().add(createHeader(rightBoss, "Hyperparameters"));
-		StackPane left = createContentStackPane(0.3,0.67);
+		StackPane left = createContentStackPane(0.3, 0.67);
 		HBox topBox = createTopHbox(left);
 		VBox leftColumn = createColumnVbox(topBox, 0.45);
 		VBox rightColmn = createColumnVbox(topBox, 0.45);
-		StackPane right = createContentStackPane(0.45,0.67);
+		StackPane right = createContentStackPane(0.45, 0.67);
 		aiconfig.widthProperty().addListener((observable, oldValue, newValue) -> {
 			double newPadding = newValue.doubleValue() * 0.02;
 			left.setPadding(new Insets(newPadding));
@@ -221,7 +228,7 @@ public class PopUpCreator {
 		});
 		HBox topBox2 = createTopHbox(right);
 		VBox onlyColumn = createColumnVbox(topBox2, 0.9);
-		fillColumns(leftColumn, rightColmn,onlyColumn);
+		fillColumns(leftColumn, rightColmn, onlyColumn);
 		topBox.getChildren().addAll(leftColumn, rightColmn);
 		topBox2.getChildren().add(onlyColumn);
 		left.getChildren().add(topBox);
@@ -232,16 +239,16 @@ public class PopUpCreator {
 		sep.getChildren().add(rightBoss);
 		mainBox.getChildren().add(sep);
 		HBox buttomBox = createButtomHBox();
-		buttomBox.getChildren().addAll(createConfigButton("Play and Save"), createConfigButton("Save"),createConfigButton("Back"));
+		
 		mainBox.getChildren().add(buttomBox);
 		configRoot.getChildren().add(mainBox);
 		aiconfig.setContent(configRoot);
 		return aiconfig;
 	}
-	
+
 	/**
-	 * @author Manuel Krakowski
-	 * Cretaes a transparent, resizbale Background Image for the whole scene
+	 * @author Manuel Krakowski Cretaes a transparent, resizbale Background Image
+	 *         for the whole scene
 	 * @param configRoot Stackpane on that the background-image should be placed
 	 * @return background-image
 	 */
@@ -254,10 +261,11 @@ public class PopUpCreator {
 		mpv.setOpacity(0.2);
 		return mpv;
 	}
-	
-	/**@author Manuel Krakowski
-	 * Box which contains all the components of the scene. Divided into 3 parts: Header on top, Boxes with all
-	 *  Multipliers and hyperparams in the middle, Buttons to submit and leave in the bottom
+
+	/**
+	 * @author Manuel Krakowski Box which contains all the components of the scene.
+	 *         Divided into 3 parts: Header on top, Boxes with all Multipliers and
+	 *         hyperparams in the middle, Buttons to submit and leave in the bottom
 	 * @param parent StackPane in that the box is placed
 	 * @return
 	 */
@@ -273,7 +281,7 @@ public class PopUpCreator {
 		});
 		return mainBox;
 	}
-	
+
 	/**
 	 * @author Manuel Krakowski
 	 * @return Creates the Header of the whole scene with the name AI-Generator
@@ -286,11 +294,11 @@ public class PopUpCreator {
 		mpv.fitHeightProperty().bind(aiconfig.heightProperty().multiply(0.08));
 		return mpv;
 	}
-	
-	
+
 	/**
 	 * @author Manuel Krakowski
-	 * @return Creates the Hbox which is the top COntainer of the middle part of the Screen, which will contain the two vboxes
+	 * @return Creates the Hbox which is the top COntainer of the middle part of the
+	 *         Screen, which will contain the two vboxes
 	 */
 	private HBox createMiddleHBox() {
 		HBox sep = new HBox();
@@ -302,44 +310,45 @@ public class PopUpCreator {
 		});
 		return sep;
 	}
-	
+
 	/**
-	 * @author Manuel Krakowski
-	 * Creates Left Side of the Screen in which the multipliers will be placed
-	 * @param HBOX which contains the two VBoxes for multipliers(this one) and for hyperparams
+	 * @author Manuel Krakowski Creates Left Side of the Screen in which the
+	 *         multipliers will be placed
+	 * @param HBOX which contains the two VBoxes for multipliers(this one) and for
+	 *             hyperparams
 	 * @return Box in that multipliers will be placed
 	 */
-	private VBox createLeftVBox(HBox parent){
+	private VBox createLeftVBox(HBox parent) {
 		VBox leftBox = new VBox();
-		//leftBox.setStyle("-fx-background-color: blue");
+		// leftBox.setStyle("-fx-background-color: blue");
 		leftBox.setAlignment(Pos.TOP_CENTER);
 		leftBox.prefWidthProperty().bind(parent.widthProperty().multiply(0.55));
 		leftBox.prefHeightProperty().bind(parent.heightProperty().multiply(0.68));
 		return leftBox;
 	}
-	
-	
+
 	/**
-	 * @author Manuel Krakowski
-	 * Creates Right Side of the Screen in which the hyperparams will be placed
-	 * @param HBOX which contains the two VBoxes for hyperparams(this one) and for mulitpliers
+	 * @author Manuel Krakowski Creates Right Side of the Screen in which the
+	 *         hyperparams will be placed
+	 * @param HBOX which contains the two VBoxes for hyperparams(this one) and for
+	 *             mulitpliers
 	 * @return Box in that multipliers will be placed
 	 */
-	private VBox createRightVBox(HBox parent){
+	private VBox createRightVBox(HBox parent) {
 		VBox rightBox = new VBox();
-		//rightBox.setStyle("-fx-background-color: blue");
+		// rightBox.setStyle("-fx-background-color: blue");
 		rightBox.setAlignment(Pos.TOP_CENTER);
 		rightBox.prefWidthProperty().bind(parent.widthProperty().multiply(0.35));
 		rightBox.prefHeightProperty().bind(parent.heightProperty().multiply(0.68));
 		return rightBox;
 	}
-	
-	
+
 	/**
-	 * @author Manuel Krakowski
-	 * Creates the header-Text which can be used for the multiplier and the hyperparm-box
-	 * @param parent: VBox in which the header and the box with the content will be placed
-	 * @param text: Text that the label should display
+	 * @author Manuel Krakowski Creates the header-Text which can be used for the
+	 *         multiplier and the hyperparm-box
+	 * @param parent: VBox in which the header and the box with the content will be
+	 *                placed
+	 * @param text:   Text that the label should display
 	 * @return
 	 */
 	private Label createHeader(VBox parent, String text) {
@@ -350,13 +359,13 @@ public class PopUpCreator {
 		l.prefWidthProperty().bind(parent.widthProperty().multiply(0.7));
 		return l;
 	}
-	
-	
+
 	/**
 	 * @author Manuel Krakowski
-	 * @param relWidth with in Relation two the whole screen
+	 * @param relWidth  with in Relation two the whole screen
 	 * @param relHeight height in relation of the whole scene
-	 * @return: Creates the box with border in which the parameters to modify the AI will be placed
+	 * @return: Creates the box with border in which the parameters to modify the AI
+	 *          will be placed
 	 */
 	public StackPane createContentStackPane(double relWidth, double relHeight) {
 		StackPane pane = new StackPane();
@@ -364,15 +373,17 @@ public class PopUpCreator {
 		pane.getStyleClass().add("option-pane");
 		pane.setPrefSize(250, 250);
 		pane.prefWidthProperty().bind(aiconfig.widthProperty().multiply(relWidth));
-		pane.prefHeightProperty().bind(aiconfig.heightProperty().multiply(relHeight)); //maybe change aiconfig to parent here to make resizing more fluent
+		pane.prefHeightProperty().bind(aiconfig.heightProperty().multiply(relHeight)); // maybe change aiconfig to
+																						// parent here to make resizing
+																						// more fluent
 		return pane;
 	}
-	
-	
+
 	/**
 	 * @author Manuel Krakowski
 	 * @param Stackpane Box with border
-	 * @return Creates a HBox which is espically imporant in the left Box two divide it into two Columns
+	 * @return Creates a HBox which is espically imporant in the left Box two divide
+	 *         it into two Columns
 	 */
 	private HBox createTopHbox(StackPane parent) {
 		HBox topBox = new HBox();
@@ -385,11 +396,10 @@ public class PopUpCreator {
 		});
 		return topBox;
 	}
-	
-	
+
 	/**
 	 * @author Manuel Krakowski
-	 * @param parent Box in which columns will be placed
+	 * @param parent   Box in which columns will be placed
 	 * @param relWidth how much with of he Parent the column should fill relativly
 	 * @return Column which will contain the content
 	 */
@@ -401,60 +411,60 @@ public class PopUpCreator {
 			double newSpacing = newValue.doubleValue() * 0.12;
 			column.setSpacing(newSpacing);
 		});
-		return column; 
+		return column;
 	}
-	
-	
+
 	/**
-	 * @author Manuel Krakowski
-	 * Finally creates one row containg a short description label, info icon and spinner
-	 * @param parent: Column in which the row should be placed
-	 * @param text: Description Text for param
-	 * @param min: min value for param
-	 * @param max: max value for param
-	 * @param current: default value for param
-	 * @param isDouble: if param is double value is set, only one param is a double currently
+	 * @author Manuel Krakowski Finally creates one row containg a short description
+	 *         label, info icon and spinner
+	 * @param parent:   Column in which the row should be placed
+	 * @param text:     Description Text for param
+	 * @param min:      min value for param
+	 * @param max:      max value for param
+	 * @param current:  default value for param
+	 * @param isDouble: if param is double value is set, only one param is a double
+	 *                  currently
 	 * @return Hbox: one row
 	 */
 	private HBox createOneRowHBox(VBox parent, AIConfigs text, int min, int max, int current, boolean isDouble) {
 		HBox oneRow = new HBox();
-		//oneRow.setStyle("-fx-background-color: yellow");
+		// oneRow.setStyle("-fx-background-color: yellow");
 		oneRow.prefHeightProperty().bind(parent.heightProperty().divide(3));
 		oneRow.prefWidthProperty().bind(parent.widthProperty());
 		VBox divideRow = new VBox();
 		divideRow.prefWidthProperty().bind(oneRow.widthProperty());
 		divideRow.prefHeightProperty().bind(oneRow.heightProperty());
-		HBox upperpart = createUpperPartOfRow(text,  divideRow);
+		HBox upperpart = createUpperPartOfRow(text, divideRow);
 		HBox lowerPart = new HBox();
 		lowerPart.setAlignment(Pos.CENTER);
 		lowerPart.prefHeightProperty().bind(divideRow.heightProperty().divide(2));
-		if(isDouble) {
+		if (isDouble) {
 			Spinner<Double> spinner = createConfigSpinnerDouble(0, Double.MAX_VALUE, current, lowerPart);
-			
+			createDoubleSpinnerListener(spinner, text);
 			lowerPart.getChildren().add(spinner);
-		}else {
+		} else {
 			Spinner<Integer> spinner = createConfigSpinner(min, max, current, lowerPart);
 			createIntegerSpinnerListener(spinner, text);
 			lowerPart.getChildren().add(spinner);
 		}
-		divideRow.getChildren().addAll(upperpart,lowerPart);
+		divideRow.getChildren().addAll(upperpart, lowerPart);
 		oneRow.getChildren().add(divideRow);
 		return oneRow;
 	}
-	
-	
+
 	/**
-	 * @author Manuel Krakowski
-	 * creates the upper Part of the row containg a short descrition label and a info icon which shows information when hovering
-	 * @param text: Text of the Label
-	 * @param oneRow: Row in which it is placed
+	 * @author Manuel Krakowski creates the upper Part of the row containg a short
+	 *         descrition label and a info icon which shows information when
+	 *         hovering
+	 * @param text:      Text of the Label
+	 * @param oneRow:    Row in which it is placed
 	 * @param divideRow: Vbox in which the whole row is placed
 	 * @return HBox: upper part of the row
 	 */
 	private HBox createUpperPartOfRow(AIConfigs text, VBox divideRow) {
 		HBox upperpart = new HBox();
 		upperpart.setAlignment(Pos.CENTER);
-		//upperpart.prefHeightProperty().bind(divideRow.heightProperty().divide(2));
+		// upperpart.prefHeightProperty().bind(divideRow.heightProperty().divide(2));
 		upperpart.prefWidthProperty().bind(divideRow.widthProperty().multiply(0.8));
 		Label l = new Label(text.toString());
 		l.getStyleClass().add("spinner-des-label");
@@ -476,60 +486,86 @@ public class PopUpCreator {
 		upperpart.getChildren().addAll(upperLeft, upperRight);
 		return upperpart;
 	}
-	
+
 	/**
-	 * @author Manuel Krakowski
-	 * creates an Integer-Spinner which can be used to modify a param
-	 * @param min: min value of param
-	 * @param max; max vallue of param
-	 * @param cur: default value of param
+	 * @author Manuel Krakowski creates an Integer-Spinner which can be used to
+	 *         modify a param
+	 * @param min:    min value of param
+	 * @param max;    max vallue of param
+	 * @param cur:    default value of param
 	 * @param parent: Hbox in which Spinner will be placed
 	 * @return integer-spinner for one param
 	 */
 	private Spinner<Integer> createConfigSpinner(int min, int max, int cur, HBox parent) {
-	    this.values = new SpinnerValueFactory.IntegerSpinnerValueFactory(min, max, cur);
-	    Spinner<Integer> spinner = new Spinner<>(values);
-	    spinner.getStyleClass().add("spinner");
-	    TextField spinnerText = spinner.getEditor();
-	    spinnerText.fontProperty().bind(spinnerLabel);
-	    spinner.setEditable(true);
-	    spinner.prefWidthProperty().bind(parent.widthProperty().multiply(0.8));
-	    spinner.prefHeightProperty().bind(parent.heightProperty().multiply(1));
-	    return spinner;
-	  }
-	
+		this.values = new SpinnerValueFactory.IntegerSpinnerValueFactory(min, max, cur);
+		Spinner<Integer> spinner = new Spinner<>(values);
+		spinner.getStyleClass().add("spinner");
+		TextField spinnerText = spinner.getEditor();
+		spinnerText.fontProperty().bind(spinnerLabel);
+		spinner.setEditable(true);
+		spinner.prefWidthProperty().bind(parent.widthProperty().multiply(0.8));
+		spinner.prefHeightProperty().bind(parent.heightProperty().multiply(1));
+		return spinner;
+	}
+
 	/**
-	 * @author Manuel Krakowski
-	 * creates an Double-Spinner which can be used to modify a param
-	 * @param min: min value of param
-	 * @param max; max vallue of param
-	 * @param cur: default value of param
+	 * @author Manuel Krakowski creates an Double-Spinner which can be used to
+	 *         modify a param
+	 * @param min:    min value of param
+	 * @param max;    max vallue of param
+	 * @param cur:    default value of param
 	 * @param parent: Hbox in which Spinner will be placed
 	 * @return Double-spinner for one param
 	 */
 	private Spinner<Double> createConfigSpinnerDouble(double min, double max, double cur, HBox parent) {
-	    this.values2 = new SpinnerValueFactory.DoubleSpinnerValueFactory(min, max, cur,0.1);
-	    Spinner<Double> spinner = new Spinner<>(values2);
-	    spinner.getStyleClass().add("spinner");
-	    
-	    TextField spinnerText = spinner.getEditor();
-	    spinnerText.fontProperty().bind(spinnerLabel);
-	    spinner.setEditable(true);
-	    spinner.prefWidthProperty().bind(parent.widthProperty().multiply(0.8));
-	    spinner.prefHeightProperty().bind(parent.heightProperty().multiply(1));
-	    return spinner;
-	  }
-	
-	 private void createIntegerSpinnerListener(Spinner<Integer> spinner, AIConfigs valueToModify) {
-		    spinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
-		    	changeConfigIntValue(valueToModify, newValue);
-		    });
-		  }
-	
+		this.values2 = new SpinnerValueFactory.DoubleSpinnerValueFactory(min, max, cur, 0.1);
+		Spinner<Double> spinner = new Spinner<>(values2);
+		spinner.getStyleClass().add("spinner");
+
+		TextField spinnerText = spinner.getEditor();
+		spinnerText.fontProperty().bind(spinnerLabel);
+		spinner.setEditable(true);
+		spinner.prefWidthProperty().bind(parent.widthProperty().multiply(0.8));
+		spinner.prefHeightProperty().bind(parent.heightProperty().multiply(1));
+		return spinner;
+	}
+
+	/**
+	 * @author Manuel Krakowski Adds a Listener to a Integer-Spinner which changes
+	 *         the respective value
+	 * @param spinner:       Spinner to which Listener is added
+	 * @param valueToModify: Value that should be modified by the spinner
+	 */
+	private void createIntegerSpinnerListener(Spinner<Integer> spinner, AIConfigs valueToModify) {
+		spinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
+			changeConfigIntValue(valueToModify, newValue);
+		});
+	}
+
+	/**
+	 * @author Manuel Krakowski Adds a Listener to a Double-Spinner which changes
+	 *         the respective value
+	 * @param spinner:       Spinner to which Listener is added
+	 * @param valueToModify: Value that should be modified by the spinner
+	 */
+	private void createDoubleSpinnerListener(Spinner<Double> spinner, AIConfigs valueToModify) {
+		spinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
+			defaultConfig.C = newValue;
+		});
+	}
+
+	/**
+	 * Helper method for Spinner Listener to change the respective value of the
+	 * config
+	 * 
+	 * @author Manuel Krakoski
+	 * @param config:   Config that should be changed
+	 * @param newValue: new value of the config
+	 */
 	private void changeConfigIntValue(AIConfigs config, int newValue) {
 		switch (config) {
 		case ATTACK_POWER_MUL:
-			defaultConfig.attackPowerMultiplier= newValue;
+			defaultConfig.attackPowerMultiplier = newValue;
 			System.out.println("Attack Power: " + defaultConfig.attackPowerMultiplier);
 			break;
 		case PIECE_MUL:
@@ -552,55 +588,63 @@ public class PopUpCreator {
 			defaultConfig.shapeReachMultiplier = newValue;
 			System.out.println("Shape Reach: " + newValue);
 			break;
+		case NUM_THREADS:
+			defaultConfig.numThreads = newValue;
+			break;
+		case MAX_STEPS:
+			defaultConfig.MAX_STEPS = newValue;
 		default:
 			break;
 		}
 	}
+
 	/**
-	 * @author Manuel Krakowski
-	 * Initializes a Map with the names and default values of all ai-multiplier values to fill the containers faster
+	 * @author Manuel Krakowski Initializes a Map with the names and default values
+	 *         of all ai-multiplier values to fill the containers faster
 	 */
 	private void createConfigMaps() {
 		multipliers.put(AIConfigs.ATTACK_POWER_MUL, defaultConfig.attackPowerMultiplier);
-		multipliers.put(AIConfigs.PIECE_MUL,defaultConfig.pieceMultiplier);
+		multipliers.put(AIConfigs.PIECE_MUL, defaultConfig.pieceMultiplier);
 		multipliers.put(AIConfigs.BASE_DISTANCE_MUL, defaultConfig.distanceBaseMultiplier);
-		multipliers.put(AIConfigs.DIRECTION_MUL,defaultConfig.directionMultiplier);
+		multipliers.put(AIConfigs.DIRECTION_MUL, defaultConfig.directionMultiplier);
 		multipliers.put(AIConfigs.FLAG_MUL, defaultConfig.flagMultiplier);
 		multipliers.put(AIConfigs.SHAPE_REACH_MUL, defaultConfig.shapeReachMultiplier);
 	}
-	
+
 	/**
-	 * @author Manuel Krakowski
-	 * Finaly creates all the Multipliers and hyperparams with their spinners and sets their names and default values
-	 * @param multiplyerLeft: Left Column of the multiplier-Box
+	 * @author Manuel Krakowski Finaly creates all the Multipliers and hyperparams
+	 *         with their spinners and sets their names and default values
+	 * @param multiplyerLeft:  Left Column of the multiplier-Box
 	 * @param multiplyerRight: Right Column of the multiplier-Box
-	 * @param hyperparam: Only Column of the hyperparam-box
+	 * @param hyperparam:      Only Column of the hyperparam-box
 	 */
 	private void fillColumns(VBox multiplyerLeft, VBox multiplyerRight, VBox hyperparam) {
-		int i=0;
-		for(AIConfigs multilier: multipliers.keySet()) {
-			if(i<3 ){
-				HBox oneRow = createOneRowHBox(multiplyerLeft, multilier, 0, Integer.MAX_VALUE, multipliers.get(multilier),false);
+		int i = 0;
+		for (AIConfigs multilier : multipliers.keySet()) {
+			if (i < 3) {
+				HBox oneRow = createOneRowHBox(multiplyerLeft, multilier, 0, Integer.MAX_VALUE,
+						multipliers.get(multilier), false);
 				multiplyerLeft.getChildren().add(oneRow);
 			} else {
-				HBox oneRow = createOneRowHBox(multiplyerRight, multilier, 0, Integer.MAX_VALUE, multipliers.get(multilier),false);
+				HBox oneRow = createOneRowHBox(multiplyerRight, multilier, 0, Integer.MAX_VALUE,
+						multipliers.get(multilier), false);
 				multiplyerRight.getChildren().add(oneRow);
 			}
 			i++;
 		}
-		HBox row1 = createOneRowHBox(hyperparam, AIConfigs.C, -1, -1,-1 , true);
+		HBox row1 = createOneRowHBox(hyperparam, AIConfigs.C, -1, -1, -1, true);
 		hyperparam.getChildren().add(row1);
-		HBox row2 = createOneRowHBox(hyperparam, AIConfigs.MAX_STEPS, 0, Integer.MAX_VALUE, defaultConfig.MAX_STEPS, false);
+		HBox row2 = createOneRowHBox(hyperparam, AIConfigs.MAX_STEPS, 0, Integer.MAX_VALUE, defaultConfig.MAX_STEPS,
+				false);
 		hyperparam.getChildren().add(row2);
-		HBox row3 = createOneRowHBox(hyperparam, AIConfigs.NUM_THREADS, 1, Integer.MAX_VALUE, defaultConfig.numThreads, false);
+		HBox row3 = createOneRowHBox(hyperparam, AIConfigs.NUM_THREADS, 1, Integer.MAX_VALUE, defaultConfig.numThreads,
+				false);
 		hyperparam.getChildren().add(row3);
 	}
-	
-	
-	
+
 	/**
-	 * @author Manuel Krakowski
-	 * Creates the Hbox in the bottom of the screen which will contain 3 buttons
+	 * @author Manuel Krakowski Creates the Hbox in the bottom of the screen which
+	 *         will contain 3 buttons
 	 * @return Hbox
 	 */
 	private HBox createButtomHBox() {
@@ -611,12 +655,36 @@ public class PopUpCreator {
 			double newSpacing = newValue.doubleValue() * 0.05;
 			buttonBox.setSpacing(newSpacing);
 		});
+		buttonBox.getChildren().addAll(createConfigButton("Save"), createConfigButton("Play"),
+				createConfigButton("Back"));
 		return buttonBox;
 	}
+
+	private void performLeave(Button b) {
+		b.setOnAction(e -> {
+			root.getChildren().remove(aiconfig);
+			root.getChildren().add(aiLevelPopUpPane);
+		});
+	}
+
+	private void performSave(Button b) {
+		b.setOnAction(e -> {
+			createSaveConfigPopUp();
+		});
+	}
 	
+	private void performPlay(Button b) {
+		b.setOnAction(e -> {
+			// ADD COnfig Starting Here
+			hsc.switchToWaitGameScene(App.getStage());
+		});
+	}
+	
+	
+
 	/**
-	 * @author Manuel Krakowski
-	 * creates a button to either save/play, play or leave with always the same design
+	 * @author Manuel Krakowski creates a button to either save/play, play or leave
+	 *         with always the same design
 	 * @param text
 	 * @return
 	 */
@@ -626,15 +694,101 @@ public class PopUpCreator {
 		configButton.getStyleClass().add("leave-button");
 		configButton.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
 		configButton.prefHeightProperty().bind(configButton.widthProperty().multiply(0.25));
-		configButton.setOnAction(e -> {
-			//hsc.switchToCreateGameScene(App.getStage());
-		});
+		switch (text) {
+		case "Back":
+			performLeave(configButton);
+			break;
+		case "Save":
+			performSave(configButton);
+			break;
+		case "Play":
+			performPlay(configButton);
+		default:
+			break;
+		}
 		return configButton;
 	}
 	
 	
 	
+	private void createSaveConfigPopUp() {
+		saveConfig = new PopUpPane(scene, 0.55, 0.4);
+		root.getChildren().remove(aiconfig);
+		VBox topBox = new VBox();
+		topBox.heightProperty().addListener((obs, oldVal, newVal) -> {
+			double spacing = newVal.doubleValue() * 0.09;
+			topBox.setSpacing(spacing);
+		});
+		Label l = new Label("Save Config as:");
+		l.prefWidthProperty().bind(saveConfig.widthProperty());
+		l.setAlignment(Pos.CENTER);
+		l.getStyleClass().add("custom-label");
+		l.fontProperty().bind(saveConfigLavel);
+		topBox.getChildren().add(l);
+		HBox enterNameBox = new HBox();
+		enterNameBox.setAlignment(Pos.CENTER);
+		enterConfigNamefield = CretaeGameScreenV2.createTextfield("Enter the Config Name", 0.4);
+		enterConfigNamefield.prefWidthProperty().bind(enterNameBox.widthProperty().multiply(0.8));
+		enterNameBox.getChildren().add(enterConfigNamefield);
+		topBox.getChildren().add(enterNameBox);
+		HBox centerLeaveButton = new HBox();
+		saveConfig.widthProperty().addListener((observable, oldValue, newValue) -> {
+			double newSpacing = newValue.doubleValue() * 0.05;
+			centerLeaveButton.setSpacing(newSpacing);
+		});
+		centerLeaveButton.prefHeightProperty().bind(saveConfig.heightProperty().multiply(0.4));
+		centerLeaveButton.setAlignment(Pos.CENTER);
+		centerLeaveButton.getChildren().addAll(createNamePopUpButton("Save"), createNamePopUpButton("Save and Play"), createNamePopUpButton("Back"));
+		topBox.getChildren().add(centerLeaveButton);
+		saveConfig.setContent(topBox);
+		root.getChildren().add(saveConfig);
+	}
 	
 	
+	private void performNamePopUpBack(Button b) {
+		b.setOnAction(e -> {
+			root.getChildren().remove(saveConfig);
+			root.getChildren().add(aiconfig);
+		});
+	}
 	
+	private void performNamePopUpSaveAndPlay(Button b) {
+		b.setOnAction(e -> {
+			//ADD CONFIG START HERE
+			defaultConfig.saveConfigAs(enterConfigNamefield.getText());
+			hsc.switchToWaitGameScene(App.getStage());
+		});
+	}
+	
+	private void perfromNamePopUpSave(Button b) {
+		b.setOnAction(e -> {
+			defaultConfig.saveConfigAs(enterConfigNamefield.getText());
+			root.getChildren().remove(saveConfig);
+			root.getChildren().add(aiconfig);
+		});
+		
+	}
+	
+	private Button createNamePopUpButton(String text) {
+		Button namePopButton = new Button(text);
+		namePopButton.fontProperty().bind(enterNameButtonText);
+		namePopButton.getStyleClass().add("leave-button");
+		namePopButton.prefWidthProperty().bind(root.widthProperty().multiply(0.13));
+		namePopButton.prefHeightProperty().bind(namePopButton.widthProperty().multiply(0.25));
+		switch (text) {
+		case "Save":
+			perfromNamePopUpSave(namePopButton);
+			break;
+		case "Save and Play":
+			performNamePopUpSaveAndPlay(namePopButton);
+			break;
+		case "Back" :
+			performNamePopUpBack(namePopButton);
+		default:
+			break;
+		}
+		return namePopButton;
+	}
+	
+
 }

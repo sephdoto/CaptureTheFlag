@@ -86,7 +86,7 @@ public class CretaeGameScreenV2 extends Scene {
 		
 		
 		this.root = (StackPane) this.getRoot();
-		popUpCreator = new PopUpCreator(this, root);
+		popUpCreator = new PopUpCreator(this, root,hsc);
 		createLayout();
 	}
 
@@ -137,7 +137,7 @@ public class CretaeGameScreenV2 extends Scene {
 			top.setSpacing(spacing);
 		});
 		Label l = new Label("Select Team Name");
-		l.prefWidthProperty().bind(aiOrHumanPop.widthProperty());
+		l.prefWidthProperty().bind(enterNamePopUp.widthProperty());
 		l.setAlignment(Pos.CENTER);
 		l.getStyleClass().add("custom-label");
 		l.fontProperty().bind(popUpLabel);
@@ -150,7 +150,7 @@ public class CretaeGameScreenV2 extends Scene {
 		top.getChildren().add(enterNameBox);
 		HBox centerLeaveButton = new HBox();
 		enterNamePopUp.widthProperty().addListener((observable, oldValue, newValue) -> {
-			double newSpacing = newValue.doubleValue() * 0.05; // Beispiel: 5% der Höhe als Spacing
+			double newSpacing = newValue.doubleValue() * 0.05; 
 			centerLeaveButton.setSpacing(newSpacing);
 		});
 		centerLeaveButton.prefHeightProperty().bind(enterNamePopUp.heightProperty().multiply(0.4));
@@ -444,7 +444,7 @@ public class CretaeGameScreenV2 extends Scene {
 		return pane;
 	}
 
-	private TextField createTextfield(String prompt, double x) {
+	public static TextField createTextfield(String prompt, double x) {
 		TextField searchField = new TextField();
 		searchField.getStyleClass().add("custom-search-field2");
 		searchField.setPromptText(prompt);

@@ -74,10 +74,6 @@ public class HomeSceneController {
 		.build();
 	}
 	
-	
-	
-	
-
 	public String getTeamName() {
 		return teamName;
 	}

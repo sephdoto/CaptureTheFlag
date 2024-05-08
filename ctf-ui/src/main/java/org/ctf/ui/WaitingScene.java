@@ -88,7 +88,7 @@ public class WaitingScene extends Scene {
 		manageFontSizes();
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
 		this.root = (StackPane) this.getRoot();
-		createLayout();
+		createLayout2();
 		 this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
 	       
 	}
