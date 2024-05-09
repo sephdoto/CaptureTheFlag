@@ -6,28 +6,49 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import org.ctf.shared.ai.TestValues;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums;
 import org.ctf.shared.wave.WaveFunctionCollapse;
+import org.ctf.shared.wave.WaveGrid;
 import org.junit.jupiter.api.Test;
-
+/**
+ * @author ysiebenh
+ */
 class WaveFunctionCollapseTest {
 
   @Test
   void gridToImgTest() {
-    WaveFunctionCollapse wfc = new WaveFunctionCollapse(TestValues.getTestState().getGrid());
+    WaveFunctionCollapse wfc1 = new WaveFunctionCollapse(TestValues.getTestState().getGrid(), Enums.Themes.LOTR);
+    WaveFunctionCollapse wfc2 = new WaveFunctionCollapse(TestValues.getTestState().getGrid(), Enums.Themes.STARWARS);
+    WaveFunctionCollapse wfc3 = new WaveFunctionCollapse(TestValues.getTestState().getGrid(), Enums.Themes.BAYERN);
+    
+    //WaveFunctionCollapse wfc = new WaveFunctionCollapse(new String[3][3]);
     try {
-      int[][] test = new int[30][30];
-      test[0][0] = 1;
-      test[0][1] = 5;
-      test[1][1] = 4;
-      test[1][2] = 2;
-      int[][] grid = wfc
-          .generateBackground(test);
-      ImageIO.write(wfc.gridToImg(grid), "png", new File(Constants.toUIResources + "grid.png"));
+ 
+      //wfc.generateBackgroundRecursive(new WaveGrid(test, WaveFunctionCollapse.IMAGES_AMOUNT));
+      ImageIO.write(wfc1.getBackground(), "png", new File(Constants.toUIResources + "gridLOTR.png"));
+      ImageIO.write(wfc2.getBackground(), "png", new File(Constants.toUIResources + "gridSTARWARS.png"));
+      ImageIO.write(wfc3.getBackground(), "png", new File(Constants.toUIResources + "gridBAYERN.png"));
+     
+      
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
   }
+  
+  @Test
+  void randomWithWeightsTest() {
+    int total = 0;
+    for(int i = 0 ; i <= 10000; i++) {
+      int y =  (int) (Math.random() * 5) ;
+      int x = WaveFunctionCollapse.randomWithWeights(5, new int[] {1,1,1,1,1});
+      total += x;
+    }
+    
+    System.out.println("The total is" + (double)total / 10000.0);
+    
+  }
+  
 
 }
