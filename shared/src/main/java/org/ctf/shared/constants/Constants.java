@@ -25,10 +25,11 @@ public class Constants {
   ///////////////////////////////////////////////////////
 
   // to shared.resources folder
+  private static final String CFP14 = "cfp14";
   public static final String sharedResourcesFolder =
       jar
-          + Paths.get("").toAbsolutePath().toString().split("cfp14")[0]
-          + "cfp14"
+          + Paths.get("").toAbsolutePath().toString().split(CFP14)[0]
+          + CFP14
           + File.separator
           + "shared"
           + File.separator
@@ -69,8 +70,8 @@ public class Constants {
       mapTemplateFolder + "10x10_2teams_example_moveTimeLimited.json";
   public static final String toUIResources =
       jar
-          + Paths.get("").toAbsolutePath().toString().split("cfp14")[0]
-          + "cfp14"
+          + Paths.get("").toAbsolutePath().toString().split(CFP14)[0]
+          + CFP14
           + File.separator
           + "ctf-ui"
           + File.separator
@@ -81,8 +82,6 @@ public class Constants {
   // Folder for music
   public static final String musicFolder = Constants.toUIResources + "music" + File.separator;
 
-  //TODO Insert Path to Databank
-  public static String dataBankPath;
 
   /**
    * Constants needed to make the base URI of the restClient
