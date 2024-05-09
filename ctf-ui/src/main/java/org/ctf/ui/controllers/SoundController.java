@@ -1,7 +1,5 @@
 package org.ctf.ui.controllers;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -15,6 +13,7 @@ import javafx.application.Platform;
 import javafx.scene.media.AudioClip;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.SoundType;
+import org.ctf.shared.constants.Enums.Themes;
 import org.ctf.shared.tools.JsonTools;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,29 +27,34 @@ import org.json.JSONException;
  */
 public class SoundController {
   private static HashMap<String, AudioObject> audioClips;
-  private static String soundFolderLocation;
+  public static String soundFolderLocation;
   private static String linkedSoundsFile;
 
-  
+
   /**
    * ONLY USED FOR TESTING!! TODO REMOVE THIS
    * @param args
    * @throws JSONException
    * @throws IOException
+   * @throws InterruptedException 
    */
-  public static void main(String args[]) throws JSONException, IOException {
+  public static void main(String args[]) throws JSONException, IOException, InterruptedException {
     Platform.startup(() -> {});
 
-//    for(SoundType type : SoundType.values()) {
-//      saveSound("Default", type, new File(soundFolderLocation +
-//          SoundType.KILL.getLocation() + "Default.wav"), false);
-//    }
-    playSound("Defa2ult", SoundType.CAPTURE);
-        try {
-      Thread.sleep(5000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+    /*for(Themes theme : Themes.values()) {
+      for(SoundType type : SoundType.values()) {
+        saveSound("Default", theme, type, new File(soundFolderLocation + "starwars" + File.separator +
+            SoundType.MOVE.getLocation() + "Default.wav"), false);
+      }
+    }*/
+    playSound("notexisting", SoundType.CAPTURE);
+    System.out.println("Is default sound? " + isDefaultSound("notexisting", Themes.STARWARS, SoundType.CAPTURE));
+    System.out.println("Sound can be changed? " + soundCanBeChanged("notexisting", Themes.STARWARS, SoundType.CAPTURE));
+    System.out.println("Can I override a default sound? " + 
+    saveSound("Default", Themes.STARWARS, SoundType.CAPTURE, new File(
+        soundFolderLocation + "starwars" + File.separator + SoundType.MOVE.getLocation() + "Default.wav"
+        ), false));
+    Thread.sleep(5000);
     Platform.exit();
   }
 
@@ -65,19 +69,65 @@ public class SoundController {
     linkedSoundsFile = soundFolderLocation + "linkedSounds.json";
     initAudioClips();
   }
-  
+
   /**
    * Plays a pieces sound depending on the SoundType.
    * If a piece got no sounds associated with it the SoundTypes default sound is played.
+   * Picks the sound for the current theme.
    * 
    * @author sistumpf
    * @param piece A pieces name given by the type String from PieceDescription
    * @param type The type the pieces sound belongs to (e.g. Move / Capture)
    */
   public static void playSound(String piece, SoundType type) {
-    getSound(piece, type).play();
+    getSound(piece, Constants.theme, type).play();
   }
-  
+
+  /**
+   * Plays a pieces sound depending on the SoundType.
+   * If a piece got no sounds associated with it the SoundTypes default sound is played.
+   * The theme can be specified and doesn't have to be the current theme.
+   * 
+   * @author sistumpf
+   * @param piece A pieces name given by the type String from PieceDescription
+   * @param theme The theme the sound belongs to
+   * @param type The type the pieces sound belongs to (e.g. Move / Capture)
+   */
+  public static void playSound(String piece, Themes theme, SoundType type) {
+    getSound(piece, theme, type).play();
+  }
+
+  /**
+   * Returns if the requested Sound falls back to a default sound.
+   * This might be because the Default sound is requested or there is no custom sound yet.
+   * 
+   * @author sistumpf
+   * @param piece A pieces name given by the type String from PieceDescription
+   * @param theme The theme the sound belongs to
+   * @param type The type the pieces sound belongs to (e.g. Move / Capture)
+   * @return true if a Default sound is used
+   */
+  public static boolean isDefaultSound(String piece, Themes theme, SoundType type) {
+    if(piece.equals("Default"))
+      return true;
+    return !audioClips.containsKey(piece + theme + type);
+  }
+
+  /**
+   * Returns if the sound is custom made by the user and can be changed,
+   * or its a developer made sound that should stay and never be changed.
+   * 
+   * @param piece A pieces name given by the type String from PieceDescription
+   * @param theme The theme the sound belongs to
+   * @param type The type the pieces sound belongs to (e.g. Move / Capture)
+   * @return true if the user can change this sound
+   */
+  public static boolean soundCanBeChanged(String piece, Themes theme, SoundType type) {
+    if(!audioClips.containsKey(piece + theme + type))
+      return true;
+    return audioClips.get(piece + theme + type).getCustom();
+  }
+
   /**
    * Creates an AudioObject.class Object from a given sound and its information,
    * copies it to its according place in ui.resources, adds it to linkedSounds.json
@@ -90,8 +140,11 @@ public class SoundController {
    * @param custom true if its a custom sound, then it can be deleted by the user
    * @return true if the sound got saved successfully
    */
-  public static boolean saveSound(String pieceName, SoundType type, File sound, boolean custom) {
-    AudioObject audio = new AudioObject(pieceName, type, custom);
+  public static boolean saveSound(String pieceName, Themes theme, SoundType type, File sound, boolean custom) {
+    if(!soundCanBeChanged(pieceName, theme, type))
+      return false;
+    
+    AudioObject audio = new AudioObject(pieceName, theme, type, custom);
     if (!copyAudioFile(sound, audio)) return false;
     return addToJSON(audio);
   }
@@ -104,15 +157,22 @@ public class SoundController {
    * @param piece A pieces name given by the type String from PieceDescription
    * @param type The type the pieces sound belongs to (e.g. Move / Capture)
    */
-  private static AudioClip getSound(String piece, SoundType type) {
+  private static AudioClip getSound(String piece, Themes theme, SoundType type) {
     try {
-    File file = new File(soundFolderLocation + audioClips.get(piece + type.toString()).getLocation());
-    return new AudioClip(file.toURI().toString());
+      File file = new File(
+          audioClips.get(piece + theme.toString() + type.toString()).constructLocation()
+          );
+      return new AudioClip(file.toURI().toString());
     } catch (NullPointerException npe) {
-      return new AudioClip(new File(soundFolderLocation + audioClips.get("Default" + type.toString()).getLocation()).toURI().toString());
+      return new AudioClip(
+          new File(
+              audioClips.get(
+                  "Default" + theme.toString() + type.toString()
+                  ).constructLocation()).toURI().toString()
+          );
     }
   }
-  
+
   /**
    * Loads all in linkedSounds.json referenced sounds into {@link audioClips}.
    *
@@ -131,7 +191,7 @@ public class SoundController {
     for (int i = 0; i < jarray.length(); i++) {
       try {
         AudioObject sound = new AudioObject(jarray.getJSONObject(i));
-        audioClips.put(sound.getPieceName() + sound.getSoundType(), sound);
+        audioClips.put(sound.getPieceName() + sound.getTheme() + sound.getSoundType(), sound);
       } catch (JSONException je) {
         je.printStackTrace();
       }
@@ -190,7 +250,7 @@ public class SoundController {
    */
   private static boolean copyAudioFile(File audioFile, AudioObject audio) {
     Path sourcePath = audioFile.toPath();
-    Path targetPath = Paths.get(soundFolderLocation + audio.getLocation());
+    Path targetPath = Paths.get(audio.constructLocation());
 
     try {
       Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);

@@ -1,38 +1,128 @@
 [
   {
     "pieceName": "Default",
-    "location": "move\\Default.wav",
-    "type": "MOVE",
-    "custom": false
-  },
-  {
-    "pieceName": "Default",
-    "location": "misc\\Default.wav",
+    "fileType": ".wav",
     "type": "MISC",
+    "theme": "LOTR",
     "custom": false
   },
   {
     "pieceName": "Default",
-    "location": "kill\\Default.wav",
-    "type": "KILL",
-    "custom": false
-  },
-  {
-    "pieceName": "Default",
-    "location": "select\\Default.wav",
-    "type": "SELECT",
-    "custom": false
-  },
-  {
-    "pieceName": "Default",
-    "location": "capture\\Default.wav",
-    "type": "CAPTURE",
-    "custom": false
-  },
-  {
-    "pieceName": "Default",
-    "location": "deselect\\Default.wav",
+    "fileType": ".wav",
     "type": "DESELECT",
+    "theme": "STARWARS",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "fileType": ".wav",
+    "type": "CAPTURE",
+    "theme": "BAYERN",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "fileType": ".wav",
+    "type": "KILL",
+    "theme": "LOTR",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "fileType": ".wav",
+    "type": "DESELECT",
+    "theme": "LOTR",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "fileType": ".wav",
+    "type": "DESELECT",
+    "theme": "BAYERN",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "fileType": ".wav",
+    "type": "SELECT",
+    "theme": "LOTR",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "fileType": ".wav",
+    "type": "CAPTURE",
+    "theme": "STARWARS",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "fileType": ".wav",
+    "type": "MOVE",
+    "theme": "BAYERN",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "fileType": ".wav",
+    "type": "CAPTURE",
+    "theme": "LOTR",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "fileType": ".wav",
+    "type": "MOVE",
+    "theme": "STARWARS",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "fileType": ".wav",
+    "type": "SELECT",
+    "theme": "STARWARS",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "fileType": ".wav",
+    "type": "MISC",
+    "theme": "STARWARS",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "fileType": ".wav",
+    "type": "KILL",
+    "theme": "STARWARS",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "fileType": ".wav",
+    "type": "KILL",
+    "theme": "BAYERN",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "fileType": ".wav",
+    "type": "SELECT",
+    "theme": "BAYERN",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "fileType": ".wav",
+    "type": "MOVE",
+    "theme": "LOTR",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "fileType": ".wav",
+    "type": "MISC",
+    "theme": "BAYERN",
     "custom": false
   }
 ]

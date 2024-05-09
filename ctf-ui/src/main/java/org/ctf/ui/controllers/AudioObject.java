@@ -3,6 +3,7 @@ package org.ctf.ui.controllers;
 import java.io.File;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.SoundType;
+import org.ctf.shared.constants.Enums.Themes;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,8 +17,9 @@ import org.json.JSONObject;
  */
 class AudioObject {
   private String pieceName;
-  private String location;
+  private String fileType;
   private SoundType type;
+  private Themes theme;
   private boolean custom;
 
   /**
@@ -28,10 +30,11 @@ class AudioObject {
    * @param type The SoundType associated with the piece's sound
    * @param custom true if the audio is user-made (= it can be deleted by the user)
    */
-  public AudioObject(String pieceName, SoundType type, boolean custom) {
+  public AudioObject(String pieceName, Themes theme, SoundType type, boolean custom) {
     this.pieceName = pieceName;
-    this.location = type.toString().toLowerCase() + File.separator + pieceName + Constants.soundFileTypes;
     this.type = type;
+    this.theme = theme;
+    this.fileType = ".wav";
     this.custom = custom;
   }
 
@@ -44,20 +47,31 @@ class AudioObject {
   public AudioObject(JSONObject jobject) {
     try {
       this.pieceName = jobject.getString("pieceName");
-      this.location = jobject.getString("location");
+      this.fileType = jobject.getString("fileType");
       this.type = SoundType.valueOf(jobject.getString("type"));
+      this.theme = Themes.valueOf(jobject.getString("theme"));
       this.custom = jobject.getBoolean("custom");
     } catch (JSONException e) {
       e.printStackTrace();
     }
   }
+  
+  /**
+   * Constructs the Audio Files Location from the information in the AudioObject
+   * 
+   * @author sistumpf
+   * @return location of the addressed audio file.
+   */
+  public String constructLocation() {
+    return SoundController.soundFolderLocation + theme.toString().toLowerCase() + File.separator + type.toString().toLowerCase() + File.separator + pieceName + fileType;
+  }
 
-  public String getLocation() {
-    return location;
+  public String getFileType() {
+    return this.fileType;
   }
 
   public String getPieceName() {
-    return pieceName;
+    return this.pieceName;
   }
 
   public SoundType getSoundType() {
@@ -67,15 +81,19 @@ class AudioObject {
   public boolean getCustom() {
     return this.custom;
   }
+  
+  public Themes getTheme() {
+    return this.theme;
+  }
 
   /**
-   * Custom hashCode method that creates a hashCode from the AudioObjects location.
+   * Custom hashCode method that creates a hashCode from the AudioObjects unique properties.
    * 
    * @author sistumpf
    */
   @Override
   public int hashCode() {
-    return (this.location).hashCode();
+    return (theme.toString() + type.toString() + pieceName + Constants.soundFileTypes).hashCode();
   }
 
   /**
@@ -85,6 +103,6 @@ class AudioObject {
    */
   @Override
   public boolean equals(Object object) {
-    return (this.location).equals(((AudioObject) object).getLocation());
+    return this.hashCode() == ((AudioObject) object).hashCode();
   }
 }
