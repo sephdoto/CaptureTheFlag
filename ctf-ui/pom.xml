@@ -101,7 +101,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>org.ctf.UI.EntryPoint</mainClass>
+                            <mainClass>org.ctf.ui.EntryPoint</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
