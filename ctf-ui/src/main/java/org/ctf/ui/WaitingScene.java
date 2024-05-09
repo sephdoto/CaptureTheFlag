@@ -16,6 +16,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.PathTransition;
+import javafx.animation.PauseTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
@@ -76,7 +77,7 @@ public class WaitingScene extends Scene {
 	Text text;
 	VBox testBox;
 	Label howManyTeams;
-	StackPane clipboardInfo;
+	Label clipboardInfo;
 	GamePane gm;
 	private  ObjectProperty<Color> sceneColorProperty = 
 		        new SimpleObjectProperty<>(Color.BLUE);
@@ -85,6 +86,7 @@ public class WaitingScene extends Scene {
 	private ObjectProperty<Font> serverInfoCOntentFontSize = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> addHumanButtonTextFontSIze = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> serverInfoDescription = new SimpleObjectProperty<Font>(Font.getDefault());
+	private ObjectProperty<Font> clipBoardInfoText = new SimpleObjectProperty<Font>(Font.getDefault());
 	
 
 	public WaitingScene(HomeSceneController hsc, double width, double height) {
@@ -122,6 +124,8 @@ public class WaitingScene extends Scene {
 		            serverInfoCOntentFontSize.set(Font.font(newWidth.doubleValue()/ 65));
 		            addHumanButtonTextFontSIze.set(Font.font(newWidth.doubleValue()/ 70));
 		            serverInfoDescription.set(Font.font(newWidth.doubleValue()/ 50));
+		            clipBoardInfoText.set(Font.font(newWidth.doubleValue()/ 60));
+
 		        }
 		    });
 	}
@@ -209,19 +213,40 @@ public class WaitingScene extends Scene {
 		dividelowerPart.getChildren().add(createInfoLabel(parent, "port", hsc.getPort(), 0.35));
 		dividelowerPart.getChildren().add(createInfoLabel(parent, "Server-IP", hsc.getServerID(), 0.55));
 		serverInfoBox.getChildren().add(dividelowerPart);
+		serverInfoBox.getChildren().add(createShowClipBoardInfoStackPane(serverInfoBox));
 		return serverInfoBox;
 	}
 	
 	
-	private void createShowClipBoardInfoStackPane() {
-		
+	private StackPane createShowClipBoardInfoStackPane(VBox parent) {
+		 StackPane displayClipBoardText = new StackPane();
+		 displayClipBoardText.prefWidthProperty().bind(parent.widthProperty());
+		 displayClipBoardText.setAlignment(Pos.CENTER);
+		 clipboardInfo = new Label("");
+		 clipboardInfo.getStyleClass().add("des-label");
+		 clipboardInfo.fontProperty().bind(clipBoardInfoText);
+		 displayClipBoardText.getChildren().add(clipboardInfo);
+		 return displayClipBoardText;
 	}
 	
-	private void copyTextToClipBoard() {
+	private void copyTextToClipBoard(String text) {
 		Clipboard clipboard = Clipboard.getSystemClipboard();
 		ClipboardContent content = new ClipboardContent();
-		content.putString(hsc.getSessionID());
+		content.putString(text);
 		clipboard.setContent(content);
+	}
+	
+	private void showClipInfo(String copyText) {
+		clipboardInfo.setText("Copied " + copyText +  " to clipboard");
+		FadeTransition fade = new FadeTransition(Duration.seconds(1), clipboardInfo);
+		fade.setDelay(Duration.seconds(1));
+		fade.setFromValue(1.0);
+		fade.setToValue(0.0);
+		fade.setOnFinished(event -> {
+			clipboardInfo.setText("");
+			clipboardInfo.setOpacity(1);
+		});
+		fade.play();
 	}
 	
 	private Label createServerDescription(VBox parent, String text) {
@@ -243,6 +268,20 @@ public class WaitingScene extends Scene {
 		Label numberLabel = new Label(content);
 		numberLabel.getStyleClass().add("number-label");
 		numberLabel.fontProperty().bind(serverInfoCOntentFontSize);
+		labelBox.setOnMouseClicked(event -> {
+            System.out.println(content);
+            copyTextToClipBoard(content);
+            showClipInfo(header);
+            FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), labelBox);
+            fadeTransition.setFromValue(1.0);
+            fadeTransition.setToValue(0.0);
+            fadeTransition.setOnFinished(e -> {
+                
+            });
+            fadeTransition.setFromValue(0.0);
+            fadeTransition.setToValue(1.0);
+            fadeTransition.play();
+		});
 		labelBox.getChildren().addAll(headerLabel,numberLabel);
 		return labelBox;
 	}
