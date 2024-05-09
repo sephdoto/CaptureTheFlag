@@ -1,9 +1,15 @@
 package org.ctf.shared.client.testClasses;
 
 import com.google.gson.Gson;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.ai.AIController;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
@@ -151,7 +157,7 @@ public class ScheduledTasks {
             .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
-            .AIPlayerSelector(AI.MCTS)
+            .aiPlayerSelector(AI.MCTS, new AIConfig())
             .enableSaveGame(false)
             .gameData(GameID, "Team 1")
             .build();
@@ -160,7 +166,7 @@ public class ScheduledTasks {
             .enableRestLayer(false)
             .onLocalHost()
             .onPort("8888")
-            .AIPlayerSelector(AI.MCTS)
+            .aiPlayerSelector(AI.MCTS, new AIConfig())
             .enableSaveGame(false)
             .gameData(GameID, "Team 2")
             .build();
@@ -191,7 +197,7 @@ public class ScheduledTasks {
 
     // AIController Controller1 = new AIController(client1.getCurrentState(), AI.RANDOM);
     //  AIController Controller2 = new AIController(client2.getCurrentState(), AI.MCTS);
-    Runnable playTask =
+   /*  Runnable playTask =
         () -> {
           try {
             System.out.println("running playtask 1");
@@ -203,25 +209,25 @@ public class ScheduledTasks {
             AIController controller = new AIController(client1.getCurrentState(), client1.selectedAI, thinkingTime);
             client1.pullData();
             controller.update(client1.getCurrentState());
-            /*       client2.pullData();
-            Controller2.update(client2.getCurrentState()); */
+              client2.pullData();
+            Controller2.update(client2.getCurrentState()); 
             if (client1.isItMyTurn()) {
               client1.makeMove(controller.getNextMove());
             }
             /* else if (client2.isItMyTurn()) {
               client2.makeMove(Controller2.getNextMove());
-            } */
+            } 
             client1.pullData();
             controller.update(client1.getCurrentState());
-            /*   client2.pullData();
-            Controller2.update(client2.getCurrentState()); */
+          client2.pullData();
+            Controller2.update(client2.getCurrentState());
             TimeUnit.MILLISECONDS.sleep(1500);
           } catch (InterruptedException | NoMovesLeftException | InvalidShapeException e) {
             e.printStackTrace();
           }
-        };
+        }; */
 
-    Runnable playTask2 =
+/*     Runnable playTask2 =
         () -> {
           try {
             System.out.println("running playtask 2");
@@ -242,7 +248,7 @@ public class ScheduledTasks {
           } catch (InterruptedException | NoMovesLeftException | InvalidShapeException e) {
             e.printStackTrace();
           }
-        };
+        }; */
 
     Runnable printGson =
         () -> {
@@ -253,7 +259,7 @@ public class ScheduledTasks {
             e.printStackTrace();
           }
         };
-
+/* 
     scheduler.schedule(CreateGame, 1, TimeUnit.SECONDS);
     scheduler.schedule(joinTask, 3, TimeUnit.SECONDS);
     scheduler.schedule(joinTask2, 5, TimeUnit.SECONDS);
@@ -263,7 +269,7 @@ public class ScheduledTasks {
     scheduler.scheduleWithFixedDelay(playTask2, 9, 3, TimeUnit.SECONDS);
     // scheduler.scheduleWithFixedDelay(printGson, 9, 5, TimeUnit.SECONDS);
     // scheduler.scheduleWithFixedDelay(playTask2, 11, 2, TimeUnit.SECONDS);
-    /* try {
+    try { */
 
       Callable<Integer> task2 =
           new Callable<Integer>() {
@@ -304,7 +310,7 @@ public class ScheduledTasks {
 
       Future<Integer> result = scheduler.schedule(task, delay, TimeUnit.SECONDS);
 
-      try {
+/*       try {
 
         Integer value = result.get();
 
@@ -317,6 +323,6 @@ public class ScheduledTasks {
       scheduler.shutdown();
     } catch (Exception e) {
       // TODO: handle exception
-    } */
-  }
+    }  */
+   }  
 }

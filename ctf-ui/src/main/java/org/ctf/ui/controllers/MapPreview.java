@@ -5,6 +5,7 @@ import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
+import org.ctf.shared.constants.Enums.Port;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.map.MapTemplate;
@@ -29,9 +30,9 @@ public class MapPreview {
   }
 
   /**
-   * Method internally generates Clients for each Player. Joins a server with it and deletes the
-   * session at the end to save server resources. Waits 80ms between commands in case the server is
-   * slow.
+   * Method internally generates Clients for each Player. Joins a localhost server with it and uses
+   * the DefaultPort set in Enums.Port. Deletes the session at the end to save server resources.
+   * Waits 80ms between commands in case the server is slow.
    *
    * @return GameState object containing all data from the server (including blocks and placement)
    * @author rsyed & ysiebenh
@@ -39,7 +40,8 @@ public class MapPreview {
   public GameState getGameState() throws Accepted {
     Client[] clients = new Client[mapTemplate.getTeams()];
     ServerManager server =
-        new ServerManager(new CommLayer(), new ServerDetails("localhost", "8888"), mapTemplate);
+        new ServerManager(
+            new CommLayer(), new ServerDetails("localhost", Port.DEFAULT.toString()), mapTemplate);
     server.createGame();
     // Init all clients
     for (int i = 0; i < clients.length; i++) {

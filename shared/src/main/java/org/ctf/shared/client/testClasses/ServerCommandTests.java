@@ -579,7 +579,7 @@ public class ServerCommandTests {
           }
         """;
 
-    Gson gson = new Gson();
+/*     Gson gson = new Gson();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     Client javaClient =
         ClientStepBuilder.newBuilder()
@@ -601,7 +601,7 @@ public class ServerCommandTests {
     javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
     javaClient.getSessionFromServer();
-    javaClient2.getSessionFromServer();
+    javaClient2.getSessionFromServer(); */
     /*   Move move = new Move();
     if (javaClient.getCurrentTeamTurn() == 1) {
       try {
@@ -620,7 +620,7 @@ public class ServerCommandTests {
         System.out.println("Made move");
       }
     }  */
-    javaClient.getStateFromServer();
+   /*  javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
     // System.out.println(gson.toJson(javaClient.getCurrentState()));
     AIController Controller = new AIController(javaClient.getCurrentState(), AI.MCTS,0);
@@ -650,9 +650,9 @@ public class ServerCommandTests {
         javaClient2.getStateFromServer();
         Controller2.update(javaClient2.getCurrentState());
         // System.out.println(gson.toJson(javaClient.getGrid()))
-        e.printStackTrace();
-      }
-    }
+        e.printStackTrace(); */
+  /*     }
+    } */
   }
 
   public static void AIVSHUMAN() {
@@ -767,7 +767,7 @@ public class ServerCommandTests {
           }
         """;
 
-    Gson gson = new Gson();
+  /*   Gson gson = new Gson();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     Client javaClient =
         ClientStepBuilder.newBuilder()
@@ -796,7 +796,7 @@ public class ServerCommandTests {
 
         e.printStackTrace();
       }
-    }
+    } */
   }
 
 

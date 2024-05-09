@@ -9,9 +9,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
-
 import java.io.File;
 import java.io.IOException;
+import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.ai.AIController;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
@@ -116,8 +116,8 @@ public class AnalyzerTest {
         "p2");
     p1.pullData();
     p2.pullData();
-    AIController controller1 = new AIController(p1.getCurrentState(), AI.RANDOM, 0);
-    AIController controller2 = new AIController(p2.getCurrentState(), AI.RANDOM, 0);
+    AIController controller1 = new AIController(p1.getCurrentState(), AI.RANDOM, new AIConfig(), 0);
+    AIController controller2 = new AIController(p2.getCurrentState(), AI.RANDOM, new AIConfig(), 0);
     analyzer.addGameState(p1.getCurrentState());
     for (int i = 0; i < 5; i++) {
       try {
@@ -154,15 +154,18 @@ public class AnalyzerTest {
     assertTrue(b);
     SavedGame gameData = analyzer.getSavedGame();
     Gson gson = new Gson();
-    
+
     Move move1 = new Move();
     move1.setPieceId("p:0_16");
     move1.setTeamId("p1");
-    move1.setNewPosition(new int[]{6,9});
-    assertTrue(move1.getPieceId().toString().equals(gameData.getMoves().get("1").getPieceId().toString()));
-    assertTrue(move1.getTeamId().toString().equals(gameData.getMoves().get("1").getTeamId().toString()) );
-    assertArrayEquals(move1.getNewPosition(),gameData.getMoves().get("1").getNewPosition());
-    //System.out.println(gson.toJson(move1.getNewPosition()) +  gson.toJson(gameData.getMoves().get("1").getNewPosition()));
+    move1.setNewPosition(new int[] {6, 9});
+    assertTrue(
+        move1.getPieceId().toString().equals(gameData.getMoves().get("1").getPieceId().toString()));
+    assertTrue(
+        move1.getTeamId().toString().equals(gameData.getMoves().get("1").getTeamId().toString()));
+    assertArrayEquals(move1.getNewPosition(), gameData.getMoves().get("1").getNewPosition());
+    // System.out.println(gson.toJson(move1.getNewPosition()) +
+    // gson.toJson(gameData.getMoves().get("1").getNewPosition()));
   }
 
   @Test
@@ -200,8 +203,8 @@ public class AnalyzerTest {
         "p2");
     p1.pullData();
     p2.pullData();
-    AIController controller1 = new AIController(p1.getCurrentState(), AI.RANDOM, 0);
-    AIController controller2 = new AIController(p2.getCurrentState(), AI.RANDOM, 0);
+    AIController controller1 = new AIController(p1.getCurrentState(), AI.RANDOM,new AIConfig(), 0);
+    AIController controller2 = new AIController(p2.getCurrentState(), AI.RANDOM,new AIConfig(), 0);
     analyzer.addGameState(p1.getCurrentState());
     for (int i = 0; i < 5; i++) {
       try {
@@ -221,7 +224,7 @@ public class AnalyzerTest {
       controller2.update(p2.getCurrentState());
     }
     assertTrue(analyzer.writeOut());
-    File myObj = new File(Constants.saveGameFolder + analyzer.lastFileName + ".savedgame"); 
+    File myObj = new File(Constants.saveGameFolder + analyzer.lastFileName + ".savedgame");
     myObj.delete();
   }
 

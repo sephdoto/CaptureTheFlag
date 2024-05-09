@@ -3,6 +3,8 @@ package org.ctf.shared.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
 import java.io.IOException;
+
+import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
@@ -32,7 +34,7 @@ public class AIClientTest {
             .enableRestLayer(false)
             .onLocalHost()
             .onPort("9992")
-            .AIPlayerSelector(AI.MCTS)
+            .aiPlayerSelector(AI.MCTS, new AIConfig())
             .enableSaveGame(false)
             .gameData(server.getGameSessionID(), "Team1")
             .build();
@@ -42,7 +44,7 @@ public class AIClientTest {
             .enableRestLayer(true)
             .onRemoteHost("127.0.0.1")
             .onPort(Port.AICLIENTTEST)
-            .AIPlayerSelector(AI.MCTS)
+            .aiPlayerSelector(AI.MCTS, new AIConfig())
             .enableSaveGame(true)
             .gameData(server.getGameSessionID(), "Team2")
             .build();

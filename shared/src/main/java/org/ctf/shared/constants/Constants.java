@@ -25,7 +25,7 @@ public class Constants {
   ///////////////////////////////////////////////////////
 
   // to shared.resources folder
-  public static String sharedResourcesFolder =
+  public static final String sharedResourcesFolder =
       jar
           + Paths.get("").toAbsolutePath().toString().split("cfp14")[0]
           + "cfp14"
@@ -48,26 +48,26 @@ public class Constants {
           + File.separator;
 
   // to AI config folder
-  public static String aiConfigFolder = sharedResourcesFolder + "ai_configs" + File.separator;
+  public static final String aiConfigFolder = sharedResourcesFolder + "ai_configs" + File.separator;
   
   // Default folder for saving games for AI Analysis
-  public static String saveGameFolder = sharedResourcesFolder + "savegames" + File.separator;
+  public static final String saveGameFolder = sharedResourcesFolder + "savegames" + File.separator;
   // package map, class JsonTools
-  public static String mapTemplateFolder = sharedResourcesFolder + "maptemplates" + File.separator;
+  public static final String mapTemplateFolder = sharedResourcesFolder + "maptemplates" + File.separator;
 
   /**
    * Constants needed for file paths
    *
    * @author rsyed
    */
-  public static String testTemplate = mapTemplateFolder + "serverTester.json";
+  public static final String testTemplate = mapTemplateFolder + "serverTester.json";
 
-  public static String clientTestingTemplate = mapTemplateFolder + "10x10_2teams_example.json";
-  public static String clientTimeLimitedTemplate =
+  public static  final String clientTestingTemplate = mapTemplateFolder + "10x10_2teams_example.json";
+  public static final String clientTimeLimitedTemplate =
       mapTemplateFolder + "10x10_2teams_example_timeLimited.json";
-  public static String clientMoveTimeLimitedTemplate =
+  public static final String clientMoveTimeLimitedTemplate =
       mapTemplateFolder + "10x10_2teams_example_moveTimeLimited.json";
-  public static String toUIResources =
+  public static final String toUIResources =
       jar
           + Paths.get("").toAbsolutePath().toString().split("cfp14")[0]
           + "cfp14"
@@ -76,11 +76,12 @@ public class Constants {
           + File.separator
           + "resources"
           + File.separator;
-  public static String soundFileTypes = ".wav";
+  public static final String soundFileTypes = ".wav";
 
   // Folder for music
-  public static String musicFolder = Constants.toUIResources + "music" + File.separator;
+  public static final String musicFolder = Constants.toUIResources + "music" + File.separator;
 
+  //TODO Insert Path to Databank
   public static String dataBankPath;
 
   /**

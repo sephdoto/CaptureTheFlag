@@ -95,6 +95,7 @@ public class Enums {
       return label.equals(otherEnum);
     }
 
+    @Override
     public String toString() {
       return this.label;
     }
@@ -129,6 +130,7 @@ public class Enums {
 		  this.name = name;
 	  }
 
+	  @Override
 	  public String toString() {
 		  return this.name;
 	  }

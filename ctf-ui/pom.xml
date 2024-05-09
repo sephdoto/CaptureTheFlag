@@ -50,6 +50,12 @@
             <version>0.0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>de.uni-mannheim.swt.pse</groupId>
+            <artifactId>ctf</artifactId>
+            <scope>test</scope>
+            <version>0.0.1-SNAPSHOT</version>
+          </dependency>
     </dependencies>
 
     <build>

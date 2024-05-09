@@ -151,7 +151,7 @@ public class AIClient extends Client {
   }
 
   @Override
-  protected void pullData() {
+  public void pullData() {
     getSessionFromServer();
     getStateFromServer();
   }

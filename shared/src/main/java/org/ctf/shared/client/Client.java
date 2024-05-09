@@ -552,7 +552,7 @@ public class Client implements GameClientInterface {
    *
    * @author rsyed
    */
-  protected void pullData() {
+  public void pullData() {
     getSessionFromServer();
     getStateFromServer();
   }

@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
 import java.io.IOException;
+
+import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.ai.AIController;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
@@ -28,7 +30,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author rsyed
  */
-public class ClientTest {
+class ClientTest {
 
   static CommLayer comm = new CommLayer();
   static Client javaClient;
@@ -172,8 +174,8 @@ public class ClientTest {
         "localhost", "9998", javaClient.getCurrentGameSessionID(), "Team2");
     javaClient.pullData();
     javaClient2.pullData();
-    AIController Controller = new AIController(javaClient.getCurrentState(), AI.MCTS, 0);
-    AIController Controller2 = new AIController(javaClient2.getCurrentState(), AI.MCTS,0);
+    AIController Controller = new AIController(javaClient.getCurrentState(), AI.MCTS,new AIConfig(), 0);
+    AIController Controller2 = new AIController(javaClient2.getCurrentState(), AI.MCTS,new AIConfig(),0);
     try {
       if (javaClient.isItMyTurn()) {
         javaClient.makeMove(Controller.getNextMove());
@@ -331,8 +333,8 @@ public class ClientTest {
         "localhost", "9998", javaClient.getCurrentGameSessionID(), "Team2");
     javaClient.pullData();
     javaClient2.pullData();
-    AIController Controller = new AIController(javaClient.getCurrentState(), AI.MCTS,0);
-    AIController Controller2 = new AIController(javaClient2.getCurrentState(), AI.MCTS,0);
+    AIController Controller = new AIController(javaClient.getCurrentState(), AI.MCTS,new AIConfig(),0);
+    AIController Controller2 = new AIController(javaClient2.getCurrentState(), AI.MCTS,new AIConfig(),0);
     try {
       if (javaClient.isItMyTurn()) {
 

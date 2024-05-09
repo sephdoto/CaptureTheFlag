@@ -1,6 +1,6 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
     "java.configuration.updateBuildConfiguration": "automatic",
-    "maven.view": "flat",
+    "maven.view": "hierarchical",
     "java.debug.settings.onBuildFailureProceed": true
 }
