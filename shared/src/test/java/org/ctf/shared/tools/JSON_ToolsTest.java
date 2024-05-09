@@ -24,7 +24,7 @@ import org.junit.jupiter.api.TestInstance;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class JSON_ToolsTest {
-  String mapTemplateFolder;
+  String mapTemplateFolder = Constants.mapTemplateFolder;
   String mapString;
   MapTemplate mapTemplate;
 
@@ -32,7 +32,6 @@ class JSON_ToolsTest {
   //TODO
   void getTemplateAndGameState() {
     HashMap map = JsonTools.getTemplateAndGameState("test");
-    System.out.println(1);
   }
   
   @Test
@@ -68,7 +67,7 @@ class JSON_ToolsTest {
   @Test
   void testReadMapTemplateFile() {
     MapTemplate testTemplate = null;
-    File file = new File(Constants.mapTemplateFolder + "10x10_2teams_example.json");
+    File file = new File(this.mapTemplateFolder + "10x10_2teams_example.json");
 
     try {
       JsonTools.saveMapTemplateAsFile("incomplete", testTemplate);
@@ -125,16 +124,15 @@ class JSON_ToolsTest {
     Gson gson = new Gson();
     new TypeToken<>() {}.getType(); 
     this.mapTemplate = gson.fromJson(mapString, MapTemplate.class);
-    this.mapTemplateFolder = Constants.mapTemplateFolder;
-//    Constants.mapTemplateFolder = Paths.get("src" + File.separator + "test" + File.separator +"java" + File.separator + "org" + File.separator + "ctf" + 
-//    File.separator +"shared" + File.separator +"tools" + File.separator + "maptemplates").toAbsolutePath().toString() + File.separator;
+    this.mapTemplateFolder = Paths.get("src" + File.separator + "test" + File.separator +"java" + File.separator + "org" + File.separator + "ctf" + 
+    File.separator +"shared" + File.separator +"tools" + File.separator + "maptemplates" + File.separator + "templates").toAbsolutePath().toString() + File.separator;
 //    JsonTools.gameStates = Constants.mapTemplateFolder + "gamestates" + File.separator;
 //    JsonTools.mapTemplates = Constants.mapTemplateFolder + "templates" + File.separator;
   }
 
   @AfterAll
   void tearDownAfterClass() throws Exception {
-    Constants.mapTemplateFolder = mapTemplateFolder;
+//    Constants.mapTemplateFolder = mapTemplateFolder;
     JsonTools.gameStates = Constants.mapTemplateFolder + "gamestates" + File.separator;
     JsonTools.mapTemplates = Constants.mapTemplateFolder + "templates" + File.separator;
   }
