@@ -23,7 +23,7 @@ public class AIController {
   int thinkingTime;
 
   public AIController(GameState gameState, AI ai, AIConfig config, int thinkingTime) {
-    this.ai = ai;
+    this.ai = config == null ? AI.RANDOM : ai;
     this.thinkingTime = thinkingTime * 1000;
     if (gameState.getCurrentTeam() < 0)
       return;
