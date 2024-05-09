@@ -168,6 +168,7 @@ public class CretaeGameScreenV2 extends Scene {
 			//hsc.switchToCreateGameScene(App.getStage());
 			portText.setDisable(false);
 			serverIPText.setDisable(false);
+			hsc.deleteGame();
 			root.getChildren().remove(aiOrHumanPop);
 		});
 		

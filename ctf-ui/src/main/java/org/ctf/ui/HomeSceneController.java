@@ -26,14 +26,17 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+
 public class HomeSceneController {
 	private Stage stage;
+	WaitingThread waitingThread;
 	String port;
 	String serverID;
 	String sessionID;
 	ServerManager serverManager;
 	MapTemplate template;
 	CretaeGameScreenV2 createGameScreenV2;
+	WaitingScene waitingScene;
 	Client mainClient;
 	String teamName;
 	
@@ -83,9 +86,16 @@ public class HomeSceneController {
 	public void setTeamName(String teamName) {
 		this.teamName = teamName;
 	}
+	
+	public void updateTeamsinWaitingScene(String text) {
+		waitingScene.setCUrrentTeams(text);
+	}
 
 	public void switchToWaitGameScene(Stage stage) {
-		stage.setScene(new WaitingScene(this, stage.getWidth(), stage.getHeight()));
+		waitingScene = new WaitingScene(this, stage.getWidth(), stage.getHeight());
+		stage.setScene(waitingScene);
+		 waitingThread = new WaitingThread( serverManager, this);
+		waitingThread.setAcive();
 	}
 	public void switchToPlayGameScene(Stage stage) {
 		stage.setScene(new PlayGameScreenV2(this, stage.getWidth(), stage.getHeight()));
@@ -114,6 +124,10 @@ public class HomeSceneController {
 
 	public void setTemplate(MapTemplate template) {
 		this.template = template;
+	}
+	
+	public int getMaxNumberofTemas() {
+		return template.getTeams();
 	}
 
 	public Stage getStage() {

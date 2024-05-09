@@ -74,7 +74,7 @@ public class WaitingScene extends Scene {
 	StackPane root;
 	StackPane left;
 	StackPane right;
-	Text text;
+	Label curenntTeams;
 	VBox testBox;
 	Label howManyTeams;
 	Label clipboardInfo;
@@ -173,6 +173,8 @@ public class WaitingScene extends Scene {
 		leftBox.setAlignment(Pos.TOP_CENTER);
 		leftBox.prefWidthProperty().bind(parent.widthProperty().multiply(0.55));
 		leftBox.prefHeightProperty().bind(parent.heightProperty().multiply(0.68));
+		leftBox.getChildren().add(createTestLabel(leftBox));
+		leftBox.getChildren().add(createTestLabel2(leftBox));
 		return leftBox;
 	}
 	
@@ -285,6 +287,24 @@ public class WaitingScene extends Scene {
 		labelBox.getChildren().addAll(headerLabel,numberLabel);
 		return labelBox;
 	}
+	
+	private Label createTestLabel(VBox parent) {
+		Label test = new Label(" max teams:" + hsc.getMaxNumberofTemas());
+		test.prefWidthProperty().bind(parent.widthProperty());
+		return test;
+	}
+	
+	private Label createTestLabel2(VBox parent) {
+		 curenntTeams = new Label(" current teams:");
+		curenntTeams.prefWidthProperty().bind(parent.widthProperty());
+		return curenntTeams;
+	}
+	
+	public void setCUrrentTeams(String text) {
+		curenntTeams.setText(text);
+	}
+	
+	
 	
 	
 	
