@@ -1,4 +1,4 @@
-package org.ctf.shared.client.service;
+package de.unimannheim.swt.pse.ctf.game;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;

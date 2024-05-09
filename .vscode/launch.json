@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "MCTSSimulation",
+            "request": "launch",
+            "mainClass": "org.ctf.shared.client.testClasses.MCTSSimulation",
+            "projectName": "shared"
+        },
+        {
+            "type": "java",
             "name": "SaveGameVisualizer",
             "request": "launch",
             "mainClass": "org.ctf.shared.client.testClasses.SaveGameVisualizer",
