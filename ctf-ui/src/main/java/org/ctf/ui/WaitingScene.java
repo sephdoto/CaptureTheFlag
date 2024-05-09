@@ -1,5 +1,7 @@
 package org.ctf.ui;
 
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -43,6 +45,8 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -72,6 +76,7 @@ public class WaitingScene extends Scene {
 	Text text;
 	VBox testBox;
 	Label howManyTeams;
+	StackPane clipboardInfo;
 	GamePane gm;
 	private  ObjectProperty<Color> sceneColorProperty = 
 		        new SimpleObjectProperty<>(Color.BLUE);
@@ -79,7 +84,7 @@ public class WaitingScene extends Scene {
 	private ObjectProperty<Font> serverInfoHeaderFontSize = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> serverInfoCOntentFontSize = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> addHumanButtonTextFontSIze = new SimpleObjectProperty<Font>(Font.getDefault());
-	private ObjectProperty<Font> addAiCOmboTextFontSIze = new SimpleObjectProperty<Font>(Font.getDefault());
+	private ObjectProperty<Font> serverInfoDescription = new SimpleObjectProperty<Font>(Font.getDefault());
 	
 
 	public WaitingScene(HomeSceneController hsc, double width, double height) {
@@ -88,15 +93,39 @@ public class WaitingScene extends Scene {
 		manageFontSizes();
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
 		this.root = (StackPane) this.getRoot();
-		createLayout2();
-		 this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
+		this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
+		createLayout();
 	       
 	}
 	
 	
-	public void createLayout() {
+	private void createLayout() {
+		root.getStyleClass().add("join-root");
 		VBox mainBox = createMainBox(root);
+		root.getChildren().add(mainBox);
+		mainBox.getChildren().add(createHeader());
+		HBox middle = createMiddleHBox();
+		VBox leftTop = createLeftVBox(middle);
+		VBox rightTop = createRightVBox(middle);
+		middle.getChildren().addAll(leftTop,rightTop);
+		mainBox.getChildren().add(middle);
+		
 	}
+	
+	private void manageFontSizes() {
+		 widthProperty().addListener(new ChangeListener<Number>()
+		    {
+		        public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth, Number newWidth)
+		        {
+		            waitigFontSize.set(Font.font(newWidth.doubleValue() / 60));
+		            serverInfoHeaderFontSize.set(Font.font(newWidth.doubleValue()/ 100));
+		            serverInfoCOntentFontSize.set(Font.font(newWidth.doubleValue()/ 65));
+		            addHumanButtonTextFontSIze.set(Font.font(newWidth.doubleValue()/ 70));
+		            serverInfoDescription.set(Font.font(newWidth.doubleValue()/ 50));
+		        }
+		    });
+	}
+	
 	
 	private VBox createMainBox(StackPane parent) {
 		VBox mainBox = new VBox();
@@ -110,6 +139,120 @@ public class WaitingScene extends Scene {
 		});
 		return mainBox;
 	}
+	
+	private ImageView createHeader() {
+		Image mp = new Image(getClass().getResourceAsStream("multiplayerlogo.png"));
+		ImageView mpv = new ImageView(mp);
+		mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.5));
+		mpv.setPreserveRatio(true);
+		return mpv;
+	}
+	
+	private HBox createMiddleHBox() {
+		HBox sep = new HBox();
+		sep.setStyle("-fx-background-color: red");
+		sep.prefHeightProperty().bind(this.heightProperty());
+		sep.setAlignment(Pos.CENTER);
+		sep.setSpacing(50);
+		sep.widthProperty().addListener((observable, oldValue, newValue) -> {
+			double newSpacing = newValue.doubleValue() * 0.05;
+			sep.setSpacing(newSpacing);
+		});
+		return sep;
+	}
+	
+	private VBox createLeftVBox(HBox parent) {
+		
+		VBox leftBox = new VBox();
+		leftBox.prefHeightProperty().bind(parent.heightProperty());
+		leftBox.setStyle("-fx-background-color: green");
+		leftBox.setAlignment(Pos.TOP_CENTER);
+		leftBox.prefWidthProperty().bind(parent.widthProperty().multiply(0.55));
+		leftBox.prefHeightProperty().bind(parent.heightProperty().multiply(0.68));
+		return leftBox;
+	}
+	
+	private VBox createRightVBox(HBox parent) {
+		VBox rightBox = new VBox();
+		rightBox.prefHeightProperty().bind(parent.heightProperty());
+		rightBox.setStyle("-fx-background-color: yellow");
+		rightBox.setAlignment(Pos.TOP_CENTER);
+		rightBox.widthProperty().addListener((observable, oldValue, newValue) -> {
+			double newPadding = newValue.doubleValue() * 0.04;
+			double newSpacing = newValue.doubleValue() * 0.03;
+			rightBox.setPadding(new Insets(newPadding));
+			rightBox.setSpacing(newSpacing);
+		});
+		rightBox.prefWidthProperty().bind(parent.widthProperty().multiply(0.35));
+		rightBox.prefHeightProperty().bind(parent.heightProperty().multiply(0.68));
+		rightBox.getChildren().add(createServerDescription(rightBox,"Server Information"));
+		rightBox.getChildren().add(createSeverInfoBox(rightBox));
+		return rightBox;
+	}
+	
+	private VBox createSeverInfoBox(VBox parent) {
+		VBox serverInfoBox = new VBox();
+		serverInfoBox.prefWidthProperty().bind(parent.widthProperty());
+		serverInfoBox.setStyle("-fx-background-color: yellow");
+		serverInfoBox.setAlignment(Pos.CENTER);
+		serverInfoBox.widthProperty().addListener((observable, oldValue, newValue) -> {
+			double newSpacing = newValue.doubleValue() * 0.05;
+			serverInfoBox.setSpacing(newSpacing);
+		});
+		serverInfoBox.getChildren().add(createInfoLabel(serverInfoBox, "Session-ID", hsc.getSessionID(), 0.8));
+		
+		HBox dividelowerPart = new HBox();
+		dividelowerPart.widthProperty().addListener((observable, oldValue, newValue) -> {
+			double newSpacing = newValue.doubleValue() * 0.05;
+			dividelowerPart.setSpacing(newSpacing);
+		});
+		dividelowerPart.getChildren().add(createInfoLabel(parent, "port", hsc.getPort(), 0.35));
+		dividelowerPart.getChildren().add(createInfoLabel(parent, "Server-IP", hsc.getServerID(), 0.55));
+		serverInfoBox.getChildren().add(dividelowerPart);
+		return serverInfoBox;
+	}
+	
+	
+	private void createShowClipBoardInfoStackPane() {
+		
+	}
+	
+	private void copyTextToClipBoard() {
+		Clipboard clipboard = Clipboard.getSystemClipboard();
+		ClipboardContent content = new ClipboardContent();
+		content.putString(hsc.getSessionID());
+		clipboard.setContent(content);
+	}
+	
+	private Label createServerDescription(VBox parent, String text) {
+		Label l = new Label(text);
+		l.getStyleClass().add("aiConfig-label");
+		l.setAlignment(Pos.CENTER);
+		l.fontProperty().bind(serverInfoDescription);
+		l.prefWidthProperty().bind(parent.widthProperty().multiply(0.7));
+		return l;
+	}
+	
+	private VBox createInfoLabel(VBox parent, String header, String content, double relWidth) {
+		VBox labelBox = new VBox();
+		labelBox.prefWidthProperty().bind(parent.widthProperty().multiply(relWidth));
+		labelBox.getStyleClass().add("info-vbox");
+		Label headerLabel = new Label(header);
+		headerLabel.fontProperty().bind(serverInfoHeaderFontSize);
+		headerLabel.getStyleClass().add("des-label");
+		Label numberLabel = new Label(content);
+		numberLabel.getStyleClass().add("number-label");
+		numberLabel.fontProperty().bind(serverInfoCOntentFontSize);
+		labelBox.getChildren().addAll(headerLabel,numberLabel);
+		return labelBox;
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	public void showTeamInformation() {
 		howManyTeams = new Label();
@@ -220,9 +363,9 @@ public class WaitingScene extends Scene {
 		});
 		VBox labels = new VBox();
 		labels.setSpacing(30);
-		labels.getChildren().add(createInfoLabel("port" , hsc.getPort()));
-		labels.getChildren().add(createInfoLabel("Server-ID" , hsc.getServerID()));
-		labels.getChildren().add(createInfoLabel("Session-ID", hsc.getSessionID()));
+		//labels.getChildren().add(createInfoLabel("port" , hsc.getPort()));
+		//labels.getChildren().add(createInfoLabel("Server-ID" , hsc.getServerID()));
+		//labels.getChildren().add(createInfoLabel("Session-ID", hsc.getSessionID()));
 		left.getChildren().add(labels);
 //		Image mp = new Image(getClass().getResourceAsStream("ct2.png"));
 //		ImageView mpv = new ImageView(mp);
@@ -279,42 +422,12 @@ public class WaitingScene extends Scene {
 		
 	}
 	
-	private void manageFontSizes() {
-		 widthProperty().addListener(new ChangeListener<Number>()
-		    {
-		        public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth, Number newWidth)
-		        {
-		            waitigFontSize.set(Font.font(newWidth.doubleValue() / 60));
-		            serverInfoHeaderFontSize.set(Font.font(newWidth.doubleValue()/ 100));
-		            serverInfoCOntentFontSize.set(Font.font(newWidth.doubleValue()/ 65));
-		            addHumanButtonTextFontSIze.set(Font.font(newWidth.doubleValue()/ 70));
-		            addAiCOmboTextFontSIze.set(Font.font(newWidth.doubleValue()/ 60));
-		        }
-		    });
-	}
 	
 	
-	private VBox createInfoLabel(String header, String content) {
-		VBox labelBox = new VBox();
-		labelBox.getStyleClass().add("info-vbox");
-		Label headerLabel = new Label(header);
-		headerLabel.fontProperty().bind(serverInfoHeaderFontSize);
-		headerLabel.getStyleClass().add("des-label");
-		Label numberLabel = new Label(content);
-		numberLabel.getStyleClass().add("number-label");
-		numberLabel.fontProperty().bind(serverInfoCOntentFontSize);
-		labelBox.getChildren().addAll(headerLabel,numberLabel);
-		return labelBox;
-	}
 	
 	
-	private ImageView createHeader() {
-		Image mp = new Image(getClass().getResourceAsStream("multiplayerlogo.png"));
-		ImageView mpv = new ImageView(mp);
-		mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.5));
-		mpv.setPreserveRatio(true);
-		return mpv;
-	}
+	
+	
 	
 	private Button createLeave() {
 		Button exit = new Button("Leave");

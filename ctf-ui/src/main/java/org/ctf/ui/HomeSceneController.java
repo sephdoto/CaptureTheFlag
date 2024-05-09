@@ -5,6 +5,8 @@ package org.ctf.ui;
 This Class controls what happens when clicking the buttons on the HomeScreen
  */
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 
 import org.ctf.shared.client.Client;
 import org.ctf.shared.client.ClientStepBuilder;
@@ -127,6 +129,14 @@ public class HomeSceneController {
 	}
 
 	public String getServerID() {
+		if (serverID.equals("localhost")) {
+			try {
+				return Inet4Address.getLocalHost().getHostAddress();
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		return serverID;
 	}
 

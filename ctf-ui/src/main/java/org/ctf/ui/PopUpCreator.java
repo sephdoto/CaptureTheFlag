@@ -38,6 +38,7 @@ public class PopUpCreator {
 	private AIConfig defaultConfig;
 	PopUpPane saveConfig;
 	private HomeSceneController hsc;
+	private String defaultAiName;
 	TextField enterConfigNamefield;
 	private HashMap<AIConfigs, Integer> multipliers = new HashMap<AIConfigs, Integer>();
 	private SpinnerValueFactory<Integer> values;
@@ -186,6 +187,7 @@ public class PopUpCreator {
 			// hsc.switchToWaitGameScene(App.getStage());
 			root.getChildren().remove(aiorHumanpopup);
 			root.getChildren().add(createConfigPane(1, 1));
+			defaultAiName = aiName.toString();
 		});
 		return power;
 	}
@@ -301,7 +303,9 @@ public class PopUpCreator {
 	 *         Screen, which will contain the two vboxes
 	 */
 	private HBox createMiddleHBox() {
+		
 		HBox sep = new HBox();
+		sep.prefHeightProperty().bind(aiconfig.heightProperty().multiply(0.65));
 		sep.setAlignment(Pos.CENTER);
 		sep.setSpacing(50);
 		sep.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -439,7 +443,7 @@ public class PopUpCreator {
 		lowerPart.setAlignment(Pos.CENTER);
 		lowerPart.prefHeightProperty().bind(divideRow.heightProperty().divide(2));
 		if (isDouble) {
-			Spinner<Double> spinner = createConfigSpinnerDouble(0, Double.MAX_VALUE, current, lowerPart);
+			Spinner<Double> spinner = createConfigSpinnerDouble(0, Double.MAX_VALUE, 100.0, lowerPart);
 			createDoubleSpinnerListener(spinner, text);
 			lowerPart.getChildren().add(spinner);
 		} else {
@@ -676,6 +680,8 @@ public class PopUpCreator {
 	private void performPlay(Button b) {
 		b.setOnAction(e -> {
 			// ADD COnfig Starting Here
+			hsc.setTeamName(defaultAiName);
+			hsc.createHumanClient();
 			hsc.switchToWaitGameScene(App.getStage());
 		});
 	}
@@ -756,6 +762,8 @@ public class PopUpCreator {
 		b.setOnAction(e -> {
 			//ADD CONFIG START HERE
 			defaultConfig.saveConfigAs(enterConfigNamefield.getText());
+			hsc.setTeamName(defaultAiName + "["  +  enterConfigNamefield.getText() + "]" );
+			hsc.createHumanClient();
 			hsc.switchToWaitGameScene(App.getStage());
 		});
 	}

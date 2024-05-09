@@ -6,14 +6,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
-import org.ctf.shared.client.service.CommLayer;
-import org.ctf.shared.constants.Constants;
-import org.ctf.shared.constants.Descriptions;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
-import org.ctf.shared.state.data.map.Movement;
 import org.ctf.shared.tools.JsonTools;
 import org.ctf.ui.customobjects.PopUpPane;
 
@@ -34,7 +29,6 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -42,7 +36,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.PopupWindow.AnchorLocation;
 import javafx.util.Duration;
 
 public class CretaeGameScreenV2 extends Scene {
@@ -229,11 +222,9 @@ public class CretaeGameScreenV2 extends Scene {
 		left = createOptionPane();
 		selected = StroeMaps.getRandomMapName();
 		right = createShowMapPane(selected);
-
 		sep.getChildren().add(left);
 		sep.getChildren().add(right);
 		mainBox.getChildren().add(sep);
-		// mainBox.getChildren().add(createSettings());
 		mainBox.getChildren().add(createLeave());
 		this.widthProperty().addListener((observable, oldValue, newValue) -> {
 			double newSpacing = newValue.doubleValue() * 0.05;
@@ -268,13 +259,6 @@ public class CretaeGameScreenV2 extends Scene {
 		return exit;
 	}
 
-//	private ImageView createSettings() {
-//		Image mp = new Image(getClass().getResourceAsStream("Settings_(iOS).png"));
-//		ImageView mpv = new ImageView(mp);
-//		mpv.fitWidthProperty().bind(this.widthProperty().multiply(0.05));
-//		mpv.setPreserveRatio(true);
-//		return mpv;
-//	}
 
 	private ImageView createHeader() {
 		Image mp = new Image(getClass().getResourceAsStream("multiplayerlogo.png"));
