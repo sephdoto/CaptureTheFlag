@@ -15,7 +15,7 @@ import org.ctf.shared.state.data.map.PieceDescription;
 import org.ctf.shared.state.data.map.PlacementType;
 import org.ctf.shared.tools.JsonTools;
 import org.ctf.shared.tools.JsonTools.IncompleteMapTemplateException;
-
+import org.ctf.ui.controllers.MapPreviewThread;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
@@ -172,7 +172,12 @@ public class TemplateEngine {
       editorscene.setSpinnerChange(true);
       spinner.getValueFactory().setValue(old);
       editorscene.inform("There is not enough space!");
+      return isvalid;
     }
+    editorscene.setValidTemplate(true);
+    MapPreviewThread thread = new MapPreviewThread(editorscene);
+    thread.start();
+    
     return isvalid;
   }
 
@@ -263,6 +268,9 @@ public class TemplateEngine {
 
       editorscene.inform(("There is not enough space for that many figures!"));
     }
+    editorscene.setValidTemplate(true);
+    MapPreviewThread thread = new MapPreviewThread(editorscene);
+    thread.start();
     return true;
   }
 
@@ -481,5 +489,8 @@ public class TemplateEngine {
    */
   public Movement getTmpMovement() {
     return this.tmpMovement;
+  }
+  public MapTemplate getTmpTemplate() {
+    return this.tmpTemplate;
   }
 }

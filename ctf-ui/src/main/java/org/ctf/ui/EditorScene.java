@@ -1,6 +1,7 @@
 package org.ctf.ui;
 
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,14 +20,18 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import org.ctf.shared.state.data.exceptions.Accepted;
+import org.ctf.shared.state.data.exceptions.UnknownError;
 import org.ctf.ui.controllers.MapPreview;
+import org.ctf.ui.controllers.MapPreviewThread;
 import org.ctf.ui.customobjects.MovementVisual;
 
 /**
@@ -52,6 +57,9 @@ public class EditorScene extends Scene {
   MediaPlayer mediaPlayer;
   VBox directionsContainer;
   MovementVisual movementVisual;
+  boolean validtemplate = true;
+  Text invalid;
+  
 
   /**
    * Starts the initialization process of the scene, generates different menu panes and connects it
@@ -74,6 +82,9 @@ public class EditorScene extends Scene {
     options[2] = createFigureCustomizer();
     options[3] = createSoundCustomizer();
     createLayout();
+    createInvalidText();
+//    TextGeneratorThread textGeneratorThread = new TextGeneratorThread();
+//    textGeneratorThread.start();
 
   }
 
@@ -454,7 +465,11 @@ public class EditorScene extends Scene {
     Button submit = createControlButton("Submit");
     submit.setOnAction(e -> {
       engine.printTemplate();
-      // root.getChildren().add(new PopUpPane(this, 0.4, 0.4));
+      System.out.println(this.validtemplate);
+      if(!this.validtemplate) {
+       this.inform("You can not save invalid templates!");
+        return;
+      }
       root.getChildren().add(new ComponentCreator(this).createSubmitWindow());
     });
     return submit;
@@ -536,7 +551,6 @@ public class EditorScene extends Scene {
   public void addMapItem(String mapName) {
     MenuItem item = new MenuItem(mapName);
     item.setOnAction(e -> {
-     System.out.println("test");
       engine.loadTemplate(mapName);
       engine.initializePieces();
       options[0] = createMapChooser();
@@ -545,6 +559,7 @@ public class EditorScene extends Scene {
       leftPane.getChildren().add(options[0]);
       mb.setText("Edit Map");
       updateVisualRoot();
+      this.validtemplate = true;
       inform(mapName + "was loaded.");
     });
     mapMenuButton.getItems().add(item);
@@ -574,11 +589,11 @@ public class EditorScene extends Scene {
    * @param divider - int value that determines the resize ratio
    * @return
    */
-  private Text createText(VBox vBox, String label, int divider) {
+  private Text createText(Pane pane, String label, int divider) {
     Text text = new Text(label);
     text.getStyleClass().add("custom-info-label");
     text.fontProperty().bind(Bindings.createObjectBinding(
-        () -> Font.font("Century Gothic", vBox.getWidth() / divider), vBox.widthProperty()));
+        () -> Font.font("Century Gothic", pane.getWidth() / divider), pane.widthProperty()));
     return text;
   }
 
@@ -714,9 +729,7 @@ public class EditorScene extends Scene {
     chooseBar.getChildren().add(createFigureBox());
     Spinner<Integer> customSpinner = createMapSpinner(0, 100, 0);
     chooseBar.getChildren().add(customSpinner);
-    System.out.println("i:"+customFigureBox.getValue());
     customFigureBox.setValue("Choose Custom Piece");
-    System.out.println("i:"+customFigureBox.getValue());
     customFigureBox.setOnAction(e -> {
       if(customFigureBox.getValue().equals("Choose Custom Piece")) {
         System.out.println();
@@ -818,9 +831,9 @@ public class EditorScene extends Scene {
         return;
       }
       if (engine.handleSpinnerEvent(event, spinner, old, newValue)) {
-        spinner.setDisable(true);
-        updateVisualRoot();
-        spinner.setDisable(false);
+//        spinner.setDisable(true);
+//        updateVisualRoot();
+//        spinner.setDisable(false);
       } ;
     });
   }
@@ -840,14 +853,18 @@ public class EditorScene extends Scene {
    * @author rsyed: Bug fixes
    */
   private void updateVisualRoot() {
-    MapPreview mp = new MapPreview(engine.tmpTemplate);
-    visualRoot.getChildren().clear();
-    try {
-      visualRoot.getChildren().add(new GamePane(mp.getGameState()));
-    } catch (Accepted e) {
-      e.getMessage();
-    }
-
+//    MapPreview mp = new MapPreview(engine.tmpTemplate);
+//    visualRoot.getChildren().clear();
+//    try {
+//      visualRoot.getChildren().add(new GamePane(mp.getGameState()));
+//    } catch (Accepted e) {
+//      e.getMessage();
+//    }
+//  TextGeneratorThread textGeneratorThread = new TextGeneratorThread();
+//  textGeneratorThread.start();
+  MapPreviewThread mt = new MapPreviewThread(this);
+  mt.start();
+  
     // GridPane stack = new GridPane();
     // Button but = new Button("hi");
     // StackPane.setAlignment(but, Pos.CENTER);
@@ -881,4 +898,24 @@ public class EditorScene extends Scene {
   public StackPane getRootPane() {
     return this.root;
   }
+  
+  public StackPane getVisualRoot() {
+    return this.visualRoot;
+  }
+  public void setValidTemplate(boolean valid) {
+     this.validtemplate = valid;
+  }
+  
+  public Text getInvalidText() {
+    return this.invalid;
+  }
+  
+  private void createInvalidText() {
+    String info = "The Configurations result in  an invalid map template bacuse the current"
+        + " seed does not provide enough space for one team. Please Change a Paraeter.";
+    this.invalid = createText(visualRoot, info, 18);
+    this.invalid.wrappingWidthProperty().bind(visualRoot.widthProperty().multiply(0.8));
+    StackPane.setAlignment(invalid, Pos.CENTER);   
+  }
+  
 }
