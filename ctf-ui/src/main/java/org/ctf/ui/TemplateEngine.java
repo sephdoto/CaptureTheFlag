@@ -26,6 +26,7 @@ import javafx.scene.control.TextField;
  * @author aniemesc
  */
 public class TemplateEngine {
+  ArrayList<String> names = new ArrayList<String>(Arrays.asList("Pawn", "Knight", "Queen", "Bishop", "Rook", "King")); 
   EditorScene editorscene;
   MapTemplate tmpTemplate;
   Movement tmpMovement = new Movement();
@@ -39,6 +40,7 @@ public class TemplateEngine {
    */
   public TemplateEngine(EditorScene editorscene) {
     this.editorscene = editorscene;
+    initializeCustomBox(this.editorscene.getCustomFigureBox());    
     loadTemplate("10x10_2teams_example_moveTimeLimited");
     tmpMovement.setDirections(new Directions());
     initializePieces();
@@ -311,6 +313,27 @@ public class TemplateEngine {
       }
     }
   }
+  
+  public void initializeCustomBox(ComboBox<String> customBox) {
+//    String[] names = {"Pawn", "Knight", "Queen", "Bishop", "Rook", "King"};
+//    ArrayList<String> defaultPieces = new ArrayList<String>(Arrays.asList(names));
+    for(String name : TemplateEngine.getTemplateNames()) {
+      this.loadTemplate(name);
+//      System.out.println(name);
+//      initializePieces();
+      for(PieceDescription p : tmpTemplate.getPieces()) {
+        if(!names.contains(p.getType())) {
+          pieces.put(p.getType(), p);
+          names.add(p.getType());
+          customBox.getItems().add(p.getType());
+         
+        }
+      }
+      
+      }
+      
+    }
+  
 
   /**
    * Generates a Directions object which is a copy of tmpMovement attribute.

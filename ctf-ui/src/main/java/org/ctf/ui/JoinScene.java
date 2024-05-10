@@ -151,7 +151,7 @@ public class JoinScene extends Scene {
     });
     String test =
         "MCTS ist ein unglaublich starker KI spiler der alles zerstört falls er nicht aufgehalten wird ";
-    InfoPaneCreator.addInfoPane(exit, hsc.getStage(), test, InfoPaneCreator.BOTTOM);
+    InfoPaneCreator.addInfoPane(exit, hsc.getStage(), test, InfoPaneCreator.TOP);
     return exit;
   }
 

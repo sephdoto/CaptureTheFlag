@@ -43,7 +43,7 @@ public class EditorScene extends Scene {
   StackPane visualRoot;
   SpinnerValueFactory<Integer> valueFactory;
   TemplateEngine engine;
-  ComboBox<String> customFigureBox;
+  ComboBox<String> customFigureBox =  new ComboBox<>(); 
   MenuButton mapMenuButton;
   MenuButton mb;
   Text infoText;
@@ -68,10 +68,11 @@ public class EditorScene extends Scene {
     this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
     this.root = (StackPane) this.getRoot();
     engine = new TemplateEngine(this);
-    options = new Parent[3];
+    options = new Parent[4];
     options[0] = createMapChooser();
     options[1] = createFigureChooser();
     options[2] = createFigureCustomizer();
+    options[3] = createSoundCustomizer();
     createLayout();
 
   }
@@ -84,16 +85,21 @@ public class EditorScene extends Scene {
    */
   private void createLayout() {
     root.getStyleClass().add("join-root");
-
     VBox mainBox = new VBox();
     root.getChildren().add(mainBox);
+    root.heightProperty().addListener((obs, oldVal, newVal) -> {
+      double spacing = newVal.doubleValue() * 0.03;
+      mainBox.setSpacing(spacing);
+    });
     mainBox.getChildren().add(createHeader());
     mainBox.setAlignment(Pos.TOP_CENTER);
-    mainBox.setSpacing(50);
     HBox sep = new HBox();
     sep.setAlignment(Pos.CENTER);
-    sep.setSpacing(50);
-    sep.setPadding(new Insets(50));
+    
+    root.heightProperty().addListener((obs, oldVal, newVal) -> {
+      double spacing = newVal.doubleValue() * 0.07;
+      sep.setSpacing(spacing);
+    });
     VBox leftControl = new VBox();
     leftControl.setAlignment(Pos.CENTER);
     leftControl.setSpacing(10);
@@ -308,7 +314,6 @@ public class EditorScene extends Scene {
    */
   private VBox createFigureCustomizer() {
     VBox customRoot = new VBox();
-    customRoot.setSpacing(10);
     customRoot.widthProperty().addListener((obs, oldVal, newVal) -> {
       double spacing = newVal.doubleValue() * 0.05;
       customRoot.setSpacing(spacing);
@@ -350,6 +355,19 @@ public class EditorScene extends Scene {
 
     return customRoot;
   }
+  
+  private VBox createSoundCustomizer() {
+    VBox customRoot = new VBox();
+    customRoot.widthProperty().addListener((obs, oldVal, newVal) -> {
+      double spacing = newVal.doubleValue() * 0.05;
+      customRoot.setSpacing(spacing);
+    });
+    customRoot.setPadding(new Insets(20));
+    customRoot.setAlignment(Pos.TOP_CENTER);
+    customRoot.getChildren().add(createHeaderText(customRoot, "Configure Sounds", 15));
+    return customRoot;
+  }
+  
 /**
  * Creates the Container for displaying the different option tabs on 
  * the left side of the scene.
@@ -374,12 +392,25 @@ public class EditorScene extends Scene {
    */
   private HBox createControlBar() {
     HBox controlBar = new HBox();
+    //controlBar.setStyle( "-fx-background-color: red;");
+    controlBar.setAlignment(Pos.CENTER_LEFT);
     controlBar.setSpacing(10);
-    controlBar.getChildren().add(createMenuButton());
+    
+    
+    VBox menuButtonBox = new VBox();
+    menuButtonBox.setSpacing(10);
     createMapMenuButton();
-    controlBar.getChildren().add(mapMenuButton);
-    controlBar.getChildren().add(createExit());
-    controlBar.getChildren().add(createSubmit());
+    menuButtonBox.getChildren().add(mapMenuButton);
+    menuButtonBox.getChildren().add(createMenuButton());
+    controlBar.getChildren().add(menuButtonBox);
+    
+    HBox actionButtonBox = new HBox();
+    actionButtonBox.setAlignment(Pos.CENTER);
+    actionButtonBox.setSpacing(10);
+    actionButtonBox.getChildren().add(createSubmit());
+    actionButtonBox.getChildren().add(createExit());
+    controlBar.getChildren().add(actionButtonBox);
+    
     return controlBar;
   }
 
@@ -438,8 +469,8 @@ public class EditorScene extends Scene {
   private MenuButton createMenuButton() {
     mb = new MenuButton("Edit Map");
     mb.getStyleClass().add("custom-menu-button");
-    mb.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
-    mb.prefHeightProperty().bind(mb.widthProperty().multiply(0.25));
+    mb.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
+    mb.prefHeightProperty().bind(mb.widthProperty().multiply(0.2));
     // mb.prefHeightProperty().addListener((obs, oldv, newV) -> {
     // System.out.println("hey");
     // double size = newV.doubleValue() * 0.5;
@@ -448,7 +479,8 @@ public class EditorScene extends Scene {
     MenuItem mapMenuItem = new MenuItem("Edit Map");
     MenuItem figureMenuItem = new MenuItem("Add Pieces");
     MenuItem configMenuItem = new MenuItem("Custom Pieces");
-    mb.getItems().addAll(mapMenuItem, figureMenuItem, configMenuItem);
+    MenuItem soundMenuItem = new MenuItem("Sounds");
+    mb.getItems().addAll(mapMenuItem, figureMenuItem, configMenuItem,soundMenuItem);
     mapMenuItem.setOnAction(event -> {
       leftPane.getChildren().clear();
       leftPane.getChildren().add(options[0]);
@@ -468,6 +500,13 @@ public class EditorScene extends Scene {
       visualRoot.getChildren().clear();
       visualRoot.getChildren().add(directionsContainer);
     });
+    soundMenuItem.setOnAction(event -> {
+      leftPane.getChildren().clear();
+      leftPane.getChildren().add(options[3]);
+      mb.setText("Sounds");
+      visualRoot.getChildren().clear();
+      visualRoot.getChildren().add(new Text("Drag in a Sound File!"));
+    });
     return mb;
   }
 
@@ -477,15 +516,15 @@ public class EditorScene extends Scene {
    * @author aniemesc
    * @return MenuButton for loading map templates
    */
-  private MenuButton createMapMenuButton() {
+  private void createMapMenuButton() {
     mapMenuButton = new MenuButton("Load Map");
     mapMenuButton.getStyleClass().add("custom-menu-button");
-    mapMenuButton.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
-    mapMenuButton.prefHeightProperty().bind(mb.widthProperty().multiply(0.25));
+    mapMenuButton.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
+    mapMenuButton.prefHeightProperty().bind(mapMenuButton.widthProperty().multiply(0.2));
     for (String mapName : engine.getTemplateNames()) {
       addMapItem(mapName);
     }
-    return mb;
+    
   }
 
   /**
@@ -497,6 +536,7 @@ public class EditorScene extends Scene {
   public void addMapItem(String mapName) {
     MenuItem item = new MenuItem(mapName);
     item.setOnAction(e -> {
+     System.out.println("test");
       engine.loadTemplate(mapName);
       engine.initializePieces();
       options[0] = createMapChooser();
@@ -597,14 +637,12 @@ public class EditorScene extends Scene {
   }
 
   /**
-   * Creates and styles the ComboBox responsible for choosing saved 
+   * Styles the ComboBox responsible for choosing saved 
    * custom pieces in the "Add Pieces" option tab.
    * @author aniemesc
    * @return ComboBox for choosing saved pieces
    */
   private ComboBox<String> createFigureBox() {
-    customFigureBox = new ComboBox<>();
-    engine.fillCustomBox(customFigureBox);
     customFigureBox.getStyleClass().add("custom-combo-box-2");
     customFigureBox.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
     customFigureBox.prefHeightProperty().bind(customFigureBox.widthProperty().multiply(0.18));
@@ -676,8 +714,14 @@ public class EditorScene extends Scene {
     chooseBar.getChildren().add(createFigureBox());
     Spinner<Integer> customSpinner = createMapSpinner(0, 100, 0);
     chooseBar.getChildren().add(customSpinner);
+    System.out.println("i:"+customFigureBox.getValue());
     customFigureBox.setValue("Choose Custom Piece");
+    System.out.println("i:"+customFigureBox.getValue());
     customFigureBox.setOnAction(e -> {
+      if(customFigureBox.getValue().equals("Choose Custom Piece")) {
+        System.out.println();
+        return;
+      }
       boxchange = true;
       int customcount = engine.getPieceCount(customFigureBox.getValue());
       if (customSpinner.getValue() == customcount) {
