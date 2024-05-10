@@ -1,6 +1,5 @@
 package org.ctf.shared.client.service;
 
-
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.exceptions.ForbiddenMove;
@@ -15,6 +14,11 @@ import org.ctf.shared.state.dto.GameSessionResponse;
 import org.ctf.shared.state.dto.JoinGameResponse;
 import org.ctf.shared.state.dto.MoveRequest;
 
+/**
+ * Defines the basic contract any CommLayer Object has to implement.
+ *
+ * @author rsyed
+ */
 public interface CommLayerInterface {
 
   /**
