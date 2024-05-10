@@ -768,6 +768,10 @@ public class Client implements GameClientInterface {
   public ServerDetails getServerDetails() {
     return this.serverInfo;
   }
+
+  public boolean isGameStarted(){
+    return this.gameStarted;
+  }
   // **************************************************
   // End of Getter Block
   // **************************************************
