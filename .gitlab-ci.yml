@@ -1,5 +1,6 @@
 stages:
   - build
+  - test
 
 variables:
   # This will suppress any download for dependencies and plugins or upload messages which would clutter the console log.
@@ -39,3 +40,56 @@ java-build:
   #  name: "Maven artifacts from $CI_PROJECT_NAME on $CI_COMMIT_REF_SLUG"
   #  paths:
   #    - "**/target"
+include:
+  - local: cfp-service-main/.gitlab-ci.yml
+#  - local: ctf-ui/.gitlab-ci.yml
+#  - local: shared/.gitlab-ci.yml
+
+
+.test-module:
+  stage: test
+  script:
+   - echo "Testing $MODULE"
+   - mvn $MAVEN_CLI_OPTS -pl $MODULE test --also-make
+
+.build-module:
+  stage: build
+  script:
+  - echo "Building $MODULE"
+  - mvn -pl $MODULE clean compile --also-make
+  artifacts:
+    expire_in: 10 min
+    paths:
+    - "*/target"
+
+# BUILD JOBS
+build-server-module:
+  extends:
+  - .cfp-module
+  - .build-module
+
+build-ui-module:
+  extends:
+  - .ui-module
+  - .build-module
+
+build-shared-module:
+  extends:
+  - .shared-module
+  - .build-module
+
+# TEST JOBS
+test-server-module:
+  extends:
+  - .cfp-module
+  - .build-module
+
+test-ui-module:
+  extends:
+    - .ui-module
+    - .test-module
+
+test-shared-module:
+  extends:
+   - .shared-module
+   - .test-module
