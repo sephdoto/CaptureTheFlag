@@ -1,4 +1,4 @@
-package org.ctf.shared.client.lib;
+package de.unimannheim.swt.pse.ctf.game;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -9,6 +9,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
 import java.io.IOException;
+
+import org.ctf.shared.client.lib.ServerDetails;
+import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.junit.jupiter.api.BeforeAll;

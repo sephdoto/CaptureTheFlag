@@ -27,8 +27,8 @@ import java.io.File;
  * @author sistumpf
  */
 public class JsonTools {
-  public static String mapTemplates = Constants.mapTemplateFolder + "templates" + File.separator;
-  static String gameStates = Constants.mapTemplateFolder + "gamestates" + File.separator;
+  public static String mapTemplates = Constants.aboveMapTemplateFolder + "templates" + File.separator;
+  static String gameStates = Constants.aboveMapTemplateFolder + "gamestates" + File.separator;
   
   /**
    * Returns a MapTemplate from a given File. 

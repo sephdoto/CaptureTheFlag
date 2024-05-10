@@ -1,10 +1,12 @@
-package org.ctf.shared.client;
+package de.unimannheim.swt.pse.ctf.game;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
 import java.io.IOException;
 
 import org.ctf.shared.ai.AIConfig;
+import org.ctf.shared.client.AIClient;
+import org.ctf.shared.client.AIClientStepBuilder;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;

@@ -24,29 +24,22 @@ public class Constants {
   //                      Strings                      //
   ///////////////////////////////////////////////////////
 
-  // to shared.resources folder
+  // to resources folder
   private static final String CFP14 = "cfp14";
-  public static final String sharedResourcesFolder =
+  public static final String toUIResources =
       jar
           + Paths.get("").toAbsolutePath().toString().split(CFP14)[0]
           + CFP14
           + File.separator
-          + "shared"
+          + "ctf-ui"
           + File.separator
           + "src"
           + File.separator
           + "main"
           + File.separator
-          + "java"
-          + File.separator
-          + "org"
-          + File.separator
-          + "ctf"
-          + File.separator
-          + "shared"
-          + File.separator
           + "resources"
           + File.separator;
+  public static final String sharedResourcesFolder = toUIResources + "game" + File.separator;
 
   // to AI config folder
   public static final String aiConfigFolder = sharedResourcesFolder + "ai_configs" + File.separator;
@@ -54,8 +47,8 @@ public class Constants {
   // Default folder for saving games for AI Analysis
   public static final String saveGameFolder = sharedResourcesFolder + "savegames" + File.separator;
   // package map, class JsonTools
-  public static final String mapTemplateFolder = sharedResourcesFolder + "maptemplates" + File.separator;
-
+  public static final String aboveMapTemplateFolder = sharedResourcesFolder + "maptemplates" + File.separator;
+  public static final String mapTemplateFolder = aboveMapTemplateFolder + "templates" + File.separator;
   /**
    * Constants needed for file paths
    *
@@ -68,15 +61,6 @@ public class Constants {
       mapTemplateFolder + "10x10_2teams_example_timeLimited.json";
   public static final String clientMoveTimeLimitedTemplate =
       mapTemplateFolder + "10x10_2teams_example_moveTimeLimited.json";
-  public static final String toUIResources =
-      jar
-          + Paths.get("").toAbsolutePath().toString().split(CFP14)[0]
-          + CFP14
-          + File.separator
-          + "ctf-ui"
-          + File.separator
-          + "resources"
-          + File.separator;
   public static final String soundFileTypes = ".wav";
 
   // Folder for music

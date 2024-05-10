@@ -1,4 +1,4 @@
-package org.ctf.shared.client.lib;
+package de.unimannheim.swt.pse.ctf.game;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,6 +17,10 @@ import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.client.ClientStepBuilder;
+import org.ctf.shared.client.lib.Analyzer;
+import org.ctf.shared.client.lib.SavedGame;
+import org.ctf.shared.client.lib.ServerDetails;
+import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.RestClientLayer;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.AI;

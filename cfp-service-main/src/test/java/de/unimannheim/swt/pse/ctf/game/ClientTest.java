@@ -1,4 +1,4 @@
-package org.ctf.shared.client;
+package de.unimannheim.swt.pse.ctf.game;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -13,6 +13,11 @@ import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.ai.AIController;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
+import org.ctf.shared.client.Client;
+import org.ctf.shared.client.ClientStepBuilder;
+import org.ctf.shared.client.Client;
+import org.ctf.shared.client.Client;
+import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
@@ -221,7 +226,7 @@ class ClientTest {
     } catch (Exception e) {
       System.out.println("Updated");
     }
-    assertNotNull(javaClient.startDate);
+    assertNotNull(javaClient.getStartDate());
   }
 
   @Test

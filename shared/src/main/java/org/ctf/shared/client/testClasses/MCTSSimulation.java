@@ -7,6 +7,9 @@ import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.Analyzer;
+import org.ctf.shared.client.lib.ServerDetails;
+import org.ctf.shared.client.lib.ServerManager;
+import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.map.MapTemplate;
@@ -123,7 +126,11 @@ public class MCTSSimulation {
             "moveTimeLimitInSeconds": -1
           }
         """;
-
+        Gson gson = new Gson();
+        MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
+        ServerManager manager = new ServerManager(new CommLayer(), new ServerDetails("localhost", "8888") , template);
+        manager.createGame();
+        System.out.println(manager.getGameSessionID());
    /*  Gson gson = new Gson();
     MapTemplate template = gson.fromJson(jsonPayload, MapTemplate.class);
     Client javaClient =

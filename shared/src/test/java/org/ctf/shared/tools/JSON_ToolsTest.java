@@ -133,7 +133,7 @@ class JSON_ToolsTest {
   @AfterAll
   void tearDownAfterClass() throws Exception {
 //    Constants.mapTemplateFolder = mapTemplateFolder;
-    JsonTools.gameStates = Constants.mapTemplateFolder + "gamestates" + File.separator;
-    JsonTools.mapTemplates = Constants.mapTemplateFolder + "templates" + File.separator;
+    JsonTools.gameStates = Constants.aboveMapTemplateFolder + "gamestates" + File.separator;
+    JsonTools.mapTemplates = Constants.aboveMapTemplateFolder + "templates" + File.separator;
   }
 }
