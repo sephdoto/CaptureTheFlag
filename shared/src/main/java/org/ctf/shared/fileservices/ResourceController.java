@@ -96,7 +96,7 @@ public class ResourceController {
     try {
       JarFile jFile = new JarFile(Constants.JARPARENTFOLDER + Constants.JARNAME);
       ResourceController rc = new ResourceController();
-      rc.copyDirectoryFromJar(jFile, new String[]{Constants.RESOURCEFOLDERNAME}, new File[]{new File(Constants.JARRESOURCES)});
+      rc.copyDirectoryFromJar(jFile, new String[]{"resources"}, new File[]{new File(Constants.JARRESOURCES)});
 
     } catch (IOException e) {
       e.printStackTrace();

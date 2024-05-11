@@ -14,7 +14,6 @@ public class EntryPoint {
   public static void main(String[] args) {
     if (Constants.ISJAR) 
       if (!new File(Constants.JARRESOURCES).isDirectory()) {
-        new File(Constants.JARRESOURCES).mkdir();
         ResourceController.main(args);
       }
     App.main(args);
