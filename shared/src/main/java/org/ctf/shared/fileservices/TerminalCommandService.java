@@ -22,7 +22,7 @@ public class TerminalCommandService {
     runCommandinShell(commandBase);
   }
 
-  private static void runCommandinShell(String command) {
+  public static void runCommandinShell(String command) {
     try {
       Process proc = Runtime.getRuntime().exec(command);
       proc.getInputStream().transferTo(System.out);
