@@ -11,9 +11,7 @@ import org.ctf.shared.constants.Constants;
 public class EntryPoint {
 
   public static void main(String[] args) {
-    if(Constants.ISJAR)
-      if(!new File(Constants.JARRESOURCES).isDirectory())
-        return;
+    if (Constants.ISJAR) if (!new File(Constants.JARRESOURCES).isDirectory()) return;
     App.main(args);
   }
 }

@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ResourceController",
+            "request": "launch",
+            "mainClass": "org.ctf.ui.controllers.ResourceController",
+            "projectName": "ctf-ui"
+        },
+        {
+            "type": "java",
             "name": "TerminalCommandService",
             "request": "launch",
             "mainClass": "org.ctf.shared.fileservices.TerminalCommandService",
