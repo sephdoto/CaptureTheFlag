@@ -98,4 +98,14 @@ public class Constants {
    */
   public static final int BUFFER_SIZE = 8 * 1024;
   public static final String JAR_PREFIX = "jar:file:";
+
+ /**
+   * Constants needed to point to the server JAR to start it
+   *
+   * @author rsyed
+   */
+  public static final String SERVERJARNAME =
+  "server.jar"; // executionLocationURL.substring(executionLocationURL.lastIndexOf("/") +1);
+  public static final String START_SERVER_JAR_COMMAND =
+  "java -jar "+ Constants.JARPARENTFOLDER + Constants.SERVERJARNAME + " --server.port=8888";
 }

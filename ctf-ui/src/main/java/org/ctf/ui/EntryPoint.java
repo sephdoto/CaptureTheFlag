@@ -17,9 +17,7 @@ public class EntryPoint {
   public static void main(String[] args) {
     ExecutorService executor = Executors.newSingleThreadExecutor();
     Runnable startServer =
-        () -> {
-          TerminalCommandService.runCommandinShell("java -jar F:\\server.jar --server.port=8888");
-        };
+        () -> TerminalCommandService.runCommandinShell(Constants.START_SERVER_JAR_COMMAND);
     if (Constants.ISJAR)
       if (!new File(Constants.JARRESOURCES).isDirectory()) {
         ResourceController.main(args);
