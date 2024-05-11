@@ -12,8 +12,9 @@ public class Constants {
   ///////////////////////////////////////////////////////
   //              important stuff for jar              //
   ///////////////////////////////////////////////////////
-  public static final boolean ISJAR = Constants.class.getProtectionDomain().getCodeSource().getLocation().getFile().endsWith(".jar");
-  public static final  String JARNAME = "app.jar";
+  private static final String executionLocationURL = Constants.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+  public static final boolean ISJAR = executionLocationURL.endsWith(".jar");
+  public static final  String JARNAME = executionLocationURL.substring(executionLocationURL.lastIndexOf("/") +1);
   public static final  String RESOURCES = "resources_ctf_team_14";
   public static final  String JARRESOURCES = 
       Paths.get("").toAbsolutePath().toString().split(JARNAME)[0]
