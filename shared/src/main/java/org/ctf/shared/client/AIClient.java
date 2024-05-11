@@ -29,7 +29,7 @@ public class AIClient extends Client {
   private volatile Analyzer analyzer;
   private String gameIDString;
   private String constructorSetTeamName;
-  private long aiClientRefreshTime = 1000L;
+  private int aiClientRefreshTime = 1;
   private int controllerThinkingTime = 3;
   private boolean saveToken = true;
   ScheduledExecutorService aiClientScheduler = Executors.newScheduledThreadPool(2);
