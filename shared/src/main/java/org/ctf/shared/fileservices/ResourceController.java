@@ -23,19 +23,21 @@ public class ResourceController {
    * @param path The path to the directory inside the JAR file. Starts like "folder1\\folder2"
    * @param target The target directory. Pass it a new File instance
    */
-  public void copyDirectoryFromJar(JarFile sauce, String path, File target) {
+  public void copyDirectoryFromJar(JarFile sauce, String[] path, File[] target) {
     try {
       Enumeration<JarEntry> jarEntries = sauce.entries();
-      String newpath = String.format("%s/", path);
-      while (jarEntries.hasMoreElements()) {
-        JarEntry entry = jarEntries.nextElement();
-        if (entry.getName().startsWith(newpath) && !entry.isDirectory()) {
-          File destination = new File(target, entry.getName().substring(newpath.length()));
-          File parent = destination.getParentFile();
-          if (parent != null) {
-            parent.mkdirs();
+      for(int i = 0;i<path.length;i++){
+        String newpath = String.format("%s/", path[i]);
+        while (jarEntries.hasMoreElements()) {
+          JarEntry entry = jarEntries.nextElement();
+          if (entry.getName().startsWith(newpath) && !entry.isDirectory()) {
+            File destination = new File(target[i], entry.getName().substring(newpath.length()));
+            File parent = destination.getParentFile();
+            if (parent != null) {
+              parent.mkdirs();
+            }
+            this.writeToFile(sauce.getInputStream(entry), destination);
           }
-          this.writeToFile(sauce.getInputStream(entry), destination);
         }
       }
     } catch (IOException e) {
@@ -75,9 +77,9 @@ public class ResourceController {
    * @param target The target file
    * @throws IOException If there is an read/write error. Caught and given out in the logger
    */
-  private void writeToFile(final InputStream input, final File target) {
-    try (final OutputStream output = Files.newOutputStream(target.toPath()); ) {
-      final byte[] buffer = new byte[Constants.BUFFER_SIZE];
+  private void writeToFile(InputStream input, File target) {
+    try (OutputStream output = Files.newOutputStream(target.toPath());) {
+      byte[] buffer = new byte[Constants.BUFFER_SIZE];
       int length = input.read(buffer);
       while (length > 0) {
         output.write(buffer, 0, length);
@@ -92,9 +94,9 @@ public class ResourceController {
   public static void main(String[] args) {
 
     try {
-      JarFile jFile = new JarFile("F:\\ctfui.jar");
+      JarFile jFile = new JarFile("F:\\app.jar");
       ResourceController rc = new ResourceController();
-      rc.copyDirectoryFromJar(jFile, "pictures", new File("F:\\copytester\\"));
+      rc.copyDirectoryFromJar(jFile, new String[]{"resources"}, new File[]{new File("F:\\copytester\\resources")});
 
     } catch (IOException e) {
       e.printStackTrace();

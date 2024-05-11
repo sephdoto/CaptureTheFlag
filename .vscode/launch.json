@@ -8,6 +8,13 @@
             "type": "java",
             "name": "ResourceController",
             "request": "launch",
+            "mainClass": "org.ctf.shared.fileservices.ResourceController",
+            "projectName": "shared"
+        },
+        {
+            "type": "java",
+            "name": "ResourceController",
+            "request": "launch",
             "mainClass": "org.ctf.ui.controllers.ResourceController",
             "projectName": "ctf-ui"
         },
