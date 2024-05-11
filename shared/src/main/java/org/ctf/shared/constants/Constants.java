@@ -14,14 +14,14 @@ public class Constants {
   ///////////////////////////////////////////////////////
   private static final String executionLocationURL = Constants.class.getProtectionDomain().getCodeSource().getLocation().getFile();
   public static final boolean ISJAR = executionLocationURL.endsWith(".jar");
-  public static final  String JARNAME = executionLocationURL.substring(executionLocationURL.lastIndexOf("/") +1);
-  public static final  String RESOURCES = "resources_ctf_team_14";
-  public static final  String JARRESOURCES = 
-      Paths.get("").toAbsolutePath().toString().split(JARNAME)[0]
-          + File.separator
-          + RESOURCES
-          + File.separator;
-  
+  public static final String JARNAME = executionLocationURL.substring(executionLocationURL.lastIndexOf("/") +1);
+  public static final String JARPARENTFOLDER = Paths.get("").toAbsolutePath().toString().split(JARNAME)[0] + File.separator;
+  public static final String RESOURCEFOLDERNAME = "resources_ctf_team_14";
+  public static final String JARRESOURCES = 
+      JARPARENTFOLDER
+      + RESOURCEFOLDERNAME
+      + File.separator;
+
   ///////////////////////////////////////////////////////
   //             User changeable things                //
   ///////////////////////////////////////////////////////
@@ -37,22 +37,22 @@ public class Constants {
   // to resources folder
   private static final String CFP14 = "cfp14";
   public static final String toUIResources = ISJAR ? JARRESOURCES :
-      Paths.get("").toAbsolutePath().toString().split(CFP14)[0]
-          + CFP14
-          + File.separator
-          + "ctf-ui"
-          + File.separator
-          + "src"
-          + File.separator
-          + "main"
-          + File.separator
-          + "resources"
-          + File.separator;
+    Paths.get("").toAbsolutePath().toString().split(CFP14)[0]
+        + CFP14
+        + File.separator
+        + "ctf-ui"
+        + File.separator
+        + "src"
+        + File.separator
+        + "main"
+        + File.separator
+        + "resources"
+        + File.separator;
   public static final String sharedResourcesFolder = toUIResources + "game" + File.separator;
 
   // to AI config folder
   public static final String aiConfigFolder = sharedResourcesFolder + "ai_configs" + File.separator;
-  
+
   // Default folder for saving games for AI Analysis
   public static final String saveGameFolder = sharedResourcesFolder + "savegames" + File.separator;
   // package map, class JsonTools
