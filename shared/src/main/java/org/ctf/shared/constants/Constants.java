@@ -13,7 +13,7 @@ public class Constants {
   //              important stuff for jar              //
   ///////////////////////////////////////////////////////
   private static final String executionLocationURL = Constants.class.getProtectionDomain().getCodeSource().getLocation().getFile();
-  public static final boolean ISJAR = true;
+  public static final boolean ISJAR = false;
   public static final String JARNAME = executionLocationURL.substring(executionLocationURL.lastIndexOf("/") +1);
   public static final String JARPARENTFOLDER = Paths.get("").toAbsolutePath().toString().split(JARNAME)[0] + File.separator;
   public static final String RESOURCEFOLDERNAME = "resources_ctf_team_14";
