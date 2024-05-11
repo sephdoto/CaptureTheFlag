@@ -9,9 +9,18 @@ import java.nio.file.Paths;
  * @author sistumpf
  */
 public class Constants {
-  // TODO: add "jar:" before all path strings. then everything should work, even if in a jar.
-  static String jar = ""; // "jar:";
-
+  ///////////////////////////////////////////////////////
+  //              important stuff for jar              //
+  ///////////////////////////////////////////////////////
+  static boolean isJar = false;
+  static String jarName = "app.jar";
+  static String resourcesName = "resources_ctf_team_14";
+  static String jarResources = 
+      Paths.get("").toAbsolutePath().toString().split(jarName)[0]
+          + File.separator
+          + resourcesName
+          + File.separator;
+  
   ///////////////////////////////////////////////////////
   //             User changeable things                //
   ///////////////////////////////////////////////////////
@@ -26,9 +35,8 @@ public class Constants {
 
   // to resources folder
   private static final String CFP14 = "cfp14";
-  public static final String toUIResources =
-      jar
-          + Paths.get("").toAbsolutePath().toString().split(CFP14)[0]
+  public static final String toUIResources = isJar ? jarResources :
+      Paths.get("").toAbsolutePath().toString().split(CFP14)[0]
           + CFP14
           + File.separator
           + "ctf-ui"
