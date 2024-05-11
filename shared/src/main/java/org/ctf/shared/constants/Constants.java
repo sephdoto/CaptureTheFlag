@@ -12,7 +12,7 @@ public class Constants {
   ///////////////////////////////////////////////////////
   //              important stuff for jar              //
   ///////////////////////////////////////////////////////
-  public static final boolean ISJAR = false;
+  public static final boolean ISJAR = Constants.class.getProtectionDomain().getCodeSource().getLocation().getFile().endsWith(".jar");
   public static final  String JARNAME = "app.jar";
   public static final  String RESOURCES = "resources_ctf_team_14";
   public static final  String JARRESOURCES = 
