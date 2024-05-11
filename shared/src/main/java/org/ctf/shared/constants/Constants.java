@@ -12,13 +12,13 @@ public class Constants {
   ///////////////////////////////////////////////////////
   //              important stuff for jar              //
   ///////////////////////////////////////////////////////
-  static boolean isJar = false;
-  static String jarName = "app.jar";
-  static String resourcesName = "resources_ctf_team_14";
-  static String jarResources = 
-      Paths.get("").toAbsolutePath().toString().split(jarName)[0]
+  public static final boolean ISJAR = false;
+  public static final  String JARNAME = "app.jar";
+  public static final  String RESOURCES = "resources_ctf_team_14";
+  public static final  String JARRESOURCES = 
+      Paths.get("").toAbsolutePath().toString().split(JARNAME)[0]
           + File.separator
-          + resourcesName
+          + RESOURCES
           + File.separator;
   
   ///////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ public class Constants {
 
   // to resources folder
   private static final String CFP14 = "cfp14";
-  public static final String toUIResources = isJar ? jarResources :
+  public static final String toUIResources = ISJAR ? JARRESOURCES :
       Paths.get("").toAbsolutePath().toString().split(CFP14)[0]
           + CFP14
           + File.separator
