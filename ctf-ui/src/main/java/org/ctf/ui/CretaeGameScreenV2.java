@@ -281,12 +281,19 @@ public class CretaeGameScreenV2 extends Scene {
 	private VBox createLeftcontent() {
 		VBox leftBox = new VBox();
 		leftBox.setAlignment(Pos.TOP_CENTER);
-		// leftBox.setPadding(new Insets(20));
 		leftBox.setSpacing(left.heightProperty().doubleValue() * 0.06);
 		left.heightProperty().addListener((obs, oldVal, newVal) -> {
 			double spacing = newVal.doubleValue() * 0.06;
 			leftBox.setSpacing(spacing);
 		});
+		VBox serverInfoBox = createServerInfoBox(leftBox);
+		leftBox.getChildren().add(serverInfoBox);
+		VBox buttonBox = createChooseMapBox(leftBox);
+		leftBox.getChildren().add(buttonBox);
+		return leftBox;
+	}
+	
+	private VBox createServerInfoBox(VBox leftBox) {
 		VBox serverInfoBox = new VBox();
 		serverInfoBox.getStyleClass().add("option-pane");
 		serverInfoBox.prefWidthProperty().bind(left.widthProperty());
@@ -296,7 +303,7 @@ public class CretaeGameScreenV2 extends Scene {
 			double spacing = newVal.doubleValue() * 0.09;
 			serverInfoBox.setSpacing(spacing);
 		});
-		serverInfoBox.getChildren().add(createHeader(leftBox, "select sever"));
+		serverInfoBox.getChildren().add(createHeader(leftBox, "select sever haha"));
 		HBox enterSeverInfoBox = new HBox();
 		enterSeverInfoBox.prefHeightProperty().bind(serverInfoBox.heightProperty().multiply(0.6));
 		enterSeverInfoBox.prefWidthProperty().bind(serverInfoBox.widthProperty());
@@ -313,26 +320,26 @@ public class CretaeGameScreenV2 extends Scene {
 		portText.prefWidthProperty().bind(enterSeverInfoBox.widthProperty().multiply(0.4));
 		enterSeverInfoBox.getChildren().add(portText);
 		serverInfoBox.getChildren().add(enterSeverInfoBox);
-		leftBox.getChildren().add(serverInfoBox);
-
+		return serverInfoBox;
+	}
+	
+	
+	private VBox createChooseMapBox(VBox parent) {
 		VBox buttonBox = new VBox();
 		buttonBox.getStyleClass().add("option-pane");
 		buttonBox.prefHeightProperty().bind(left.heightProperty().multiply(0.7));
-		buttonBox.getChildren().add(createHeader(leftBox, "Choose Map"));
+		buttonBox.getChildren().add(createHeader(parent, "Choose Map"));
 		buttonBox.setAlignment(Pos.CENTER);
 		buttonBox.setPadding(new Insets(20));
-		// buttonBox.setSpacing(buttonBox.heightProperty().doubleValue() * 0.06);
 		buttonBox.heightProperty().addListener((obs, oldVal, newVal) -> {
 			double spacing = newVal.doubleValue() * 0.2;
 			buttonBox.setSpacing(spacing);
 		});
 		buttonBox.getChildren().add(createChoiceBox(buttonBox));
 		buttonBox.getChildren().add(createCreateButton());
-		leftBox.getChildren().add(buttonBox);
-
-		return leftBox;
+		return buttonBox;
 	}
-
+	
 	private Button createCreateButton() {
 		Button search = new Button("Create");
 		search.getStyleClass().add("leave-button");
@@ -341,7 +348,6 @@ public class CretaeGameScreenV2 extends Scene {
 		search.fontProperty().bind(Bindings.createObjectBinding(
 				() -> Font.font("Century Gothic", search.getHeight() * 0.4), search.heightProperty()));
 		search.setOnAction(e -> {
-			Game.initializeGame(gm, GameMode.Online);
 			if (portText.getText().isEmpty()) {
 				informationmustBeEntered(portText,"custom-search-field2-mustEnter","custom-search-field2");
 			}
@@ -358,7 +364,6 @@ public class CretaeGameScreenV2 extends Scene {
 				this.createChooserPopup();
 			}
 		});
-
 		return search;
 	}
 
@@ -441,26 +446,7 @@ public class CretaeGameScreenV2 extends Scene {
 		return searchField;
 	}
 
-	private void fitText( Label lbl, double max) {
-		double defaultFontSize = 32;
-		Font defaultFont = Font.font(defaultFontSize);
-		lbl.setFont(defaultFont);
-		lbl.textProperty().addListener((observable, oldValue, newValue) -> {
 
-			Text tmpText = new Text(newValue);
-			tmpText.setFont(defaultFont);
-
-			double textWidth = tmpText.getLayoutBounds().getWidth();
-			if (textWidth <= max) {
-				lbl.setFont(defaultFont);
-			} else {
-
-				double newFontSize = defaultFontSize * max / textWidth;
-				lbl.setFont(Font.font(defaultFont.getFamily(), newFontSize));
-			}
-
-		});
-	}
 
 	private ComboBox<String> createChoiceBox(VBox parent) {
 		ComboBox<String> c = new ComboBox<String>();
