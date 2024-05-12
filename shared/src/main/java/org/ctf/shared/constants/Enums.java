@@ -61,6 +61,21 @@ public class Enums {
     public String getLocation() {
       return this.location;
     }
+    
+    /**
+     * MISC is used for sounds like Button clicks, a user should not change that.
+     * 
+     * @return An Array Containing the SoundTypes a user is allowed to change
+     */
+    public SoundType[] userChangeValues() {
+      return new SoundType[] {
+          MOVE,
+          KILL,
+          CAPTURE,
+          SELECT,
+          DESELECT
+      };
+    }
   }
 
   /**
