@@ -5,14 +5,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.tools.JsonTools;
 import org.ctf.ui.customobjects.PopUpPane;
-
-import configs.GameMode;
 import configs.ImageLoader;
 import javafx.animation.TranslateTransition;
 import javafx.beans.binding.Bindings;
@@ -82,6 +79,370 @@ public class CretaeGameScreenV2 extends Scene {
 		popUpCreator = new PopUpCreator(this, root,hsc);
 		createLayout();
 	}
+	
+	
+	/**
+	 * Changes the font-sizes in relation to the screen size
+	 * @author Manuel Krakowski
+	 */
+	private void manageFontSizes() {
+		widthProperty().addListener(new ChangeListener<Number>() {
+			public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth, Number newWidth) {
+				addHumanButtonTextFontSIze.set(Font.font(newWidth.doubleValue() / 70));
+				addAiCOmboTextFontSIze.set(Font.font(newWidth.doubleValue() / 60));
+				popUpLabel.set(Font.font(newWidth.doubleValue() / 50));
+				leaveButtonText.set(Font.font(newWidth.doubleValue() / 80));
+				aiPowerText.set(Font.font(newWidth.doubleValue() / 50));
+				padding.set(new Insets(newWidth.doubleValue()*0.01));
+			}
+		});
+	}
+	
+	/**
+	 * Creates the layout of the whole scene including all components
+	 * @author Manuel Krakowski
+	 */
+	private void createLayout() {
+		manageFontSizes();
+		ImageLoader.loadImages();
+		StroeMaps.initDefaultMaps();
+		root.getStyleClass().add("join-root");
+		VBox mainBox = new VBox();
+		
+		root.getChildren().add(mainBox);
+		mainBox.getChildren().add(createTop());
+		mainBox.setAlignment(Pos.TOP_CENTER);
+		mainBox.setSpacing(30);
+		sep = new HBox();
+		sep.setAlignment(Pos.CENTER);
+		sep.setSpacing(50);
+		left = createOptionPane();
+		selected = StroeMaps.getRandomMapName();
+		right = createShowMapPane(selected);
+		sep.getChildren().add(left);
+		sep.getChildren().add(right);
+		mainBox.getChildren().add(sep);
+		mainBox.getChildren().add(createLeave());
+		this.widthProperty().addListener((observable, oldValue, newValue) -> {
+			double newSpacing = newValue.doubleValue() * 0.05;
+			sep.setSpacing(newSpacing);
+		});
+		left.getChildren().add(createMiddleLeft());
+	}
+	
+	/**
+	 * Creates A Vbox which will be used to divide the whole screen vertically into 3 main parts
+	 * @author Manuel Krakowski
+	 * @return Vbox
+	 */
+	private VBox createMainBox() {
+		VBox mainBox = new VBox();
+		mainBox.getChildren().add(createTop());
+		mainBox.setAlignment(Pos.TOP_CENTER);
+		mainBox.widthProperty().addListener((observable, oldValue, newValue) -> {
+			double newSpacing = newValue.doubleValue() * 0.03;
+			mainBox.setSpacing(newSpacing);
+		});
+		return mainBox;
+	}
+	
+	/**
+	 * Creates an Image which is the header of the whole scene
+	 * @author Manuel Krakowski
+	 * @return
+	 */
+	private ImageView createTop() {
+		Image mp = new Image(getClass().getResourceAsStream("multiplayerlogo.png"));
+		ImageView mpv = new ImageView(mp);
+		mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.8));
+		mpv.setPreserveRatio(true);
+		root.widthProperty().addListener(e -> {
+			if (root.getWidth() > 1000) {
+				mpv.fitWidthProperty().unbind();
+				mpv.setFitWidth(800);
+			} else if (root.getWidth() <= 1000) {
+				mpv.fitWidthProperty().unbind();
+				mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.8));
+			}
+		});
+		return mpv;
+	}
+	
+	/**
+	 * Creates A HBox which will be used to divide the middle part of the screen horizontally into 2 main parts
+	 * @author Manuel Krakowski
+	 * @return
+	 */
+	private HBox createMiddleSperator() {
+		sep = new HBox();
+		sep.setAlignment(Pos.CENTER);
+		sep.widthProperty().addListener((observable, oldValue, newValue) -> {
+			double newSpacing = newValue.doubleValue() * 0.05;
+			sep.setSpacing(newSpacing);
+		});
+		return sep;
+	}
+	
+	/**
+	 * Creates the Vbox in the middle-left in which contains tow boxes in which the user can select a server and choose a map
+	 * @author Manuel Krakowski
+	 * @return
+	 */
+	private VBox createMiddleLeft() {
+		VBox leftBox = new VBox();
+		leftBox.setAlignment(Pos.TOP_CENTER);
+		leftBox.setSpacing(left.heightProperty().doubleValue() * 0.06);
+		left.heightProperty().addListener((obs, oldVal, newVal) -> {
+			double spacing = newVal.doubleValue() * 0.06;
+			leftBox.setSpacing(spacing);
+		});
+		VBox serverInfoBox = createServerInfoBox(leftBox);
+		leftBox.getChildren().add(serverInfoBox);
+		VBox buttonBox = createChooseMapBox(leftBox);
+		leftBox.getChildren().add(buttonBox);
+		return leftBox;
+	}
+	
+	/**
+	 * Creates a Box containing one header and two textfields in which the user can enter the server-information
+	 * @author Manuel Krakowski
+	 * @param parent: used for relative resizing
+	 * @return
+	 */
+	private VBox createServerInfoBox(VBox parent) {
+		VBox serverInfoBox = new VBox();
+		serverInfoBox.getStyleClass().add("option-pane");
+		serverInfoBox.prefWidthProperty().bind(left.widthProperty());
+		serverInfoBox.setAlignment(Pos.TOP_CENTER);
+		serverInfoBox.setSpacing(left.heightProperty().doubleValue() * 0.09);
+		serverInfoBox.heightProperty().addListener((obs, oldVal, newVal) -> {
+			double spacing = newVal.doubleValue() * 0.09;
+			serverInfoBox.setSpacing(spacing);
+		});
+		serverInfoBox.getChildren().add(createHeader(parent, "select sever haha"));
+		HBox enterSeverInfoBox = new HBox();
+		enterSeverInfoBox.prefHeightProperty().bind(serverInfoBox.heightProperty().multiply(0.6));
+		enterSeverInfoBox.prefWidthProperty().bind(serverInfoBox.widthProperty());
+		enterSeverInfoBox.setAlignment(Pos.CENTER);
+		enterSeverInfoBox.setSpacing(enterSeverInfoBox.widthProperty().doubleValue() * 0.06);
+		enterSeverInfoBox.widthProperty().addListener((obs, oldVal, newVal) -> {
+			double spacing = newVal.doubleValue() * 0.06;
+			enterSeverInfoBox.setSpacing(spacing);
+		});
+		serverIPText = createTextfield("Enter the Server IP",0.2);
+		serverIPText.prefWidthProperty().bind(enterSeverInfoBox.widthProperty().multiply(0.4));
+		enterSeverInfoBox.getChildren().add(serverIPText);
+		portText = createTextfield("Enter the Port",0.2);
+		portText.prefWidthProperty().bind(enterSeverInfoBox.widthProperty().multiply(0.4));
+		enterSeverInfoBox.getChildren().add(portText);
+		serverInfoBox.getChildren().add(enterSeverInfoBox);
+		return serverInfoBox;
+	}
+	
+	/**
+	 * Creates a Box in which the user can select a map from a ComboBox and start a game with it by clicking on a button
+	 * @author Manuel Krakowski
+	 * @param parent: used for relative resizing
+	 * @return
+	 */
+	private VBox createChooseMapBox(VBox parent) {
+		VBox buttonBox = new VBox();
+		buttonBox.getStyleClass().add("option-pane");
+		buttonBox.prefHeightProperty().bind(left.heightProperty().multiply(0.7));
+		buttonBox.getChildren().add(createHeader(parent, "Choose Map"));
+		buttonBox.setAlignment(Pos.CENTER);
+		buttonBox.setPadding(new Insets(20));
+		buttonBox.heightProperty().addListener((obs, oldVal, newVal) -> {
+			double spacing = newVal.doubleValue() * 0.2;
+			buttonBox.setSpacing(spacing);
+		});
+		buttonBox.getChildren().add(createChoiceBox(buttonBox));
+		buttonBox.getChildren().add(createCreateButton());
+		return buttonBox;
+	}
+	
+	
+	/**
+	 * Creates a simple Textfield
+	 * @author Manuel Krakowski
+	 * @param prompt: Prompt text of the textfield
+	 * @param x: Height of the textfield in relation to its width
+	 * @return
+	 */
+	public static TextField createTextfield(String prompt, double x) {
+		TextField searchField = new TextField();
+		searchField.getStyleClass().add("custom-search-field2");
+		searchField.setPromptText(prompt);
+		searchField.prefHeightProperty().bind(searchField.widthProperty().multiply(x));
+		searchField.heightProperty().addListener((obs, oldVal, newVal) -> {
+			double newFontSize = newVal.doubleValue() * 0.4;
+			searchField.setFont(new Font(newFontSize));
+		});
+		return searchField;
+	}
+	
+	/**
+	 * Creates the ComboBox in which the user can select a map
+	 * @author Manuel Krakowski
+	 * @param parent: used for relative resizing
+	 * @return 
+	 */
+	private ComboBox<String> createChoiceBox(VBox parent) {
+		ComboBox<String> c = new ComboBox<String>();
+		c.getStyleClass().add("combo-box");
+		c.getItems().addAll(this.getTemplateNames());
+		//c.setValue(selected);
+		c.prefWidthProperty().bind(parent.widthProperty().multiply(0.8));
+		c.prefHeightProperty().bind(parent.heightProperty().multiply(0.1));
+		c.setCellFactory(param -> new ListCell<String>() {
+			protected void updateItem(String item, boolean empty) {
+				super.updateItem(item, empty);
+				if (empty || item == null) {
+					setText(null);
+				} else {
+					setText(item);
+					setAlignment(javafx.geometry.Pos.CENTER);
+				}
+			}
+		});
+		c.setButtonCell(new ListCell<String>() {
+			protected void updateItem(String item, boolean empty) {
+				super.updateItem(item, empty);
+				if (empty || item == null) {
+					setText(null);
+				} else {
+					setText(item);
+					setAlignment(javafx.geometry.Pos.CENTER);
+				}
+			}
+		});
+		c.setOnAction(event -> {
+			perfromChoiceBoxAction(c);
+		});
+		return c;
+	}
+	
+	
+	/**
+	 * when a map from the choiceBox is selected the respective Template and GameState are accessed from the folder using
+	 * {@link JsonTools}. The respective Map is shown on the right side using the GameState.
+	 * @author Manuel Krakowski
+	 * @param c: ChoiceBox from which the user selects the map
+	 */
+	private void perfromChoiceBoxAction(ComboBox<String> c) {
+		selected = c.getValue();
+		showMapBox.getChildren().clear();
+		maps = JsonTools.getTemplateAndGameState(selected);
+		if (!maps.isEmpty()) {
+	            Map.Entry<MapTemplate, GameState> entry = maps.entrySet().iterator().next();
+	            template = entry.getKey();
+	            state  = entry.getValue();
+	        } 
+		GamePane gm = new GamePane(state);
+		showMapBox.getChildren().add(gm);
+	}
+	
+	
+	public ArrayList<String> getTemplateNames(){
+		File templateFolder = new File(JsonTools.mapTemplates);
+		if(templateFolder.isDirectory()) {
+			String[] names = templateFolder.list();
+			for(int i=0;i<names.length;i++) {
+				names[i] =   names[i].substring(0, names[i].length()-5);
+			}
+			ArrayList<String> result = new ArrayList<String>();
+			result.addAll(Arrays.asList(names));
+			return result;
+			}		
+		return new ArrayList<String>();
+	}
+	
+	
+	/**
+	 * Creates the button which is used to create a game when it is clicked, if the
+	 * Textfields with the server info are empty an animation is shown and the create action can#t be executed
+	 * @author Manuel Krakowski
+	 * @return create-button
+	 */
+	private Button createCreateButton() {
+		Button search = new Button("Create");
+		search.getStyleClass().add("leave-button");
+		search.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
+		search.prefHeightProperty().bind(search.widthProperty().multiply(0.25));
+		search.fontProperty().bind(Bindings.createObjectBinding(
+				() -> Font.font("Century Gothic", search.getHeight() * 0.4), search.heightProperty()));
+		search.setOnAction(e -> {
+			if (portText.getText().isEmpty()) {
+				informationmustBeEntered(portText,"custom-search-field2-mustEnter","custom-search-field2");
+			}
+			if (serverIPText.getText().isEmpty()) {
+				informationmustBeEntered(serverIPText,"custom-search-field2-mustEnter","custom-search-field2");
+			}
+			if (!portText.getText().isEmpty() && !serverIPText.getText().isEmpty()) {
+				perfromCreateButtonClick();
+				
+			}
+		});
+		return search;
+	}
+	
+	/**
+	 * Creates a wobbling animation of a textfield
+	 * @author Manuel Krakowski
+	 * @param t: Textfield on which the animation is shown
+	 * @param mustEnterStyle: Style of the Textfield during the animation
+	 * @param defaultStyle: default Style of the textfield before and after the animation
+	 */
+	public static void informationmustBeEntered(TextField t, String mustEnterStyle, String defaultStyle) {
+		t.getStyleClass().add(mustEnterStyle);
+		TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(0.05), t);
+		translateTransition.setFromX(-2);
+		translateTransition.setToX(2);
+		translateTransition.setCycleCount(10);
+		translateTransition.setAutoReverse(true);
+		translateTransition.playFromStart();
+		translateTransition.setOnFinished(event -> {
+			t.getStyleClass().remove(mustEnterStyle);
+			t.getStyleClass().add(defaultStyle);
+		});
+	}
+	
+	/**
+	 * when the create Button is clicked successfully a Game Session is created with the help of a controller
+	 * and a Popup Pane is shown in which the user can decide if he wants to play as human or as Ai
+	 * @author Manuel Krakowski
+	 */
+	private void perfromCreateButtonClick() {
+		serverIP = serverIPText.getText();
+		port = portText.getText();
+		hsc.setPort(port);
+		hsc.setServerID(serverIP);
+		hsc.setTemplate(template);
+		hsc.createGameSession();
+		this.createChooserPopup();
+	}
+	
+	
+	/**
+	 * Cretaes the Stackpane on the right side, which will always contain the currently selected map from the ComboBox
+	 * @author Manuel Krakowski
+	 * @param name: Hier muss man das noch ändern 
+	 * @return
+	 */
+	private StackPane createShowMapPane(String name) {
+		showMapBox = new StackPane();
+		showMapBox.getStyleClass().add("option-pane");
+		showMapBox.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
+		showMapBox.prefHeightProperty().bind(showMapBox.widthProperty());
+		showMapBox.getStyleClass().add("show-GamePane");
+		showMapBox.paddingProperty().bind(padding);
+		state = StroeMaps.getMap(name);
+		 gm = new GamePane(state);
+		showMapBox.getChildren().add(gm);
+		return showMapBox;
+	}
+	
+	
 
 	private void createChooserPopup() {
 		aiOrHumanPop = new PopUpPane(this, 0.5, 0.3);
@@ -165,7 +526,6 @@ public class CretaeGameScreenV2 extends Scene {
 		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
 		exit.setOnAction(e -> {
-			//hsc.switchToCreateGameScene(App.getStage());
 			portText.setDisable(false);
 			serverIPText.setDisable(false);
 			hsc.deleteGame();
@@ -189,51 +549,13 @@ public class CretaeGameScreenV2 extends Scene {
 				root.getChildren().remove(aiLevelPopUpPane);
 				root.getChildren().add(aiOrHumanPop);
 			}
-			
 		});
 		return exit;
 	}
 
-	private void manageFontSizes() {
-		widthProperty().addListener(new ChangeListener<Number>() {
-			public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth, Number newWidth) {
-				addHumanButtonTextFontSIze.set(Font.font(newWidth.doubleValue() / 70));
-				addAiCOmboTextFontSIze.set(Font.font(newWidth.doubleValue() / 60));
-				popUpLabel.set(Font.font(newWidth.doubleValue() / 50));
-				leaveButtonText.set(Font.font(newWidth.doubleValue() / 80));
-				aiPowerText.set(Font.font(newWidth.doubleValue() / 50));
-				padding.set(new Insets(newWidth.doubleValue()*0.01));
-			}
-		});
-	}
+	
 
-	private void createLayout() {
-		manageFontSizes();
-		ImageLoader.loadImages();
-		StroeMaps.initDefaultMaps();
-		root.getStyleClass().add("join-root");
-		VBox mainBox = new VBox();
-		root.getChildren().add(mainBox);
-		mainBox.getChildren().add(createHeader());
-		mainBox.setAlignment(Pos.TOP_CENTER);
-		mainBox.setSpacing(30);
-		sep = new HBox();
-		sep.setAlignment(Pos.CENTER);
-		sep.setSpacing(50);
-		left = createOptionPane();
-		selected = StroeMaps.getRandomMapName();
-		right = createShowMapPane(selected);
-		sep.getChildren().add(left);
-		sep.getChildren().add(right);
-		mainBox.getChildren().add(sep);
-		mainBox.getChildren().add(createLeave());
-		this.widthProperty().addListener((observable, oldValue, newValue) -> {
-			double newSpacing = newValue.doubleValue() * 0.05;
-			sep.setSpacing(newSpacing);
-		});
-		left.getChildren().add(createLeftcontent());
-
-	}
+	
 
 	private Button createLeave() {
 		Button exit = new Button("Leave");
@@ -261,125 +583,7 @@ public class CretaeGameScreenV2 extends Scene {
 	}
 
 
-	private ImageView createHeader() {
-		Image mp = new Image(getClass().getResourceAsStream("multiplayerlogo.png"));
-		ImageView mpv = new ImageView(mp);
-		mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.8));
-		mpv.setPreserveRatio(true);
-		root.widthProperty().addListener(e -> {
-			if (root.getWidth() > 1000) {
-				mpv.fitWidthProperty().unbind();
-				mpv.setFitWidth(800);
-			} else if (root.getWidth() <= 1000) {
-				mpv.fitWidthProperty().unbind();
-				mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.8));
-			}
-		});
-		return mpv;
-	}
-
-	private VBox createLeftcontent() {
-		VBox leftBox = new VBox();
-		leftBox.setAlignment(Pos.TOP_CENTER);
-		leftBox.setSpacing(left.heightProperty().doubleValue() * 0.06);
-		left.heightProperty().addListener((obs, oldVal, newVal) -> {
-			double spacing = newVal.doubleValue() * 0.06;
-			leftBox.setSpacing(spacing);
-		});
-		VBox serverInfoBox = createServerInfoBox(leftBox);
-		leftBox.getChildren().add(serverInfoBox);
-		VBox buttonBox = createChooseMapBox(leftBox);
-		leftBox.getChildren().add(buttonBox);
-		return leftBox;
-	}
 	
-	private VBox createServerInfoBox(VBox leftBox) {
-		VBox serverInfoBox = new VBox();
-		serverInfoBox.getStyleClass().add("option-pane");
-		serverInfoBox.prefWidthProperty().bind(left.widthProperty());
-		serverInfoBox.setAlignment(Pos.TOP_CENTER);
-		serverInfoBox.setSpacing(left.heightProperty().doubleValue() * 0.09);
-		serverInfoBox.heightProperty().addListener((obs, oldVal, newVal) -> {
-			double spacing = newVal.doubleValue() * 0.09;
-			serverInfoBox.setSpacing(spacing);
-		});
-		serverInfoBox.getChildren().add(createHeader(leftBox, "select sever haha"));
-		HBox enterSeverInfoBox = new HBox();
-		enterSeverInfoBox.prefHeightProperty().bind(serverInfoBox.heightProperty().multiply(0.6));
-		enterSeverInfoBox.prefWidthProperty().bind(serverInfoBox.widthProperty());
-		enterSeverInfoBox.setAlignment(Pos.CENTER);
-		enterSeverInfoBox.setSpacing(enterSeverInfoBox.widthProperty().doubleValue() * 0.06);
-		enterSeverInfoBox.widthProperty().addListener((obs, oldVal, newVal) -> {
-			double spacing = newVal.doubleValue() * 0.06;
-			enterSeverInfoBox.setSpacing(spacing);
-		});
-		serverIPText = createTextfield("Enter the Server IP",0.2);
-		serverIPText.prefWidthProperty().bind(enterSeverInfoBox.widthProperty().multiply(0.4));
-		enterSeverInfoBox.getChildren().add(serverIPText);
-		portText = createTextfield("Enter the Port",0.2);
-		portText.prefWidthProperty().bind(enterSeverInfoBox.widthProperty().multiply(0.4));
-		enterSeverInfoBox.getChildren().add(portText);
-		serverInfoBox.getChildren().add(enterSeverInfoBox);
-		return serverInfoBox;
-	}
-	
-	
-	private VBox createChooseMapBox(VBox parent) {
-		VBox buttonBox = new VBox();
-		buttonBox.getStyleClass().add("option-pane");
-		buttonBox.prefHeightProperty().bind(left.heightProperty().multiply(0.7));
-		buttonBox.getChildren().add(createHeader(parent, "Choose Map"));
-		buttonBox.setAlignment(Pos.CENTER);
-		buttonBox.setPadding(new Insets(20));
-		buttonBox.heightProperty().addListener((obs, oldVal, newVal) -> {
-			double spacing = newVal.doubleValue() * 0.2;
-			buttonBox.setSpacing(spacing);
-		});
-		buttonBox.getChildren().add(createChoiceBox(buttonBox));
-		buttonBox.getChildren().add(createCreateButton());
-		return buttonBox;
-	}
-	
-	private Button createCreateButton() {
-		Button search = new Button("Create");
-		search.getStyleClass().add("leave-button");
-		search.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
-		search.prefHeightProperty().bind(search.widthProperty().multiply(0.25));
-		search.fontProperty().bind(Bindings.createObjectBinding(
-				() -> Font.font("Century Gothic", search.getHeight() * 0.4), search.heightProperty()));
-		search.setOnAction(e -> {
-			if (portText.getText().isEmpty()) {
-				informationmustBeEntered(portText,"custom-search-field2-mustEnter","custom-search-field2");
-			}
-			if (serverIPText.getText().isEmpty()) {
-				informationmustBeEntered(serverIPText,"custom-search-field2-mustEnter","custom-search-field2");
-			}
-			if (!portText.getText().isEmpty() && !serverIPText.getText().isEmpty()) {
-				serverIP = serverIPText.getText();
-				port = portText.getText();
-				hsc.setPort(port);
-				hsc.setServerID(serverIP);
-				hsc.setTemplate(template);
-				hsc.createGameSession();
-				this.createChooserPopup();
-			}
-		});
-		return search;
-	}
-
-	public static void informationmustBeEntered(TextField t, String mustEnterStyle, String defaultStyle) {
-		t.getStyleClass().add(mustEnterStyle);
-		TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(0.05), t);
-		translateTransition.setFromX(-2);
-		translateTransition.setToX(2);
-		translateTransition.setCycleCount(10);
-		translateTransition.setAutoReverse(true);
-		translateTransition.playFromStart();
-		translateTransition.setOnFinished(event -> {
-			t.getStyleClass().remove(mustEnterStyle);
-			t.getStyleClass().add(defaultStyle);
-		});
-	}
 
 	private Button createAddHumanButton(String text, String src) {
 		Button button = new Button(text);
@@ -434,94 +638,17 @@ public class CretaeGameScreenV2 extends Scene {
 		return pane;
 	}
 
-	public static TextField createTextfield(String prompt, double x) {
-		TextField searchField = new TextField();
-		searchField.getStyleClass().add("custom-search-field2");
-		searchField.setPromptText(prompt);
-		searchField.prefHeightProperty().bind(searchField.widthProperty().multiply(x));
-		searchField.heightProperty().addListener((obs, oldVal, newVal) -> {
-			double newFontSize = newVal.doubleValue() * 0.4;
-			searchField.setFont(new Font(newFontSize));
-		});
-		return searchField;
-	}
-
-
-
-	private ComboBox<String> createChoiceBox(VBox parent) {
-		ComboBox<String> c = new ComboBox<String>();
-		c.getStyleClass().add("combo-box");
-		c.getItems().addAll(this.getTemplateNames());
-		c.setCellFactory(param -> new ListCell<String>() {
-			@Override
-			protected void updateItem(String item, boolean empty) {
-				super.updateItem(item, empty);
-				if (empty || item == null) {
-					setText(null);
-				} else {
-					setText(item);
-					setAlignment(javafx.geometry.Pos.CENTER);
-				}
-			}
-		});
-		c.setButtonCell(new ListCell<String>() {
-			@Override
-			protected void updateItem(String item, boolean empty) {
-				super.updateItem(item, empty);
-				if (empty || item == null) {
-					setText(null);
-				} else {
-					setText(item);
-					setAlignment(javafx.geometry.Pos.CENTER);
-				}
-			}
-		});
-		//c.setValue(selected);
-		c.prefWidthProperty().bind(parent.widthProperty().multiply(0.8));
-		c.prefHeightProperty().bind(parent.heightProperty().multiply(0.1));
-		c.setOnAction(event -> {
-			selected = c.getValue();
-			showMapBox.getChildren().clear();
-			maps = JsonTools.getTemplateAndGameState(selected);
-			if (!maps.isEmpty()) {
-		            Map.Entry<MapTemplate, GameState> entry = maps.entrySet().iterator().next();
-		            template = entry.getKey();
-		            state  = entry.getValue();
-		        } 
-			GamePane gm = new GamePane(state);
-			showMapBox.getChildren().add(gm);
-		});
-		return c;
-	}
 	
-	public ArrayList<String> getTemplateNames(){
-		File templateFolder = new File(JsonTools.mapTemplates);
-		if(templateFolder.isDirectory()) {
-			String[] names = templateFolder.list();
-			for(int i=0;i<names.length;i++) {
-				names[i] =   names[i].substring(0, names[i].length()-5);
-			}
-			ArrayList<String> result = new ArrayList<String>();
-			result.addAll(Arrays.asList(names));
-			return result;
-			}		
-		return new ArrayList<String>();
-	}
+
+
+
+	
+	
+	
 	
 	
 
-	private StackPane createShowMapPane(String name) {
-		showMapBox = new StackPane();
-		showMapBox.getStyleClass().add("option-pane");
-		showMapBox.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
-		showMapBox.prefHeightProperty().bind(showMapBox.widthProperty());
-		showMapBox.getStyleClass().add("show-GamePane");
-		showMapBox.paddingProperty().bind(padding);
-		state = StroeMaps.getMap(name);
-		 gm = new GamePane(state);
-		showMapBox.getChildren().add(gm);
-		return showMapBox;
-	}
+	
 
 	public String getServerIP() {
 		return serverIP;

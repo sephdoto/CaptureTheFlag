@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
 import org.ctf.shared.ai.GameUtilities;
+import org.ctf.shared.client.Client;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.exceptions.ForbiddenMove;
@@ -17,39 +18,25 @@ import org.ctf.ui.customobjects.CostumFigurePain;
 
 public class Game {
 
-	static GamePane cb; // Das GamePane wird nur einmal geladen und anhand von neuen GameStates
-						// verändert
+	static GamePane cb; 
 	static ArrayList<int[]> possibleMoves;
 	static CostumFigurePain currentPlayer;
 	static GameState state;
+	static Client cliento;
 	static String currentTeam;
 	static Move lastMove;
 	static String myTeam;
 	static GameMode mode;
 
-	public static void initializeGame(GamePane pane, GameMode mode) {
+	public static void initializeGame(GamePane pane, Client client) {
 		possibleMoves = new ArrayList<int[]>();
+		cliento = client;
 		state = pane.state;
 		cb = pane;
 		currentPlayer = null;
-		currentTeam = "0";
-		setCurrentTeamActiveTeamactive();
 	}
 
-	public static void perfomMove(Move m) {
-		lastMove = m;
-		int x = lastMove.getNewPosition()[0];
-		int y = lastMove.getNewPosition()[1];
-		CostumFigurePain mover = cb.getFigures().get(lastMove.getPieceId());
-		cb.moveFigure(x, y, mover);
-		if (mode == GameMode.OneDevice) {
-			setCurrentTeamActiveTeamactive();
-		} else {
-			if (currentTeam.equals(myTeam)) {
-				setCurrentTeamActiveTeamactive();
-			}
-		}
-	}
+
 
 	// hier wird Move Objekt an Client gesendet
 	public static void makeMoveRequest(int[] newPos) {
@@ -59,7 +46,7 @@ public class Game {
 		//cb.moveFigure(newPos[0], newPos[1], currentPlayer); //
 		
 		try {
-			// JavaClient.makeMoveRequest(move)
+			cliento.makeMove(move);
 		} catch (SessionNotFound e) {
 			Dialogs.showExceptionDialog("Session not found", e.getMessage());
 		} catch (ForbiddenMove e) {
@@ -91,14 +78,6 @@ public class Game {
 			if (c.getTeamID().equals(teamToDelete)) {
 				c.getParentCell().removeFigure();
 				cb.getFigures().remove(c.getId(), c);
-			}
-		}
-	}
-
-	public static void setCurrentTeamActiveTeamactive() {
-		for (CostumFigurePain c : cb.getFigures().values()) {
-			if (c.getTeamID().equals(currentTeam)) {
-				c.setActive();
 			}
 		}
 	}

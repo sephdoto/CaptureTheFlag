@@ -33,6 +33,7 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class PlayGameScreenV2 extends Scene {
+	Label teamTurn;
 	HomeSceneController hsc;
 	StackPane root;
 	StackPane left;
@@ -98,11 +99,15 @@ public class PlayGameScreenV2 extends Scene {
 	}
 	
 	public void redrawGrid(GameState state) {
-		showMapBox.getChildren().clear();
-		gm = new GamePane(state);
-		gm.enableBaseColors(this);
-		showMapBox.getChildren().add(gm);
-		
+		if(state == null) {
+		showMapBox.getChildren().add(new Label("hallo"));
+		} else {
+			showMapBox.getChildren().clear();
+			gm = new GamePane(state);
+			Game.initializeGame(gm, hsc.mainClient);
+			gm.enableBaseColors(this);
+			showMapBox.getChildren().add(gm);
+		}
 	}
 	
 	private VBox createShowMapPane(String name) {
@@ -162,9 +167,14 @@ public class PlayGameScreenV2 extends Scene {
 		captureLoadingLabel.setAlignment(Pos.CENTER);
 		//captureLoadingLabel.setStyle("-fx-background-color: yellow");
 		captureLoadingLabel.prefWidthProperty().bind(right.widthProperty().multiply(0.8));
-		captureLoadingLabel.getChildren().add(waitingBox("3"));
+		//captureLoadingLabel.getChildren().add(waitingBox("3"));
+		teamTurn = new Label("Current team:");
+		captureLoadingLabel.getChildren().add(teamTurn);
 		return captureLoadingLabel;
-		
+	}
+	
+	public void setTeamTurn(String s) {
+		teamTurn.setText(s);
 	}
 	
 	private void manageFontSizes() {

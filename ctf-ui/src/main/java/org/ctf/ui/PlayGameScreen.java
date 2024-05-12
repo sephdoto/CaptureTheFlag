@@ -43,7 +43,7 @@ public class PlayGameScreen {
 		gm = createLeftSidPane(state);
 		DropShadow shadow = new DropShadow(50, Color.GRAY);
         gm.setEffect(shadow);
-		Game.initializeGame(gm,mode);
+		//Game.initializeGame(gm,mode);
 		//gm.setGame(game);
 		v = new VBox();
 		//HBox headerBox = createHeaderBox();

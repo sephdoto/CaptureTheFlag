@@ -1,11 +1,16 @@
 package org.ctf.ui;
 
+import java.io.BufferedReader;
 /**
  * @author mkrakows & aniemesc
 This Class controls what happens when clicking the buttons on the HomeScreen
  */
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.UnknownHostException;
 
 import org.ctf.shared.client.Client;
@@ -13,6 +18,7 @@ import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
+import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 
 import javafx.event.ActionEvent;
@@ -24,6 +30,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Stop;
 import javafx.stage.Stage;
 
 
@@ -34,8 +41,10 @@ public class HomeSceneController {
 	String serverID;
 	String sessionID;
 	ServerManager serverManager;
+	TestThread t;
 	MapTemplate template;
 	CretaeGameScreenV2 createGameScreenV2;
+	PlayGameScreenV2 playGameScreenV2;
 	WaitingScene waitingScene;
 	Client mainClient;
 	String teamName;
@@ -90,15 +99,27 @@ public class HomeSceneController {
 	public void updateTeamsinWaitingScene(String text) {
 		waitingScene.setCUrrentTeams(text);
 	}
+	
+	public void redraw(GameState state) {
+		playGameScreenV2.redrawGrid(state);
+	}
+	
+	public void setTeamTurn(String s) {
+		playGameScreenV2.setTeamTurn(s);
+	}
 
 	public void switchToWaitGameScene(Stage stage) {
 		waitingScene = new WaitingScene(this, stage.getWidth(), stage.getHeight());
 		stage.setScene(waitingScene);
-		 waitingThread = new WaitingThread( serverManager, this);
-		waitingThread.setAcive();
+		t = new TestThread(this, serverManager);
+		t.start();
 	}
 	public void switchToPlayGameScene(Stage stage) {
-		stage.setScene(new PlayGameScreenV2(this, stage.getWidth(), stage.getHeight()));
+		playGameScreenV2 = new PlayGameScreenV2(this, stage.getWidth(), stage.getHeight());
+		stage.setScene(playGameScreenV2);
+		t.stopThread();
+		GameStatePuller g = new GameStatePuller(mainClient, this);
+		g.start();
 		stage.setFullScreen(true);
 	}
 
@@ -144,12 +165,21 @@ public class HomeSceneController {
 
 	public String getServerID() {
 		if (serverID.equals("localhost")) {
+			  URL url;
 			try {
-				return Inet4Address.getLocalHost().getHostAddress();
-			} catch (UnknownHostException e) {
+				url = new URL("https://api.ipify.org");
+				BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+	            String ipAddress = reader.readLine();
+	            System.out.println("Öffentliche IP-Adresse: " + ipAddress);
+	            reader.close();
+	            
+	           // return ipAddress;
+	            return InetAddress.getLocalHost().getHostAddress();
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+	            
 		}
 		return serverID;
 	}

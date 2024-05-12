@@ -121,7 +121,7 @@ public class WaitingScene extends Scene {
 		        {
 		            waitigFontSize.set(Font.font(newWidth.doubleValue() / 60));
 		            serverInfoHeaderFontSize.set(Font.font(newWidth.doubleValue()/ 100));
-		            serverInfoCOntentFontSize.set(Font.font(newWidth.doubleValue()/ 65));
+		            serverInfoCOntentFontSize.set(Font.font(newWidth.doubleValue()/ 68));
 		            addHumanButtonTextFontSIze.set(Font.font(newWidth.doubleValue()/ 70));
 		            serverInfoDescription.set(Font.font(newWidth.doubleValue()/ 50));
 		            clipBoardInfoText.set(Font.font(newWidth.doubleValue()/ 60));
@@ -175,6 +175,7 @@ public class WaitingScene extends Scene {
 		leftBox.prefHeightProperty().bind(parent.heightProperty().multiply(0.68));
 		leftBox.getChildren().add(createTestLabel(leftBox));
 		leftBox.getChildren().add(createTestLabel2(leftBox));
+		leftBox.getChildren().add(createCreateButton());
 		return leftBox;
 	}
 	
@@ -288,6 +289,51 @@ public class WaitingScene extends Scene {
 		return labelBox;
 	}
 	
+	private VBox createAddButtons() {
+		VBox v = new VBox();
+		v.heightProperty().addListener((obs, oldVal, newVal) -> {
+			double spacing = newVal.doubleValue() * 0.04;
+			v.setSpacing(spacing);
+			double padding = newVal.doubleValue() * 0.1;
+			v.setPadding(new Insets(padding, 0, 0, 0));
+		});
+		v.prefWidthProperty().bind(this.widthProperty().multiply(0.2));
+		Button k = createAddHumanButton("add Human-Player","user-286.png");
+		Button b = createAddAIButton("add Bot","robot1.png");
+		b.prefHeightProperty().bind(k.heightProperty());
+		v.getChildren().add(b);
+		v.getChildren().add(k);
+		return v;
+	}
+	
+	private Button createAddHumanButton(String text, String src) {
+		Button button = new Button(text);
+		button.getStyleClass().add("button25");
+		button.fontProperty().bind(addHumanButtonTextFontSIze);
+		Image mp = new Image(getClass().getResourceAsStream(src));
+		ImageView vw = new ImageView(mp);
+		button.setGraphic(vw);
+        button.setContentDisplay(ContentDisplay.RIGHT);
+        vw.fitWidthProperty().bind(button.widthProperty().divide(5));
+        vw.setPreserveRatio(true);
+        button.setMaxWidth(Double.MAX_VALUE); 
+        return button;
+	}
+	
+	private Button createAddAIButton(String text, String src) {
+		Button button = new Button(text);
+		button.getStyleClass().add("button25");
+		button.fontProperty().bind(addHumanButtonTextFontSIze);
+		Image mp = new Image(getClass().getResourceAsStream(src));
+		ImageView vw = new ImageView(mp);
+		button.setGraphic(vw);
+        button.setContentDisplay(ContentDisplay.RIGHT);
+        vw.fitWidthProperty().bind(button.widthProperty().divide(8));
+        vw.setPreserveRatio(true);
+        button.setMaxWidth(Double.MAX_VALUE); 
+        return button;
+	}
+	
 	private Label createTestLabel(VBox parent) {
 		Label test = new Label(" max teams:" + hsc.getMaxNumberofTemas());
 		test.prefWidthProperty().bind(parent.widthProperty());
@@ -295,7 +341,7 @@ public class WaitingScene extends Scene {
 	}
 	
 	private Label createTestLabel2(VBox parent) {
-		 curenntTeams = new Label(" current teams:");
+		 curenntTeams = new Label(" current teams: 1");
 		curenntTeams.prefWidthProperty().bind(parent.widthProperty());
 		return curenntTeams;
 	}
@@ -341,50 +387,7 @@ public class WaitingScene extends Scene {
           contextMenu.show(this.getWindow(),d,e);
 	}
 	
-	private VBox createAddButtons() {
-		VBox v = new VBox();
-		v.heightProperty().addListener((obs, oldVal, newVal) -> {
-			double spacing = newVal.doubleValue() * 0.04;
-			v.setSpacing(spacing);
-			double padding = newVal.doubleValue() * 0.1;
-			v.setPadding(new Insets(padding, 0, 0, 0));
-		});
-		v.prefWidthProperty().bind(this.widthProperty().multiply(0.2));
-		Button k = createAddHumanButton("add Human-Player","user-286.png");
-		Button b = createAddAIButton("add Bot","robot1.png");
-		b.prefHeightProperty().bind(k.heightProperty());
-		v.getChildren().add(b);
-		v.getChildren().add(k);
-		return v;
-	}
 	
-	private Button createAddHumanButton(String text, String src) {
-		Button button = new Button(text);
-		button.getStyleClass().add("button25");
-		button.fontProperty().bind(addHumanButtonTextFontSIze);
-		Image mp = new Image(getClass().getResourceAsStream(src));
-		ImageView vw = new ImageView(mp);
-		button.setGraphic(vw);
-        button.setContentDisplay(ContentDisplay.RIGHT);
-        vw.fitWidthProperty().bind(button.widthProperty().divide(5));
-        vw.setPreserveRatio(true);
-        button.setMaxWidth(Double.MAX_VALUE); 
-        return button;
-	}
-	
-	private Button createAddAIButton(String text, String src) {
-		Button button = new Button(text);
-		button.getStyleClass().add("button25");
-		button.fontProperty().bind(addHumanButtonTextFontSIze);
-		Image mp = new Image(getClass().getResourceAsStream(src));
-		ImageView vw = new ImageView(mp);
-		button.setGraphic(vw);
-        button.setContentDisplay(ContentDisplay.RIGHT);
-        vw.fitWidthProperty().bind(button.widthProperty().divide(8));
-        vw.setPreserveRatio(true);
-        button.setMaxWidth(Double.MAX_VALUE); 
-        return button;
-	}
 	
 	private void createLayout2(){
 		HBox main = new HBox();
@@ -480,10 +483,6 @@ public class WaitingScene extends Scene {
 		return captureLoadingLabel;
 		
 	}
-	
-	
-	
-	
 	
 	
 	

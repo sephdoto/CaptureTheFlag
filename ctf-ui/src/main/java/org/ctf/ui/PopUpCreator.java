@@ -1,6 +1,4 @@
 package org.ctf.ui;
-
-
 import java.util.HashMap;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.constants.Descriptions;

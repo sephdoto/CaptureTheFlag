@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.doubleThat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.Team;
@@ -51,13 +52,13 @@ public class GamePane extends HBox{
 	String[][] map;
 	final GameState state;
 	Team[] teams;
-int rows;
+	int rows;
 	int cols;
 	int currentTeam;
 	public VBox vBox;
 	int anzTeams;
-	 HashMap<String, CostumFigurePain> figures = new HashMap<String, CostumFigurePain>();
-	 HashMap<Integer, BaseRep> bases = new HashMap<Integer, BaseRep>();
+	HashMap<String, CostumFigurePain> figures = new HashMap<String, CostumFigurePain>();
+	HashMap<Integer, BaseRep> bases = new HashMap<Integer, BaseRep>();
 	HashMap<Integer, BackgroundCellV2> cells = new HashMap<Integer, BackgroundCellV2>();
 	public GridPane gridPane;
 	 SimpleObjectProperty<Double> prefWidth = new SimpleObjectProperty<Double>();
@@ -143,6 +144,8 @@ int rows;
 
 	}
 	
+	
+	
 
 	public void moveFigure(int x, int y, CostumFigurePain mover) {
 		mover.getParentCell().removeFigure();
@@ -171,7 +174,6 @@ int rows;
 				c.setActive();
 			}
 		}
-		Game.initializeGame(this, GameMode.Online);
 	}
 
 	

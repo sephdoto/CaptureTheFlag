@@ -93,6 +93,23 @@
     -fx-border-radius: 5px; 
 }
 
+.info-vbox.clicked{
+	-fx-background-color: rgba(128,128,128,0.5) ; 
+    -fx-padding: 5px; 
+    -fx-border-color: #FFD700;
+    -fx-border-width: 2px; 
+    -fx-border-radius: 5px; 
+}
+
+
+.info-vbox-active {
+	 -fx-background-color: rgba(128,128,128,0.5) ; 
+    -fx-padding: 5px; 
+    -fx-border-color: #FFD700;
+    -fx-border-width: 2px; 
+    -fx-border-radius: 5px; 
+}
+
 
 .context-menu{
     -fx-background-color: derive(#ececec,26.4%);

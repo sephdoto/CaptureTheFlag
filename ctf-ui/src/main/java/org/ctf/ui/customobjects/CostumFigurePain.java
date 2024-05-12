@@ -190,13 +190,6 @@ public class CostumFigurePain extends Pane {
 		this.posY = parent.y;
 	}
 	
-	//Mehtode wird in der jetzigen implementierung nicht benötigt
-	public void updatePos(int x1, int y1) {
-		this.posX = x1;
-		this.posY = y1;
-		int[] pos = {x1,y1};
-		piece.setPosition(pos);
-	}
 	
 	public void setActive() {
 		this.active = true;
