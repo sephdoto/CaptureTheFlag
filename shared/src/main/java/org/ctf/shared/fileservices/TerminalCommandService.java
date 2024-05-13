@@ -8,12 +8,24 @@ public class TerminalCommandService {
   static final String SPACE = " ";
   Logger logger = Logger.getLogger(getClass().getName());
 
-  public static void main(String[] args) {
-    listJarFiles("F:", "testjar.jar");
+  public static void main(String[] args) throws IOException {
+    Process proc =
+        Runtime.getRuntime()
+            .exec(
+                "jar -uvf \"F:\\Test Folder\\app.jar\" -C \"F:\\Test Folder\\r"
+                    + "esources_ctf_team_14\" resources");
+
+    proc.getInputStream().transferTo(System.out);
+    proc.getErrorStream().transferTo(System.out);
+    // String path = "cmd \"F:\\Test Folder\"";
+    // "F:\\Test Folder\\";
+    // path = path.replaceAll(" ", "\\\\ ");
+    // System.out.println(path);
+    // listJarFiles(path, "app.jar");
   }
 
   public static void addFileToJar(File file, String path) {
-    String commandBase =  "jar" + SPACE + "uf" + SPACE + "path";
+    String commandBase = "jar" + SPACE + "uf" + SPACE + "path";
     runCommandinShell(commandBase);
   }
 

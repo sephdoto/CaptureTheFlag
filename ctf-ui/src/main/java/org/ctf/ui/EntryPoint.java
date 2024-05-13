@@ -1,13 +1,9 @@
 package org.ctf.ui;
 
 import java.io.File;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.fileservices.ResourceController;
-import org.ctf.shared.fileservices.TerminalCommandService;
-import com.sun.media.jfxmedia.logging.Logger;
-import de.unimannheim.swt.pse.ctf.CtfApplication;
+import org.ctf.ui.controllers.ServerController;
 
 /**
  * Accessor File to allow proper exposure of dependencies
@@ -17,20 +13,17 @@ import de.unimannheim.swt.pse.ctf.CtfApplication;
 public class EntryPoint {
 
   public static void main(String[] args) {
-    //    ExecutorService executor = Executors.newSingleThreadExecutor();
-    //    Runnable startServer =
-    //        () -> TerminalCommandService.runCommandinShell(Constants.START_SERVER_JAR_COMMAND);
-    if (Constants.ISJAR)
-      if (!new File(Constants.JARRESOURCES).isDirectory()) {
-        ResourceController.main(args);
-      }
-    //    executor.submit(startServer);
-    String[] args2 = new String[] {"--server.port=8888"};
-    try {
-      CtfApplication.main(args2);
-    } catch (Exception e) {
-      e.printStackTrace();
+    if (Constants.ISJAR && !new File(Constants.JARRESOURCES).isDirectory()) {
+      ResourceController.main(args);
+    }  
+    //Two liner to Start a Server
+    ServerController sc = new ServerController();
+    boolean isStarted = sc.startServer("9999");
+    if(!isStarted){
+     System.out.println("Server aint on bruh");
     }
+
+    String[] args2 = new String[] {};
     App.main(args2);
   }
 }
