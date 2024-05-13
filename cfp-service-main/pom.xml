@@ -43,7 +43,8 @@
             <version>20240205</version>
         </dependency>
         <dependency>
-            <groupId>org.openjfx</groupId>
+            <groupId>org.openjfx</groupId>  
+	  		<classifier>mac</classifier>
             <artifactId>javafx-controls</artifactId>
             <version>21.0.2</version>
             <scope>provided</scope>
@@ -51,12 +52,14 @@
         <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-fxml -->
         <dependency>
             <groupId>org.openjfx</groupId>
+	  		<classifier>mac</classifier>
             <artifactId>javafx-fxml</artifactId>
             <version>21.0.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
+	  		<classifier>mac</classifier>
             <artifactId>javafx-graphics</artifactId>
             <version>21.0.2</version>
             <scope>provided</scope>
