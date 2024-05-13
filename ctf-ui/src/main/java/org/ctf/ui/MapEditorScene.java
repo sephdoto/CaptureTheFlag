@@ -60,6 +60,7 @@ public class MapEditorScene extends Scene {
 	private Parent[] options;
 	private StackPane left;
 	private MapTemplate tmpTemplate;
+	private MapPreview mp;
 	private PieceDescription tmpdescription = new PieceDescription();
 	private Movement tmpMovement = new Movement();
 	private ComboBox<String> pieceComboBox;
@@ -153,9 +154,9 @@ public class MapEditorScene extends Scene {
 		
 		
 		//GamePane visual = new GamePane(CreateTextGameStates.createTestGameState1());
-		MapPreview mp = new MapPreview(tmpTemplate);
+		mp = new MapPreview(tmpTemplate);
 		GameState gamestate = mp.getGameState();
-		 visual = new GamePane(mp.getGameState());
+		visual = new GamePane(mp.getGameState());
 		
 		test.getChildren().add(visual);
 		test.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
@@ -876,7 +877,7 @@ public class MapEditorScene extends Scene {
 			left.getChildren().clear();
 			left.getChildren().add(options[0]);
 			this.test.getChildren().remove(visual);
-			MapPreview mp = new MapPreview(tmpTemplate);
+			mp = new MapPreview(tmpTemplate);
 			GameState gamestate = mp.getGameState();
 			visual = new GamePane(gamestate);
 			this.test.getChildren().add(visual);
@@ -946,7 +947,7 @@ public class MapEditorScene extends Scene {
 		});
 		submit.setOnAction(e -> {
 			try {
-				JsonTools.saveMapTemplateAsFile("test", tmpTemplate);
+				JsonTools.saveTemplateWithGameState("test", tmpTemplate, mp.getGameState());
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.function.Consumer;
 
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.Directions;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.data.map.Movement;
@@ -15,6 +16,7 @@ import org.ctf.shared.state.data.map.PieceDescription;
 import org.ctf.shared.state.data.map.PlacementType;
 import org.ctf.shared.tools.JsonTools;
 import org.ctf.shared.tools.JsonTools.IncompleteMapTemplateException;
+import org.ctf.ui.controllers.MapPreview;
 import org.ctf.ui.controllers.MapPreviewThread;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Spinner;
@@ -41,7 +43,7 @@ public class TemplateEngine {
   public TemplateEngine(EditorScene editorscene) {
     this.editorscene = editorscene;
     initializeCustomBox(this.editorscene.getCustomFigureBox());    
-    loadTemplate("10x10_2teams_example_moveTimeLimited");
+    loadTemplate("test");
     tmpMovement.setDirections(new Directions());
     initializePieces();
   }
@@ -232,7 +234,7 @@ public class TemplateEngine {
    */
   public void saveTemplate(String name) {
     try {
-      JsonTools.saveMapTemplateAsFile(name, tmpTemplate);
+      JsonTools.saveTemplateWithGameState(name, tmpTemplate, new MapPreview(tmpTemplate).getGameState());
     } catch (IOException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();

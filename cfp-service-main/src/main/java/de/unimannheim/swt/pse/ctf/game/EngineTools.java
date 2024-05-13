@@ -267,6 +267,7 @@ public class EngineTools extends GameUtilities {
       teams[i].setBase(gameState.getTeams()[i].getBase());
       teams[i].setFlags(gameState.getTeams()[i].getFlags());
       teams[i].setId(gameState.getTeams()[i].getId());
+      teams[i].setColor(gameState.getTeams()[i].getColor());
       Piece[] pieces = new Piece[gameState.getTeams()[i].getPieces().length];
       for (int j = 0; j < pieces.length; j++) {
         pieces[j] = new Piece();
