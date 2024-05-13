@@ -31,6 +31,8 @@ import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Control;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -78,7 +80,6 @@ public class GamePane extends HBox{
 	
 
 	public GamePane(GameState state) {
-		
 		//this.setStyle("-fx-background-color: yellow");
 		this.state = state;
 		this.map = state.getGrid();
@@ -86,11 +87,10 @@ public class GamePane extends HBox{
 		rows = map.length;
 		cols = map[0].length;
 		vBox = new VBox();
-		//vBox.setStyle("-fx-background-color: red");
+		vBox.setStyle("-fx-background-color: red");
 		vBox.alignmentProperty().set(Pos.CENTER);
 		alignmentProperty().set(Pos.CENTER);
 		//paddingProperty().set(new Insets(20));
-		
 		vBox.heightProperty().addListener(new ChangeListener<Number>() {
 			public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth, Number newWidth) {
 					if(Game.getCurrent()!=null) {
@@ -135,13 +135,23 @@ public class GamePane extends HBox{
 			
 			gridPane.getRowConstraints().add(rowConstraints);
 		}
-		
+		vBox.getChildren().add(createBackgroundImage());
 		vBox.getChildren().add(gridPane);
 		getChildren().add(vBox);
 		HBox.setHgrow(this, Priority.ALWAYS);
 		this.fillGrid();
 		setCurrentTeamActive();
 
+	}
+	
+	public  ImageView createBackgroundImage() {
+		Image mp = new Image(getClass().getResourceAsStream("tuning1.png"));
+		ImageView mpv = new ImageView(mp);
+		mpv.fitHeightProperty().bind(vBox.heightProperty());
+		mpv.fitWidthProperty().bind(vBox.widthProperty());
+		mpv.setPreserveRatio(true);
+		mpv.setOpacity(0.2);
+		return mpv;
 	}
 	
 	
@@ -170,7 +180,7 @@ public class GamePane extends HBox{
 	
 	public  void setCurrentTeamActive() {
 		for (CostumFigurePain c : figures.values()) {
-			if (c.getTeamID().equals(currentTeam)) {
+			if (c.getTeamID().equals(String.valueOf(currentTeam))) {
 				c.setActive();
 			}
 		}
