@@ -338,7 +338,7 @@ public class CretaeGameScreenV2 extends Scene {
 	            template = entry.getKey();
 	            state  = entry.getValue();
 	        } 
-		GamePane gm = new GamePane(state);
+		GamePane gm = new GamePane(state,hsc);
 		showMapBox.getChildren().add(gm);
 	}
 	
@@ -437,9 +437,24 @@ public class CretaeGameScreenV2 extends Scene {
 		showMapBox.getStyleClass().add("show-GamePane");
 		showMapBox.paddingProperty().bind(padding);
 		state = StroeMaps.getMap(name);
-		 gm = new GamePane(state);
+		 gm = new GamePane(state,hsc);
+		 StackPane.setAlignment(gm, Pos.CENTER);
+		 gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
+		 //gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
+		 showMapBox.getChildren().add(createBackgroundImage(gm.vBox));
 		showMapBox.getChildren().add(gm);
 		return showMapBox;
+	}
+	
+	public  ImageView createBackgroundImage(VBox vBox) {
+		Image mp = new Image(getClass().getResourceAsStream("gridSTARWARS.png"));
+		ImageView mpv = new ImageView(mp);
+		StackPane.setAlignment(mpv, Pos.CENTER);
+		mpv.fitHeightProperty().bind(vBox.heightProperty().multiply(1));
+		mpv.fitWidthProperty().bind(vBox.widthProperty().multiply(1));
+		mpv.setPreserveRatio(true);
+		mpv.setOpacity(1);
+		return mpv;
 	}
 	
 	
@@ -577,6 +592,7 @@ public class CretaeGameScreenV2 extends Scene {
 		exit.setOnAction(e -> {
 			hsc.setTeamName(enterNamefield.getText());
 			hsc.createHumanClient();
+			//hsc.switchToTestScene(App.getStage());
 			hsc.switchToWaitGameScene(App.getStage());
 		});
 		return exit;

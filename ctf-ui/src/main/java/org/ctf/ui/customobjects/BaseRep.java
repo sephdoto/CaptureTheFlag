@@ -59,7 +59,7 @@ public class BaseRep extends Pane {
 	}
 	
 	public void showColor(ObjectProperty<Color> sceneColorProperty) {
-		//label.textFillProperty().bind(sceneColorProperty);
+		label.textFillProperty().bind(sceneColorProperty);
 	}
 	
 	public String getTeamID() {

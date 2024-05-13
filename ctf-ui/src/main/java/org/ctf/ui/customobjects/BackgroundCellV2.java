@@ -136,7 +136,7 @@ public class BackgroundCellV2 extends Pane {
 		createCircle2();
 	}
 	public void deselect() {
-		this.setStyle( " -fx-border-color: black; " + "-fx-border-width: 2px ");
+		this.setStyle( " -fx-border-color: black; " + "-fx-border-width: 1.2px ");
 		this.active = false;
 		rc.setFill(null);
 		if(rc2 != null) {

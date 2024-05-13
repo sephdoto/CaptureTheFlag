@@ -9,6 +9,8 @@ import org.ctf.ui.customobjects.BackgroundCellV2;
 import org.ctf.ui.customobjects.BaseRep;
 import org.ctf.ui.customobjects.CostumFigurePain;
 
+import com.jayway.jsonpath.internal.function.sequence.Last;
+
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.SimpleObjectProperty;
@@ -55,17 +57,18 @@ public class GamePane extends HBox{
      );
      NumberBinding binding;
      SimpleObjectProperty<Double> min = new SimpleObjectProperty<Double>();
-    
+    HomeSceneController hsc;
 
     
      
 	
 
-	public GamePane(GameState state) {
+	public GamePane(GameState state, HomeSceneController hsc) {
 		//this.setStyle("-fx-background-color: yellow");
 		this.state = state;
 		this.map = state.getGrid();
 		this.currentTeam = state.getCurrentTeam();
+		this.hsc = hsc;
 		rows = map.length;
 		cols = map[0].length;
 		vBox = new VBox();
@@ -112,7 +115,6 @@ public class GamePane extends HBox{
 			 RowConstraints rowConstraints = new RowConstraints(Control.USE_PREF_SIZE, Control.USE_COMPUTED_SIZE,
 					Double.MAX_VALUE);
 			rowConstraints.setVgrow(Priority.SOMETIMES);
-			
 			gridPane.getRowConstraints().add(rowConstraints);
 		}
 		vBox.getChildren().add(gridPane);
@@ -120,7 +122,7 @@ public class GamePane extends HBox{
 		HBox.setHgrow(this, Priority.ALWAYS);
 		this.fillGrid();
 		setCurrentTeamActive();
-
+		
 	}
 	
 	public  ImageView createBackgroundImage() {
@@ -160,6 +162,7 @@ public class GamePane extends HBox{
 	public  void setCurrentTeamActive() {
 		for (CostumFigurePain c : figures.values()) {
 			if (c.getTeamID().equals(String.valueOf(currentTeam))) {
+				
 				c.setActive();
 			}
 		}
@@ -220,7 +223,11 @@ public class GamePane extends HBox{
 			Piece[] pieces = currenTeam.getPieces();
 			for(Piece piece: pieces) {
 				CostumFigurePain pieceRep = new CostumFigurePain(piece);
-				pieceRep.showTeamColor("red");//
+				if ( hsc.playGameScreenV2 !=null) {
+					pieceRep.showTeamColorWhenSelecting(hsc.playGameScreenV2.colors.get(piece.getTeamId()));
+				}else {
+					pieceRep.showTeamColor("red");//
+				}
 			figures.put(piece.getId(), pieceRep);
 				//allFigures.add(pieceRep);
 				int x = piece.getPosition()[0];

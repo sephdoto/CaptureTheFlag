@@ -21,6 +21,7 @@ import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 
+import javafx.beans.property.ObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,6 +31,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Stop;
 import javafx.stage.Stage;
 
@@ -48,6 +50,8 @@ public class HomeSceneController {
 	WaitingScene waitingScene;
 	Client mainClient;
 	String teamName;
+	String teamTurn;
+	public  ObjectProperty<Color> lastcolor;
 	
 	public void switchtoHomeScreen(ActionEvent e) {
 		Scene scene = App.getScene();
@@ -101,10 +105,22 @@ public class HomeSceneController {
 	}
 	
 	public void redraw(GameState state) {
-		playGameScreenV2.redrawGrid(state);
+		playGameScreenV2.redrawGrid(state,  this);
+		
 	}
 	
+	
+	
+	public ObjectProperty<Color> getLastcolor() {
+		return lastcolor;
+	}
+
+	public void setLastcolor(ObjectProperty<Color> lastcolor) {
+		this.lastcolor = lastcolor;
+	}
+
 	public void setTeamTurn(String s) {
+		this.teamTurn = s;
 		playGameScreenV2.setTeamTurn(s);
 	}
 
@@ -135,6 +151,7 @@ public class HomeSceneController {
 	public void switchToMapEditorScene(Stage stage) {
 		stage.setScene(new EditorScene(this, stage.getWidth(), stage.getHeight()));
 	}
+	
 	public void switchToTestScene(Stage stage) {
 		stage.setScene(new TestScene(this, stage).getScene());
 	}

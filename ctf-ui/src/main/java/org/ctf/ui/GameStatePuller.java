@@ -15,7 +15,6 @@ public class GameStatePuller extends Thread {
 		this.mainClient = mainClient;
 		currentTeam = mainClient.getCurrentTeamTurn();
 		 Platform.runLater(() -> {
-			 System.out.println(mainClient.getCurrentState() != null);
 			 hsc.redraw(mainClient.getCurrentState());
 			 hsc.setTeamTurn(String.valueOf(currentTeam));
 	        });
@@ -25,7 +24,7 @@ public class GameStatePuller extends Thread {
 	public void run() {
 		while(active) {
 		try {
-			Thread.sleep(100);
+			Thread.sleep(10);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -33,7 +32,6 @@ public class GameStatePuller extends Thread {
 		if (currentTeam != mainClient.getCurrentTeamTurn()) {
 			currentTeam = mainClient.getCurrentTeamTurn();
 			 Platform.runLater(() -> {
-				 System.out.println(mainClient.getCurrentState() != null);
 				 hsc.redraw(mainClient.getCurrentState());
 				 hsc.setTeamTurn(String.valueOf(currentTeam));
 		        });

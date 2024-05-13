@@ -42,6 +42,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -87,6 +88,7 @@ public class WaitingScene extends Scene {
 	private ObjectProperty<Font> addHumanButtonTextFontSIze = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> serverInfoDescription = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> clipBoardInfoText = new SimpleObjectProperty<Font>(Font.getDefault());
+	private ObjectProperty<Font> tableHeader = new SimpleObjectProperty<Font>(Font.getDefault());
 	
 
 	public WaitingScene(HomeSceneController hsc, double width, double height) {
@@ -103,10 +105,12 @@ public class WaitingScene extends Scene {
 	
 	private void createLayout() {
 		root.getStyleClass().add("join-root");
+		root.prefHeightProperty().bind(this.heightProperty());
+		root.prefWidthProperty().bind(this.widthProperty());
 		VBox mainBox = createMainBox(root);
 		root.getChildren().add(mainBox);
 		mainBox.getChildren().add(createHeader());
-		HBox middle = createMiddleHBox();
+		HBox middle = createMiddleHBox(mainBox);
 		VBox leftTop = createLeftVBox(middle);
 		VBox rightTop = createRightVBox(middle);
 		middle.getChildren().addAll(leftTop,rightTop);
@@ -122,9 +126,10 @@ public class WaitingScene extends Scene {
 		            waitigFontSize.set(Font.font(newWidth.doubleValue() / 60));
 		            serverInfoHeaderFontSize.set(Font.font(newWidth.doubleValue()/ 100));
 		            serverInfoCOntentFontSize.set(Font.font(newWidth.doubleValue()/ 68));
-		            addHumanButtonTextFontSIze.set(Font.font(newWidth.doubleValue()/ 70));
+		            addHumanButtonTextFontSIze.set(Font.font(newWidth.doubleValue()/ 50));
 		            serverInfoDescription.set(Font.font(newWidth.doubleValue()/ 50));
 		            clipBoardInfoText.set(Font.font(newWidth.doubleValue()/ 60));
+		            tableHeader.set(Font.font(newWidth.doubleValue()/50));
 
 		        }
 		    });
@@ -147,17 +152,18 @@ public class WaitingScene extends Scene {
 	private ImageView createHeader() {
 		Image mp = new Image(getClass().getResourceAsStream("multiplayerlogo.png"));
 		ImageView mpv = new ImageView(mp);
+		mpv.fitHeightProperty().bind(root.heightProperty().multiply(0.1));
 		mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.5));
 		mpv.setPreserveRatio(true);
 		return mpv;
 	}
 	
-	private HBox createMiddleHBox() {
+	private HBox createMiddleHBox(VBox parent) {
 		HBox sep = new HBox();
-		sep.setStyle("-fx-background-color: red");
-		sep.prefHeightProperty().bind(this.heightProperty());
+		//sep.setStyle("-fx-background-color: red");
+		sep.prefHeightProperty().bind(parent.heightProperty().multiply(0.9));
+		sep.prefWidthProperty().bind(parent.widthProperty());
 		sep.setAlignment(Pos.CENTER);
-		sep.setSpacing(50);
 		sep.widthProperty().addListener((observable, oldValue, newValue) -> {
 			double newSpacing = newValue.doubleValue() * 0.05;
 			sep.setSpacing(newSpacing);
@@ -166,46 +172,99 @@ public class WaitingScene extends Scene {
 	}
 	
 	private VBox createLeftVBox(HBox parent) {
-		
 		VBox leftBox = new VBox();
-		leftBox.prefHeightProperty().bind(parent.heightProperty());
 		leftBox.setStyle("-fx-background-color: green");
 		leftBox.setAlignment(Pos.TOP_CENTER);
 		leftBox.prefWidthProperty().bind(parent.widthProperty().multiply(0.55));
-		leftBox.prefHeightProperty().bind(parent.heightProperty().multiply(0.68));
+		leftBox.prefHeightProperty().bind(parent.heightProperty().multiply(1));
 		leftBox.getChildren().add(createTestLabel(leftBox));
 		leftBox.getChildren().add(createTestLabel2(leftBox));
 		leftBox.getChildren().add(createCreateButton());
+		leftBox.getChildren().add(createHeaderRow(leftBox));
+		ScrollPane scroller = new ScrollPane();
+		scroller.prefHeightProperty().bind(leftBox.heightProperty().multiply(0.8));
+		scroller.prefWidthProperty().bind(leftBox.widthProperty());
+		VBox content = new VBox();
+		for(int i=0; i<10;i++) {
+			content.getChildren().add(createNormalRow(scroller));
+			
+		}
+		scroller.setContent(content);
+		leftBox.getChildren().add(scroller);
 		return leftBox;
 	}
 	
+	private HBox createHeaderRow(VBox parent) {
+		HBox h = new HBox();
+		Label l = createHeaderLabel("Teamcolor", h);
+		Label l2 = createHeaderLabel("Teamname", h);
+		Label l3 = createHeaderLabel("Type", h);
+		h.getChildren().addAll(l,l2,l3);
+		return h;
+	}
+	
+	private Label createHeaderLabel(String text, HBox h) {
+		Label l = new Label(text);
+		l.setAlignment(Pos.CENTER);
+		l.prefWidthProperty().bind(h.widthProperty().divide(3));
+		l.setStyle("-fx-border-color:black");
+		l.fontProperty().bind(tableHeader);
+		return l;
+	}
+	
+	private HBox createNormalRow(ScrollPane parent) {
+		HBox oneRow = new HBox();
+		oneRow.prefHeightProperty().bind(this.heightProperty().multiply(0.1));
+		oneRow.prefWidthProperty().bind(parent.widthProperty());
+		HBox colorBox = new HBox();
+		Pane colorRec = new Pane();
+		colorRec.setStyle("-fx-background-color: blue");
+		colorRec.prefWidthProperty().bind(Bindings.divide(colorBox.widthProperty(), 2));
+		colorRec.prefHeightProperty().bind(Bindings.divide(colorBox.heightProperty(), 2));
+        colorRec.layoutXProperty().bind(Bindings.subtract(colorBox.widthProperty().divide(2), colorRec.widthProperty().divide(2)));
+		colorRec.layoutYProperty().bind(Bindings.subtract(colorBox.widthProperty().divide(2), colorRec.heightProperty().divide(2)));
+		colorBox.setAlignment(Pos.CENTER);
+		colorBox.setStyle("-fx-border-color: black");
+		colorBox.prefWidthProperty().bind(oneRow.widthProperty().divide(3));
+		//colorBox.getChildren().add(colorRec);
+		Label l2 = createHeaderLabel("Teamname", oneRow);
+		l2.prefHeightProperty().bind(this.heightProperty().multiply(0.1));
+		Label l3 = createHeaderLabel("Type", oneRow);
+		l3.prefHeightProperty().bind(this.heightProperty().multiply(0.1));
+		oneRow.getChildren().addAll(colorBox,l2,l3);
+		return oneRow;
+	}
+	
+	
+	
 	private VBox createRightVBox(HBox parent) {
 		VBox rightBox = new VBox();
-		rightBox.prefHeightProperty().bind(parent.heightProperty());
-		rightBox.setStyle("-fx-background-color: yellow");
+		//rightBox.setStyle("-fx-background-color: yellow");
 		rightBox.setAlignment(Pos.TOP_CENTER);
 		rightBox.widthProperty().addListener((observable, oldValue, newValue) -> {
 			double newPadding = newValue.doubleValue() * 0.04;
-			double newSpacing = newValue.doubleValue() * 0.03;
+			double newSpacing = newValue.doubleValue() * 0.1;
 			rightBox.setPadding(new Insets(newPadding));
 			rightBox.setSpacing(newSpacing);
 		});
 		rightBox.prefWidthProperty().bind(parent.widthProperty().multiply(0.35));
-		rightBox.prefHeightProperty().bind(parent.heightProperty().multiply(0.68));
-		rightBox.getChildren().add(createServerDescription(rightBox,"Server Information"));
+		rightBox.prefHeightProperty().bind(parent.heightProperty().multiply(0.65));
 		rightBox.getChildren().add(createSeverInfoBox(rightBox));
+		rightBox.getChildren().add(createAddButtons(rightBox));
 		return rightBox;
 	}
 	
 	private VBox createSeverInfoBox(VBox parent) {
 		VBox serverInfoBox = new VBox();
 		serverInfoBox.prefWidthProperty().bind(parent.widthProperty());
-		serverInfoBox.setStyle("-fx-background-color: yellow");
+		serverInfoBox.prefHeightProperty().bind(parent.heightProperty().multiply(0.5));
+		//serverInfoBox.setStyle("-fx-background-color: yellow");
 		serverInfoBox.setAlignment(Pos.CENTER);
 		serverInfoBox.widthProperty().addListener((observable, oldValue, newValue) -> {
 			double newSpacing = newValue.doubleValue() * 0.05;
 			serverInfoBox.setSpacing(newSpacing);
 		});
+		serverInfoBox.getChildren().add(createGeneralDescription(serverInfoBox,"Server Information"));
 		serverInfoBox.getChildren().add(createInfoLabel(serverInfoBox, "Session-ID", hsc.getSessionID(), 0.8));
 		
 		HBox dividelowerPart = new HBox();
@@ -252,7 +311,7 @@ public class WaitingScene extends Scene {
 		fade.play();
 	}
 	
-	private Label createServerDescription(VBox parent, String text) {
+	private Label createGeneralDescription(VBox parent, String text) {
 		Label l = new Label(text);
 		l.getStyleClass().add("aiConfig-label");
 		l.setAlignment(Pos.CENTER);
@@ -289,18 +348,19 @@ public class WaitingScene extends Scene {
 		return labelBox;
 	}
 	
-	private VBox createAddButtons() {
+	private VBox createAddButtons(VBox parent) {
 		VBox v = new VBox();
+		//v.setStyle("-fx-background-color: blue");
+		v.setAlignment(Pos.TOP_CENTER);
 		v.heightProperty().addListener((obs, oldVal, newVal) -> {
-			double spacing = newVal.doubleValue() * 0.04;
+			double spacing = newVal.doubleValue() * 0.08;
 			v.setSpacing(spacing);
-			double padding = newVal.doubleValue() * 0.1;
-			v.setPadding(new Insets(padding, 0, 0, 0));
 		});
-		v.prefWidthProperty().bind(this.widthProperty().multiply(0.2));
+		v.prefWidthProperty().bind(parent.widthProperty().multiply(0.6));
 		Button k = createAddHumanButton("add Human-Player","user-286.png");
 		Button b = createAddAIButton("add Bot","robot1.png");
-		b.prefHeightProperty().bind(k.heightProperty());
+		
+		v.getChildren().add(createGeneralDescription(v, "Add local players"));
 		v.getChildren().add(b);
 		v.getChildren().add(k);
 		return v;
@@ -314,11 +374,13 @@ public class WaitingScene extends Scene {
 		ImageView vw = new ImageView(mp);
 		button.setGraphic(vw);
         button.setContentDisplay(ContentDisplay.RIGHT);
-        vw.fitWidthProperty().bind(button.widthProperty().divide(5));
+        vw.fitWidthProperty().bind(button.widthProperty().divide(8));
         vw.setPreserveRatio(true);
         button.setMaxWidth(Double.MAX_VALUE); 
         return button;
 	}
+	
+	
 	
 	private Button createAddAIButton(String text, String src) {
 		Button button = new Button(text);
@@ -413,7 +475,6 @@ public class WaitingScene extends Scene {
 		middleBox.setAlignment(Pos.TOP_CENTER);
 		//middleBox.setStyle("-fx-background-color:red");
 		main.getChildren().add(middleBox);
-		main.getChildren().add(createAddButtons());
 		root.setStyle("-fx-background-color:black");
 		root.getChildren().add(main);
 	}
@@ -483,9 +544,6 @@ public class WaitingScene extends Scene {
 		return captureLoadingLabel;
 		
 	}
-	
-	
-	
 	
 	private Button createLeave() {
 		Button exit = new Button("Leave");

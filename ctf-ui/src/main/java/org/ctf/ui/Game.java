@@ -36,15 +36,13 @@ public class Game {
 		currentPlayer = null;
 	}
 
-
+	
 
 	// hier wird Move Objekt an Client gesendet
 	public static void makeMoveRequest(int[] newPos) {
 		Move move = new Move();
 		move.setPieceId(currentPlayer.getPiece().getId());
 		move.setNewPosition(newPos);
-		//cb.moveFigure(newPos[0], newPos[1], currentPlayer); //
-		
 		try {
 			cliento.makeMove(move);
 		} catch (SessionNotFound e) {
@@ -70,7 +68,6 @@ public class Game {
 			cf.setUnactive();
 			cf.setUnattacble();
 		}
-		//PlayGameScreen.resetTimer();
 	}
 
 	public void deleteTeam(String teamToDelete) {

@@ -1,5 +1,7 @@
 package org.ctf.ui;
 
+import java.util.HashMap;
+
 import org.ctf.shared.state.GameState;
 import org.ctf.ui.customobjects.BaseRep;
 import org.ctf.ui.customobjects.CostumFigurePain;
@@ -50,7 +52,8 @@ public class PlayGameScreenV2 extends Scene {
 	private static Label teamLabel;
 	private static Label countLabel;
 	StackPane showMapBox;
-	private  ObjectProperty<Color> sceneColorProperty = 
+	public HashMap<String,  ObjectProperty<Color>> colors = new HashMap<String, ObjectProperty<Color>>();
+	public  ObjectProperty<Color> sceneColorProperty = 
 	        new SimpleObjectProperty<>(Color.BLUE);
 	private ObjectProperty<Font> timerLabel = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> timerDescription = new SimpleObjectProperty<Font>(Font.getDefault());
@@ -62,13 +65,19 @@ public class PlayGameScreenV2 extends Scene {
 	public PlayGameScreenV2(HomeSceneController hsc, double width, double height) {
 		super(new StackPane(), width, height);
 		this.hsc = hsc;
-		
-
 		manageFontSizes();
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
 		this.root = (StackPane) this.getRoot();
 		createLayout();
-		 this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
+		this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
+		initColorHashMap();
+		
+	}
+	
+	public void initColorHashMap() {
+		for(int i=0; i<hsc.getMaxNumberofTemas(); i++) {
+			colors.put(String.valueOf(i), new SimpleObjectProperty<>(Color.BEIGE));
+		}
 	}
 	
 	
@@ -98,15 +107,15 @@ public class PlayGameScreenV2 extends Scene {
 		//PullGameStateThreads p = new PullGameStateThreads();
 	}
 	
-	public void redrawGrid(GameState state) {
+	public void redrawGrid(GameState state, HomeSceneController hsc) {
 		if(state == null) {
 		showMapBox.getChildren().add(new Label("hallo"));
 		} else {
 			showMapBox.getChildren().clear();
-			gm = new GamePane(state);
-			Game.initializeGame(gm, hsc.mainClient);
+			gm = new GamePane(state,hsc);
 			gm.enableBaseColors(this);
 			showMapBox.getChildren().add(gm);
+			Game.initializeGame(gm, hsc.mainClient);
 		}
 	}
 	
@@ -122,7 +131,7 @@ public class PlayGameScreenV2 extends Scene {
 		showMapBox.prefHeightProperty().bind(outerbox.heightProperty());
 		showMapBox.getStyleClass().add("show-GamePane");
 		state = StroeMaps.getMap(name);
-		gm = new GamePane(state);
+		gm = new GamePane(state,hsc);
 //		gm.prefHeightProperty().bind(this.heightProperty().multiply(0.9));
 //		gm.prefWidthProperty().bind(this.widthProperty().multiply(0.9));
 		gm.enableBaseColors(this);
@@ -198,10 +207,12 @@ public class PlayGameScreenV2 extends Scene {
         CustomMenuItem itemColor = new CustomMenuItem(myCustomColorPicker);
         itemColor.getStyleClass().add("custom-menu-item");
         itemColor.setHideOnClick(false);
-        sceneColorProperty.bind(myCustomColorPicker.customColorProperty());
+        colors.get(r.getTeamID()).bind(myCustomColorPicker.customColorProperty());
+        //sceneColorProperty.bind(myCustomColorPicker.customColorProperty());
+        //colors.put(r.getTeamID(), new SimpleObjectProperty<T>)
         for(CostumFigurePain p : gm.getFigures().values()) {
       	  	if(p.getTeamID().equals(r.getTeamID())) {
-      		  p.showTeamColorWhenSelecting(sceneColorProperty);
+      		  p.showTeamColorWhenSelecting(colors.get(r.getTeamID()));
       	  	}
         }
         r.showColor(sceneColorProperty);
