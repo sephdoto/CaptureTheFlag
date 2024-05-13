@@ -1,35 +1,20 @@
 package org.ctf.ui;
 
-import static org.mockito.ArgumentMatchers.doubleThat;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.Team;
 import org.ctf.ui.customobjects.BackgroundCellV2;
 import org.ctf.ui.customobjects.BaseRep;
-import org.ctf.ui.customobjects.BlockRepV3;
 import org.ctf.ui.customobjects.CostumFigurePain;
 
-import configs.GameMode;
-import javafx.animation.TranslateTransition;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.NumberBinding;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.geometry.HPos;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -38,10 +23,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.util.Duration;
 
 
 /**
@@ -87,7 +69,7 @@ public class GamePane extends HBox{
 		rows = map.length;
 		cols = map[0].length;
 		vBox = new VBox();
-		vBox.setStyle("-fx-background-color: red");
+		//vBox.setStyle("-fx-background-color: red");
 		vBox.alignmentProperty().set(Pos.CENTER);
 		alignmentProperty().set(Pos.CENTER);
 		//paddingProperty().set(new Insets(20));
@@ -106,8 +88,6 @@ public class GamePane extends HBox{
 				 
 			}
 		});
-		 IntegerProperty nbC = new SimpleIntegerProperty(cols);
-	     IntegerProperty nbR = new SimpleIntegerProperty(rows);
 		
 		 gridPane = new GridPane();
 		 
@@ -135,7 +115,6 @@ public class GamePane extends HBox{
 			
 			gridPane.getRowConstraints().add(rowConstraints);
 		}
-		vBox.getChildren().add(createBackgroundImage());
 		vBox.getChildren().add(gridPane);
 		getChildren().add(vBox);
 		HBox.setHgrow(this, Priority.ALWAYS);
