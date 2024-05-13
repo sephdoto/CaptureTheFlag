@@ -11,6 +11,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -274,7 +275,7 @@ public class ComponentCreator {
    * @param popUp - submitting window
    * @return Button used for closing the submitting window
    */
-  private Button createControlButton(VBox vBox,String label) {
+  public static Button createControlButton(VBox vBox,String label) {
     Button button = new Button(label);
     button.getStyleClass().add("leave-button");
     button.prefWidthProperty().bind(vBox.widthProperty().multiply(0.3));
@@ -296,7 +297,7 @@ public class ComponentCreator {
     });
   }
 
-  public Text createHeaderText(VBox vBox, String label, int divider) {
+  public static Text createHeaderText(VBox vBox, String label, int divider) {
     Text leftheader = new Text(label);
     leftheader.getStyleClass().add("custom-header");
     leftheader.fontProperty().bind(Bindings.createObjectBinding(
@@ -313,5 +314,56 @@ public class ComponentCreator {
     slider.setValue(value);
     slider.setBlockIncrement(0.1);
     return slider;
+  }
+  
+  public static PopUpPane createAIWindow(PopUpCreator popUpCreator) {
+	  PopUpPane popUp = new PopUpPane(App.getStage().getScene(), 0.6, 0.4);
+	    VBox vbox = new VBox();
+	    vbox.setAlignment(Pos.TOP_CENTER);
+	    vbox.setPadding(new Insets(10));
+	    vbox.widthProperty().addListener((obs, oldVal, newVal) -> {
+	      double size = newVal.doubleValue() * 0.035;
+	      vbox.setSpacing(size);
+	    });
+	    vbox.getChildren().add(createHeaderText(vbox, "Choose an AI Configuration", 18));
+	    popUp.setContent(vbox);
+	    
+	    ComboBox<String> configBox = new ComboBox<String>();
+	    configBox.setValue("Test");
+	    configBox.getStyleClass().add("custom-combo-box-2");
+	    configBox.prefWidthProperty().bind(vbox.widthProperty().multiply(0.4));
+	    configBox.prefHeightProperty().bind(configBox.widthProperty().multiply(0.1));
+	    configBox.prefHeightProperty().addListener((obs, oldv, newV) -> {
+	      double size = newV.doubleValue() * 0.4;
+	      configBox.setStyle("-fx-font-size: " + size + "px;");
+	  });
+	    vbox.getChildren().add(configBox);
+	    HBox selectBox = new HBox();
+	    selectBox.setAlignment(Pos.CENTER);
+	    selectBox.widthProperty().addListener((obs, oldVal, newVal) -> {
+		      double size = newVal.doubleValue() * 0.1;
+		      selectBox.setSpacing(size);
+		    });
+	    Button select = new Button("Select");
+	    select.setOnAction(e -> {
+	    	popUpCreator.getRoot().getChildren().remove(popUp);
+	    	popUpCreator.getRoot().getChildren().add(popUpCreator.createConfigPane(1, 1));   
+	    });
+	    select.prefWidthProperty().bind(vbox.widthProperty().multiply(0.25));
+	    select.prefHeightProperty().bind(select.widthProperty().multiply(0.25));
+	    select.prefHeightProperty().addListener((obs, oldv, newV) -> {
+	      double size = newV.doubleValue() * 0.5;
+	      select.setFont(Font.font("Century Gothic", size));
+	    });
+	    selectBox.getChildren().addAll(configBox,select);
+	    
+	    Button leave = createControlButton(vbox, "Back");
+	    leave.setOnAction(e -> {
+	    	popUpCreator.getRoot().getChildren().remove(popUp);
+	    	popUpCreator.getRoot().getChildren().add(popUpCreator.getAiLevelPopUpPane());
+	    });
+	    vbox.getChildren().add(selectBox);
+	    vbox.getChildren().add(leave);
+	    return popUp;
   }
 }

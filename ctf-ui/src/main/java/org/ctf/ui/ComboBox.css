@@ -143,9 +143,34 @@
     -fx-text-fill: white;
 }
 
+.config-button{
+   -fx-background-color: rgba(53,89,119,0.4); 
+    -fx-text-fill: white; 
+    -fx-font-family: "Century Gothic", sans-serif; 
+	 -fx-background-radius: 5px; 
+    -fx-border-radius: 5px; 
+    -fx-border-color: white; 
+    -fx-border-width: 2px; 
+    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
+}
 
-
-
+.custom-combo-box-2 {
+   -fx-background-color: rgb(25,25,25); 
+   -fx-text-fill: white; 
+   -fx-border-color: white; 
+   -fx-border-width: 2.0px;
+   -fx-background-radius: 5px; 
+	 -fx-border-radius: 5px;
+   -fx-font-size: 90%;
+    
+    }
+    .custom-combo-box-2 .list-cell {
+    -fx-text-fill: white; 
+    -fx-font-family: "Century Gothic", sans-serif;
+}
+.custom-combo-box-2 .list-view .list-cell {
+    -fx-text-fill: black; 
+}
 
  
 

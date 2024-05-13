@@ -3,6 +3,7 @@ import java.util.HashMap;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.constants.Descriptions;
 import org.ctf.shared.constants.Enums.AIConfigs;
+import org.ctf.ui.customobjects.ButtonPane;
 import org.ctf.ui.customobjects.PopUpPane;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -22,7 +23,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 /**
  * @author Manuel Krakowski Creates the PopUpPanes to choose an AI an and custom
@@ -165,35 +168,56 @@ public class PopUpCreator {
 	 * @param relSpacing
 	 * @return
 	 */
-	private Button createAIPowerButton(AIConfigs aiName, double relSpacing, int InfoPanePosition) {
-		Button power = new Button(aiName.toString());
-		power.fontProperty().bind(aiPowerText);
-		power.getStyleClass().add("ai-button-easy");
-		Image mp = new Image(getClass().getResourceAsStream("i1.png"));
-		ImageView vw = new ImageView(mp);
-		power.setGraphic(vw);
-		power.setContentDisplay(ContentDisplay.RIGHT);
-		power.widthProperty().addListener((observable, oldValue, newValue) -> {
-			double newSpacing = newValue.doubleValue() * relSpacing;
-			power.setGraphicTextGap(newSpacing);
+	private StackPane createAIPowerButton(AIConfigs aiName, double relSpacing, int InfoPanePosition) {
+//		Button power = new Button(aiName.toString());
+//		power.fontProperty().bind(aiPowerText);
+//		power.getStyleClass().add("ai-button-easy");
+//		Image mp = new Image(getClass().getResourceAsStream("i1.png"));
+//		ImageView vw = new ImageView(mp);
+//		power.setGraphic(vw);
+//		power.setContentDisplay(ContentDisplay.RIGHT);
+//		power.widthProperty().addListener((observable, oldValue, newValue) -> {
+//			double newSpacing = newValue.doubleValue() * relSpacing;
+//			power.setGraphicTextGap(newSpacing);
+//		});
+//		InfoPaneCreator.addInfoPane(power, App.getStage(), Descriptions.describe(aiName), InfoPanePosition);
+//		vw.fitWidthProperty().bind(power.widthProperty().divide(8));
+//		vw.setPreserveRatio(true);
+//		power.prefWidthProperty().bind(root.widthProperty().multiply(0.22));
+//		power.prefHeightProperty().bind(power.widthProperty().multiply(0.45));
+//		power.setOnAction(e -> {
+//			// hsc.switchToWaitGameScene(App.getStage());
+//			root.getChildren().remove(aiorHumanpopup);
+//			root.getChildren().add(createConfigPane(1, 1));
+//			defaultAiName = aiName.toString();
+//		});
+		ButtonPane pane = new ButtonPane(aiName, hsc.getStage(), InfoPanePosition);
+		pane.prefWidthProperty().bind(root.widthProperty().multiply(0.22));
+		pane.prefHeightProperty().bind(pane.widthProperty().multiply(0.45));
+		pane.maxWidthProperty().bind(root.widthProperty().multiply(0.22));
+		pane.maxHeightProperty().bind(pane.widthProperty().multiply(0.45));
+		pane.getEditButton().setOnAction(e -> {		
+			root.getChildren().add(createConfigPane(1, 1));			
 		});
-		InfoPaneCreator.addInfoPane(power, App.getStage(), Descriptions.describe(aiName), InfoPanePosition);
-		vw.fitWidthProperty().bind(power.widthProperty().divide(8));
-		vw.setPreserveRatio(true);
-		power.prefWidthProperty().bind(root.widthProperty().multiply(0.22));
-		power.prefHeightProperty().bind(power.widthProperty().multiply(0.45));
-		power.setOnAction(e -> {
-			// hsc.switchToWaitGameScene(App.getStage());
+		pane.getLoadButton().setOnAction(e -> {
 			root.getChildren().remove(aiorHumanpopup);
-			root.getChildren().add(createConfigPane(1, 1));
-			defaultAiName = aiName.toString();
+			root.getChildren().remove(aiLevelPopUpPane);
+			root.getChildren().add(ComponentCreator.createAIWindow(this));
 		});
-		return power;
+		return pane;
 	}
 
 	
 
 	
+
+	public StackPane getRoot() {
+		return root;
+	}
+
+	public PopUpPane getAiLevelPopUpPane() {
+		return aiLevelPopUpPane;
+	}
 
 	/**
 	 * @author Manuel Krakowski Creates the pane in that a user can customize an AI

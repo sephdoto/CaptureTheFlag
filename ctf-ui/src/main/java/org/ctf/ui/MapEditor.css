@@ -187,4 +187,12 @@
 	-fx-border-radius: 5px;
 	-fx-border-width: 2px; 
 }
+.ai-pane{
+	-fx-background-color: rgba(53,89,119,0.4); 
+	 -fx-background-radius: 5px; 
+    -fx-border-radius: 5px; 
+    -fx-border-color: white; 
+    -fx-border-width: 2px; 
+    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
+}
 
