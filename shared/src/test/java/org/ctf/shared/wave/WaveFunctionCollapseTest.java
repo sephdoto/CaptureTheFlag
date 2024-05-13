@@ -16,39 +16,20 @@ import org.junit.jupiter.api.Test;
 class WaveFunctionCollapseTest {
 
   @Test
-  void gridToImgTest() {
+  void waveFunctionCollapseTest() {
     WaveFunctionCollapse wfc1 = new WaveFunctionCollapse(TestValues.getTestState().getGrid(), Enums.Themes.LOTR);
     WaveFunctionCollapse wfc2 = new WaveFunctionCollapse(TestValues.getTestState().getGrid(), Enums.Themes.STARWARS);
     WaveFunctionCollapse wfc3 = new WaveFunctionCollapse(TestValues.getTestState().getGrid(), Enums.Themes.BAYERN);
     
-    //WaveFunctionCollapse wfc = new WaveFunctionCollapse(new String[3][3]);
-    try {
- 
-      //wfc.generateBackgroundRecursive(new WaveGrid(test, WaveFunctionCollapse.IMAGES_AMOUNT));
+    try {;
       ImageIO.write(wfc1.getBackground(), "png", new File(Constants.toUIResources + "gridLOTR.png"));
       ImageIO.write(wfc2.getBackground(), "png", new File(Constants.toUIResources + "gridSTARWARS.png"));
-      ImageIO.write(wfc3.getBackground(), "png", new File(Constants.toUIResources + "gridBAYERN.png"));
-     
-      
+      ImageIO.write(wfc3.getBackground(), "png", new File(Constants.toUIResources + "gridBAYERN.png"));      
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
   }
-  
-  @Test
-  void randomWithWeightsTest() {
-    int total = 0;
-    for(int i = 0 ; i <= 10000; i++) {
-      int y =  (int) (Math.random() * 5) ;
-      int x = WaveFunctionCollapse.randomWithWeights(5, new int[] {1,1,1,1,1});
-      total += x;
-    }
-    
-    System.out.println("The total is" + (double)total / 10000.0);
-    
-  }
-  
 
 }

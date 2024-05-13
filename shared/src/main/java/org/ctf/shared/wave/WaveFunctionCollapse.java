@@ -400,7 +400,8 @@ public class WaveFunctionCollapse {
     BufferedImage[] images = new BufferedImage[imagesAmount+6];
 
         block =  ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"Block.png"));
-        images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c2.png"));
+        base = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"tuning1.png"));
+          images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c2.png"));
         
         for(int i = 1, c = 1; c <= imagesAmount+4; i++) {
           if(i == 1 || i == 2) {
@@ -432,6 +433,7 @@ public class WaveFunctionCollapse {
     BufferedImage[] images = new BufferedImage[imagesAmount+1];
     images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"l1.png"));
     block = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"tree.png"));
+    base = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"tuning1.png"));
 
     for(int i = 1; i <= 48; i++) {
       images[i] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"l" + i + ".png"));
@@ -491,6 +493,7 @@ public class WaveFunctionCollapse {
   private BufferedImage[] loadKnotImages() throws IOException{
     BufferedImage[] images = new BufferedImage[imagesAmount+1];
     block = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"tree.png"));
+    base = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"tuning1.png"));
 
       images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p1.png"));
 
@@ -536,13 +539,13 @@ public class WaveFunctionCollapse {
           Graphics g = result.getGraphics();
           g.drawImage(block, x * imageSize * 3, y * imageSize * 3,
               x * imageSize * 3 + imageSize * 3, y * imageSize * 3 + imageSize * 3, 0, 0,
-              42, 42, null);
+              block.getHeight(), block.getWidth(), null);
         }
-        if (ogGrid[y][x].contains("b:") && theme == Themes.BAYERN) {
+        if (ogGrid[y][x].contains("b:")) {
           Graphics g = result.getGraphics();
           g.drawImage(base, x * imageSize * 3, y * imageSize * 3,
               x * imageSize * 3 + imageSize * 3, y * imageSize * 3 + imageSize * 3, 0, 0,
-              126, 126, null);
+              base.getHeight(), base.getWidth(), null);
         }
       }
     }
