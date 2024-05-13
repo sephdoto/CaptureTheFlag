@@ -68,7 +68,7 @@ public class Constants {
    *
    * @author rsyed
    */
-  public static final String testTemplate = mapTemplateFolder + "serverTester.json";
+  public static final String testTemplate = mapTemplateFolder + "test.json";
 
   public static final String clientTestingTemplate =
       mapTemplateFolder + "10x10_2teams_example.json";

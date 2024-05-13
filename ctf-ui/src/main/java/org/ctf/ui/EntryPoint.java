@@ -18,7 +18,7 @@ public class EntryPoint {
     }  
     //Two liner to Start a Server
     ServerController sc = new ServerController();
-    boolean isStarted = sc.startServer("9999");
+    boolean isStarted = sc.startServer("8888");
     if(!isStarted){
      System.out.println("Server aint on bruh");
     }
