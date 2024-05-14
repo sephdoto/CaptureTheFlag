@@ -19,14 +19,14 @@ public class Profiling {
     int crashes = 0;
 
     MCTS mcts = new MCTS(new TreeNode(null, new ReferenceGameState(TestValues.getTestState()), new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0})), new AIConfig());
-    TreeNode rootclone = mcts.root.clone(mcts.root.gameState.clone());
+    TreeNode rootclone = mcts.root.clone(mcts.root.getGameState().clone());
     
     for (; count < 100; count++) {
 
       //      MCTS_TestDouble mcts = new
       // MCTS_TestDouble(MCTSTest.mcts.root.clone(MCTSTest.mcts.root.copyGameState()));
-      mcts.root = rootclone.clone(rootclone.gameState.clone());
-      mcts.root.parent = null;
+      mcts.root = rootclone.clone(rootclone.getGameState().clone());
+      mcts.root.setParent(null);
       try {
         mcts.getMove(timeInMilis, new AIConfig().C);
       } catch (NullPointerException npe) {
