@@ -24,7 +24,7 @@ import org.junit.jupiter.api.TestInstance;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class JSON_ToolsTest {
-  String mapTemplateFolder = Constants.mapTemplateFolder;
+  String mapTemplateFolder;
   String mapString;
   MapTemplate mapTemplate;
 
@@ -47,13 +47,13 @@ class JSON_ToolsTest {
   @Test
   void testSaveMapTemplateAsFile() {
     try {
-      JsonTools.saveMapTemplateAsFile("test", mapTemplate);
+      JsonTools.saveMapTemplateAsFile("testxxx", mapTemplate);
     } catch (IOException e) {
       fail("MapTemplate konnte nicht gespeichert werden");
     }
 
     try {
-      assertTrue(Files.deleteIfExists(Paths.get(Constants.mapTemplateFolder + "test.json")));
+      assertTrue(Files.deleteIfExists(Paths.get(mapTemplateFolder + "testxxx.json")));
     } catch (IOException e) {
       fail("MapTemplate konnte nicht gelöscht werden");
     }
@@ -72,7 +72,7 @@ class JSON_ToolsTest {
     try {
       JsonTools.saveMapTemplateAsFile("incomplete", testTemplate);
     } catch (IOException e) {e.printStackTrace();}
-    File incomplete = new File(Constants.mapTemplateFolder + "incomplete.json");
+    File incomplete = new File(mapTemplateFolder + "incomplete.json");
 
     try {
       testTemplate = JsonTools.readMapTemplate(file);
@@ -127,7 +127,7 @@ class JSON_ToolsTest {
     this.mapTemplateFolder = Paths.get("src" + File.separator + "test" + File.separator +"java" + File.separator + "org" + File.separator + "ctf" + 
     File.separator +"shared" + File.separator +"tools" + File.separator + "maptemplates" + File.separator + "templates").toAbsolutePath().toString() + File.separator;
 //    JsonTools.gameStates = Constants.mapTemplateFolder + "gamestates" + File.separator;
-//    JsonTools.mapTemplates = Constants.mapTemplateFolder + "templates" + File.separator;
+    JsonTools.mapTemplates = this.mapTemplateFolder;
   }
 
   @AfterAll

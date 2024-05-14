@@ -251,10 +251,10 @@ public class EngineTools extends GameUtilities {
   }
 
   /**
-   * helper for the spaced placement
+   * Deep copies a GameState
    *
-   * @author rsyed
-   * @return
+   * @author sistumpf, rsyed, ysiebenh
+   * @return a deep copy of a given GameState
    */
   public static GameState deepCopyGameState(GameState gameState) {
     GameState newState = new GameState();

@@ -90,7 +90,7 @@ public class JsonTools {
    * @throws IOException 
    */
   public static void saveMapTemplateAsFile(String mapName, MapTemplate mapTemplate) throws IOException {
-    saveObjectAsJSON(Constants.mapTemplateFolder+mapName+".json", mapTemplate, false);
+    saveObjectAsJSON(mapTemplates+mapName+".json", mapTemplate, false);
   }
   
   

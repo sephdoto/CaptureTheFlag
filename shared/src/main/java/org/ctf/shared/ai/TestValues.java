@@ -183,7 +183,7 @@ public class TestValues {
   public static MapTemplate getTestTemplate() {
     MapTemplate mt = new MapTemplate();
     try {
-      mt = JsonTools.readMapTemplate("10x10_2teams_example");
+      mt = JsonTools.readMapTemplate("test");
     } catch (MapNotFoundException e) {e.printStackTrace();}
     return mt;
   }
