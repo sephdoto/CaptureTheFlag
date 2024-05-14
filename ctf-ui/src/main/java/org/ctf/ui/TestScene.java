@@ -76,7 +76,7 @@ public class TestScene  {
 	      scene = new Scene(king, WINDOW_SIZE, WINDOW_SIZE, Color.LIGHTBLUE);
 
 	      nbC = new SimpleIntegerProperty(10);
-	      nbR = new SimpleIntegerProperty(12);
+	      nbR = new SimpleIntegerProperty(15);
 
 	      createPanes();
 	      //addWinLabel();
@@ -87,7 +87,7 @@ public class TestScene  {
 	     
 	}
 
-		   // will be the root of our scene
+		 
 		 
 
 		  
@@ -100,25 +100,7 @@ public class TestScene  {
 		this.scene = scene;
 	}
 
-		public void addWinLabel() {
-		      SimpleDoubleProperty fontSize = new SimpleDoubleProperty();
-		      fontSize.bind(cellSize.multiply(nbC.getValue()).divide(15));
-
-		      winLabel = new Label("Congratulations, you won ! :)");
-		      winLabel.prefWidthProperty().bind(stack.widthProperty());
-		      winLabel.prefHeightProperty().bind(stack.heightProperty());
-
-		      winLabel.setTextFill(Color.web("#3099AA"));
-		      winLabel.setAlignment(Pos.CENTER);
-
-		      winLabel.styleProperty().bind(Bindings.concat("-fx-font-size: ", fontSize.asString(), ";",
-		            "-fx-background-color: rgba(200, 200, 200, 0.85);"));
-
-		      anchor.getChildren().add(winLabel);
-		      AnchorPane.setTopAnchor(winLabel, 75.0);
-		      AnchorPane.setLeftAnchor(winLabel, 75.0);
-		   }
-
+	
 		   public void createPanes() {
 		      anchor.getChildren().remove(stack);
 		      stack = new StackPane();
@@ -150,8 +132,7 @@ public class TestScene  {
 		            gPane.add(pane, c, r);
 		         }
 		      }
-		      
-
+		     
 		      gPane.setGridLinesVisible(true);
 		      stack.getChildren().addAll(gPane);
 		      anchor.getChildren().add(stack);

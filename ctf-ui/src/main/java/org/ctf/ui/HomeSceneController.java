@@ -52,6 +52,7 @@ public class HomeSceneController {
 	String teamName;
 	String teamTurn;
 	public  ObjectProperty<Color> lastcolor;
+	boolean mainClientIsHuman;
 	
 	public void switchtoHomeScreen(ActionEvent e) {
 		Scene scene = App.getScene();
@@ -109,8 +110,6 @@ public class HomeSceneController {
 		
 	}
 	
-	
-	
 	public ObjectProperty<Color> getLastcolor() {
 		return lastcolor;
 	}
@@ -130,10 +129,13 @@ public class HomeSceneController {
 		t = new TestThread(this, serverManager);
 		t.start();
 	}
+	
 	public void switchToPlayGameScene(Stage stage) {
 		playGameScreenV2 = new PlayGameScreenV2(this, stage.getWidth(), stage.getHeight());
 		stage.setScene(playGameScreenV2);
-		t.stopThread();
+		if(t != null) {
+			t.stopThread();
+		}
 		GameStatePuller g = new GameStatePuller(mainClient, this);
 		g.start();
 		stage.setFullScreen(true);

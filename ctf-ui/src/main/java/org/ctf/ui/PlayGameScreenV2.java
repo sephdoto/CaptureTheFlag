@@ -130,12 +130,12 @@ public class PlayGameScreenV2 extends Scene {
 		showMapBox.paddingProperty().bind(padding);
 		showMapBox.prefHeightProperty().bind(outerbox.heightProperty());
 		showMapBox.getStyleClass().add("show-GamePane");
-		state = StroeMaps.getMap(name);
-		gm = new GamePane(state,hsc);
+		//state = StroeMaps.getMap(name);
+		//gm = new GamePane(state,hsc);
 //		gm.prefHeightProperty().bind(this.heightProperty().multiply(0.9));
 //		gm.prefWidthProperty().bind(this.widthProperty().multiply(0.9));
-		gm.enableBaseColors(this);
-		showMapBox.getChildren().add(gm);
+		//gm.enableBaseColors(this);
+		//showMapBox.getChildren().add(gm);
 	
 		outerbox.getChildren().add(showMapBox);
 		return outerbox;

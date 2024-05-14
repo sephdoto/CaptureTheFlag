@@ -240,6 +240,20 @@ public class CretaeGameScreenV2 extends Scene {
 	}
 	
 	/**
+	 * Creates a Header Text
+	 * @param leftBox: parent for relative resizing
+	 * @param text: Text that the header should show
+	 * @return
+	 */
+	private Text createHeader(VBox leftBox, String text) {
+		Text leftheader = new Text(text);
+		leftheader.getStyleClass().add("custom-header");
+		leftheader.fontProperty()
+				.bind(Bindings.createObjectBinding(() -> Font.font(leftBox.getWidth() / 18), leftBox.widthProperty()));
+		return leftheader;
+	}
+	
+	/**
 	 * Creates a Box in which the user can select a map from a ComboBox and start a game with it by clicking on a button
 	 * @author Manuel Krakowski
 	 * @param parent: used for relative resizing
@@ -457,10 +471,23 @@ public class CretaeGameScreenV2 extends Scene {
 		return mpv;
 	}
 	
+	private Button createLeave() {
+		Button exit = new Button("Leave");
+		exit.getStyleClass().add("leave-button");
+		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
+		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
+		exit.setOnAction(e -> {
+			hsc.switchtoHomeScreen(e);
+		});
+		return exit;
+	}
+	
 	
 
 	private void createChooserPopup() {
 		aiOrHumanPop = new PopUpPane(this, 0.5, 0.3);
+		portText.setDisable(true);
+		serverIPText.setDisable(true);
 		root.getChildren().add(aiOrHumanPop);
 		VBox top = new VBox();
 		top.heightProperty().addListener((obs, oldVal, newVal) -> {
@@ -493,6 +520,58 @@ public class CretaeGameScreenV2 extends Scene {
 		centerLeaveButton.getChildren().add(createCancelButton());
 		top.getChildren().add(centerLeaveButton);
 		aiOrHumanPop.setContent(top);
+	}
+	
+	
+	private Button createAddHumanButton(String text, String src) {
+		Button button = new Button(text);
+		button.getStyleClass().add("button25");
+		button.fontProperty().bind(addHumanButtonTextFontSIze);
+		Image mp = new Image(getClass().getResourceAsStream(src));
+		ImageView vw = new ImageView(mp);
+		button.setGraphic(vw);
+		button.setContentDisplay(ContentDisplay.RIGHT);
+		vw.fitWidthProperty().bind(button.widthProperty().divide(5));
+		vw.setPreserveRatio(true);
+		button.setMaxWidth(Double.MAX_VALUE);
+		button.setOnAction(e -> {
+			createEnterNamePopUp();
+		});
+		return button;
+	}
+
+	private Button createAddAIButton(String text, String src) {
+		Button button = new Button(text);
+		button.getStyleClass().add("button25");
+		button.fontProperty().bind(addHumanButtonTextFontSIze);
+		Image mp = new Image(getClass().getResourceAsStream(src));
+		ImageView vw = new ImageView(mp);
+		button.setGraphic(vw);
+		button.setContentDisplay(ContentDisplay.RIGHT);
+		vw.fitWidthProperty().bind(button.widthProperty().divide(8));
+		vw.setPreserveRatio(true);
+		button.setMaxWidth(Double.MAX_VALUE);
+		button.setOnAction(e -> {
+			popUpCreator.createAiLevelPopUp(aiOrHumanPop,portText,serverIPText);
+		});
+		return button;
+
+	}
+	
+	private Button createCancelButton() {
+		Button exit = new Button("Cancel");
+		exit.fontProperty().bind(leaveButtonText);
+		exit.getStyleClass().add("leave-button");
+		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
+		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
+		exit.setOnAction(e -> {
+			portText.setDisable(false);
+			serverIPText.setDisable(false);
+			hsc.deleteGame();
+			root.getChildren().remove(aiOrHumanPop);
+		});
+		
+		return exit;
 	}
 	
 	
@@ -533,23 +612,6 @@ public class CretaeGameScreenV2 extends Scene {
 	
 	
 	
-
-	private Button createCancelButton() {
-		Button exit = new Button("Cancel");
-		exit.fontProperty().bind(leaveButtonText);
-		exit.getStyleClass().add("leave-button");
-		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
-		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
-		exit.setOnAction(e -> {
-			portText.setDisable(false);
-			serverIPText.setDisable(false);
-			hsc.deleteGame();
-			root.getChildren().remove(aiOrHumanPop);
-		});
-		
-		return exit;
-	}
-
 	private Button createBackButton(String text) {
 		Button exit = new Button("back");
 		exit.fontProperty().bind(leaveButtonText);
@@ -557,32 +619,12 @@ public class CretaeGameScreenV2 extends Scene {
 		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
 		exit.setOnAction(e -> {
-			if(text.equals("name")) {
 				root.getChildren().remove(enterNamePopUp);
 				root.getChildren().add(aiOrHumanPop);
-			}else {
-				root.getChildren().remove(aiLevelPopUpPane);
-				root.getChildren().add(aiOrHumanPop);
-			}
 		});
 		return exit;
 	}
 
-	
-
-	
-
-	private Button createLeave() {
-		Button exit = new Button("Leave");
-		exit.getStyleClass().add("leave-button");
-		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
-		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
-		exit.setOnAction(e -> {
-			hsc.switchtoHomeScreen(e);
-		});
-		return exit;
-	}
-	
 	private Button createEnterButton() {
 		Button exit = new Button("Enter");
 		exit.fontProperty().bind(leaveButtonText);
@@ -601,48 +643,7 @@ public class CretaeGameScreenV2 extends Scene {
 
 	
 
-	private Button createAddHumanButton(String text, String src) {
-		Button button = new Button(text);
-		button.getStyleClass().add("button25");
-		button.fontProperty().bind(addHumanButtonTextFontSIze);
-		Image mp = new Image(getClass().getResourceAsStream(src));
-		ImageView vw = new ImageView(mp);
-		button.setGraphic(vw);
-		button.setContentDisplay(ContentDisplay.RIGHT);
-		vw.fitWidthProperty().bind(button.widthProperty().divide(5));
-		vw.setPreserveRatio(true);
-		button.setMaxWidth(Double.MAX_VALUE);
-		button.setOnAction(e -> {
-			createEnterNamePopUp();
-		});
-		return button;
-	}
-
-	private Button createAddAIButton(String text, String src) {
-		Button button = new Button(text);
-		button.getStyleClass().add("button25");
-		button.fontProperty().bind(addHumanButtonTextFontSIze);
-		Image mp = new Image(getClass().getResourceAsStream(src));
-		ImageView vw = new ImageView(mp);
-		button.setGraphic(vw);
-		button.setContentDisplay(ContentDisplay.RIGHT);
-		vw.fitWidthProperty().bind(button.widthProperty().divide(8));
-		vw.setPreserveRatio(true);
-		button.setMaxWidth(Double.MAX_VALUE);
-		button.setOnAction(e -> {
-			popUpCreator.createAiLevelPopUp(aiOrHumanPop,portText,serverIPText);
-		});
-		return button;
-
-	}
-
-	private Text createHeader(VBox leftBox, String text) {
-		Text leftheader = new Text(text);
-		leftheader.getStyleClass().add("custom-header");
-		leftheader.fontProperty()
-				.bind(Bindings.createObjectBinding(() -> Font.font(leftBox.getWidth() / 18), leftBox.widthProperty()));
-		return leftheader;
-	}
+	
 
 	public StackPane createOptionPane() {
 		StackPane pane = new StackPane();
@@ -654,39 +655,27 @@ public class CretaeGameScreenV2 extends Scene {
 		return pane;
 	}
 
-	
-
-
-
-	
-	
-	
-	
-	
-
-	
-
-	public String getServerIP() {
-		return serverIP;
-	}
-
-	public void setServerIP(String serverIP) {
-		this.serverIP = serverIP;
-	}
-
-	public String getPort() {
-		return port;
-	}
-
-	public void setPort(String port) {
-		this.port = port;
-	}
-
-	public ServerManager getServerManager() {
-		return serverManager;
-	}
-
-	public void setServerManager(ServerManager serverManager) {
-		this.serverManager = serverManager;
-	}
+//	public String getServerIP() {
+//		return serverIP;
+//	}
+//
+//	public void setServerIP(String serverIP) {
+//		this.serverIP = serverIP;
+//	}
+//
+//	public String getPort() {
+//		return port;
+//	}
+//
+//	public void setPort(String port) {
+//		this.port = port;
+//	}
+//
+//	public ServerManager getServerManager() {
+//		return serverManager;
+//	}
+//
+//	public void setServerManager(ServerManager serverManager) {
+//		this.serverManager = serverManager;
+//	}
 }

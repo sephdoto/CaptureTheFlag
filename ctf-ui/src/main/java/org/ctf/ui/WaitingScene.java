@@ -181,17 +181,22 @@ public class WaitingScene extends Scene {
 		leftBox.getChildren().add(createTestLabel2(leftBox));
 		leftBox.getChildren().add(createCreateButton());
 		leftBox.getChildren().add(createHeaderRow(leftBox));
+		
+		leftBox.getChildren().add(createScrollPane(leftBox));
+		return leftBox;
+	}
+	
+	
+	private ScrollPane createScrollPane(VBox parent) {
 		ScrollPane scroller = new ScrollPane();
-		scroller.prefHeightProperty().bind(leftBox.heightProperty().multiply(0.8));
-		scroller.prefWidthProperty().bind(leftBox.widthProperty());
+		scroller.prefHeightProperty().bind(parent.heightProperty().multiply(0.8));
+		scroller.prefWidthProperty().bind(parent.widthProperty());
 		VBox content = new VBox();
-		for(int i=0; i<10;i++) {
+		for(int i=0; i<hsc.getMaxNumberofTemas();i++) {
 			content.getChildren().add(createNormalRow(scroller));
-			
 		}
 		scroller.setContent(content);
-		leftBox.getChildren().add(scroller);
-		return leftBox;
+		return scroller;
 	}
 	
 	private HBox createHeaderRow(VBox parent) {
@@ -219,14 +224,12 @@ public class WaitingScene extends Scene {
 		HBox colorBox = new HBox();
 		Pane colorRec = new Pane();
 		colorRec.setStyle("-fx-background-color: blue");
-		colorRec.prefWidthProperty().bind(Bindings.divide(colorBox.widthProperty(), 2));
-		colorRec.prefHeightProperty().bind(Bindings.divide(colorBox.heightProperty(), 2));
-        colorRec.layoutXProperty().bind(Bindings.subtract(colorBox.widthProperty().divide(2), colorRec.widthProperty().divide(2)));
-		colorRec.layoutYProperty().bind(Bindings.subtract(colorBox.widthProperty().divide(2), colorRec.heightProperty().divide(2)));
+		colorRec.prefWidthProperty().bind(Bindings.divide(colorBox.widthProperty(), 2.5));
+		colorRec.maxHeightProperty().bind(Bindings.divide(colorBox.heightProperty(), 2));
 		colorBox.setAlignment(Pos.CENTER);
 		colorBox.setStyle("-fx-border-color: black");
 		colorBox.prefWidthProperty().bind(oneRow.widthProperty().divide(3));
-		//colorBox.getChildren().add(colorRec);
+		colorBox.getChildren().add(colorRec);
 		Label l2 = createHeaderLabel("Teamname", oneRow);
 		l2.prefHeightProperty().bind(this.heightProperty().multiply(0.1));
 		Label l3 = createHeaderLabel("Type", oneRow);
