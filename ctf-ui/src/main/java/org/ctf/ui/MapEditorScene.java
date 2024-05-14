@@ -155,8 +155,8 @@ public class MapEditorScene extends Scene {
 		
 		//GamePane visual = new GamePane(CreateTextGameStates.createTestGameState1());
 		mp = new MapPreview(tmpTemplate);
-		GameState gamestate = mp.getGameState();
-		visual = new GamePane(mp.getGameState());
+//		GameState gamestate = mp.getGameState();
+//		visual = new GamePane(mp.getGameState());
 		
 		test.getChildren().add(visual);
 		test.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
@@ -878,8 +878,8 @@ public class MapEditorScene extends Scene {
 			left.getChildren().add(options[0]);
 			this.test.getChildren().remove(visual);
 			mp = new MapPreview(tmpTemplate);
-			GameState gamestate = mp.getGameState();
-			visual = new GamePane(gamestate);
+//			GameState gamestate = mp.getGameState();
+//			visual = new GamePane(gamestate);
 			this.test.getChildren().add(visual);
 		});
 		default2Item.setOnAction(event -> {

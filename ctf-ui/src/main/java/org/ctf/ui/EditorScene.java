@@ -30,6 +30,8 @@ import javafx.util.Duration;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.exceptions.UnknownError;
+import org.ctf.shared.state.data.map.Shape;
+import org.ctf.shared.state.data.map.ShapeType;
 import org.ctf.ui.controllers.MapPreview;
 import org.ctf.ui.controllers.MapPreviewThread;
 import org.ctf.ui.customobjects.MovementVisual;
@@ -349,6 +351,7 @@ public class EditorScene extends Scene {
     TextField namefield = (createNameField(customRoot));
     controlgrid.add(namefield, 1, 0);
     controlgrid.add(createShapeBox(), 1, 1);
+    
     Spinner<Integer> strenghthSpinner = createMapSpinner(0, 500, 0);
     controlgrid.add(strenghthSpinner, 3, 0);
 
@@ -685,6 +688,19 @@ public class EditorScene extends Scene {
       double size = newV.doubleValue() * 0.4;
       shapeBox.setStyle("-fx-font-size: " + size + "px;");
   });
+    shapeBox.setOnAction(e -> {
+    	switch(shapeBox.getValue()) {
+    	case "None": 
+    		engine.getTmpMovement().setShape(null);
+    		movementVisual.updateMovementOptions("None");
+    		break;
+    	case "L-Shape":
+    		Shape shape = new Shape();
+    		shape.setType(ShapeType.lshape);
+    		engine.setTmpShape(shape);
+    		movementVisual.updateMovementOptions("L-Shape");
+    	}
+    });
     return shapeBox;
   }
 

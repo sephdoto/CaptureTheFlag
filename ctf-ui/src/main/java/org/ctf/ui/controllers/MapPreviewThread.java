@@ -21,7 +21,7 @@ public class MapPreviewThread extends Thread {
               MapPreview mp = new MapPreview(editorScene.getEngine().getTmpTemplate());
               GamePane gp = new GamePane(mp.getGameState(),editorScene.getHsc());
               Platform.runLater(() -> {
-                editorScene.inform("hey");
+                //editorScene.inform("hey");
                 editorScene.getVisualRoot().getChildren().clear();
                 editorScene.getVisualRoot().getChildren().add(gp);
              });
