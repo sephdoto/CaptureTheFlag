@@ -54,7 +54,7 @@ public class Constants {
 
   // to AI config folder
   public static final String aiConfigFolder = sharedResourcesFolder + "ai_configs" + File.separator;
-
+  //F:\VS Code Repo\cfp14\ctf-ui\src\main\resources\game\savegames\analyzerTestDataFile.savedgame
   // Default folder for saving games for AI Analysis
   public static final String saveGameFolder = sharedResourcesFolder + "savegames" + File.separator;
   // package map, class JsonTools

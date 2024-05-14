@@ -43,11 +43,19 @@ public class ServerController {
    * @author rsyed
    */
   public int closeServer() {
-    return SpringApplication.exit(ctx, () -> 0);
+    System.exit(SpringApplication.exit(ctx, () -> 0));
+    if (ctx == null) {
+      return 0;
+    } else {
+      return -1;
+    }
+
+    // Alt Method
+    // return SpringApplication.exit(ctx, () -> 0);
   }
 
-  // Uncomment the code below to test 
-/*   public static void main(String[] args) {
+  // Uncomment the code below to test
+  /*   public static void main(String[] args) {
     ServerController sc = new ServerController();
     System.out.println(sc.startServer("8888"));
     System.out.println(sc.closeServer());

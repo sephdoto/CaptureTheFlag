@@ -1,16 +1,16 @@
-package de.unimannheim.swt.pse.ctf.game;
+package org.ctf.ui.integration;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
+import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
 import java.io.IOException;
 
-import org.ctf.shared.client.service.RestClientLayer;
+import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.exceptions.Accepted;
-import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.dto.GameSessionRequest;
 import org.ctf.shared.state.dto.GameSessionResponse;
@@ -25,13 +25,12 @@ import org.junit.jupiter.api.Test;
  *
  * @author rsyed
  */
-public class RestClientTest {
-
-  static RestClientLayer comm = new RestClientLayer();
+public class CommLayerTest {
+  static CommLayer comm = new CommLayer();
 
   @BeforeAll
   static void setup() {
-    String[] args = new String[] {"--server.port=9997"};
+    String[] args = new String[] {"--server.port=9987"};
     CtfApplication.main(args);
   }
 
@@ -41,7 +40,7 @@ public class RestClientTest {
     GameSessionRequest gSessionRequest = new GameSessionRequest();
     gSessionRequest.setTemplate(template);
     GameSessionResponse gameSessionResponse =
-        comm.createGameSession("http://localhost:9997/api/gamesession", gSessionRequest);
+        comm.createGameSession("http://localhost:9987/api/gamesession", gSessionRequest);
     assertNotNull(gameSessionResponse.getId());
   }
 
@@ -51,8 +50,8 @@ public class RestClientTest {
     GameSessionRequest gSessionRequest = new GameSessionRequest();
     gSessionRequest.setTemplate(template);
     GameSessionResponse gameSessionResponse =
-        comm.createGameSession("http://localhost:9997/api/gamesession", gSessionRequest);
-    String idURL = "http://localhost:9997/api/gamesession/" + gameSessionResponse.getId();
+        comm.createGameSession("http://localhost:9987/api/gamesession", gSessionRequest);
+    String idURL = "http://localhost:9987/api/gamesession/" + gameSessionResponse.getId();
     JoinGameResponse jsResponse = comm.joinGame(idURL, "TestTeam1");
     JoinGameResponse jsResponse2 = comm.joinGame(idURL, "TestTeam2");
     assertNotNull(comm.getCurrentGameState(idURL));
@@ -64,8 +63,8 @@ public class RestClientTest {
     GameSessionRequest gSessionRequest = new GameSessionRequest();
     gSessionRequest.setTemplate(template);
     GameSessionResponse gameSessionResponse =
-        comm.createGameSession("http://localhost:9997/api/gamesession", gSessionRequest);
-    String idURL = "http://localhost:9997/api/gamesession/" + gameSessionResponse.getId();
+        comm.createGameSession("http://localhost:9987/api/gamesession", gSessionRequest);
+    String idURL = "http://localhost:9987/api/gamesession/" + gameSessionResponse.getId();
 
     assertNotNull(comm.getCurrentSessionState(idURL));
   }
@@ -77,8 +76,8 @@ public class RestClientTest {
     gSessionRequest.setTemplate(template);
 
     GameSessionResponse gameSessionResponse =
-        comm.createGameSession("http://localhost:9997/api/gamesession", gSessionRequest);
-    String idURL = "http://localhost:9997/api/gamesession/" + gameSessionResponse.getId();
+        comm.createGameSession("http://localhost:9987/api/gamesession", gSessionRequest);
+    String idURL = "http://localhost:9987/api/gamesession/" + gameSessionResponse.getId();
     JoinGameResponse jsResponse = comm.joinGame(idURL, "TestTeam1");
     assertNotNull(jsResponse.getTeamSecret());
   }
@@ -90,21 +89,21 @@ public class RestClientTest {
     gSessionRequest.setTemplate(template);
 
     GameSessionResponse gameSessionResponse =
-        comm.createGameSession("http://localhost:9997/api/gamesession", gSessionRequest);
+        comm.createGameSession("http://localhost:9987/api/gamesession", gSessionRequest);
     JoinGameResponse jsResponse =
         comm.joinGame(
-            "http://localhost:9997/api/gamesession/" + gameSessionResponse.getId(), "TestTeam1");
+            "http://localhost:9987/api/gamesession/" + gameSessionResponse.getId(), "TestTeam1");
     assertNotNull(jsResponse.getTeamSecret());
     JoinGameResponse jsResponse2 =
         comm.joinGame(
-            "http://localhost:9997/api/gamesession/" + gameSessionResponse.getId(), "TestTeam2");
+            "http://localhost:9987/api/gamesession/" + gameSessionResponse.getId(), "TestTeam2");
     MoveRequest movRe = new MoveRequest();
     movRe.setNewPosition(new int[] {1, 1});
     movRe.setPieceId("p:1_1");
     movRe.setTeamId(jsResponse.getTeamId());
     movRe.setTeamSecret(jsResponse.getTeamSecret());
     try {
-      comm.makeMove("http://localhost:9999/api/gamesession/" + gameSessionResponse.getId(), movRe);
+      comm.makeMove("http://localhost:9987/api/gamesession/" + gameSessionResponse.getId(), movRe);
     } catch (Exception ex) {
       assert (!(ex instanceof Accepted) || (ex instanceof InvalidMove));
     }
@@ -117,8 +116,8 @@ public class RestClientTest {
     gSessionRequest.setTemplate(template);
 
     GameSessionResponse gameSessionResponse =
-        comm.createGameSession("http://localhost:9997/api/gamesession", gSessionRequest);
-    String idURL = "http://localhost:9997/api/gamesession/" + gameSessionResponse.getId();
+        comm.createGameSession("http://localhost:9987/api/gamesession", gSessionRequest);
+    String idURL = "http://localhost:9987/api/gamesession/" + gameSessionResponse.getId();
     JoinGameResponse jsResponse = comm.joinGame(idURL, "TestTeam1");
 
     JoinGameResponse jsResponse2 = comm.joinGame(idURL, "TestTeam2");
@@ -148,10 +147,10 @@ public class RestClientTest {
     gSessionRequest.setTemplate(template);
 
     GameSessionResponse gameSessionResponse =
-        comm.createGameSession("http://localhost:9997/api/gamesession", gSessionRequest);
+        comm.createGameSession("http://localhost:9987/api/gamesession", gSessionRequest);
     try {
       comm.deleteCurrentSession(
-          "http://localhost:9997/api/gamesession/" + gameSessionResponse.getId());
+          "http://localhost:9987/api/gamesession/" + gameSessionResponse.getId());
     } catch (Exception e) {
       fail();
     }

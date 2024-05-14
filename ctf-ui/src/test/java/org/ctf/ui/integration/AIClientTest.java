@@ -1,4 +1,4 @@
-package de.unimannheim.swt.pse.ctf.game;
+package org.ctf.ui.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
