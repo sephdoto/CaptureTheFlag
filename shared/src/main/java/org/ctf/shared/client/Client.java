@@ -7,12 +7,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-import org.ctf.shared.client.lib.Analyzer;
+
 import org.ctf.shared.client.lib.GameClientInterface;
 import org.ctf.shared.client.lib.ServerChecker;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.client.service.CommLayerInterface;
+import org.ctf.shared.gameanalyzer.Analyzer;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;

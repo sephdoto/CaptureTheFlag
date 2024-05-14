@@ -1,4 +1,4 @@
-package org.ctf.shared.client.lib;
+package org.ctf.shared.gameanalyzer;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.JFileChooser;
+
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;

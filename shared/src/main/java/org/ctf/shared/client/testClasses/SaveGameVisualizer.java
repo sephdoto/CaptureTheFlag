@@ -2,7 +2,8 @@ package org.ctf.shared.client.testClasses;
 
 import com.google.gson.Gson;
 import java.util.HashMap;
-import org.ctf.shared.client.lib.Analyzer;
+
+import org.ctf.shared.gameanalyzer.Analyzer;
 import org.ctf.shared.state.Move;
 
 public class SaveGameVisualizer {

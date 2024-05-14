@@ -1,6 +1,7 @@
-package org.ctf.shared.client.lib;
+package org.ctf.shared.gameanalyzer;
 
 import java.util.HashMap;
+
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 
@@ -15,15 +16,18 @@ import org.ctf.shared.state.Move;
  */
 public class SavedGame implements java.io.Serializable {
   private GameState initialState;
-  private HashMap<String, Move> lastMovesMap = new HashMap<>();
-  private int counter = 1;
+  private HashMap<String, Move> lastMovesMap;
+  private int counter;
 
   /**
    * Inits the HashMap and the counter
    *
    * @author rsyed
    */
-  public SavedGame() {}
+  public SavedGame() {
+    lastMovesMap = new HashMap<>();
+    counter = 1;
+   }
 
   /**
    * Setter for the {@link GameState} object
