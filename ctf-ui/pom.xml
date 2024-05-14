@@ -57,7 +57,7 @@
         <dependency>
             <groupId>de.uni-mannheim.swt.pse</groupId>
             <artifactId>ctf</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
           </dependency>
     </dependencies>
 
