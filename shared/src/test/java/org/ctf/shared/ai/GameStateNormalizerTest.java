@@ -8,6 +8,11 @@ import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.junit.jupiter.api.Test;
 
+/**
+ * GameState normalizer normalizes GameStates in its Constructor and unnormalizes normalized moves with a method.
+ * 
+ * @author sistumpf
+ */
 class GameStateNormalizerTest {
   String[] funIds = new String[] {
       "Never",
@@ -52,7 +57,7 @@ class GameStateNormalizerTest {
   }
 
   /**
-   * creates an unnormalized GameState
+   * creates and returns an unnormalized GameState
    * @return an unnormalized GameState
    */
   GameState unnormalizedGameState() {
