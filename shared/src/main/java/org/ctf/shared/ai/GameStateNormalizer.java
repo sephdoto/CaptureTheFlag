@@ -26,6 +26,12 @@ public class GameStateNormalizer {
   public GameStateNormalizer(GameState original, boolean rowThanColumn) {
     this.rowThanColumn = rowThanColumn;
     this.originalGameState = original;
+    
+    if(original.getLastMove() == null)
+      original.setLastMove(new Move());
+    if(original.getLastMove().getNewPosition() == null)
+      original.getLastMove().setNewPosition(new int[] {0,0});
+    
     this.normalizedGameState = deepNormalizeGameState(originalGameState);
   }
 

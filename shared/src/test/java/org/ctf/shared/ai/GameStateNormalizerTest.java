@@ -20,7 +20,6 @@ class GameStateNormalizerTest {
   void testNormalize() {
     //create unnormalized GameState
     GameState gs = TestValues.getTestState();
-    gs.setLastMove(new Move());
     for(int i=0; i<gs.getTeams().length; i++) {
       gs.getTeams()[i].setId(funIds[i]);
       for(int j=0; j<gs.getTeams()[i].getPieces().length; j++) {
