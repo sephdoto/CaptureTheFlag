@@ -13,20 +13,20 @@ public class Profiling {
   public static void main (String[] args) {
     double expansions = 0;
     int count = 0;
-    int timeInMilis = 100;
+    int timeInMilis = 1;
     int simulations = 0;
     int heuristics = 0;
     int crashes = 0;
 
     MCTS mcts = new MCTS(new TreeNode(null, new ReferenceGameState(TestValues.getTestState()), new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0})), new AIConfig());
-    TreeNode rootclone = mcts.root.clone(mcts.root.getGameState().clone());
+    TreeNode rootclone = mcts.getRoot().clone(mcts.getRoot().getReferenceGameState().clone());
     
-    for (; count < 100; count++) {
+    for (; count < 10; count++) {
 
       //      MCTS_TestDouble mcts = new
       // MCTS_TestDouble(MCTSTest.mcts.root.clone(MCTSTest.mcts.root.copyGameState()));
-      mcts.root = rootclone.clone(rootclone.getGameState().clone());
-      mcts.root.setParent(null);
+      mcts.setRoot(rootclone.clone(rootclone.getReferenceGameState().clone()));
+      mcts.getRoot().setParent(null);
       try {
         mcts.getMove(timeInMilis, new AIConfig().C);
       } catch (NullPointerException npe) {

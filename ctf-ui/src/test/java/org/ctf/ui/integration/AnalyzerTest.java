@@ -22,7 +22,7 @@ import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.RestClientLayer;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.AI;
-import org.ctf.shared.gameanalyzer.Analyzer;
+import org.ctf.shared.gameanalyzer.GameSaveHandler;
 import org.ctf.shared.gameanalyzer.SavedGame;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.map.MapTemplate;
@@ -41,7 +41,7 @@ public class AnalyzerTest {
 
   @Test
   void testAddGameState() {
-    Analyzer analyzer = new Analyzer();
+    GameSaveHandler analyzer = new GameSaveHandler();
     MapTemplate template = createGameTemplate();
     ServerManager manager =
         new ServerManager(comm, new ServerDetails("localhost", "9994"), template);
@@ -87,7 +87,7 @@ public class AnalyzerTest {
 
   @Test
   void testAddMove() {
-    Analyzer analyzer = new Analyzer();
+    GameSaveHandler analyzer = new GameSaveHandler();
     MapTemplate template = createGameTemplate();
     ServerManager manager =
         new ServerManager(comm, new ServerDetails("localhost", "9994"), template);
@@ -155,7 +155,7 @@ public class AnalyzerTest {
 //TODO This Test is failing. Fix it
   void testReadFile() {
     
-    Analyzer analyzer = new Analyzer();
+    GameSaveHandler analyzer = new GameSaveHandler();
     boolean b = analyzer.readFile("analyzerTestDataFile");
     assertTrue(b);
     SavedGame gameData = analyzer.getSavedGame();
@@ -176,7 +176,7 @@ public class AnalyzerTest {
 
   @Test
   void testWriteOut() {
-    Analyzer analyzer = new Analyzer();
+    GameSaveHandler analyzer = new GameSaveHandler();
     MapTemplate template = createGameTemplate();
     ServerManager manager =
         new ServerManager(comm, new ServerDetails("localhost", "9994"), template);

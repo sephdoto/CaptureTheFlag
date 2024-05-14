@@ -19,13 +19,13 @@ class TreeNodeTest {
   void testUpdating() {
     TreeNode node = new TreeNode(null, TestValues.getTestState(), null);
     MCTS mcts = new MCTS(node, new AIConfig());
-    for(int i=0; i<50 && mcts.isTerminal(node.getGameState()) == -1; i++){
+    for(int i=0; i<50 && mcts.isTerminal(node.getReferenceGameState()) == -1; i++){
       mcts.oneMove(node, node, true);
-      mcts.removeTeamCheck(node.getGameState());
+      mcts.removeTeamCheck(node.getReferenceGameState());
 //      node.printGrids();
 //      System.out.println(node.gameState.getTeams()[0].getPieces().length + "<- 0, 1 ->" + node.gameState.getTeams()[1].getPieces().length);
     }
-    TreeNode copy = node.clone(node.getGameState().clone());
+    TreeNode copy = node.clone(node.getReferenceGameState().clone());
     copy.initPossibleMovesAndChildren();
     
   }
@@ -79,7 +79,7 @@ class TreeNodeTest {
     TreeNode node = new TreeNode(null, gameState, null);
     
     MCTS mcts = new MCTS(node, new AIConfig());
-    for(; mcts.isTerminal(node.getGameState()) == -1; ) {
+    for(; mcts.isTerminal(node.getReferenceGameState()) == -1; ) {
       mcts.oneMove(node, node, true);
 //      node.printGrids();
     }
@@ -119,7 +119,7 @@ class TreeNodeTest {
     TreeNode node = new TreeNode(null, gameState, null);
     
     MCTS mcts = new MCTS(node, new AIConfig());
-    for(; mcts.isTerminal(node.getGameState()) == -1; ) {
+    for(; mcts.isTerminal(node.getReferenceGameState()) == -1; ) {
       mcts.oneMove(node, node, true);
 //      node.printGrids();
     }

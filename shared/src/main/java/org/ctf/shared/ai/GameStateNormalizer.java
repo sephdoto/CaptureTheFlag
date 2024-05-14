@@ -38,6 +38,7 @@ public class GameStateNormalizer {
   /**
    * A normalized move given, the move gets unnormalized, to represent the original GameState.
    * The team and piece Id get changed, if needed the [x,y] or [y,x] coordinates also get changed.
+   * No grid is required, so a GameState must not represent the current state of the game.
    * 
    * @param move the move generated with a normalized GameState
    * @return the same move but adjusted to the original GameState

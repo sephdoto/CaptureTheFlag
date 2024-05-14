@@ -3,7 +3,9 @@ package org.ctf.shared.ai.mcts3;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
+import org.ctf.shared.ai.MonteCarloTreeNode;
 import org.ctf.shared.ai.ReferenceMove;
+import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
 
 /**
@@ -12,7 +14,7 @@ import org.ctf.shared.state.Piece;
  * The parent is the game one move prior, the children are the game one move further.
  * @author sistumpf
  */
-public class TreeNode implements Comparable<TreeNode> {
+public class TreeNode implements MonteCarloTreeNode, Comparable<TreeNode> {
   private TreeNode parent;
   private TreeNode[] children;
   private IdentityHashMap<Piece, ArrayList<int[]>> possibleMoves;
@@ -22,7 +24,7 @@ public class TreeNode implements Comparable<TreeNode> {
   
   public TreeNode(TreeNode parent, ReferenceGameState gameState, int[] wins, ReferenceMove operateOn) {
     this.setParent(parent);
-    this.setGameState(gameState);
+    this.setReferenceGameState(gameState);
     this.setOperateOn(operateOn);
     this.setWins(wins != null ? wins : new int[gameState.getTeams().length]);
     initPossibleMovesAndChildren();
@@ -34,8 +36,8 @@ public class TreeNode implements Comparable<TreeNode> {
   public void initPossibleMovesAndChildren() {
     this.setPossibleMoves(new IdentityHashMap<Piece, ArrayList<int[]>>());
     int children = 0;
-    for(Piece p : getGameState().getTeams()[getGameState().getCurrentTeam()].getPieces()) {
-      ArrayList<int[]> movesPieceP = MCTSUtilities.getPossibleMoves(getGameState(), p, new ArrayList<int[]>(), getOperateOn());
+    for(Piece p : getReferenceGameState().getTeams()[getReferenceGameState().getCurrentTeam()].getPieces()) {
+      ArrayList<int[]> movesPieceP = MCTSUtilities.getPossibleMoves(getReferenceGameState(), p, new ArrayList<int[]>(), getOperateOn());
       if(movesPieceP.size() > 0) {
         getPossibleMoves().put(p, movesPieceP);
         children += getPossibleMoves().get(p).size();
@@ -57,7 +59,7 @@ public class TreeNode implements Comparable<TreeNode> {
     * @return V value for UCT
     */
    public double getV() {
-     int team = MCTSUtilities.getPreviousTeam(getGameState());
+     int team = MCTSUtilities.getPreviousTeam(getReferenceGameState());
      return getWins()[team] / (double)getNK();
    }
 
@@ -101,12 +103,12 @@ public class TreeNode implements Comparable<TreeNode> {
     * prints the grid
     */
    public void printGrid() {
-     for(int y=0; y<getGameState().getGrid().getGrid().length; y++) {
-       for(int x=0; x<getGameState().getGrid().getGrid()[y].length; x++) {
-         if(getGameState().getGrid().getPosition(x, y) == null)
+     for(int y=0; y<getReferenceGameState().getGrid().getGrid().length; y++) {
+       for(int x=0; x<getReferenceGameState().getGrid().getGrid()[y].length; x++) {
+         if(getReferenceGameState().getGrid().getPosition(x, y) == null)
            System.out.print(" . ");
          else
-         System.out.print(getGameState().getGrid().getPosition(x, y));
+         System.out.print(getReferenceGameState().getGrid().getPosition(x, y));
        }
        System.out.println();
      }
@@ -116,8 +118,8 @@ public class TreeNode implements Comparable<TreeNode> {
     return parent;
   }
 
-  public void setParent(TreeNode parent) {
-    this.parent = parent;
+  public void setParent(MonteCarloTreeNode parent) {
+    this.parent = (TreeNode)parent;
   }
 
   public TreeNode[] getChildren() {
@@ -135,15 +137,7 @@ public class TreeNode implements Comparable<TreeNode> {
   public void setPossibleMoves(IdentityHashMap<Piece, ArrayList<int[]>> possibleMoves) {
     this.possibleMoves = possibleMoves;
   }
-
-  public ReferenceGameState getGameState() {
-    return gameState;
-  }
-
-  public void setGameState(ReferenceGameState gameState) {
-    this.gameState = gameState;
-  }
-
+  
   public int[] getWins() {
     return wins;
   }
@@ -158,5 +152,17 @@ public class TreeNode implements Comparable<TreeNode> {
 
   public void setOperateOn(ReferenceMove operateOn) {
     this.operateOn = operateOn;
+  }
+
+  public ReferenceGameState getReferenceGameState() {
+    return gameState;
+  }
+
+  public void setReferenceGameState(ReferenceGameState gameState) {
+    this.gameState = gameState;
+  }
+  
+  public GameState getGameState() {
+    return this.gameState.toGameState();
   }
 }

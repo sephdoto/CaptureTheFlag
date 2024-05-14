@@ -30,7 +30,7 @@ class MCTS_ToolsTest {
     HashSet<Piece> updateThese = new HashSet<Piece>();
     ReferenceGameState gameState = new ReferenceGameState(TestValues.getTestState());
     TreeNode node = new TreeNode(null, gameState, null);
-    MCTSUtilities.putNeighbouringPieces(updateThese, node.getGameState().getGrid(), node.getGameState().getTeams()[0].getPieces()[2].getPosition());
+    MCTSUtilities.putNeighbouringPieces(updateThese, node.getReferenceGameState().getGrid(), node.getReferenceGameState().getTeams()[0].getPieces()[2].getPosition());
     HashSet<Piece> trueNeighbours = new HashSet<Piece>();
     trueNeighbours.add(gameState.getTeams()[0].getPieces()[3]);
     assertTrue(trueNeighbours.equals(updateThese));
@@ -39,10 +39,10 @@ class MCTS_ToolsTest {
   @Test
   void testPossibleMovesWithPieceVision() {
     TreeNode node = new TreeNode(null, TestValues.getTestState(), null);
-    Piece piece = node.getGameState().getTeams()[1].getPieces()[1];                          //Piece at position 7,3; only position it can walk to is above, 6,3.
+    Piece piece = node.getReferenceGameState().getTeams()[1].getPieces()[1];                          //Piece at position 7,3; only position it can walk to is above, 6,3.
     ArrayList<int[]> possibleMoves = new ArrayList<int[]>();
     ArrayList<int[]> impossibleMoves = new ArrayList<int[]>();
-    impossibleMoves = MCTSUtilities.getPossibleMovesWithPieceVision(node.getGameState(), piece, possibleMoves);
+    impossibleMoves = MCTSUtilities.getPossibleMovesWithPieceVision(node.getReferenceGameState(), piece, possibleMoves);
     
     ArrayList<int[]> musterPossibleMoves = new ArrayList<int[]>();
     musterPossibleMoves.add(new int[] {6,3});

@@ -38,7 +38,27 @@ public class ReferenceGameState {
         new ReferenceMove(null, new int[2]) : lastMove;
   }
 
-  //TODO sehr ineffizient, offen für Verbesserungsvorschläge
+  /**
+   * Creates and returns a GameState representing this ReferenceGameState
+   * @return a GameState representation of this ReferenceGameState
+   */
+  public GameState toGameState() {
+    GameState gameState = new GameState();
+    gameState.setCurrentTeam(currentTeam);
+    gameState.setLastMove(this.lastMove.toMove());
+    gameState.setTeams(teams);
+    String[][] stringGrid = new String[grid.getGrid().length][grid.getGrid()[0].length];
+    for(int y=0; y<grid.getGrid().length; y++)
+      for(int x=0; x<grid.getGrid()[0].length; x++) {
+        if(grid.getPosition(x, y) == null)
+          stringGrid[y][x] = "";
+        else
+          stringGrid[y][x] = grid.getPosition(x, y).toString();
+      }
+    gameState.setGrid(stringGrid);
+    return gameState;
+  }
+  
   /**
    * This method only deep copies the Grid.grid, the pieceVisionGrid and pieceVisions should be initialized in TreeNode.
    * @return clone of this ReferenceGameState

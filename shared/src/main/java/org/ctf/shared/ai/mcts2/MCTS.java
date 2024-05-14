@@ -12,6 +12,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.ctf.shared.ai.AIConfig;
+import org.ctf.shared.ai.MonteCarloTreeNode;
+import org.ctf.shared.ai.MonteCarloTreeSearch;
 import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
@@ -22,12 +24,12 @@ import org.ctf.shared.state.Piece;
 /**
  * @author sistumpf
  */
-public class MCTS {
+public class MCTS implements MonteCarloTreeSearch {
   private AIConfig config;
   private Random rand;
   private int teams;
   private int maxDistance;
-  public TreeNode root;
+  private TreeNode root;
   private ExecutorService executorService;
   public AtomicInteger simulationCounter;
   public AtomicInteger heuristicCounter;
@@ -35,13 +37,13 @@ public class MCTS {
 
   public MCTS(TreeNode root, AIConfig config) {
     this.config = config;
-    this.root = root;
+    this.setRoot(root);
     this.rand = new Random();
     simulationCounter = new AtomicInteger();
     heuristicCounter = new AtomicInteger();
     expansionCounter = new AtomicInteger();
-    this.teams = root.getGameState().getTeams().length;
-    this.maxDistance = (int)Math.round(Math.sqrt(Math.pow(root.getGameState().getGrid().getGrid().length, 2) + Math.pow(root.getGameState().getGrid().getGrid()[0].length, 2)));
+    this.teams = root.getReferenceGameState().getTeams().length;
+    this.maxDistance = (int)Math.round(Math.sqrt(Math.pow(root.getReferenceGameState().getGrid().getGrid().length, 2) + Math.pow(root.getReferenceGameState().getGrid().getGrid()[0].length, 2)));
     this.executorService  = Executors.newFixedThreadPool(config.numThreads);
   }
 
@@ -58,19 +60,19 @@ public class MCTS {
 
     while(System.currentTimeMillis() - time < milis){
       //Schritte des UCT abarbeiten
-      if(root.getGameState().getLastMove() == null)
-        root.getGameState().setLastMove(new ReferenceMove(null, new int[2]));
-      TreeNode selected = selectAndExpand(root, C);
+      if(getRoot().getReferenceGameState().getLastMove() == null)
+        getRoot().getReferenceGameState().setLastMove(new ReferenceMove(null, new int[2]));
+      TreeNode selected = selectAndExpand(getRoot(), C);
       backpropagate(selected, simulate(selected));
     }
 
-    TreeNode bestChild = getRootBest(root);
+    TreeNode bestChild = getRootBest(getRoot());
 
     // Hier werden wichtige Daten zur Auswahl ausgegeben 
     //      printResults(bestChild);
 
     this.executorService.shutdown();
-    return bestChild.getGameState().getLastMove().toMove();
+    return bestChild.getReferenceGameState().getLastMove().toMove();
   }
 
 
@@ -82,7 +84,7 @@ public class MCTS {
    * @return the node to simulate on
    */
   TreeNode selectAndExpand(TreeNode node, double C){
-    while(isTerminal(node.getGameState()) == -1) {      
+    while(isTerminal(node.getReferenceGameState()) == -1) {      
       if(!isFullyExpanded(node)){
         expansionCounter.incrementAndGet();
         return expand(node);
@@ -103,7 +105,7 @@ public class MCTS {
   TreeNode expand(TreeNode parent){
     for(int i=0; i<parent.getChildren().length; i++) {
       if(parent.getChildren()[i] == null) {
-        TreeNode child = parent.clone(parent.getGameState().clone());
+        TreeNode child = parent.clone(parent.getReferenceGameState().clone());
 //        child.initPossibleMovesAndChildren();
         oneMove(child, parent, false);
         parent.getChildren()[i] = child;
@@ -119,7 +121,7 @@ public class MCTS {
    * @return an array containing a number of wins for the team at position teamId
    */
   int[] multiSimulate(TreeNode simulateOn) { 
-    int[] winners = new int[simulateOn.getGameState().getTeams().length];
+    int[] winners = new int[simulateOn.getReferenceGameState().getTeams().length];
 
     try {
       // Create a list of Callable tasks for parallel execution
@@ -157,7 +159,7 @@ public class MCTS {
    */
   int[] simulate(TreeNode simulateOn){      
     simulationCounter.incrementAndGet();
-    int isTerminal = isTerminal(simulateOn.getGameState());
+    int isTerminal = isTerminal(simulateOn.getReferenceGameState());
     int[] winners = new int[this.teams];
     int count = config.MAX_STEPS;
     if(isTerminal >= 0) {
@@ -166,11 +168,11 @@ public class MCTS {
     }
     
 
-    simulateOn = simulateOn.clone(simulateOn.getGameState().clone());
+    simulateOn = simulateOn.clone(simulateOn.getReferenceGameState().clone());
 
-    for(;count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn.getGameState())) {
+    for(;count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn.getReferenceGameState())) {
       oneMove(simulateOn, simulateOn, true);
-      removeTeamCheck(simulateOn.getGameState());
+      removeTeamCheck(simulateOn.getReferenceGameState());
     }
     if(isTerminal < 0) {  
       simulationCounter.decrementAndGet();
@@ -190,7 +192,7 @@ public class MCTS {
    * @return the best teams teamId (as an int)
    */
   int terminalHeuristic(TreeNode node) {
-    Team[] teams = node.getGameState().getTeams();
+    Team[] teams = node.getReferenceGameState().getTeams();
     int[] points = new int[teams.length];
 
     for(int i=0; i<teams.length; i++) {
@@ -384,9 +386,9 @@ public class MCTS {
       Piece center = move.getPiece();
       int[] oldPos = center.getPosition();
       updateThese.add(center);
-      MCTSUtilities.putNeighbouringPieces(updateThese, alter.getGameState().getGrid(), oldPos);
-      alterGameStateAndGrid(alter.getGameState(), move);
-      MCTSUtilities.putNeighbouringPieces(updateThese, alter.getGameState().getGrid(), center.getPosition());
+      MCTSUtilities.putNeighbouringPieces(updateThese, alter.getReferenceGameState().getGrid(), oldPos);
+      alterGameStateAndGrid(alter.getReferenceGameState(), move);
+      MCTSUtilities.putNeighbouringPieces(updateThese, alter.getReferenceGameState().getGrid(), center.getPosition());
 //      System.out.println(move.getPiece().getId() + " moves to " + move.getNewPosition()[0] + "-" + move.getNewPosition()[1]);
       alter.updateGrids(updateThese);
 //      alter.printGrids();
@@ -395,8 +397,8 @@ public class MCTS {
       
     } else {
       ReferenceMove move = getAndRemoveMoveHeuristic(original);
-      move.setPiece(alter.getGameState().getGrid().getGrid()[move.getPiece().getPosition()[0]][move.getPiece().getPosition()[1]].getPiece());
-      alterGameStateAndGrid(alter.getGameState(), move);
+      move.setPiece(alter.getReferenceGameState().getGrid().getGrid()[move.getPiece().getPosition()[0]][move.getPiece().getPosition()[1]].getPiece());
+      alterGameStateAndGrid(alter.getReferenceGameState(), move);
       alter.initPossibleMovesAndChildren();
     }
   }   
@@ -409,19 +411,19 @@ public class MCTS {
    * @return possible move
    */
   ReferenceMove getAndRemoveMoveHeuristicFromGrid(TreeNode parent) {
-    for(Piece piece : parent.getGameState().getTeams()[parent.getGameState().getCurrentTeam()].getPieces()) {
-      if(parent.getGameState().getGrid().getPieceVisions().get(piece) == null)
+    for(Piece piece : parent.getReferenceGameState().getTeams()[parent.getReferenceGameState().getCurrentTeam()].getPieces()) {
+      if(parent.getReferenceGameState().getGrid().getPieceVisions().get(piece) == null)
         System.out.println("weird null pointer in getAndRemove");
-      for(int i=0; i<parent.getGameState().getGrid().getPieceVisions().get(piece).size(); i++) {
-        int[] pos = parent.getGameState().getGrid().getPieceVisions().get(piece).get(i);
-        if(MCTSUtilities.emptyField(parent.getGameState().getGrid(), pos)) {
+      for(int i=0; i<parent.getReferenceGameState().getGrid().getPieceVisions().get(piece).size(); i++) {
+        int[] pos = parent.getReferenceGameState().getGrid().getPieceVisions().get(piece).get(i);
+        if(MCTSUtilities.emptyField(parent.getReferenceGameState().getGrid(), pos)) {
           continue;
         }
-        if(MCTSUtilities.otherTeamsBase(parent.getGameState().getGrid(), pos, piece.getPosition())) {
+        if(MCTSUtilities.otherTeamsBase(parent.getReferenceGameState().getGrid(), pos, piece.getPosition())) {
           return new ReferenceMove(piece, pos);
         }
-        if(!MCTSUtilities.occupiedBySameTeam(parent.getGameState(), piece.getPosition(), pos)
-            && MCTSUtilities.occupiedByWeakerOpponent(parent.getGameState().getGrid().getPosition(pos[1], pos[0]).getPiece(), piece)) {
+        if(!MCTSUtilities.occupiedBySameTeam(parent.getReferenceGameState(), piece.getPosition(), pos)
+            && MCTSUtilities.occupiedByWeakerOpponent(parent.getReferenceGameState().getGrid().getPosition(pos[1], pos[0]).getPiece(), piece)) {
           return new ReferenceMove(piece, pos);
         }
       }
@@ -438,7 +440,7 @@ public class MCTS {
     ReferenceMove move = null;
     
     try {
-      move = MCTSUtilities.pickMoveComplex(parent.getGameState());
+      move = MCTSUtilities.pickMoveComplex(parent.getReferenceGameState());
     } catch (NoMovesLeftException e) {
       e.printStackTrace();
     } catch (InvalidShapeException e) {
@@ -462,13 +464,13 @@ public class MCTS {
     for(Piece piece : parent.getPossibleMoves().keySet()) {
       for(int i=0; i<parent.getPossibleMoves().get(piece).size(); i++) {
         int[] pos = parent.getPossibleMoves().get(piece).get(i);
-        if(MCTSUtilities.emptyField(parent.getGameState().getGrid(), pos)) {
+        if(MCTSUtilities.emptyField(parent.getReferenceGameState().getGrid(), pos)) {
           continue;
         }
-        if(MCTSUtilities.otherTeamsBase(parent.getGameState().getGrid(), pos, piece.getPosition())) {
+        if(MCTSUtilities.otherTeamsBase(parent.getReferenceGameState().getGrid(), pos, piece.getPosition())) {
           return createMoveDeleteIndex(parent, piece, i);
         }
-        if(MCTSUtilities.occupiedByWeakerOpponent(parent.getGameState().getGrid().getPosition(pos[1], pos[0]).getPiece(), piece)) {
+        if(MCTSUtilities.occupiedByWeakerOpponent(parent.getReferenceGameState().getGrid().getPosition(pos[1], pos[0]).getPiece(), piece)) {
           return createMoveDeleteIndex(parent, piece, i);
         }
       }
@@ -556,18 +558,27 @@ public class MCTS {
     sb.append("\nBest children:");
     //if not all children are expanded they cannot be sorted.
     try {
-    Arrays.sort(root.getChildren());
+    Arrays.sort(getRoot().getChildren());
     } catch(NullPointerException npe) {};
     int n = 5;
-    for(int i=0; i<(root.getChildren().length > n ? n : root.getChildren().length); i++) {
-      if (root.getChildren()[i] == null) {
+    for(int i=0; i<(getRoot().getChildren().length > n ? n : getRoot().getChildren().length); i++) {
+      if (getRoot().getChildren()[i] == null) {
         n += 1;
         continue;
       }
-      Move rootMove = root.getChildren()[i].getGameState().getLastMove().toMove();
+      Move rootMove = getRoot().getChildren()[i].getReferenceGameState().getLastMove().toMove();
       sb.append("\n   " + rootMove.getPieceId() + " to [" + rootMove.getNewPosition()[0] + "," + rootMove.getNewPosition()[1] + "]"
-          + " winning chance: " + (root.getChildren()[i].getV() * 100) + "% with " + root.getChildren()[i].getNK() + " nodes" + ", uct: " + root.getChildren()[i].getUCT(config.C) + " wins 0 " + root.getChildren()[i].getWins()[0] + ", wins 1 " + root.getChildren()[i].getWins()[1]);
+          + " winning chance: " + (getRoot().getChildren()[i].getV() * 100) + "% with " + getRoot().getChildren()[i].getNK() + " nodes" + ", uct: " + getRoot().getChildren()[i].getUCT(config.C) + " wins 0 " + getRoot().getChildren()[i].getWins()[0] + ", wins 1 " + getRoot().getChildren()[i].getWins()[1]);
     }
     return sb.toString();
+  }
+
+
+  public TreeNode getRoot() {
+    return root;
+  }
+
+  public void setRoot(MonteCarloTreeNode root) {
+    this.root = (TreeNode)root;
   }
 }

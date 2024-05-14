@@ -5,8 +5,10 @@ import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.ctf.shared.ai.AIConfig;
+import org.ctf.shared.ai.MonteCarloTreeSearch;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
+import org.ctf.shared.ai.MonteCarloTreeNode;
 import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.ai.random.RandomAI;
 import org.ctf.shared.state.Move;
@@ -16,30 +18,29 @@ import org.ctf.shared.state.Team;
 /**
  * @author sistumpf
  */
-public class MCTS {
-  AIConfig config;
-  static int count;
-  int teams;
-  int maxDistance;
-  public TreeNode root;
+public class MCTS implements MonteCarloTreeSearch {
+  private AIConfig config;
+  private int teams;
+  private int maxDistance;
+  private TreeNode root;
   public AtomicInteger simulationCounter;
   public AtomicInteger heuristicCounter;
   public AtomicInteger expansionCounter;
 
   public MCTS(TreeNode root, AIConfig config) {
     this.config = config;
-    this.root = root;
+    this.setRoot(root);
 //    this.rand = new Random();
     simulationCounter = new AtomicInteger();
     heuristicCounter = new AtomicInteger();
     expansionCounter = new AtomicInteger();
-    this.teams = root.getGameState().getTeams().length;
+    this.teams = root.getReferenceGameState().getTeams().length;
     this.maxDistance =
         (int)
             Math.round(
                 Math.sqrt(
-                    Math.pow(root.getGameState().getGrid().getGrid().length, 2)
-                        + Math.pow(root.getGameState().getGrid().getGrid()[0].length, 2)));
+                    Math.pow(root.getReferenceGameState().getGrid().getGrid().length, 2)
+                        + Math.pow(root.getReferenceGameState().getGrid().getGrid()[0].length, 2)));
   }
 
   /**
@@ -55,16 +56,16 @@ public class MCTS {
 
     while (System.currentTimeMillis() - time < milis) {
       // Schritte des UCT abarbeiten
-      TreeNode selected = selectAndExpand(root, C);
+      TreeNode selected = selectAndExpand(getRoot(), C);
       backpropagate(selected, simulate(selected));
     }
 
-    TreeNode bestChild = getRootBest(root);
+    TreeNode bestChild = getRootBest(getRoot());
 
     // Hier werden wichtige Daten zur Auswahl ausgegeben
     //      printResults(bestChild);
 
-    return bestChild.getGameState().getLastMove().toMove();
+    return bestChild.getReferenceGameState().getLastMove().toMove();
   }
 
   /**
@@ -76,7 +77,7 @@ public class MCTS {
    * @return the node to simulate on
    */
   TreeNode selectAndExpand(TreeNode node, double C) {
-    while (isTerminal(node.getGameState(), node.getOperateOn()) == -1) {
+    while (isTerminal(node.getReferenceGameState(), node.getOperateOn()) == -1) {
       if (!isFullyExpanded(node)) {
         expansionCounter.incrementAndGet();
         return expand(node);
@@ -98,7 +99,7 @@ public class MCTS {
   TreeNode expand(TreeNode parent) {
     for (int i = 0; i < parent.getChildren().length; i++) {
       if (parent.getChildren()[i] == null) {
-        TreeNode child = parent.clone(parent.getGameState().clone());
+        TreeNode child = parent.clone(parent.getReferenceGameState().clone());
         oneMove(child, parent, false, child.getOperateOn());
         parent.getChildren()[i] = child;
         return child;
@@ -158,7 +159,7 @@ public class MCTS {
   int[] simulate(TreeNode simulateOn) {
     simulationCounter.incrementAndGet();
     ReferenceMove change = new ReferenceMove(null, new int[] {0,0});
-    int isTerminal = isTerminal(simulateOn.getGameState(), change);
+    int isTerminal = isTerminal(simulateOn.getReferenceGameState(), change);
     int[] winners = new int[this.teams];
     int count = config.MAX_STEPS;
     if (isTerminal >= 0) {
@@ -166,12 +167,12 @@ public class MCTS {
       return winners;
     }
 
-    simulateOn = simulateOn.clone(simulateOn.getGameState().clone());
+    simulateOn = simulateOn.clone(simulateOn.getReferenceGameState().clone());
     simulateOn.setOperateOn(change);
 
-    for (; count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn.getGameState(), change)) {
+    for (; count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn.getReferenceGameState(), change)) {
       oneMove(simulateOn, simulateOn, true, change);
-      removeTeamCheck(simulateOn.getGameState());
+      removeTeamCheck(simulateOn.getReferenceGameState());
     }
     if (isTerminal < 0) {
       simulationCounter.decrementAndGet();
@@ -191,7 +192,7 @@ public class MCTS {
    * @return the best teams teamId (as an int)
    */
   int terminalHeuristic(TreeNode node) {
-    Team[] teams = node.getGameState().getTeams();
+    Team[] teams = node.getReferenceGameState().getTeams();
     int[] points = new int[teams.length];
 
     for (int i = 0; i < teams.length; i++) {
@@ -381,12 +382,12 @@ public class MCTS {
    */
   void oneMove(TreeNode alter, TreeNode original, boolean simulate, ReferenceMove change) {
     if(!simulate) {
-    alterGameState(alter.getGameState(), new ReferenceMove(alter.getGameState(), getAndRemoveMoveHeuristic(original)));
+    alterGameState(alter.getReferenceGameState(), new ReferenceMove(alter.getReferenceGameState(), getAndRemoveMoveHeuristic(original)));
     alter.initPossibleMovesAndChildren();
     }
     else {
       try {
-        alterGameState(alter.getGameState(), MCTSUtilities.pickMoveComplex(alter.getGameState(), change));
+        alterGameState(alter.getReferenceGameState(), MCTSUtilities.pickMoveComplex(alter.getReferenceGameState(), change));
 //        alterGameState(alter.gameState, MCTSUtilities.pickMoveSimple(alter.gameState, change));
       } catch (NoMovesLeftException | InvalidShapeException e) {
         e.printStackTrace();
@@ -406,11 +407,11 @@ public class MCTS {
     for (Piece piece : parent.getPossibleMoves().keySet()) {
       for (int i = 0; i < parent.getPossibleMoves().get(piece).size(); i++) {
         int[] pos = parent.getPossibleMoves().get(piece).get(i);
-        if (MCTSUtilities.emptyField(parent.getGameState().getGrid(), pos)) continue;
-        if (MCTSUtilities.otherTeamsBase(parent.getGameState().getGrid(), pos, piece.getPosition())) {
+        if (MCTSUtilities.emptyField(parent.getReferenceGameState().getGrid(), pos)) continue;
+        if (MCTSUtilities.otherTeamsBase(parent.getReferenceGameState().getGrid(), pos, piece.getPosition())) {
           return createMoveDeleteIndex(parent, piece, i);
         }
-        if (MCTSUtilities.occupiedByWeakerOpponent(parent.getGameState().getGrid().getPosition(pos[1], pos[0]).getPiece(), piece)) {
+        if (MCTSUtilities.occupiedByWeakerOpponent(parent.getReferenceGameState().getGrid().getPosition(pos[1], pos[0]).getPiece(), piece)) {
           return createMoveDeleteIndex(parent, piece, i);
         }
       }
@@ -526,17 +527,17 @@ public class MCTS {
     sb.append("\nBest children:");
     // if not all children are expanded they cannot be sorted.
     try {
-      Arrays.sort(root.getChildren());
+      Arrays.sort(getRoot().getChildren());
     } catch (NullPointerException npe) {
     }
     ;
     int n = 5;
-    for (int i = 0; i < (root.getChildren().length > n ? n : root.getChildren().length); i++) {
-      if (root.getChildren()[i] == null) {
+    for (int i = 0; i < (getRoot().getChildren().length > n ? n : getRoot().getChildren().length); i++) {
+      if (getRoot().getChildren()[i] == null) {
         n += 1;
         continue;
       }
-      Move rootMove = root.getChildren()[i].getGameState().getLastMove().toMove();
+      Move rootMove = getRoot().getChildren()[i].getReferenceGameState().getLastMove().toMove();
       sb.append(
           "\n   "
               + rootMove.getPieceId()
@@ -546,17 +547,25 @@ public class MCTS {
               + rootMove.getNewPosition()[1]
               + "]"
               + " winning chance: "
-              + (root.getChildren()[i].getV() * 100)
+              + (getRoot().getChildren()[i].getV() * 100)
               + "% with "
-              + root.getChildren()[i].getNK()
+              + getRoot().getChildren()[i].getNK()
               + " nodes"
               + ", uct: "
-              + root.getChildren()[i].getUCT(config.C)
+              + getRoot().getChildren()[i].getUCT(config.C)
               + " wins 0 "
-              + root.getChildren()[i].getWins()[0]
+              + getRoot().getChildren()[i].getWins()[0]
               + ", wins 1 "
-              + root.getChildren()[i].getWins()[1]);
+              + getRoot().getChildren()[i].getWins()[1]);
     }
     return sb.toString();
+  }
+
+  public TreeNode getRoot() {
+    return root;
+  }
+
+  public void setRoot(MonteCarloTreeNode root) {
+    this.root = (TreeNode)root;
   }
 }

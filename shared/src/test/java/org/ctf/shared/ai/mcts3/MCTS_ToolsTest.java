@@ -28,9 +28,9 @@ class MCTS_ToolsTest {
   @Test
   void testPossibleMoves() {
     TreeNode node = new TreeNode(null, new ReferenceGameState(TestValues.getTestState()), null, new ReferenceMove(null, new int[2]));
-    Piece piece = node.getGameState().getTeams()[1].getPieces()[1];                          //Piece at position 7,3; only position it can walk to is above, 6,3.
+    Piece piece = node.getReferenceGameState().getTeams()[1].getPieces()[1];                          //Piece at position 7,3; only position it can walk to is above, 6,3.
     ArrayList<int[]> possibleMoves = new ArrayList<int[]>();
-    MCTSUtilities.getPossibleMoves(node.getGameState(), piece, possibleMoves, new ReferenceMove(null, new int[2]));
+    MCTSUtilities.getPossibleMoves(node.getReferenceGameState(), piece, possibleMoves, new ReferenceMove(null, new int[2]));
     
     ArrayList<int[]> musterPossibleMoves = new ArrayList<int[]>();
     musterPossibleMoves.add(new int[] {6,3});

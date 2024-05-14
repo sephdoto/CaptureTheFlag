@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
 import org.ctf.shared.ai.GameUtilities;
+import org.ctf.shared.ai.MonteCarloTreeNode;
 import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
@@ -15,7 +16,7 @@ import org.ctf.shared.state.Team;
  * The parent is the game one move prior, the children are the game one move further.
  * @author sistumpf
  */
-public class TreeNode implements Comparable<TreeNode> {
+public class TreeNode implements MonteCarloTreeNode, Comparable<TreeNode> {
   private TreeNode parent;
   private TreeNode[] children;
   private IdentityHashMap<Piece, ArrayList<int[]>> possibleMoves;
@@ -162,8 +163,8 @@ public class TreeNode implements Comparable<TreeNode> {
     return parent;
   }
 
-  public void setParent(TreeNode parent) {
-    this.parent = parent;
+  public void setParent(MonteCarloTreeNode parent) {
+    this.parent = (TreeNode) parent;
   }
 
   public IdentityHashMap<Piece, ArrayList<int[]>> getPossibleMoves() {

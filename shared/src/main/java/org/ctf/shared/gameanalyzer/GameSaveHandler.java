@@ -16,27 +16,27 @@ import org.ctf.shared.state.Move;
 /**
  * An service that can be used to save games as serialized object of {@link SavedGame} with
  * .savedgame extension for use in AI training. Saves files in
- * \shared\src\main\java\org\ctf\shared\resources\savegames with time stamps as file names. Also has
+ * Save Game folder with time stamps as file names. Also has
  * a loader function "readFile()" which can either open a file picker to select and read a file or
- * takes a file name as string. Incase of picker the {@link SavedGame} object is returned but if a
- * String file name is provided the analyzer holds it in its internal savedGame attribute. The
+ * takes a file name as String. In case of picker the {@link SavedGame} object is returned but if a
+ * String file name is provided the GameSaveHandler holds it in its internal savedGame attribute. The
  * SavedGame object can then be fetched using the getSavedGame() command.
  *
  * @author rsyed
  */
-public class Analyzer {
+public class GameSaveHandler {
 
   LocalDateTime localDateTime;
   public SavedGame savedGame;
   public String lastFileName;
 
   /**
-   * Main constructor just initialzes the {@link SavedGame} object this Analyzer will use to save
+   * Main constructor just initialzes the {@link SavedGame} object this GameSaveHandler will use to save
    * data into.
    *
    * @author rsyed
    */
-  public Analyzer() {
+  public GameSaveHandler() {
     savedGame = new SavedGame();
   }
 

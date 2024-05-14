@@ -8,6 +8,8 @@ import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
+import org.ctf.shared.ai.MonteCarloTreeNode;
+import org.ctf.shared.ai.MonteCarloTreeSearch;
 import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.ai.random.RandomAI;
 import org.ctf.shared.state.GameState;
@@ -18,18 +20,18 @@ import org.ctf.shared.state.Team;
 /**
  * @author sistumpf
  */
-public class MCTS {
+public class MCTS implements MonteCarloTreeSearch {
   private AIConfig config;
   private int teams;
   private int maxDistance;
-  public TreeNode root;
+  private TreeNode root;
   public AtomicInteger simulationCounter;
   public AtomicInteger heuristicCounter;
   public AtomicInteger expansionCounter;
 
   public MCTS(TreeNode root, AIConfig config) {
     this.config = config;
-    this.root = root;
+    this.setRoot(root);
 //    this.rand = new Random();
     simulationCounter = new AtomicInteger();
     heuristicCounter = new AtomicInteger();
@@ -56,11 +58,11 @@ public class MCTS {
 
     while (System.currentTimeMillis() - time < milis) {
       // Schritte des UCT abarbeiten
-      TreeNode selected = selectAndExpand(root, C);
+      TreeNode selected = selectAndExpand(getRoot(), C);
       backpropagate(selected, simulate(selected));
     }
 
-    TreeNode bestChild = getRootBest(root);
+    TreeNode bestChild = getRootBest(getRoot());
 
     // Hier werden wichtige Daten zur Auswahl ausgegeben
     //      printResults(bestChild);
@@ -533,17 +535,17 @@ public class MCTS {
     sb.append("\nBest children:");
     // if not all children are expanded they cannot be sorted.
     try {
-      Arrays.sort(root.getChildren());
+      Arrays.sort(getRoot().getChildren());
     } catch (NullPointerException npe) {
     }
     ;
     int n = 5;
-    for (int i = 0; i < (root.getChildren().length > n ? n : root.getChildren().length); i++) {
-      if (root.getChildren()[i] == null) {
+    for (int i = 0; i < (getRoot().getChildren().length > n ? n : getRoot().getChildren().length); i++) {
+      if (getRoot().getChildren()[i] == null) {
         n += 1;
         continue;
       }
-      Move rootMove = root.getChildren()[i].getGameState().getLastMove();
+      Move rootMove = getRoot().getChildren()[i].getGameState().getLastMove();
       sb.append(
           "\n   "
               + rootMove.getPieceId()
@@ -553,17 +555,25 @@ public class MCTS {
               + rootMove.getNewPosition()[1]
               + "]"
               + " winning chance: "
-              + (root.getChildren()[i].getV() * 100)
+              + (getRoot().getChildren()[i].getV() * 100)
               + "% with "
-              + root.getChildren()[i].getNK()
+              + getRoot().getChildren()[i].getNK()
               + " nodes"
               + ", uct: "
-              + root.getChildren()[i].getUCT(config.C)
+              + getRoot().getChildren()[i].getUCT(config.C)
               + " wins 0 "
-              + root.getChildren()[i].getWins()[0]
+              + getRoot().getChildren()[i].getWins()[0]
               + ", wins 1 "
-              + root.getChildren()[i].getWins()[1]);
+              + getRoot().getChildren()[i].getWins()[1]);
     }
     return sb.toString();
+  }
+
+  public TreeNode getRoot() {
+    return root;
+  }
+
+  public void setRoot(MonteCarloTreeNode root) {
+    this.root = (TreeNode)root;
   }
 }

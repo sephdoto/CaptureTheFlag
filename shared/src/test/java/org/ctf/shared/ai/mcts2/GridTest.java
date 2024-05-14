@@ -13,9 +13,9 @@ class GridTest {
   @Test
   void testEquals() {
     TreeNode node = new TreeNode(null, TestValues.getTestState(), null);
-    TreeNode clone = node.clone(node.getGameState().clone());
-    assertTrue(node.getGameState().getGrid().equals(node.getGameState().getGrid()));
-    assertTrue(node.getGameState().getGrid().equals(clone.getGameState().getGrid()));
+    TreeNode clone = node.clone(node.getReferenceGameState().clone());
+    assertTrue(node.getReferenceGameState().getGrid().equals(node.getReferenceGameState().getGrid()));
+    assertTrue(node.getReferenceGameState().getGrid().equals(clone.getReferenceGameState().getGrid()));
   }
   
   @Test
@@ -46,26 +46,26 @@ class GridTest {
   void testInitPieceVision() {
     GameState testState = TestValues.getTestState();
     TreeNode node = new TreeNode(null, testState, null);
-    Grid grid = node.getGameState().getGrid();
+    Grid grid = node.getReferenceGameState().getGrid();
     for(Piece key : node.getPossibleMoves().keySet())
       for(int[] pos : node.getPossibleMoves().get(key))
         assertNotNull(grid.pieceVisionGrid[pos[0]][pos[1]]);
     
-    for(int i=0; i<node.getGameState().getGrid().getGrid().length; i++) {
-      for(int j=0; j<node.getGameState().getGrid().getGrid()[0].length; j++) {
-        if(node.getGameState().getGrid().getPieceVisionGrid()[i][j] == null)
+    for(int i=0; i<node.getReferenceGameState().getGrid().getGrid().length; i++) {
+      for(int j=0; j<node.getReferenceGameState().getGrid().getGrid()[0].length; j++) {
+        if(node.getReferenceGameState().getGrid().getPieceVisionGrid()[i][j] == null)
           System.out.print(". ");
-        else if(node.getGameState().getGrid().getPieceVisionGrid()[i][j].getPieces().stream().anyMatch(p -> p.getId().equals("p:0_6")))
+        else if(node.getReferenceGameState().getGrid().getPieceVisionGrid()[i][j].getPieces().stream().anyMatch(p -> p.getId().equals("p:0_6")))
           System.out.print("X ");
         else
-          System.out.print(node.getGameState().getGrid().getPieceVisionGrid()[i][j].getPieces().size() + " ");
+          System.out.print(node.getReferenceGameState().getGrid().getPieceVisionGrid()[i][j].getPieces().size() + " ");
       }
       System.out.print("\t");
-      for(int j=0; j<node.getGameState().getGrid().getGrid()[0].length; j++) {
-        if(node.getGameState().getGrid().getGrid()[i][j] == null)
+      for(int j=0; j<node.getReferenceGameState().getGrid().getGrid()[0].length; j++) {
+        if(node.getReferenceGameState().getGrid().getGrid()[i][j] == null)
           System.out.print(". ");
         else
-          System.out.print(node.getGameState().getGrid().getGrid()[i][j].getObject().ordinal() + " ");
+          System.out.print(node.getReferenceGameState().getGrid().getGrid()[i][j].getObject().ordinal() + " ");
       }
      System.out.println(); 
     }

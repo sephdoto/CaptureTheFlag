@@ -3,13 +3,13 @@ package org.ctf.shared.client.testClasses;
 import com.google.gson.Gson;
 import java.util.HashMap;
 
-import org.ctf.shared.gameanalyzer.Analyzer;
+import org.ctf.shared.gameanalyzer.GameSaveHandler;
 import org.ctf.shared.state.Move;
 
 public class SaveGameVisualizer {
 
   public static void main(String[] args) {
-    Analyzer analyzer = new Analyzer();
+    GameSaveHandler analyzer = new GameSaveHandler();
     Gson gson = new Gson();
     boolean b = analyzer.readFile("20240506-164855");
     System.out.println(b);

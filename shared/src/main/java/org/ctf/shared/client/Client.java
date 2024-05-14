@@ -13,7 +13,7 @@ import org.ctf.shared.client.lib.ServerChecker;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.client.service.CommLayerInterface;
-import org.ctf.shared.gameanalyzer.Analyzer;
+import org.ctf.shared.gameanalyzer.GameSaveHandler;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
@@ -51,7 +51,7 @@ public class Client implements GameClientInterface {
   protected Gson gson; // Gson object for conversions incase needed
   // Two CommLayers Available CommLayer and RestClientLayer
   protected CommLayerInterface comm; // Layer instance which is used for communication
-  protected Analyzer analyzer;
+  protected GameSaveHandler analyzer;
 
   // Block for Server Info
   protected String currentServer; // Creates URL with Session ID for use later
@@ -109,7 +109,7 @@ public class Client implements GameClientInterface {
     this.comm = comm;
     this.enableLogging = enableLogging;
     if (enableLogging) {
-      analyzer = new Analyzer();
+      analyzer = new GameSaveHandler();
     }
     setServer(IP, port);
   }

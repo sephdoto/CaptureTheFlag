@@ -9,7 +9,7 @@ import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.client.service.CommLayerInterface;
 import org.ctf.shared.constants.Enums.AI;
-import org.ctf.shared.gameanalyzer.Analyzer;
+import org.ctf.shared.gameanalyzer.GameSaveHandler;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.NoMoreTeamSlots;
@@ -26,7 +26,7 @@ public class AIClient extends Client {
   private AI selectedAI;
   private AIConfig aiConfig;
   private boolean enableLogging;
-  private volatile Analyzer analyzer;
+  private volatile GameSaveHandler analyzer;
   private String gameIDString;
   private String constructorSetTeamName;
   private int aiClientRefreshTime = 1;
@@ -98,7 +98,7 @@ public class AIClient extends Client {
     this.aiConfig = aiConfig;
     this.enableLogging = enableLogging;
     if(enableLogging){
-      this.analyzer = new Analyzer();
+      this.analyzer = new GameSaveHandler();
     }
     
   }

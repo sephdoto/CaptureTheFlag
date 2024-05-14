@@ -10,7 +10,7 @@ import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Enums.AI;
-import org.ctf.shared.gameanalyzer.Analyzer;
+import org.ctf.shared.gameanalyzer.GameSaveHandler;
 import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.map.MapTemplate;
 
@@ -185,7 +185,7 @@ public class MCTSSimulation {
         "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 4");
     javaClient5.joinExistingGame(
         "localhost", "8888", javaClient.getCurrentGameSessionID(), "Team 5"); */
-    Analyzer newAna = new Analyzer();
+    GameSaveHandler newAna = new GameSaveHandler();
     /*  javaClient.getStateFromServer();
     javaClient2.getStateFromServer();
     javaClient3.getStateFromServer();

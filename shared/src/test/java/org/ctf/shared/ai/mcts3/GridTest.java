@@ -13,9 +13,9 @@ class GridTest {
   @Test
   void testEquals() {
     TreeNode node = new TreeNode(null, new ReferenceGameState(TestValues.getTestState()), null, new ReferenceMove(null, new int[2]));
-    TreeNode clone = node.clone(node.getGameState().clone());
-    assertTrue(node.getGameState().getGrid().equals(node.getGameState().getGrid()));
-    assertTrue(node.getGameState().getGrid().equals(clone.getGameState().getGrid()));
+    TreeNode clone = node.clone(node.getReferenceGameState().clone());
+    assertTrue(node.getReferenceGameState().getGrid().equals(node.getReferenceGameState().getGrid()));
+    assertTrue(node.getReferenceGameState().getGrid().equals(clone.getReferenceGameState().getGrid()));
   }
   
   @Test

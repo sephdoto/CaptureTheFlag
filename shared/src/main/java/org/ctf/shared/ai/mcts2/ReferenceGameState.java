@@ -37,7 +37,6 @@ public class ReferenceGameState {
     this.lastMove = lastMove;
   }
 
-  //TODO sehr ineffizient, offen für Verbesserungsvorschläge
   /**
    * This method only deep copies the Grid.grid, the pieceVisionGrid and pieceVisions should be initialized in TreeNode.
    * @return clone of this ReferenceGameState
@@ -70,6 +69,23 @@ public class ReferenceGameState {
         this.grid.getPosition(this.lastMove.getPiece().getPosition()[1], this.lastMove.getPiece().getPosition()[0]).getPiece(), 
         this.lastMove.getNewPosition());
     return new ReferenceGameState(new Grid(teams, this.grid.getGrid().length, this.grid.getGrid()[0].length), teams, this.currentTeam, lastMove);
+  }
+  
+  /**
+   * Creates and returns a GameState representing this ReferenceGameState
+   * @return a GameState representation of this ReferenceGameState
+   */
+  public GameState toGameState() {
+    GameState gameState = new GameState();
+    gameState.setCurrentTeam(currentTeam);
+    gameState.setLastMove(this.lastMove.toMove());
+    gameState.setTeams(teams);
+    String[][] stringGrid = new String[grid.getGrid().length][grid.getGrid()[0].length];
+    for(int y=0; y<grid.getGrid().length; y++)
+      for(int x=0; x<grid.getGrid()[0].length; x++)
+        stringGrid[y][x] = grid.getPosition(x, y).toString();
+    gameState.setGrid(stringGrid);
+    return gameState;
   }
   
   public Grid getGrid() {

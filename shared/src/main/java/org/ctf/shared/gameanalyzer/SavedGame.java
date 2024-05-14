@@ -9,7 +9,7 @@ import org.ctf.shared.state.Move;
  * This class is were the save game data is held. It holds a an initial {@link GameState} along with
  * a {@link HashMap} containing all the moves made in the game in a sequential list from 1 to n. Has
  * built-in logic to not save a move which if it is the same as the last one so the logic in Client
- * can be simpler and faster in case the Game does not need to be saved. The {@link Analyzer} serves
+ * can be simpler and faster in case the Game does not need to be saved. The {@link GameSaveHandler} serves
  * as a controlling class of this class
  *
  * @author rsyed
@@ -42,7 +42,7 @@ public class SavedGame implements java.io.Serializable {
   /**
    * Adder for the {@link Move} object this class is asked to save. Autochecks if its the same as
    * the one it last saved, saves if different, rejects the save internally otherwise for minimal
-   * distraction for the {@link Analyzer} object
+   * distraction for the {@link GameSaveHandler} object
    *
    * @param move the move to save
    * @author rsyed
