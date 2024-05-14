@@ -102,6 +102,7 @@ public class TemplateEngine {
     switch (event) {
       case "Flags":
         tmpTemplate.setFlags(newV);
+        editorscene.updateVisualRoot();
         return true;
       case "TurnTime":
         tmpTemplate.setMoveTimeLimitInSeconds(newV);

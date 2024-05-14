@@ -230,7 +230,7 @@ public class EditorScene extends Scene {
     Spinner<Integer> teamSpinner = createMapSpinner(2, 50, engine.tmpTemplate.getTeams());
     createChangeListener(teamSpinner, "Teams", false);
     controlgrid.add(teamSpinner, 1, 2);
-    Spinner<Integer> flagSpinner = createMapSpinner(1, 100, engine.tmpTemplate.getTeams());
+    Spinner<Integer> flagSpinner = createMapSpinner(1, 100, engine.tmpTemplate.getFlags());
     createChangeListener(flagSpinner, "Flags", false);
     controlgrid.add(flagSpinner, 1, 3);
     Spinner<Integer> blockSpinner =
@@ -852,7 +852,7 @@ public class EditorScene extends Scene {
    * @author aniemesc
    * @author rsyed: Bug fixes
    */
-  private void updateVisualRoot() {
+  public void updateVisualRoot() {
 //    MapPreview mp = new MapPreview(engine.tmpTemplate);
 //    visualRoot.getChildren().clear();
 //    try {
@@ -872,7 +872,12 @@ public class EditorScene extends Scene {
     // visualRoot.getChildren().add(directionsContainer);
   }
 
-  /**
+  public HomeSceneController getHsc() {
+	return hsc;
+}
+
+
+/**
    * Initializes the MovementVisual of the EditorScene used for displaying the 
    * current movement options of a custom piece
    * @author aniemesc
