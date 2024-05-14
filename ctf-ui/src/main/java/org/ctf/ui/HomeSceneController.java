@@ -141,6 +141,10 @@ public class HomeSceneController {
 		stage.setFullScreen(true);
 	}
 
+	public void setMainClient(Client mainClient) {
+		this.mainClient = mainClient;
+	}
+
 	public void switchToCreateGameScene(Stage stage) {
 		createGameScreenV2=  new CretaeGameScreenV2(this, stage.getWidth(), stage.getHeight());
 		stage.setScene(createGameScreenV2);

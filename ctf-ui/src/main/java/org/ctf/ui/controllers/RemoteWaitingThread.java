@@ -23,12 +23,9 @@ public class RemoteWaitingThread extends Thread {
 			Thread.sleep(1000);
 			while (isactive) {
 				 Platform.runLater(() -> {
-		               rws.getText().setText(rws.getClient().isGameStarted()+"");
-		               if(rws.getClient().isGameStarted()) {
-		            	   rws.getClient().getCurrentState();
-		               }
+		               rws.getText().setText(rws.getClient().isGameStarted()+"");		              
 		             });
-				//System.out.println(client.isGameStarted());
+				
 			}
 
 		} catch (InterruptedException e) {
