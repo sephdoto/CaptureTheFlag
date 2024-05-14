@@ -156,7 +156,7 @@ public class PopUpCreator {
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
 		exit.setOnAction(e -> {
 			root.getChildren().remove(aiLevelPopUpPane);
-			root.getChildren().add(aiorHumanpopup);
+			//root.getChildren().add(aiorHumanpopup);
 		});
 		return exit;
 	}

@@ -3,15 +3,18 @@ package org.ctf.ui.controllers;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.state.data.exceptions.UnknownError;
 import org.ctf.ui.GamePane;
+import org.ctf.ui.RemoteWaitingScene;
+
 import javafx.application.Platform;
+import javafx.scene.text.Text;
 
 public class RemoteWaitingThread extends Thread {
-	Client client;
-	String s;
+	RemoteWaitingScene rws;
 	boolean isactive;
+	
 
-	public RemoteWaitingThread(Client client) {
-		this.client = client;
+	public RemoteWaitingThread(RemoteWaitingScene rws)  {
+		this.rws = rws;
 		isactive = true;
 	}
 
@@ -19,7 +22,13 @@ public class RemoteWaitingThread extends Thread {
 		try {
 			Thread.sleep(1000);
 			while (isactive) {
-				System.out.println(client.isGameStarted());
+				 Platform.runLater(() -> {
+		               rws.getText().setText(rws.getClient().isGameStarted()+"");
+		               if(rws.getClient().isGameStarted()) {
+		            	   rws.getClient().getCurrentState();
+		               }
+		             });
+				//System.out.println(client.isGameStarted());
 			}
 
 		} catch (InterruptedException e) {
