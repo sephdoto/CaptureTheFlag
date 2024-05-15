@@ -64,7 +64,7 @@ public class GamePane extends HBox{
      
 	
 
-	public GamePane(GameState state, HomeSceneController hsc) {
+	public GamePane(GameState state) {
 		//this.setStyle("-fx-background-color: yellow");
 		this.state = state;
 		this.map = state.getGrid();
@@ -123,16 +123,16 @@ public class GamePane extends HBox{
 		HBox.setHgrow(this, Priority.ALWAYS);
 		this.fillGrid();
 		setCurrentTeamActive();
-		
+		showLastMove();
 	}
 	
 	
 	private void showLastMove() {
-		if (state.getLastMove() != null) {
+		if (state.getLastMove() != null && state.getLastMove().getNewPosition() != null) {
 			Move lastMove = state.getLastMove();
 			int x = lastMove.getNewPosition()[0];
 			int y = lastMove.getNewPosition()[1];
-			
+			cells.get(generateKey(x, y)).showLastMove();
 		}
 		
 		
@@ -237,11 +237,12 @@ public class GamePane extends HBox{
 			Piece[] pieces = currenTeam.getPieces();
 			for(Piece piece: pieces) {
 				CostumFigurePain pieceRep = new CostumFigurePain(piece);
-				if ( hsc.playGameScreenV2 !=null) {
-					pieceRep.showTeamColorWhenSelecting(hsc.playGameScreenV2.colors.get(piece.getTeamId()));
-				}else {
-					pieceRep.showTeamColor("red");//
-				}
+//				if ( hsc.playGameScreenV2 !=null) {
+//					pieceRep.showTeamColorWhenSelecting(hsc.playGameScreenV2.colors.get(piece.getTeamId()));
+//				}else {
+//					pieceRep.showTeamColor("blue");//
+//				}
+				pieceRep.showTeamColor("blue");
 			figures.put(piece.getId(), pieceRep);
 				//allFigures.add(pieceRep);
 				int x = piece.getPosition()[0];

@@ -106,8 +106,7 @@ public class HomeSceneController {
 	}
 	
 	public void redraw(GameState state) {
-		playGameScreenV2.redrawGrid(state,  this);
-		
+		playGameScreenV2.redrawGrid(state, this);
 	}
 	
 	public ObjectProperty<Color> getLastcolor() {
@@ -128,6 +127,7 @@ public class HomeSceneController {
 		stage.setScene(waitingScene);
 		//t = new TestThread(this, serverManager);
 		//t.start();
+		//CreateGameController.startWaitingLobbyThread();
 	}
 	
 	public void switchToPlayGameScene(Stage stage) {
@@ -136,7 +136,7 @@ public class HomeSceneController {
 //		if(t != null) {
 //			t.stopThread();
 //		}
-		GameStatePuller g = new GameStatePuller(mainClient, this);
+		GameStatePuller g = new GameStatePuller(CreateGameController.getMainClient(), this);
 		g.start();
 		stage.setFullScreen(true);
 	}

@@ -1,7 +1,11 @@
 package org.ctf.ui;
 
 import java.util.HashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import org.ctf.shared.client.Client;
 import org.ctf.shared.state.GameState;
 import org.ctf.ui.customobjects.BaseRep;
 import org.ctf.ui.customobjects.CostumFigurePain;
@@ -9,6 +13,7 @@ import org.ctf.ui.customobjects.Timer;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -35,6 +40,10 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class PlayGameScreenV2 extends Scene {
+	
+	 private ScheduledExecutorService scheduler;
+	 // TODO Remember to close the service before moving away from this scene
+	 //private int cu
 	Label teamTurn;
 	HomeSceneController hsc;
 	StackPane root;
@@ -62,8 +71,26 @@ public class PlayGameScreenV2 extends Scene {
 	SimpleObjectProperty<Insets> padding = new SimpleObjectProperty<>(new Insets(10));
 	
 	
+	
+	 Runnable updateTask =
+		      () -> {
+		        try {
+		       	
+		        } catch (Exception e) {
+
+		        }
+		      };
+
 	public PlayGameScreenV2(HomeSceneController hsc, double width, double height) {
 		super(new StackPane(), width, height);
+		initalizePlayGameScreen(hsc);
+	}
+	
+	
+	
+	public void initalizePlayGameScreen(HomeSceneController hsc) {
+		scheduler = Executors.newScheduledThreadPool(1);
+		//scheduler.scheduleAtFixedRate(updateTask, 0, 1, TimeUnit.SECONDS);
 		this.hsc = hsc;
 		manageFontSizes();
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
@@ -71,11 +98,10 @@ public class PlayGameScreenV2 extends Scene {
 		createLayout();
 		this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
 		initColorHashMap();
-		
 	}
 	
 	public void initColorHashMap() {
-		for(int i=0; i<hsc.getMaxNumberofTemas(); i++) {
+		for(int i=0; i<CreateGameController.getMaxNumberofTeams(); i++) {
 			colors.put(String.valueOf(i), new SimpleObjectProperty<>(Color.BEIGE));
 		}
 	}
@@ -112,11 +138,13 @@ public class PlayGameScreenV2 extends Scene {
 		showMapBox.getChildren().add(new Label("hallo"));
 		} else {
 			showMapBox.getChildren().clear();
-			PlayController.setFigures(gm.getFigures());
-			gm = new GamePane(state,hsc);
+//			if(gm != null) {
+//				PlayController.setFigures(gm.getFigures());
+//			}
+			gm = new GamePane(state);
 			gm.enableBaseColors(this);
 			showMapBox.getChildren().add(gm);
-			Game.initializeGame(gm, hsc.mainClient);
+			Game.initializeGame(gm, CreateGameController.getMainClient());
 		}
 	}
 	

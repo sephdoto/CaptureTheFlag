@@ -3,6 +3,7 @@ package org.ctf.ui;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -42,6 +43,14 @@ public class CreateGameController {
 	private static int currentNumberofTeams;
 	
 	
+	public static ServerManager getServerManager() {
+		return serverManager;
+	}
+
+	public static void setServerManager(ServerManager serverManager) {
+		CreateGameController.serverManager = serverManager;
+	}
+
 	// Client that is used to pull the newest GameState and redraw the GamePane with it
 	private static Client mainClient;
 	//List of all Human-Clients on one device
@@ -86,12 +95,12 @@ public class CreateGameController {
 	 *@param isMain: true if the client is used as mainClient, false otherwise
 	 * @return human client
 	 */
-	public static Client createHumanClient(String teamName, boolean isMain) {
+	public static void createHumanClient(String teamName, boolean isMain) {
 		sessionID = serverManager.getGameSessionID();
 		Client c =
 		ClientStepBuilder.newBuilder()
 		.enableRestLayer(false)
-		.onLocalHost()
+		.onRemoteHost(serverIP)
 		.onPort(port)
 		.enableSaveGame(false)
 		.enableAutoJoin(sessionID, teamName)
@@ -99,10 +108,18 @@ public class CreateGameController {
 		if (isMain) {
 			mainClient = c;
 		}
-		return c;
+		localHumanClients.add(c);
 	}
 	
 	
+	public static Client getMainClient() {
+		return mainClient;
+	}
+
+	public static void setMainClient(Client mainClient) {
+		CreateGameController.mainClient = mainClient;
+	}
+
 	/**
 	 * Creates an AI CLient
 	 * @author Manuel Krakowski
@@ -112,7 +129,7 @@ public class CreateGameController {
 	 * @param isMain: true if the client is used as mainClient, false otherwise
 	 * @return
 	 */
-	public static  AIClient createAiClient(String teamName, AI aitype, AIConfig config, boolean isMain) {
+	public static  void createAiClient(String teamName, AI aitype, AIConfig config, boolean isMain) {
 		AIClient aiClient = 
 		AIClientStepBuilder.newBuilder()
 		.enableRestLayer(false)
@@ -125,15 +142,15 @@ public class CreateGameController {
 		if(isMain) {
 			mainClient = aiClient;
 		}
-		return aiClient;
+		localAIClients.add(aiClient);
 	}
 	
 	
 	
-	public static void startWaitingLobbyThread() {
-		WaitingLobbyThread waitingLobbyThread = new WaitingLobbyThread(serverManager);
-		waitingLobbyThread.start();
-	}
+//	public static void startWaitingLobbyThread() {
+//		//WaitingLobbyThread waitingLobbyThread = new WaitingLobbyThread(serverManager);
+//		//waitingLobbyThread.start();
+//	}
 	
 	public static void updateTeamNumberFromRemote(int currentNumber) {
 		currentNumberofTeams = currentNumber;
@@ -163,8 +180,8 @@ public class CreateGameController {
 				String ipAddress = reader.readLine();
 				System.out.println("Öffentliche IP-Adresse: " + ipAddress);
 				reader.close();
-				return ipAddress;
-				// return InetAddress.getLocalHost().getHostAddress();
+				//return ipAddress;
+			 return InetAddress.getLocalHost().getHostAddress();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

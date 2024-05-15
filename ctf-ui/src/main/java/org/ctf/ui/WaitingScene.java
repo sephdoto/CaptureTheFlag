@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -43,6 +44,7 @@ public class WaitingScene extends Scene {
   // Executor Service
   private ScheduledExecutorService scheduler;
   // TODO Remember to close the service before moving away from this scene
+  private int currentNumber;
   HomeSceneController hsc;
   StackPane root;
   StackPane left;
@@ -69,7 +71,13 @@ public class WaitingScene extends Scene {
   Runnable updateTask =
       () -> {
         try {
-
+       	 if(CreateGameController.getServerManager().getCurrentNumberofTeams() != currentNumber) {
+				   currentNumber = CreateGameController.getServerManager().getCurrentNumberofTeams();
+				   Platform.runLater(() -> {
+					   this.setCUrrentTeams(currentNumber);
+				        });
+				 
+			 }
         } catch (Exception e) {
 
         }
@@ -83,6 +91,7 @@ public class WaitingScene extends Scene {
     this.root = (StackPane) this.getRoot();
     this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
     createLayout();
+    currentNumber = 1;
 	scheduler = Executors.newScheduledThreadPool(1);
 	scheduler.scheduleAtFixedRate(updateTask, 0, 1, TimeUnit.SECONDS);
   }
