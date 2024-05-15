@@ -53,6 +53,14 @@ public class CreateGameController {
 
 	// Client that is used to pull the newest GameState and redraw the GamePane with it
 	private static Client mainClient;
+	public static ArrayList<AIClient> getLocalAIClients() {
+		return localAIClients;
+	}
+
+	public static void setLocalAIClients(ArrayList<AIClient> localAIClients) {
+		CreateGameController.localAIClients = localAIClients;
+	}
+
 	//List of all Human-Clients on one device
 	private static ArrayList<Client> localHumanClients = new ArrayList<Client>();
 	//List of all AI-clients on one device

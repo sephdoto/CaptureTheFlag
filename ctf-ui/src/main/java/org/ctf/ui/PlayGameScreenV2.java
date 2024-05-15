@@ -75,13 +75,12 @@ public class PlayGameScreenV2 extends Scene {
 	
 	Runnable updateTask = () -> {
 		try {
-			if (mainClient.getCurrentTeamTurn() != -1) {
-				if (currentTeam != mainClient.getCurrentTeamTurn()) {
+			if(currentTeam != mainClient.getCurrentTeamTurn()) {
+				currentTeam = mainClient.getCurrentTeamTurn();
 					Platform.runLater(() -> {
-						 hsc.redraw(mainClient.getCurrentState());
-						 hsc.setTeamTurn(String.valueOf(currentTeam));
+						 this.redrawGrid(mainClient.getCurrentState());
+						 this.setTeamTurn(String.valueOf(mainClient.getCurrentTeamTurn()));
 				        });
-				}
 			}
 		} catch (Exception e) {
 
@@ -96,8 +95,10 @@ public class PlayGameScreenV2 extends Scene {
 	
 	
 	public void initalizePlayGameScreen(HomeSceneController hsc) {
+		this.mainClient = CreateGameController.getMainClient();
+		currentTeam = -1;
 		scheduler = Executors.newScheduledThreadPool(1);
-		//scheduler.scheduleAtFixedRate(updateTask, 0, 1, TimeUnit.SECONDS);
+		scheduler.scheduleAtFixedRate(updateTask, 0, 1, TimeUnit.SECONDS);
 		this.hsc = hsc;
 		manageFontSizes();
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
@@ -140,7 +141,7 @@ public class PlayGameScreenV2 extends Scene {
 		//PullGameStateThreads p = new PullGameStateThreads();
 	}
 	
-	public void redrawGrid(GameState state, HomeSceneController hsc) {
+	public void redrawGrid(GameState state) {
 		if(state == null) {
 		showMapBox.getChildren().add(new Label("hallo"));
 		} else {
@@ -151,7 +152,12 @@ public class PlayGameScreenV2 extends Scene {
 			gm = new GamePane(state);
 			gm.enableBaseColors(this);
 			showMapBox.getChildren().add(gm);
-			Game.initializeGame(gm, CreateGameController.getMainClient());
+			int currentTeam = mainClient.getCurrentTeamTurn();
+			for(Client  local: CreateGameController.getLocalAIClients() ) {
+				if (local.getTeamID().equals(String.valueOf(currentTeam))) {
+					Game.initializeGame(gm,local);
+				}
+			}
 		}
 	}
 	

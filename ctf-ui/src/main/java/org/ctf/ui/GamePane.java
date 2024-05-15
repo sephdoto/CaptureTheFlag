@@ -69,7 +69,6 @@ public class GamePane extends HBox{
 		this.state = state;
 		this.map = state.getGrid();
 		this.currentTeam = state.getCurrentTeam();
-		this.hsc = hsc;
 		rows = map.length;
 		cols = map[0].length;
 		vBox = new VBox();
@@ -122,7 +121,7 @@ public class GamePane extends HBox{
 		getChildren().add(vBox);
 		HBox.setHgrow(this, Priority.ALWAYS);
 		this.fillGrid();
-		setCurrentTeamActive();
+		//setCurrentTeamActive();
 		showLastMove();
 	}
 	
@@ -174,13 +173,13 @@ public class GamePane extends HBox{
 		}
 	}
 	
-	public  void setCurrentTeamActive() {
-		for (CostumFigurePain c : figures.values()) {
-			if (c.getTeamID().equals(String.valueOf(currentTeam))) {
-				c.setActive();
-			}
-		}
-	}
+//	public  void setCurrentTeamActive() {
+//		for (CostumFigurePain c : figures.values()) {
+//			if (c.getTeamID().equals(String.valueOf(currentTeam))) {
+//				c.setActive();
+//			}
+//		}
+//	}
 
 	
 	public int generateKey(int x, int y) {
@@ -242,7 +241,7 @@ public class GamePane extends HBox{
 //				}else {
 //					pieceRep.showTeamColor("blue");//
 //				}
-				pieceRep.showTeamColor("blue");
+				pieceRep.showTeamColor(teamColor);
 			figures.put(piece.getId(), pieceRep);
 				//allFigures.add(pieceRep);
 				int x = piece.getPosition()[0];

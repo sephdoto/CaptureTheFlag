@@ -23,7 +23,7 @@ public class Game {
 	static CostumFigurePain currentPlayer;
 	static GameState state;
 	static Client cliento;
-	static String currentTeam;
+	static int currentTeam;
 	static Move lastMove;
 	static String myTeam;
 	static GameMode mode;
@@ -34,6 +34,18 @@ public class Game {
 		state = pane.state;
 		cb = pane;
 		currentPlayer = null;
+		currentTeam = cb.state.getCurrentTeam();
+		setCurrentTeamActive();
+		
+	}
+	
+	
+	public static  void setCurrentTeamActive() {
+		for (CostumFigurePain c : cb.getFigures().values()) {
+			if (c.getTeamID().equals(String.valueOf(currentTeam))) {
+				c.setActive();
+			}
+		}
 	}
 
 	

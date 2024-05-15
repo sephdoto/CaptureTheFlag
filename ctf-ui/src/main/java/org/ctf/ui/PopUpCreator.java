@@ -156,7 +156,7 @@ public class PopUpCreator {
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
 		exit.setOnAction(e -> {
 			root.getChildren().remove(aiLevelPopUpPane);
-			//root.getChildren().add(aiorHumanpopup);
+			root.getChildren().add(aiorHumanpopup);
 		});
 		return exit;
 	}
@@ -197,7 +197,7 @@ public class PopUpCreator {
 		pane.maxWidthProperty().bind(root.widthProperty().multiply(0.22));
 		pane.maxHeightProperty().bind(pane.widthProperty().multiply(0.45));
 		pane.getEditButton().setOnAction(e -> {		
-			root.getChildren().add(createConfigPane(1, 1));			
+			root.getChildren().add(createConfigPane(1, 1,null));			
 		});
 		pane.getLoadButton().setOnAction(e -> {
 			root.getChildren().remove(aiorHumanpopup);
@@ -226,8 +226,11 @@ public class PopUpCreator {
 	 * @param hight relative height in relation to the scene
 	 * @return Popupane to custom Ai
 	 */
-	public PopUpPane createConfigPane(double widht, double hight) {
+	public PopUpPane createConfigPane(double widht, double hight, AIConfig costumConfig) {
 		root.getChildren().remove(aiLevelPopUpPane);
+		if(costumConfig != null) {
+			defaultConfig = costumConfig;
+		}
 		defaultConfig = new AIConfig();
 		createConfigMaps();
 		aiconfig = new PopUpPane(scene, widht, hight);
@@ -466,7 +469,7 @@ public class PopUpCreator {
 		lowerPart.setAlignment(Pos.CENTER);
 		lowerPart.prefHeightProperty().bind(divideRow.heightProperty().divide(2));
 		if (isDouble) {
-			Spinner<Double> spinner = createConfigSpinnerDouble(0, Double.MAX_VALUE, 100.0, lowerPart);
+			Spinner<Double> spinner = createConfigSpinnerDouble(0, Double.MAX_VALUE, defaultConfig.C, lowerPart);
 			createDoubleSpinnerListener(spinner, text);
 			lowerPart.getChildren().add(spinner);
 		} else {
