@@ -236,7 +236,6 @@ public class WaveFunctionCollapse {
    * @param tiles ArrayList
    */
   private void removeCollapsedTiles(ArrayList<Tile> tiles) {
-
     ArrayList<Tile> toRemove = new ArrayList<Tile>(); // removing all collapsed tiles (in two
                                                       // loops to avoid
                                                       // ConcurrentModificationException) 
@@ -392,13 +391,10 @@ public class WaveFunctionCollapse {
       chosenValue = (optionSaveDynamic.get((int) (Math.random() * optionSaveDynamic.size())));
       thisTile.setValue(chosenValue);
     }
-      
-      
-      //System.out.println("X = " + thisTile.getX() + " Y = " + thisTile.getY());
-      return wGrid.grid;
-      
-    
+
+       return wGrid.grid;
   }
+  
   /**
    * Parses an integer grid into an image using the png files supplied in UIResources.
    * 
@@ -410,7 +406,7 @@ public class WaveFunctionCollapse {
 
     BufferedImage result =
         new BufferedImage(imageSize * grid[0].length, imageSize * grid.length, BufferedImage.TYPE_INT_ARGB);
-    ImageLoader fl = new ImageLoader(WaveFunctionCollapse.imageSize, WaveFunctionCollapse.imagesAmount);
+    ImageLoader fl = new ImageLoader();
     BufferedImage[] files = fl.loadImages(this.theme);
     for (int y = 0; y < grid.length; y++) {
       for (int x = 0; x < grid[y].length; x++) {
@@ -499,7 +495,7 @@ public class WaveFunctionCollapse {
    * @param weights
    * @return a random integer value
    */
-  static int randomWithWeights(int max, int[] weights) {
+  private static int randomWithWeights(int max, int[] weights) {
     int total = 0;
     
     for(int x : weights) {

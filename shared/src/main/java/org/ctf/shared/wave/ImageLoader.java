@@ -10,17 +10,27 @@ import javax.imageio.ImageIO;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.Themes;
 
+/**
+ * Helps with loading the images. Used in WaveFunctionCollapse -> gridToImg.
+ * 
+ * @author ysiebenh
+ */
 class ImageLoader {
+ 
+  // **************************************************
+  // Fields
+  // **************************************************
   
-  int imageSize;
-  int imagesAmount;
+  private int imagesAmount;
+ 
+  // **************************************************
+  // Constructor
+  // **************************************************
   
-  ImageLoader(int size, int amount){
-    this.imageSize = size;
-    this.imagesAmount = amount;
+  ImageLoader(){
+    this.imagesAmount = WaveFunctionCollapse.imagesAmount;
   }
 
-  
   /**
    * Controller used in the gridToImg method to choose which images to load according to the
    * theme used.
@@ -103,7 +113,7 @@ class ImageLoader {
    */
   private BufferedImage[] loadBayernImages() throws IOException {
     int franken = (int) (Math.random() * 20);
-    String bayern = franken == 1 ? "Franken.png" : "Bayern.png";
+    String bayern = franken == 1 ? "Franken.png" : "Bayern.png";    //Franken Easteregg
     BufferedImage[] images = new BufferedImage[imagesAmount+1];
     WaveFunctionCollapse.instance.setBlock(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"noweed.png")));
     WaveFunctionCollapse.instance.setBase(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"Ei.png")));
