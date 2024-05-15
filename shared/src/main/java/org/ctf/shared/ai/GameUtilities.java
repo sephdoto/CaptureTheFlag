@@ -447,9 +447,9 @@ public class GameUtilities {
   /**
    * Checks if a piece can occupy a given position.
    *
-   * @param pos
-   * @param piece
-   * @param gameState
+   * @param pos new position
+   * @param piece the moving piece
+   * @param gameState current GameState
    * @return true if the position can be occupied.
    */
   public static boolean validPos(int[] pos, Piece piece, GameState gameState) {

@@ -45,12 +45,12 @@ public class AIConfig {
     this.MAX_STEPS = 100;
     this.numThreads = Runtime.getRuntime().availableProcessors() / 2;
     
-    this.attackPowerMultiplier = 3;
-    this.pieceMultiplier = 10;
+    this.attackPowerMultiplier = 2;
+    this.pieceMultiplier = 3;
     this.flagMultiplier = 1000;
-    this.directionMultiplier = 2;
+    this.directionMultiplier = 1;
     this.shapeReachMultiplier = 1;
-    this.distanceBaseMultiplier = 10;
+    this.distanceBaseMultiplier = 5;
   }
   
   /**

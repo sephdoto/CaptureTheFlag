@@ -88,7 +88,7 @@ public class BoardController {
    */
   public Team initializeTeam(int teamID, MapTemplate template) {
     // Creating the Pieces for the team
-    int count = 1;
+    int count = 0;
     LinkedList<Piece> indPieces = new LinkedList<Piece>();
     for (PieceDescription piece : template.getPieces()) {
       for (int i = 0; i < piece.getCount(); i++) {

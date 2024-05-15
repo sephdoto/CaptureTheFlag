@@ -47,7 +47,7 @@ public class AIController {
   }
   
   @SuppressWarnings("incomplete-switch")
-  private void initMCTS() {
+  protected void initMCTS() {
     switch(ai) {
       case MCTS:
         org.ctf.shared.ai.mcts.TreeNode root = new org.ctf.shared.ai.mcts.TreeNode(
@@ -89,23 +89,24 @@ public class AIController {
   /**
    * Update the Controller with a new Move.
    * Only works with an MCTS AI.
-   * 
+   * It is assumed that the move is unnormalized.
    * 
    * @param gameState
    */
   public boolean update(Move move) {
     if(this.ai == AI.HUMAN || this.ai == AI.RANDOM) return false;
+    move = this.normalizedGameState.normalizedMove(move);
     
     MonteCarloTreeNode[] children = getMcts().getRoot().getChildren();
     for(int i=0; i<children.length; i++) {
       Move childMove = children[i].getGameState().getLastMove();
-      if(childMove.getPieceId().equals(move.getPieceId()) &&
-          Arrays.equals(childMove.getNewPosition(), move.getNewPosition())) {
+      if(moveEquals(childMove, move)) {
         getMcts().setRoot(children[i]);
         getMcts().getRoot().setParent(null);
+        return true;
       }
     }
-    return true;
+    return false;
   }
 
   public void shutDown() {
@@ -127,11 +128,25 @@ public class AIController {
     Move move;
     
     if(getAi() == AI.MCTS || getAi() == AI.IMPROVED || getAi() == AI.EXPERIMENTAL) {
-      move = getMcts().getMove(getThinkingTime(), getConfig().C);
+      move = getMcts().getMove(thinkingTime, getConfig().C);
     } else {
       move = RandomAI.pickMoveComplex(getNormalizedGameState().getNormalizedGameState(), new ReferenceMove(null, new int[] { 0, 0 })).toMove();
     }
     return getNormalizedGameState().unnormalizeMove(move);
+  }
+  
+  /**
+   * Depending on the contained piece and its new position, two moves are checked for equality.
+   * 
+   * @param move1
+   * @param move2
+   * @return true if move1 and move2 are equal
+   */
+  public boolean moveEquals(Move move1, Move move2) {
+    if(move1.getPieceId().equals(move2.getPieceId()))
+      if(Arrays.equals(move1.getNewPosition(), move2.getNewPosition()))
+        return true;
+    return false;
   }
 
   public boolean isActive() {

@@ -36,7 +36,7 @@ public class GameStateNormalizer {
   }
 
   /**
-   * A normalized move given, the move gets unnormalized, to represent the original GameState.
+   * A normalized move given, the move gets unnormalized to represent the original GameState.
    * The team and piece Id get changed, if needed the [x,y] or [y,x] coordinates also get changed.
    * No grid is required, so a GameState must not represent the current state of the game.
    * 
@@ -57,6 +57,29 @@ public class GameStateNormalizer {
           unmove.setPieceId(originalGameState.getTeams()[i].getPieces()[j].getId());
         }
     return unmove;
+  }
+  /**
+   * Aun unnormalized move given, the move gets normalized to represent the normalized GameState.
+   * The team and piece Id get changed, if needed the [x,y] or [y,x] coordinates also get changed.
+   * No grid is required, so a GameState must not represent the current state of the game.
+   * 
+   * @param move the move generated with a original GameState
+   * @return the same move but adjusted to the normalized GameState
+   */
+  public Move normalizedMove(Move move) {
+    Move normove = new Move();
+    normove.setNewPosition(
+        this.rowThanColumn ? 
+            move.getNewPosition() :
+              new int[] {move.getNewPosition()[1], move.getNewPosition()[0]}
+            );
+    for(int i=0; i< originalGameState.getTeams().length; i++)
+      for(int j=0; j<originalGameState.getTeams()[i].getPieces().length; j++)
+        if(originalGameState.getTeams()[i].getPieces()[j].getId().equals(move.getPieceId())) {
+          normove.setTeamId("" + i);
+          normove.setPieceId(normalizedGameState.getTeams()[i].getPieces()[j].getId());
+        }
+    return normove;
   }
   
   public GameState getOriginalGameState() {

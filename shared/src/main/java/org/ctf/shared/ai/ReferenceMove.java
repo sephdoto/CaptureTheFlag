@@ -36,7 +36,7 @@ public class ReferenceMove {
     if(move == null)
       return;
     
-    if(move.getPieceId() != null) {
+    if(move.getPieceId() != null  && !move.getPieceId().equals("")) {
       this.newPosition = move.getNewPosition();
       this.piece =
           Arrays.stream(
