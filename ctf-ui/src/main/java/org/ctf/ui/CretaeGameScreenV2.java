@@ -6,9 +6,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.ctf.shared.client.lib.ServerManager;
+import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums.Themes;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.tools.JsonTools;
+import org.ctf.shared.wave.WaveFunctionCollapse;
 import org.ctf.ui.customobjects.PopUpPane;
 import configs.ImageLoader;
 import javafx.animation.TranslateTransition;
@@ -60,6 +63,7 @@ public class CretaeGameScreenV2 extends Scene {
 	ServerManager serverManager;
 	HashMap<MapTemplate, GameState> maps;
 	GamePane gm;
+	ComboBox<String> c;
 	private ObjectProperty<Font> addHumanButtonTextFontSIze = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> addAiCOmboTextFontSIze = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> popUpLabel = new SimpleObjectProperty<Font>(Font.getDefault());
@@ -117,6 +121,7 @@ public class CretaeGameScreenV2 extends Scene {
 		sep.setAlignment(Pos.CENTER);
 		sep.setSpacing(50);
 		left = createOptionPane();
+		left.getChildren().add(createMiddleLeft());
 		selected = StroeMaps.getRandomMapName();
 		right = createShowMapPane(selected);
 		sep.getChildren().add(left);
@@ -127,7 +132,7 @@ public class CretaeGameScreenV2 extends Scene {
 			double newSpacing = newValue.doubleValue() * 0.05;
 			sep.setSpacing(newSpacing);
 		});
-		left.getChildren().add(createMiddleLeft());
+		
 	}
 	
 	/**
@@ -302,10 +307,10 @@ public class CretaeGameScreenV2 extends Scene {
 	 * @return 
 	 */
 	private ComboBox<String> createChoiceBox(VBox parent) {
-		ComboBox<String> c = new ComboBox<String>();
+	    c = new ComboBox<String>();
 		c.getStyleClass().add("combo-box");
 		c.getItems().addAll(this.getTemplateNames());
-		//c.setValue(selected);
+		c.setValue(c.getItems().get(0));
 		c.prefWidthProperty().bind(parent.widthProperty().multiply(0.8));
 		c.prefHeightProperty().bind(parent.heightProperty().multiply(0.1));
 		c.setCellFactory(param -> new ListCell<String>() {
@@ -341,6 +346,7 @@ public class CretaeGameScreenV2 extends Scene {
 	 * when a map from the choiceBox is selected the respective Template and GameState are accessed from the folder using
 	 * {@link JsonTools}. The respective Map is shown on the right side using the GameState.
 	 * @author Manuel Krakowski
+	 * @author aniemesc
 	 * @param c: ChoiceBox from which the user selects the map
 	 */
 	private void perfromChoiceBoxAction(ComboBox<String> c) {
@@ -353,10 +359,17 @@ public class CretaeGameScreenV2 extends Scene {
 	            state  = entry.getValue();
 	        } 
 		gm = new GamePane(state);
-		 gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
-		showMapBox.getChildren().add(createBackgroundImage(gm.vBox));
-		StackPane.setAlignment(gm, Pos.CENTER);
-		showMapBox.getChildren().add(gm);
+	    ImageView iv = this.createBackgroundImage(gm.vBox);
+	  StackPane.setAlignment(iv, Pos.CENTER);
+	  sep.getChildren().remove(showMapBox);
+	  createShowMapPane("lol");
+	  sep.getChildren().add(showMapBox);
+//	    showMapBox.getChildren().add(iv);
+//	    showMapBox.getChildren().add(gm);
+//		 gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
+//		showMapBox.getChildren().add(createBackgroundImage(gm.vBox));
+//		StackPane.setAlignment(gm, Pos.CENTER);
+//		showMapBox.getChildren().add(gm);
 	}
 	
 	
@@ -448,35 +461,54 @@ public class CretaeGameScreenV2 extends Scene {
 	/**
 	 * Cretaes the Stackpane on the right side, which will always contain the currently selected map from the ComboBox
 	 * @author Manuel Krakowski
+	 * @author aniemesc
 	 * @param name: Hier muss man das noch ändern 
 	 * @return
 	 */
 	private StackPane createShowMapPane(String name) {
-		showMapBox = new StackPane();
-		showMapBox.getStyleClass().add("option-pane");
-		showMapBox.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
-		showMapBox.prefHeightProperty().bind(showMapBox.widthProperty());
-		showMapBox.getStyleClass().add("show-GamePane");
-		showMapBox.paddingProperty().bind(padding);
-		state = StroeMaps.getMap(name);
-		 gm = new GamePane(state);
-		 StackPane.setAlignment(gm, Pos.CENTER);
-		 gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));      //Für die Map
-		 //gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
-		 showMapBox.getChildren().add(createBackgroundImage(gm.vBox));
-		showMapBox.getChildren().add(gm);
-		return showMapBox;
+	 showMapBox = new StackPane();
+	  showMapBox.getStyleClass().add("option-pane");
+	  showMapBox.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
+	  showMapBox.prefHeightProperty().bind(showMapBox.widthProperty());
+	  showMapBox.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.45));
+	    showMapBox.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.65));
+	  showMapBox.getStyleClass().add("show-GamePane");
+	  showMapBox.paddingProperty().bind(padding);
+	  //state = StroeMaps.getMap(name);
+	  maps = JsonTools.getTemplateAndGameState(c.getValue());
+	  if (!maps.isEmpty()) {
+	      Map.Entry<MapTemplate, GameState> entry = maps.entrySet().iterator().next();
+	      template = entry.getKey();
+	      state  = entry.getValue();
+	  } 
+	  
+	   gm = new GamePane(state);
+	   StackPane.setAlignment(gm, Pos.CENTER);
+	   gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
+	   gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
+	   showMapBox.getChildren().add(createBackgroundImage(gm.vBox));
+	  showMapBox.getChildren().add(gm);
+	  return showMapBox;
 	}
-	
+	/**
+	 * 
+	 * @author aniemesc
+	 * @param vBox
+	 * @return
+	 */
 	public  ImageView createBackgroundImage(VBox vBox) {
-		Image mp = new Image(getClass().getResourceAsStream("gridSTARWARS.png"));
-		ImageView mpv = new ImageView(mp);
-		StackPane.setAlignment(mpv, Pos.CENTER);
-		mpv.fitHeightProperty().bind(vBox.heightProperty().multiply(1));
-		mpv.fitWidthProperty().bind(vBox.widthProperty().multiply(1));
-		mpv.setPreserveRatio(true);
-		mpv.setOpacity(1);
-		return mpv;
+    //Image mp = new Image(getClass().getResourceAsStream("gridSTARWARS.png"));
+    WaveFunctionCollapse backgroundcreator = new WaveFunctionCollapse(state.getGrid(), Themes.BAYERN);
+    backgroundcreator.saveToResources();
+    Image mp = new Image(new File(Constants.toUIResources+"pictures"+File.separator+"grid.png").toURI().toString());
+    ImageView mpv = new ImageView(mp);
+    StackPane.setAlignment(mpv, Pos.CENTER);
+    mpv.fitHeightProperty().bind(vBox.heightProperty().multiply(1));
+    mpv.fitWidthProperty().bind(vBox.widthProperty().multiply(1));
+    
+    //mpv.setPreserveRatio(true);
+    mpv.setOpacity(1);
+    return mpv;
 	}
 	
 	private Button createLeave() {
