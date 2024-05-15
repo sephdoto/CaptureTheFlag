@@ -96,7 +96,6 @@ public class ServerManager {
    */
   public int getCurrentNumberofTeams() {
     int counter = 0;
-    if (isServerActive()) {
       try {
         GameState gameState = comm.getCurrentGameState(currentServer + "/" + gameSessionID);
         for (int i = 0; i < gameState.getTeams().length; i++) {
@@ -107,7 +106,6 @@ public class ServerManager {
       } catch (Exception e) {
         return 0;
       }
-    }
     return counter;
   }
 
