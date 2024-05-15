@@ -50,7 +50,7 @@ public class EditorScene extends Scene {
   StackPane visualRoot;
   SpinnerValueFactory<Integer> valueFactory;
   TemplateEngine engine;
-  ComboBox<String> customFigureBox =  new ComboBox<>(); 
+  ComboBox<String> box =  new ComboBox<>(); 
   MenuButton mapMenuButton;
   MenuButton mb;
   Text infoText;
@@ -379,6 +379,37 @@ public class EditorScene extends Scene {
     customRoot.setPadding(new Insets(20));
     customRoot.setAlignment(Pos.TOP_CENTER);
     customRoot.getChildren().add(createHeaderText(customRoot, "Configure Sounds", 15));
+//    ComboBox<String> test = customFigureBox;
+//    customRoot.getChildren().add(test);
+    GridPane controlgrid = new GridPane();
+    customRoot.widthProperty().addListener((obs, oldVal, newVal) -> {
+        controlgrid.setHgap(newVal.doubleValue()*0.05);
+        controlgrid.setVgap(newVal.doubleValue()*0.03);
+
+      });
+    controlgrid.add(createText(customRoot, "Theme", 30), 0, 0);
+    controlgrid.add(createText(customRoot, "Piece", 30), 0, 1);
+    controlgrid.add(createText(customRoot, "Sound", 30), 0, 2);
+    ComboBox<String> themeBox = new ComboBox<String>();
+    createFigureBox(themeBox);
+    controlgrid.add(themeBox, 1, 0);
+    ComboBox<String> soundBox = new ComboBox<String>();
+    createFigureBox(soundBox);
+    controlgrid.add(soundBox, 1, 2);
+    ComboBox<String> pieceBox = new ComboBox<String>();
+    createFigureBox(pieceBox);
+    controlgrid.add(pieceBox, 1, 1);
+    
+    HBox soundButtonBox = new HBox();
+    soundButtonBox.setAlignment(Pos.CENTER);
+    soundButtonBox.setSpacing(20);
+    Button playButton = createControlButton("Play Current Sound", 0.16,0.15);
+    Button saveButton = createControlButton("Add New Sound", 0.16, 0.15);
+    soundButtonBox.getChildren().add(playButton);
+    soundButtonBox.getChildren().add(saveButton);
+    
+    customRoot.getChildren().add(controlgrid);
+    customRoot.getChildren().add(soundButtonBox);
     return customRoot;
   }
   
@@ -434,11 +465,11 @@ public class EditorScene extends Scene {
    * @param label - String value for button initialization
    * @return Button object
    */
-  private Button createControlButton(String label) {
+  private Button createControlButton(String label,double widthratio,double heightRatio) {
     Button but = new Button(label);
     but.getStyleClass().add("leave-button");
-    but.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
-    but.prefHeightProperty().bind(but.widthProperty().multiply(0.25));
+    but.prefWidthProperty().bind(root.widthProperty().multiply(widthratio));
+    but.prefHeightProperty().bind(but.widthProperty().multiply(heightRatio));
     but.prefHeightProperty().addListener((obs, oldv, newV) -> {
       double size = newV.doubleValue() * 0.5;
       but.setFont(Font.font("Century Gothic", size));
@@ -452,7 +483,7 @@ public class EditorScene extends Scene {
    * @return Button for leaving
    */
   private Button createExit() {
-    Button exit = createControlButton("Leave");
+    Button exit = createControlButton("Leave",0.1,0.25);
     exit.setOnAction(e -> {
       hsc.switchtoHomeScreen(e);
     });
@@ -465,7 +496,7 @@ public class EditorScene extends Scene {
    * @return Button for submitting templates
    */
   private Button createSubmit() {
-    Button submit = createControlButton("Submit");
+    Button submit = createControlButton("Submit",0.1,0.25);
     submit.setOnAction(e -> {
       engine.printTemplate();
       System.out.println(this.validtemplate);
@@ -660,15 +691,15 @@ public class EditorScene extends Scene {
    * @author aniemesc
    * @return ComboBox for choosing saved pieces
    */
-  private ComboBox<String> createFigureBox() {
-    customFigureBox.getStyleClass().add("custom-combo-box-2");
-    customFigureBox.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
-    customFigureBox.prefHeightProperty().bind(customFigureBox.widthProperty().multiply(0.18));
-    customFigureBox.prefHeightProperty().addListener((obs, oldv, newV) -> {
+  private void createFigureBox(ComboBox<String>box) {
+    box.getStyleClass().add("custom-combo-box-2");
+    box.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
+    box.prefHeightProperty().bind(box.widthProperty().multiply(0.18));
+    box.prefHeightProperty().addListener((obs, oldv, newV) -> {
       double size = newV.doubleValue() * 0.25;
-      customFigureBox.setStyle("-fx-font-size: " + size + "px;");
+      box.setStyle("-fx-font-size: " + size + "px;");
   });
-    return customFigureBox;
+   
   }
 
   /**
@@ -742,17 +773,18 @@ public class EditorScene extends Scene {
       double spacing = newVal.doubleValue() * 0.06;
       chooseBar.setSpacing(spacing);
     });
-    chooseBar.getChildren().add(createFigureBox());
+    createFigureBox(box);
+    chooseBar.getChildren().add(box);
     Spinner<Integer> customSpinner = createMapSpinner(0, 100, 0);
     chooseBar.getChildren().add(customSpinner);
-    customFigureBox.setValue("Choose Custom Piece");
-    customFigureBox.setOnAction(e -> {
-      if(customFigureBox.getValue().equals("Choose Custom Piece")) {
+    box.setValue("Choose Custom Piece");
+    box.setOnAction(e -> {
+      if(box.getValue().equals("Choose Custom Piece")) {
         System.out.println();
         return;
       }
       boxchange = true;
-      int customcount = engine.getPieceCount(customFigureBox.getValue());
+      int customcount = engine.getPieceCount(box.getValue());
       if (customSpinner.getValue() == customcount) {
         boxchange = false;
       }
@@ -909,7 +941,7 @@ public class EditorScene extends Scene {
   }
 
   public ComboBox<String> getCustomFigureBox() {
-    return customFigureBox;
+    return box;
   }
 
   public TemplateEngine getEngine() {
