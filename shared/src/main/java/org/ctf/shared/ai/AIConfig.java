@@ -1,8 +1,11 @@
 package org.ctf.shared.ai;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.tools.JsonTools;
 import org.json.JSONObject;
@@ -83,7 +86,8 @@ public class AIConfig {
   }
   
   public static void main(String[] args) {
-    new AIConfig("TestConfig").saveConfigAs("TestConfigCopy");
+//    new AIConfig("TestConfig").saveConfigAs("TestConfigCopy");
+    getTemplateNames().forEach(s -> System.out.println(s));
   }
   
   /**
@@ -108,5 +112,25 @@ public class AIConfig {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+  
+  /**
+   * Returns all names of saved AI configurations
+   * 
+   * @author sistumpf, aniemesc
+   * @return ArrayList containing the names of all saved map templates
+   */
+  public static ArrayList<String> getTemplateNames() {
+      File templateFolder = new File(Constants.aiConfigFolder);
+      if (templateFolder.isDirectory()) {
+          String[] names = templateFolder.list();
+          for (int i = 0; i < names.length; i++) {
+              names[i] = names[i].substring(0, names[i].length() - 5);
+          }
+          ArrayList<String> result = new ArrayList<String>();
+          result.addAll(Arrays.asList(names));
+          return result;
+      }
+      return new ArrayList<String>();
   }
 }
