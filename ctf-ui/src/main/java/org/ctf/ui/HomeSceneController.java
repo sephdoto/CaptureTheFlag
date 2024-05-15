@@ -43,7 +43,7 @@ public class HomeSceneController {
 	String serverID;
 	String sessionID;
 	ServerManager serverManager;
-	TestThread t;
+	//TestThread t;
 	MapTemplate template;
 	CretaeGameScreenV2 createGameScreenV2;
 	PlayGameScreenV2 playGameScreenV2;
@@ -102,7 +102,7 @@ public class HomeSceneController {
 	}
 	
 	public void updateTeamsinWaitingScene(String text) {
-		waitingScene.setCUrrentTeams(text);
+		//waitingScene.setCUrrentTeams(text);
 	}
 	
 	public void redraw(GameState state) {
@@ -126,16 +126,16 @@ public class HomeSceneController {
 	public void switchToWaitGameScene(Stage stage) {
 		waitingScene = new WaitingScene(this, stage.getWidth(), stage.getHeight());
 		stage.setScene(waitingScene);
-		t = new TestThread(this, serverManager);
-		t.start();
+		//t = new TestThread(this, serverManager);
+		//t.start();
 	}
 	
 	public void switchToPlayGameScene(Stage stage) {
 		playGameScreenV2 = new PlayGameScreenV2(this, stage.getWidth(), stage.getHeight());
 		stage.setScene(playGameScreenV2);
-		if(t != null) {
-			t.stopThread();
-		}
+//		if(t != null) {
+//			t.stopThread();
+//		}
 		GameStatePuller g = new GameStatePuller(mainClient, this);
 		g.start();
 		stage.setFullScreen(true);

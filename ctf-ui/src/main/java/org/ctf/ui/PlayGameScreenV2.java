@@ -112,6 +112,7 @@ public class PlayGameScreenV2 extends Scene {
 		showMapBox.getChildren().add(new Label("hallo"));
 		} else {
 			showMapBox.getChildren().clear();
+			PlayController.setFigures(gm.getFigures());
 			gm = new GamePane(state,hsc);
 			gm.enableBaseColors(this);
 			showMapBox.getChildren().add(gm);
@@ -203,13 +204,10 @@ public class PlayGameScreenV2 extends Scene {
 	public void showColorChooser(double d, double e, BaseRep r) {
 		  MyCustomColorPicker myCustomColorPicker = new MyCustomColorPicker();
         myCustomColorPicker.setCurrentColor(sceneColorProperty.get());
-
         CustomMenuItem itemColor = new CustomMenuItem(myCustomColorPicker);
         itemColor.getStyleClass().add("custom-menu-item");
         itemColor.setHideOnClick(false);
         colors.get(r.getTeamID()).bind(myCustomColorPicker.customColorProperty());
-        //sceneColorProperty.bind(myCustomColorPicker.customColorProperty());
-        //colors.put(r.getTeamID(), new SimpleObjectProperty<T>)
         for(CostumFigurePain p : gm.getFigures().values()) {
       	  	if(p.getTeamID().equals(r.getTeamID())) {
       		  p.showTeamColorWhenSelecting(colors.get(r.getTeamID()));
@@ -218,8 +216,6 @@ public class PlayGameScreenV2 extends Scene {
         r.showColor(sceneColorProperty);
         ContextMenu contextMenu = new ContextMenu(itemColor);
         contextMenu.setOnHiding(t->{sceneColorProperty.unbind();
-        
-        System.out.println("hihihi");
          for(CostumFigurePain m : gm.getFigures().values() ) {
          		m.unbind();
          	}});

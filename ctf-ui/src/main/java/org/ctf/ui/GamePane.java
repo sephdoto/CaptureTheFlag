@@ -3,6 +3,7 @@ package org.ctf.ui;
 import java.util.HashMap;
 
 import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.Team;
 import org.ctf.ui.customobjects.BackgroundCellV2;
@@ -125,6 +126,18 @@ public class GamePane extends HBox{
 		
 	}
 	
+	
+	private void showLastMove() {
+		if (state.getLastMove() != null) {
+			Move lastMove = state.getLastMove();
+			int x = lastMove.getNewPosition()[0];
+			int y = lastMove.getNewPosition()[1];
+			
+		}
+		
+		
+	}
+	
 	public  ImageView createBackgroundImage() {
 		Image mp = new Image(getClass().getResourceAsStream("tuning1.png"));
 		ImageView mpv = new ImageView(mp);
@@ -134,6 +147,8 @@ public class GamePane extends HBox{
 		mpv.setOpacity(0.2);
 		return mpv;
 	}
+	
+	
 	
 	
 	
@@ -162,7 +177,6 @@ public class GamePane extends HBox{
 	public  void setCurrentTeamActive() {
 		for (CostumFigurePain c : figures.values()) {
 			if (c.getTeamID().equals(String.valueOf(currentTeam))) {
-				
 				c.setActive();
 			}
 		}
