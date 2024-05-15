@@ -96,13 +96,45 @@ public class WaveFunctionCollapse {
     
     int[][] intGrid = stringToInt(grid);
     this.grid = generateBackground(intGrid);
-    //this.grid = generateBackgroundRecursive(new WaveGrid(intGrid, IMAGES_AMOUNT));
     try {
       background = gridToImg(this.grid);
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
+  
+  private int[][] stringToIntSW(String[][] grid){
+    int[][] intGrid = new int[grid.length * 3][grid[0].length * 3];
+    for (int y = 0; y < intGrid.length; y++) {
+      for (int x = 0; x < intGrid[0].length; x++) {
+        if (grid[y / 3][x / 3] == null) {
+          intGrid[y / 3][x / 3] = 0;
+        } else if (grid[y / 3][x / 3].contains("p") || grid[y / 3][x / 3].contains("b:")) { // players
+                                                                                            // and
+                                                                                            // base
+          intGrid[y][x] = 1;
+        }
+      }
+    }
+    return intGrid;
+  }
+  
+  private int[][] stringToIntLOTR(String[][] grid){
+    int[][] intGrid = new int[grid.length*3][grid[0].length*3];
+    for (int y = 0; y < intGrid.length; y++) {
+      for (int x = 0; x < intGrid[0].length; x++) {
+        if (grid[y / 3][x / 3] == null) {
+          intGrid[y / 3][x / 3] = 0;
+        } else if (grid[y / 3][x / 3].contains("p") || grid[y / 3][x / 3].contains("b:")) {
+          intGrid[y / 3 * 3 + 2][x] = 1;
+        } else if (grid[y / 3][x / 3].equals("b")) {
+          intGrid[y][x] = 1;
+        }
+      }
+    }
+    return intGrid;
+  }
+
 
   /**
    * Generates an integer grid that is three times the size of the original String grid and fills it
@@ -116,34 +148,13 @@ public class WaveFunctionCollapse {
 
     // Place the Pieces, Bases and Blocks if we want to use them as input for the algorithm
     if (theme == Themes.STARWARS) {
-      for (int y = 0; y < intGrid.length; y++) {
-        for (int x = 0; x < intGrid[0].length; x++) {
-          if (grid[y/3][x/3] == null) {
-            intGrid[y/3][x/3] = 0;
-          } else if (grid[y/3][x/3].contains("p") || grid[y/3][x/3].contains("b:")) { //players and base
-            intGrid[y][x] = 1;
-          }
-        }
-      }
+      return stringToIntSW(grid);
     } else if (theme == Themes.LOTR) {
-      intGrid = new int[grid.length*3][grid[0].length*3];
-      for (int y = 0; y < intGrid.length; y++) {
-        for (int x = 0; x < intGrid[0].length; x++) {
-          if (grid[y/3][x/3] == null) {
-            intGrid[y/3][x/3] = 0;
-          }
-          else if (grid[y/3][x/3].contains("p") || grid[y/3][x/3].contains("b:")  ) {            
-            intGrid[y/3*3+2][x] = 1;
-          }
-          else if(grid[y/3][x/3].equals("b")) {
-            intGrid[y][x] = 1;
-          }
-          }
-        }
+      return stringToIntLOTR(grid);
+    } else {
+      return intGrid;
     }
-    return intGrid;
   }
-
   
   /**
    * The Wave Function Collapse algorithm. Generates a pattern from an initial set of images
@@ -473,6 +484,12 @@ public class WaveFunctionCollapse {
     return images;
   }
   
+  /**
+   * Pre-loads the images used in the Lord of the Rings pattern.
+   * 
+   * @return
+   * @throws IOException
+   */
   private BufferedImage[] loadLOTRImages() throws IOException{
     BufferedImage[] images = new BufferedImage[imagesAmount+1];
     block = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"tree.png"));
@@ -537,13 +554,28 @@ public class WaveFunctionCollapse {
   }
   
   /**
-   * Getter for the grid. 
+   * Getter for the grid.
+   * 
    * @return
    */
   public int[][] getGrid() {
     return grid;
   }
   
+  /**
+   * Saves the current image to the UI Resources folder. Only use when an image has already been
+   * created.
+   */
+  public void saveToResources() {
+    try {
+      ImageIO.write(this.getBackground(), "png", new File(
+          Constants.toUIResources + File.separator + "pictures" + File.separator + "grid.png"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+  }
+
   /**
    * Used in the gridToImg method to turn pngs around. Taken from StackOverFlow
    * 
@@ -588,10 +620,17 @@ public class WaveFunctionCollapse {
   public BufferedImage getBackground() {
     return background;
   }
-  
-  public static int randomWithWeights(int max, int[] weights) {
+
+  /**
+   * Returns a random integer value between 0 - max. The weights array defines weights for every
+   * value. The higher the weight the higher the likelihood of this number being selcted.
+   * 
+   * @param max
+   * @param weights
+   * @return a random integer value
+   */
+  static int randomWithWeights(int max, int[] weights) {
     int total = 0;
-    int value = 0;
     
     for(int x : weights) {
       total += x;

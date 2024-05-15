@@ -25,7 +25,7 @@ class WaveFunctionCollapseTest {
     try {
  
       //wfc.generateBackgroundRecursive(new WaveGrid(test, WaveFunctionCollapse.IMAGES_AMOUNT));
-      ImageIO.write(wfc1.getBackground(), "png", new File(Constants.toUIResources + "gridLOTR.png"));
+      ImageIO.write(wfc2.getBackground(), "png", new File(Constants.toUIResources + "gridLOTR.png"));
       ImageIO.write(wfc2.getBackground(), "png", new File(Constants.toUIResources + "gridSTARWARS.png"));
       ImageIO.write(wfc3.getBackground(), "png", new File(Constants.toUIResources + "gridBAYERN.png"));
      
@@ -36,19 +36,4 @@ class WaveFunctionCollapseTest {
     }
 
   }
-  
-  @Test
-  void randomWithWeightsTest() {
-    int total = 0;
-    for(int i = 0 ; i <= 10000; i++) {
-      int y =  (int) (Math.random() * 5) ;
-      int x = WaveFunctionCollapse.randomWithWeights(5, new int[] {1,1,1,1,1});
-      total += x;
-    }
-    
-    System.out.println("The total is" + (double)total / 10000.0);
-    
-  }
-  
-
 }
