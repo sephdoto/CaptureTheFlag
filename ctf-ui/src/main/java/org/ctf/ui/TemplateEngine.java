@@ -20,6 +20,8 @@ import org.ctf.shared.tools.JsonTools.IncompleteMapTemplateException;
 import org.ctf.ui.controllers.MapPreview;
 import org.ctf.ui.controllers.MapPreviewThread;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
@@ -36,6 +38,7 @@ public class TemplateEngine {
 	MapTemplate tmpTemplate;
 	Movement tmpMovement = new Movement();
 	HashMap<String, PieceDescription> pieces = new HashMap<String, PieceDescription>();
+	
 
 	/**
 	 * Initializes the TemplateEngine by loading a default template and connecting
@@ -402,6 +405,7 @@ public class TemplateEngine {
 		result.setAttackPower(strengthSpinner.getValueFactory().getValue());
 		pieces.put(result.getType(), result);
 		editorscene.getCustomFigureBox().getItems().add(result.getType());
+		editorscene.getSoundPieceBox().getItems().add(result.getType());
 		editorscene.inform(nameField.getText() + " was added succesfully!");
 	}
 
@@ -522,5 +526,13 @@ public class TemplateEngine {
 
 	public void setTmpShape(org.ctf.shared.state.data.map.Shape shape) {
 		this.tmpMovement.setShape(shape);
+	}
+	
+	public ObservableList<String> getAllPieceNames(){
+		 ObservableList<String> options = FXCollections.observableArrayList();
+		 for(String type : pieces.keySet()) {
+			 options.add(type);
+		 }
+		 return options;
 	}
 }
