@@ -252,7 +252,7 @@ public class App extends Application {
    * @author rsyed
    * @param title The title you want the window to have
    */
-  public void setTitle(String title) {
+  public static void setTitle(String title) {
     mainStage.setTitle(title);
   }
 
@@ -262,7 +262,7 @@ public class App extends Application {
    * @author rsyed
    * @return String which is the current title of the UI Window
    */
-  public String getTitle() {
+  public static String getTitle() {
     return mainStage.getTitle();
   }
 
