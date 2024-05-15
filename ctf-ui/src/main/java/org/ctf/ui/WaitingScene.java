@@ -44,6 +44,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -191,8 +192,9 @@ public class WaitingScene extends Scene {
 		ScrollPane scroller = new ScrollPane();
 		scroller.prefHeightProperty().bind(parent.heightProperty().multiply(0.8));
 		scroller.prefWidthProperty().bind(parent.widthProperty());
+		scroller.setHbarPolicy(ScrollBarPolicy.NEVER);
 		VBox content = new VBox();
-		for(int i=0; i<hsc.getMaxNumberofTemas();i++) {
+		for(int i=0; i<CreateGameController.getMaxNumberofTeams();i++) {
 			content.getChildren().add(createNormalRow(scroller));
 		}
 		scroller.setContent(content);
@@ -268,15 +270,15 @@ public class WaitingScene extends Scene {
 			serverInfoBox.setSpacing(newSpacing);
 		});
 		serverInfoBox.getChildren().add(createGeneralDescription(serverInfoBox,"Server Information"));
-		serverInfoBox.getChildren().add(createInfoLabel(serverInfoBox, "Session-ID", hsc.getSessionID(), 0.8));
+		serverInfoBox.getChildren().add(createInfoLabel(serverInfoBox, "Session-ID", CreateGameController.getSessionID(), 0.8));
 		
 		HBox dividelowerPart = new HBox();
 		dividelowerPart.widthProperty().addListener((observable, oldValue, newValue) -> {
 			double newSpacing = newValue.doubleValue() * 0.05;
 			dividelowerPart.setSpacing(newSpacing);
 		});
-		dividelowerPart.getChildren().add(createInfoLabel(parent, "port", hsc.getPort(), 0.35));
-		dividelowerPart.getChildren().add(createInfoLabel(parent, "Server-IP", hsc.getServerID(), 0.55));
+		dividelowerPart.getChildren().add(createInfoLabel(parent, "port", CreateGameController.getPort(), 0.35));
+		dividelowerPart.getChildren().add(createInfoLabel(parent, "Server-IP", CreateGameController.getServerIP(), 0.55));
 		serverInfoBox.getChildren().add(dividelowerPart);
 		serverInfoBox.getChildren().add(createShowClipBoardInfoStackPane(serverInfoBox));
 		return serverInfoBox;
@@ -400,7 +402,7 @@ public class WaitingScene extends Scene {
 	}
 	
 	private Label createTestLabel(VBox parent) {
-		Label test = new Label(" max teams:" + hsc.getMaxNumberofTemas());
+		Label test = new Label(" max teams:" + CreateGameController.getMaxNumberofTeams());
 		test.prefWidthProperty().bind(parent.widthProperty());
 		return test;
 	}
@@ -411,8 +413,8 @@ public class WaitingScene extends Scene {
 		return curenntTeams;
 	}
 	
-	public void setCUrrentTeams(String text) {
-		curenntTeams.setText(text);
+	public void setCUrrentTeams(int i) {
+		curenntTeams.setText("Current Ts:" + String.valueOf(i));
 	}
 	
 	

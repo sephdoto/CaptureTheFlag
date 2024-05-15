@@ -429,12 +429,17 @@ public class CretaeGameScreenV2 extends Scene {
 	private void perfromCreateButtonClick() {
 		serverIP = serverIPText.getText();
 		port = portText.getText();
-		hsc.setPort(port);
-		hsc.setServerID(serverIP);
-		hsc.setTemplate(template);
-		hsc.createGameSession();
+		CreateGameController.setPort(port);
+		CreateGameController.setServerIP(serverIP);
+		CreateGameController.setTemplate(template);
+		CreateGameController.createGameSession();
+//		hsc.setPort(port);
+//		hsc.setServerID(serverIP);
+//		hsc.setTemplate(template);
+//		hsc.createGameSession();
 		this.createChooserPopup();
 	}
+	
 	
 	
 	/**
@@ -567,7 +572,8 @@ public class CretaeGameScreenV2 extends Scene {
 		exit.setOnAction(e -> {
 			portText.setDisable(false);
 			serverIPText.setDisable(false);
-			hsc.deleteGame();
+			CreateGameController.deleteGame();
+			//hsc.deleteGame();
 			root.getChildren().remove(aiOrHumanPop);
 		});
 		
@@ -632,18 +638,14 @@ public class CretaeGameScreenV2 extends Scene {
 		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
 		exit.setOnAction(e -> {
-			hsc.setTeamName(enterNamefield.getText());
-			hsc.createHumanClient();
-			//hsc.switchToTestScene(App.getStage());
+			//hsc.setTeamName(enterNamefield.getText());
+			//hsc.createHumanClient();
+			CreateGameController.createHumanClient(teamName, true);
 			hsc.switchToWaitGameScene(App.getStage());
 		});
 		return exit;
 	}
 
-
-	
-
-	
 
 	public StackPane createOptionPane() {
 		StackPane pane = new StackPane();

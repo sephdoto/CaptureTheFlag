@@ -6,14 +6,12 @@ import org.ctf.shared.client.lib.ServerManager;
 
 import javafx.application.Platform;
 
-public class TestThread extends Thread {
-	HomeSceneController hsc;
+public class WaitingLobbyThread extends Thread {
 	ServerManager serverManager;
 	int currentTeams;
 	boolean active;
 	
-	public TestThread(HomeSceneController hsc, ServerManager serverManager) {
-		this.hsc = hsc;
+	public WaitingLobbyThread(ServerManager serverManager) {
 		this.serverManager = serverManager;
 		currentTeams = 1;
 		active = true;
@@ -30,10 +28,10 @@ public class TestThread extends Thread {
 		}
 		
 		 Platform.runLater(() -> {
-			 //double random = Math.random();
-			 if(serverManager.getCurrentNumberofTeams() != currentTeams)
-				 currentTeams = serverManager.getCurrentNumberofTeams();
-	          hsc.updateTeamsinWaitingScene("currentTeams:" + currentTeams);
+			 if(serverManager.getCurrentNumberofTeams() != currentTeams) {
+				   currentTeams = serverManager.getCurrentNumberofTeams();
+				   CreateGameController.updateTeamNumberFromRemote(currentTeams);
+			 }
 	        });
 		}
 		

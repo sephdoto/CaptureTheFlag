@@ -3,7 +3,6 @@ package org.ctf.ui.customobjects;
 
 
 import org.ctf.ui.Game;
-import org.ctf.ui.PlayGameScreen;
 import org.ctf.ui.PlayGameScreenV2;
 
 import configs.ImageLoader;

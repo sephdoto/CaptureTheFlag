@@ -10,6 +10,7 @@ public class GameStatePuller extends Thread {
 	boolean active;
 	int currentTeam;
 	
+	
 	public GameStatePuller(Client mainClient, HomeSceneController hsc) {
 		this.hsc = hsc;
 		this.mainClient = mainClient;

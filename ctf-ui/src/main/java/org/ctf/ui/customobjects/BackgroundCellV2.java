@@ -120,6 +120,10 @@ public class BackgroundCellV2 extends Pane {
 		
 	}
 	
+	public void showLastMove() {
+		this.setStyle("-fx-background-color: rgb(255, 0, 0, 0.2);" + "-fx-border-color: blue; " + "-fx-border-width: 1.2px");
+	}
+	
 	public void testCircle() {
 		rc.setFill(Color.WHITE);
 	}
@@ -143,7 +147,6 @@ public class BackgroundCellV2 extends Pane {
 			base.getChildren().remove(rc2);
 		}
 		//rc2.setFill(Color.WHITE);
-		
 	}
 
 	public int[] getPosition() {
@@ -203,7 +206,6 @@ public class BackgroundCellV2 extends Pane {
 		occupied = false;
 		base.getChildren().remove(child);
 		this.child = null;
-		
 	}
 	
 	public CostumFigurePain getChild() {
