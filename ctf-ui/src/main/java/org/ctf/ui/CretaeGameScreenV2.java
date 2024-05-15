@@ -352,7 +352,10 @@ public class CretaeGameScreenV2 extends Scene {
 	            template = entry.getKey();
 	            state  = entry.getValue();
 	        } 
-		GamePane gm = new GamePane(state,hsc);
+		gm = new GamePane(state);
+		 gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
+		showMapBox.getChildren().add(createBackgroundImage(gm.vBox));
+		StackPane.setAlignment(gm, Pos.CENTER);
 		showMapBox.getChildren().add(gm);
 	}
 	
@@ -456,9 +459,9 @@ public class CretaeGameScreenV2 extends Scene {
 		showMapBox.getStyleClass().add("show-GamePane");
 		showMapBox.paddingProperty().bind(padding);
 		state = StroeMaps.getMap(name);
-		 gm = new GamePane(state,hsc);
+		 gm = new GamePane(state);
 		 StackPane.setAlignment(gm, Pos.CENTER);
-		 gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
+		 gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));      //Für die Map
 		 //gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
 		 showMapBox.getChildren().add(createBackgroundImage(gm.vBox));
 		showMapBox.getChildren().add(gm);
