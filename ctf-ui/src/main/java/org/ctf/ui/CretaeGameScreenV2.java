@@ -349,28 +349,28 @@ public class CretaeGameScreenV2 extends Scene {
 	 * @author aniemesc
 	 * @param c: ChoiceBox from which the user selects the map
 	 */
-	private void perfromChoiceBoxAction(ComboBox<String> c) {
-		selected = c.getValue();
-		showMapBox.getChildren().clear();
-		maps = JsonTools.getTemplateAndGameState(selected);
-		if (!maps.isEmpty()) {
-	            Map.Entry<MapTemplate, GameState> entry = maps.entrySet().iterator().next();
-	            template = entry.getKey();
-	            state  = entry.getValue();
-	        } 
-		gm = new GamePane(state);
-	    ImageView iv = this.createBackgroundImage(gm.vBox);
-	  StackPane.setAlignment(iv, Pos.CENTER);
-	  sep.getChildren().remove(showMapBox);
-	  createShowMapPane("lol");
-	  sep.getChildren().add(showMapBox);
-//	    showMapBox.getChildren().add(iv);
-//	    showMapBox.getChildren().add(gm);
-//		 gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
-//		showMapBox.getChildren().add(createBackgroundImage(gm.vBox));
-//		StackPane.setAlignment(gm, Pos.CENTER);
-//		showMapBox.getChildren().add(gm);
-	}
+    private void perfromChoiceBoxAction(ComboBox<String> c) {
+      selected = c.getValue();
+      showMapBox.getChildren().clear();
+      maps = JsonTools.getTemplateAndGameState(selected);
+      if (!maps.isEmpty()) {
+        Map.Entry<MapTemplate, GameState> entry = maps.entrySet().iterator().next();
+        template = entry.getKey();
+        state = entry.getValue();
+      }
+      gm = new GamePane(state);
+      ImageView iv = this.createBackgroundImage(gm.vBox);
+      StackPane.setAlignment(iv, Pos.CENTER);
+      sep.getChildren().remove(showMapBox);
+      createShowMapPane("lol");
+      sep.getChildren().add(showMapBox);
+      // showMapBox.getChildren().add(iv);
+      // showMapBox.getChildren().add(gm);
+      // gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
+      // showMapBox.getChildren().add(createBackgroundImage(gm.vBox));
+      // StackPane.setAlignment(gm, Pos.CENTER);
+      // showMapBox.getChildren().add(gm);
+    }
 	
 	
 	public ArrayList<String> getTemplateNames(){
@@ -466,50 +466,53 @@ public class CretaeGameScreenV2 extends Scene {
 	 * @return
 	 */
 	private StackPane createShowMapPane(String name) {
-	 showMapBox = new StackPane();
-	  showMapBox.getStyleClass().add("option-pane");
-	  showMapBox.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
-	  showMapBox.prefHeightProperty().bind(showMapBox.widthProperty());
-	  showMapBox.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.45));
-	    showMapBox.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.65));
-	  showMapBox.getStyleClass().add("show-GamePane");
-	  showMapBox.paddingProperty().bind(padding);
-	  //state = StroeMaps.getMap(name);
-	  maps = JsonTools.getTemplateAndGameState(c.getValue());
-	  if (!maps.isEmpty()) {
-	      Map.Entry<MapTemplate, GameState> entry = maps.entrySet().iterator().next();
-	      template = entry.getKey();
-	      state  = entry.getValue();
-	  } 
-	  
-	   gm = new GamePane(state);
-	   StackPane.setAlignment(gm, Pos.CENTER);
-	   gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
-	   gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
-	   showMapBox.getChildren().add(createBackgroundImage(gm.vBox));
-	  showMapBox.getChildren().add(gm);
-	  return showMapBox;
-	}
+      showMapBox = new StackPane();
+      showMapBox.getStyleClass().add("option-pane");
+      showMapBox.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
+      showMapBox.prefHeightProperty().bind(showMapBox.widthProperty());
+      showMapBox.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.45));
+      showMapBox.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.65));
+      showMapBox.getStyleClass().add("show-GamePane");
+      showMapBox.paddingProperty().bind(padding);
+      // state = StroeMaps.getMap(name);
+      maps = JsonTools.getTemplateAndGameState(c.getValue());
+      if (!maps.isEmpty()) {
+        Map.Entry<MapTemplate, GameState> entry = maps.entrySet().iterator().next();
+        template = entry.getKey();
+        state = entry.getValue();
+      }
+
+      gm = new GamePane(state);
+      StackPane.setAlignment(gm, Pos.CENTER);
+      gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
+      gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
+      showMapBox.getChildren().add(createBackgroundImage(gm.vBox));
+      showMapBox.getChildren().add(gm);
+      return showMapBox;
+    }
 	/**
 	 * 
 	 * @author aniemesc
 	 * @param vBox
 	 * @return
 	 */
-	public  ImageView createBackgroundImage(VBox vBox) {
-    //Image mp = new Image(getClass().getResourceAsStream("gridSTARWARS.png"));
-    WaveFunctionCollapse backgroundcreator = new WaveFunctionCollapse(state.getGrid(), Themes.BAYERN);
-    backgroundcreator.saveToResources();
-    Image mp = new Image(new File(Constants.toUIResources+"pictures"+File.separator+"grid.png").toURI().toString());
-    ImageView mpv = new ImageView(mp);
-    StackPane.setAlignment(mpv, Pos.CENTER);
-    mpv.fitHeightProperty().bind(vBox.heightProperty().multiply(1));
-    mpv.fitWidthProperty().bind(vBox.widthProperty().multiply(1));
-    
-    //mpv.setPreserveRatio(true);
-    mpv.setOpacity(1);
-    return mpv;
-	}
+    public ImageView createBackgroundImage(VBox vBox) {
+      // Image mp = new Image(getClass().getResourceAsStream("gridSTARWARS.png"));
+      WaveFunctionCollapse backgroundcreator =
+          new WaveFunctionCollapse(state.getGrid(), Themes.BAYERN);
+      backgroundcreator.saveToResources();
+      Image mp =
+          new Image(new File(Constants.toUIResources + "pictures" + File.separator + "grid.png")
+              .toURI().toString());
+      ImageView mpv = new ImageView(mp);
+      StackPane.setAlignment(mpv, Pos.CENTER);
+      mpv.fitHeightProperty().bind(vBox.heightProperty().multiply(1));
+      mpv.fitWidthProperty().bind(vBox.widthProperty().multiply(1));
+
+      // mpv.setPreserveRatio(true);
+      mpv.setOpacity(1);
+      return mpv;
+    }
 	
 	private Button createLeave() {
 		Button exit = new Button("Leave");
