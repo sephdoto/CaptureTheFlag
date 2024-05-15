@@ -43,7 +43,8 @@ public class PlayGameScreenV2 extends Scene {
 	
 	 private ScheduledExecutorService scheduler;
 	 // TODO Remember to close the service before moving away from this scene
-	 //private int cu
+	 private int currentTeam;
+	 private Client mainClient;
 	Label teamTurn;
 	HomeSceneController hsc;
 	StackPane root;
@@ -72,14 +73,20 @@ public class PlayGameScreenV2 extends Scene {
 	
 	
 	
-	 Runnable updateTask =
-		      () -> {
-		        try {
-		       	
-		        } catch (Exception e) {
+	Runnable updateTask = () -> {
+		try {
+			if (mainClient.getCurrentTeamTurn() != -1) {
+				if (currentTeam != mainClient.getCurrentTeamTurn()) {
+					Platform.runLater(() -> {
+						 hsc.redraw(mainClient.getCurrentState());
+						 hsc.setTeamTurn(String.valueOf(currentTeam));
+				        });
+				}
+			}
+		} catch (Exception e) {
 
-		        }
-		      };
+		}
+	};
 
 	public PlayGameScreenV2(HomeSceneController hsc, double width, double height) {
 		super(new StackPane(), width, height);

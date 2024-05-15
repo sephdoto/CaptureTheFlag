@@ -643,6 +643,7 @@ public class CretaeGameScreenV2 extends Scene {
 		exit.setOnAction(e -> {
 			//hsc.setTeamName(enterNamefield.getText());
 			//hsc.createHumanClient();
+			teamName = enterNamefield.getText();
 			CreateGameController.createHumanClient(teamName, true);
 			hsc.switchToWaitGameScene(App.getStage());
 		});
