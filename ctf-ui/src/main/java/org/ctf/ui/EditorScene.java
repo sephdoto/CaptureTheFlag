@@ -18,6 +18,8 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -28,7 +30,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
-
+import java.io.File;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.shared.constants.Enums.Themes;
 import org.ctf.shared.state.data.exceptions.Accepted;
@@ -65,8 +67,6 @@ public class EditorScene extends Scene {
   MovementVisual movementVisual;
   boolean validtemplate = true;
   ComboBox<String> soundPieceBox;
-
-
   Text invalid;
 
   /**
@@ -885,6 +885,23 @@ public class EditorScene extends Scene {
     visualRoot.setPadding(new Insets(10));
     visualRoot.prefWidthProperty().bind(root.widthProperty().multiply(0.45));
     visualRoot.prefHeightProperty().bind(root.heightProperty().multiply(0.75));
+    visualRoot.setOnDragOver(event -> {
+      if (event.getGestureSource() != this && event.getDragboard().hasFiles()) {
+        event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+    }
+    event.consume();
+    });
+    visualRoot.setOnDragDropped(event -> {
+      Dragboard dragboard = event.getDragboard();
+      boolean success = false;
+      if (dragboard.hasFiles()) {
+          File file = dragboard.getFiles().get(0);
+          System.out.println(file.getName());
+      }
+      event.setDropCompleted(success);
+      event.consume();
+    
+    });
     // GamePane visual = new GamePane(CreateTextGameStates.createTestGameState1());
     createDirectionsVisual();
     updateVisualRoot();
