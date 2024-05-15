@@ -43,9 +43,15 @@ public class Tile {
   // Package methods
   // **************************************************
 
-  void removeFromOptions(int r, Tile t) {
+  /**
+   * removes the TileType with the specified int value from the options array;
+   * 
+   * @param toRemove
+   * @param t
+   */
+  void removeFromOptions(int toRemove, Tile t) {
     if (t != null) {
-      t.options.remove(Integer.valueOf(r));
+      t.options.remove(Integer.valueOf(toRemove));
     }
   }
 
@@ -61,7 +67,12 @@ public class Tile {
   int getValue() {
     return value;
   }
-  
+
+  /**
+   * Sets a value without updating the grid. Use with caution.
+   * 
+   * @param value
+   */
   void setValueSimple(int value) {
     this.value = value;
     if (this.parentGrid != null) {
@@ -69,6 +80,11 @@ public class Tile {
     }
   }
 
+  /**
+   * Collapses one tile and changes the options around it accordingly.
+   * 
+   * @param value
+   */
   void setValue(int value) {
     this.value = value;
     if (this.parentGrid != null) {
@@ -80,6 +96,11 @@ public class Tile {
     this.options = new ArrayList<Integer>();
   }
   
+  /**
+   * Controller decides what weights are used according to the theme.
+   * 
+   * @return
+   */
   int[] getWeights() {
     if(this.parentGrid.theme == Themes.STARWARS) {
       return getStarWarsWeights();

@@ -1,6 +1,7 @@
 package org.ctf.shared.wave;
 
 import java.awt.Graphics;
+
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -12,7 +13,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
-import java.util.Stack;
 
 /**
  * Instantiate this class when creating a background with the wave function collapse algorithm. Idea
@@ -116,32 +116,13 @@ public class WaveFunctionCollapse {
 
     // Place the Pieces, Bases and Blocks if we want to use them as input for the algorithm
     if (theme == Themes.STARWARS) {
-      for (int y = 0; y < grid.length; y++) {
-        for (int x = 0; x < grid[0].length; x++) {
-          if (grid[y][x] == null) {
-            intGrid[y * 3 + 1][x * 3 + 1] = 0;
-          } else if (grid[y][x].contains("p") || grid[y][x].contains("b:")) { //players and base
-            intGrid[y * 3][x * 3] = 1;
-            intGrid[y * 3][x * 3 + 1] = 1;
-            intGrid[y * 3][x * 3 + 2] = 1;
-
-            intGrid[y * 3 + 1][x * 3] = 1;
-            intGrid[y * 3 + 1][x * 3 + 1] = 1;
-            intGrid[y * 3 + 1][x * 3 + 2] = 1;
-
-            intGrid[y * 3 + 2][x * 3] = 1;
-            intGrid[y * 3 + 2][x * 3 + 1] = 1;
-            intGrid[y * 3 + 2][x * 3 + 2] = 1;
+      for (int y = 0; y < intGrid.length; y++) {
+        for (int x = 0; x < intGrid[0].length; x++) {
+          if (grid[y/3][x/3] == null) {
+            intGrid[y/3][x/3] = 0;
+          } else if (grid[y/3][x/3].contains("p") || grid[y/3][x/3].contains("b:")) { //players and base
+            intGrid[y][x] = 1;
           }
-          /*
-           * else if(grid[y][x].equals("b")) {
-           * 
-           * intGrid[y*3][x*3] = 2; intGrid[y*3][x*3+1] = 2; intGrid[y*3][x*3+2] = 2;
-           * 
-           * intGrid[y*3+1][x*3] = 2; intGrid[y*3+1][x*3+1] = 2; intGrid[y*3+1][x*3+2] = 2;
-           * 
-           * intGrid[y*3+2][x*3] = 2; intGrid[y*3+2][x*3+1] = 2; intGrid[y*3+2][x*3+2] = 2; }
-           */
         }
       }
     } else if (theme == Themes.LOTR) {
@@ -224,16 +205,15 @@ public class WaveFunctionCollapse {
 
       // two approaches how to handle a dead end (no possible images left for a particular tile)
       if (thisTile.options.size() == 0) {
-        if (false && this.theme == Themes.LOTR) {
-          return generateBackground(grid);  // option 1: just start over. works for
+
+          //return generateBackground(grid);// option 1: just start over. works for
                                             // some patterns. takes wayy too long for others
-         }
-        else {
+
           thisTile.collapsed = true;        // option 2: just skip the tile that does not work 
           continue;
                                             // option 3 would be backtracking 
                                             // but I could not get it to work
-        }
+        
       }
 
       // choose which tile to use at random ( with weights assigned in Tile.getWeights() )
@@ -370,7 +350,7 @@ public class WaveFunctionCollapse {
   }
   
   /**
-   * Controller method used in the gridToImg method to choose which images to load according to the
+   * Controller used in the gridToImg method to choose which images to load according to the
    * theme used.
    * 
    * @param theme
@@ -386,13 +366,13 @@ public class WaveFunctionCollapse {
       return loadBayernImages();
     }
     else if(theme == Themes.LOTR) {
-      return loadKnotImages();
+      return loadLOTRImages();
     }
     else return null;
   }
   
   /**
-   * Preloads the images used in the Star Wars pattern. The pattern was originally inspired by a pattern called "circuits" designed by 
+   * Pre-loads the images used in the Star Wars pattern. The pattern was originally inspired by a pattern called "circuits" designed by 
    * @return
    * @throws IOException
    */
@@ -400,7 +380,7 @@ public class WaveFunctionCollapse {
     BufferedImage[] images = new BufferedImage[imagesAmount+6];
 
         block =  ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"Block.png"));
-        base = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"tuning1.png"));
+        base = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"BaseSW.png"));
           images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c2.png"));
         
         for(int i = 1, c = 1; c <= imagesAmount+4; i++) {
@@ -423,13 +403,14 @@ public class WaveFunctionCollapse {
   }
   
   /**
-   * Preloads the images used in the Lord of the Rings pattern. The pattern was originally drawn by
+   * Pre-loads the images used in the Lord of the Rings pattern. The pattern was originally drawn by
    * Hermann Hillmann and found on the WaveFunctionCollapse github page (see header).
    * 
    * @return
    * @throws IOException
    */
-  private BufferedImage[] loadLOTRImages() throws IOException {
+  @Deprecated
+  private BufferedImage[] loadLOTRImagesOld() throws IOException {
     BufferedImage[] images = new BufferedImage[imagesAmount+1];
     images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"l1.png"));
     block = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"tree.png"));
@@ -443,27 +424,29 @@ public class WaveFunctionCollapse {
   }
   
   /**
-   * Preloads the images used in the Bayern pattern. 
+   * Pre-loads the images used in the Bayern pattern. 
    * 
    * @return
    * @throws IOException
    */
   private BufferedImage[] loadBayernImages() throws IOException {
+    int franken = (int) (Math.random() * 20);
+    String bayern = franken == 1 ? "Franken.png" : "Bayern.png";
     BufferedImage[] images = new BufferedImage[imagesAmount+1];
     block = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"noweed.png"));
     base = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"Ei.png"));
     images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"p1.png"));
-    images[1] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"Bayern.png"));
-    images[2] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"Bayern.png")),90);
-    images[3] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"Bayern.png")),180);
-    images[4] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"Bayern.png")),270);
+    images[1] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + bayern));
+    images[2] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + bayern)),90);
+    images[3] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + bayern)),180);
+    images[4] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + bayern)),270);
     return images;
     
   }
   
   @Deprecated
   private BufferedImage[] loadRoomImages() throws IOException {
-    //Imageamount = 28
+    //Image amount = 28
     
     BufferedImage[] images = new BufferedImage[imagesAmount+1];
     block = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"tree.png"));
@@ -490,7 +473,7 @@ public class WaveFunctionCollapse {
     return images;
   }
   
-  private BufferedImage[] loadKnotImages() throws IOException{
+  private BufferedImage[] loadLOTRImages() throws IOException{
     BufferedImage[] images = new BufferedImage[imagesAmount+1];
     block = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"tree.png"));
     base = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"tuning1.png"));
@@ -591,8 +574,6 @@ public class WaveFunctionCollapse {
     at.rotate(rads, x, y);
     g2d.setTransform(at);
     g2d.drawImage(img, 0, 0, null);
-    // g2d.setColor(Color.RED);
-    // g2d.drawRect(0, 0, newWidth - 1, newHeight - 1);
     g2d.dispose();
 
     return rotated;

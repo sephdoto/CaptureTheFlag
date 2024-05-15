@@ -17,13 +17,21 @@ public class WaveGrid {
   
   public int[][] grid; // saves the grid with the images
   public ArrayList<Tile> tiles; // saves all the tiles in one loooong array
-  TileType[] rules;;
+  TileType[] rules; // a copy to save the rules for all INDIVIDUAL tiles as refernce
   Themes theme;
 
   // **************************************************
   // Constructor
   // **************************************************
 
+  /**
+   * Initializes the int[][] grid and the tiles List. Creates tiles and fills them with rules from
+   * the ruleset.
+   * 
+   * @param grid
+   * @param images
+   * @param theme
+   */
   public WaveGrid(int[][] grid, int images, Themes theme) {
     
     this.theme = theme;
@@ -43,8 +51,8 @@ public class WaveGrid {
         tiles.add(thisTile);
       }
     }
-    this.setOptions();
-    this.setRules();
+    this.setOptions();  // initializes every non-collapsed tile with all options 
+    this.setRules();    // sets the rules and updates the options accordingly
   }
 
   // **************************************************
@@ -80,7 +88,7 @@ public class WaveGrid {
   // **************************************************
   
   /**
-   * adds every single image to the initial set of options (coded as integers 1-x)
+   * Adds every single image to the initial set of options (coded as integers 1-x).
    * 
    * @param pictures
    */
