@@ -9,7 +9,7 @@ import org.ctf.shared.constants.Enums.Themes;
  * @author ysiebenh
  * 
  */
-public class WaveGrid {
+ class WaveGrid {
 
   // **************************************************
   // Fields

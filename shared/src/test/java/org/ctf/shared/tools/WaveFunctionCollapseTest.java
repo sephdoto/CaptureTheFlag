@@ -8,7 +8,6 @@ import org.ctf.shared.ai.TestValues;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums;
 import org.ctf.shared.wave.WaveFunctionCollapse;
-import org.ctf.shared.wave.WaveGrid;
 import org.junit.jupiter.api.Test;
 /**
  * @author ysiebenh
@@ -25,7 +24,7 @@ class WaveFunctionCollapseTest {
     try {
  
       //wfc.generateBackgroundRecursive(new WaveGrid(test, WaveFunctionCollapse.IMAGES_AMOUNT));
-      ImageIO.write(wfc2.getBackground(), "png", new File(Constants.toUIResources + "gridLOTR.png"));
+      ImageIO.write(wfc1.getBackground(), "png", new File(Constants.toUIResources + "gridLOTR.png"));
       ImageIO.write(wfc2.getBackground(), "png", new File(Constants.toUIResources + "gridSTARWARS.png"));
       ImageIO.write(wfc3.getBackground(), "png", new File(Constants.toUIResources + "gridBAYERN.png"));
      

@@ -8,7 +8,7 @@ import org.ctf.shared.constants.Enums.Themes;
  * 
  * @author ysiebenh
  */
-public class Tile {
+ class Tile {
 
   // **************************************************
   // Fields
