@@ -51,9 +51,9 @@ public class SoundController {
     System.out.println("Is default sound? " + isDefaultSound("notexisting", Themes.STARWARS, SoundType.CAPTURE));
     System.out.println("Sound can be changed? " + soundCanBeChanged("notexisting", Themes.STARWARS, SoundType.CAPTURE));
     System.out.println("Can I override a default sound? " + 
-    saveSound("Default", Themes.STARWARS, SoundType.CAPTURE, new File(
-        soundFolderLocation + "starwars" + File.separator + SoundType.MOVE.getLocation() + "Default.wav"
-        ), false));
+        saveSound("Default", Themes.STARWARS, SoundType.CAPTURE, new File(
+            soundFolderLocation + "starwars" + File.separator + SoundType.MOVE.getLocation() + "Default.wav"
+            ), false));
     Thread.sleep(5000);
     Platform.exit();
   }
@@ -81,6 +81,21 @@ public class SoundController {
    */
   public static void playSound(String piece, SoundType type) {
     getSound(piece, Constants.theme, type).play();
+  }
+
+  /**
+   * Plays a sound with a file that links to the sound.
+   * 
+   * @author sistumpf
+   * @param file the sound file that gets played
+   */
+  public static void playSound(File file) {
+    try {
+      new AudioClip(file.toURI().toString()).play();
+    } catch (Exception e) {
+      e.printStackTrace();
+      //TODO lustigen "kann nicht abgespielt werden" sound abspielen
+    }
   }
 
   /**
@@ -143,7 +158,7 @@ public class SoundController {
   public static boolean saveSound(String pieceName, Themes theme, SoundType type, File sound, boolean custom) {
     if(!soundCanBeChanged(pieceName, theme, type))
       return false;
-    
+
     AudioObject audio = new AudioObject(pieceName, theme, type, custom);
     if (!copyAudioFile(sound, audio)) return false;
     return addToJSON(audio);
