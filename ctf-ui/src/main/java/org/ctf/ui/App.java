@@ -1,6 +1,9 @@
 package org.ctf.ui;
 
 import configs.ImageLoader;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import javafx.animation.FadeTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -21,6 +24,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.ctf.shared.constants.Constants;
 import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.controllers.SettingsSetter;
 import org.ctf.ui.customobjects.*;
@@ -37,6 +41,7 @@ public class App extends Application {
   static MusicPlayer backgroundMusic;
   HomeSceneController ssc;
   FadeTransition startTransition;
+  Process process;
 
   public void start(Stage stage) {
     mainStage = stage;
@@ -61,8 +66,39 @@ public class App extends Application {
     stage.setTitle("Capture The Flag Team 14");
     stage.setScene(lockscreen);
     backgroundMusic = new MusicPlayer();
+    stage.setOnCloseRequest(
+        e -> {
+          process.destroy();
+          System.exit(0);
+        });
     SettingsSetter.giveMeTheAux(backgroundMusic);
     stage.show();
+    try {
+      ProcessBuilder processBuilder =
+          new ProcessBuilder(
+              "java", "-jar", Constants.toUIResources + "server.jar", "--server.port=8888");
+      processBuilder.redirectErrorStream(true);
+      process = processBuilder.start();
+      System.out.println(process.isAlive());
+
+      // Lies die Ausgabe des Prozesses
+      new Thread(
+              () -> {
+                try (BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                  String line;
+                  while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                  }
+                } catch (IOException e) {
+                  e.printStackTrace();
+                }
+              })
+          .start();
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -169,7 +205,7 @@ public class App extends Application {
               pictureBox.setSpacing(size);
             });
     Image ctf = new Image(getClass().getResourceAsStream("CaptureTheFlag.png"));
-    ImageView ctfv = new ImageView(ctf); 
+    ImageView ctfv = new ImageView(ctf);
     ctfv.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.8));
     ctfv.setPreserveRatio(true);
     Image r2d2 = new Image(getClass().getResourceAsStream("R2D2.png"));
