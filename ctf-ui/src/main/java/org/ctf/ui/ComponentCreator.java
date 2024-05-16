@@ -330,7 +330,7 @@ public class ComponentCreator {
 	    popUp.setContent(vbox);
 	    
 	    ComboBox<String> configBox = new ComboBox<String>();
-	    configBox.getStyleClass().add("custom-combo-box-2");
+	    //configBox.getStyleClass().add("custom-combo-box-2");
 	    for(String name : AIConfig.getTemplateNames()) {
 	      configBox.getItems().add(name);
 	    }	    

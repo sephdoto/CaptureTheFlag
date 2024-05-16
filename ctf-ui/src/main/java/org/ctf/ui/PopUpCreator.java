@@ -1,4 +1,5 @@
 package org.ctf.ui;
+import java.util.ArrayList;
 import java.util.HashMap;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.constants.Descriptions;
@@ -44,6 +45,7 @@ public class PopUpCreator {
 	private HomeSceneController hsc;
 	private String defaultAiName;
 	TextField enterConfigNamefield;
+	private ArrayList<ButtonPane> buttonPanes = new ArrayList<ButtonPane>();
 	private HashMap<AIConfigs, Integer> multipliers = new HashMap<AIConfigs, Integer>();
 	private SpinnerValueFactory<Integer> values;
 	private SpinnerValueFactory<Double> values2;
@@ -126,6 +128,7 @@ public class PopUpCreator {
 			buttonBox.setSpacing(newSpacing);
 			buttonBox.setPadding(new Insets(0, padding, 0, padding));
 		});
+		
 		buttonBox.getChildren().addAll(createAIPowerButton(AIConfigs.RANDOM, 0.365, 1),
 				createAIPowerButton(AIConfigs.MCTS, 0.53, 1));
 		HBox buttonBox2 = new HBox();
@@ -201,7 +204,8 @@ public class PopUpCreator {
 //			root.getChildren().add(createConfigPane(1, 1));
 //			defaultAiName = aiName.toString();
 //		});
-		ButtonPane pane = new ButtonPane(aiName, hsc.getStage(), InfoPanePosition);
+		ButtonPane pane = new ButtonPane(aiName, hsc.getStage(), InfoPanePosition,buttonPanes);
+		buttonPanes.add(pane);
 		pane.prefWidthProperty().bind(root.widthProperty().multiply(0.22));
 		pane.prefHeightProperty().bind(pane.widthProperty().multiply(0.45));
 		pane.maxWidthProperty().bind(root.widthProperty().multiply(0.22));

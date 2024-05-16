@@ -1,5 +1,6 @@
 package org.ctf.ui.customobjects;
 
+import java.util.ArrayList;
 import org.ctf.shared.constants.Descriptions;
 import org.ctf.shared.constants.Enums.AIConfigs;
 import org.ctf.ui.InfoPaneCreator;
@@ -26,7 +27,7 @@ public class ButtonPane extends StackPane{
 	private ImageView vw;
 	
 
-    public ButtonPane(AIConfigs aiName, Stage stage, int InfoPanePosition) {
+    public ButtonPane(AIConfigs aiName, Stage stage, int InfoPanePosition,ArrayList<ButtonPane> connected) {
       this.config = aiName;
       loadButton = createConfigButton("Load");
       editButton = createConfigButton("Edit");
@@ -52,6 +53,11 @@ public class ButtonPane extends StackPane{
       this.setOnMouseClicked(e -> {
         this.getChildren().clear();
         this.getChildren().add(createButtonBox());
+        for(ButtonPane bp : connected) {
+          if(bp!=this) {
+            bp.reset();
+          }
+        }
       });
     }
 
