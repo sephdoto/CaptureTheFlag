@@ -5,6 +5,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.ctf.shared.client.AIClient;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.state.GameState;
 import org.ctf.ui.customobjects.BaseRep;
@@ -38,6 +39,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import javassist.expr.Instanceof;
 
 public class PlayGameScreenV2 extends Scene {
 	
@@ -48,8 +50,10 @@ public class PlayGameScreenV2 extends Scene {
 	Label teamTurn;
 	HomeSceneController hsc;
 	StackPane root;
+	HBox captureLoadingLabel;
 	StackPane left;
 	Text text;
+	boolean isRemote;
 	VBox testBox;
 	Label howManyTeams;
 	GamePane gm;
@@ -86,9 +90,10 @@ public class PlayGameScreenV2 extends Scene {
 		}
 	};
 
-	public PlayGameScreenV2(HomeSceneController hsc, double width, double height,Client mainClient) {
+	public PlayGameScreenV2(HomeSceneController hsc, double width, double height,Client mainClient,boolean isRemote) {
 		super(new StackPane(), width, height);
 		this.mainClient = mainClient;
+		this.isRemote = isRemote;
 		initalizePlayGameScreen(hsc);
 	}
 	
@@ -147,6 +152,11 @@ public class PlayGameScreenV2 extends Scene {
 			gm = new GamePane(state);
 			gm.enableBaseColors(this);
 			showMapBox.getChildren().add(gm);
+			if(isRemote) {
+				if(mainClient.isItMyTurn() && ! (mainClient instanceof AIClient) ) {
+					Game.initializeGame(gm, mainClient);
+				}
+			}
 			for(Client  local: CreateGameController.getLocalHumanClients() ) {
 				System.out.println("Local: " + local.getTeamID());
 				if (local.isItMyTurn()) {
@@ -180,7 +190,7 @@ public class PlayGameScreenV2 extends Scene {
 	
 	
 	private VBox waitingBox(String playerName) {
-		String showString = "team " +  playerName + "s turn";
+		String showString = "team " +  playerName + "'s turn";
 		 final Label    status   = new Label(showString);
 		 status.getStyleClass().add("des-label2");
 		    final Timeline timeline = new Timeline(
@@ -209,18 +219,20 @@ public class PlayGameScreenV2 extends Scene {
 	}
 	
 	private HBox createTopCenter() {
-		HBox captureLoadingLabel = new HBox();
+		captureLoadingLabel = new HBox();
 		captureLoadingLabel.setAlignment(Pos.CENTER);
 		//captureLoadingLabel.setStyle("-fx-background-color: yellow");
 		captureLoadingLabel.prefWidthProperty().bind(right.widthProperty().multiply(0.8));
 		//captureLoadingLabel.getChildren().add(waitingBox("3"));
-		teamTurn = new Label("Current team:");
-		captureLoadingLabel.getChildren().add(teamTurn);
+		//teamTurn = new Label("Current team:");
+		captureLoadingLabel.getChildren().add(waitingBox(String.valueOf(mainClient.getCurrentTeamTurn())));
 		return captureLoadingLabel;
 	}
 	
 	public void setTeamTurn(String s) {
-		teamTurn.setText(s);
+		//teamTurn.setText(s);
+		captureLoadingLabel.getChildren().clear();
+		captureLoadingLabel.getChildren().add(waitingBox(s));
 	}
 	
 	private void manageFontSizes() {

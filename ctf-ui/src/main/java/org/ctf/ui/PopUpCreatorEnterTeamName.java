@@ -98,25 +98,27 @@ public class PopUpCreatorEnterTeamName {
 		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
 		exit.setOnAction(e -> {
-			if (isMain && !isAi) {
+			if (enterNamefield.getText().isEmpty()) {
+				CretaeGameScreenV2.informationmustBeEntered(enterNamefield, "custom-search-field2-mustEnter","custom-search-field2");
+			}else {
 				teamName = enterNamefield.getText();
+			
+			if (isMain && !isAi) {
 				CreateGameController.createHumanClient(teamName, true);
 				hsc.switchToWaitGameScene(App.getStage());
 			}
 			if(!isMain && !isAi) {
-				teamName = enterNamefield.getText();
 				CreateGameController.createHumanClient(teamName, true);
 				root.getChildren().remove(enterNamePopUp);
 			}
 			if(isMain && isAi) {
-				teamName = enterNamefield.getText();
-				CreateGameController.createAiClient(teamName, AI.IMPROVED, config, isMain);
+				CreateGameController.createAiClient(teamName, AI.RANDOM, config, isMain);
 				hsc.switchToWaitGameScene(App.getStage());
 			}
 			if(!isMain && isAi) {
-				teamName = enterNamefield.getText();
-				CreateGameController.createAiClient(teamName, AI.IMPROVED, config, isMain);
+				CreateGameController.createAiClient(teamName, AI.RANDOM, config, isMain);
 				root.getChildren().remove(enterNamePopUp);
+			}
 			}
 		});
 		return exit;
