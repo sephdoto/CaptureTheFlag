@@ -2,7 +2,7 @@ package configs;
 
 import java.util.Optional;
 
-import org.ctf.ui.CreateGameScreen;
+//import org.ctf.ui.CreateGameScreen;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -45,7 +45,7 @@ public class Dialogs {
 	    Button noButtonNode = (Button) dialogPane.lookupButton(noButton);
 
 	    for (Button button : new Button[]{yesButtonNode, noButtonNode}) {
-	      CreateGameScreen.applyButtonStyle(button,"white");
+	      //CreateGameScreen.applyButtonStyle(button,"white");
 	    }
 
 	    Optional<ButtonType> result = alert.showAndWait();
@@ -69,7 +69,7 @@ public class Dialogs {
 		        + " -fx-text-fill: white");
 
 	    Button okButton = (Button) dialogPane.lookupButton(ButtonType.OK);
-	    CreateGameScreen.applyButtonStyle(okButton,"white");
+	    //CreateGameScreen.applyButtonStyle(okButton,"white");
 	    alert.showAndWait();
 	  }
 	
@@ -111,7 +111,7 @@ public class Dialogs {
 	    
 
 	    for (Button button : new Button[]{easyButtonNode, mediButtonNode, strongButtonNode}) {
-	      CreateGameScreen.applyButtonStyle(button,"white");
+	      //CreateGameScreen.applyButtonStyle(button,"white");
 	    }
 
 	    Optional<ButtonType> result = alert.showAndWait();
