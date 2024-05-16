@@ -230,6 +230,7 @@ public class ComponentCreator {
     ComboBox<String> box = new ComboBox<String>();
     HBox.setMargin(box, new Insets(20));
     box.getStyleClass().add("custom-combo-box-2");
+    
     box.prefWidthProperty().bind(vbox.widthProperty().multiply(0.45));
     box.prefHeightProperty().bind(box.widthProperty().multiply(0.18));
     box.prefHeightProperty().addListener((obs, oldv, newV) -> {
@@ -240,6 +241,8 @@ public class ComponentCreator {
     for (Themes st : themes) {
       box.getItems().add(st.toString());
     }
+    box.setValue(Constants.theme.toString());
+    
     
    
     vbox.widthProperty().addListener((obs, oldVal, newVal) -> {
@@ -291,7 +294,7 @@ public class ComponentCreator {
 //    });
     VBox.setMargin(grid, new Insets(0, 50, 15, 50));
     Button save = createControlButton(vbox,"Save");
-    addSaveListener(save, musicSlider, soundSlider, popUp, root);
+    addSaveListener(save, musicSlider, soundSlider, popUp, root,box);
     Button cancel = createControlButton(vbox, "Cancel");
     cancel.setOnAction(e -> {
       root.getChildren().remove(popUp);
@@ -328,12 +331,15 @@ public class ComponentCreator {
   }
 
   private void addSaveListener(Button exit, Slider musicSlider, Slider soundSlider, PopUpPane popUp,
-      StackPane root) {
+      StackPane root,ComboBox<String> box) {
     exit.setOnAction(e -> {
       root.getChildren().remove(popUp);
       MusicPlayer.setMusicVolume(musicSlider.getValue());
       Constants.soundVolume = soundSlider.getValue();
+      Constants.theme = Themes.valueOf(box.getValue());
       SettingsSetter.saveCustomSettings();
+      
+      
     });
   }
 

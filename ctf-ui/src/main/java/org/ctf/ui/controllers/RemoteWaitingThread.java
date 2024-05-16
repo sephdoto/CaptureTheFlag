@@ -32,7 +32,7 @@ public class RemoteWaitingThread extends Thread {
 		            Button but = new Button("hello");
 		            rws.getRootPane().getChildren().add(but);
 		            but.setOnAction(e ->{
-		              rws.getHsc().switchToPlayGameScene(App.getStage(), rws.getClient());
+		              rws.getHsc().switchToPlayGameScene(App.getStage(), rws.getClient(),true);
 		            });
 		            isactive = false;
 		            } 

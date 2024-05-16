@@ -500,7 +500,7 @@ public class CretaeGameScreenV2 extends Scene {
     public ImageView createBackgroundImage(VBox vBox) {
       // Image mp = new Image(getClass().getResourceAsStream("gridSTARWARS.png"));
       WaveFunctionCollapse backgroundcreator =
-          new WaveFunctionCollapse(state.getGrid(), Themes.BAYERN);
+          new WaveFunctionCollapse(state.getGrid(), Constants.theme);
       backgroundcreator.saveToResources();
       Image mp =
           new Image(new File(Constants.toUIResources + "pictures" + File.separator + "grid.png")
