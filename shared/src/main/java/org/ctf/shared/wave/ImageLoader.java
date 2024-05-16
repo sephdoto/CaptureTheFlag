@@ -183,7 +183,7 @@ class ImageLoader {
   }
 
   /**
-   * Used in the gridToImg method to turn pngs around. Taken from StackOverFlow
+   * Used to turn pngs around. Taken from StackOverFlow
    * 
    * @see <a href=
    *      "https://stackoverflow.com/questions/37758061/rotate-a-buffered-image-in-java">Stackoverflow Reference</a>
