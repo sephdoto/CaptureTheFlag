@@ -2,7 +2,9 @@ package org.ctf.ui;
 
 import java.text.DecimalFormat;
 import org.ctf.shared.ai.AIConfig;
+import org.ctf.shared.ai.mcts2.Grid;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums.Themes;
 import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.controllers.SettingsSetter;
 import org.ctf.ui.customobjects.PopUpPane;
@@ -220,37 +222,74 @@ public class ComponentCreator {
     VBox vbox = new VBox();
     vbox.setAlignment(Pos.TOP_CENTER);
     vbox.setPadding(new Insets(10));
+   
+    vbox.getChildren().add(createHeaderText(vbox, "Settings", 12));
+   
+    
+    
+    ComboBox<String> box = new ComboBox<String>();
+    HBox.setMargin(box, new Insets(20));
+    box.getStyleClass().add("custom-combo-box-2");
+    box.prefWidthProperty().bind(vbox.widthProperty().multiply(0.45));
+    box.prefHeightProperty().bind(box.widthProperty().multiply(0.18));
+    box.prefHeightProperty().addListener((obs, oldv, newV) -> {
+      double size = newV.doubleValue() * 0.35;
+      box.setStyle("-fx-font-size: " + size + "px;");
+    });
+    Themes[] themes = Themes.values();
+    for (Themes st : themes) {
+      box.getItems().add(st.toString());
+    }
+    
+   
     vbox.widthProperty().addListener((obs, oldVal, newVal) -> {
       double size = newVal.doubleValue() * 0.035;
       vbox.setSpacing(size);
+      
     });
-    vbox.getChildren().add(createHeaderText(vbox, "Settings", 12));
+    
+    
     GridPane grid = new GridPane();
     grid.setVgap(15);
     grid.setHgap(15);
-    grid.add(createHeaderText(vbox, "Music Volume", 18), 0, 0);
-    grid.add(createHeaderText(vbox, "Sound Volume", 18), 0, 1);
-    Text musicValue = createHeaderText(vbox,df.format(Constants.musicVolume), 28);
-    grid.add(musicValue, 2, 0);
+   grid.add(box, 1, 0);
+    grid.add(createHeaderText(vbox, "Music Volume", 18), 0, 1);
+    grid.add(createHeaderText(vbox, "Sound Volume", 18), 0, 2);
+    grid.add(createHeaderText(vbox, "Theme", 18), 0, 0);
+   
+    HBox musicBox = new HBox();
+    musicBox.setSpacing(10);
+    musicBox.setAlignment(Pos.CENTER);
+    
+    HBox soundBox = new HBox();
+    soundBox.setSpacing(10);
+    soundBox.setAlignment(Pos.CENTER);
+    
+    Text musicValue = createHeaderText(vbox,df.format(Constants.musicVolume), 28);   
     Text soundValue = createHeaderText(vbox,df.format(Constants.soundVolume), 28);
-    grid.add(soundValue, 2, 1);
+   
     Slider musicSlider = createSlider(Constants.musicVolume,vbox);
     musicSlider.valueProperty().addListener((obs, old, newV) -> {
       MusicPlayer.setMusicVolume(musicSlider.getValue());
       musicValue.setText(df.format(musicSlider.getValue()));
     });
-    grid.add(musicSlider, 1, 0);
+   
+    
     Slider soundSlider = createSlider(Constants.soundVolume,vbox);
     soundSlider.valueProperty().addListener((obs, old, newV) -> {
       soundValue.setText(df.format(soundSlider.getValue()));
     });
-    grid.add(soundSlider, 1, 1);
+    musicBox.getChildren().addAll(musicSlider,musicValue);
+    grid.add(musicBox, 1, 1);
+    soundBox.getChildren().addAll(soundSlider,soundValue);
+    grid.add(soundBox, 1, 2);
     vbox.getChildren().add(grid);
+   
 //    vbox.widthProperty().addListener((obs, oldv, newV) -> {
 //      double size = newV.doubleValue() * 0.2;
 //      VBox.setMargin(grid, new Insets(15, size, 15, size));
 //    });
-    VBox.setMargin(grid, new Insets(15, 50, 15, 50));
+    VBox.setMargin(grid, new Insets(0, 50, 15, 50));
     Button save = createControlButton(vbox,"Save");
     addSaveListener(save, musicSlider, soundSlider, popUp, root);
     Button cancel = createControlButton(vbox, "Cancel");
