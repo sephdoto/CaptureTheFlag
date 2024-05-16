@@ -50,16 +50,21 @@ public class App extends Application {
   static StackPane wrapper;
   static StackPane root;
 
-  public void startServer(String port){
+  /**
+   * Starts a server at the designated port using the jar present in resources. Also sets the title
+   * of the window to give information about the port of the server
+   *
+   * @author rsyed
+   * @param port the port you want to start the server at
+   */
+  public void startServer(String port) {
     try {
       ProcessBuilder processBuilder =
           new ProcessBuilder(
-              "java", "-jar", Constants.toUIResources + "server.jar", "--server.port="+ port);
+              "java", "-jar", Constants.toUIResources + "server.jar", "--server.port=" + port);
       processBuilder.redirectErrorStream(true);
       process = processBuilder.start();
       System.out.println(process.isAlive());
-
-      // Lies die Ausgabe des Prozesses
       new Thread(
               () -> {
                 try (BufferedReader reader =
@@ -77,10 +82,17 @@ public class App extends Application {
     } catch (IOException e) {
       e.printStackTrace();
     }
+    setTitle("CFP 14" + " Local Server is active @ " + port);
   }
 
-  public void closeServer(){
+   /**
+   * Kills the process holding the server instance inside of it. Closing the server
+   *
+   * @author rsyed
+   */
+  public void closeServer() {
     this.process.destroy();
+    setTitle("CFP 14" + " Local Server is inactive");
     System.exit(0);
   }
 
