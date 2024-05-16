@@ -1,9 +1,5 @@
 package org.ctf.ui.controllers;
 
-import de.unimannheim.swt.pse.ctf.CtfApplication;
-import org.ctf.shared.client.lib.ServerChecker;
-import org.ctf.shared.client.lib.ServerDetails;
-import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -22,7 +18,7 @@ public class ServerController {
    * @return true if server starts properly, false otherwise
    * @author rsyed
    */
-  public boolean startServer(String port) {
+  /*   public boolean startServer(String port) {
     String[] args = new String[] {"--server.port=" + port};
     try {
       ctx = new SpringApplication(CtfApplication.class).run(args);
@@ -34,7 +30,7 @@ public class ServerController {
       // Constants.localServerPort = port;
     }
     return success;
-  }
+  } */
 
   /**
    * Closes the server this instance of Server Controller is pointing to
@@ -42,7 +38,7 @@ public class ServerController {
    * @return 0 if server closes properly
    * @author rsyed
    */
-  public int closeServer() {
+  /*  public int closeServer() {
     System.exit(SpringApplication.exit(ctx, () -> 0));
     if (ctx == null) {
       return 0;
@@ -52,12 +48,12 @@ public class ServerController {
 
     // Alt Method
     // return SpringApplication.exit(ctx, () -> 0);
-  }
+  }*/
 
   // Uncomment the code below to test
-  public static void main(String[] args) {
+  /*  public static void main(String[] args) {
     ServerController sc = new ServerController();
     System.out.println(sc.startServer("8888"));
     System.out.println(sc.closeServer());
-  }
+  } */
 }
