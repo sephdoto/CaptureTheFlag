@@ -100,7 +100,7 @@ public class JoinScene extends Scene {
 
     mainBox.getChildren().add(createLeave());
     left.getChildren().add(createLeftcontent());
-   
+
   }
 
   /**
@@ -109,9 +109,10 @@ public class JoinScene extends Scene {
    * @author aniemesc
    * @return ImageView that gets added to the scene
    */
-  private ImageView createHeader() {  
-    Image mp = new Image(new File(Constants.toUIResources + "pictures" + File.separator + "multiplayerlogo.png")
-        .toURI().toString());
+  private ImageView createHeader() {
+    Image mp = new Image(
+        new File(Constants.toUIResources + "pictures" + File.separator + "multiplayerlogo.png")
+            .toURI().toString());
     ImageView mpv = new ImageView(mp);
     mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.8));
     mpv.setPreserveRatio(true);
@@ -159,7 +160,7 @@ public class JoinScene extends Scene {
     });
     String test =
         "MCTS ist ein unglaublich starker KI spiler der alles zerstört falls er nicht aufgehalten wird ";
-    //InfoPaneCreator.addInfoPane(exit, hsc.getStage(), test, InfoPaneCreator.TOP);
+    // InfoPaneCreator.addInfoPane(exit, hsc.getStage(), test, InfoPaneCreator.TOP);
     return exit;
   }
 
@@ -188,8 +189,8 @@ public class JoinScene extends Scene {
     leftBox.getChildren().add(sessionText);
 
     leftBox.getChildren().add(createSearch());
-    
-    
+
+
     return leftBox;
   }
 
@@ -214,8 +215,8 @@ public class JoinScene extends Scene {
         .createObjectBinding(() -> Font.font(right.getWidth() / 18), right.widthProperty()));
     rightBox.getChildren().add(rightHeader);
     rightBox.getChildren().add(createSessionInfo(id, teams));
-    rightBox.getChildren().add(createButtonOption(id,ip,port));
-    
+    rightBox.getChildren().add(createButtonOption(id, ip, port));
+
 
     return rightBox;
   }
@@ -268,9 +269,9 @@ public class JoinScene extends Scene {
     search.fontProperty().bind(Bindings.createObjectBinding(
         () -> Font.font("Century Gothic", search.getHeight() * 0.4), search.heightProperty()));
     search.setOnAction(e -> {
-    	//hsc.getStage().setScene(new RemoteWaitingScene(null, this.getWidth(), this.getHeight()));
-//    	PopUpCreator popUpCreator = new PopUpCreator(this, root, hsc);
-//    	popUpCreator.createAiLevelPopUp(new PopUpPane(null, 0, 0), portText, serverIPText);
+      // hsc.getStage().setScene(new RemoteWaitingScene(null, this.getWidth(), this.getHeight()));
+      // PopUpCreator popUpCreator = new PopUpCreator(this, root, hsc);
+      // popUpCreator.createAiLevelPopUp(new PopUpPane(null, 0, 0), portText, serverIPText);
       try {
         ServerManager ser = new ServerManager(new CommLayer(),
             new ServerDetails(serverIPText.getText(), portText.getText()), sessionText.getText());
@@ -343,10 +344,12 @@ public class JoinScene extends Scene {
       double spacing = newVal.doubleValue() * 0.03;
       textBox.setSpacing(spacing);
     });
-    Text idtext = createInfoText("Session ID:  " + id, 80);
+    Text idtext = createInfoText("Session ID:  " + id, 35);
     textBox.getChildren().add(idtext);
 
-    Text teamText = createInfoText(teams + " players are waiting in the lobby!", 25);
+    String waitingString = (teams == 1) ? teams + " player is waiting in the lobby!"
+        : teams + " players are waiting in the lobby!";
+    Text teamText = createInfoText(waitingString, 25);
     textBox.getChildren().add(teamText);
     sessionInfoBox.getChildren().add(textBox);
 
@@ -390,32 +393,32 @@ public class JoinScene extends Scene {
       buttonBox.setVgap(spacing);
     });
     Button playerButton = createJoinButton("Join as Player");
-   playerButton.setOnAction(e -> {
-    this.root.getChildren().add(createJoinWindow(id, ip, port));
-   });
+    playerButton.setOnAction(e -> {
+      this.root.getChildren().add(createJoinWindow(id, ip, port));
+    });
     buttonBox.add(playerButton, 0, 0);
     Button aiButton = createJoinButton("Join as AI-Client");
     aiButton.setOnAction(e -> {
-    	AIClient aiClient = AIClientStepBuilder.newBuilder().enableRestLayer(false)
-    			.onRemoteHost(ip).onPort(port).aiPlayerSelector(AI.RANDOM, null).enableSaveGame(false)
-    			.gameData(id, "AI-Player").build();
-         right.getChildren().clear();
-         info.setText("Client hast joined!\n Waiting for the Game to start.");
-         right.getChildren().add(info);
-    	//    	Client client =
-//    	          ClientStepBuilder.newBuilder()
-//    	          .enableRestLayer(false)
-//    	          .onRemoteHost(ip)
-//    	          .onPort(port)
-//    	          .enableSaveGame(false)
-//    	          .enableAutoJoin(id, "teamname")
-//    	          .build();
+      AIClient aiClient = AIClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(ip)
+          .onPort(port).aiPlayerSelector(AI.RANDOM, null).enableSaveGame(false)
+          .gameData(id, "AI-Player").build();
+      right.getChildren().clear();
+      info.setText("Client hast joined!\n Waiting for the Game to start.");
+      right.getChildren().add(info);
+      // Client client =
+      // ClientStepBuilder.newBuilder()
+      // .enableRestLayer(false)
+      // .onRemoteHost(ip)
+      // .onPort(port)
+      // .enableSaveGame(false)
+      // .enableAutoJoin(id, "teamname")
+      // .build();
     });
     buttonBox.add(aiButton, 1, 0);
     return buttonBox;
 
   }
-  
+
   @Deprecated
   /**
    * This method creates the UI components for choosing an AI client
@@ -441,13 +444,14 @@ public class JoinScene extends Scene {
     childBox.getChildren().add(aiComboBox);
     return childBox;
   }
+
   /**
    * Generates a Window for submitting a map template in an editor scene.
    * 
    * @author aniemesc
    * @return StackPane for Submitting templates
    */
-  public StackPane createJoinWindow(String id,String ip,String port) {
+  public StackPane createJoinWindow(String id, String ip, String port) {
     PopUpPane popUp = new PopUpPane(this, 0.4, 0.4);
     VBox vbox = new VBox();
     vbox.setAlignment(Pos.TOP_CENTER);
@@ -455,7 +459,7 @@ public class JoinScene extends Scene {
     vbox.setSpacing(15);
     Text header = EditorScene.createHeaderText(vbox, "Enter a Team name!", 15);
     vbox.getChildren().add(header);
-    nameField = ComponentCreator.createNameField(vbox);  
+    nameField = ComponentCreator.createNameField(vbox);
     vbox.getChildren().add(nameField);
     HBox buttonBox = new HBox();
     buttonBox.setAlignment(Pos.CENTER);
@@ -474,40 +478,34 @@ public class JoinScene extends Scene {
         CretaeGameScreenV2.informationmustBeEntered(nameField, "custom-search-field",
             "custom-search-field");
         return;
-      } 
-      Client client =
-          ClientStepBuilder.newBuilder()
-          .enableRestLayer(false)
-          .onRemoteHost(ip)
-          .onPort(port)
-          .enableSaveGame(false)
-          .enableAutoJoin(id, "teamname")
-          .build();
+      }
+      Client client = ClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(ip)
+          .onPort(port).enableSaveGame(false).enableAutoJoin(id, "teamname").build();
       root.getChildren().remove(popUp);
       right.getChildren().clear();
       info.setText("Client hast joined!\n Waiting for the Game to start.");
       right.getChildren().add(info);
-      hsc.getStage().setScene(new RemoteWaitingScene(client, getWidth(), getHeight(),this.hsc)); 
-//      Button create = new Button("create");
-//      right.getChildren().add(create);
-//      create.setOnAction(e2 -> {
-//    	  hsc.setMainClient(client);
-//    	  hsc.switchToPlayGameScene(hsc.getStage());
-//      });
-      
+      hsc.getStage().setScene(new RemoteWaitingScene(client, getWidth(), getHeight(), this.hsc));
+      // Button create = new Button("create");
+      // right.getChildren().add(create);
+      // create.setOnAction(e2 -> {
+      // hsc.setMainClient(client);
+      // hsc.switchToPlayGameScene(hsc.getStage());
+      // });
+
     });
     Button cancelButton = createControlButton(vbox, "Cancel", "leave-button");
     cancelButton.setOnAction(e -> {
       root.getChildren().remove(popUp);
     });
-    buttonBox.getChildren().addAll(joinButton,cancelButton);
+    buttonBox.getChildren().addAll(joinButton, cancelButton);
     StackPane.setAlignment(buttonBox, Pos.BOTTOM_CENTER);
     vbox.getChildren().add(buttonBox);
     popUp.setContent(vbox);
     return popUp;
   }
-  
-  private Button createControlButton(VBox vBox,String label,String style) {
+
+  private Button createControlButton(VBox vBox, String label, String style) {
     Button joinButton = new Button(label);
     joinButton.getStyleClass().add(style);
     joinButton.prefWidthProperty().bind(vBox.widthProperty().multiply(0.25));
