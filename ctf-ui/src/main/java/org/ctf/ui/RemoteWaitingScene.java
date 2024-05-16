@@ -2,7 +2,9 @@ package org.ctf.ui;
 
 import org.ctf.shared.client.Client;
 import org.ctf.ui.controllers.RemoteWaitingThread;
-
+import javafx.animation.FadeTransition;
+import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -10,12 +12,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 public class RemoteWaitingScene extends Scene {
 	StackPane root;
 	Client client;
-	Text text = new Text("Test");
+	Text text;
 
 	public RemoteWaitingScene(Client client, double width, double height) {
 		super(new StackPane(), width, height);
@@ -51,7 +55,25 @@ public class RemoteWaitingScene extends Scene {
 			double margin = newV.doubleValue()*0.05;
 			VBox.setMargin(mpv, new Insets(margin,0,0,0));
 		});
-		mainBox.getChildren().add(text);
+		text = new Text("Please wait for the game to start.");
+		text.getStyleClass().add("custom-info-label");
+		text.fontProperty()
+        .bind(
+            Bindings.createObjectBinding(
+                () -> Font.font("Century Gothic", App.getStage().getWidth() / 50),
+                App.getStage().widthProperty()));
+		
+		
+		//text.setOpacity(0);
+//		FadeTransition startTransition = new FadeTransition(Duration.millis(1500), text);
+//	    startTransition.setFromValue(0.1);
+//	    startTransition.setToValue(1.0);
+//	    startTransition.setDelay(Duration.millis(2000));
+//	    startTransition.setAutoReverse(true); //
+//	    startTransition.setCycleCount(Timeline.INDEFINITE);
+//	    startTransition.play();
+	    StackPane.setAlignment(text, Pos.CENTER);
+	    root.getChildren().add(text);
 		root.getChildren().add(mainBox);
 		
 		

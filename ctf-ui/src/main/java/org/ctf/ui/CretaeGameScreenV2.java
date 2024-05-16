@@ -492,6 +492,7 @@ public class CretaeGameScreenV2 extends Scene {
     }
 	/**
 	 * 
+	 * @author Manuel Krakowski
 	 * @author aniemesc
 	 * @param vBox
 	 * @return

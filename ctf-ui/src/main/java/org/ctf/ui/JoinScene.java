@@ -1,5 +1,6 @@
 package org.ctf.ui;
 
+import java.io.File;
 import org.ctf.shared.client.AIClient;
 import org.ctf.shared.client.AIClientStepBuilder;
 import org.ctf.shared.client.Client;
@@ -7,6 +8,7 @@ import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.ui.controllers.RemoteWaitingThread;
 import org.ctf.ui.customobjects.PopUpPane;
@@ -107,8 +109,9 @@ public class JoinScene extends Scene {
    * @author aniemesc
    * @return ImageView that gets added to the scene
    */
-  private ImageView createHeader() {
-    Image mp = new Image(getClass().getResourceAsStream("multiplayerlogo.png"));
+  private ImageView createHeader() {  
+    Image mp = new Image(new File(Constants.toUIResources + "pictures" + File.separator + "multiplayerlogo.png")
+        .toURI().toString());
     ImageView mpv = new ImageView(mp);
     mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.8));
     mpv.setPreserveRatio(true);
@@ -266,28 +269,28 @@ public class JoinScene extends Scene {
         () -> Font.font("Century Gothic", search.getHeight() * 0.4), search.heightProperty()));
     search.setOnAction(e -> {
     	//hsc.getStage().setScene(new RemoteWaitingScene(null, this.getWidth(), this.getHeight()));
-    	PopUpCreator popUpCreator = new PopUpCreator(this, root, hsc);
-    	popUpCreator.createAiLevelPopUp(new PopUpPane(null, 0, 0), portText, serverIPText);
-//      try {
-//        ServerManager ser = new ServerManager(new CommLayer(),
-//            new ServerDetails(serverIPText.getText(), portText.getText()), sessionText.getText());
-//        if (!ser.isServerActive()) {
-//          info.setText(
-//              "The Server \n cannot be found!\n Please check the Server IP\n and select the right Port!");
-//        } else if (!ser.isSessionActive()) {
-//          info.setText("The Session is not active!\n" + "Please check your Session ID!");
-//        } else {
-//          right.getChildren().clear();
-//          right.getChildren().add(createRightContent(sessionText.getText(),
-//              ser.getCurrentNumberofTeams(), serverIPText.getText(), portText.getText()));
-//        }
-//      } catch (IllegalArgumentException e2) {
-//        // TODO: handle exception
-//        e2.printStackTrace();
-//        right.getChildren().clear();
-//        info.setText("Please enter a valid \n IP-adress and port!");
-//        right.getChildren().add(info);
-//      }
+//    	PopUpCreator popUpCreator = new PopUpCreator(this, root, hsc);
+//    	popUpCreator.createAiLevelPopUp(new PopUpPane(null, 0, 0), portText, serverIPText);
+      try {
+        ServerManager ser = new ServerManager(new CommLayer(),
+            new ServerDetails(serverIPText.getText(), portText.getText()), sessionText.getText());
+        if (!ser.isServerActive()) {
+          info.setText(
+              "The Server \n cannot be found!\n Please check the Server IP\n and select the right Port!");
+        } else if (!ser.isSessionActive()) {
+          info.setText("The Session is not active!\n" + "Please check your Session ID!");
+        } else {
+          right.getChildren().clear();
+          right.getChildren().add(createRightContent(sessionText.getText(),
+              ser.getCurrentNumberofTeams(), serverIPText.getText(), portText.getText()));
+        }
+      } catch (IllegalArgumentException e2) {
+        // TODO: handle exception
+        e2.printStackTrace();
+        right.getChildren().clear();
+        info.setText("Please enter a valid \n IP-adress and port!");
+        right.getChildren().add(info);
+      }
 
 
     });
@@ -394,7 +397,7 @@ public class JoinScene extends Scene {
     Button aiButton = createJoinButton("Join as AI-Client");
     aiButton.setOnAction(e -> {
     	AIClient aiClient = AIClientStepBuilder.newBuilder().enableRestLayer(false)
-    			.onRemoteHost(ip).onPort(port).aiPlayerSelector(AI.MCTS, null).enableSaveGame(false)
+    			.onRemoteHost(ip).onPort(port).aiPlayerSelector(AI.RANDOM, null).enableSaveGame(false)
     			.gameData(id, "AI-Player").build();
          right.getChildren().clear();
          info.setText("Client hast joined!\n Waiting for the Game to start.");
@@ -484,7 +487,7 @@ public class JoinScene extends Scene {
       right.getChildren().clear();
       info.setText("Client hast joined!\n Waiting for the Game to start.");
       right.getChildren().add(info);
-      //hsc.getStage().setScene(new RemoteWaitingScene(client, getWidth(), getHeight())); 
+      hsc.getStage().setScene(new RemoteWaitingScene(client, getWidth(), getHeight())); 
 //      Button create = new Button("create");
 //      right.getChildren().add(create);
 //      create.setOnAction(e2 -> {

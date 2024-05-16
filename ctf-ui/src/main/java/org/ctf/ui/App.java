@@ -169,7 +169,7 @@ public class App extends Application {
               pictureBox.setSpacing(size);
             });
     Image ctf = new Image(getClass().getResourceAsStream("CaptureTheFlag.png"));
-    ImageView ctfv = new ImageView(ctf);
+    ImageView ctfv = new ImageView(ctf); 
     ctfv.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.8));
     ctfv.setPreserveRatio(true);
     Image r2d2 = new Image(getClass().getResourceAsStream("R2D2.png"));
