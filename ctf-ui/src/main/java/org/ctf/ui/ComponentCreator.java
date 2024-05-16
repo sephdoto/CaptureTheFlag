@@ -242,8 +242,6 @@ public class ComponentCreator {
       box.getItems().add(st.toString());
     }
     box.setValue(Constants.theme.toString());
-    
-    
    
     vbox.widthProperty().addListener((obs, oldVal, newVal) -> {
       double size = newVal.doubleValue() * 0.035;
@@ -333,11 +331,13 @@ public class ComponentCreator {
   private void addSaveListener(Button exit, Slider musicSlider, Slider soundSlider, PopUpPane popUp,
       StackPane root,ComboBox<String> box) {
     exit.setOnAction(e -> {
-      root.getChildren().remove(popUp);
+     
       MusicPlayer.setMusicVolume(musicSlider.getValue());
       Constants.soundVolume = soundSlider.getValue();
       Constants.theme = Themes.valueOf(box.getValue());
       SettingsSetter.saveCustomSettings();
+      App.chagngeHomescreenBackground();
+      root.getChildren().remove(popUp);
       
       
     });

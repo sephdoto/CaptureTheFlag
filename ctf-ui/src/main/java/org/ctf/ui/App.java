@@ -14,6 +14,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -42,6 +47,7 @@ public class App extends Application {
   HomeSceneController ssc;
   FadeTransition startTransition;
   Process process;
+  static StackPane wrapper;
 
   public void startServer(String port){
     try {
@@ -180,8 +186,18 @@ public class App extends Application {
     StackPane.setAlignment(vbox, Pos.TOP_CENTER);
     vbox.setAlignment(Pos.TOP_CENTER);
     vbox.setMaxWidth(50);
-    root.getChildren().addAll(vw, vbox);
+    App.wrapper = new StackPane();
+    App.chagngeHomescreenBackground();
+    root.getChildren().addAll(wrapper, vbox);
     return root;
+  }
+  
+  public static void chagngeHomescreenBackground() {
+    Image bImage = ImageCreator.loadThemedImage("homescreen");
+    BackgroundSize backgroundSize = new BackgroundSize(1, 1, true, true, true, true);
+    BackgroundImage background = new BackgroundImage(bImage, BackgroundRepeat.NO_REPEAT,
+        BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
+    App.wrapper.setBackground(new Background(background));
   }
 
   /**
