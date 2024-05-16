@@ -142,25 +142,27 @@ public class PlayGameScreenV2 extends Scene {
 	}
 	
 	public void redrawGrid(GameState state) {
-		if(state == null) {
-		showMapBox.getChildren().add(new Label("hallo"));
+		if (state == null) {
+			showMapBox.getChildren().add(new Label("hallo"));
 		} else {
 			showMapBox.getChildren().clear();
-			if(gm != null) {
+			if (gm != null) {
 				CreateGameController.setFigures(gm.getFigures());
 			}
 			gm = new GamePane(state);
 			gm.enableBaseColors(this);
 			showMapBox.getChildren().add(gm);
-			if(isRemote) {
-				if(mainClient.isItMyTurn() && ! (mainClient instanceof AIClient) ) {
+			if (isRemote) {
+				if (mainClient.isItMyTurn() && !(mainClient instanceof AIClient)) {
 					Game.initializeGame(gm, mainClient);
 				}
-			}
-			for(Client  local: CreateGameController.getLocalHumanClients() ) {
-				System.out.println("Local: " + local.getTeamID());
-				if (local.isItMyTurn()) {
-					Game.initializeGame(gm,local);
+			} else {
+
+				for (Client local : CreateGameController.getLocalHumanClients()) {
+					System.out.println("Local: " + local.getTeamID());
+					if (local.isItMyTurn()) {
+						Game.initializeGame(gm, local);
+					}
 				}
 			}
 		}

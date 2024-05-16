@@ -322,6 +322,7 @@ public class WaitingScene extends Scene {
     content.putString(text);
     clipboard.setContent(content);
   }
+  
 
   private void showClipInfo(String copyText) {
     clipboardInfo.setText("Copied " + copyText + " to clipboard");
@@ -610,7 +611,7 @@ public class WaitingScene extends Scene {
                 search.heightProperty()));
     search.setOnAction(
         e -> {
-          hsc.switchToPlayGameScene(App.getStage(),CreateGameController.getMainClient());
+          hsc.switchToPlayGameScene(App.getStage(),CreateGameController.getMainClient(), false);
           // hsc.switchToTestScene(App.getStage());
         });
 
