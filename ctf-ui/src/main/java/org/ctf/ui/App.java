@@ -43,40 +43,11 @@ public class App extends Application {
   FadeTransition startTransition;
   Process process;
 
-  public void start(Stage stage) {
-    mainStage = stage;
-    ssc = new HomeSceneController(mainStage);
-    SettingsSetter.loadCustomSettings();
-    ImageLoader.loadImages();
-    Scene lockscreen = new Scene(createLockScreen(), 1000, 500);
-    startScene = new Scene(createParent());
-    startScene.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
-    lockscreen.setOnKeyPressed(
-        e -> {
-          mainStage.setScene(startScene);
-          backgroundMusic.startShuffle();
-          startTransition.stop();
-        });
-    lockscreen.setOnMousePressed(
-        e -> {
-          mainStage.setScene(startScene);
-          backgroundMusic.startShuffle();
-          startTransition.stop();
-        });
-    stage.setTitle("Capture The Flag Team 14");
-    stage.setScene(lockscreen);
-    backgroundMusic = new MusicPlayer();
-    stage.setOnCloseRequest(
-        e -> {
-          process.destroy();
-          System.exit(0);
-        });
-    SettingsSetter.giveMeTheAux(backgroundMusic);
-    stage.show();
+  public void startServer(String port){
     try {
       ProcessBuilder processBuilder =
           new ProcessBuilder(
-              "java", "-jar", Constants.toUIResources + "server.jar", "--server.port=8888");
+              "java", "-jar", Constants.toUIResources + "server.jar", "--server.port="+ port);
       processBuilder.redirectErrorStream(true);
       process = processBuilder.start();
       System.out.println(process.isAlive());
@@ -99,6 +70,47 @@ public class App extends Application {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  public void closeServer(){
+    this.process.destroy();
+    System.exit(0);
+  }
+
+  public void start(Stage stage) {
+    mainStage = stage;
+    Parameters params = getParameters();
+        String port = params.getNamed().get("port");
+    ssc = new HomeSceneController(mainStage);
+    SettingsSetter.loadCustomSettings();
+    ImageLoader.loadImages();
+    Scene lockscreen = new Scene(createLockScreen(), 1000, 500);
+    startScene = new Scene(createParent());
+    startScene.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
+    lockscreen.setOnKeyPressed(
+        e -> {
+          mainStage.setScene(startScene);
+          backgroundMusic.startShuffle();
+          startTransition.stop();
+        });
+    lockscreen.setOnMousePressed(
+        e -> {
+          mainStage.setScene(startScene);
+          backgroundMusic.startShuffle();
+          startTransition.stop();
+        });
+    stage.setTitle("Capture The Flag Team 14");
+    stage.setScene(lockscreen);
+    startServer("9999");
+    backgroundMusic = new MusicPlayer();
+    stage.setOnCloseRequest(
+        e -> {
+          this.process.destroy();
+          System.exit(0);
+        });
+    SettingsSetter.giveMeTheAux(backgroundMusic);
+    stage.show();
+    
   }
 
   /**
