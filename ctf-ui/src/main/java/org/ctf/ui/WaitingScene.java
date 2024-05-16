@@ -1,5 +1,6 @@
 package org.ctf.ui;
 
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -56,6 +57,9 @@ public class WaitingScene extends Scene {
   Label howManyTeams;
   Label clipboardInfo;
   GamePane gm;
+  HashMap<Integer, Label> teamNames = new HashMap<Integer, Label>();
+  HashMap<Integer, Label> teamTypes = new HashMap<Integer, Label>();
+  HashMap<Integer, HBox> colors = new HashMap<Integer, HBox>();
   private ObjectProperty<Color> sceneColorProperty = new SimpleObjectProperty<>(Color.BLUE);
   private ObjectProperty<Font> waitigFontSize = new SimpleObjectProperty<Font>(Font.getDefault());
   private ObjectProperty<Font> serverInfoHeaderFontSize =
@@ -102,7 +106,7 @@ public class WaitingScene extends Scene {
     this.getStylesheets().add(getClass().getResource("ComboBox.css").toExternalForm());
     this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
     createLayout();
-    currentNumber = 1;
+    currentNumber = 0;
 	scheduler = Executors.newScheduledThreadPool(1);
 	scheduler.scheduleAtFixedRate(updateTask, 0, 1, TimeUnit.SECONDS);
   }
@@ -202,10 +206,37 @@ public class WaitingScene extends Scene {
     scroller.setHbarPolicy(ScrollBarPolicy.NEVER);
     VBox content = new VBox();
     for (int i = 0; i < CreateGameController.getMaxNumberofTeams(); i++) {
-      content.getChildren().add(createNormalRow(scroller));
+      //content.getChildren().add(createNormalRow(scroller));
+    	  HBox oneRow = new HBox();
+    	    oneRow.prefHeightProperty().bind(this.heightProperty().multiply(0.1));
+    	    oneRow.prefWidthProperty().bind(parent.widthProperty());
+    	    HBox colorBox = new HBox();
+    	    colors.put(i, colorBox);
+    	    Label defaultColorLabel = new Label("?");
+    	    defaultColorLabel.fontProperty().bind(tableHeader);
+    	    colorBox.setAlignment(Pos.CENTER);
+    	    colorBox.setStyle("-fx-border-color: black");
+    	    colorBox.prefWidthProperty().bind(oneRow.widthProperty().divide(3));
+    	    colorBox.getChildren().add(defaultColorLabel);
+    	    Label l2 = createHeaderLabel("?", oneRow);
+    	    teamNames.put(i, l2);
+    	    l2.prefHeightProperty().bind(this.heightProperty().multiply(0.1));
+    	    Label l3 = createHeaderLabel("?", oneRow);
+    	    teamTypes.put(i, l3);
+    	    l3.prefHeightProperty().bind(this.heightProperty().multiply(0.1));
+    	    oneRow.getChildren().addAll(colorBox, l2, l3);
+    	    content.getChildren().add(oneRow);
     }
     scroller.setContent(content);
     return scroller;
+  }
+  
+  private Pane createColorRec(String color, HBox colorBox) {
+	  Pane colorRec = new Pane();
+	    colorRec.setStyle("-fx-background-color: " + color);
+	    colorRec.prefWidthProperty().bind(Bindings.divide(colorBox.widthProperty(), 2.5));
+	    colorRec.maxHeightProperty().bind(Bindings.divide(colorBox.heightProperty(), 2));
+	    return colorRec;
   }
 
   private HBox createHeaderRow(VBox parent) {
@@ -239,7 +270,7 @@ public class WaitingScene extends Scene {
     colorBox.setStyle("-fx-border-color: black");
     colorBox.prefWidthProperty().bind(oneRow.widthProperty().divide(3));
     colorBox.getChildren().add(colorRec);
-    Label l2 = createHeaderLabel("Teamname", oneRow);
+    Label l2 = createHeaderLabel("Team", oneRow);
     l2.prefHeightProperty().bind(this.heightProperty().multiply(0.1));
     Label l3 = createHeaderLabel("Type", oneRow);
     l3.prefHeightProperty().bind(this.heightProperty().multiply(0.1));
@@ -449,6 +480,13 @@ public class WaitingScene extends Scene {
 
   public void setCUrrentTeams(int i) {
     curenntTeams.setText("Current Ts:" + String.valueOf(i));
+    if((i-1) >= 0){
+    HBox toAdd = colors.get(i-1);
+    //String color = CreateGameController.getMainClient().getTeams()[i-1].getColor();
+    toAdd.getChildren().clear();
+    toAdd.getChildren().add(createColorRec("blue", toAdd));
+    
+    }
   }
 
   //TODO Call this before moving away from the scene
