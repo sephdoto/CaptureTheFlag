@@ -610,7 +610,7 @@ public class WaitingScene extends Scene {
                 search.heightProperty()));
     search.setOnAction(
         e -> {
-          hsc.switchToPlayGameScene(App.getStage());
+          hsc.switchToPlayGameScene(App.getStage(),CreateGameController.getMainClient());
           // hsc.switchToTestScene(App.getStage());
         });
 
