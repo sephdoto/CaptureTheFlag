@@ -526,8 +526,7 @@ public class Client implements GameClientInterface {
   /**
    * Initializes {@link allTeamNames} if not done yet, then normalizes the team IDs.
    * The Server replaces the teamIDs, so here they get reset to ints 0-n, representing their placement in the array.
-   * The currents Team int id is missing, so the ID in gameState starts with "_" instead of the int ID.
-   * This gets recognized and the if the name matches this clients name {@link myTeam} is set true.
+   * If the team name matches this clients name {@link myTeam} is set to the corresponding ID.
    *
    * @param gameState the gameState to get normalized
    * @author rsyed, sistumpf
@@ -539,7 +538,7 @@ public class Client implements GameClientInterface {
     for(int teamID=0; teamID<gameState.getTeams().length; teamID++) {
       Team team = gameState.getTeams()[teamID];
       if(team == null) continue;
-      if(team.getId().startsWith("_")) this.myTeam = teamID;
+      
       team.setId("" + teamID);
     }
   }
@@ -555,6 +554,9 @@ public class Client implements GameClientInterface {
 
     for(int teamID=0; teamID<gameState.getTeams().length; teamID++) {
       String name = gameState.getTeams()[teamID].getId();
+      if(this.requestedTeamName.equals(name.substring(name.indexOf("_")+1))) 
+        this.myTeam = teamID;
+      
       allTeamNames[teamID] = name.substring(name.indexOf("_")+1);
     }
   }

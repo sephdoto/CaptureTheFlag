@@ -14,12 +14,14 @@ import java.time.Duration;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -277,7 +279,7 @@ public class GameEngine implements Game {
   /**
    * Replaces the TeamIDs with the Pattern:
    * (IntegerID) + ("_") + (Name)
-   * Only the currentTeams ID is missing, so the corresponding client knows it's his turn.
+   * It is assumed that each Name only exists once.
    * 
    * @author sistumpf
    * @param original the GameState which's deep copy gets altered and returned
@@ -287,11 +289,10 @@ public class GameEngine implements Game {
     GameState returnState = EngineTools.deepCopyGameState(original);
     
     Stream.of(returnState.getTeams())
+    .filter(Objects::nonNull)
     .forEach(
         team -> team.setId(team.getId() + "_" + integerToTeam.get(Integer.parseInt(team.getId())))
         );
-    Team currentTeam = returnState.getTeams()[returnState.getCurrentTeam()];
-    currentTeam.setId(currentTeam.getId().substring(currentTeam.getId().indexOf("_")));
     
     return returnState;
   }
@@ -689,13 +690,16 @@ public class GameEngine implements Game {
    */
   private static int hashTeam(Team team) {
     StringBuilder sb = new StringBuilder()
-        .append(team.getFlags())
-        .append(team.getId())
-        .append(team.getBase()[0] + team.getBase()[1]);
-    for(Piece piece : team.getPieces())
-      sb.append(piece.getId())
-      .append(piece.getPosition()[0] + piece.getPosition()[1])
-      .append(piece.getDescription().getType());
+        .append(
+            new Random(team.getId().hashCode() * 256).nextInt(256)
+            )
+        .append(
+            new Random(team.getPieces().length * 256).nextInt(256)
+            );
+    Stream.of(team.getPieces()).forEach(
+        piece -> sb.append(
+            new Random(piece.getId().hashCode()).nextInt(256)
+            ));
     return sb.toString().hashCode();
   }
   
