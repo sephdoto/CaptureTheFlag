@@ -698,6 +698,10 @@ public class Client implements GameClientInterface {
                   if (enableLogging) {
                     analyzer.addMove(getCurrentState().getLastMove());
                   }
+                  //TODO Experimental Code...Look here if something breaks
+                  if(isGameOver()){
+                    scheduler.shutdown();
+                  }
                   Thread.sleep(this.refreshTime);
                 } catch (InterruptedException e) {
                   throw new Error("Something went wrong in the Client Thread");

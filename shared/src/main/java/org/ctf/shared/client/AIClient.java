@@ -22,34 +22,28 @@ import org.ctf.shared.state.data.exceptions.SessionNotFound;
  * @author rsyed
  */
 public class AIClient extends Client {
+  //These two vars controls the client behaviour
+  private int aiClientRefreshTime = 1;
+  private int controllerThinkingTime = 3;
 
   private AI selectedAI;
   private AIConfig aiConfig;
+  private AIController controller;
   private boolean enableLogging;
   private volatile GameSaveHandler analyzer;
   private String gameIDString;
   private String constructorSetTeamName;
-  private int aiClientRefreshTime = 1;
-  private int controllerThinkingTime = 3;
   private boolean saveToken = true;
   ScheduledExecutorService aiClientScheduler = Executors.newScheduledThreadPool(2);
 
   Runnable aiClientJoinTask =
-      () -> 
-        joinExistingGame(
-            serverInfo.getHost(), serverInfo.getPort(), gameIDString, constructorSetTeamName);
+      () ->
+          joinExistingGame(
+              serverInfo.getHost(), serverInfo.getPort(), gameIDString, constructorSetTeamName);
 
   Runnable playTask =
       () -> {
         try {
-          getStateFromServer();
-
-          if (moveTimeLimitedGameTrigger) {
-            controllerThinkingTime = getRemainingMoveTimeInSeconds() - 1;
-            //  logger.info("We had " + controllerThinkingTime + " to think");
-          }
-          AIController controller =
-              new AIController(getCurrentState(), selectedAI, aiConfig, controllerThinkingTime);
           pullData();
           controller.update(getCurrentState());
           if (enableLogging) {
@@ -62,16 +56,18 @@ public class AIClient extends Client {
           controller.update(getCurrentState());
 
         } catch (NoMovesLeftException | InvalidShapeException e) {
+          aiClientScheduler.shutdown();
           throw new UnknownError("Games most likely over");
         } catch (GameOver e) {
           if (saveToken && enableLogging) {
             this.analyzer.writeOut();
             saveToken = false;
           } else {
+            aiClientScheduler.shutdown();
             throw new GameOver();
           }
         } catch (NullPointerException e) {
-           logger.info("nullpointer exception");
+          logger.info("Nullpointer in playTask");
         }
       };
 
@@ -97,10 +93,9 @@ public class AIClient extends Client {
     this.selectedAI = selected;
     this.aiConfig = aiConfig;
     this.enableLogging = enableLogging;
-    if(enableLogging){
+    if (enableLogging) {
       this.analyzer = new GameSaveHandler();
     }
-    
   }
 
   /**
@@ -192,13 +187,18 @@ public class AIClient extends Client {
               while (running) {
                 try {
                   Long sleep = 1000L;
-                  Thread.sleep(sleep);
                   getSessionFromServer(); // Gets Session from server
                   if (getStartDate() != null) {
+                    getStateFromServer();
                     if (enableLogging) {
-                      getStateFromServer();
                       analyzer.addGameState(currentState);
                     }
+                    if (moveTimeLimitedGameTrigger) {
+                      controllerThinkingTime = getRemainingMoveTimeInSeconds() - 1;
+                    }
+                    controller =
+                        new AIController(
+                            getCurrentState(), selectedAI, aiConfig, controllerThinkingTime);
                     aiPlayerStart();
                     running = false;
                   }
