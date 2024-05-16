@@ -40,6 +40,8 @@ import javafx.util.Duration;
 import org.ctf.ui.customobjects.BaseRep;
 import org.ctf.ui.customobjects.CostumFigurePain;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
+
 public class WaitingScene extends Scene {
   // Executor Service
   private ScheduledExecutorService scheduler;
@@ -68,20 +70,28 @@ public class WaitingScene extends Scene {
       new SimpleObjectProperty<Font>(Font.getDefault());
   private ObjectProperty<Font> tableHeader = new SimpleObjectProperty<Font>(Font.getDefault());
 
-  Runnable updateTask =
-      () -> {
-        try {
-       	 if(CreateGameController.getServerManager().getCurrentNumberofTeams() != currentNumber) {
-				   currentNumber = CreateGameController.getServerManager().getCurrentNumberofTeams();
-				   Platform.runLater(() -> {
-					   this.setCUrrentTeams(currentNumber);
-				        });
-				 
-			 }
-        } catch (Exception e) {
+	Runnable updateTask = () -> {
+		try {
+//			if (CreateGameController.getMainClient() != null) {
+//				if (CreateGameController.getMainClient().isGameStarted()) {
+//					System.out.println("Game has starteeeeeet");
+//					scheduler.shutdown();
+//					hsc.switchToPlayGameScene(hsc.getStage());
+//					
+//				}
+//			}
+			if (CreateGameController.getServerManager().getCurrentNumberofTeams() != currentNumber) {
+				currentNumber = CreateGameController.getServerManager().getCurrentNumberofTeams();
 
-        }
-      };
+				Platform.runLater(() -> {
+					this.setCUrrentTeams(currentNumber);
+				});
+
+			}
+		} catch (Exception e) {
+
+		}
+	};
 
   public WaitingScene(HomeSceneController hsc, double width, double height) {
     super(new StackPane(), width, height);
@@ -89,6 +99,7 @@ public class WaitingScene extends Scene {
     manageFontSizes();
     this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
     this.root = (StackPane) this.getRoot();
+    this.getStylesheets().add(getClass().getResource("ComboBox.css").toExternalForm());
     this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
     createLayout();
     currentNumber = 1;
@@ -393,6 +404,10 @@ public class WaitingScene extends Scene {
     button.setContentDisplay(ContentDisplay.RIGHT);
     vw.fitWidthProperty().bind(button.widthProperty().divide(8));
     vw.setPreserveRatio(true);
+    button.setOnAction(e -> {
+		PopUpCreatorEnterTeamName popi = new PopUpCreatorEnterTeamName(this, root, null, hsc,false,false);
+		popi.createEnterNamePopUp();
+	});
     button.setMaxWidth(Double.MAX_VALUE);
     return button;
   }
@@ -407,6 +422,10 @@ public class WaitingScene extends Scene {
     button.setContentDisplay(ContentDisplay.RIGHT);
     vw.fitWidthProperty().bind(button.widthProperty().divide(8));
     vw.setPreserveRatio(true);
+    button.setOnAction(e -> {
+		PopUpCreator aiPopCreator = new PopUpCreator(this, root, hsc);
+		aiPopCreator.createAiLevelPopUp(null, null, null);
+	});
     button.setMaxWidth(Double.MAX_VALUE);
     return button;
   }

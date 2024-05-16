@@ -578,7 +578,9 @@ public class CretaeGameScreenV2 extends Scene {
 		vw.setPreserveRatio(true);
 		button.setMaxWidth(Double.MAX_VALUE);
 		button.setOnAction(e -> {
-			createEnterNamePopUp();
+			//createEnterNamePopUp();
+			PopUpCreatorEnterTeamName popi = new PopUpCreatorEnterTeamName(this, root, aiOrHumanPop, hsc,true,false);
+			popi.createEnterNamePopUp();
 		});
 		return button;
 	}

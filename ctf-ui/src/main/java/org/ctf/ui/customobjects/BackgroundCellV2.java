@@ -28,6 +28,7 @@ public class BackgroundCellV2 extends Pane {
 	//public Game game;
 	public StackPane base;
 	CostumFigurePain child;
+	BaseRep teamBase;
 	Color testColor;
 
 	public BackgroundCellV2(int x, int y) {
@@ -101,6 +102,7 @@ public class BackgroundCellV2 extends Pane {
 		NumberBinding binding = Bindings.multiply(widthProperty(), 0.5);
 		NumberBinding roundSize = Bindings.createIntegerBinding(() ->  binding.intValue(), binding);
 		occupied = true;
+		teamBase = r;
 		BaseRep basis = r;
 		basis.maxWidthProperty().bind(roundSize);
 		basis.maxHeightProperty().bind(roundSize);
@@ -110,6 +112,14 @@ public class BackgroundCellV2 extends Pane {
 	
 	
 	
+	public BaseRep getTeamBase() {
+		return teamBase;
+	}
+
+	public void setTeamBase(BaseRep teamBase) {
+		this.teamBase = teamBase;
+	}
+
 	public void showattackCircle() {
 		this.setStyle("-fx-background-color: rgb(255, 0, 0, 0.2);" + "-fx-border-color: red; " + "-fx-border-width: 1.2px");
 		//this.setStyle("-fx-background-color: red;");
@@ -121,7 +131,7 @@ public class BackgroundCellV2 extends Pane {
 	}
 	
 	public void showLastMove() {
-		this.setStyle("-fx-background-color: rgb(255, 0, 0, 0.2);" + "-fx-border-color: blue; " + "-fx-border-width: 1.2px");
+		this.setStyle("-fx-background-color: rgb(0, 0, 255, 0.2);" + "-fx-border-color: blue; " + "-fx-border-width: 1.2px");
 	}
 	
 	public void testCircle() {
@@ -189,6 +199,22 @@ public class BackgroundCellV2 extends Pane {
 		this.getChildren().add(base);
 	}
 	
+
+	public int getX() {
+		return x;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
 
 	public void performClickOnCell() {
 			int[] xk = { x, y };

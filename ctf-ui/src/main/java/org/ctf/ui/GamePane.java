@@ -129,9 +129,15 @@ public class GamePane extends HBox{
 	private void showLastMove() {
 		if (state.getLastMove() != null && state.getLastMove().getNewPosition() != null) {
 			Move lastMove = state.getLastMove();
-			int x = lastMove.getNewPosition()[0];
-			int y = lastMove.getNewPosition()[1];
-			cells.get(generateKey(x, y)).showLastMove();
+			int xNewPos = lastMove.getNewPosition()[0];
+			int yNewPos = lastMove.getNewPosition()[1];
+			cells.get(generateKey(xNewPos, yNewPos)).showLastMove();
+			if(CreateGameController.getLastFigures() != null) {
+			CostumFigurePain old = CreateGameController.getLastFigures().get(lastMove.getPieceId());
+			int xOldPosX = old.getPosX();
+			int oldPosY = old.getPosY();
+			cells.get(generateKey(xOldPosX, oldPosY)).showLastMove();
+			}
 		}
 		
 		
@@ -230,18 +236,17 @@ public class GamePane extends HBox{
 			int baseX = currenTeam.getBase()[0];
 			int baseY = currenTeam.getBase()[1];
 			String teamColor = currenTeam.getColor();
-			BaseRep b = new BaseRep(currenTeam.getFlags(),teamColor, currenTeam.getId());
+			BaseRep b = new BaseRep(currenTeam.getFlags(),teamColor, currenTeam.getId(), cells.get(generateKey(baseX, baseY)));
 			bases.put(i, b);
 			cells.get(generateKey(baseX, baseY)).addBasis(b);
 			Piece[] pieces = currenTeam.getPieces();
 			for(Piece piece: pieces) {
 				CostumFigurePain pieceRep = new CostumFigurePain(piece);
-//				if ( hsc.playGameScreenV2 !=null) {
-//					pieceRep.showTeamColorWhenSelecting(hsc.playGameScreenV2.colors.get(piece.getTeamId()));
-//				}else {
-//					pieceRep.showTeamColor("blue");//
-//				}
-				pieceRep.showTeamColor(teamColor);
+				if ( !CreateGameController.getColors().isEmpty()) {
+					pieceRep.showTeamColorWhenSelecting(CreateGameController.getColors().get(piece.getTeamId()));
+				}else {
+					pieceRep.showTeamColor(teamColor);//
+				}
 			figures.put(piece.getId(), pieceRep);
 				//allFigures.add(pieceRep);
 				int x = piece.getPosition()[0];

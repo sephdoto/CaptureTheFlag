@@ -128,6 +128,7 @@ public class HomeSceneController {
 		//t = new TestThread(this, serverManager);
 		//t.start();
 		//CreateGameController.startWaitingLobbyThread();
+		CreateGameController.initColorHashMap();
 	}
 	
 	public void switchToPlayGameScene(Stage stage) {
@@ -138,6 +139,7 @@ public class HomeSceneController {
 //		}
 		//GameStatePuller g = new GameStatePuller(CreateGameController.getMainClient(), this);
 		//g.start();
+		
 		stage.setFullScreen(true);
 	}
 

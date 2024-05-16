@@ -2,6 +2,7 @@ package org.ctf.ui;
 import java.util.HashMap;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.constants.Descriptions;
+import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.AIConfigs;
 import org.ctf.ui.customobjects.ButtonPane;
 import org.ctf.ui.customobjects.PopUpPane;
@@ -36,8 +37,9 @@ public class PopUpCreator {
 	private PopUpPane aiLevelPopUpPane;
 	private PopUpPane aiorHumanpopup;
 	private Scene scene;
-	private PopUpPane aiconfig;
+	private PopUpPane aiconfigPopUp;
 	private AIConfig defaultConfig;
+	private AI aitype;
 	PopUpPane saveConfig;
 	private HomeSceneController hsc;
 	private String defaultAiName;
@@ -96,10 +98,14 @@ public class PopUpCreator {
 	 * @return PopUpPane that should be shown
 	 */
 	public PopUpPane createAiLevelPopUp(PopUpPane aiOrHuman, TextField portText, TextField serverIPText) {
+		if(aiOrHuman!= null) {
 		aiorHumanpopup = aiOrHuman;
 		root.getChildren().remove(aiorHumanpopup);
+		}
+		if(portText != null && serverIPText != null) {
 		portText.setDisable(true);
 		serverIPText.setDisable(true);
+		}
 		aiLevelPopUpPane = new PopUpPane(scene, 0.6, 0.4);
 		VBox top = new VBox();
 		top.heightProperty().addListener((obs, oldVal, newVal) -> {
@@ -155,8 +161,12 @@ public class PopUpCreator {
 		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
 		exit.setOnAction(e -> {
+			if(aiorHumanpopup != null) {
 			root.getChildren().remove(aiLevelPopUpPane);
 			root.getChildren().add(aiorHumanpopup);
+			} else {
+				root.getChildren().remove(aiLevelPopUpPane);
+			}
 		});
 		return exit;
 	}
@@ -200,7 +210,9 @@ public class PopUpCreator {
 			root.getChildren().add(createConfigPane(1, 1,null));			
 		});
 		pane.getLoadButton().setOnAction(e -> {
+			if(aiorHumanpopup!= null) {
 			root.getChildren().remove(aiorHumanpopup);
+			}
 			root.getChildren().remove(aiLevelPopUpPane);
 			root.getChildren().add(ComponentCreator.createAIWindow(this));
 		});
@@ -233,7 +245,7 @@ public class PopUpCreator {
 		}
 		defaultConfig = new AIConfig();
 		createConfigMaps();
-		aiconfig = new PopUpPane(scene, widht, hight);
+		aiconfigPopUp = new PopUpPane(scene, widht, hight);
 		StackPane configRoot = new StackPane();
 		configRoot.getChildren().add(createBackgroundImage(configRoot));
 		configRoot.getStyleClass().add("join-root");
@@ -249,7 +261,7 @@ public class PopUpCreator {
 		VBox leftColumn = createColumnVbox(topBox, 0.45);
 		VBox rightColmn = createColumnVbox(topBox, 0.45);
 		StackPane right = createContentStackPane(0.45, 0.67);
-		aiconfig.widthProperty().addListener((observable, oldValue, newValue) -> {
+		aiconfigPopUp.widthProperty().addListener((observable, oldValue, newValue) -> {
 			double newPadding = newValue.doubleValue() * 0.02;
 			left.setPadding(new Insets(newPadding));
 			right.setPadding(new Insets(newPadding));
@@ -270,8 +282,8 @@ public class PopUpCreator {
 		
 		mainBox.getChildren().add(buttomBox);
 		configRoot.getChildren().add(mainBox);
-		aiconfig.setContent(configRoot);
-		return aiconfig;
+		aiconfigPopUp.setContent(configRoot);
+		return aiconfigPopUp;
 	}
 
 	/**
@@ -317,9 +329,9 @@ public class PopUpCreator {
 	private ImageView createHeader() {
 		Image mp = new Image(getClass().getResourceAsStream("aiGenerator.png"));
 		ImageView mpv = new ImageView(mp);
-		mpv.fitWidthProperty().bind(aiconfig.widthProperty().multiply(0.6));
+		mpv.fitWidthProperty().bind(aiconfigPopUp.widthProperty().multiply(0.6));
 		mpv.setPreserveRatio(true);
-		mpv.fitHeightProperty().bind(aiconfig.heightProperty().multiply(0.08));
+		mpv.fitHeightProperty().bind(aiconfigPopUp.heightProperty().multiply(0.08));
 		return mpv;
 	}
 
@@ -331,7 +343,7 @@ public class PopUpCreator {
 	private HBox createMiddleHBox() {
 		
 		HBox sep = new HBox();
-		sep.prefHeightProperty().bind(aiconfig.heightProperty().multiply(0.65));
+		sep.prefHeightProperty().bind(aiconfigPopUp.heightProperty().multiply(0.65));
 		sep.setAlignment(Pos.CENTER);
 		sep.setSpacing(50);
 		sep.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -402,8 +414,8 @@ public class PopUpCreator {
 		pane.setAlignment(Pos.CENTER);
 		pane.getStyleClass().add("option-pane");
 		pane.setPrefSize(250, 250);
-		pane.prefWidthProperty().bind(aiconfig.widthProperty().multiply(relWidth));
-		pane.prefHeightProperty().bind(aiconfig.heightProperty().multiply(relHeight)); // maybe change aiconfig to
+		pane.prefWidthProperty().bind(aiconfigPopUp.widthProperty().multiply(relWidth));
+		pane.prefHeightProperty().bind(aiconfigPopUp.heightProperty().multiply(relHeight)); // maybe change aiconfig to
 																						// parent here to make resizing
 																						// more fluent
 		return pane;
@@ -681,7 +693,7 @@ public class PopUpCreator {
 		HBox buttonBox = new HBox();
 		buttonBox.setAlignment(Pos.TOP_CENTER);
 		buttonBox.setSpacing(50);
-		aiconfig.widthProperty().addListener((observable, oldValue, newValue) -> {
+		aiconfigPopUp.widthProperty().addListener((observable, oldValue, newValue) -> {
 			double newSpacing = newValue.doubleValue() * 0.05;
 			buttonBox.setSpacing(newSpacing);
 		});
@@ -692,7 +704,7 @@ public class PopUpCreator {
 
 	private void performLeave(Button b) {
 		b.setOnAction(e -> {
-			root.getChildren().remove(aiconfig);
+			root.getChildren().remove(aiconfigPopUp);
 			root.getChildren().add(aiLevelPopUpPane);
 		});
 	}
@@ -706,9 +718,17 @@ public class PopUpCreator {
 	private void performPlay(Button b) {
 		b.setOnAction(e -> {
 			// ADD COnfig Starting Here
-			hsc.setTeamName(defaultAiName);
-			hsc.createHumanClient();
-			hsc.switchToWaitGameScene(App.getStage());
+			if(aiorHumanpopup == null) {
+				PopUpCreatorEnterTeamName teamNamePopup = new PopUpCreatorEnterTeamName(scene, root, aiconfigPopUp, hsc, false, true);
+				teamNamePopup.setConfig(defaultConfig);
+				teamNamePopup.createEnterNamePopUp();
+				
+
+			}else {
+				PopUpCreatorEnterTeamName teamNamePopup = new PopUpCreatorEnterTeamName(scene, root, aiconfigPopUp, hsc, true, true);
+				teamNamePopup.setConfig(defaultConfig);
+				teamNamePopup.createEnterNamePopUp();
+			}
 		});
 	}
 	
@@ -745,7 +765,7 @@ public class PopUpCreator {
 	
 	private void createSaveConfigPopUp() {
 		saveConfig = new PopUpPane(scene, 0.55, 0.4);
-		root.getChildren().remove(aiconfig);
+		root.getChildren().remove(aiconfigPopUp);
 		VBox topBox = new VBox();
 		topBox.heightProperty().addListener((obs, oldVal, newVal) -> {
 			double spacing = newVal.doubleValue() * 0.09;
@@ -770,40 +790,50 @@ public class PopUpCreator {
 		});
 		centerLeaveButton.prefHeightProperty().bind(saveConfig.heightProperty().multiply(0.4));
 		centerLeaveButton.setAlignment(Pos.CENTER);
-		centerLeaveButton.getChildren().addAll(createNamePopUpButton("Save"), createNamePopUpButton("Save and Play"), createNamePopUpButton("Back"));
+		centerLeaveButton.getChildren().addAll(createSavePopUpButton("Save"), createSavePopUpButton("Save and Play"), createSavePopUpButton("Back"));
 		topBox.getChildren().add(centerLeaveButton);
 		saveConfig.setContent(topBox);
 		root.getChildren().add(saveConfig);
 	}
 	
 	
-	private void performNamePopUpBack(Button b) {
+	private void performSavePopUpBack(Button b) {
 		b.setOnAction(e -> {
 			root.getChildren().remove(saveConfig);
-			root.getChildren().add(aiconfig);
+			root.getChildren().add(aiconfigPopUp);
 		});
 	}
 	
-	private void performNamePopUpSaveAndPlay(Button b) {
+	private void performSavePopUpSaveAndPlay(Button b) {
 		b.setOnAction(e -> {
 			//ADD CONFIG START HERE
 			defaultConfig.saveConfigAs(enterConfigNamefield.getText());
-			hsc.setTeamName(defaultAiName + "["  +  enterConfigNamefield.getText() + "]" );
-			hsc.createHumanClient();
-			hsc.switchToWaitGameScene(App.getStage());
+			if(aiorHumanpopup == null) {
+				PopUpCreatorEnterTeamName teamNamePopup = new PopUpCreatorEnterTeamName(scene, root, saveConfig, hsc, false, true);
+				teamNamePopup.setConfig(defaultConfig);
+				teamNamePopup.createEnterNamePopUp();
+
+			}else {
+				PopUpCreatorEnterTeamName teamNamePopup = new PopUpCreatorEnterTeamName(scene, root, saveConfig, hsc, true, true);
+				teamNamePopup.setConfig(defaultConfig);
+				teamNamePopup.createEnterNamePopUp();
+			}
+			
+
+			
 		});
 	}
 	
-	private void perfromNamePopUpSave(Button b) {
+	private void perfromSavePopUpSave(Button b) {
 		b.setOnAction(e -> {
 			defaultConfig.saveConfigAs(enterConfigNamefield.getText());
 			root.getChildren().remove(saveConfig);
-			root.getChildren().add(aiconfig);
+			root.getChildren().add(aiconfigPopUp);
 		});
 		
 	}
 	
-	private Button createNamePopUpButton(String text) {
+	private Button createSavePopUpButton(String text) {
 		Button namePopButton = new Button(text);
 		namePopButton.fontProperty().bind(enterNameButtonText);
 		namePopButton.getStyleClass().add("leave-button");
@@ -811,13 +841,13 @@ public class PopUpCreator {
 		namePopButton.prefHeightProperty().bind(namePopButton.widthProperty().multiply(0.25));
 		switch (text) {
 		case "Save":
-			perfromNamePopUpSave(namePopButton);
+			perfromSavePopUpSave(namePopButton);
 			break;
 		case "Save and Play":
-			performNamePopUpSaveAndPlay(namePopButton);
+			performSavePopUpSaveAndPlay(namePopButton);
 			break;
 		case "Back" :
-			performNamePopUpBack(namePopButton);
+			performSavePopUpBack(namePopButton);
 		default:
 			break;
 		}

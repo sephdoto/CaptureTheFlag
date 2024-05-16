@@ -62,7 +62,6 @@ public class PlayGameScreenV2 extends Scene {
 	private static Label teamLabel;
 	private static Label countLabel;
 	StackPane showMapBox;
-	public HashMap<String,  ObjectProperty<Color>> colors = new HashMap<String, ObjectProperty<Color>>();
 	public  ObjectProperty<Color> sceneColorProperty = 
 	        new SimpleObjectProperty<>(Color.BLUE);
 	private ObjectProperty<Font> timerLabel = new SimpleObjectProperty<Font>(Font.getDefault());
@@ -97,22 +96,17 @@ public class PlayGameScreenV2 extends Scene {
 	public void initalizePlayGameScreen(HomeSceneController hsc) {
 		this.mainClient = CreateGameController.getMainClient();
 		currentTeam = -1;
-		scheduler = Executors.newScheduledThreadPool(1);
-		scheduler.scheduleAtFixedRate(updateTask, 0, 1, TimeUnit.SECONDS);
 		this.hsc = hsc;
 		manageFontSizes();
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
 		this.root = (StackPane) this.getRoot();
 		createLayout();
 		this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
-		initColorHashMap();
+		scheduler = Executors.newScheduledThreadPool(1);
+		scheduler.scheduleAtFixedRate(updateTask, 0, 1, TimeUnit.SECONDS);
 	}
 	
-	public void initColorHashMap() {
-		for(int i=0; i<CreateGameController.getMaxNumberofTeams(); i++) {
-			colors.put(String.valueOf(i), new SimpleObjectProperty<>(Color.BEIGE));
-		}
-	}
+	
 	
 	
 	public void createLayout() {
@@ -146,15 +140,15 @@ public class PlayGameScreenV2 extends Scene {
 		showMapBox.getChildren().add(new Label("hallo"));
 		} else {
 			showMapBox.getChildren().clear();
-//			if(gm != null) {
-//				PlayController.setFigures(gm.getFigures());
-//			}
+			if(gm != null) {
+				CreateGameController.setFigures(gm.getFigures());
+			}
 			gm = new GamePane(state);
 			gm.enableBaseColors(this);
 			showMapBox.getChildren().add(gm);
-			int currentTeam = mainClient.getCurrentTeamTurn();
-			for(Client  local: CreateGameController.getLocalAIClients() ) {
-				if (local.getTeamID().equals(String.valueOf(currentTeam))) {
+			for(Client  local: CreateGameController.getLocalHumanClients() ) {
+				System.out.println("Local: " + local.getTeamID());
+				if (local.isItMyTurn()) {
 					Game.initializeGame(gm,local);
 				}
 			}
@@ -248,13 +242,15 @@ public class PlayGameScreenV2 extends Scene {
         CustomMenuItem itemColor = new CustomMenuItem(myCustomColorPicker);
         itemColor.getStyleClass().add("custom-menu-item");
         itemColor.setHideOnClick(false);
-        colors.get(r.getTeamID()).bind(myCustomColorPicker.customColorProperty());
+        //colors.get(r.getTeamID()).bind(myCustomColorPicker.customColorProperty());
+        CreateGameController.getColors().get(r.getTeamID()).bind(myCustomColorPicker.customColorProperty());
         for(CostumFigurePain p : gm.getFigures().values()) {
       	  	if(p.getTeamID().equals(r.getTeamID())) {
-      		  p.showTeamColorWhenSelecting(colors.get(r.getTeamID()));
+      		 // p.showTeamColorWhenSelecting(colors.get(r.getTeamID()));
+      	  		p.showTeamColorWhenSelecting(CreateGameController.getColors().get(r.getTeamID()));
       	  	}
         }
-        r.showColor(sceneColorProperty);
+        //r.showColor(sceneColorProperty);
         ContextMenu contextMenu = new ContextMenu(itemColor);
         contextMenu.setOnHiding(t->{sceneColorProperty.unbind();
          for(CostumFigurePain m : gm.getFigures().values() ) {

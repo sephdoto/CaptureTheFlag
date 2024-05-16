@@ -39,7 +39,6 @@ public class Game {
 		
 	}
 	
-	
 	public static  void setCurrentTeamActive() {
 		for (CostumFigurePain c : cb.getFigures().values()) {
 			if (c.getTeamID().equals(String.valueOf(currentTeam))) {
@@ -109,8 +108,11 @@ public class Game {
 					if (!c.isOccupied()) {
 						c.showPossibleMove();
 					} else if (c.isOccupied()) {
-						System.out.println("Attackble: " + c.x + ", c.y");
+						if(c.getChild() != null) {
 						c.getChild().setAttacable();
+						}else {
+							c.getTeamBase().setAttackable();
+						}
 					}
 				}
 			}

@@ -2,6 +2,7 @@ package org.ctf.ui.customobjects;
 
 
 import org.ctf.ui.CretaeGameScreenV2;
+import org.ctf.ui.Game;
 import org.ctf.ui.MyCustomColorPicker;
 import org.ctf.ui.PlayGameScreenV2;
 import org.ctf.ui.WaitingScene;
@@ -29,12 +30,18 @@ public class BaseRep extends Pane {
 	Label label;
 	int flags;
 	String teamID;
+	BackgroundCellV2 parent;
 	String teamColor;
+	boolean showBasecolers;
+	boolean isAttackable;
 	PlayGameScreenV2 scene;
 	private final EventHandler<MouseEvent> clickHandler;
 	
 	
-	public BaseRep(int flags, String color, String teamID) {
+	public BaseRep(int flags, String color, String teamID, BackgroundCellV2 parent) {
+		this.parent = parent;
+		showBasecolers = false;
+		isAttackable = false;
 		teamColor = color;
 		this.flags = flags;
 		this.teamID = teamID;
@@ -48,11 +55,17 @@ public class BaseRep extends Pane {
 		label.prefHeightProperty().bind(this.heightProperty());
 		label.setAlignment(Pos.BOTTOM_CENTER);
 		label.setStyle("-fx-background-color: white ; -fx-border-color: black; -fx-font-weight: bold; -fx-shape: 'M  150 0 L75 200 L225 200  z'");
-		//label.setOpacity(0);
 		this.getChildren().add(label);
 		 clickHandler = event -> {
-	            // Rufe die Methode zur Verarbeitung des Mausklicks in einer anderen Klasse auf
+	            if(showBasecolers && !isAttackable) {
 	            scene.showColorChooser(event.getSceneX(), event.getSceneY(),this);
+	            }
+	            if (isAttackable) {
+					BaseRep.this.flags = BaseRep.this.flags -1;
+					label.setText(String.valueOf(flags));
+	            	int[] xy = {parent.getX(), parent.getY()};
+	            	Game.makeMoveRequest(xy);
+				}
 	        };
 	     this.setOnMouseClicked(clickHandler);
             
@@ -86,8 +99,21 @@ public class BaseRep extends Pane {
 	
 
 	public void setScene(PlayGameScreenV2 scene) {
+		showBasecolers = true;
 		this.scene = scene;
 	}
+
+	public void setAttackable() {
+		isAttackable = true;
+		parent.showattackCircle();
+	}
+	
+	public void setUnattacble() {
+		isAttackable = false;
+		//parent.deselect();
+	}
+
+	
 
 	
 	

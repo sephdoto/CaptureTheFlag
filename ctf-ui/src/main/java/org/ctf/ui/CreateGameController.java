@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.client.AIClient;
@@ -17,6 +18,11 @@ import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.state.data.map.MapTemplate;
+import org.ctf.ui.customobjects.CostumFigurePain;
+
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.paint.Color;
 
 public class CreateGameController {
 	
@@ -43,23 +49,15 @@ public class CreateGameController {
 	private static int currentNumberofTeams;
 	
 	
-	public static ServerManager getServerManager() {
-		return serverManager;
-	}
-
-	public static void setServerManager(ServerManager serverManager) {
-		CreateGameController.serverManager = serverManager;
-	}
+	private static HashMap<String,  ObjectProperty<Color>> colors = new HashMap<String, ObjectProperty<Color>>();
+	
+	
 
 	// Client that is used to pull the newest GameState and redraw the GamePane with it
 	private static Client mainClient;
-	public static ArrayList<AIClient> getLocalAIClients() {
-		return localAIClients;
-	}
+	
 
-	public static void setLocalAIClients(ArrayList<AIClient> localAIClients) {
-		CreateGameController.localAIClients = localAIClients;
-	}
+	private static HashMap<String, CostumFigurePain> lastfigures;
 
 	//List of all Human-Clients on one device
 	private static ArrayList<Client> localHumanClients = new ArrayList<Client>();
@@ -70,10 +68,13 @@ public class CreateGameController {
 	private static HomeSceneController hsc;
 	private static WaitingScene waitingScene;
 	
-
 	
+	public static void initColorHashMap() {
+		for(int i=0; i<CreateGameController.getMaxNumberofTeams(); i++) {
+			colors.put(String.valueOf(i), new SimpleObjectProperty<>(Color.BEIGE));
+		}
+	}
 	
-
 	/**
 	 * Initializes a servermanager with a port,serverIp and template and creates a game session with it
 	 * @author Manuel Krakowski
@@ -243,7 +244,35 @@ public class CreateGameController {
 	public static void setSessionID(String sessionID) {
 		CreateGameController.sessionID = sessionID;
 	}
+	public static ServerManager getServerManager() {
+		return serverManager;
+	}
+
+	public static void setServerManager(ServerManager serverManager) {
+		CreateGameController.serverManager = serverManager;
+	}
 	
+	public static ArrayList<Client> getLocalHumanClients() {
+		return localHumanClients;
+	}
+
+	public static void setLocalHumanClients(ArrayList<Client> localHumanClients) {
+		CreateGameController.localHumanClients = localHumanClients;
+	}
+	public static HashMap<String, ObjectProperty<Color>> getColors() {
+		return colors;
+	}
+
+	public static void setColors(HashMap<String, ObjectProperty<Color>> colors) {
+		CreateGameController.colors = colors;
+	}
+	public static HashMap<String, CostumFigurePain> getLastFigures() {
+		return lastfigures;
+	}
+
+	public static void setFigures(HashMap<String, CostumFigurePain> figures) {
+		lastfigures = figures;
+	}
 	
 	
 
