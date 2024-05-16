@@ -86,15 +86,16 @@ public class PlayGameScreenV2 extends Scene {
 		}
 	};
 
-	public PlayGameScreenV2(HomeSceneController hsc, double width, double height) {
+	public PlayGameScreenV2(HomeSceneController hsc, double width, double height,Client mainClient) {
 		super(new StackPane(), width, height);
+		this.mainClient = mainClient;
 		initalizePlayGameScreen(hsc);
 	}
 	
 	
 	
 	public void initalizePlayGameScreen(HomeSceneController hsc) {
-		this.mainClient = CreateGameController.getMainClient();
+		//this.mainClient = CreateGameController.getMainClient();
 		currentTeam = -1;
 		this.hsc = hsc;
 		manageFontSizes();

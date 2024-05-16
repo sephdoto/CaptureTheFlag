@@ -132,7 +132,7 @@ public class HomeSceneController {
 	}
 	
 	public void switchToPlayGameScene(Stage stage) {
-		playGameScreenV2 = new PlayGameScreenV2(this, stage.getWidth(), stage.getHeight());
+		playGameScreenV2 = new PlayGameScreenV2(this, stage.getWidth(), stage.getHeight(),CreateGameController.getMainClient());
 		stage.setScene(playGameScreenV2);
 //		if(t != null) {
 //			t.stopThread();
