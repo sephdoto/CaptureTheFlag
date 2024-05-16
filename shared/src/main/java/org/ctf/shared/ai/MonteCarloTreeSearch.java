@@ -15,4 +15,5 @@ public interface MonteCarloTreeSearch {
   public void setRoot(MonteCarloTreeNode root);
   public AtomicInteger getExpansionCounter();
   public void setExpansionCounter(int expansionCounter);
+  public String printResults(Move move);
 }

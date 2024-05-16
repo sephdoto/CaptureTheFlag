@@ -129,6 +129,7 @@ public class AIController {
     
     if(getAi() == AI.MCTS || getAi() == AI.IMPROVED || getAi() == AI.EXPERIMENTAL) {
       move = getMcts().getMove(thinkingTime);
+      System.out.println(getMcts().printResults(move));
     } else {
       move = RandomAI.pickMoveComplex(getNormalizedGameState().getNormalizedGameState(), new ReferenceMove(null, new int[] { 0, 0 })).toMove();
     }
