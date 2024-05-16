@@ -55,9 +55,9 @@ public class ServerController {
   }
 
   // Uncomment the code below to test
-  /*   public static void main(String[] args) {
+  public static void main(String[] args) {
     ServerController sc = new ServerController();
     System.out.println(sc.startServer("8888"));
     System.out.println(sc.closeServer());
-  } */
+  }
 }
