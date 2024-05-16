@@ -73,6 +73,7 @@ public class Client implements GameClientInterface {
   protected String teamColor;
   protected int myTeam = -1; // index of the team this client represents in teams array
   protected String gameIDtoJoin;
+  protected String[] allTeamNames;
 
   // Block for alt game mode data
   protected Date startDate;
@@ -112,6 +113,7 @@ public class Client implements GameClientInterface {
       analyzer = new GameSaveHandler();
     }
     setServer(IP, port);
+    allTeamNames = null;
   }
 
   /**
@@ -522,18 +524,38 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Iterates through the {@link GameState}s teams and replaces their IDs with their index. If an ID
-   * matches this clients name, it gets set as this clients team.
+   * Initializes {@link allTeamNames} if not done yet, then normalizes the team IDs.
+   * The Server replaces the teamIDs, so here they get reset to ints 0-n, representing their placement in the array.
+   * The currents Team int id is missing, so the ID in gameState starts with "_" instead of the int ID.
+   * This gets recognized and the if the name matches this clients name {@link myTeam} is set true.
    *
+   * @param gameState the gameState to get normalized
    * @author rsyed, sistumpf
    */
   protected synchronized void normaliseGameState(GameState gameState) {
-    for (int i = 0; i < gameState.getTeams().length; i++) {
-      if (gameState.getTeams()[i] == null) continue;
-      if (!gameState.getTeams()[i].getId().equals("" + i)) {
-        if (gameState.getTeams()[i].getId().equals(this.requestedTeamName)) this.myTeam = i;
-        gameState.getTeams()[i].setId("" + i);
-      }
+    if(allTeamNames == null)
+      initAllTeamNames(gameState);
+    
+    for(int teamID=0; teamID<gameState.getTeams().length; teamID++) {
+      Team team = gameState.getTeams()[teamID];
+      if(team == null) continue;
+      if(team.getId().startsWith("_")) this.myTeam = teamID;
+      team.setId("" + teamID);
+    }
+  }
+  
+  /**
+   * Initializes {@link allTeamNames} so the ui can easily access them.
+   * 
+   * @author sistumpf
+   * @param gameState the gameState from which the teamNames get pulled
+   */
+  private synchronized void initAllTeamNames(GameState gameState) {
+    allTeamNames = new String[gameState.getTeams().length];
+
+    for(int teamID=0; teamID<gameState.getTeams().length; teamID++) {
+      String name = gameState.getTeams()[teamID].getId();
+      allTeamNames[teamID] = name.substring(name.indexOf("_")+1);
     }
   }
 
@@ -776,4 +798,8 @@ public class Client implements GameClientInterface {
   // **************************************************
   // End of Getter Block
   // **************************************************
+
+  public String[] getAllTeamNames() {
+    return allTeamNames;
+  }
 }

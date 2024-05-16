@@ -111,7 +111,7 @@ public class GameEngine implements Game {
    *       team at random
    * </ul>
    *
-   * @author rsyed
+   * @author rsyed, sistumpf
    * @param teamId Team ID
    * @return Team
    * @throws NoMoreTeamSlots No more team slots available
@@ -129,8 +129,9 @@ public class GameEngine implements Game {
     integerToTeam.put(slot, teamId);
 
     canWeStartTheGameUwU();
-    tempTeam.setId(teamId);
-    return tempTeam;
+    Team copy = EngineTools.deepCopyTeam(tempTeam);
+    copy.setId(teamId);
+    return copy;
   }
 
   /**
@@ -267,12 +268,32 @@ public class GameEngine implements Game {
    */
   @Override
   public GameState getCurrentGameState() {
-    GameState retGameState = EngineTools.deepCopyGameState(gameState);
-    if (retGameState.getCurrentTeam() != -1) {
-      retGameState.getTeams()[retGameState.getCurrentTeam()].setId(
-        integerToTeam.get(retGameState.getCurrentTeam()));
+    if (gameState.getCurrentTeam() != -1) {
+      return replaceIDs(gameState);
     }
-    return retGameState;
+    return gameState;
+  }
+  
+  /**
+   * Replaces the TeamIDs with the Pattern:
+   * (IntegerID) + ("_") + (Name)
+   * Only the currentTeams ID is missing, so the corresponding client knows it's his turn.
+   * 
+   * @author sistumpf
+   * @param original the GameState which's deep copy gets altered and returned
+   * @return a deep copy of original with adjusted TeamIDs
+   */
+  private GameState replaceIDs(GameState original) {
+    GameState returnState = EngineTools.deepCopyGameState(original);
+    
+    Stream.of(returnState.getTeams())
+    .forEach(
+        team -> team.setId(team.getId() + "_" + integerToTeam.get(Integer.parseInt(team.getId())))
+        );
+    Team currentTeam = returnState.getTeams()[returnState.getCurrentTeam()];
+    currentTeam.setId(currentTeam.getId().substring(currentTeam.getId().indexOf("_")));
+    
+    return returnState;
   }
 
   /**

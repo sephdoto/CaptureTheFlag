@@ -23,9 +23,9 @@ public class EngineTools extends GameUtilities {
     String occupant = gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]];
     Piece picked =
         Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()).stream()
-            .filter(p -> p.getId().equals(move.getPieceId()))
-            .findFirst()
-            .get();
+        .filter(p -> p.getId().equals(move.getPieceId()))
+        .findFirst()
+        .get();
     int[] oldPos = picked.getPosition();
 
     gameState.getGrid()[oldPos[0]][oldPos[1]] = "";
@@ -34,8 +34,8 @@ public class EngineTools extends GameUtilities {
       int occupantTeam = Integer.parseInt(occupant.split(":")[1].split("_")[0]);
       gameState.getTeams()[occupantTeam].setPieces(
           Arrays.asList(gameState.getTeams()[occupantTeam].getPieces()).stream()
-              .filter(p -> !p.getId().equals(occupant))
-              .toArray(Piece[]::new));
+          .filter(p -> !p.getId().equals(occupant))
+          .toArray(Piece[]::new));
       gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPieceId();
       picked.setPosition(move.getNewPosition());
     } else if (occupant.contains("b:")) {
@@ -148,9 +148,10 @@ public class EngineTools extends GameUtilities {
    */
   public static void removeTeam(GameState gameState, int team) {
     gameState
-            .getGrid()[gameState.getTeams()[team].getBase()[0]][
-            gameState.getTeams()[team].getBase()[1]] =
-        "";
+    .getGrid()
+    [gameState.getTeams()[team].getBase()[0]]
+        [gameState.getTeams()[team].getBase()[1]] 
+            = "";
     for (Piece p : gameState.getTeams()[team].getPieces())
       gameState.getGrid()[p.getPosition()[0]][p.getPosition()[1]] = "";
     gameState.getTeams()[team] = null;
@@ -254,6 +255,7 @@ public class EngineTools extends GameUtilities {
    * Deep copies a GameState
    *
    * @author sistumpf, rsyed, ysiebenh
+   * @param gameState the gameState to deep copy
    * @return a deep copy of a given GameState
    */
   public static GameState deepCopyGameState(GameState gameState) {
@@ -286,6 +288,30 @@ public class EngineTools extends GameUtilities {
     }
     newState.setGrid(grid);
     return newState;
+  }
+
+  /**
+   * Deep copies a team
+   * 
+   * @param team the Team to deep copy
+   * @return a deep copy of team
+   */
+  public static Team deepCopyTeam(Team team) {
+    Team copy = new Team();
+    copy.setBase(team.getBase());
+    copy.setFlags(team.getFlags());
+    copy.setId(team.getId());
+    copy.setColor(team.getColor());
+    Piece[] pieces = new Piece[team.getPieces().length];
+    for (int j = 0; j < pieces.length; j++) {
+      pieces[j] = new Piece();
+      pieces[j].setDescription(team.getPieces()[j].getDescription());
+      pieces[j].setId(team.getPieces()[j].getId() + "");
+      pieces[j].setTeamId(team.getPieces()[j].getTeamId() + "");
+      pieces[j].setPosition(team.getPieces()[j].getPosition().clone());
+    }
+    copy.setPieces(pieces);
+    return copy;
   }
 
   /**
