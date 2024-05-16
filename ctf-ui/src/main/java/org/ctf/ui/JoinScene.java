@@ -487,7 +487,7 @@ public class JoinScene extends Scene {
       right.getChildren().clear();
       info.setText("Client hast joined!\n Waiting for the Game to start.");
       right.getChildren().add(info);
-      hsc.getStage().setScene(new RemoteWaitingScene(client, getWidth(), getHeight())); 
+      hsc.getStage().setScene(new RemoteWaitingScene(client, getWidth(), getHeight(),this.hsc)); 
 //      Button create = new Button("create");
 //      right.getChildren().add(create);
 //      create.setOnAction(e2 -> {

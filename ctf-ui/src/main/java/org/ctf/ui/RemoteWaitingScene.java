@@ -20,9 +20,11 @@ public class RemoteWaitingScene extends Scene {
 	StackPane root;
 	Client client;
 	Text text;
+	HomeSceneController hsc;
 
-	public RemoteWaitingScene(Client client, double width, double height) {
+	public RemoteWaitingScene(Client client, double width, double height,HomeSceneController hsc) {
 		super(new StackPane(), width, height);
+		this.hsc = hsc;
 		this.client = client;
 		root = (StackPane) this.getRoot();
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
@@ -32,7 +34,12 @@ public class RemoteWaitingScene extends Scene {
 	}
 
 
-	public Client getClient() {
+	public HomeSceneController getHsc() {
+    return hsc;
+  }
+
+
+  public Client getClient() {
 		return client;
 	}
 
@@ -78,4 +85,9 @@ public class RemoteWaitingScene extends Scene {
 		
 		
 	}
+
+
+  public StackPane getRootPane() {
+    return root;
+  }
 }
