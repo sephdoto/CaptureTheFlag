@@ -332,19 +332,20 @@ public class ComponentCreator {
 	    configBox.setValue("Test");
 	    configBox.getStyleClass().add("custom-combo-box-2");
 	    configBox.prefWidthProperty().bind(vbox.widthProperty().multiply(0.4));
-	    configBox.prefHeightProperty().bind(configBox.widthProperty().multiply(0.1));
+	    configBox.prefHeightProperty().bind(configBox.widthProperty().multiply(0.15625));
 	    configBox.prefHeightProperty().addListener((obs, oldv, newV) -> {
 	      double size = newV.doubleValue() * 0.4;
 	      configBox.setStyle("-fx-font-size: " + size + "px;");
 	  });
 	    
 	    vbox.getChildren().add(configBox);
-	    HBox selectBox = new HBox();
-	    selectBox.setAlignment(Pos.CENTER);
-	    selectBox.widthProperty().addListener((obs, oldVal, newVal) -> {
+	    HBox sep = new HBox();
+	    sep.setAlignment(Pos.CENTER);
+	    sep.widthProperty().addListener((obs, oldVal, newVal) -> {
 		      double size = newVal.doubleValue() * 0.1;
-		      selectBox.setSpacing(size);
+		      sep.setSpacing(size);
 		    });
+	    
 	    Button select = new Button("Select");
 	    select.getStyleClass().add("join-button");
 	    select.setOnAction(e -> {
@@ -357,15 +358,27 @@ public class ComponentCreator {
 	      double size = newV.doubleValue() * 0.5;
 	      select.setFont(Font.font("Century Gothic", size));
 	    });
-	    selectBox.getChildren().addAll(configBox,select);
 	    
 	    Button leave = createControlButton(vbox, "Back");
 	    leave.setOnAction(e -> {
 	    	popUpCreator.getRoot().getChildren().remove(popUp);
 	    	popUpCreator.getRoot().getChildren().add(popUpCreator.getAiLevelPopUpPane());
 	    });
-	    vbox.getChildren().add(selectBox);
-	    vbox.getChildren().add(leave);
+	    leave.prefWidthProperty().bind(vbox.widthProperty().multiply(0.25));
+        leave.prefHeightProperty().bind(leave.widthProperty().multiply(0.25));
+        leave.prefHeightProperty().addListener((obs, oldv, newV) -> {
+          double size = newV.doubleValue() * 0.5;
+          leave.setFont(Font.font("Century Gothic", size));
+        });
+	    VBox buttonBox = new VBox();
+	    buttonBox.setAlignment(Pos.TOP_CENTER);
+        vbox.widthProperty().addListener((obs, oldVal, newVal) -> {
+          double size = newVal.doubleValue() * 0.035;
+          buttonBox.setSpacing(size);
+        });
+        buttonBox.getChildren().addAll(select,leave);
+        sep.getChildren().addAll(configBox,buttonBox);
+	    vbox.getChildren().add(sep);
 	    return popUp;
   }
 }
