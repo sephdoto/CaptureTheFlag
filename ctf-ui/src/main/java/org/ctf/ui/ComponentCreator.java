@@ -1,6 +1,7 @@
 package org.ctf.ui;
 
 import java.text.DecimalFormat;
+import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.constants.Constants;
 import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.controllers.SettingsSetter;
@@ -329,8 +330,11 @@ public class ComponentCreator {
 	    popUp.setContent(vbox);
 	    
 	    ComboBox<String> configBox = new ComboBox<String>();
-	    configBox.setValue("Test");
 	    configBox.getStyleClass().add("custom-combo-box-2");
+	    for(String name : AIConfig.getTemplateNames()) {
+	      configBox.getItems().add(name);
+	    }	    
+	    configBox.setValue(configBox.getItems().get(0));
 	    configBox.prefWidthProperty().bind(vbox.widthProperty().multiply(0.4));
 	    configBox.prefHeightProperty().bind(configBox.widthProperty().multiply(0.15625));
 	    configBox.prefHeightProperty().addListener((obs, oldv, newV) -> {
@@ -350,7 +354,7 @@ public class ComponentCreator {
 	    select.getStyleClass().add("join-button");
 	    select.setOnAction(e -> {
 	    	popUpCreator.getRoot().getChildren().remove(popUp);
-	    	popUpCreator.getRoot().getChildren().add(popUpCreator.createConfigPane(1, 1,null));   
+	    	popUpCreator.getRoot().getChildren().add(popUpCreator.createConfigPane(1, 1,new AIConfig(configBox.getValue())));   
 	    });
 	    select.prefWidthProperty().bind(vbox.widthProperty().multiply(0.25));
 	    select.prefHeightProperty().bind(select.widthProperty().multiply(0.25));

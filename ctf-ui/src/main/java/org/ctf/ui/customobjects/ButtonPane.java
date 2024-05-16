@@ -22,35 +22,39 @@ public class ButtonPane extends StackPane{
 	private AIConfigs config;
 	private Button loadButton;
 	private Button editButton;
-	public ButtonPane(AIConfigs aiName,Stage stage ,int InfoPanePosition) {		
-		this.config = aiName;
-		loadButton = createConfigButton("Load");
-		 editButton = createConfigButton("Edit");
-		this.getStyleClass().add("ai-button-easy");
-		Text text = new Text(aiName.toString());
-		 text.fontProperty().bind(Bindings.createObjectBinding(
-		          () -> Font.font("Century Gothic", this.getHeight() * 0.3), this.heightProperty()));
-		StackPane.setAlignment(text, Pos.CENTER_LEFT);
-		this.widthProperty().addListener((obs, old, newV) -> {
-	            double padding = newV.doubleValue() * 0.05; 
-	            this.setPadding(new Insets(padding));
-	        });
-		text.setFill(Color.WHITE);
-		text.setMouseTransparent(true);
-		this.getChildren().add(text);
-		Image mp = new Image(getClass().getResourceAsStream("i1.png"));
-		ImageView vw = new ImageView(mp);
-		StackPane.setAlignment(vw, Pos.CENTER_RIGHT);
-		vw.fitHeightProperty().bind(this.heightProperty().multiply(0.5));
-		vw.setPreserveRatio(true);
-		this.getChildren().add(vw);
-		InfoPaneCreator.addInfoPane(vw, stage, Descriptions.describe(aiName), InfoPanePosition);
-		this.setOnMouseClicked( e -> {
-			this.getChildren().clear();
-			this.getChildren().add(createButtonBox());
-		});
-	}
+	private Text text;
+	private ImageView vw;
 	
+
+    public ButtonPane(AIConfigs aiName, Stage stage, int InfoPanePosition) {
+      this.config = aiName;
+      loadButton = createConfigButton("Load");
+      editButton = createConfigButton("Edit");
+      this.getStyleClass().add("ai-button-easy");
+      text = new Text(aiName.toString());
+      text.fontProperty().bind(Bindings.createObjectBinding(
+          () -> Font.font("Century Gothic", this.getHeight() * 0.3), this.heightProperty()));
+      StackPane.setAlignment(text, Pos.CENTER_LEFT);
+      this.widthProperty().addListener((obs, old, newV) -> {
+        double padding = newV.doubleValue() * 0.05;
+        this.setPadding(new Insets(padding));
+      });
+      text.setFill(Color.WHITE);
+      text.setMouseTransparent(true);
+      this.getChildren().add(text);
+      Image mp = new Image(getClass().getResourceAsStream("i1.png"));
+      vw = new ImageView(mp);
+      StackPane.setAlignment(vw, Pos.CENTER_RIGHT);
+      vw.fitHeightProperty().bind(this.heightProperty().multiply(0.5));
+      vw.setPreserveRatio(true);
+      this.getChildren().add(vw);
+      InfoPaneCreator.addInfoPane(vw, stage, Descriptions.describe(aiName), InfoPanePosition);
+      this.setOnMouseClicked(e -> {
+        this.getChildren().clear();
+        this.getChildren().add(createButtonBox());
+      });
+    }
+
 	private HBox createButtonBox() {
 		HBox hbox = new HBox();
 		StackPane.setAlignment(hbox, Pos.CENTER);
@@ -70,6 +74,11 @@ public class ButtonPane extends StackPane{
 		      but1.setFont(Font.font("Century Gothic", size));
 		    });
 		 return but1;
+	}
+	
+	public void reset() {
+	  this.getChildren().clear();
+	  this.getChildren().addAll(text,vw);
 	}
 	
 	public Button getLoadButton() {

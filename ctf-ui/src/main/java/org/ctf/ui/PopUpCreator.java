@@ -207,7 +207,8 @@ public class PopUpCreator {
 		pane.maxWidthProperty().bind(root.widthProperty().multiply(0.22));
 		pane.maxHeightProperty().bind(pane.widthProperty().multiply(0.45));
 		pane.getEditButton().setOnAction(e -> {		
-			root.getChildren().add(createConfigPane(1, 1,null));			
+			root.getChildren().add(createConfigPane(1, 1,null));
+			pane.reset();
 		});
 		pane.getLoadButton().setOnAction(e -> {
 			if(aiorHumanpopup!= null) {
@@ -215,6 +216,7 @@ public class PopUpCreator {
 			}
 			root.getChildren().remove(aiLevelPopUpPane);
 			root.getChildren().add(ComponentCreator.createAIWindow(this));
+			pane.reset();
 		});
 		return pane;
 	}
@@ -240,10 +242,11 @@ public class PopUpCreator {
 	 */
 	public PopUpPane createConfigPane(double widht, double hight, AIConfig costumConfig) {
 		root.getChildren().remove(aiLevelPopUpPane);
-		if(costumConfig != null) {
-			defaultConfig = costumConfig;
-		}
-		defaultConfig = new AIConfig();
+        if (costumConfig != null) {
+          defaultConfig = costumConfig;
+        } else {
+          defaultConfig = new AIConfig();
+        }
 		createConfigMaps();
 		aiconfigPopUp = new PopUpPane(scene, widht, hight);
 		StackPane configRoot = new StackPane();
