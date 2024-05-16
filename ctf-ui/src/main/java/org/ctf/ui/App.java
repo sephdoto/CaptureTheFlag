@@ -48,6 +48,7 @@ public class App extends Application {
   FadeTransition startTransition;
   Process process;
   static StackPane wrapper;
+  static StackPane root;
 
   public void startServer(String port){
     try {
@@ -128,7 +129,7 @@ public class App extends Application {
    * @return Parent
    */
   private Parent createParent() {
-    StackPane root = new StackPane();
+    root = new StackPane();
     root.setPrefSize(600, 600);
     Image bImage = new Image(getClass().getResourceAsStream("output.jpg"));
     ImageView vw = new ImageView(bImage);
@@ -189,7 +190,13 @@ public class App extends Application {
     App.wrapper = new StackPane();
     App.chagngeHomescreenBackground();
     root.getChildren().addAll(wrapper, vbox);
+    
     return root;
+  }
+  
+  public static void adjustHomescreen(double width,double height) {
+    App.root.setPrefWidth(width);
+    App.root.setPrefHeight(height);
   }
   
   public static void chagngeHomescreenBackground() {
