@@ -181,6 +181,28 @@ public class TreeNode implements MonteCarloTreeNode, Comparable<TreeNode> {
   }
   
   /**
+   * Deep clones this TreeNode without parent, but with deep copies of all its children.
+   * 
+   * @return a deep copy of this node and its children
+   */
+  public TreeNode deepCloneWithChildren() {
+    TreeNode node = deepClone();
+    for(int i=0; i<getChildren().length; i++)
+      node.children[i] = children[i].deepClone();
+    return node;
+  }
+  
+  /**
+   * Deep clones this TreeNode, the returned node got neither a parent, nor this nodes children.
+   * The children get initialized but don't have any value, as they just got created.
+   * 
+   * @return a deep copy of the node
+   */
+  public TreeNode deepClone() {
+    return new TreeNode(null, gameState.clone(), Arrays.copyOf(getWins(), getWins().length));
+  }
+  
+  /**
    * Compares two nodes with their V value.
    * @param node to compare to
    * @return as super.compareTo

@@ -76,6 +76,7 @@ public class TreeNode implements MonteCarloTreeNode, Comparable<TreeNode> {
     * Copies the current TreeNode, rotates the player Attribute to the next player.
     * GameState won't be copied here, giving a new GameState that gets inserted into the new node is required.
     * Using the copyGameState method to deep copy and alter the nodes GameState is recommended.
+    * 
     * @return a copy of the current node
     */
    public TreeNode clone(GameState newState) {
@@ -83,6 +84,28 @@ public class TreeNode implements MonteCarloTreeNode, Comparable<TreeNode> {
      return treeNode;
    }
 
+   /**
+    * Deep clones this TreeNode without parent, but with deep copies of all its children.
+    * 
+    * @return a deep copy of this node and its children
+    */
+   public TreeNode deepCloneWithChildren() {
+     TreeNode node = deepClone();
+     for(int i=0; i<getChildren().length; i++)
+       node.children[i] = children[i].deepClone();
+     return node;
+   }
+   
+   /**
+    * Deep clones this TreeNode, the returned node got neither a parent, nor this nodes children.
+    * The children get initialized but don't have any value, as they just got created.
+    * 
+    * @return a deep copy of the node
+    */
+   public TreeNode deepClone() {
+     return new TreeNode(null, copyGameState(), Arrays.copyOf(getWins(), getWins().length), operateOn);
+   }
+   
    /**
     * Used instead of a GameState.clone method, as GameState is not altered in this MCTS implementation.
     * @return a deep copy of this nodes gameState

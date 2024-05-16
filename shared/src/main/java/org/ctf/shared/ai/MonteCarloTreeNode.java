@@ -10,7 +10,10 @@ import org.ctf.shared.state.GameState;
  */
 public interface MonteCarloTreeNode {
   public MonteCarloTreeNode[] getChildren();
+  public MonteCarloTreeNode deepCloneWithChildren();
+  public MonteCarloTreeNode deepClone();
   public double getV();
+  public int getNK();
   public GameState getGameState();
   public void setParent(MonteCarloTreeNode node);
 }

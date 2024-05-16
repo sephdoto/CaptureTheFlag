@@ -145,7 +145,7 @@ public class GameStateNormalizer {
           gameState.getLastMove().getNewPosition()[1], 
           gameState.getLastMove().getNewPosition()[0]
               });
-    newState.setLastMove(gameState.getLastMove());
+    newState.setLastMove(move);
     
     return newState;
   }

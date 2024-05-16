@@ -11,7 +11,7 @@ class GameAnalyzerTest {
   void testGameAnalyzer() {
     GameSaveHandler gsh = new GameSaveHandler();
     gsh.readFile("analyzerTestDataFile");
-    GameAnalyzer analyzer = new GameAnalyzer(gsh.getSavedGame(), AI.RANDOM, new AIConfig(), 1);
+    GameAnalyzer analyzer = new GameAnalyzer(gsh.getSavedGame(), AI.IMPROVED, new AIConfig(), 0);
   }
 
 }

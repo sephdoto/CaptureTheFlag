@@ -1,5 +1,6 @@
 package org.ctf.shared.ai;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import org.ctf.shared.state.Move;
 
 /**
@@ -9,7 +10,9 @@ import org.ctf.shared.state.Move;
  * @author sistumpf
  */
 public interface MonteCarloTreeSearch {
-  public Move getMove(int milis, double C);
+  public Move getMove(int milis);
   public MonteCarloTreeNode getRoot();
   public void setRoot(MonteCarloTreeNode root);
+  public AtomicInteger getExpansionCounter();
+  public void setExpansionCounter(int expansionCounter);
 }

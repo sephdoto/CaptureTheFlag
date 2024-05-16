@@ -128,7 +128,7 @@ public class AIController {
     Move move;
     
     if(getAi() == AI.MCTS || getAi() == AI.IMPROVED || getAi() == AI.EXPERIMENTAL) {
-      move = getMcts().getMove(thinkingTime, getConfig().C);
+      move = getMcts().getMove(thinkingTime);
     } else {
       move = RandomAI.pickMoveComplex(getNormalizedGameState().getNormalizedGameState(), new ReferenceMove(null, new int[] { 0, 0 })).toMove();
     }
@@ -142,7 +142,7 @@ public class AIController {
    * @param move2
    * @return true if move1 and move2 are equal
    */
-  public boolean moveEquals(Move move1, Move move2) {
+  public static boolean moveEquals(Move move1, Move move2) {
     if(move1.getPieceId().equals(move2.getPieceId()))
       if(Arrays.equals(move1.getNewPosition(), move2.getNewPosition()))
         return true;

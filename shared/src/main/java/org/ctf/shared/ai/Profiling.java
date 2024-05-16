@@ -28,14 +28,14 @@ public class Profiling {
       mcts.setRoot(rootclone.clone(rootclone.getReferenceGameState().clone()));
       mcts.getRoot().setParent(null);
       try {
-        mcts.getMove(timeInMilis, new AIConfig().C);
+        mcts.getMove(timeInMilis);
       } catch (NullPointerException npe) {
         crashes++;
       }
     }
     simulations = mcts.simulationCounter.get() / count;
     heuristics = mcts.heuristicCounter.get() / count;
-    expansions = ((Math.round(((double) mcts.expansionCounter.get() / count) * 1000)) / 1000.);
+    expansions = ((Math.round(((double) mcts.getExpansionCounter().get() / count) * 1000)) / 1000.);
 
     System.out.println(
         count

@@ -15,6 +15,25 @@ public class Enums {
     BAYERN;
 
   }
+  
+  /**
+   * Move evaluations to represent how good or bad a move is.
+   * TODO add colors
+   * 
+   * @author sistumpf
+   */
+  public enum MoveEvaluation {
+    GREAT,
+    BEST,
+    EXCELLENT,
+    GOOD,
+    OK,
+    INACCURACY,
+    MISTAKE,
+    MISS,
+    BLUNDER,
+    SUPERBLUNDER;
+  }
 
   /**
    * Contains the above mentioned variables. It safes them with their name to put in the

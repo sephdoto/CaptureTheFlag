@@ -65,7 +65,7 @@ class MCTSTest {
       tn = tn.clone((tn.getGameState()));
 
       MCTS mcts2 = new MCTS(tn, new AIConfig());
-      move = mcts2.getMove(timeForMove, new AIConfig().C);
+      move = mcts2.getMove(timeForMove);
       ++mctsTillEnd;
       tn = mcts2.getRoot();
       mcts2.alterGameState(tn.getGameState(),  new ReferenceMove(tn.getGameState(), move));
@@ -115,14 +115,14 @@ class MCTSTest {
       mcts.setRoot(rootclone.clone(rootclone.copyGameState()));
       mcts.getRoot().setParent(null);
       try {
-        mcts.getMove(timeInMilis, new AIConfig().C);
+        mcts.getMove(timeInMilis);
       } catch (NullPointerException npe) {
         crashes++;
       }
     }
     simulations = mcts.simulationCounter.get() / count;
     heuristics = mcts.heuristicCounter.get() / count;
-    expansions = ((Math.round(((double) mcts.expansionCounter.get() / count) * 1000)) / 1000.);
+    expansions = ((Math.round(((double) mcts.getExpansionCounter().get() / count) * 1000)) / 1000.);
 
     System.out.println(
         count
@@ -173,7 +173,7 @@ class MCTSTest {
 //    System.out.println("parent Grid:");
 //    parent.printGrid();
 
-    Move move = mcts.getMove(100, Math.sqrt(2));
+    Move move = mcts.getMove(100);
 
     //    System.out.println(mcts.printResults(move));
     mcts.alterGameState(mcts.getRoot().getGameState(), new ReferenceMove(mcts.getRoot().getGameState(), move));
@@ -200,7 +200,7 @@ class MCTSTest {
     int mctsTillEnd = 0;
     while (mcts.isTerminal(mcts.getRoot().getGameState(), new ReferenceMove(null, new int[] {0,0})) == -1) {
 
-      Move move = mcts.getMove(100, new AIConfig().C);
+      Move move = mcts.getMove(100);
       ++mctsTillEnd;
       TreeNode tn = mcts.getRoot();
       mcts.alterGameState(tn.getGameState(), new ReferenceMove(tn.getGameState(), move));
@@ -271,7 +271,7 @@ class MCTSTest {
     mcts = new MCTS(parent, new AIConfig());
 
 //    Move move = 
-        mcts.getMove(100, (float) Math.sqrt(2));
+        mcts.getMove(100);
     //    System.out.println("Piece: " + move.getPieceId() + " moves to " + move.getNewPosition()[0]
     // + ", " + move.getNewPosition()[1]);
     for (int i = 0; i < parent.getPossibleMoves().size(); i++) {

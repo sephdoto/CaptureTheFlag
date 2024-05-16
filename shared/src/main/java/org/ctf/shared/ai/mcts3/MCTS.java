@@ -25,7 +25,7 @@ public class MCTS implements MonteCarloTreeSearch {
   private TreeNode root;
   public AtomicInteger simulationCounter;
   public AtomicInteger heuristicCounter;
-  public AtomicInteger expansionCounter;
+  private AtomicInteger expansionCounter;
 
   public MCTS(TreeNode root, AIConfig config) {
     this.config = config;
@@ -33,7 +33,7 @@ public class MCTS implements MonteCarloTreeSearch {
 //    this.rand = new Random();
     simulationCounter = new AtomicInteger();
     heuristicCounter = new AtomicInteger();
-    expansionCounter = new AtomicInteger();
+    this.expansionCounter = new AtomicInteger();
     this.teams = root.getReferenceGameState().getTeams().length;
     this.maxDistance =
         (int)
@@ -51,12 +51,12 @@ public class MCTS implements MonteCarloTreeSearch {
    * @param Constant C used in the UCT formula
    * @return the algorithms choice for the best move
    */
-  public Move getMove(int milis, double C) {
+  public Move getMove(int milis) {
     long time = System.currentTimeMillis();
 
     while (System.currentTimeMillis() - time < milis) {
       // Schritte des UCT abarbeiten
-      TreeNode selected = selectAndExpand(getRoot(), C);
+      TreeNode selected = selectAndExpand(getRoot(), config.C);
       backpropagate(selected, simulate(selected));
     }
 
@@ -79,7 +79,7 @@ public class MCTS implements MonteCarloTreeSearch {
   TreeNode selectAndExpand(TreeNode node, double C) {
     while (isTerminal(node.getReferenceGameState(), node.getOperateOn()) == -1) {
       if (!isFullyExpanded(node)) {
-        expansionCounter.incrementAndGet();
+        this.expansionCounter.incrementAndGet();
         return expand(node);
       } else {
         node = bestChild(node, C);
@@ -519,7 +519,7 @@ public class MCTS implements MonteCarloTreeSearch {
             + move.getNewPosition()[1]);
     sb.append(
         "\nNodes expanded: "
-            + expansionCounter
+            + getExpansionCounter()
             + ", simulations till the end: "
             + simulationCounter
             + ", heuristic used: "
@@ -567,5 +567,13 @@ public class MCTS implements MonteCarloTreeSearch {
 
   public void setRoot(MonteCarloTreeNode root) {
     this.root = (TreeNode)root;
+  }
+
+  public AtomicInteger getExpansionCounter() {
+    return expansionCounter;
+  }
+
+  public void setExpansionCounter(int expansionCounter) {
+    this.expansionCounter.set(expansionCounter);
   }
 }

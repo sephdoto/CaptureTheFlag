@@ -3,6 +3,7 @@ package org.ctf.shared.gameanalyzer;
 import java.util.Arrays;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.ai.AIController;
+import org.ctf.shared.ai.GameStateNormalizer;
 import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
@@ -18,6 +19,8 @@ import org.ctf.shared.state.Move;
  */
 public class GameAnalyzer extends AIController {
   SavedGame game;
+  AnalyzedGameState[] results;
+  int currentlyAnalyzing;
   
   /**
    * Initializes the AIController with {@link calculatingTime} seconds calculating time per GameState.
@@ -36,42 +39,29 @@ public class GameAnalyzer extends AIController {
       super.initMCTS();
     }
     this.game = game;
+    this.results = new AnalyzedGameState[game.getMoves().size()];
+    this.currentlyAnalyzing = 0;
     
     startAnalyzing();
   }
   
   public void startAnalyzing(){
-    for(int turn=1; turn<game.getMoves().size(); turn++) {
-      analyzeMove(turn);
-      Move next = game.getMoves().get("" + turn);
+    for(; currentlyAnalyzing<game.getMoves().size(); currentlyAnalyzing++) {
+      analyzeMove(currentlyAnalyzing +1);
+      Move next = game.getMoves().get("" + (currentlyAnalyzing +1));
       if(next != null) {
-        System.out.println("Move possible? " + GameUtilities.validPos(new int[] {4,5}, game.getInitialState().getTeams()[1].getPieces()[17], game.getInitialState()));
-        System.out.println("Root updated with " + next.getPieceId() + " ? " + update(next));
+        if(update(next));
+          getMcts().setExpansionCounter(getMcts().getRoot().getNK());
       }
     }
   }
   
   void analyzeMove(int turn){
     try {
-      Move best = getNextMove();
+      Move best = getNormalizedGameState().normalizedMove(getNextMove());
       Move made = getNormalizedGameState().normalizedMove(game.getMoves().get("" +turn));
      
-      MonteCarloTreeNode[] children = getMcts().getRoot().getChildren();
-      
-      try {
-        Arrays.sort(children);
-      } catch (NullPointerException npe) {npe.printStackTrace();}
-      
-      System.out.println("\ncurrent team: " + getMcts().getRoot().getGameState().getCurrentTeam());
-      for(int child=0; child<children.length; child++) {
-        if(moveEquals(children[child].getGameState().getLastMove(), made)) {
-          System.out.println(child + " " + (getMcts().getRoot().getChildren()[child].getV() * 100));
-          System.out.println("\nYour move was AIs " + (child+1) + " choice");
-          break;
-        } else {
-          System.out.println(child + " " + (getMcts().getRoot().getChildren()[child].getV() * 100));
-        }
-      }
+      results[currentlyAnalyzing] = new AnalyzedGameState(getMcts(), made, best);
       
     } catch (NoMovesLeftException | InvalidShapeException e) {
       e.printStackTrace();
