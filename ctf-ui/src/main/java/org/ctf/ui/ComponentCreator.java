@@ -337,6 +337,7 @@ public class ComponentCreator {
 	      double size = newV.doubleValue() * 0.4;
 	      configBox.setStyle("-fx-font-size: " + size + "px;");
 	  });
+	    
 	    vbox.getChildren().add(configBox);
 	    HBox selectBox = new HBox();
 	    selectBox.setAlignment(Pos.CENTER);
@@ -345,9 +346,10 @@ public class ComponentCreator {
 		      selectBox.setSpacing(size);
 		    });
 	    Button select = new Button("Select");
+	    select.getStyleClass().add("join-button");
 	    select.setOnAction(e -> {
 	    	popUpCreator.getRoot().getChildren().remove(popUp);
-	    	popUpCreator.getRoot().getChildren().add(popUpCreator.createConfigPane(1, 1));   
+	    	popUpCreator.getRoot().getChildren().add(popUpCreator.createConfigPane(1, 1,null));   
 	    });
 	    select.prefWidthProperty().bind(vbox.widthProperty().multiply(0.25));
 	    select.prefHeightProperty().bind(select.widthProperty().multiply(0.25));

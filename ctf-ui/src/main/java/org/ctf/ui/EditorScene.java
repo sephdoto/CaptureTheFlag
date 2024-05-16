@@ -896,6 +896,7 @@ public class EditorScene extends Scene {
       boolean success = false;
       if (dragboard.hasFiles()) {
           File file = dragboard.getFiles().get(0);
+         
           System.out.println(file.getName());
       }
       event.setDropCompleted(success);

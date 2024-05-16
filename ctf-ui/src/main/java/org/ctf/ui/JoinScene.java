@@ -266,28 +266,28 @@ public class JoinScene extends Scene {
         () -> Font.font("Century Gothic", search.getHeight() * 0.4), search.heightProperty()));
     search.setOnAction(e -> {
     	//hsc.getStage().setScene(new RemoteWaitingScene(null, this.getWidth(), this.getHeight()));
-//    	PopUpCreator popUpCreator = new PopUpCreator(this, root, hsc);
-//    	popUpCreator.createAiLevelPopUp(new PopUpPane(null, 0, 0), portText, serverIPText);
-      try {
-        ServerManager ser = new ServerManager(new CommLayer(),
-            new ServerDetails(serverIPText.getText(), portText.getText()), sessionText.getText());
-        if (!ser.isServerActive()) {
-          info.setText(
-              "The Server \n cannot be found!\n Please check the Server IP\n and select the right Port!");
-        } else if (!ser.isSessionActive()) {
-          info.setText("The Session is not active!\n" + "Please check your Session ID!");
-        } else {
-          right.getChildren().clear();
-          right.getChildren().add(createRightContent(sessionText.getText(),
-              ser.getCurrentNumberofTeams(), serverIPText.getText(), portText.getText()));
-        }
-      } catch (IllegalArgumentException e2) {
-        // TODO: handle exception
-        e2.printStackTrace();
-        right.getChildren().clear();
-        info.setText("Please enter a valid \n IP-adress and port!");
-        right.getChildren().add(info);
-      }
+    	PopUpCreator popUpCreator = new PopUpCreator(this, root, hsc);
+    	popUpCreator.createAiLevelPopUp(new PopUpPane(null, 0, 0), portText, serverIPText);
+//      try {
+//        ServerManager ser = new ServerManager(new CommLayer(),
+//            new ServerDetails(serverIPText.getText(), portText.getText()), sessionText.getText());
+//        if (!ser.isServerActive()) {
+//          info.setText(
+//              "The Server \n cannot be found!\n Please check the Server IP\n and select the right Port!");
+//        } else if (!ser.isSessionActive()) {
+//          info.setText("The Session is not active!\n" + "Please check your Session ID!");
+//        } else {
+//          right.getChildren().clear();
+//          right.getChildren().add(createRightContent(sessionText.getText(),
+//              ser.getCurrentNumberofTeams(), serverIPText.getText(), portText.getText()));
+//        }
+//      } catch (IllegalArgumentException e2) {
+//        // TODO: handle exception
+//        e2.printStackTrace();
+//        right.getChildren().clear();
+//        info.setText("Please enter a valid \n IP-adress and port!");
+//        right.getChildren().add(info);
+//      }
 
 
     });
