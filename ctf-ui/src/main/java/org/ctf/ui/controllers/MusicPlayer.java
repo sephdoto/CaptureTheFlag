@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -20,12 +22,14 @@ import org.ctf.shared.constants.Enums.Themes;
 public class MusicPlayer {
   public static MediaPlayer mp;
   Themes theme;
+  Set<FadeIntoExistence> fadingIn;
 
   public MusicPlayer() {
+    this.fadingIn = ConcurrentHashMap.newKeySet();
     start();
     this.theme = Constants.theme;
   }
-  
+
   /**
    * Adjusts the music volume in Constants and for the current player.
    * 
@@ -76,12 +80,14 @@ public class MusicPlayer {
    * @author sistumpf
    */
   private void fadeInAndOut() {
-    new FadeOutOfExistence(mp, 2500).start();
+    new FadeOutOfExistence(mp, 1500).start();
     mp = getMusic();
     mp.setVolume(0);
     mp.setOnEndOfMedia(infinitePlay(false));
     mp.play();
-    new FadeIntoExistence(mp, 7000).start();
+    FadeIntoExistence fade = new FadeIntoExistence(mp, 3500);
+    fade.start();
+    fadingIn.add(fade);
   }
 
   /**
@@ -165,10 +171,12 @@ public class MusicPlayer {
     public FadeOutOfExistence(MediaPlayer mp, int millis) {
       this.mp = mp;
       this.millisTillStop = millis;
+      if(MusicPlayer.this.fadingIn != null)
+        fadingIn.forEach(t -> t.endNow());
     }
 
     public void run() {
-      for(int millis = (int)(millisTillStop * Constants.musicVolume); millis > 0; millis--) {
+      for(int millis = (int)(millisTillStop * mp.getVolume()); millis > 0; millis -= 1) {
         mp.setVolume((double)millis /millisTillStop);
         try {
           Thread.sleep(1);
@@ -187,19 +195,26 @@ public class MusicPlayer {
   private class FadeIntoExistence extends Thread {
     MediaPlayer mp;
     int millisTillFull;
+    boolean allowedToRun;
 
     public FadeIntoExistence(MediaPlayer mp, int millis) {
       this.mp = mp;
       this.millisTillFull = millis;
+      this.allowedToRun = true;
     }
 
     public void run() {
-      for(int millis = 0; (double)millis / millisTillFull < Constants.musicVolume; millis++) {
+      for(int millis = 0; allowedToRun && (double)millis / millisTillFull < Constants.musicVolume; millis += 1) {
         mp.setVolume((double)millis / millisTillFull);
         try {
           Thread.sleep(1);
         } catch (InterruptedException e) { e.printStackTrace(); }
       }
+      MusicPlayer.this.fadingIn.remove(this);
+    }
+
+    public void endNow() {
+      this.allowedToRun = false;
     }
   }
 }
