@@ -739,12 +739,14 @@ public class PopUpCreator {
 		  if(aiorHumanpopup == null) {
 				PopUpCreatorEnterTeamName teamNamePopup = new PopUpCreatorEnterTeamName(scene, root, aiconfigPopUp, hsc, false, true);
 				teamNamePopup.setConfig(defaultConfig);
+				teamNamePopup.setAitype(aitype);
 				teamNamePopup.createEnterNamePopUp();
 				
 
 			}else {
 				PopUpCreatorEnterTeamName teamNamePopup = new PopUpCreatorEnterTeamName(scene, root, aiconfigPopUp, hsc, true, true);
 				teamNamePopup.setConfig(defaultConfig);
+				teamNamePopup.setAitype(aitype);
 				teamNamePopup.createEnterNamePopUp();
 			}
 		});
@@ -829,11 +831,13 @@ public class PopUpCreator {
 			if(aiorHumanpopup == null) {
 				PopUpCreatorEnterTeamName teamNamePopup = new PopUpCreatorEnterTeamName(scene, root, saveConfig, hsc, false, true);
 				teamNamePopup.setConfig(defaultConfig);
+				teamNamePopup.setAitype(aitype);
 				teamNamePopup.createEnterNamePopUp();
 
 			}else {
 				PopUpCreatorEnterTeamName teamNamePopup = new PopUpCreatorEnterTeamName(scene, root, saveConfig, hsc, true, true);
 				teamNamePopup.setConfig(defaultConfig);
+				teamNamePopup.setAitype(aitype);
 				teamNamePopup.createEnterNamePopUp();
 			}
 			

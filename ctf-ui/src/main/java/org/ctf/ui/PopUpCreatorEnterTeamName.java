@@ -29,11 +29,19 @@ public class PopUpCreatorEnterTeamName {
 	PopUpPane enterNamePopUp;
 	String teamName;
 	AIConfig config;
-	
+	AI aitype;
+
+	public AI getAitype() {
+		return aitype;
+	}
+
+	public void setAitype(AI aitype) {
+		this.aitype = aitype;
+	}
 
 	HomeSceneController hsc;
-	private ObjectProperty<Font> popUpLabel = new SimpleObjectProperty<Font>(Font.getDefault());
-	private ObjectProperty<Font> leaveButtonText = new SimpleObjectProperty<Font>(Font.getDefault());
+	private ObjectProperty<Font> popUpLabel;
+	private ObjectProperty<Font> leaveButtonText; 
 	
 	
 	public PopUpCreatorEnterTeamName(Scene scene,StackPane root, PopUpPane before, HomeSceneController hsc, boolean isMain, boolean isAi) {
@@ -43,6 +51,8 @@ public class PopUpCreatorEnterTeamName {
 		this.hsc = hsc;
 		this.isMain = isMain;
 		this.isAi = isAi;
+		popUpLabel = new SimpleObjectProperty<Font>(Font.font(scene.getWidth()/50));
+		leaveButtonText = new SimpleObjectProperty<Font>(Font.font(scene.getWidth()/80));
 		manageFontSizes();
 	}
 	
@@ -69,6 +79,7 @@ public class PopUpCreatorEnterTeamName {
 		l.prefWidthProperty().bind(enterNamePopUp.widthProperty());
 		l.setAlignment(Pos.CENTER);
 		l.getStyleClass().add("custom-label");
+		l.setFont(Font.font(scene.getWidth()/50));
 		l.fontProperty().bind(popUpLabel);
 		top.getChildren().add(l);
 		HBox enterNameBox = new HBox();
@@ -117,13 +128,13 @@ public class PopUpCreatorEnterTeamName {
 
 			}
 			if(isMain && isAi) {
-				CreateGameController.createAiClient(teamName, AI.RANDOM, config, isMain);
+				CreateGameController.createAiClient(teamName, aitype, config, isMain);
 				hsc.switchToWaitGameScene(App.getStage());
 				CreateGameController.setLasttype("AI");
 
 			}
 			if(!isMain && isAi) {
-				CreateGameController.createAiClient(teamName, AI.RANDOM, config, isMain);
+				CreateGameController.createAiClient(teamName, aitype, config, isMain);
 				root.getChildren().remove(enterNamePopUp);
 				CreateGameController.setLasttype("AI");
 
@@ -137,6 +148,7 @@ public class PopUpCreatorEnterTeamName {
 
 	private Button createBackButton(String text) {
 		Button exit = new Button("back");
+		exit.setFont(Font.font(scene.getWidth()/80));
 		exit.fontProperty().bind(leaveButtonText);
 		exit.getStyleClass().add("leave-button");
 		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));

@@ -183,10 +183,10 @@ public class PlayGameScreenV2 extends Scene {
 	     gm.maxWidthProperty().bind(this.widthProperty().multiply(0.7));
 	     gm.maxHeightProperty().bind(this.heightProperty().multiply(0.9));
 	     gm.enableBaseColors(this);
-	     if (first) {
-		     showMapBox.getChildren().add(createBackgroundImage(gm.vBox,state));
-		     first = false;
-		}
+//	     if (first) {
+//		     showMapBox.getChildren().add(createBackgroundImage(gm.vBox,state));
+//		     first = false;
+//		}
 	     showMapBox.getChildren().add(gm);
 	}
 	

@@ -94,7 +94,7 @@ public class CreateGameController {
 
 	public static void initColorHashMap() {
 		for(int i=0; i<CreateGameController.getMaxNumberofTeams(); i++) {
-			colors.put(String.valueOf(i), new SimpleObjectProperty<>(Color.BEIGE));
+			colors.put(String.valueOf(i), new SimpleObjectProperty<>(Color.BLACK));
 		}
 	}
 	
