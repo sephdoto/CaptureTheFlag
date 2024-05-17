@@ -789,6 +789,11 @@ public class Client implements GameClientInterface {
     return endDate;
   }
 
+  /**
+   * Getter which returns true if and only if the game is over on serverside
+   *
+   * @author rsyed
+   */
   public boolean isGameOver() {
     try {
       return gameOver;
