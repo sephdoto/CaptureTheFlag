@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import org.ctf.shared.constants.Constants;
@@ -13,11 +14,33 @@ import org.ctf.shared.constants.Enums.Themes;
 import org.springframework.util.StringUtils;
 import javafx.scene.image.Image;
 
+/**
+ * Tools for loading and saving images from/to their corresponding place in ui.resources.
+ * 
+ * @author sistumpf
+ */
 public class ImageController {
-
+  /**
+   * Checks if a picture already exists in resources and hence cannot be changed
+   * 
+   * @author sistumpf
+   * @param type the type the image belongs to
+   * @param theme the theme the image got chosen for
+   * @param imageName the name of the picture without extension
+   * @return true if no picture exists yet
+   */
+  public static boolean canBeChanged(ImageType type, Themes theme, String imageName) {
+    File location = new File(Constants.toUIPictures + theme.toString().toLowerCase() + File.separator + type.getFolderName());
+    for(String extension : getAllExtensionsIn(location)) {
+      if(Files.exists(Paths.get(location.getAbsolutePath() + File.separator + imageName + "." + extension)))
+        return false;
+    }
+    return true;
+  }
+  
   /**
    * Loads a certain image from a certain folder. Uses a specified theme.
-   * Tries to load .png or .jpg, if they don't exists it loads a fallback image
+   * Tries to load the picture, if it doesn't exists it tries a default and in the worst case a fallback image
    * 
    * @param type Type of the image
    * @param imageName Name of the image, without name ending (.png, .jpg, ...)
@@ -25,14 +48,16 @@ public class ImageController {
    */
   public static Image loadImage(ImageType type, Themes theme, String imageName) {
     try {
-      String location = new File(Constants.toUIPictures + theme.toString().toLowerCase() + File.separator + type.getFolderName()).toURI().toURL().toString();
-
-      try {
-        return new Image(location + imageName + ".png");
-      } catch (Exception e) {e.printStackTrace();}
-      try {
-        return new Image(location + imageName + ".jpg");
-      } catch (Exception e) {e.printStackTrace();}
+      File locationFile = new File(Constants.toUIPictures + theme.toString().toLowerCase() + File.separator + type.getFolderName());
+      String location = locationFile.toURI().toURL().toString();
+      
+      //try loading the image with all available extensions
+      for(String extension : getAllExtensionsIn(locationFile)) {
+        try {
+          return new Image(location + imageName + "." + extension);
+        } catch (Exception e) {e.printStackTrace();}
+      }
+      //try loading the default image if the previous step didn't work
       try {
         return new Image(location + "Default" + ".png");
       } catch(Exception e) {
@@ -40,7 +65,8 @@ public class ImageController {
       }
     } catch (Exception e) {
       e.printStackTrace();
-    }      
+    }
+    //load fallback image if something REALLY failed
     return loadFallbackImage(type);
   }
 
@@ -123,5 +149,23 @@ public class ImageController {
         Constants.toUIPictures + "fallback" + File.separator + type.getFolderName() + "missingImage.png")
         .toURI().toString());
     return image;
+  }
+  
+  /**
+   * Returns all file extensions in a given directory
+   * 
+   * @author sistumpf
+   * @param dir the directory which gets scanned for the extensions
+   * @return all possible extensions
+   */
+  private static HashSet<String> getAllExtensionsIn(File dir) {
+    HashSet<String> extSet = new HashSet<String>();
+    if(!dir.isDirectory())
+      return extSet;
+    
+    for(File file : dir.listFiles())
+      extSet.add(StringUtils.getFilenameExtension(file.getPath()));
+    
+    return extSet;
   }
 }
