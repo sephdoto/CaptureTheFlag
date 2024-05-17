@@ -117,6 +117,7 @@ public class Client implements GameClientInterface {
     }
     setServer(IP, port);
     allTeamNames = null;
+    this.currentTeamTurn= -1;
   }
 
   /**
