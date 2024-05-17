@@ -62,7 +62,7 @@ public class CreateGameController {
 	//List of all Human-Clients on one device
 	private static ArrayList<Client> localHumanClients = new ArrayList<Client>();
 	//List of all AI-clients on one device
-	private static ArrayList<AIClient> localAIClients = new ArrayList<AIClient>();
+	//private static ArrayList<AIClient> localAIClients = new ArrayList<AIClient>();
 	
 	
 	private static HomeSceneController hsc;
@@ -176,7 +176,7 @@ public class CreateGameController {
 		if(isMain) {
 			mainClient = aiClient;
 		}
-		localAIClients.add(aiClient);
+		//localAIClients.add(aiClient);
 	}
 	
 	
