@@ -152,7 +152,7 @@ public class PlayGameScreenV2 extends Scene {
 		if (state == null) {
 			showMapBox.getChildren().add(new Label("hallo"));
 		} else {
-			
+					  
 			if (gm != null) {
 				CreateGameController.setFigures(gm.getFigures());
 				showMapBox.getChildren().remove(gm);

@@ -509,7 +509,7 @@ public class EditorScene extends Scene {
    * @param label - String value for button initialization
    * @return Button object
    */
-  private Button createControlButton(String label, double widthratio, double heightRatio) {
+  public Button createControlButton(String label, double widthratio, double heightRatio) {
     Button but = new Button(label);
     but.getStyleClass().add("leave-button");
     but.prefWidthProperty().bind(root.widthProperty().multiply(widthratio));
