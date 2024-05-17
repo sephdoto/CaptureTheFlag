@@ -1,5 +1,6 @@
 package org.ctf.ui;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -7,7 +8,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.ctf.shared.client.AIClient;
 import org.ctf.shared.client.Client;
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.GameState;
+import org.ctf.shared.wave.WaveFunctionCollapse;
 import org.ctf.ui.customobjects.BaseRep;
 import org.ctf.ui.customobjects.CostumFigurePain;
 import org.ctf.ui.customobjects.Timer;
@@ -29,6 +32,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -59,6 +63,7 @@ public class PlayGameScreenV2 extends Scene {
 	GamePane gm;
 	GameState state;
 	VBox right;
+	boolean first;
 	private static Circle c;
 	private static Label idLabel;
 	private static Label typeLabel;
@@ -104,6 +109,7 @@ public class PlayGameScreenV2 extends Scene {
 		currentTeam = -1;
 		this.hsc = hsc;
 		manageFontSizes();
+		first = true;
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
 		this.root = (StackPane) this.getRoot();
 		createLayout();
@@ -122,15 +128,16 @@ public class PlayGameScreenV2 extends Scene {
 		root.prefWidthProperty().bind(this.widthProperty());
 		HBox top = new HBox();
 		top.setAlignment(Pos.CENTER);
-		VBox left = new VBox();
+		//VBox left = new VBox();
 		right = new VBox();
 		right.setAlignment(Pos.BOTTOM_CENTER);
-		left.setAlignment(Pos.CENTER);
+		//left.setAlignment(Pos.CENTER);
 		top.prefHeightProperty().bind(this.heightProperty());
-		left.prefHeightProperty().bind(this.heightProperty());
-		left.prefWidthProperty().bind(this.widthProperty().multiply(0.7));
-		left.getChildren().add(createShowMapPane("p2"));
-		top.getChildren().add(left);
+//		left.prefHeightProperty().bind(this.heightProperty());
+//		left.prefWidthProperty().bind(this.widthProperty().multiply(0.7));
+//		left.getChildren().add(createShowMapPane("p2"));
+		
+		top.getChildren().add(createShowMapPane());
 		right.getChildren().add(createTopCenter());
 		right.getChildren().add(imageTest());
 		right.getChildren().add(createClockBox());
@@ -145,13 +152,15 @@ public class PlayGameScreenV2 extends Scene {
 		if (state == null) {
 			showMapBox.getChildren().add(new Label("hallo"));
 		} else {
-			showMapBox.getChildren().clear();
+			
 			if (gm != null) {
 				CreateGameController.setFigures(gm.getFigures());
+				showMapBox.getChildren().remove(gm);
 			}
-			gm = new GamePane(state);
-			gm.enableBaseColors(this);
-			showMapBox.getChildren().add(gm);
+//			gm = new GamePane(state);
+//			gm.enableBaseColors(this);
+//			showMapBox.getChildren().add(gm);
+			drawGamePane(state);
 			if (isRemote) {
 				if (mainClient.isItMyTurn() && !(mainClient instanceof AIClient)) {
 					Game.initializeGame(gm, mainClient);
@@ -168,26 +177,51 @@ public class PlayGameScreenV2 extends Scene {
 		}
 	}
 	
-	private VBox createShowMapPane(String name) {
-		VBox outerbox = new VBox();
-		VBox.setVgrow(outerbox, Priority.ALWAYS);
-		outerbox.prefHeightProperty().bind(root.heightProperty());
-		//outerbox.setFillWidth(true);
+	private void drawGamePane(GameState state) {
+		 gm = new GamePane(state);
+	     StackPane.setAlignment(gm, Pos.CENTER);
+	     gm.maxWidthProperty().bind(this.widthProperty().multiply(0.7));
+	     gm.maxHeightProperty().bind(this.heightProperty().multiply(0.9));
+	     if (first) {
+		     showMapBox.getChildren().add(createBackgroundImage(gm.vBox,state));
+		     first = false;
+		}
+	     showMapBox.getChildren().add(gm);
+	}
+	
+	
+	public ImageView createBackgroundImage(VBox vBox, GameState state) {
+	      // Image mp = new Image(getClass().getResourceAsStream("gridSTARWARS.png"));
+	      WaveFunctionCollapse backgroundcreator =
+	          new WaveFunctionCollapse(state.getGrid(), Constants.theme);
+	      backgroundcreator.saveToResources();
+	      Image mp =
+	          new Image(new File(Constants.toUIResources + "pictures" + File.separator + "grid.png")
+	              .toURI().toString());
+	      ImageView mpv = new ImageView(mp);
+	      StackPane.setAlignment(mpv, Pos.CENTER);
+	      mpv.fitHeightProperty().bind(vBox.heightProperty().multiply(1));
+	      mpv.fitWidthProperty().bind(vBox.widthProperty().multiply(1));
+
+	      // mpv.setPreserveRatio(true);
+	      mpv.setOpacity(1);
+	      return mpv;
+	    }
+	
+	private StackPane createShowMapPane() {
+		
+		//VBox.setVgrow(outerbox, Priority.ALWAYS);
+		
 		showMapBox = new StackPane();
 		showMapBox.getStyleClass().add("play-pane");
-		//showMapBox.prefWidthProperty().bind(this.widthProperty().multiply(0.7));
+		
 		showMapBox.paddingProperty().bind(padding);
-		showMapBox.prefHeightProperty().bind(outerbox.heightProperty());
+		showMapBox.prefWidthProperty().bind(this.widthProperty().multiply(0.7));
+	     showMapBox.prefHeightProperty().bind(this.heightProperty().multiply(0.9));
+	     showMapBox.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.7));
+	     showMapBox.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.9));
 		showMapBox.getStyleClass().add("show-GamePane");
-		//state = StroeMaps.getMap(name);
-		//gm = new GamePane(state,hsc);
-//		gm.prefHeightProperty().bind(this.heightProperty().multiply(0.9));
-//		gm.prefWidthProperty().bind(this.widthProperty().multiply(0.9));
-		//gm.enableBaseColors(this);
-		//showMapBox.getChildren().add(gm);
-	
-		outerbox.getChildren().add(showMapBox);
-		return outerbox;
+		return showMapBox;
 	}
 	
 	

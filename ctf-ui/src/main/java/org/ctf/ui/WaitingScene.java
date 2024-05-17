@@ -484,7 +484,7 @@ public class WaitingScene extends Scene {
     HBox toAdd = colors.get(i-1);
     //String color = CreateGameController.getMainClient().getTeams()[i-1].getColor();
     toAdd.getChildren().clear();
-    toAdd.getChildren().add(createColorRec("blue", toAdd));
+    toAdd.getChildren().add(createColorRec("grey", toAdd));
     
     }
   }

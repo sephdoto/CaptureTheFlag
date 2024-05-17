@@ -79,12 +79,14 @@ public class CreateGameController {
 	 * Initializes a servermanager with a port,serverIp and template and creates a game session with it
 	 * @author Manuel Krakowski
 	 */
-	public static void createGameSession() {
+	public static boolean createGameSession() {
 		serverManager = new ServerManager(new CommLayer(), new ServerDetails(serverIP, port), template);
 		if (serverManager.createGame()) {
 			System.out.println("Session erstellt");
+			return true;
 		} else {
 			System.out.println("None");
+			return false;
 		}
 	}
 	
