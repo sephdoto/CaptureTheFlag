@@ -44,18 +44,18 @@ public class ImageGetter {
    * @return 
    */
   public static Image loadThemedImage(ImageType type, String imageName) {
-    String location = Constants.toUIPictures + Constants.theme.toString().toLowerCase() + File.separator + type.getFolderName();
     try {
+      String location = new File(Constants.toUIPictures + Constants.theme.toString().toLowerCase() + File.separator + type.getFolderName()).toURI().toURL().toString().replace("file:/", "");
       if(new File(location + imageName + ".png").exists())
-        return new Image(location + imageName + ".png");
+        return new Image("file:/" + location + imageName + ".png");
       else if(new File(location + imageName + ".jpg").exists())
-        return new Image(location + imageName + ".jpg");
+        return new Image("file:/" + location + imageName + ".jpg");
       else 
-        return new Image(location + "Default" + ".png");
+        return new Image("file:/" + location + "Default" + ".png");
     } catch(Exception e) {
       e.printStackTrace();
+      return loadFallbackImage(type);
     }
-    return loadFallbackImage(type);
   }
 
   public static Image loadFallbackImage(ImageType type) {

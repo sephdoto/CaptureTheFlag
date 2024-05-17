@@ -31,12 +31,14 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import java.io.File;
+import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.shared.constants.Enums.Themes;
 import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.exceptions.UnknownError;
 import org.ctf.shared.state.data.map.Shape;
 import org.ctf.shared.state.data.map.ShapeType;
+import org.ctf.ui.controllers.ImageGetter;
 import org.ctf.ui.controllers.MapPreview;
 import org.ctf.ui.controllers.MapPreviewThread;
 import org.ctf.ui.controllers.SoundController;
@@ -142,7 +144,7 @@ public class EditorScene extends Scene {
    * @return ImageView that gets added to the scene
    */
   private ImageView createHeader() {
-    Image mp = new Image(getClass().getResourceAsStream("EditorImage.png"));
+    Image mp = ImageGetter.loadThemedImage(ImageType.MISC, "EditorImage");
     ImageView mpv = new ImageView(mp);
     mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.8));
     mpv.setPreserveRatio(true);

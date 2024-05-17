@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.Directions;
 import org.ctf.shared.state.data.map.MapTemplate;
@@ -17,6 +18,7 @@ import org.ctf.shared.state.data.map.PieceDescription;
 import org.ctf.shared.state.data.map.PlacementType;
 import org.ctf.shared.tools.JsonTools;
 import org.ctf.shared.tools.JsonTools.IncompleteMapTemplateException;
+import org.ctf.ui.controllers.ImageGetter;
 import org.ctf.ui.controllers.MapPreview;
 
 import javafx.animation.FadeTransition;
@@ -112,7 +114,7 @@ public class MapEditorScene extends Scene {
 		VBox root = (VBox) this.getRoot();
 		root.setStyle("-fx-background-color: black;" + "-fx-padding: 25px;" + "-fx-spacing: 50px;"
 				+ "-fx-alignment: top-center ;");
-		Image meI = new Image(getClass().getResourceAsStream("EditorImage.png"));
+		Image meI = ImageGetter.loadThemedImage(ImageType.MISC, "EditorImage");
 		ImageView meIv = new ImageView(meI);
 		meIv.setPreserveRatio(true);
 		root.getChildren().add(meIv);
