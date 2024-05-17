@@ -49,6 +49,13 @@
     "custom": false
   },
   {
+    "pieceName": "Tommy",
+    "fileType": ".wav",
+    "type": "MOVE",
+    "theme": "STARWARS",
+    "custom": true
+  },
+  {
     "pieceName": "Default",
     "fileType": ".wav",
     "type": "CAPTURE",

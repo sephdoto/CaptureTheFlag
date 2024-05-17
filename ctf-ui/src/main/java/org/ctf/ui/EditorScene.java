@@ -42,6 +42,7 @@ import org.ctf.ui.controllers.ImageGetter;
 import org.ctf.ui.controllers.MapPreview;
 import org.ctf.ui.controllers.MapPreviewThread;
 import org.ctf.ui.controllers.SoundController;
+import org.ctf.ui.customobjects.DragAndDropPane;
 import org.ctf.ui.customobjects.MovementVisual;
 
 /**
@@ -67,6 +68,7 @@ public class EditorScene extends Scene {
   MediaPlayer mediaPlayer;
   VBox directionsContainer;
   MovementVisual movementVisual;
+  DragAndDropPane dragAndDropPane;
   boolean validtemplate = true;
   ComboBox<String> soundPieceBox;
   Text invalid;
@@ -94,6 +96,7 @@ public class EditorScene extends Scene {
     options[3] = createSoundCustomizer();
     createLayout();
     createInvalidText();
+    this.dragAndDropPane = new DragAndDropPane(this);
     // TextGeneratorThread textGeneratorThread = new TextGeneratorThread();
     // textGeneratorThread.start();
 
@@ -598,7 +601,7 @@ public class EditorScene extends Scene {
       leftPane.getChildren().add(options[3]);
       mb.setText("Sounds");
       visualRoot.getChildren().clear();
-      visualRoot.getChildren().add(new Text("Drag in a Sound File!"));
+      visualRoot.getChildren().add(dragAndDropPane);
     });
     return mb;
   }
@@ -929,6 +932,14 @@ public class EditorScene extends Scene {
     createDirectionsVisual();
     updateVisualRoot();
     // visualRoot.getChildren().add(visual);
+  }
+
+  public void setCurrentSound(File currentSound) {
+    this.currentSound = currentSound;
+  }
+
+  public File getCurrentSound() {
+    return currentSound;
   }
 
   /**
