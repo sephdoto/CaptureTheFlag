@@ -40,6 +40,7 @@ public class TemplateEngine {
   HashMap<String, PieceDescription> pieces = new HashMap<String, PieceDescription>();
   public static final ArrayList<String> defaultNames =
       new ArrayList<String>(Arrays.asList("Pawn", "Knight", "Queen", "Bishop", "Rook", "King"));
+  
 
   /**
    * Initializes the TemplateEngine by loading a default template and connecting to an EditorScene.

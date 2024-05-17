@@ -68,11 +68,14 @@ public class EditorScene extends Scene {
   MediaPlayer mediaPlayer;
   VBox directionsContainer;
   MovementVisual movementVisual;
-  DragAndDropPane dragAndDropPane;
+  DragAndDropPane dragAndDropPaneSound;
+  DragAndDropPane dragAndDropPaneImages;
   boolean validtemplate = true;
   ComboBox<String> soundPieceBox;
+  ComboBox<String> picturePieceBox;
   Text invalid;
   File currentSound;
+  File currentPicture;
 
   /**
    * Starts the initialization process of the scene, generates different menu panes and connects it
@@ -89,14 +92,18 @@ public class EditorScene extends Scene {
     this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
     this.root = (StackPane) this.getRoot();
     engine = new TemplateEngine(this);
-    options = new Parent[4];
+    options = new Parent[5];
     options[0] = createMapChooser();
     options[1] = createFigureChooser();
     options[2] = createFigureCustomizer();
     options[3] = createSoundCustomizer();
+    options[4] = createPictureCustomizer();
     createLayout();
     createInvalidText();
-    this.dragAndDropPane = new DragAndDropPane(this);
+    this.dragAndDropPaneSound =
+        new DragAndDropPane(this, "Drag and Drop a \n sound file in the .wav format!",DragAndDropPane.SOUNDS);
+    this.dragAndDropPaneImages = 
+        new DragAndDropPane(this, "Drag and Drop an \n image file!",DragAndDropPane.IMAGES);
     // TextGeneratorThread textGeneratorThread = new TextGeneratorThread();
     // textGeneratorThread.start();
 
@@ -403,8 +410,6 @@ public class EditorScene extends Scene {
     createFigureBox(themeBox, 0.2, 0.18, 0.35);
     controlgrid.add(themeBox, 1, 0);
 
-
-
     ComboBox<String> soundBox = new ComboBox<String>();
     SoundType[] types = SoundType.values();
     for (SoundType st : types) {
@@ -429,23 +434,24 @@ public class EditorScene extends Scene {
           SoundType.valueOf(soundBox.getValue()));
     });
     Button saveButton = createControlButton("Add loaded Sound", 0.16, 0.15);
-    saveButton.setOnAction( e-> {
-      if(TemplateEngine.defaultNames.contains(soundPieceBox.getValue())){
+    saveButton.setOnAction(e -> {
+      if (TemplateEngine.defaultNames.contains(soundPieceBox.getValue())) {
         this.inform("You can not change the sound of default pieces!");
         return;
       }
-      
-      if(currentSound == null) {
+
+      if (currentSound == null) {
         this.inform("Please enter a .wav sound File!");
         return;
       }
       String filename = currentSound.getName();
-      if(!filename.substring(filename.length()-4, filename.length()).equals(".wav")) {
+      if (!filename.substring(filename.length() - 4, filename.length()).equals(".wav")) {
         this.inform("Please enter a file in the .wav format!");
         return;
       }
-      
-      SoundController.saveSound(soundPieceBox.getValue(), Themes.valueOf(themeBox.getValue()), SoundType.valueOf(soundBox.getValue()), currentSound, true);
+
+      SoundController.saveSound(soundPieceBox.getValue(), Themes.valueOf(themeBox.getValue()),
+          SoundType.valueOf(soundBox.getValue()), currentSound, true);
       this.inform(filename + " was saved!");
     });
     soundButtonBox.getChildren().add(playButton);
@@ -455,6 +461,76 @@ public class EditorScene extends Scene {
     customRoot.getChildren().add(soundButtonBox);
     return customRoot;
   }
+
+  private VBox createPictureCustomizer() {
+    VBox customRoot = new VBox();
+    customRoot.widthProperty().addListener((obs, oldVal, newVal) -> {
+      double spacing = newVal.doubleValue() * 0.05;
+      customRoot.setSpacing(spacing);
+    });
+    customRoot.setPadding(new Insets(20));
+    customRoot.setAlignment(Pos.TOP_CENTER);
+    customRoot.getChildren().add(createHeaderText(customRoot, "Configure Piece Images", 18));
+    // ComboBox<String> test = customFigureBox;
+    // customRoot.getChildren().add(test);
+    GridPane controlgrid = new GridPane();
+    customRoot.widthProperty().addListener((obs, oldVal, newVal) -> {
+      controlgrid.setHgap(newVal.doubleValue() * 0.05);
+      controlgrid.setVgap(newVal.doubleValue() * 0.03);
+
+    });
+    controlgrid.add(createText(customRoot, "Theme", 20), 0, 0);
+    controlgrid.add(createText(customRoot, "Piece", 20), 0, 1);
+    HBox wrapper = new HBox();
+    wrapper.setAlignment(Pos.CENTER);
+    wrapper.getChildren().add(controlgrid);
+
+    ComboBox<String> themeBox = new ComboBox<String>();
+    Themes[] themes = Themes.values();
+    for (Themes st : themes) {
+      themeBox.getItems().add(st.toString());
+    }
+
+    themeBox.setValue(themeBox.getItems().get(0));
+    createFigureBox(themeBox, 0.2, 0.18, 0.35);
+    controlgrid.add(themeBox, 1, 0);
+
+
+    picturePieceBox = new ComboBox<String>(engine.getAllPieceNames());
+    picturePieceBox.setValue(picturePieceBox.getItems().get(0));
+    createFigureBox(picturePieceBox, 0.2, 0.18, 0.35);
+    controlgrid.add(picturePieceBox, 1, 1);
+
+    HBox soundButtonBox = new HBox();
+    soundButtonBox.setAlignment(Pos.CENTER);
+    soundButtonBox.setSpacing(20);
+    Button saveButton = createControlButton("Save loaded Picture", 0.2, 0.15);
+    saveButton.setOnAction(e -> {
+      if (TemplateEngine.defaultNames.contains(picturePieceBox.getValue())) {
+        this.inform("You can not change the picture of default pieces!");
+        return;
+      }
+
+      if (currentSound == null) {
+        this.inform("Please enter an image File!");
+        return;
+      }
+      String filename = currentPicture.getName();
+      if (!filename.substring(filename.length() - 4, filename.length()).equals(".png")) {
+        this.inform("Please enter a file in the .png format!");
+        return;
+      }
+
+
+      this.inform(filename + " was saved!");
+    });
+    soundButtonBox.getChildren().add(saveButton);
+    controlgrid.add(saveButton, 1, 2);
+    customRoot.getChildren().add(wrapper);
+    // customRoot.getChildren().add(soundButtonBox);
+    return customRoot;
+  }
+
 
   /**
    * Creates the Container for displaying the different option tabs on the left side of the scene.
@@ -576,7 +652,8 @@ public class EditorScene extends Scene {
     MenuItem figureMenuItem = new MenuItem("Add Pieces");
     MenuItem configMenuItem = new MenuItem("Custom Pieces");
     MenuItem soundMenuItem = new MenuItem("Sounds");
-    mb.getItems().addAll(mapMenuItem, figureMenuItem, configMenuItem, soundMenuItem);
+    MenuItem imageMenuItem = new MenuItem("Images");
+    mb.getItems().addAll(mapMenuItem, figureMenuItem, configMenuItem, soundMenuItem, imageMenuItem);
     mapMenuItem.setOnAction(event -> {
       leftPane.getChildren().clear();
       leftPane.getChildren().add(options[0]);
@@ -601,7 +678,14 @@ public class EditorScene extends Scene {
       leftPane.getChildren().add(options[3]);
       mb.setText("Sounds");
       visualRoot.getChildren().clear();
-      visualRoot.getChildren().add(dragAndDropPane);
+      visualRoot.getChildren().add(dragAndDropPaneSound);
+    });
+    imageMenuItem.setOnAction(event -> {
+      leftPane.getChildren().clear();
+      leftPane.getChildren().add(options[4]);
+      mb.setText("Images");
+      visualRoot.getChildren().clear();
+      visualRoot.getChildren().add(dragAndDropPaneImages);
     });
     return mb;
   }
@@ -913,20 +997,20 @@ public class EditorScene extends Scene {
     visualRoot.setOnDragOver(event -> {
       if (event.getGestureSource() != this && event.getDragboard().hasFiles()) {
         event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-    }
-    event.consume();
+      }
+      event.consume();
     });
     visualRoot.setOnDragDropped(event -> {
       Dragboard dragboard = event.getDragboard();
       boolean success = false;
       if (dragboard.hasFiles()) {
-          File file = dragboard.getFiles().get(0);
-         this.inform(file.getName()+" was loaded.");
-          this.currentSound = file;
+        File file = dragboard.getFiles().get(0);
+        this.inform(file.getName() + " was loaded.");
+        this.currentSound = file;
       }
       event.setDropCompleted(success);
       event.consume();
-    
+
     });
     // GamePane visual = new GamePane(CreateTextGameStates.createTestGameState1());
     createDirectionsVisual();
