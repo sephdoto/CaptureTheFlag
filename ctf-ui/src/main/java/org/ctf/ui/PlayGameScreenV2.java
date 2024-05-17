@@ -60,6 +60,7 @@ public class PlayGameScreenV2 extends Scene {
 	boolean isRemote;
 	VBox testBox;
 	Label howManyTeams;
+	Label timeLabel;
 	GamePane gm;
 	GameState state;
 	VBox right;
@@ -94,9 +95,10 @@ public class PlayGameScreenV2 extends Scene {
 //			}
 			if(mainClient.getQueuedGameState() !=null) {
 				Platform.runLater(() -> {
-					currentState = mainClient.getQueuedGameState();
+						currentState = mainClient.getQueuedGameState();
 					 this.redrawGrid(currentState);
 					 this.setTeamTurn(String.valueOf(mainClient.getCurrentTeamTurn()));
+					 //timeLabel.setText(formatTime(mainClient.getRemainingMoveTimeInSeconds()));
 			        });
 			}
 		} catch (Exception e) {
@@ -150,7 +152,7 @@ public class PlayGameScreenV2 extends Scene {
 		top.getChildren().add(createShowMapPane());
 		right.getChildren().add(createTopCenter());
 		right.getChildren().add(imageTest());
-		right.getChildren().add(createClockBox());
+		right.getChildren().add(createClockBox(mainClient.isGameMoveTimeLimited(), mainClient.isGameTimeLimited()));
 		right.setStyle("-fx-background-color: black");
 		right.prefWidthProperty().bind(this.widthProperty().multiply(0.3));
 		top.getChildren().add(right);
@@ -162,6 +164,8 @@ public class PlayGameScreenV2 extends Scene {
 		if (state == null) {
 			showMapBox.getChildren().add(new Label("hallo"));
 		} else {
+			System.out.println(state.getCurrentTeam());
+			System.out.println(state.getGrid()[0].length);
 			drawGamePane(state);
 			if (isRemote) {
 				if (mainClient.isItMyTurn() && !(mainClient instanceof AIClient)) {
@@ -321,7 +325,7 @@ public class PlayGameScreenV2 extends Scene {
         contextMenu.show(this.getWindow(),d,e);
 	}
 	
-	private HBox createClockBox() {
+	private HBox createClockBox(boolean movetimelimited, boolean gametimeLimited) {
 		HBox timerBox = new HBox();
 		timerBox.setAlignment(Pos.CENTER);
 		timerBox.getStyleClass().add("timer-box");
@@ -332,8 +336,14 @@ public class PlayGameScreenV2 extends Scene {
 			timerBox.setSpacing(newSpacing);
 			timerBox.setPadding(new Insets(0, padding, 0, padding));
 		});
-		VBox timer1 =  createTimer(timerBox, "Game Time");
-		VBox timer2 =  createTimer(timerBox, "Move Time");
+		VBox timer1;
+		if(movetimelimited) {
+			timer1 = createTimer2(timerBox, "Move Time");
+		}else {
+			 timer1 =  createTimer(timerBox, "Move Time");
+		}
+		
+		VBox timer2 =  createTimer(timerBox, "Game Time");
 		timerBox.getChildren().addAll(timer1,timer2);
 		return timerBox;
 	}
@@ -356,6 +366,27 @@ public class PlayGameScreenV2 extends Scene {
 		timerwithDescrip.getChildren().add(t);
 		return timerwithDescrip;
 	}
+	
+	private VBox createTimer2(HBox timerBox, String text) {
+		VBox timerwithDescrip = new VBox();
+		timerwithDescrip.setAlignment(Pos.CENTER);
+		timerwithDescrip.prefWidthProperty().bind(timerBox.widthProperty().multiply(0.35));
+		timerwithDescrip.prefHeightProperty().bind(timerBox.widthProperty().multiply(0.35));
+		Label desLabel = new Label(text);
+		desLabel.setAlignment(Pos.CENTER);
+		desLabel.fontProperty().bind(timerDescription);
+		desLabel.getStyleClass().add("des-timer");
+		timerwithDescrip.getChildren().add(desLabel);
+		timeLabel = new Label();
+		timeLabel.prefWidthProperty().bind(timerBox.widthProperty().multiply(0.35));
+		timeLabel.prefHeightProperty().bind(timeLabel.widthProperty().multiply(0.35));
+		timeLabel.getStyleClass().add("timer-label");
+		timeLabel.fontProperty().bind(timerLabel);
+		timerwithDescrip.getChildren().add(timeLabel);
+		return timerwithDescrip;
+	}
+	
+	
 	
 	private HBox imageTest() {
 		HBox h1 = new HBox();
