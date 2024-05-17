@@ -662,12 +662,11 @@ public class GameEngine implements Game {
    * @return String containing a randomized color as a HEX Code
    */
   static String getRandColor(Team team) {
-    int i=1;
-    int r = pseudoRandomColorInt(team, i++);
-    int g = pseudoRandomColorInt(team, i++);
+    int i=3;
+    int r = pseudoRandomColorInt(team, i--);
+    int g = pseudoRandomColorInt(team, i--);
     int b = pseudoRandomColorInt(team, i);
-    Color testColor = Color.rgb(r, g, b);
-    return testColor.toString();
+    return Color.rgb(r, g, b).toString();
   }
   
   /**
@@ -698,7 +697,7 @@ public class GameEngine implements Game {
             );
     Stream.of(team.getPieces()).forEach(
         piece -> sb.append(
-            new Random(piece.getId().hashCode()).nextInt(256)
+            new Random(piece.getId().hashCode()).nextInt(team.getPieces().length)
             ));
     return sb.toString().hashCode();
   }
