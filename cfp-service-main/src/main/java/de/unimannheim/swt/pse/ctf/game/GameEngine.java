@@ -130,9 +130,9 @@ public class GameEngine implements Game {
     teamToInteger.put(teamId, slot);
     integerToTeam.put(slot, teamId);
 
-    canWeStartTheGameUwU();
     Team copy = EngineTools.deepCopyTeam(tempTeam);
     copy.setId(teamId);
+    canWeStartTheGameUwU();
     return copy;
   }
 

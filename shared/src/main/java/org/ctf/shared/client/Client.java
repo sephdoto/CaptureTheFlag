@@ -532,7 +532,7 @@ public class Client implements GameClientInterface {
    * @author rsyed, sistumpf
    */
   protected synchronized void normaliseGameState(GameState gameState) {
-    if (allTeamNames == null) initAllTeamNames(gameState);
+    if (allTeamNames == null && gameState.getCurrentTeam() >= 0) initAllTeamNames(gameState);
 
     for (int teamID = 0; teamID < gameState.getTeams().length; teamID++) {
       Team team = gameState.getTeams()[teamID];
