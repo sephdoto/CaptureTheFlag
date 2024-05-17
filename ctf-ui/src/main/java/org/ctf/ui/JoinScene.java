@@ -399,6 +399,9 @@ public class JoinScene extends Scene {
     buttonBox.add(playerButton, 0, 0);
     Button aiButton = createJoinButton("Join as AI-Client");
     aiButton.setOnAction(e -> {
+       PopUpCreator popUpCreator = new PopUpCreator(this, root, hsc);
+       popUpCreator.createAiLevelPopUp(new PopUpPane(null, 0, 0), portText, serverIPText);
+       
       AIClient aiClient = AIClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(ip)
           .onPort(port).aiPlayerSelector(AI.RANDOM, null).enableSaveGame(false)
           .gameData(id, "AI-Player").build();

@@ -124,5 +124,12 @@
     "type": "MISC",
     "theme": "BAYERN",
     "custom": false
+  },
+  {
+    "pieceName": "Tobi",
+    "fileType": ".wav",
+    "type": "MOVE",
+    "theme": "STARWARS",
+    "custom": true
   }
 ]

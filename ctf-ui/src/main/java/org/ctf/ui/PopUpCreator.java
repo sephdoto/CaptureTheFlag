@@ -41,6 +41,7 @@ public class PopUpCreator {
 	private PopUpPane aiconfigPopUp;
 	private AIConfig defaultConfig;
 	private AI aitype;
+	private AIConfig config;
 	PopUpPane saveConfig;
 	private HomeSceneController hsc;
 	private String defaultAiName;

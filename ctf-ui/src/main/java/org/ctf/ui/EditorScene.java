@@ -70,6 +70,7 @@ public class EditorScene extends Scene {
   boolean validtemplate = true;
   ComboBox<String> soundPieceBox;
   Text invalid;
+  File currentSound;
 
   /**
    * Starts the initialization process of the scene, generates different menu panes and connects it
@@ -421,10 +422,29 @@ public class EditorScene extends Scene {
     soundButtonBox.setSpacing(20);
     Button playButton = createControlButton("Play Current Sound", 0.16, 0.15);
     playButton.setOnAction(e -> {
-      SoundController.playSound("Queen", Themes.valueOf(themeBox.getValue()),
+      SoundController.playSound(soundPieceBox.getValue(), Themes.valueOf(themeBox.getValue()),
           SoundType.valueOf(soundBox.getValue()));
     });
     Button saveButton = createControlButton("Add New Sound", 0.16, 0.15);
+    saveButton.setOnAction( e-> {
+      if(TemplateEngine.defaultNames.contains(soundPieceBox.getValue())){
+        this.inform("You can not change the sound of default pieces!");
+        return;
+      }
+      
+      if(currentSound == null) {
+        this.inform("Please enter a .wav sound File!");
+        return;
+      }
+      String filename = currentSound.getName();
+      if(!filename.substring(filename.length()-4, filename.length()).equals(".wav")) {
+        this.inform("Please enter a file in the .wav format!");
+        return;
+      }
+      
+      SoundController.saveSound(soundPieceBox.getValue(), Themes.valueOf(themeBox.getValue()), SoundType.valueOf(soundBox.getValue()), currentSound, true);
+      this.inform(filename + "was saved!");
+    });
     soundButtonBox.getChildren().add(playButton);
     soundButtonBox.getChildren().add(saveButton);
 
@@ -898,8 +918,8 @@ public class EditorScene extends Scene {
       boolean success = false;
       if (dragboard.hasFiles()) {
           File file = dragboard.getFiles().get(0);
-         
-          System.out.println(file.getName());
+         this.inform(file.getName()+" was loaded.");
+          this.currentSound = file;
       }
       event.setDropCompleted(success);
       event.consume();
