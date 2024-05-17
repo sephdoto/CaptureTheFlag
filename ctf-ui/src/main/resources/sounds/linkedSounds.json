@@ -28,6 +28,13 @@
     "custom": false
   },
   {
+    "pieceName": "Tobi",
+    "fileType": ".wav",
+    "type": "KILL",
+    "theme": "STARWARS",
+    "custom": true
+  },
+  {
     "pieceName": "Default",
     "fileType": ".wav",
     "type": "DESELECT",

@@ -428,7 +428,7 @@ public class EditorScene extends Scene {
       SoundController.playSound(soundPieceBox.getValue(), Themes.valueOf(themeBox.getValue()),
           SoundType.valueOf(soundBox.getValue()));
     });
-    Button saveButton = createControlButton("Add New Sound", 0.16, 0.15);
+    Button saveButton = createControlButton("Add loaded Sound", 0.16, 0.15);
     saveButton.setOnAction( e-> {
       if(TemplateEngine.defaultNames.contains(soundPieceBox.getValue())){
         this.inform("You can not change the sound of default pieces!");
@@ -446,7 +446,7 @@ public class EditorScene extends Scene {
       }
       
       SoundController.saveSound(soundPieceBox.getValue(), Themes.valueOf(themeBox.getValue()), SoundType.valueOf(soundBox.getValue()), currentSound, true);
-      this.inform(filename + "was saved!");
+      this.inform(filename + " was saved!");
     });
     soundButtonBox.getChildren().add(playButton);
     soundButtonBox.getChildren().add(saveButton);

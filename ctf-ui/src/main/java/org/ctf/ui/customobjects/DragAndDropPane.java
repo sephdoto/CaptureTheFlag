@@ -56,6 +56,7 @@ public class DragAndDropPane extends StackPane{
           File file = dragboard.getFiles().get(0);
          scene.inform(file.getName()+" was loaded.");
           scene.setCurrentSound(file);
+          this.getChildren().clear();
           wrapper.getChildren().add(playButton);
           this.getChildren().add(wrapper);
       }
