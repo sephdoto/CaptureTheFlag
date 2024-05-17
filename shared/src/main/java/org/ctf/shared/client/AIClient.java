@@ -22,7 +22,7 @@ import org.ctf.shared.state.data.exceptions.SessionNotFound;
  * @author rsyed
  */
 public class AIClient extends Client {
-  //These two vars controls the client behaviour
+  // These two vars controls the client behaviour
   private int aiClientRefreshTime = 1;
   private int controllerThinkingTime = 3;
 
@@ -44,6 +44,14 @@ public class AIClient extends Client {
   Runnable playTask =
       () -> {
         try {
+          getStateFromServer();
+
+          if (moveTimeLimitedGameTrigger) {
+            controllerThinkingTime = getRemainingMoveTimeInSeconds() - 1;
+            //  logger.info("We had " + controllerThinkingTime + " to think");
+          }
+          AIController controller =
+              new AIController(getCurrentState(), selectedAI, aiConfig, controllerThinkingTime);
           pullData();
           controller.update(getCurrentState());
           if (enableLogging) {
@@ -56,18 +64,16 @@ public class AIClient extends Client {
           controller.update(getCurrentState());
 
         } catch (NoMovesLeftException | InvalidShapeException e) {
-          aiClientScheduler.shutdown();
           throw new UnknownError("Games most likely over");
         } catch (GameOver e) {
           if (saveToken && enableLogging) {
             this.analyzer.writeOut();
             saveToken = false;
           } else {
-            aiClientScheduler.shutdown();
             throw new GameOver();
           }
         } catch (NullPointerException e) {
-          logger.info("Nullpointer in playTask");
+          logger.info("nullpointer exception");
         }
       };
 
