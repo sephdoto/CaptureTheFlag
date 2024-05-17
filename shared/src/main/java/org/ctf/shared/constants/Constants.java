@@ -51,7 +51,8 @@ public class Constants {
               + "resources"
               + File.separator;
   public static final String sharedResourcesFolder = toUIResources + "game" + File.separator;
-
+  public static final String toUIPictures = Constants.toUIResources + "pictures" + File.separator;
+  
   // to AI config folder
   public static final String aiConfigFolder = sharedResourcesFolder + "ai_configs" + File.separator;
   //F:\VS Code Repo\cfp14\ctf-ui\src\main\resources\game\savegames\analyzerTestDataFile.savedgame

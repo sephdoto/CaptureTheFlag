@@ -58,6 +58,23 @@ public class Enums {
     ;
   }
 
+  public enum ImageType {
+    HOME("homescreen"),
+    START("startscreen"),
+    PIECE("pieces"),
+    MISC("misc");
+
+    private final String folderName;
+
+    ImageType(final String folderName) {
+      this.folderName = folderName + File.separator;
+    }
+
+    public String getFolderName() {
+      return this.folderName;
+    }
+  }
+  
   /**
    * Contains the different Sound Types and their locations in the project.
    *

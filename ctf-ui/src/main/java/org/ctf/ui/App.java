@@ -30,6 +30,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums.ImageType;
+import org.ctf.ui.controllers.ImageGetter;
 import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.controllers.SettingsSetter;
 import org.ctf.ui.customobjects.*;
@@ -212,7 +214,7 @@ public class App extends Application {
   }
   
   public static void chagngeHomescreenBackground() {
-    Image bImage = ImageCreator.loadThemedImage("homescreen");
+    Image bImage = ImageGetter.loadRandomThemedImage(ImageType.HOME);
     BackgroundSize backgroundSize = new BackgroundSize(1, 1, true, true, true, true);
     BackgroundImage background = new BackgroundImage(bImage, BackgroundRepeat.NO_REPEAT,
         BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
