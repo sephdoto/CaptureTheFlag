@@ -63,6 +63,7 @@ public class PlayGameScreenV2 extends Scene {
 	GamePane gm;
 	GameState state;
 	VBox right;
+	GameState currentState;
 	boolean first;
 	private static Circle c;
 	private static Label idLabel;
@@ -83,12 +84,20 @@ public class PlayGameScreenV2 extends Scene {
 	
 	Runnable updateTask = () -> {
 		try {
-			if(currentTeam != mainClient.getCurrentTeamTurn()) {
-				currentTeam = mainClient.getCurrentTeamTurn();
-					Platform.runLater(() -> {
-						 this.redrawGrid(mainClient.getCurrentState());
-						 this.setTeamTurn(String.valueOf(mainClient.getCurrentTeamTurn()));
-				        });
+//			if(currentTeam != mainClient.getCurrentTeamTurn()) {
+//				currentTeam = mainClient.getCurrentTeamTurn();
+//					Platform.runLater(() -> {
+//						
+//						 this.redrawGrid(mainClient.getCurrentState());
+//						 this.setTeamTurn(String.valueOf(mainClient.getCurrentTeamTurn()));
+//				        });
+//			}
+			if(mainClient.getQueuedGameState() !=null) {
+				Platform.runLater(() -> {
+					currentState = mainClient.getQueuedGameState();
+					 this.redrawGrid(currentState);
+					 this.setTeamTurn(String.valueOf(mainClient.getCurrentTeamTurn()));
+			        });
 			}
 		} catch (Exception e) {
 
@@ -98,6 +107,7 @@ public class PlayGameScreenV2 extends Scene {
 	public PlayGameScreenV2(HomeSceneController hsc, double width, double height,Client mainClient,boolean isRemote) {
 		super(new StackPane(), width, height);
 		this.mainClient = mainClient;
+		this.mainClient.enableGameStateQueue(true);
 		this.isRemote = isRemote;
 		initalizePlayGameScreen(hsc);
 	}
@@ -152,23 +162,14 @@ public class PlayGameScreenV2 extends Scene {
 		if (state == null) {
 			showMapBox.getChildren().add(new Label("hallo"));
 		} else {
-					  
-			if (gm != null) {
-				CreateGameController.setFigures(gm.getFigures());
-				showMapBox.getChildren().remove(gm);
-			}
-//			gm = new GamePane(state);
-//			gm.enableBaseColors(this);
-//			showMapBox.getChildren().add(gm);
 			drawGamePane(state);
 			if (isRemote) {
 				if (mainClient.isItMyTurn() && !(mainClient instanceof AIClient)) {
 					Game.initializeGame(gm, mainClient);
 				}
 			} else {
-
 				for (Client local : CreateGameController.getLocalHumanClients()) {
-					System.out.println("Local: " + local.getTeamID());
+					//System.out.println("Local: " + local.getTeamID());
 					if (local.isItMyTurn()) {
 						Game.initializeGame(gm, local);
 					}
@@ -178,6 +179,10 @@ public class PlayGameScreenV2 extends Scene {
 	}
 	
 	private void drawGamePane(GameState state) {
+		if (gm != null) {
+			CreateGameController.setFigures(gm.getFigures());
+			showMapBox.getChildren().remove(gm);
+		}
 		 gm = new GamePane(state);
 	     StackPane.setAlignment(gm, Pos.CENTER);
 	     gm.maxWidthProperty().bind(this.widthProperty().multiply(0.7));
