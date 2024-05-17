@@ -120,7 +120,7 @@ public class App extends Application {
         });
     stage.setTitle("Capture The Flag Team 14");
     stage.setScene(lockscreen);
-    startServer("9999");
+    startServer("8888");
     backgroundMusic = new MusicPlayer();
     stage.setOnCloseRequest(
         e -> {

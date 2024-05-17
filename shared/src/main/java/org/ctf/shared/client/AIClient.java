@@ -22,7 +22,7 @@ import org.ctf.shared.state.data.exceptions.SessionNotFound;
  * @author rsyed
  */
 public class AIClient extends Client {
-  //These two vars controls the client behaviour
+  // These two vars controls the client behaviour
   private int aiClientRefreshTime = 1;
   private int controllerThinkingTime = 3;
 
@@ -34,6 +34,7 @@ public class AIClient extends Client {
   private String gameIDString;
   private String constructorSetTeamName;
   private boolean saveToken = true;
+  private boolean controllerInitToken = true;
   ScheduledExecutorService aiClientScheduler = Executors.newScheduledThreadPool(2);
 
   Runnable aiClientJoinTask =
@@ -45,6 +46,11 @@ public class AIClient extends Client {
       () -> {
         try {
           pullData();
+          if (controllerInitToken) {
+            controller =
+                new AIController(getCurrentState(), selectedAI, aiConfig, controllerThinkingTime);
+            controllerInitToken = false;
+          }
           controller.update(getCurrentState());
           if (enableLogging) {
             this.analyzer.addMove(getCurrentState().getLastMove());
@@ -189,16 +195,15 @@ public class AIClient extends Client {
                   Long sleep = 1000L;
                   getSessionFromServer(); // Gets Session from server
                   if (getStartDate() != null) {
-                    getStateFromServer();
+
                     if (enableLogging) {
+                      getStateFromServer();
                       analyzer.addGameState(currentState);
                     }
                     if (moveTimeLimitedGameTrigger) {
                       controllerThinkingTime = getRemainingMoveTimeInSeconds() - 1;
                     }
-                    controller =
-                        new AIController(
-                            getCurrentState(), selectedAI, aiConfig, controllerThinkingTime);
+
                     aiPlayerStart();
                     running = false;
                   }
