@@ -61,26 +61,47 @@ class ImageLoader {
   private BufferedImage[] loadSWImages() throws IOException {
     BufferedImage[] images = new BufferedImage[imagesAmount+6];
 
-    WaveFunctionCollapse.instance.setBlock(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"Block.png")));
-    WaveFunctionCollapse.instance.setBase(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"BaseSW.png")));
-          images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"c2.png"));
-        
-        for(int i = 1, c = 1; c <= imagesAmount+4; i++) {
-          if(i == 1 || i == 2) {
-            images[c++] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "c" + i + ".png"));
-          }
-          else if(i == 3 || i == 5 || i == 6 || i == 9 || i == 10 || i == 12 || i == 14) {
-            images[c++] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "c" + i + ".png"));
-            images[c++] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "c" + i + ".png")),90);
-            images[c++] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "c" + i + ".png")),180);
-            images[c++] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "c" + i + ".png")),270);
-          }
-          else {
-            images[c++] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "c" + i + ".png")); 
-            images[c++] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "c" + i + ".png")),90);
-           
-          }
-        }
+    WaveFunctionCollapse.instance
+        .setBlock(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator
+            + "starwars" + File.separator + "WaveFunctionTiles" + File.separator + "Block.png")));
+    WaveFunctionCollapse.instance
+        .setBase(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator
+            + "starwars" + File.separator + "WaveFunctionTiles" + File.separator + "BaseSW.png")));
+    images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator
+        + "starwars" + File.separator + "WaveFunctionTiles" + File.separator + "c2.png"));
+
+    for (int i = 1, c = 1; c <= imagesAmount + 4; i++) {
+      if (i == 1 || i == 2) {
+        images[c++] =
+            ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "starwars"
+                + File.separator + "WaveFunctionTiles" + File.separator + "c" + i + ".png"));
+      } else if (i == 3 || i == 5 || i == 6 || i == 9 || i == 10 || i == 12 || i == 14) {
+        images[c++] = ImageIO.read(
+            new File(Constants.toUIResources + "pictures" + File.separator + "starwars"
+                + File.separator + "WaveFunctionTiles" + File.separator + "c" + i + ".png"));
+        images[c++] = this.rotateImageByDegrees(
+            ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "starwars"
+                + File.separator + "WaveFunctionTiles" + File.separator + "c" + i + ".png")),
+            90);
+        images[c++] = this.rotateImageByDegrees(
+            ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "starwars"
+                + File.separator + "WaveFunctionTiles" + File.separator + "c" + i + ".png")),
+            180);
+        images[c++] = this.rotateImageByDegrees(
+            ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "starwars"
+                + File.separator + "WaveFunctionTiles" + File.separator + "c" + i + ".png")),
+            270);
+      } else {
+        images[c++] =
+            ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "starwars"
+                + File.separator + "WaveFunctionTiles" + File.separator + "c" + i + ".png"));
+        images[c++] = this.rotateImageByDegrees(
+            ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "starwars"
+                + File.separator + "WaveFunctionTiles" + File.separator + "c" + i + ".png")),
+            90);
+
+      }
+    }
     return images;
   }
   
@@ -116,27 +137,34 @@ class ImageLoader {
     String bayern = franken == 1 ? "Franken.png" : "Bayern.png"; // Franken Easteregg
     BufferedImage[] images = new BufferedImage[imagesAmount + 1];
     WaveFunctionCollapse.instance
-        .setBlock(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator
-            + "bayern" + File.separator + "WaveFunctionTiles" + File.separator + "noweed.png")));
+      .setBlock(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator 
+           + "bayern" + File.separator + "WaveFunctionTiles" + File.separator + "noweed.png")));
+    
     WaveFunctionCollapse.instance
-        .setBase(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator
+      .setBase(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator
             + "bayern" + File.separator + "WaveFunctionTiles" + File.separator + "Ei.png")));
+    
     images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator
         + "bayern" + File.separator + "WaveFunctionTiles" + File.separator + bayern));
+    
     images[1] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator
         + "bayern" + File.separator + "WaveFunctionTiles" + File.separator + bayern));
+    
     images[2] = this.rotateImageByDegrees(
         ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "bayern"
             + File.separator + "WaveFunctionTiles" + File.separator + bayern)),
         90);
+    
     images[3] = this.rotateImageByDegrees(
         ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "bayern"
             + File.separator + "WaveFunctionTiles" + File.separator + bayern)),
         180);
+    
     images[4] = this.rotateImageByDegrees(
         ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "bayern"
             + File.separator + "WaveFunctionTiles" + File.separator + bayern)),
         270);
+    
     return images;
 
   }
@@ -176,25 +204,51 @@ class ImageLoader {
    * @return
    * @throws IOException
    */
-  private BufferedImage[] loadLOTRImages() throws IOException{
-    BufferedImage[] images = new BufferedImage[imagesAmount+1];
-    WaveFunctionCollapse.instance.setBlock(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"tree.png")));
-    WaveFunctionCollapse.instance.setBase(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"tuning1.png")));
+  private BufferedImage[] loadLOTRImages() throws IOException {
+    BufferedImage[] images = new BufferedImage[imagesAmount + 1];
+    WaveFunctionCollapse.instance
+        .setBlock(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator
+            + "lotr" + File.separator + "WaveFunctionTiles" + File.separator + "tree.png")));
+    WaveFunctionCollapse.instance
+        .setBase(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator
+            + "lotr" + File.separator + "WaveFunctionTiles" + File.separator + "tree.png")));
 
-      images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p1.png"));
+    images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "lotr"
+        + File.separator + "WaveFunctionTiles" + File.separator + "p1.png"));
 
-      images[1] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p1.png"));
-      images[2] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p2.png"));
-      images[3] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p2.png")),90);
-      images[4] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p2.png")),180);
-      images[5] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p2.png")),270);
-      
-      images[6] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p3.png"));
-      images[7] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p3.png")),90);
-      images[8] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p3.png")),180);
-      images[9] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "p3.png")),270);
-      
-      return images;
+    images[1] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "lotr"
+        + File.separator + "WaveFunctionTiles" + File.separator + "p1.png"));
+    images[2] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "lotr"
+        + File.separator + "WaveFunctionTiles" + File.separator + "p2.png"));
+    images[3] = this.rotateImageByDegrees(
+        ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "lotr"
+            + File.separator + "WaveFunctionTiles" + File.separator + "p2.png")),
+        90);
+    images[4] = this.rotateImageByDegrees(
+        ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "lotr"
+            + File.separator + "WaveFunctionTiles" + File.separator + "p2.png")),
+        180);
+    images[5] = this.rotateImageByDegrees(
+        ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "lotr"
+            + File.separator + "WaveFunctionTiles" + File.separator + "p2.png")),
+        270);
+
+    images[6] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "lotr"
+        + File.separator + "WaveFunctionTiles" + File.separator + "p3.png"));
+    images[7] = this.rotateImageByDegrees(
+        ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "lotr"
+            + File.separator + "WaveFunctionTiles" + File.separator + "p3.png")),
+        90);
+    images[8] = this.rotateImageByDegrees(
+        ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "lotr"
+            + File.separator + "WaveFunctionTiles" + File.separator + "p3.png")),
+        180);
+    images[9] = this.rotateImageByDegrees(
+        ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "lotr"
+            + File.separator + "WaveFunctionTiles" + File.separator + "p3.png")),
+        270);
+
+    return images;
   }
 
   /**

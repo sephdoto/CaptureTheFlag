@@ -20,18 +20,18 @@ class WaveFunctionCollapseTest {
     WaveFunctionCollapse wfc3 = new WaveFunctionCollapse(TestValues.getTestState().getGrid(), Enums.Themes.BAYERN);
     
     //WaveFunctionCollapse wfc = new WaveFunctionCollapse(new String[3][3]);
-    try {
+    //try {
  
       //wfc.generateBackgroundRecursive(new WaveGrid(test, WaveFunctionCollapse.IMAGES_AMOUNT));
-      ImageIO.write(wfc1.getBackground(), "png", new File(Constants.toUIResources + "gridLOTR.png"));
-      ImageIO.write(wfc2.getBackground(), "png", new File(Constants.toUIResources + "gridSTARWARS.png"));
-      ImageIO.write(wfc3.getBackground(), "png", new File(Constants.toUIResources + "gridBAYERN.png"));
+      //ImageIO.write(wfc1.getBackground(), "png", new File(Constants.toUIResources + "gridLOTR.png"));
+      //ImageIO.write(wfc2.getBackground(), "png", new File(Constants.toUIResources + "gridSTARWARS.png"));
+      //ImageIO.write(wfc3.getBackground(), "png", new File(Constants.toUIResources + "gridBAYERN.png"));
      
       
-    } catch (IOException e) {
+    //} catch (IOException e) {
       // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+     // e.printStackTrace();
+    //}
 
   }
 }
