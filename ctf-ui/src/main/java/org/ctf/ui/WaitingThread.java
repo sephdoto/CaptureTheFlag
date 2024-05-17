@@ -19,8 +19,8 @@ public class WaitingThread {
 	long millis = 1000;
 
 	public WaitingThread(ServerManager servermanager, HomeSceneController hsc) {
-		this.hsc = hsc;
-		this.serverManager = servermanager;
+		//this.hsc = hsc;
+		//this.serverManager = servermanager;
 		//this.currentTeams = servermanager.getCurrentNumberofTeams();
 		//this.currentTeams = 1;
 		//hsc.updateTeamsinWaitingScene("Teams:  " + currentTeams);

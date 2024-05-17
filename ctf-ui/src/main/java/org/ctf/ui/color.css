@@ -1,6 +1,20 @@
 
 
+.scroll-pane {
+    -fx-background: #202F3B;
+    -fx-border-color: #202F3B ; 
+    -fx-border-width: 0;
+}
 
+
+
+
+
+.scroll-pane:focused {
+    -fx-border-color: #202F3B;
+    -fx-border-width: 0;
+    -fx-effect: none; 
+}
 			
 			
 			
@@ -14,6 +28,54 @@
     -fx-text-fill: rgba(128, 128, 128, 0.9);
     -fx-font-family: 'Eras Medium Light';
 }
+
+.lobby-header-label {
+    -fx-text-fill: black;
+    -fx-font-family: 'Eras Medium Light';
+    -fx-font-weight: bold;
+    -fx-background-color: white;
+}
+
+
+.lobby-normal-label {
+    -fx-text-fill: white;
+    -fx-font-family: 'Eras Medium Light';
+    -fx-background-color: #475865;
+}
+.lobby-normal-label-2 {
+    -fx-text-fill: white;
+    -fx-font-family: 'Eras Medium Light';
+    -fx-background-color: grey;
+}
+
+
+
+
+.lobby-table-header {
+   
+    -fx-border-color: rgba(255,255,255,1);
+	-fx-border-width: 1.5px;
+	
+    -border-top-left-radius: 10px; /* Abgerundete obere linke Ecke */
+    -border-top-right-radius: 10px; /* Abgerundete obere rechte Ecke */
+    -background-top-left-radius: 10px; /* Abgerundete obere linke Ecke */
+    -background-top-right-radius: 10px; /* Abgerundete obere rechte Ecke */
+   -border-bottom-left-radius: 0;  /* Keine Abrundung unten links */
+    -border-bottom-right-radius: 0; /* Keine Abrundung unten rechts */ 
+}
+
+.lobby-table-header-2 {
+    -fx-border-color: rgba(255,255,255,1);
+	-fx-border-width: 1.5px;
+	
+    -border-top-left-radius: 10px; /* Abgerundete obere linke Ecke */
+    -border-top-right-radius: 10px; /* Abgerundete obere rechte Ecke */
+    -background-top-left-radius: 10px; /* Abgerundete obere linke Ecke */
+    -background-top-right-radius: 10px; /* Abgerundete obere rechte Ecke */
+   -border-bottom-left-radius: 0;  /* Keine Abrundung unten links */
+    -border-bottom-right-radius: 0; /* Keine Abrundung unten rechts */ 
+}
+
 
 .aiConfig-label{
 	font-family: 'Eras Bold ITC', sans-serif;
