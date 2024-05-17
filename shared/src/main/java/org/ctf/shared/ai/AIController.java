@@ -132,6 +132,11 @@ public class AIController {
       System.out.println(getMcts().printResults(move));
     } else {
       move = RandomAI.pickMoveComplex(getNormalizedGameState().getNormalizedGameState(), new ReferenceMove(null, new int[] { 0, 0 })).toMove();
+      try {
+        Thread.sleep(thinkingTime / 2);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
     }
     return getNormalizedGameState().unnormalizeMove(move);
   }
