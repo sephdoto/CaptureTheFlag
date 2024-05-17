@@ -34,6 +34,8 @@ public class AIClient extends Client {
   private String gameIDString;
   private String constructorSetTeamName;
   private boolean saveToken = true;
+  private boolean controllerToken = true;
+
   ScheduledExecutorService aiClientScheduler = Executors.newScheduledThreadPool(2);
 
   Runnable aiClientJoinTask =
@@ -45,13 +47,14 @@ public class AIClient extends Client {
       () -> {
         try {
           getStateFromServer();
-
-          if (moveTimeLimitedGameTrigger) {
-            controllerThinkingTime = getRemainingMoveTimeInSeconds() - 1;
-            //  logger.info("We had " + controllerThinkingTime + " to think");
+          if(controllerToken){
+            if (moveTimeLimitedGameTrigger) {
+              controllerThinkingTime = getRemainingMoveTimeInSeconds() - 1;
+              //  logger.info("We had " + controllerThinkingTime + " to think");
+            }
+            controller = new AIController(getCurrentState(), selectedAI, aiConfig, controllerThinkingTime);
+            controllerToken = false;
           }
-          AIController controller =
-              new AIController(getCurrentState(), selectedAI, aiConfig, controllerThinkingTime);
           pullData();
           controller.update(getCurrentState());
           if (enableLogging) {
@@ -193,18 +196,13 @@ public class AIClient extends Client {
               while (running) {
                 try {
                   Long sleep = 1000L;
+                  Thread.sleep(sleep);
                   getSessionFromServer(); // Gets Session from server
                   if (getStartDate() != null) {
                     getStateFromServer();
                     if (enableLogging) {
                       analyzer.addGameState(currentState);
                     }
-                    if (moveTimeLimitedGameTrigger) {
-                      controllerThinkingTime = getRemainingMoveTimeInSeconds() - 1;
-                    }
-                    controller =
-                        new AIController(
-                            getCurrentState(), selectedAI, aiConfig, controllerThinkingTime);
                     aiPlayerStart();
                     running = false;
                   }

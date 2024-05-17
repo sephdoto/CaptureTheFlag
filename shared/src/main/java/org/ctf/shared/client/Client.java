@@ -790,7 +790,11 @@ public class Client implements GameClientInterface {
   }
 
   public boolean isGameOver() {
-    return gameOver;
+    try {
+      return gameOver;
+    } catch (Exception e) {
+      return false;
+    }
   }
 
   public ServerDetails getServerDetails() {
