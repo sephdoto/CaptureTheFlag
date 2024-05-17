@@ -161,7 +161,7 @@ public class Enums {
 	public enum AIConfigs {
 	  RANDOM("RANDOM"),
 	  MCTS("MCTS"),
-	  MCTS_IMPROVED("MCTS-IMPROVED"),
+	  IMPROVED("MCTS-IMPROVED"),
 	  EXPERIMENTAL("EXPERIMENTAL"),
 	  
 	  C("UCT-C"), 

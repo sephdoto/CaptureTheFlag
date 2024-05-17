@@ -41,11 +41,11 @@ public class PopUpCreator {
 	private PopUpPane aiconfigPopUp;
 	private AIConfig defaultConfig;
 	private AI aitype;
-	private AIConfig config;
 	PopUpPane saveConfig;
 	private HomeSceneController hsc;
 	private String defaultAiName;
 	TextField enterConfigNamefield;
+	private boolean remote = false;
 	private ArrayList<ButtonPane> buttonPanes = new ArrayList<ButtonPane>();
 	private HashMap<AIConfigs, Integer> multipliers = new HashMap<AIConfigs, Integer>();
 	private SpinnerValueFactory<Integer> values;
@@ -140,7 +140,7 @@ public class PopUpCreator {
 			buttonBox2.setSpacing(newSpacing);
 			buttonBox2.setPadding(new Insets(0, padding, 0, padding));
 		});
-		buttonBox2.getChildren().addAll(createAIPowerButton(AIConfigs.MCTS_IMPROVED, 0.05, 2),
+		buttonBox2.getChildren().addAll(createAIPowerButton(AIConfigs.IMPROVED, 0.05, 2),
 				createAIPowerButton(AIConfigs.EXPERIMENTAL, 0.15, 2));
 		top.getChildren().addAll(buttonBox, buttonBox2);
 		HBox centerLeaveButton = new HBox();
@@ -212,7 +212,8 @@ public class PopUpCreator {
 		pane.maxWidthProperty().bind(root.widthProperty().multiply(0.22));
 		pane.maxHeightProperty().bind(pane.widthProperty().multiply(0.45));
 		pane.getEditButton().setOnAction(e -> {		
-			root.getChildren().add(createConfigPane(1, 1,null));
+		  this.aitype =  AI.valueOf(aiName.name()); 
+		  root.getChildren().add(createConfigPane(1, 1,null));
 			pane.reset();
 		});
 		pane.getLoadButton().setOnAction(e -> {
@@ -230,7 +231,9 @@ public class PopUpCreator {
 
 	
 
-	public StackPane getRoot() {
+	
+
+  public StackPane getRoot() {
 		return root;
 	}
 
@@ -726,7 +729,14 @@ public class PopUpCreator {
 	private void performPlay(Button b) {
 		b.setOnAction(e -> {
 			// ADD COnfig Starting Here
-			if(aiorHumanpopup == null) {
+			if(remote) {
+			  root.getChildren().remove(aiconfigPopUp);
+			  JoinScene joinscene = (JoinScene) scene;
+			  joinscene.createJoinWindowAI(joinscene.getId(), joinscene.getIp(), joinscene.getPort(), aitype, defaultConfig);
+			  return;
+			}
+		  
+		  if(aiorHumanpopup == null) {
 				PopUpCreatorEnterTeamName teamNamePopup = new PopUpCreatorEnterTeamName(scene, root, aiconfigPopUp, hsc, false, true);
 				teamNamePopup.setConfig(defaultConfig);
 				teamNamePopup.createEnterNamePopUp();
@@ -862,5 +872,17 @@ public class PopUpCreator {
 		return namePopButton;
 	}
 	
+	public AIConfig getDefaultConfig() {
+	    return defaultConfig;
+	  }
+
+	  public AI getAitype() {
+	    return aitype;
+	  }
+
+    public void setRemote(boolean remote) {
+      this.remote = remote;
+    }
+	  
 
 }

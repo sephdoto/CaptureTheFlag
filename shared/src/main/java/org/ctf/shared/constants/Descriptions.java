@@ -12,7 +12,7 @@ public class Descriptions {
         return "A very lightweight Monte Carlo Tree Search implementation that uses a light playout. "
             + "It does not use multithreadding and tries to minimize RAM usage. "
             + "It is recommended if many AIs are started on the same computer.";
-      case MCTS_IMPROVED: 
+      case IMPROVED: 
         return "A Monte Carlo Tree Search implementation that uses a light playout and improves Data Structures. "
             + "It does not use multithreadding. The RAM usage might be higher than normal MCTS.";
       case EXPERIMENTAL:

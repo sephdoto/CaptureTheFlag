@@ -1,6 +1,7 @@
 package org.ctf.ui;
 
 import java.io.File;
+import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.client.AIClient;
 import org.ctf.shared.client.AIClientStepBuilder;
 import org.ctf.shared.client.Client;
@@ -48,6 +49,9 @@ public class JoinScene extends Scene {
   TextField portText;
   TextField sessionText;
   TextField nameField;
+  String ip;
+  String port;
+  String id;
 
   /**
    * This constructor starts the initialization process of the scene and connects it to a CSS file.
@@ -269,9 +273,10 @@ public class JoinScene extends Scene {
     search.fontProperty().bind(Bindings.createObjectBinding(
         () -> Font.font("Century Gothic", search.getHeight() * 0.4), search.heightProperty()));
     search.setOnAction(e -> {
-      // hsc.getStage().setScene(new RemoteWaitingScene(null, this.getWidth(), this.getHeight()));
-      // PopUpCreator popUpCreator = new PopUpCreator(this, root, hsc);
-      // popUpCreator.createAiLevelPopUp(new PopUpPane(null, 0, 0), portText, serverIPText);
+     
+      //       hsc.getStage().setScene(new RemoteWaitingScene(null, this.getWidth(), this.getHeight()));
+//       PopUpCreator popUpCreator = new PopUpCreator(this, root, hsc);
+//       popUpCreator.createAiLevelPopUp(new PopUpPane(null, 0, 0), portText, serverIPText);
       try {
         ServerManager ser = new ServerManager(new CommLayer(),
             new ServerDetails(serverIPText.getText(), portText.getText()), sessionText.getText());
@@ -284,6 +289,9 @@ public class JoinScene extends Scene {
           right.getChildren().clear();
           right.getChildren().add(createRightContent(sessionText.getText(),
               ser.getCurrentNumberofTeams(), serverIPText.getText(), portText.getText()));
+          this.ip =  serverIPText.getText();
+          this.port = portText.getText();
+          this.id =sessionText.getText();
         }
       } catch (IllegalArgumentException e2) {
         // TODO: handle exception
@@ -400,22 +408,15 @@ public class JoinScene extends Scene {
     Button aiButton = createJoinButton("Join as AI-Client");
     aiButton.setOnAction(e -> {
        PopUpCreator popUpCreator = new PopUpCreator(this, root, hsc);
+       popUpCreator.setRemote(true);
        popUpCreator.createAiLevelPopUp(new PopUpPane(null, 0, 0), portText, serverIPText);
-       
-      AIClient aiClient = AIClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(ip)
-          .onPort(port).aiPlayerSelector(AI.RANDOM, null).enableSaveGame(false)
-          .gameData(id, "AI-Player").build();
-      right.getChildren().clear();
-      info.setText("Client hast joined!\n Waiting for the Game to start.");
-      right.getChildren().add(info);
-      // Client client =
-      // ClientStepBuilder.newBuilder()
-      // .enableRestLayer(false)
-      // .onRemoteHost(ip)
-      // .onPort(port)
-      // .enableSaveGame(false)
-      // .enableAutoJoin(id, "teamname")
-      // .build();
+    
+//      AIClient aiClient = AIClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(ip)
+//          .onPort(port).aiPlayerSelector(popUpCreator.getAitype(), popUpCreator.getDefaultConfig()).enableSaveGame(false)
+//          .gameData(id, "AI-Player").build();
+//      right.getChildren().clear();
+//      info.setText("Client hast joined!\n Waiting for the Game to start.");
+//      right.getChildren().add(info);
     });
     buttonBox.add(aiButton, 1, 0);
     return buttonBox;
@@ -489,13 +490,6 @@ public class JoinScene extends Scene {
       info.setText("Client hast joined!\n Waiting for the Game to start.");
       right.getChildren().add(info);
       hsc.getStage().setScene(new RemoteWaitingScene(client, getWidth(), getHeight(), this.hsc));
-      // Button create = new Button("create");
-      // right.getChildren().add(create);
-      // create.setOnAction(e2 -> {
-      // hsc.setMainClient(client);
-      // hsc.switchToPlayGameScene(hsc.getStage());
-      // });
-
     });
     Button cancelButton = createControlButton(vbox, "Cancel", "leave-button");
     cancelButton.setOnAction(e -> {
@@ -506,6 +500,54 @@ public class JoinScene extends Scene {
     vbox.getChildren().add(buttonBox);
     popUp.setContent(vbox);
     return popUp;
+  }
+  
+  public void createJoinWindowAI(String id, String ip, String port,AI type,AIConfig config) {
+    PopUpPane popUp = new PopUpPane(this, 0.4, 0.4);
+    VBox vbox = new VBox();
+    vbox.setAlignment(Pos.TOP_CENTER);
+    vbox.setPadding(new Insets(10));
+    vbox.setSpacing(15);
+    Text header = EditorScene.createHeaderText(vbox, "Enter a Team name!", 15);
+    vbox.getChildren().add(header);
+    nameField = ComponentCreator.createNameField(vbox);
+    vbox.getChildren().add(nameField);
+    HBox buttonBox = new HBox();
+    buttonBox.setAlignment(Pos.CENTER);
+    vbox.widthProperty().addListener((obs, oldv, newV) -> {
+      double size = newV.doubleValue() * 0.05;
+      buttonBox.setSpacing(size);
+    });
+    vbox.heightProperty().addListener((obs, oldv, newV) -> {
+      double size = newV.doubleValue() * 0.1;
+      VBox.setMargin(buttonBox, new Insets(size));
+    });
+    VBox.setMargin(buttonBox, new Insets(25));
+    Button joinButton = createControlButton(vbox, "Join", "save-button");
+    joinButton.setOnAction(e -> {
+      if (nameField.getText().equals("")) {
+        CretaeGameScreenV2.informationmustBeEntered(nameField, "custom-search-field",
+            "custom-search-field");
+        return;
+      }
+      AIClient aiClient = AIClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(ip)
+          .onPort(port).aiPlayerSelector(type, config).enableSaveGame(false)
+          .gameData(id, nameField.getText()).build();
+      root.getChildren().remove(popUp);
+      right.getChildren().clear();
+      info.setText("Client hast joined!\n Waiting for the Game to start.");
+      right.getChildren().add(info);
+      hsc.getStage().setScene(new RemoteWaitingScene(aiClient, getWidth(), getHeight(), this.hsc));
+    });
+    Button cancelButton = createControlButton(vbox, "Cancel", "leave-button");
+    cancelButton.setOnAction(e -> {
+      root.getChildren().remove(popUp);
+    });
+    buttonBox.getChildren().addAll(joinButton, cancelButton);
+    StackPane.setAlignment(buttonBox, Pos.BOTTOM_CENTER);
+    vbox.getChildren().add(buttonBox);
+    popUp.setContent(vbox);
+    this.root.getChildren().add(popUp);
   }
 
   private Button createControlButton(VBox vBox, String label, String style) {
@@ -518,6 +560,18 @@ public class JoinScene extends Scene {
       joinButton.setFont(Font.font("Century Gothic", size));
     });
     return joinButton;
+  }
+
+  public String getIp() {
+    return ip;
+  }
+
+  public String getPort() {
+    return port;
+  }
+
+  public String getId() {
+    return id;
   }
 
 }

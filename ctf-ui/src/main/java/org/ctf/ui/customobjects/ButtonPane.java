@@ -1,7 +1,9 @@
 package org.ctf.ui.customobjects;
 
 import java.util.ArrayList;
+import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.constants.Descriptions;
+import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.AIConfigs;
 import org.ctf.ui.InfoPaneCreator;
 
