@@ -190,6 +190,13 @@ public class PlayGameScreenV2 extends Scene {
 	     showMapBox.getChildren().add(gm);
 	}
 	
+	 private  String formatTime(int totalSeconds) {
+	        int hours = totalSeconds / 3600;
+	        int minutes = (totalSeconds % 3600) / 60;
+	        int seconds = totalSeconds % 60;
+
+	        return String.format("%d:%02d:%02d", hours, minutes, seconds);
+	    }
 	
 	public ImageView createBackgroundImage(VBox vBox, GameState state) {
 	      // Image mp = new Image(getClass().getResourceAsStream("gridSTARWARS.png"));
@@ -310,7 +317,6 @@ public class PlayGameScreenV2 extends Scene {
 	}
 	
 	private HBox createClockBox() {
-		
 		HBox timerBox = new HBox();
 		timerBox.setAlignment(Pos.CENTER);
 		timerBox.getStyleClass().add("timer-box");

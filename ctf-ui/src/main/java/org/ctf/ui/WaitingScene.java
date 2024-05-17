@@ -217,6 +217,7 @@ public class WaitingScene extends Scene {
    // leftBox.getChildren().add(createTestLabel2(leftBox));
     leftBox.getChildren().add(createTopCenter());
    leftBox.getChildren().add(createWholeTable(leftBox));
+   leftBox.getChildren().add(createLeave());
     return leftBox;
   }
   
@@ -233,7 +234,7 @@ public class WaitingScene extends Scene {
     ScrollPane scroller = new ScrollPane();
     scroller.getStyleClass().clear();
     //scroller.getStyleClass().add("scroll-pane");
-    scroller.prefHeightProperty().bind(parent.heightProperty().multiply(0.75));
+   // scroller.prefHeightProperty().bind(parent.heightProperty().multiply(0.75));
     scroller.prefWidthProperty().bind(parent.widthProperty());
     scroller.setHbarPolicy(ScrollBarPolicy.NEVER);
     
@@ -717,7 +718,7 @@ public class WaitingScene extends Scene {
     Button exit = new Button("Leave");
     exit.getStyleClass().add("leave-button");
     exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
-    exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
+    exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.35));
     exit.setOnAction(
         e -> {
           hsc.switchtoHomeScreen(e);
