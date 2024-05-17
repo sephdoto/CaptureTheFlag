@@ -806,15 +806,33 @@ public class Client implements GameClientInterface {
     return this.serverInfo;
   }
 
+    /**
+   * Getter which returns if the game has started. Aka a Start Date is set
+   *
+   * @author rsyed
+   */
   public boolean isGameStarted() {
-    return this.gameStarted;
+    return startDate != null;
+  }
+  
+  public String[] getAllTeamNames() {
+    return allTeamNames;
+  }
+
+  public ScheduledExecutorService getScheduler(){
+    return this.scheduler;
+  }
+
+  public boolean isGameTimeLimited(){
+    return this.timeLimitedGameTrigger;
+  }
+
+  public boolean isGameMoveTimeLimited(){
+    return this.moveTimeLimitedGameTrigger;
   }
 
   // **************************************************
   // End of Getter Block
   // **************************************************
 
-  public String[] getAllTeamNames() {
-    return allTeamNames;
-  }
 }
