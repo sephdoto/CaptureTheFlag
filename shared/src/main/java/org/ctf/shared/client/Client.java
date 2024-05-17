@@ -3,6 +3,7 @@ package org.ctf.shared.client;
 import com.google.gson.Gson;
 import java.time.Clock;
 import java.util.Date;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -92,6 +93,8 @@ public class Client implements GameClientInterface {
   // Services
   ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
   Logger logger = Logger.getLogger(getClass().getName());
+  // Queue for storing different game states
+  ConcurrentLinkedQueue<GameState> fifoQueue = new ConcurrentLinkedQueue<>();
 
   /**
    * Constructor to set the IP and port on object creation
@@ -476,6 +479,9 @@ public class Client implements GameClientInterface {
       throw new UnknownError("Server Error or Setting error");
     }
     this.grid = gameState.getGrid();
+    if (isNewGameState(gameState)) {
+      this.fifoQueue.offer(gameState);
+    }
     this.currentTeamTurn = gameState.getCurrentTeam();
     this.lastMove = gameState.getLastMove();
     updateLastTeam();
@@ -592,6 +598,15 @@ public class Client implements GameClientInterface {
         (lastMove != null)
             ? Integer.parseInt(lastMove.getPieceId().split(":")[1].split("_")[0])
             : -1;
+  }
+
+  /**
+   * Calculates if the last team is different than current team
+   *
+   * @author rsyed
+   */
+  protected boolean isNewGameState(GameState gameState) {
+    return this.currentTeamTurn != gameState.getCurrentTeam();
   }
 
   /**
@@ -806,7 +821,7 @@ public class Client implements GameClientInterface {
     return this.serverInfo;
   }
 
-    /**
+  /**
    * Getter which returns if the game has started. Aka a Start Date is set
    *
    * @author rsyed
@@ -814,21 +829,31 @@ public class Client implements GameClientInterface {
   public boolean isGameStarted() {
     return startDate != null;
   }
-  
+
   public String[] getAllTeamNames() {
     return allTeamNames;
   }
 
-  public ScheduledExecutorService getScheduler(){
+  public ScheduledExecutorService getScheduler() {
     return this.scheduler;
   }
 
-  public boolean isGameTimeLimited(){
+  public boolean isGameTimeLimited() {
     return this.timeLimitedGameTrigger;
   }
 
-  public boolean isGameMoveTimeLimited(){
+  public boolean isGameMoveTimeLimited() {
     return this.moveTimeLimitedGameTrigger;
+  }
+
+  /**
+   * Method to interact with the queue storing different game states for the UI. Queue is thread safe.
+   *
+   * @author rsyed
+   * @return The game state in the FIFO queue
+   */
+  public GameState getQueuedGameState() {
+    return this.fifoQueue.poll();
   }
 
   // **************************************************
