@@ -31,11 +31,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 import org.ctf.ui.customobjects.BaseRep;
@@ -56,6 +59,7 @@ public class WaitingScene extends Scene {
   VBox testBox;
   Label howManyTeams;
   Label clipboardInfo;
+  VBox leftBox;
   GamePane gm;
   HashMap<Integer, Label> teamNames = new HashMap<Integer, Label>();
   HashMap<Integer, Label> teamTypes = new HashMap<Integer, Label>();
@@ -76,22 +80,28 @@ public class WaitingScene extends Scene {
 
 	Runnable updateTask = () -> {
 		try {
-//			if (CreateGameController.getMainClient() != null) {
-//				if (CreateGameController.getMainClient().isGameStarted()) {
-//					System.out.println("Game has starteeeeeet");
-//					scheduler.shutdown();
-//					hsc.switchToPlayGameScene(hsc.getStage());
-//					
-//				}
-//			}
-			if (CreateGameController.getServerManager().getCurrentNumberofTeams() != currentNumber) {
-				currentNumber = CreateGameController.getServerManager().getCurrentNumberofTeams();
+			if (CreateGameController.getMainClient() != null) {
+				if (CreateGameController.getMainClient().getStartDate() != null) {
+					 //leftBox.getChildren().add(createCountdownBox());
+					 //System.out.println("Game startet hahahahah");
+					 scheduler.shutdown();
+					Platform.runLater(() -> {
+						 hsc.switchToPlayGameScene(App.getStage(), CreateGameController.getMainClient(), false);
+					});
 
-				Platform.runLater(() -> {
-					this.setCUrrentTeams(currentNumber);
-				});
+				} else {
+					if (CreateGameController.getServerManager().getCurrentNumberofTeams() != currentNumber) {
+						currentNumber = CreateGameController.getServerManager().getCurrentNumberofTeams();
 
+						Platform.runLater(() -> {
+							this.setCUrrentTeams(currentNumber);
+						});
+
+					}
+				}
 			}
+			
+			
 		} catch (Exception e) {
 
 		}
@@ -106,6 +116,7 @@ public class WaitingScene extends Scene {
     this.getStylesheets().add(getClass().getResource("ComboBox.css").toExternalForm());
     this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
     createLayout();
+    
     currentNumber = 0;
 	scheduler = Executors.newScheduledThreadPool(1);
 	scheduler.scheduleAtFixedRate(updateTask, 0, 1, TimeUnit.SECONDS);
@@ -123,7 +134,7 @@ public class WaitingScene extends Scene {
     VBox rightTop = createRightVBox(middle);
     middle.getChildren().addAll(leftTop, rightTop);
     mainBox.getChildren().add(middle);
-  }
+    }
 
   private void manageFontSizes() {
     widthProperty()
@@ -143,6 +154,8 @@ public class WaitingScene extends Scene {
               }
             });
   }
+  
+
 
   private VBox createMainBox(StackPane parent) {
     VBox mainBox = new VBox();
@@ -185,23 +198,36 @@ public class WaitingScene extends Scene {
   }
 
   private VBox createLeftVBox(HBox parent) {
-    VBox leftBox = new VBox();
+    leftBox = new VBox();
     leftBox.setStyle("-fx-background-color: green");
+    leftBox.heightProperty()
+    .addListener(
+        (observable, oldValue, newValue) -> {
+          double newSpacing = newValue.doubleValue() * 0.05;
+          leftBox.setSpacing(newSpacing);
+        });
     leftBox.setAlignment(Pos.TOP_CENTER);
     leftBox.prefWidthProperty().bind(parent.widthProperty().multiply(0.55));
     leftBox.prefHeightProperty().bind(parent.heightProperty().multiply(1));
     leftBox.getChildren().add(createTestLabel(leftBox));
     leftBox.getChildren().add(createTestLabel2(leftBox));
     leftBox.getChildren().add(createCreateButton());
-    leftBox.getChildren().add(createHeaderRow(leftBox));
-
-    leftBox.getChildren().add(createScrollPane(leftBox));
+   leftBox.getChildren().add(createWholeTable(leftBox));
     return leftBox;
+  }
+  
+  private VBox createWholeTable(VBox parent) {
+	  VBox v = new VBox();
+	  v.prefWidthProperty().bind(parent.widthProperty().multiply(1));
+	    v.prefHeightProperty().bind(parent.heightProperty().multiply(1));
+	  v.getChildren().add(createHeaderRow(v));
+	  v.getChildren().add(createScrollPane(v));
+	  return v;
   }
 
   private ScrollPane createScrollPane(VBox parent) {
     ScrollPane scroller = new ScrollPane();
-    scroller.prefHeightProperty().bind(parent.heightProperty().multiply(0.8));
+    scroller.prefHeightProperty().bind(parent.heightProperty().multiply(0.6));
     scroller.prefWidthProperty().bind(parent.widthProperty());
     scroller.setHbarPolicy(ScrollBarPolicy.NEVER);
     VBox content = new VBox();
@@ -231,13 +257,48 @@ public class WaitingScene extends Scene {
     return scroller;
   }
   
-  private Pane createColorRec(String color, HBox colorBox) {
-	  Pane colorRec = new Pane();
-	    colorRec.setStyle("-fx-background-color: " + color);
-	    colorRec.prefWidthProperty().bind(Bindings.divide(colorBox.widthProperty(), 2.5));
-	    colorRec.maxHeightProperty().bind(Bindings.divide(colorBox.heightProperty(), 2));
-	    return colorRec;
+  private HBox createCountdownBox() {
+	  HBox h = new HBox();
+	  Label l = new Label("Hey");
+	  h.getChildren().add(l);
+	  return h;
+	
+}
+  
+  private Rectangle createColorRec( HBox colorBox, int i) {
+//	  Pane colorRec = new Pane();
+//	    //colorRec.setStyle("-fx-background-color: " + color);
+//	    colorRec.prefWidthProperty().bind(Bindings.divide(colorBox.widthProperty(), 2.5));
+//	    colorRec.maxHeightProperty().bind(Bindings.divide(colorBox.heightProperty(), 2));
+//	    colorRec.setOnMouseClicked(new EventHandler<MouseEvent>() {
+//			public void handle(MouseEvent e) {
+//				showColorChooser(e, 5);
+//			}
+//		});
+	    Rectangle r = new Rectangle();
+	    r.setFill(Color.RED);
+	    r.widthProperty().bind(Bindings.divide(colorBox.widthProperty(), 2.5));
+	    r.heightProperty().bind(Bindings.divide(colorBox.heightProperty(), 2));
+	    r.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			public void handle(MouseEvent e) {
+				showColorChooser(e, i);
+			}
+		});
+	    r.fillProperty().bind(CreateGameController.getColors().get(String.valueOf(i)));
+	    return r;
   }
+  
+  public void showColorChooser(MouseEvent e, int i) {
+	  MyCustomColorPicker myCustomColorPicker = new MyCustomColorPicker();
+      myCustomColorPicker.setCurrentColor(sceneColorProperty.get());
+      CustomMenuItem itemColor = new CustomMenuItem(myCustomColorPicker);
+      itemColor.setHideOnClick(false);
+      //sceneColorProperty.bind(myCustomColorPicker.customColorProperty());
+      CreateGameController.getColors().get(String.valueOf(i)).bind(myCustomColorPicker.customColorProperty());
+      ContextMenu contextMenu = new ContextMenu(itemColor);
+      contextMenu.setOnHiding(t->sceneColorProperty.unbind());
+      contextMenu.show(this.getWindow(),e.getScreenX(),e.getScreenY());
+}
 
   private HBox createHeaderRow(VBox parent) {
     HBox h = new HBox();
@@ -480,12 +541,27 @@ public class WaitingScene extends Scene {
 
   public void setCUrrentTeams(int i) {
     curenntTeams.setText("Current Ts:" + String.valueOf(i));
+    System.out.println(i-1);
     if((i-1) >= 0){
     HBox toAdd = colors.get(i-1);
     //String color = CreateGameController.getMainClient().getTeams()[i-1].getColor();
     toAdd.getChildren().clear();
-    toAdd.getChildren().add(createColorRec("grey", toAdd));
-    
+    toAdd.getChildren().add(createColorRec( toAdd,i-1));
+    teamNames.get(i-1).setText(CreateGameController.getLastTeamName());
+    String text = "";
+    if(CreateGameController.getLasttype().equals("HUMAN")) {
+    	text = "local Human";
+    }else if (CreateGameController.getLasttype().equals("AI")) {
+		text = "AI";
+	}else if(CreateGameController.getLasttype().equals("UNKNOWN")) {
+		text = "Remote Player";
+	}
+    CreateGameController.setLasttype("UNKNOWN");
+    if(i-1 == 0 ) {
+    	text += " (You)";
+    }
+    teamTypes.get(i-1).setText(text);
+		
     }
   }
 
@@ -499,30 +575,7 @@ public class WaitingScene extends Scene {
     int maxteams = 2; // Add other Methode here
   }
 
-  public void showColorChooser(double d, double e, BaseRep r) {
-    MyCustomColorPicker myCustomColorPicker = new MyCustomColorPicker();
-    myCustomColorPicker.setCurrentColor(sceneColorProperty.get());
-
-    CustomMenuItem itemColor = new CustomMenuItem(myCustomColorPicker);
-    itemColor.getStyleClass().add("custom-menu-item");
-    itemColor.setHideOnClick(false);
-    sceneColorProperty.bind(myCustomColorPicker.customColorProperty());
-    for (CostumFigurePain p : gm.getFigures().values()) {
-      if (p.getTeamID().equals(r.getTeamID())) {
-        p.showTeamColorWhenSelecting(sceneColorProperty);
-      }
-    }
-    r.showColor(sceneColorProperty);
-    ContextMenu contextMenu = new ContextMenu(itemColor);
-    contextMenu.setOnHiding(
-        t -> {
-          sceneColorProperty.unbind();
-          for (CostumFigurePain m : gm.getFigures().values()) {
-            m.unbind();
-          }
-        });
-    contextMenu.show(this.getWindow(), d, e);
-  }
+ 
 
   private void createLayout2() {
     HBox main = new HBox();
@@ -649,7 +702,7 @@ public class WaitingScene extends Scene {
                 search.heightProperty()));
     search.setOnAction(
         e -> {
-          hsc.switchToPlayGameScene(App.getStage(),CreateGameController.getMainClient(), false);
+          //hsc.switchToPlayGameScene(App.getStage(),CreateGameController.getMainClient(), false);
           // hsc.switchToTestScene(App.getStage());
         });
 

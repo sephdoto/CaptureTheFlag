@@ -14,6 +14,7 @@ import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.ui.customobjects.BackgroundCellV2;
+import org.ctf.ui.customobjects.BaseRep;
 import org.ctf.ui.customobjects.CostumFigurePain;
 
 public class Game {
@@ -79,6 +80,7 @@ public class Game {
 			cf.setUnactive();
 			cf.setUnattacble();
 		}
+		
 	}
 
 	public void deleteTeam(String teamToDelete) {
@@ -100,6 +102,9 @@ public class Game {
 		}
 		for (CostumFigurePain c : cb.getFigures().values()) {
 			c.setUnattacble();
+		}
+		for(BaseRep b: cb.getBases().values()) {
+			b.setUnattacble();
 		}
 		for (BackgroundCellV2 c : cb.getCells().values()) {
 			for (int[] pos : possibleMoves) {

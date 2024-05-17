@@ -124,12 +124,13 @@ public class HomeSceneController {
 	}
 
 	public void switchToWaitGameScene(Stage stage) {
+		CreateGameController.initColorHashMap();
 		waitingScene = new WaitingScene(this, stage.getWidth(), stage.getHeight());
 		stage.setScene(waitingScene);
 		//t = new TestThread(this, serverManager);
 		//t.start();
 		//CreateGameController.startWaitingLobbyThread();
-		CreateGameController.initColorHashMap();
+		
 	}
 	
 	public void switchToPlayGameScene(Stage stage, Client mainClient, boolean isRemote) {

@@ -448,12 +448,17 @@ public class CretaeGameScreenV2 extends Scene {
 		CreateGameController.setPort(port);
 		CreateGameController.setServerIP(serverIP);
 		CreateGameController.setTemplate(template);
-		CreateGameController.createGameSession();
+		if(!CreateGameController.createGameSession()) {
+			informationmustBeEntered(serverIPText,"custom-search-field2-mustEnter","custom-search-field2");
+			informationmustBeEntered(portText,"custom-search-field2-mustEnter","custom-search-field2");
+		}else {
+			this.createChooserPopup();
+		}
 //		hsc.setPort(port);
 //		hsc.setServerID(serverIP);
 //		hsc.setTemplate(template);
 //		hsc.createGameSession();
-		this.createChooserPopup();
+		
 	}
 	
 	

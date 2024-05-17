@@ -1,5 +1,6 @@
 package org.ctf.ui;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.ctf.shared.state.GameState;
@@ -42,9 +43,20 @@ public class GamePane extends HBox{
 	int rows;
 	int cols;
 	int currentTeam;
+	
 	public VBox vBox;
 	int anzTeams;
 	HashMap<String, CostumFigurePain> figures = new HashMap<String, CostumFigurePain>();
+	public HashMap<Integer, BaseRep> getBases() {
+		return bases;
+	}
+
+
+	public void setBases(HashMap<Integer, BaseRep> bases) {
+		this.bases = bases;
+	}
+
+
 	HashMap<Integer, BaseRep> bases = new HashMap<Integer, BaseRep>();
 	HashMap<Integer, BackgroundCellV2> cells = new HashMap<Integer, BackgroundCellV2>();
 	public GridPane gridPane;

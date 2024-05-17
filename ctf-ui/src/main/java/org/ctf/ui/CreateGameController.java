@@ -69,6 +69,29 @@ public class CreateGameController {
 	private static WaitingScene waitingScene;
 	
 	
+	private static String lastTeamName;
+	private static String lasttype;
+	private static AI lastAitype;
+	
+	
+	
+
+	public static String getLasttype() {
+		return lasttype;
+	}
+
+	public static void setLasttype(String lasttype) {
+		CreateGameController.lasttype = lasttype;
+	}
+
+	public static String getLastTeamName() {
+		return lastTeamName;
+	}
+
+	public static void setLastTeamName(String lastTeamName) {
+		CreateGameController.lastTeamName = lastTeamName;
+	}
+
 	public static void initColorHashMap() {
 		for(int i=0; i<CreateGameController.getMaxNumberofTeams(); i++) {
 			colors.put(String.valueOf(i), new SimpleObjectProperty<>(Color.BEIGE));
@@ -171,6 +194,8 @@ public class CreateGameController {
 	public static void updateTeamNumberfromLocal() {
 		
 	}
+	
+	
 	
 	
 	public static void setServerIP(String serverIP) {

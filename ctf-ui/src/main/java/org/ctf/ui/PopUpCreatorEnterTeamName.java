@@ -102,22 +102,31 @@ public class PopUpCreatorEnterTeamName {
 				CretaeGameScreenV2.informationmustBeEntered(enterNamefield, "custom-search-field2-mustEnter","custom-search-field2");
 			}else {
 				teamName = enterNamefield.getText();
+				CreateGameController.setLastTeamName(teamName);
 			
 			if (isMain && !isAi) {
 				CreateGameController.createHumanClient(teamName, true);
 				hsc.switchToWaitGameScene(App.getStage());
+				CreateGameController.setLasttype("HUMAN");
+				System.out.println("Peter du hund");
 			}
 			if(!isMain && !isAi) {
 				CreateGameController.createHumanClient(teamName, true);
 				root.getChildren().remove(enterNamePopUp);
+				CreateGameController.setLasttype("HUMAN");
+
 			}
 			if(isMain && isAi) {
 				CreateGameController.createAiClient(teamName, AI.RANDOM, config, isMain);
 				hsc.switchToWaitGameScene(App.getStage());
+				CreateGameController.setLasttype("AI");
+
 			}
 			if(!isMain && isAi) {
 				CreateGameController.createAiClient(teamName, AI.RANDOM, config, isMain);
 				root.getChildren().remove(enterNamePopUp);
+				CreateGameController.setLasttype("AI");
+
 			}
 			}
 		});
