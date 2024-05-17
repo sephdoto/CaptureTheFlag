@@ -87,6 +87,7 @@ public class Client implements GameClientInterface {
   protected boolean gameOver;
   protected boolean gameStarted;
   protected boolean enableLogging;
+  protected boolean enableQueue = false;
   protected boolean moveTimeLimitedGameTrigger = false;
   protected boolean timeLimitedGameTrigger = false;
 
@@ -479,8 +480,10 @@ public class Client implements GameClientInterface {
       throw new UnknownError("Server Error or Setting error");
     }
     this.grid = gameState.getGrid();
-    if (isNewGameState(gameState)) {
-      this.fifoQueue.offer(gameState);
+    if(enableQueue){
+      if (isNewGameState(gameState)) {
+        this.fifoQueue.offer(gameState);
+      }
     }
     this.currentTeamTurn = gameState.getCurrentTeam();
     this.lastMove = gameState.getLastMove();
@@ -856,6 +859,9 @@ public class Client implements GameClientInterface {
     return this.fifoQueue.poll();
   }
 
+  public void enableGameStateQueue(boolean selector) {
+    this.enableQueue = selector;
+  }
   // **************************************************
   // End of Getter Block
   // **************************************************

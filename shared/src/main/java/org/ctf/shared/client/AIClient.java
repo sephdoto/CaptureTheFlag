@@ -1,5 +1,6 @@
 package org.ctf.shared.client;
 
+import java.util.ArrayDeque;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -240,6 +241,11 @@ public class AIClient extends Client {
       throw new UnknownError("Server Error or Setting error");
     }
     this.grid = gameState.getGrid();
+    if(enableQueue){
+      if (isNewGameState(gameState)) {
+        this.fifoQueue.offer(gameState);
+      }
+    }
     this.currentTeamTurn = gameState.getCurrentTeam();
     this.lastMove = gameState.getLastMove();
     if (enableLogging) {
