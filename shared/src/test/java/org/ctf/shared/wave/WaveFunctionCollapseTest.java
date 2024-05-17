@@ -7,8 +7,6 @@ import javax.imageio.ImageIO;
 import org.ctf.shared.ai.TestValues;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums;
-import org.ctf.shared.wave.WaveFunctionCollapse;
-import org.ctf.shared.wave.WaveGrid;
 import org.junit.jupiter.api.Test;
 /**
  * @author ysiebenh

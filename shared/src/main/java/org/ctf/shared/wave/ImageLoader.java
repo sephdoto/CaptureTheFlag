@@ -113,17 +113,32 @@ class ImageLoader {
    */
   private BufferedImage[] loadBayernImages() throws IOException {
     int franken = (int) (Math.random() * 20);
-    String bayern = franken == 1 ? "Franken.png" : "Bayern.png";    //Franken Easteregg
-    BufferedImage[] images = new BufferedImage[imagesAmount+1];
-    WaveFunctionCollapse.instance.setBlock(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"noweed.png")));
-    WaveFunctionCollapse.instance.setBase(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"Ei.png")));
-    images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator +"p1.png"));
-    images[1] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + bayern));
-    images[2] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + bayern)),90);
-    images[3] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + bayern)),180);
-    images[4] = this.rotateImageByDegrees(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + bayern)),270);
+    String bayern = franken == 1 ? "Franken.png" : "Bayern.png"; // Franken Easteregg
+    BufferedImage[] images = new BufferedImage[imagesAmount + 1];
+    WaveFunctionCollapse.instance
+        .setBlock(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator
+            + "bayern" + File.separator + "WaveFunctionTiles" + File.separator + "noweed.png")));
+    WaveFunctionCollapse.instance
+        .setBase(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator
+            + "bayern" + File.separator + "WaveFunctionTiles" + File.separator + "Ei.png")));
+    images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator
+        + "bayern" + File.separator + "WaveFunctionTiles" + File.separator + bayern));
+    images[1] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator
+        + "bayern" + File.separator + "WaveFunctionTiles" + File.separator + bayern));
+    images[2] = this.rotateImageByDegrees(
+        ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "bayern"
+            + File.separator + "WaveFunctionTiles" + File.separator + bayern)),
+        90);
+    images[3] = this.rotateImageByDegrees(
+        ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "bayern"
+            + File.separator + "WaveFunctionTiles" + File.separator + bayern)),
+        180);
+    images[4] = this.rotateImageByDegrees(
+        ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "bayern"
+            + File.separator + "WaveFunctionTiles" + File.separator + bayern)),
+        270);
     return images;
-    
+
   }
   
   @Deprecated
