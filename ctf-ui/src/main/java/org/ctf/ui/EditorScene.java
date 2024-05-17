@@ -38,7 +38,7 @@ import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.exceptions.UnknownError;
 import org.ctf.shared.state.data.map.Shape;
 import org.ctf.shared.state.data.map.ShapeType;
-import org.ctf.ui.controllers.ImageGetter;
+import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.MapPreview;
 import org.ctf.ui.controllers.MapPreviewThread;
 import org.ctf.ui.controllers.SoundController;
@@ -148,7 +148,7 @@ public class EditorScene extends Scene {
    * @return ImageView that gets added to the scene
    */
   private ImageView createHeader() {
-    Image mp = ImageGetter.loadThemedImage(ImageType.MISC, "EditorImage");
+    Image mp = ImageController.loadThemedImage(ImageType.MISC, "EditorImage");
     ImageView mpv = new ImageView(mp);
     mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.8));
     mpv.setPreserveRatio(true);
