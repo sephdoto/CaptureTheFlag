@@ -454,13 +454,13 @@ public class GameEngine implements Game {
   }
 
   /**
-   * Tells the client if the game is Time Limited
+   * Tells the client the max time they have per move
    *
    * @return Turn time limit in seconds (<= 0 if none)
    */
   @Override
   public int getTurnTimeLimit() {
-    return copyOfTemplate.getTotalTimeLimitInSeconds();
+    return copyOfTemplate.getMoveTimeLimitInSeconds();
   }
 
   /**
