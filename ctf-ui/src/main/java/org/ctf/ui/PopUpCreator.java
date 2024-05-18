@@ -7,6 +7,7 @@ import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.AIConfigs;
 import org.ctf.ui.customobjects.ButtonPane;
 import org.ctf.ui.customobjects.PopUpPane;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -130,7 +131,9 @@ public class PopUpCreator {
 			buttonBox.setPadding(new Insets(0, padding, 0, padding));
 		});
 		
-		buttonBox.getChildren().addAll(createAIPowerButton(AIConfigs.RANDOM, 0.365, 1),
+		
+		
+		buttonBox.getChildren().addAll(createRandomButton(),
 				createAIPowerButton(AIConfigs.MCTS, 0.53, 1));
 		HBox buttonBox2 = new HBox();
 		buttonBox2.setAlignment(Pos.CENTER);
@@ -151,6 +154,59 @@ public class PopUpCreator {
 		aiLevelPopUpPane.setContent(top);
 		root.getChildren().add(aiLevelPopUpPane);
 		return aiLevelPopUpPane;
+	}
+	
+	private StackPane createRandomButton() {
+	  StackPane stack = new StackPane();
+	  stack.getStyleClass().add("ai-button-easy");
+      Text text = new Text(AIConfigs.RANDOM.toString());
+      text.fontProperty().bind(Bindings.createObjectBinding(
+          () -> Font.font("Century Gothic", stack.getHeight() * 0.3), stack.heightProperty()));
+      StackPane.setAlignment(text, Pos.CENTER_LEFT);
+      stack.widthProperty().addListener((obs, old, newV) -> {
+        double padding = newV.doubleValue() * 0.05;
+        stack.setPadding(new Insets(padding));
+      });
+      text.setFill(Color.WHITE);
+      text.setMouseTransparent(true);
+      stack.getChildren().add(text);
+      Image mp = new Image(getClass().getResourceAsStream("i1.png"));
+      ImageView vw = new ImageView(mp);
+      StackPane.setAlignment(vw, Pos.CENTER_RIGHT);
+      vw.fitHeightProperty().bind(stack.heightProperty().multiply(0.5));
+      vw.setPreserveRatio(true);
+      stack.getChildren().add(vw);
+      InfoPaneCreator.addInfoPane(vw, App.getStage(), Descriptions.describe(AIConfigs.RANDOM), InfoPaneCreator.TOP);
+      stack.prefWidthProperty().bind(root.widthProperty().multiply(0.22));
+      stack.prefHeightProperty().bind(stack.widthProperty().multiply(0.45));
+      stack.maxWidthProperty().bind(root.widthProperty().multiply(0.22));
+      stack.maxHeightProperty().bind(stack.widthProperty().multiply(0.45));
+      stack.setOnMouseClicked(event -> {
+        aitype = AI.RANDOM;
+        if (remote) {
+          root.getChildren().remove(aiLevelPopUpPane);
+          JoinScene joinscene = (JoinScene) scene;
+          joinscene.createJoinWindowAI(joinscene.getId(), joinscene.getIp(), joinscene.getPort(),
+              AI.RANDOM, null);
+          return;
+        }
+        if (aiorHumanpopup == null) {
+          PopUpCreatorEnterTeamName teamNamePopup =
+              new PopUpCreatorEnterTeamName(scene, root, aiLevelPopUpPane, hsc, false, true);
+          teamNamePopup.setAitype(aitype);
+          teamNamePopup.setConfig(defaultConfig);
+          teamNamePopup.createEnterNamePopUp();
+        } else {
+          PopUpCreatorEnterTeamName teamNamePopup =
+              new PopUpCreatorEnterTeamName(scene, root, aiLevelPopUpPane, hsc, true, true);
+          teamNamePopup.setAitype(aitype);
+          teamNamePopup.setConfig(defaultConfig);
+          teamNamePopup.createEnterNamePopUp();
+        }
+
+      }
+      );
+      return stack;
 	}
 
 	/**
