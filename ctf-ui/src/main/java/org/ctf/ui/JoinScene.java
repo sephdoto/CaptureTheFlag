@@ -485,6 +485,7 @@ public class JoinScene extends Scene {
       }
       Client client = ClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(ip)
           .onPort(port).enableSaveGame(false).enableAutoJoin(id, "teamname").build();
+      client.enableGameStateQueue(true);
       root.getChildren().remove(popUp);
       right.getChildren().clear();
       info.setText("Client hast joined!\n Waiting for the Game to start.");
@@ -533,6 +534,7 @@ public class JoinScene extends Scene {
       AIClient aiClient = AIClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(ip)
           .onPort(port).aiPlayerSelector(type, config).enableSaveGame(false)
           .gameData(id, nameField.getText()).build();
+      aiClient.enableGameStateQueue(true);
       root.getChildren().remove(popUp);
       right.getChildren().clear();
       info.setText("Client hast joined!\n Waiting for the Game to start.");
