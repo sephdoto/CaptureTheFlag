@@ -69,6 +69,7 @@ public class PlayGameScreenV2 extends Scene {
 	VBox right;
 	GameState currentState;
 	boolean first;
+	HBox top;
 	private static Circle c;
 	private static Label idLabel;
 	private static Label typeLabel;
@@ -76,6 +77,7 @@ public class PlayGameScreenV2 extends Scene {
 	private static Label teamLabel;
 	private static Label countLabel;
 	StackPane showMapBox;
+	StackPane wrapper = new StackPane();
 	public  ObjectProperty<Color> sceneColorProperty = 
 	        new SimpleObjectProperty<>(Color.BLUE);
 	private ObjectProperty<Font> timerLabel = new SimpleObjectProperty<Font>(Font.getDefault());
@@ -142,6 +144,7 @@ public class PlayGameScreenV2 extends Scene {
 		super(new StackPane(), width, height);
 		this.mainClient = mainClient;
 		this.isRemote = isRemote;
+		 this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
 		initalizePlayGameScreen(hsc);
 	}
 	
@@ -173,7 +176,7 @@ public class PlayGameScreenV2 extends Scene {
 		root.paddingProperty().bind(padding);
 		root.prefHeightProperty().bind(this.heightProperty());
 		root.prefWidthProperty().bind(this.widthProperty());
-		HBox top = new HBox();
+		top = new HBox();
 		top.setAlignment(Pos.CENTER);
 		//VBox left = new VBox();
 		right = new VBox();
@@ -183,7 +186,8 @@ public class PlayGameScreenV2 extends Scene {
 //		left.prefHeightProperty().bind(this.heightProperty());
 //		left.prefWidthProperty().bind(this.widthProperty().multiply(0.7));
 //		left.getChildren().add(createShowMapPane("p2"));
-		top.getChildren().add(createShowMapPane());
+		top.getChildren().add(wrapper);
+		//top.getChildren().add(createShowMapPane());
 		right.getChildren().add(createTopCenter());
 		right.getChildren().add(imageTest());
 		right.getChildren().add(createClockBox(mainClient.isGameMoveTimeLimited(), mainClient.isGameTimeLimited()));
@@ -230,7 +234,10 @@ public class PlayGameScreenV2 extends Scene {
 //		     showMapBox.getChildren().add(createBackgroundImage(gm.vBox,state));
 //		     first = false;
 //		}
+	     wrapper.getChildren().remove(showMapBox);
+	     createShowMapPane();
 	     showMapBox.getChildren().add(gm);
+	     wrapper.getChildren().add(showMapBox);
 	}
 	
 	 private  String formatTime(int totalSeconds) {
@@ -241,11 +248,9 @@ public class PlayGameScreenV2 extends Scene {
 	        return String.format("%d:%02d:%02d", hours, minutes, seconds);
 	    }
 	
-	public ImageView createBackgroundImage(VBox vBox, GameState state) {
+	public ImageView createBackgroundImage(VBox vBox) {
 	      // Image mp = new Image(getClass().getResourceAsStream("gridSTARWARS.png"));
-	      WaveFunctionCollapse backgroundcreator =
-	          new WaveFunctionCollapse(state.getGrid(), Constants.theme);
-	      backgroundcreator.saveToResources();
+	     
 	      Image mp =
 	          new Image(new File(Constants.toUIResources + "pictures" + File.separator + "grid.png")
 	              .toURI().toString());
@@ -264,14 +269,15 @@ public class PlayGameScreenV2 extends Scene {
 		//VBox.setVgrow(outerbox, Priority.ALWAYS);
 		
 		showMapBox = new StackPane();
-		showMapBox.getStyleClass().add("play-pane");
-		
+		//showMapBox.getStyleClass().add("play-pane");		
+		//showMapBox.paddingProperty().bind(padding);
 		showMapBox.paddingProperty().bind(padding);
 		showMapBox.prefWidthProperty().bind(this.widthProperty().multiply(0.7));
 	     showMapBox.prefHeightProperty().bind(this.heightProperty().multiply(0.9));
 	     showMapBox.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.7));
 	     showMapBox.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.9));
-		showMapBox.getStyleClass().add("show-GamePane");
+		showMapBox.getStyleClass().add("option-pane");
+		showMapBox.getChildren().add(createBackgroundImage(gm.vBox));
 		return showMapBox;
 	}
 	
