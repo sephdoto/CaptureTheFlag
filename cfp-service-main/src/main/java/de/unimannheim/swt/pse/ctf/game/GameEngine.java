@@ -120,7 +120,8 @@ public class GameEngine implements Game {
    */
   @Override
   public Team joinGame(String teamId) {
-    if (getRemainingTeamSlots() == 0) {
+    if (teamToInteger.containsKey(teamId) || 
+        getRemainingTeamSlots() == 0) {
       throw new NoMoreTeamSlots();
     }
     int slot = EngineTools.getNextEmptyTeamSlot(this.gameState);
