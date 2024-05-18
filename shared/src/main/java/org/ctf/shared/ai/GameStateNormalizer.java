@@ -16,7 +16,7 @@ public class GameStateNormalizer {
   private boolean rowThanColumn;
   private GameState originalGameState;
   private GameState normalizedGameState;
-  
+
   /**
    * Generated a normalized GameState and saves it as an attribute
    * 
@@ -26,12 +26,12 @@ public class GameStateNormalizer {
   public GameStateNormalizer(GameState original, boolean rowThanColumn) {
     this.rowThanColumn = rowThanColumn;
     this.originalGameState = original;
-    
+
     if(original.getLastMove() == null)
       original.setLastMove(new Move());
     if(original.getLastMove().getNewPosition() == null)
       original.getLastMove().setNewPosition(new int[] {0,0});
-    
+
     this.normalizedGameState = deepNormalizeGameState(originalGameState);
   }
 
@@ -49,13 +49,15 @@ public class GameStateNormalizer {
         this.rowThanColumn ? 
             move.getNewPosition() :
               new int[] {move.getNewPosition()[1], move.getNewPosition()[0]}
-            );
-    for(int i=0; i< normalizedGameState.getTeams().length; i++)
+        );
+    for(int i=0; i< normalizedGameState.getTeams().length; i++) {
+      if(normalizedGameState.getTeams()[i] == null) continue;
       for(int j=0; j<normalizedGameState.getTeams()[i].getPieces().length; j++)
         if(normalizedGameState.getTeams()[i].getPieces()[j].getId().equals(move.getPieceId())) {
           unmove.setTeamId("" + i);
           unmove.setPieceId(originalGameState.getTeams()[i].getPieces()[j].getId());
         }
+    }
     return unmove;
   }
   /**
@@ -72,24 +74,26 @@ public class GameStateNormalizer {
         this.rowThanColumn ? 
             move.getNewPosition() :
               new int[] {move.getNewPosition()[1], move.getNewPosition()[0]}
-            );
-    for(int i=0; i< originalGameState.getTeams().length; i++)
+        );
+    for(int i=0; i< originalGameState.getTeams().length; i++) {
+      if(originalGameState.getTeams()[i] == null) continue;
       for(int j=0; j<originalGameState.getTeams()[i].getPieces().length; j++)
         if(originalGameState.getTeams()[i].getPieces()[j].getId().equals(move.getPieceId())) {
           normove.setTeamId("" + i);
           normove.setPieceId(normalizedGameState.getTeams()[i].getPieces()[j].getId());
         }
+    }
     return normove;
   }
-  
+
   public GameState getOriginalGameState() {
     return this.originalGameState;
   }
-  
+
   public GameState getNormalizedGameState() {
     return this.normalizedGameState;
   }
-  
+
   /**
    * Deep copies a GameState and adjusts some values to be normalized.
    * The Team id gets changed to represent its place in the Array.
@@ -129,24 +133,25 @@ public class GameStateNormalizer {
       teams[i].setPieces(pieces);
     }
     newState.setTeams(teams);
-    
+
     Move move = new Move();
-    for(int i=0; i<teams.length; i++)
+    for(int i=0; i<teams.length; i++) {
+      if (gameState.getTeams()[i] == null) continue;
       for(int j=0; j<teams[i].getPieces().length; j++)
         if(teams[i].getPieces()[j].getId().equals(gameState.getLastMove().getPieceId())) {
           move.setTeamId("" + i);
           move.setPieceId(newState.getTeams()[i].getPieces()[j].getId());
         }
-    
+    }
     if(this.rowThanColumn)
       move.setNewPosition(gameState.getLastMove().getNewPosition().clone());
     else
       move.setNewPosition(new int[] {
           gameState.getLastMove().getNewPosition()[1], 
           gameState.getLastMove().getNewPosition()[0]
-              });
+      });
     newState.setLastMove(move);
-    
+
     return newState;
   }
 }

@@ -475,6 +475,7 @@ public class Client implements GameClientInterface {
     try {
       gameState = comm.getCurrentGameState(currentServer);
       normaliseGameState(gameState);
+      if(gameState.getTeams()[myTeam] == null) this.gameOver = true;    //TODO review if this is OK. Works and everything but maybe you had other plans.
     } catch (SessionNotFound e) {
       throw new SessionNotFound("Session isnt available for this request");
     } catch (UnknownError e) {
