@@ -22,6 +22,12 @@ public class Timer extends Label {
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.play();
 	}
+	
+	public void reset() {
+		this.hour = 0;
+		this.minute = 0;
+		this.second = 0;
+	}
 
 	public String getCurrentTime() {
 		String hourText;

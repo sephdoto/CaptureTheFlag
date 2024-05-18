@@ -48,6 +48,7 @@ import javassist.expr.Instanceof;
 public class PlayGameScreenV2 extends Scene {
 	
 	 private ScheduledExecutorService scheduler;
+	 private ScheduledExecutorService scheduler2;
 	 // TODO Remember to close the service before moving away from this scene
 	 private int currentTeam;
 	 private Client mainClient;
@@ -62,6 +63,7 @@ public class PlayGameScreenV2 extends Scene {
 	Label howManyTeams;
 	Label moveTimeLimit;
 	Label gameTimeLimit;
+	Timer noMoveTimeLimit;
 	GamePane gm;
 	GameState state;
 	VBox right;
@@ -86,6 +88,7 @@ public class PlayGameScreenV2 extends Scene {
 	
 	Runnable updateTask = () -> {
 		try {
+			
 //			if(currentTeam != mainClient.getCurrentTeamTurn()) {
 //				currentTeam = mainClient.getCurrentTeamTurn();
 //					Platform.runLater(() -> {
@@ -108,11 +111,38 @@ public class PlayGameScreenV2 extends Scene {
 			if(tmp !=null) {
 				currentState = tmp;
 			    Platform.runLater(() -> {
+			    	if(! mainClient.isGameMoveTimeLimited()) {
+			    		noMoveTimeLimit.reset();
+			    	}
 					 this.redrawGrid(currentState);
 					 this.setTeamTurn(String.valueOf(mainClient.getCurrentTeamTurn()));
 			        });
 			}
 		} catch (Exception e) {
+
+		}
+	};
+	
+	Runnable updateTask2 = () -> {
+		try {
+			Platform.runLater(() -> {
+				if(mainClient.isGameMoveTimeLimited()) {
+				 moveTimeLimit.setText(formatTime(mainClient.getRemainingMoveTimeInSeconds()));
+				 if(mainClient.getRemainingMoveTimeInSeconds() <10) {
+					 moveTimeLimit.setTextFill(Color.RED);
+				 }else {
+					 moveTimeLimit.setTextFill(Color.GOLD);
+				 }
+				}
+				if(mainClient.isGameTimeLimited()) {
+				 gameTimeLimit.setText(formatTime(mainClient.getRemainingGameTimeInSeconds()));
+				 if(mainClient.getRemainingGameTimeInSeconds() <60) {
+					 gameTimeLimit.setTextFill(Color.RED);
+				 }
+				}
+
+	        });
+			} catch (Exception e) {
 
 		}
 	};
@@ -136,6 +166,10 @@ public class PlayGameScreenV2 extends Scene {
 		this.root = (StackPane) this.getRoot();
 		createLayout();
 		this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
+		if(mainClient.isGameTimeLimited() || mainClient.isGameMoveTimeLimited()) {
+			scheduler2 = Executors.newScheduledThreadPool(1);
+			scheduler2.scheduleAtFixedRate(updateTask2, 0, 1, TimeUnit.SECONDS);
+		}
 		scheduler = Executors.newScheduledThreadPool(1);
 		scheduler.scheduleAtFixedRate(updateTask, 0, 100, TimeUnit.MILLISECONDS);
 	}
@@ -158,7 +192,6 @@ public class PlayGameScreenV2 extends Scene {
 //		left.prefHeightProperty().bind(this.heightProperty());
 //		left.prefWidthProperty().bind(this.widthProperty().multiply(0.7));
 //		left.getChildren().add(createShowMapPane("p2"));
-		
 		top.getChildren().add(createShowMapPane());
 		right.getChildren().add(createTopCenter());
 		right.getChildren().add(imageTest());
@@ -349,13 +382,13 @@ public class PlayGameScreenV2 extends Scene {
 		VBox timer1;
 		VBox timer2;
 		if(movetimelimited) {
-			timer1 = createTimer2(timerBox, "Move Time",moveTimeLimit);
+			timer1 = createTimer2(timerBox, "Move Time");
 			System.out.println("move time limited");
 		}else {
-			 timer1 =  createTimer(timerBox, "Move Time");
+			 timer1 = createTimer(timerBox, "Move Time");
 		}
 		if(gametimeLimited) {
-			timer2 = createTimer2(timerBox, "Game Time", gameTimeLimit);
+			timer2 = createTimer2(timerBox, "Game Time");
 			System.out.println("Game time limited");
 		}else {
 			 timer2 =  createTimer(timerBox, "Game Time");
@@ -375,16 +408,26 @@ public class PlayGameScreenV2 extends Scene {
 		desLabel.fontProperty().bind(timerDescription);
 		desLabel.getStyleClass().add("des-timer");
 		timerwithDescrip.getChildren().add(desLabel);
+		if(text.equals("Move Time")) {
+			noMoveTimeLimit = new Timer(0,0,0);
+			noMoveTimeLimit.prefWidthProperty().bind(timerBox.widthProperty().multiply(0.35));
+			noMoveTimeLimit.prefHeightProperty().bind(noMoveTimeLimit.widthProperty().multiply(0.35));
+			noMoveTimeLimit.getStyleClass().add("timer-label");
+			noMoveTimeLimit.fontProperty().bind(timerLabel);
+			timerwithDescrip.getChildren().add(noMoveTimeLimit);
+		}else {
 		Timer t = new Timer(0,0,0);
 		t.prefWidthProperty().bind(timerBox.widthProperty().multiply(0.35));
 		t.prefHeightProperty().bind(t.widthProperty().multiply(0.35));
 		t.getStyleClass().add("timer-label");
 		t.fontProperty().bind(timerLabel);
 		timerwithDescrip.getChildren().add(t);
+		}
 		return timerwithDescrip;
 	}
 	
-	private VBox createTimer2(HBox timerBox, String text, Label l) {
+	
+	private VBox createTimer2(HBox timerBox, String text) {
 		VBox timerwithDescrip = new VBox();
 		timerwithDescrip.setAlignment(Pos.CENTER);
 		timerwithDescrip.prefWidthProperty().bind(timerBox.widthProperty().multiply(0.35));
@@ -394,12 +437,40 @@ public class PlayGameScreenV2 extends Scene {
 		desLabel.fontProperty().bind(timerDescription);
 		desLabel.getStyleClass().add("des-timer");
 		timerwithDescrip.getChildren().add(desLabel);
-		l = new Label();
-		l.prefWidthProperty().bind(timerBox.widthProperty().multiply(0.35));
-		l.prefHeightProperty().bind(l.widthProperty().multiply(0.35));
-		l.getStyleClass().add("timer-label");
-		l.fontProperty().bind(timerLabel);
-		timerwithDescrip.getChildren().add(l);
+		if (text.equals("Move Time")) {
+			moveTimeLimit = new Label();
+			moveTimeLimit.prefWidthProperty().bind(timerBox.widthProperty().multiply(0.35));
+			moveTimeLimit.prefHeightProperty().bind(moveTimeLimit.widthProperty().multiply(0.35));
+			moveTimeLimit.getStyleClass().add("timer-label");
+			moveTimeLimit.fontProperty().bind(timerLabel);
+			timerwithDescrip.getChildren().add(moveTimeLimit);
+		}else {
+			gameTimeLimit = new Label();
+			gameTimeLimit.prefWidthProperty().bind(timerBox.widthProperty().multiply(0.35));
+			gameTimeLimit.prefHeightProperty().bind(gameTimeLimit.widthProperty().multiply(0.35));
+			gameTimeLimit.getStyleClass().add("timer-label");
+			gameTimeLimit.fontProperty().bind(timerLabel);
+			timerwithDescrip.getChildren().add(gameTimeLimit);
+		}
+		return timerwithDescrip;
+	}
+	
+	private VBox createTimer3(HBox timerBox, String text) {
+		VBox timerwithDescrip = new VBox();
+		timerwithDescrip.setAlignment(Pos.CENTER);
+		timerwithDescrip.prefWidthProperty().bind(timerBox.widthProperty().multiply(0.35));
+		timerwithDescrip.prefHeightProperty().bind(timerBox.widthProperty().multiply(0.35));
+		Label desLabel = new Label(text);
+		desLabel.setAlignment(Pos.CENTER);
+		desLabel.fontProperty().bind(timerDescription);
+		desLabel.getStyleClass().add("des-timer");
+		timerwithDescrip.getChildren().add(desLabel);
+		gameTimeLimit = new Label();
+		gameTimeLimit.prefWidthProperty().bind(timerBox.widthProperty().multiply(0.35));
+		gameTimeLimit.prefHeightProperty().bind(gameTimeLimit.widthProperty().multiply(0.35));
+		gameTimeLimit.getStyleClass().add("timer-label");
+		gameTimeLimit.fontProperty().bind(timerLabel);
+		timerwithDescrip.getChildren().add(gameTimeLimit);
 		return timerwithDescrip;
 	}
 	
