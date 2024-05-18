@@ -363,6 +363,7 @@ public class Client implements GameClientInterface {
     }
     try {
       this.turnTimeLimit = gameSessionResponse.getRemainingGameTimeInSeconds();
+      this.gameTimeLeft = gameSessionResponse.getRemainingGameTimeInSeconds();
       if (turnTimeLimit > 0) {
         this.timeLimitedGameTrigger = true;
       }
@@ -652,7 +653,7 @@ public class Client implements GameClientInterface {
   }
 
   public int getRemainingGameTimeInSeconds() {
-    return this.gameTimeLeft;
+    return this.turnTimeLimit;
   }
 
   // **************************************************
