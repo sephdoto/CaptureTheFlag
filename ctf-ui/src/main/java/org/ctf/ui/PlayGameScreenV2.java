@@ -60,7 +60,8 @@ public class PlayGameScreenV2 extends Scene {
 	boolean isRemote;
 	VBox testBox;
 	Label howManyTeams;
-	Label timeLabel;
+	Label moveTimeLimit;
+	Label gameTimeLimit;
 	GamePane gm;
 	GameState state;
 	VBox right;
@@ -93,12 +94,21 @@ public class PlayGameScreenV2 extends Scene {
 //						 this.setTeamTurn(String.valueOf(mainClient.getCurrentTeamTurn()));
 //				        });
 //			}
-			if(mainClient.getQueuedGameState() !=null) {
+			//Platform.runLater(() -> {
+//				if(mainClient.isGameMoveTimeLimited() && moveTimeLimit != null) {
+//				 moveTimeLimit.setText(formatTime(mainClient.getRemainingMoveTimeInSeconds()));
+//				}
+//				if(mainClient.isGameTimeLimited() && gameTimeLimit != null) {
+//				 gameTimeLimit.setText(formatTime(mainClient.getRemainingGameTimeInSeconds()));
+//				}
+				 //moveTimeLimit.setText(formatTime(mainClient.getRemainingMoveTimeInSeconds()));
+
+	        //});
+			currentState = mainClient.getQueuedGameState();
+			if(currentState !=null) {
 				Platform.runLater(() -> {
-						currentState = mainClient.getQueuedGameState();
 					 this.redrawGrid(currentState);
 					 this.setTeamTurn(String.valueOf(mainClient.getCurrentTeamTurn()));
-					 //timeLabel.setText(formatTime(mainClient.getRemainingMoveTimeInSeconds()));
 			        });
 			}
 		} catch (Exception e) {
@@ -337,13 +347,20 @@ public class PlayGameScreenV2 extends Scene {
 			timerBox.setPadding(new Insets(0, padding, 0, padding));
 		});
 		VBox timer1;
+		VBox timer2;
 		if(movetimelimited) {
-			timer1 = createTimer2(timerBox, "Move Time");
+			timer1 = createTimer2(timerBox, "Move Time",moveTimeLimit);
+			System.out.println("move time limited");
 		}else {
 			 timer1 =  createTimer(timerBox, "Move Time");
 		}
+		if(gametimeLimited) {
+			timer2 = createTimer2(timerBox, "Game Time", gameTimeLimit);
+			System.out.println("Game time limited");
+		}else {
+			 timer2 =  createTimer(timerBox, "Game Time");
+		}
 		
-		VBox timer2 =  createTimer(timerBox, "Game Time");
 		timerBox.getChildren().addAll(timer1,timer2);
 		return timerBox;
 	}
@@ -367,7 +384,7 @@ public class PlayGameScreenV2 extends Scene {
 		return timerwithDescrip;
 	}
 	
-	private VBox createTimer2(HBox timerBox, String text) {
+	private VBox createTimer2(HBox timerBox, String text, Label l) {
 		VBox timerwithDescrip = new VBox();
 		timerwithDescrip.setAlignment(Pos.CENTER);
 		timerwithDescrip.prefWidthProperty().bind(timerBox.widthProperty().multiply(0.35));
@@ -377,12 +394,12 @@ public class PlayGameScreenV2 extends Scene {
 		desLabel.fontProperty().bind(timerDescription);
 		desLabel.getStyleClass().add("des-timer");
 		timerwithDescrip.getChildren().add(desLabel);
-		timeLabel = new Label();
-		timeLabel.prefWidthProperty().bind(timerBox.widthProperty().multiply(0.35));
-		timeLabel.prefHeightProperty().bind(timeLabel.widthProperty().multiply(0.35));
-		timeLabel.getStyleClass().add("timer-label");
-		timeLabel.fontProperty().bind(timerLabel);
-		timerwithDescrip.getChildren().add(timeLabel);
+		l = new Label();
+		l.prefWidthProperty().bind(timerBox.widthProperty().multiply(0.35));
+		l.prefHeightProperty().bind(l.widthProperty().multiply(0.35));
+		l.getStyleClass().add("timer-label");
+		l.fontProperty().bind(timerLabel);
+		timerwithDescrip.getChildren().add(l);
 		return timerwithDescrip;
 	}
 	
@@ -390,7 +407,7 @@ public class PlayGameScreenV2 extends Scene {
 	
 	private HBox imageTest() {
 		HBox h1 = new HBox();
-		h1.prefHeightProperty().bind(this.heightProperty().multiply(0.7));
+		h1.prefHeightProperty().bind(this.heightProperty().multiply(0.65));
 		h1.prefWidthProperty().bind(h1.heightProperty().multiply(0.3));
 		h1.widthProperty().addListener((observable, oldValue, newValue) -> {
 			double padding = newValue.doubleValue() * 0.08;
