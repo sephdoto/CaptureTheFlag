@@ -74,9 +74,9 @@ public class GameUtilities {
    */
   public static void removeTeam(GameState gameState, int team) {
     gameState
-            .getGrid()[gameState.getTeams()[team].getBase()[0]][
-            gameState.getTeams()[team].getBase()[1]] =
-        "";
+    .getGrid()[gameState.getTeams()[team].getBase()[0]][
+                                                        gameState.getTeams()[team].getBase()[1]] =
+                                                        "";
     for (Piece p : gameState.getTeams()[team].getPieces())
       gameState.getGrid()[p.getPosition()[0]][p.getPosition()[1]] = "";
     gameState.getTeams()[team] = null;
@@ -196,7 +196,7 @@ public class GameUtilities {
         .get();
     return getPossibleMoves(gameState, piece, possibleMoves, new ReferenceMove(null, new int[] {0,0}));
   }
-  
+
   /**
    * Given a Piece and a GameState containing the Piece, an ArrayList with all valid locations the
    * Piece can walk on is returned. The ArrayList contains int[2] values, representing a (y,x)
@@ -276,19 +276,19 @@ public class GameUtilities {
     for (int i = 0; i < xTransforms.length; i++) {
       int[] newPos =
           new int[] {
-            piece.getPosition()[0] + yTransforms[i], piece.getPosition()[1] + xTransforms[i]
-          };
+              piece.getPosition()[0] + yTransforms[i], piece.getPosition()[1] + xTransforms[i]
+      };
       if (validPos(newPos, piece, gameState)) {
         if (i >= direction.length) {
           positions.add(newPos);
         } else if (sightLine(
             gameState,
             new int[] {
-              piece.getPosition()[0] + yTransforms[(1 + (i / 3) * 3)],
-              piece.getPosition()[1] + xTransforms[(1 + (i / 3) * 3)]
+                piece.getPosition()[0] + yTransforms[12+ (i / 3)] + yTransforms[1 + ((i / 3) * 3)],
+                piece.getPosition()[1] + xTransforms[12+ (i / 3)] + xTransforms[1 + ((i / 3) * 3)]
             },
             direction[i],
-            2)) {
+            3)) {
           positions.add(newPos);
         }
       }
@@ -342,7 +342,7 @@ public class GameUtilities {
   public static ReferenceMove getDirectionMove(ArrayList<int[]> dirMap, Piece piece, GameState gameState, ReferenceMove change) {
     int randomDir = ThreadLocalRandom.current().nextInt(dirMap.size());
     int reach;
-    
+
     while (true) {
       reach = ThreadLocalRandom.current().nextInt(dirMap.get(randomDir)[1]) + 1;
       change = checkMoveValidity(gameState, piece, dirMap.get(randomDir)[0], reach, change);
@@ -363,7 +363,7 @@ public class GameUtilities {
    * @return false if there are no possible moves in this direction, true otherwise.
    */
   public static boolean validDirection(GameState gameState, Piece piece, int direction, ReferenceMove change) {
-//    return checkMoveValidity(gameState, piece, direction, 1, change).getPiece() != null;
+    //    return checkMoveValidity(gameState, piece, direction, 1, change).getPiece() != null;
     int[] pos = new int[] {piece.getPosition()[0], piece.getPosition()[1]};
     updatePos(pos, direction, 1);
     return validPos(pos, piece, gameState);
@@ -386,7 +386,7 @@ public class GameUtilities {
     int[] pos = new int[] {piece.getPosition()[0], piece.getPosition()[1]};
     updatePos(pos, direction, reach);
     change.setPiece(null);
-    
+
     if (!validPos(pos, piece, gameState)) {
       return change;
     } else if (!sightLine(gameState, new int[] {pos[0], pos[1]}, direction, reach)) {
@@ -563,7 +563,7 @@ public class GameUtilities {
         grid[pos[0]][pos[1]],
         start,
         indexUnderscore == -1 ? grid[pos[0]][pos[1]].length() : indexUnderscore,
-        10);
+            10);
   }
 
   /**

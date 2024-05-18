@@ -290,11 +290,11 @@ public class MCTSUtilities {
         } else if (sightLine(
             gameState,
             new int[] {
-              piece.getPosition()[0] + yTransforms[(1 + (i / 3) * 3)],
-              piece.getPosition()[1] + xTransforms[(1 + (i / 3) * 3)]
+                piece.getPosition()[0] + yTransforms[12+ (i / 3)] + yTransforms[1 + ((i / 3) * 3)],
+                piece.getPosition()[1] + xTransforms[12+ (i / 3)] + xTransforms[1 + ((i / 3) * 3)]
             },
             direction[i],
-            2)) {
+            3)) {
           positions.add(newPos);
         }
       }
