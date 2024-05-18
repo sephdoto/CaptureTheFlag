@@ -1,9 +1,9 @@
 package org.ctf.shared.ai.mcts3;
 
+import java.util.ArrayList;
 import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
-import org.ctf.shared.state.Team;
 
 /**
  * This class is an adjusted version of GameState, using the Grid class instead of a String[][] Array.
@@ -20,7 +20,7 @@ public class ReferenceGameState {
    * @param gameState
    */
   public ReferenceGameState(GameState gameState) {
-    this(new Grid(gameState), gameState.getTeams(), gameState.getCurrentTeam(), new ReferenceMove(gameState, gameState.getLastMove()));
+    this(new Grid(gameState), Team.toNewTeams(gameState.getTeams()), gameState.getCurrentTeam(), new ReferenceMove(gameState, gameState.getLastMove()));
   }
   
   /**
@@ -46,7 +46,7 @@ public class ReferenceGameState {
     GameState gameState = new GameState();
     gameState.setCurrentTeam(currentTeam);
     gameState.setLastMove(this.lastMove.toMove());
-    gameState.setTeams(teams);
+    gameState.setTeams(Team.toOldTeams(teams));
     String[][] stringGrid = new String[grid.getGrid().length][grid.getGrid()[0].length];
     for(int y=0; y<grid.getGrid().length; y++)
       for(int x=0; x<grid.getGrid()[0].length; x++) {
@@ -73,13 +73,13 @@ public class ReferenceGameState {
       teams[i].setBase(this.teams[i].getBase());
       teams[i].setFlags(this.teams[i].getFlags());
       teams[i].setId(this.teams[i].getId());
-      Piece[] pieces = new Piece[this.teams[i].getPieces().length];
-      for(int j=0; j<pieces.length; j++) {
-        pieces[j] = new Piece();
-        pieces[j].setDescription(this.teams[i].getPieces()[j].getDescription());
-        pieces[j].setId(this.teams[i].getPieces()[j].getId());
-        pieces[j].setTeamId(this.teams[i].getPieces()[j].getTeamId());
-        pieces[j].setPosition(new int[] {this.teams[i].getPieces()[j].getPosition()[0], this.teams[i].getPieces()[j].getPosition()[1]});
+      ArrayList<Piece> pieces = new ArrayList<Piece>(this.teams[i].getPieces().size());
+      for(int j=0; j<this.teams[i].getPieces().size(); j++) {
+        pieces.add(new Piece());
+        pieces.get(j).setDescription(this.teams[i].getPieces().get(j).getDescription());
+        pieces.get(j).setId(this.teams[i].getPieces().get(j).getId());
+        pieces.get(j).setTeamId(this.teams[i].getPieces().get(j).getTeamId());
+        pieces.get(j).setPosition(new int[] {this.teams[i].getPieces().get(j).getPosition()[0], this.teams[i].getPieces().get(j).getPosition()[1]});
       }
       teams[i].setPieces(pieces);
     }

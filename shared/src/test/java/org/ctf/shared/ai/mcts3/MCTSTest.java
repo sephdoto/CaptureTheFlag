@@ -364,14 +364,14 @@ class MCTSTest {
   @Test
   void testOneRandomMove_capturePosition() {
     TreeNode root = mcts.getRoot();
-    root.getReferenceGameState().getTeams()[0].getPieces()[0].setPosition(new int[] {5,6});                       //place on the only square the other piece can move to. attack power should be equal
-    root.getReferenceGameState().getGrid().getGrid()[5][6] = new GridObjectContainer(GridObjects.piece, 0, root.getReferenceGameState().getTeams()[0].getPieces()[0]);
+    root.getReferenceGameState().getTeams()[0].getPieces().get(0).setPosition(new int[] {5,6});                       //place on the only square the other piece can move to. attack power should be equal
+    root.getReferenceGameState().getGrid().getGrid()[5][6] = new GridObjectContainer(GridObjects.piece, 0, root.getReferenceGameState().getTeams()[0].getPieces().get(0));
 
-    int piecesTeam0 = root.getReferenceGameState().getTeams()[0].getPieces().length;
+    int piecesTeam0 = root.getReferenceGameState().getTeams()[0].getPieces().size();
 
     mcts.oneMove(root, root, false, new ReferenceMove(null, new int[2]));
 
-    int piecesTeam0new = root.getReferenceGameState().getTeams()[0].getPieces().length;
+    int piecesTeam0new = root.getReferenceGameState().getTeams()[0].getPieces().size();
 
       assertNotEquals(piecesTeam0, piecesTeam0new);                                                   //a piece got captured, the Pieces Array got smaller
   }
@@ -385,12 +385,12 @@ class MCTSTest {
     root.getReferenceGameState().getTeams()[0].setBase(new int[] {8,7});                                          //base team 1 is now at the targeted position 
     root.getReferenceGameState().getGrid().setPosition(new GridObjectContainer(GridObjects.base, 0, null), 7, 8);
 
-    int[] posPiece6 = root.getReferenceGameState().getTeams()[1].getPieces()[5].getPosition();
-    int[] posPiece8 = root.getReferenceGameState().getTeams()[1].getPieces()[7].getPosition();
+    int[] posPiece6 = root.getReferenceGameState().getTeams()[1].getPieces().get(5).getPosition();
+    int[] posPiece8 = root.getReferenceGameState().getTeams()[1].getPieces().get(7).getPosition();
     mcts.oneMove(root, root, false, new ReferenceMove(null, new int[2]));
     
-    assertFalse(Arrays.equals(posPiece6,  root.getReferenceGameState().getTeams()[1].getPieces()[5].getPosition()) &&
-        Arrays.equals(posPiece8,  root.getReferenceGameState().getTeams()[1].getPieces()[7].getPosition()));
+    assertFalse(Arrays.equals(posPiece6,  root.getReferenceGameState().getTeams()[1].getPieces().get(5).getPosition()) &&
+        Arrays.equals(posPiece8,  root.getReferenceGameState().getTeams()[1].getPieces().get(7).getPosition()));
     assertTrue(root.getReferenceGameState().getTeams()[0].getFlags() == 1);
   }
   

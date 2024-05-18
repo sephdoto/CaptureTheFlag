@@ -3,7 +3,6 @@ package org.ctf.shared.ai.mcts3;
 import java.util.LinkedList;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
-import org.ctf.shared.state.Team;
 
 /**
  * This new Grid replaces the "dumb" String[][] Grid with a smart GridObjectContainer Grid.
@@ -60,7 +59,7 @@ public class Grid {
       }
     }
     Grid.blocks = blocks.toArray(new int[blocks.size()][]);
-    for(Team team : gameState.getTeams()) {
+    for(org.ctf.shared.state.Team team : gameState.getTeams()) {
       if(team == null)
         continue;
       this.grid[team.getBase()[0]][team.getBase()[1]] = new GridObjectContainer(GridObjects.base, Integer.parseInt(team.getId()), null);

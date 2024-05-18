@@ -77,10 +77,9 @@ public class ReferenceMove {
       Move move) {
     if(move.getPieceId() != null) {
       this.newPosition = move.getNewPosition();
-      this.piece =
-          Arrays.stream(
-              gameState.getTeams()[Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0])]
-                  .getPieces())
+      this.piece = gameState.getTeams()[Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0])]
+          .getPieces()
+          .stream()
           .filter(p -> p.getId().equals(move.getPieceId()))
           .findFirst()
           .get();

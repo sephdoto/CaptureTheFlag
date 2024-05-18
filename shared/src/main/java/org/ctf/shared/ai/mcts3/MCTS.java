@@ -13,7 +13,6 @@ import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.ai.random.RandomAI;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
-import org.ctf.shared.state.Team;
 
 /**
  * @author sistumpf
@@ -295,7 +294,7 @@ public class MCTS implements MonteCarloTreeSearch {
         teamsLeft > 1;
         i = MCTSUtilities.toNextTeam(gameState).getCurrentTeam()) {
       boolean canMove = false;
-      for (int j = 0; !canMove && j < gameState.getTeams()[i].getPieces().length; j++) {
+      for (int j = 0; !canMove && j < gameState.getTeams()[i].getPieces().size(); j++) {
         // only if a move can be made no exception is thrown
         try {
           MCTSUtilities.pickMoveComplex(gameState, change);
@@ -362,7 +361,7 @@ public class MCTS implements MonteCarloTreeSearch {
    * @return the TreeNode containing the best Move
    */
   TreeNode getRootBest(TreeNode root) {
-    TreeNode bestChild = null;
+    TreeNode bestChild = root.getChildren()[0];
 
     for (int i = 0; i < root.getChildren().length; i++) {
       if (root.getChildren()[i] != null && root.getChildren()[i] == bestChild(root, 0))
@@ -466,7 +465,7 @@ public class MCTS implements MonteCarloTreeSearch {
     for (int i = 0; i < gameState.getTeams().length; i++) {
       if (gameState.getTeams()[i] == null) continue;
       if (gameState.getTeams()[i].getFlags() == 0
-          || gameState.getTeams()[i].getPieces().length == 0) {
+          || gameState.getTeams()[i].getPieces().size() == 0) {
         MCTSUtilities.removeTeam(gameState, i--);
       }
     }
@@ -488,10 +487,7 @@ public class MCTS implements MonteCarloTreeSearch {
       gameState.getGrid().setPosition(new GridObjectContainer(GridObjects.piece, gameState.getCurrentTeam(), picked), move.getNewPosition()[1], move.getNewPosition()[0]);
       picked.setPosition(move.getNewPosition());
     } else if(occupant.getObject() == GridObjects.piece) {
-      gameState.getTeams()[occupant.getTeamId()].setPieces(
-          Arrays.asList(gameState.getTeams()[occupant.getTeamId()].getPieces()).stream()
-          .filter(p -> !p.getId().equals(occupant.getPiece().getId()))
-          .toArray(Piece[]::new));
+      gameState.getTeams()[occupant.getTeamId()].getPieces().remove(occupant.getPiece());
       gameState.getGrid().setPosition(new GridObjectContainer(GridObjects.piece, gameState.getCurrentTeam(), picked), move.getNewPosition()[1], move.getNewPosition()[0]);
       picked.setPosition(move.getNewPosition());
     } else {

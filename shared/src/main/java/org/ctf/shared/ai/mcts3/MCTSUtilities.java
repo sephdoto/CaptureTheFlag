@@ -194,10 +194,9 @@ public class MCTSUtilities {
    */
   public static ArrayList<int[]> getPossibleMoves(
       ReferenceGameState gameState, String pieceId, ArrayList<int[]> possibleMoves) {
-    Piece piece =
-        Arrays.stream(
-            gameState.getTeams()[Integer.parseInt(pieceId.split(":")[1].split("_")[0])]
-                .getPieces())
+    Piece piece = 
+        gameState.getTeams()[Integer.parseInt(pieceId.split(":")[1].split("_")[0])].getPieces()
+        .stream()
         .filter(p -> p.getId().equals(pieceId))
         .findFirst()
         .get();
@@ -612,11 +611,10 @@ public class MCTSUtilities {
    * @throws NoMovesLeftException
    * @throws InvalidShapeException
    */
+  @SuppressWarnings("unchecked")
   public static ReferenceMove pickMoveComplex(ReferenceGameState gameState, ReferenceMove operateOn)
       throws NoMovesLeftException, InvalidShapeException {
-    ArrayList<Piece> piecesCurrentTeam =
-        new ArrayList<Piece>(
-            Arrays.asList(gameState.getTeams()[gameState.getCurrentTeam()].getPieces()));
+    ArrayList<Piece> piecesCurrentTeam = (ArrayList<Piece>) gameState.getTeams()[gameState.getCurrentTeam()].getPieces().clone();
     ArrayList<int[]> dirMap = new ArrayList<int[]>();
     ArrayList<int[]> shapeMoves = new ArrayList<int[]>();
 
@@ -647,39 +645,5 @@ public class MCTSUtilities {
       throw new NoMovesLeftException(gameState.getTeams()[gameState.getCurrentTeam()].getId());
 
     return null;
-  }
-  
-  /**
-   * I think about implementing this but testing shows that it's worse than complex, even though it shouldn't really be thaaaat bad.
-   * Interesting.
-   * 
-   * @param gameState
-   * @param move
-   * @return random move
-   * @throws InvalidShapeException
-   */
-  public static ReferenceMove pickMoveSimple(ReferenceGameState gameState, ReferenceMove move) throws InvalidShapeException {
-    move.setPiece(null);
-    long time = System.currentTimeMillis();
-    do {
-      Piece picked = gameState.getTeams()[gameState.getCurrentTeam()].getPieces()[(int) (Math.random() * gameState.getTeams()[gameState.getCurrentTeam()].getPieces().length)];
-      if (picked.getDescription().getMovement().getDirections() != null) {
-        int randomDirection = (int) (Math.random() * 8);
-        int reach =
-            (int)
-                (Math.random()
-                    * getReach(
-                        picked.getDescription().getMovement().getDirections(), randomDirection));
-        if(reach > 0)
-          move = checkMoveValidity(gameState, picked, randomDirection, reach, new ReferenceMove(null, new int[] {0,0}));
-      } else {
-        move =
-            getRandomShapeMove(
-                getShapeMoves(gameState, picked, new ArrayList<int[]>()), picked, new ReferenceMove(null, new int[] {0,0}));
-      }
-    } while (move.getPiece() == null);
-    if(System.currentTimeMillis() - time > 2)
-      System.out.println(System.currentTimeMillis() - time);
-    return move;
   }
 }
