@@ -111,15 +111,24 @@ public class PopUpCreatorEnterTeamName {
 		exit.setOnAction(e -> {
 			if (enterNamefield.getText().isEmpty()) {
 				CretaeGameScreenV2.informationmustBeEntered(enterNamefield, "custom-search-field2-mustEnter","custom-search-field2");
-			}else {
+			}
+				else if (CreateGameController.isNameUsed(enterNamefield.getText())) {
+					CretaeGameScreenV2.informationmustBeEntered(enterNamefield, "custom-search-field2-mustEnter","custom-search-field2");
+					enterNamefield.clear();
+					enterNamefield.setFont(new Font(enterNamefield.getHeight()*0.4));
+					enterNamefield.setPromptText("Enter a unique Teamname");
+					enterNamefield.setFont(new Font(enterNamefield.getHeight()*0.4));
+					enterNamefield.setStyle("-fx-font-size: 20px");
+				}
+			else {
 				teamName = enterNamefield.getText();
+				CreateGameController.setName(teamName);
 				CreateGameController.setLastTeamName(teamName);
 			
 			if (isMain && !isAi) {
 				CreateGameController.createHumanClient(teamName, true);
 				hsc.switchToWaitGameScene(App.getStage());
 				CreateGameController.setLasttype("HUMAN");
-				System.out.println("Peter du hund");
 			}
 			if(!isMain && !isAi) {
 				CreateGameController.createHumanClient(teamName, true);

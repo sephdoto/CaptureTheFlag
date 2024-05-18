@@ -80,7 +80,9 @@ public class Game {
 			cf.setUnactive();
 			cf.setUnattacble();
 		}
-		
+		for(BaseRep r : cb.bases.values()) {
+			r.setUnattacble();
+		}
 	}
 
 	public void deleteTeam(String teamToDelete) {

@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.client.AIClient;
@@ -56,7 +57,7 @@ public class CreateGameController {
 	// Client that is used to pull the newest GameState and redraw the GamePane with it
 	private static Client mainClient;
 	
-
+	private static HashSet<String> usedTeamNames = new HashSet<String>();
 	private static HashMap<String, CostumFigurePain> lastfigures;
 
 	//List of all Human-Clients on one device
@@ -311,6 +312,12 @@ public class CreateGameController {
 
 	public static void setFigures(HashMap<String, CostumFigurePain> figures) {
 		lastfigures = figures;
+	}
+	public static void setName(String name) {
+		usedTeamNames.add(name);
+	}
+	public static boolean isNameUsed(String name) {
+		return usedTeamNames.contains(name);
 	}
 	
 	
