@@ -122,7 +122,7 @@ public class MCTSSimulation {
               }
             ],
             "placement": "symmetrical",
-            "totalTimeLimitInSeconds": -1,
+            "totalTimeLimitInSeconds": 15,
             "moveTimeLimitInSeconds": -1
           }
         """;
