@@ -140,7 +140,7 @@ public class CreateGameController {
 		.enableAutoJoin(sessionID, teamName)
 		.build();
 		if (isMain) {
-			mainClient = c;
+			setMainClient(c);
 		}
 		localHumanClients.add(c);
 	}
@@ -151,7 +151,8 @@ public class CreateGameController {
 	}
 
 	public static void setMainClient(Client mainClient) {
-		CreateGameController.mainClient = mainClient;
+	  mainClient.enableGameStateQueue(true);
+	  CreateGameController.mainClient = mainClient;
 	}
 
 	/**
@@ -174,7 +175,7 @@ public class CreateGameController {
 		.gameData(sessionID, teamName)
 		.build();
 		if(isMain) {
-			mainClient = aiClient;
+			setMainClient(aiClient);
 		}
 		//localAIClients.add(aiClient);
 	}

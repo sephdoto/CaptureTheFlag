@@ -81,7 +81,7 @@ public class Client implements GameClientInterface {
   protected int moveTimeLeft;
   protected int gameTimeLeft;
   protected int lastTeamTurn;
-  protected long refreshTime = 300L;
+  protected long refreshTime = 10L;
 
   // Block for booleans
   protected boolean gameOver;
@@ -107,6 +107,7 @@ public class Client implements GameClientInterface {
    * @author rsyed
    */
   Client(CommLayerInterface comm, String IP, String port, boolean enableLogging) {
+    this.currentTeamTurn = -1;
     this.gson = new Gson();
     this.currentState = new GameState();
     this.currentSession = new GameSession();
@@ -117,7 +118,6 @@ public class Client implements GameClientInterface {
     }
     setServer(IP, port);
     allTeamNames = null;
-    this.currentTeamTurn= -1;
   }
 
   /**

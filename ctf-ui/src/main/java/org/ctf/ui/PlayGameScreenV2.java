@@ -104,9 +104,10 @@ public class PlayGameScreenV2 extends Scene {
 				 //moveTimeLimit.setText(formatTime(mainClient.getRemainingMoveTimeInSeconds()));
 
 	        //});
-			currentState = mainClient.getQueuedGameState();
-			if(currentState !=null) {
-				Platform.runLater(() -> {
+			GameState tmp = mainClient.getQueuedGameState();
+			if(tmp !=null) {
+				currentState = tmp;
+			    Platform.runLater(() -> {
 					 this.redrawGrid(currentState);
 					 this.setTeamTurn(String.valueOf(mainClient.getCurrentTeamTurn()));
 			        });
@@ -119,7 +120,6 @@ public class PlayGameScreenV2 extends Scene {
 	public PlayGameScreenV2(HomeSceneController hsc, double width, double height,Client mainClient,boolean isRemote) {
 		super(new StackPane(), width, height);
 		this.mainClient = mainClient;
-		this.mainClient.enableGameStateQueue(true);
 		this.isRemote = isRemote;
 		initalizePlayGameScreen(hsc);
 	}
@@ -137,7 +137,7 @@ public class PlayGameScreenV2 extends Scene {
 		createLayout();
 		this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
 		scheduler = Executors.newScheduledThreadPool(1);
-		scheduler.scheduleAtFixedRate(updateTask, 0, 1, TimeUnit.SECONDS);
+		scheduler.scheduleAtFixedRate(updateTask, 0, 100, TimeUnit.MILLISECONDS);
 	}
 	
 	
