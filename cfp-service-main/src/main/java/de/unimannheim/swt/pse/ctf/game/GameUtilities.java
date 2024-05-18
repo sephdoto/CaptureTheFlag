@@ -32,7 +32,7 @@ class GameUtilities {
       else  
         xTrans[i] = -1*distance;
     }
-    
+
     return xTrans;
   }
 
@@ -54,7 +54,7 @@ class GameUtilities {
       else
         yTrans[i] = side-- - distance;
     }
-    
+
     return yTrans;
   }
 
@@ -87,20 +87,33 @@ class GameUtilities {
     for (int i = 0; i < xTransforms.length; i++) {
       int[] newPos =
           new int[] {
-            piece.getPosition()[0] + yTransforms[i], piece.getPosition()[1] + xTransforms[i]
-          };
+              piece.getPosition()[0] + yTransforms[i], piece.getPosition()[1] + xTransforms[i]
+      };
       if (validPos(newPos, piece, gameState)) {
         if (i >= direction.length) {
           positions.add(newPos);
-        } else if (sightLine(
-            gameState,
-            new int[] {
-                piece.getPosition()[0] + yTransforms[12+ (i / 3)] + yTransforms[1 + ((i / 3) * 3)],
-                piece.getPosition()[1] + xTransforms[12+ (i / 3)] + xTransforms[1 + ((i / 3) * 3)]
-            },
-            direction[i],
-            3)) {
-          positions.add(newPos);
+        } else if ((i + 2) % 3 != 0) {
+          if(sightLine(
+              gameState,
+              new int[] {
+                  piece.getPosition()[0] + yTransforms[12+ (i / 3)] + yTransforms[1 + ((i / 3) * 3)],
+                  piece.getPosition()[1] + xTransforms[12+ (i / 3)] + xTransforms[1 + ((i / 3) * 3)]
+              },
+              direction[i],
+              3)) {
+            positions.add(newPos);
+          }
+        } else if ((i + 2) % 3 == 0){
+          if(sightLine(
+              gameState,
+              new int[] {
+                  piece.getPosition()[0] + yTransforms[i],
+                  piece.getPosition()[1] + xTransforms[i]
+              },
+              direction[i],
+              2)) {
+            positions.add(newPos);
+          } 
         }
       }
     }
@@ -339,7 +352,7 @@ class GameUtilities {
     }
     return false;
   }
-  
+
   /**
    * This method returns an occupants (piece/base) team.
    * It splits it Id and parses the enclosed TeamId to Integer.

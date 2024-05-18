@@ -33,7 +33,7 @@ public class MCTSUtilities {
     directionModifiers.put(6, new int[] {1, -1});
     directionModifiers.put(7, new int[] {1, 1});
   }
-  
+
   /**
    * Returns the previous teams index in the team array.
    *
@@ -78,10 +78,10 @@ public class MCTSUtilities {
    */
   public static void removeTeam(ReferenceGameState gameState, int team) {
     gameState.getGrid().getGrid()
-        [gameState.getTeams()[team].getBase()[1]] 
+    [gameState.getTeams()[team].getBase()[1]] 
         [gameState.getTeams()[team].getBase()[0]]
-             = null;
-    
+            = null;
+
     for (Piece p : gameState.getTeams()[team].getPieces())
       gameState.getGrid().getGrid()[p.getPosition()[1]][p.getPosition()[0]]
           = null;
@@ -178,7 +178,7 @@ public class MCTSUtilities {
   public static int seededRandom(Grid grid, int modifier, int upperBound, int lowerBound) {
     StringBuilder sb = new StringBuilder();
     Stream.of(grid.getGrid())
-        .forEach(s -> Stream.of(s).forEach(ss -> sb.append(ss == null ? "" : ss.toString())));
+    .forEach(s -> Stream.of(s).forEach(ss -> sb.append(ss == null ? "" : ss.toString())));
     int seed = sb.append(modifier).toString().hashCode();
     random.setSeed(seed);
     return random.nextInt(upperBound - lowerBound) + lowerBound;
@@ -202,7 +202,7 @@ public class MCTSUtilities {
         .get();
     return getPossibleMoves(gameState, piece, possibleMoves, new ReferenceMove(null, new int[] {0,0}));
   }
-  
+
   /**
    * Given a Piece and a ReferenceGameState containing the Piece, an ArrayList with all valid locations the
    * Piece can walk on is returned. The ArrayList contains int[2] values, representing a (y,x)
@@ -282,20 +282,33 @@ public class MCTSUtilities {
     for (int i = 0; i < xTransforms.length; i++) {
       int[] newPos =
           new int[] {
-            piece.getPosition()[0] + yTransforms[i], piece.getPosition()[1] + xTransforms[i]
-          };
+              piece.getPosition()[0] + yTransforms[i], piece.getPosition()[1] + xTransforms[i]
+      };
       if (validPos(newPos, piece, gameState)) {
         if (i >= direction.length) {
           positions.add(newPos);
-        } else if (sightLine(
-            gameState,
-            new int[] {
-                piece.getPosition()[0] + yTransforms[12+ (i / 3)] + yTransforms[1 + ((i / 3) * 3)],
-                piece.getPosition()[1] + xTransforms[12+ (i / 3)] + xTransforms[1 + ((i / 3) * 3)]
-            },
-            direction[i],
-            3)) {
-          positions.add(newPos);
+        } else if ((i + 2) % 3 != 0) {
+          if(sightLine(
+              gameState,
+              new int[] {
+                  piece.getPosition()[0] + yTransforms[12+ (i / 3)] + yTransforms[1 + ((i / 3) * 3)],
+                  piece.getPosition()[1] + xTransforms[12+ (i / 3)] + xTransforms[1 + ((i / 3) * 3)]
+              },
+              direction[i],
+              3)) {
+            positions.add(newPos);
+          }
+        } else if ((i + 2) % 3 == 0){
+          if(sightLine(
+              gameState,
+              new int[] {
+                  piece.getPosition()[0] + yTransforms[i],
+                  piece.getPosition()[1] + xTransforms[i]
+              },
+              direction[i],
+              2)) {
+            positions.add(newPos);
+          } 
         }
       }
     }
@@ -348,7 +361,7 @@ public class MCTSUtilities {
   public static ReferenceMove getDirectionMove(ArrayList<int[]> dirMap, Piece piece, ReferenceGameState gameState, ReferenceMove change) {
     int randomDir = ThreadLocalRandom.current().nextInt(dirMap.size());
     int reach;
-    
+
     while (true) {
       reach = ThreadLocalRandom.current().nextInt(dirMap.get(randomDir)[1]) + 1;
       change = checkMoveValidity(gameState, piece, dirMap.get(randomDir)[0], reach, change);
@@ -369,10 +382,10 @@ public class MCTSUtilities {
    * @return false if there are no possible moves in this direction, true otherwise.
    */
   public static boolean validDirection(ReferenceGameState gameState, Piece piece, int direction, ReferenceMove change) {
-//  return checkMoveValidity(gameState, piece, direction, 1, change).getPiece() != null;
-  int[] pos = new int[] {piece.getPosition()[0], piece.getPosition()[1]};
-  updatePos(pos, direction, 1);
-  return validPos(pos, piece, gameState);
+    //  return checkMoveValidity(gameState, piece, direction, 1, change).getPiece() != null;
+    int[] pos = new int[] {piece.getPosition()[0], piece.getPosition()[1]};
+    updatePos(pos, direction, 1);
+    return validPos(pos, piece, gameState);
   }
 
   /**
@@ -392,7 +405,7 @@ public class MCTSUtilities {
     int[] pos = new int[] {piece.getPosition()[0], piece.getPosition()[1]};
     updatePos(pos, direction, reach);
     change.setPiece(null);
-    
+
     if (!validPos(pos, piece, gameState)) {
       return change;
     } else if (!sightLine(gameState, new int[] {pos[0], pos[1]}, direction, reach)) {
