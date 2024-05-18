@@ -119,8 +119,12 @@ public class TreeNode implements MonteCarloTreeNode, Comparable<TreeNode> {
    */
   public void updateGrids(HashSet<Piece> pieces) {
     for(Piece p : pieces) {
+      try {
       removeFromGrids(p);
       addToPieceVisions(p, getIMpossibleMoves(p));
+      } catch (NullPointerException e) {
+        // Do nothing because throwing nullpointers is intended
+      }
     }
   }
   void addToPieceVisions(Piece p, ArrayList<int[]> positions){
