@@ -118,6 +118,7 @@ public class CreateGameController {
 		serverManager = new ServerManager(new CommLayer(), new ServerDetails(serverIP, port), template);
 		if (serverManager.createGame()) {
 			System.out.println("Session erstellt");
+			System.out.println(serverManager.gameSessionID);
 			return true;
 		} else {
 			System.out.println("None");
@@ -177,6 +178,7 @@ public class CreateGameController {
 	 * @return
 	 */
 	public static  void createAiClient(String teamName, AI aitype, AIConfig config, boolean isMain) {
+		sessionID = serverManager.getGameSessionID();
 		AIClient aiClient = 
 		AIClientStepBuilder.newBuilder()
 		.enableRestLayer(false)
@@ -199,6 +201,14 @@ public class CreateGameController {
 //		//waitingLobbyThread.start();
 //	}
 	
+	public static AI getLastAitype() {
+		return lastAitype;
+	}
+
+	public static void setLastAitype(AI lastAitype) {
+		CreateGameController.lastAitype = lastAitype;
+	}
+
 	public static void updateTeamNumberFromRemote(int currentNumber) {
 		currentNumberofTeams = currentNumber;
 		waitingScene.setCUrrentTeams(currentNumber);

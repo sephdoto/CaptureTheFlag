@@ -140,13 +140,14 @@ public class PopUpCreatorEnterTeamName {
 				CreateGameController.createAiClient(teamName, AI.RANDOM, null, isMain);
 				hsc.switchToWaitGameScene(App.getStage());
 				CreateGameController.setLasttype("AI");
+				CreateGameController.setLastAitype(aitype);
 
 			}
 			if(!isMain && isAi) {
 				CreateGameController.createAiClient(teamName, AI.RANDOM, null, isMain);
 				root.getChildren().remove(enterNamePopUp);
 				CreateGameController.setLasttype("AI");
-
+				CreateGameController.setLastAitype(aitype);
 			}
 			}
 		});

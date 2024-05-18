@@ -738,15 +738,15 @@ public class PopUpCreator {
 		  
 		  if(aiorHumanpopup == null) {
 				PopUpCreatorEnterTeamName teamNamePopup = new PopUpCreatorEnterTeamName(scene, root, aiconfigPopUp, hsc, false, true);
-				teamNamePopup.setConfig(defaultConfig);
 				teamNamePopup.setAitype(aitype);
+				teamNamePopup.setConfig(defaultConfig);
 				teamNamePopup.createEnterNamePopUp();
 				
 
 			}else {
 				PopUpCreatorEnterTeamName teamNamePopup = new PopUpCreatorEnterTeamName(scene, root, aiconfigPopUp, hsc, true, true);
-				teamNamePopup.setConfig(defaultConfig);
 				teamNamePopup.setAitype(aitype);
+				teamNamePopup.setConfig(defaultConfig);
 				teamNamePopup.createEnterNamePopUp();
 			}
 		});

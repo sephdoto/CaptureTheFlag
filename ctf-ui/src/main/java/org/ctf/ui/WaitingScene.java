@@ -592,7 +592,7 @@ public class WaitingScene extends Scene {
     if(CreateGameController.getLasttype().equals("HUMAN")) {
     	text = "local Human";
     }else if (CreateGameController.getLasttype().equals("AI")) {
-		text = "AI";
+		text = "AI (" + CreateGameController.getLastAitype().name() + ")" ;
 	}else if(CreateGameController.getLasttype().equals("UNKNOWN")) {
 		text = "Remote Player";
 	}
