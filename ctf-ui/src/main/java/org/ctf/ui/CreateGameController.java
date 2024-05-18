@@ -98,6 +98,17 @@ public class CreateGameController {
 		}
 	}
 	
+	public static void overWriteDefaultWithServerColors() {
+		for(int i=0; i<CreateGameController.getMaxNumberofTeams(); i++) {
+			Color colorSetByUser = colors.get(String.valueOf(i)).get();
+			if (colorSetByUser.equals(Color.BLACK)) {
+				String colorString = mainClient.getTeams()[i].getColor();
+				Color newColer = Color.web(colorString);
+				colors.get(String.valueOf(i)).set(newColer);
+			}
+		}
+	}
+	
 	/**
 	 * Initializes a servermanager with a port,serverIp and template and creates a game session with it
 	 * @author Manuel Krakowski

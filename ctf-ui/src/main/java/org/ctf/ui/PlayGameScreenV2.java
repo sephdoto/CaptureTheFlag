@@ -97,16 +97,6 @@ public class PlayGameScreenV2 extends Scene {
 //						 this.setTeamTurn(String.valueOf(mainClient.getCurrentTeamTurn()));
 //				        });
 //			}
-			//Platform.runLater(() -> {
-//				if(mainClient.isGameMoveTimeLimited() && moveTimeLimit != null) {
-//				 moveTimeLimit.setText(formatTime(mainClient.getRemainingMoveTimeInSeconds()));
-//				}
-//				if(mainClient.isGameTimeLimited() && gameTimeLimit != null) {
-//				 gameTimeLimit.setText(formatTime(mainClient.getRemainingGameTimeInSeconds()));
-//				}
-				 //moveTimeLimit.setText(formatTime(mainClient.getRemainingMoveTimeInSeconds()));
-
-	        //});
 			GameState tmp = mainClient.getQueuedGameState();
 			if(tmp !=null) {
 				currentState = tmp;
