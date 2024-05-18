@@ -245,6 +245,7 @@ public class GamePane extends HBox{
 		teams = state.getTeams();
 		for(int i=0;i<teams.length;i++) {
 			Team currenTeam = teams[i];
+			if(currenTeam == null) continue;
 			int baseX = currenTeam.getBase()[0];
 			int baseY = currenTeam.getBase()[1];
 			String teamColor = currenTeam.getColor();
