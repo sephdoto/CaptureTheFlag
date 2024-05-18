@@ -19,15 +19,13 @@ class TreeNodeTest {
   void testUpdating() {
     TreeNode node = new TreeNode(null, TestValues.getTestState(), null);
     MCTS mcts = new MCTS(node, new AIConfig());
+    TreeNode copy = null;
     for(int i=0; i<50 && mcts.isTerminal(node.getReferenceGameState()) == -1; i++){
+      copy = node.clone(node.getReferenceGameState().clone());
       mcts.oneMove(node, node, true);
       mcts.removeTeamCheck(node.getReferenceGameState());
-//      node.printGrids();
-//      System.out.println(node.gameState.getTeams()[0].getPieces().length + "<- 0, 1 ->" + node.gameState.getTeams()[1].getPieces().length);
     }
-    TreeNode copy = node.clone(node.getReferenceGameState().clone());
     copy.initPossibleMovesAndChildren();
-    
   }
   
   @Test
