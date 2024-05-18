@@ -423,12 +423,14 @@ public class WaveFunctionCollapse {
               x * imageSize * 3 + imageSize * 3, y * imageSize * 3 + imageSize * 3, 0, 0,
               block.getHeight(), block.getWidth(), null);
         }
+        /*
         if (ogGrid[y][x].contains("b:")) {
           Graphics g = result.getGraphics();
           g.drawImage(base, x * imageSize * 3, y * imageSize * 3,
-              x * imageSize * 3 + imageSize * 3, y * imageSize * 3 + imageSize * 3, 0, 0,
+              (x * imageSize * 3) + (imageSize * 3), (y * imageSize * 3) + (imageSize * 3), 0, 0,
               base.getHeight(), base.getWidth(), null);
         }
+        */
       }
     }
     
