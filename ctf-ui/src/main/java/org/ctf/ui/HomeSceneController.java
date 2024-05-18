@@ -120,7 +120,7 @@ public class HomeSceneController {
 
 	public void setTeamTurn(String s) {
 		this.teamTurn = s;
-		playGameScreenV2.setTeamTurn(s);
+		//playGameScreenV2.setTeamTurn(s);
 	}
 
 	public void switchToWaitGameScene(Stage stage) {

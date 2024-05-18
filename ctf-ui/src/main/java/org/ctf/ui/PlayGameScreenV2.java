@@ -82,6 +82,7 @@ public class PlayGameScreenV2 extends Scene {
 	private ObjectProperty<Font> timerDescription = new SimpleObjectProperty<Font>(Font.getDefault());
 	private static  ObjectProperty<Font> pictureMainDiscription = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> figureDiscription = new SimpleObjectProperty<Font>(Font.getDefault());
+	private ObjectProperty<Font> waitigFontSize = new SimpleObjectProperty<Font>(Font.getDefault());
 	SimpleObjectProperty<Insets> padding = new SimpleObjectProperty<>(new Insets(10));
 	
 	
@@ -105,7 +106,7 @@ public class PlayGameScreenV2 extends Scene {
 			    		noMoveTimeLimit.reset();
 			    	}
 					 this.redrawGrid(currentState);
-					 this.setTeamTurn(String.valueOf(mainClient.getCurrentTeamTurn()));
+					 this.setTeamTurn();
 			        });
 			}
 		} catch (Exception e) {
@@ -304,6 +305,65 @@ public class PlayGameScreenV2 extends Scene {
 		    return layout;
 	}
 	
+	 private VBox showWaitingBox() {
+		    final Label status = new Label("is making its move");
+		    status.getStyleClass().add("spinner-des-label");
+		    final Timeline timeline =
+		        new Timeline(
+		            new KeyFrame(
+		                Duration.ZERO,
+		                new EventHandler() {
+		                  @Override
+		                  public void handle(Event event) {
+		                    String statusText = status.getText();
+		                    status.setText(
+		                        ("is making its move . . .".equals(statusText))
+		                            ? "is making its move ."
+		                            : statusText + " .");
+		                  }
+		                }),
+		            new KeyFrame(Duration.millis(1000)));
+		    timeline.setCycleCount(Timeline.INDEFINITE);
+		    timeline.play();
+		    VBox layout = new VBox();
+		    String teamString = mainClient.getAllTeamNames()[mainClient.getCurrentTeamTurn()];
+		    teamString += " (" + mainClient.getCurrentTeamTurn() + ")";
+		    Label teamname = new Label(teamString);
+		    teamname.prefWidthProperty().bind(this.widthProperty().multiply(0.2));
+		    teamname.fontProperty().bind(waitigFontSize);
+		    teamname.setAlignment(Pos.CENTER);
+		    teamname.textFillProperty().bind(CreateGameController.getColors().get(String.valueOf(mainClient.getCurrentTeamTurn())));
+		    layout.prefWidthProperty().bind(this.widthProperty().multiply(0.17));
+		    status.fontProperty().bind(waitigFontSize);
+		    status.textFillProperty().bind(CreateGameController.getColors().get(String.valueOf(mainClient.getCurrentTeamTurn())));
+		    // layout.setStyle("-fx-background-color: blue");
+		    layout.getChildren().add(teamname);
+		    layout.getChildren().addAll(status);
+		    return layout;
+		  }
+	 
+	 private VBox showYourTurnBox() {
+		    Label status = new Label("It's your turn!");
+		    status.getStyleClass().add("spinner-des-label");
+		    VBox layout = new VBox();
+		    String teamString = mainClient.getAllTeamNames()[mainClient.getCurrentTeamTurn()];
+		    teamString += " (" + mainClient.getCurrentTeamTurn() + ")";
+		    Label teamname = new Label(teamString);
+		    teamname.prefWidthProperty().bind(this.widthProperty().multiply(0.2));
+		    teamname.fontProperty().bind(waitigFontSize);
+		    teamname.setAlignment(Pos.CENTER);
+		    teamname.textFillProperty().bind(CreateGameController.getColors().get(String.valueOf(mainClient.getCurrentTeamTurn())));
+		    layout.prefWidthProperty().bind(this.widthProperty().multiply(0.17));
+		    status.fontProperty().bind(waitigFontSize);
+		    status.setAlignment(Pos.CENTER);
+		    status.prefWidthProperty().bind(this.widthProperty().multiply(0.17));
+		    status.textFillProperty().bind(CreateGameController.getColors().get(String.valueOf(mainClient.getCurrentTeamTurn())));
+		    layout.getChildren().add(teamname);
+		    layout.getChildren().addAll(status);
+		    return layout;
+		  }
+	 
+	
 	private HBox createTopCenter() {
 		captureLoadingLabel = new HBox();
 		captureLoadingLabel.setAlignment(Pos.CENTER);
@@ -315,10 +375,27 @@ public class PlayGameScreenV2 extends Scene {
 		return captureLoadingLabel;
 	}
 	
-	public void setTeamTurn(String s) {
-		//teamTurn.setText(s);
+	public void setTeamTurn() {
+		boolean onelocal = false;
 		captureLoadingLabel.getChildren().clear();
-		captureLoadingLabel.getChildren().add(waitingBox(s));
+		if (isRemote) {
+			if (mainClient.isItMyTurn() && !(mainClient instanceof AIClient)) {
+				captureLoadingLabel.getChildren().add(showYourTurnBox());
+
+			}else {
+				captureLoadingLabel.getChildren().add(showWaitingBox());
+			}
+		} else {
+			for (Client local : CreateGameController.getLocalHumanClients()) {
+				if (local.isItMyTurn()) {
+					captureLoadingLabel.getChildren().add(showYourTurnBox());
+					onelocal = true;
+				}
+			}
+			if (!onelocal) {
+					captureLoadingLabel.getChildren().add(showWaitingBox());
+			}
+		}
 	}
 	
 	private void manageFontSizes() {
@@ -331,6 +408,9 @@ public class PlayGameScreenV2 extends Scene {
 		        	pictureMainDiscription.set(Font.font(newWidth.doubleValue() / 40));
 		        	figureDiscription.set(Font.font(newWidth.doubleValue() / 45));
 		        	padding.set(new Insets(newWidth.doubleValue()*0.01));
+		        	waitigFontSize.set(Font.font(newWidth.doubleValue() / 55));
+
+		        	
 		        }
 		    });
 	}
@@ -445,24 +525,7 @@ public class PlayGameScreenV2 extends Scene {
 		return timerwithDescrip;
 	}
 	
-	private VBox createTimer3(HBox timerBox, String text) {
-		VBox timerwithDescrip = new VBox();
-		timerwithDescrip.setAlignment(Pos.CENTER);
-		timerwithDescrip.prefWidthProperty().bind(timerBox.widthProperty().multiply(0.35));
-		timerwithDescrip.prefHeightProperty().bind(timerBox.widthProperty().multiply(0.35));
-		Label desLabel = new Label(text);
-		desLabel.setAlignment(Pos.CENTER);
-		desLabel.fontProperty().bind(timerDescription);
-		desLabel.getStyleClass().add("des-timer");
-		timerwithDescrip.getChildren().add(desLabel);
-		gameTimeLimit = new Label();
-		gameTimeLimit.prefWidthProperty().bind(timerBox.widthProperty().multiply(0.35));
-		gameTimeLimit.prefHeightProperty().bind(gameTimeLimit.widthProperty().multiply(0.35));
-		gameTimeLimit.getStyleClass().add("timer-label");
-		gameTimeLimit.fontProperty().bind(timerLabel);
-		timerwithDescrip.getChildren().add(gameTimeLimit);
-		return timerwithDescrip;
-	}
+	
 	
 	
 	
