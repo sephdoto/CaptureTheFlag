@@ -51,6 +51,8 @@ public class App extends Application {
   Process process;
   static StackPane wrapper;
   static StackPane root;
+  static Image backgroundImage; 
+  static BackgroundSize backgroundSize = new BackgroundSize(1, 1, true, true, true, true);
 
   /**
    * Starts a server at the designated port using the jar present in resources. Also sets the title
@@ -106,19 +108,13 @@ public class App extends Application {
     SettingsSetter.loadCustomSettings();
     ImageLoader.loadImages();
     Scene lockscreen = new Scene(createLockScreen(), 1000, 500);
-    startScene = new Scene(createParent());
-    startScene.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
     lockscreen.setOnKeyPressed(
         e -> {
-          mainStage.setScene(startScene);
-          backgroundMusic.startShuffle();
-          startTransition.stop();
+          this.changeToHomeScreen();
         });
     lockscreen.setOnMousePressed(
         e -> {
-          mainStage.setScene(startScene);
-          backgroundMusic.startShuffle();
-          startTransition.stop();
+          this.changeToHomeScreen();
         });
     stage.setTitle("Capture The Flag Team 14");
     stage.setScene(lockscreen);
@@ -144,7 +140,7 @@ public class App extends Application {
    */
   private Parent createParent() {
     root = new StackPane();
-    root.setPrefSize(600, 600);
+    root.setPrefSize(mainStage.getWidth(), mainStage.getHeight());
     Image bImage = new Image(getClass().getResourceAsStream("output.jpg"));
     ImageView vw = new ImageView(bImage);
     vw.fitWidthProperty().bind(root.widthProperty());
@@ -154,12 +150,7 @@ public class App extends Application {
     ctfv.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.8));
     ctfv.setPreserveRatio(true);
     StackPane.setAlignment(ctfv, Pos.TOP_CENTER);
-    //        root.widthProperty().addListener((observable, oldValue, newValue) -> {
-    //          double newPadding = newValue.doubleValue() * 0.05;
-    //          root.setPadding(new Insets(newPadding));
-    //        });
-
-    HomeScreenButton i1 =
+       HomeScreenButton i1 =
         new HomeScreenButton(
             "CREATE MAP",
             mainStage,
@@ -202,9 +193,10 @@ public class App extends Application {
     vbox.setAlignment(Pos.TOP_CENTER);
     vbox.setMaxWidth(50);
     App.wrapper = new StackPane();
-    App.chagngeHomescreenBackground();
     root.getChildren().addAll(wrapper, vbox);
-    
+    BackgroundImage background = new BackgroundImage(App.backgroundImage, BackgroundRepeat.NO_REPEAT,
+        BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, App.backgroundSize);
+    App.wrapper.setBackground(new Background(background));
     return root;
   }
   
@@ -220,6 +212,14 @@ public class App extends Application {
         BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
     App.wrapper.setBackground(new Background(background));
   }
+  
+  private void changeToHomeScreen() {
+    startScene = new Scene(createParent());
+    startScene.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
+    mainStage.setScene(startScene);
+    backgroundMusic.startShuffle();
+    startTransition.stop();
+  }
 
   /**
    * Generates all UI components required for the lock screen of the application.
@@ -228,10 +228,14 @@ public class App extends Application {
    * @return Root of the lock screen
    */
   private Parent createLockScreen() {
-    Pane pane = new Pane();
-    createBackground(pane);
+//    Pane pane = new Pane();
+//    createBackground(pane);
     StackPane layer = new StackPane();
-    layer.getChildren().add(pane);
+    //layer.getChildren().add(pane);
+    backgroundImage = ImageController.loadRandomThemedImage(ImageType.HOME);
+    BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT,
+        BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
+    layer.setBackground(new Background(background));
     layer
         .widthProperty()
         .addListener(
@@ -241,44 +245,44 @@ public class App extends Application {
             });
     layer.setPadding(new Insets(50));
     VBox root = new VBox();
-    layer.setStyle("-fx-background-color: black;");
+   // layer.setStyle("-fx-background-color: black;");
     root.setAlignment(Pos.CENTER);
-    HBox pictureBox = new HBox();
-    StackPane.setAlignment(pictureBox, Pos.BOTTOM_CENTER);
-    pictureBox.setAlignment(Pos.CENTER);
-    layer
-        .widthProperty()
-        .addListener(
-            (obs, old, newV) -> {
-              double size = newV.doubleValue() * 0.1;
-              pictureBox.setSpacing(size);
-            });
+//    HBox pictureBox = new HBox();
+//    StackPane.setAlignment(pictureBox, Pos.BOTTOM_CENTER);
+//    pictureBox.setAlignment(Pos.CENTER);
+//    layer
+//        .widthProperty()
+//        .addListener(
+//            (obs, old, newV) -> {
+//              double size = newV.doubleValue() * 0.1;
+//              pictureBox.setSpacing(size);
+//            });
     Image ctf = new Image(getClass().getResourceAsStream("CaptureTheFlag.png"));
     ImageView ctfv = new ImageView(ctf);
     ctfv.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.8));
     ctfv.setPreserveRatio(true);
-    Image r2d2 = new Image(getClass().getResourceAsStream("R2D2.png"));
-    ImageView r2d2v = new ImageView(r2d2);
-    r2d2v.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.2));
-    r2d2v.setPreserveRatio(true);
-    Image yoda = new Image(getClass().getResourceAsStream("Yoda.png"));
-    ImageView yodav = new ImageView(yoda);
-    yodav.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.2));
-    yodav.setPreserveRatio(true);
-
-    layer
-        .heightProperty()
-        .addListener(
-            (obs, old, newV) -> {
-              double size = newV.doubleValue() * 0.25;
-              HBox.setMargin(yodav, new Insets(size, 0, 0, 0));
-            });
-    Image luke = new Image(getClass().getResourceAsStream("LukeSkywalker.png"));
-    ImageView lukev = new ImageView(luke);
-    lukev.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.2));
-    lukev.setPreserveRatio(true);
-    pictureBox.getChildren().addAll(r2d2v, yodav, lukev);
-    layer.getChildren().add(pictureBox);
+//    Image r2d2 = new Image(getClass().getResourceAsStream("R2D2.png"));
+//    ImageView r2d2v = new ImageView(r2d2);
+//    r2d2v.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.2));
+//    r2d2v.setPreserveRatio(true);
+//    Image yoda = new Image(getClass().getResourceAsStream("Yoda.png"));
+//    ImageView yodav = new ImageView(yoda);
+//    yodav.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.2));
+//    yodav.setPreserveRatio(true);
+//
+//    layer
+//        .heightProperty()
+//        .addListener(
+//            (obs, old, newV) -> {
+//              double size = newV.doubleValue() * 0.25;
+//              HBox.setMargin(yodav, new Insets(size, 0, 0, 0));
+//            });
+//    Image luke = new Image(getClass().getResourceAsStream("LukeSkywalker.png"));
+//    ImageView lukev = new ImageView(luke);
+//    lukev.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.2));
+//    lukev.setPreserveRatio(true);
+//    pictureBox.getChildren().addAll(r2d2v, yodav, lukev);
+//    layer.getChildren().add(pictureBox);
 
     FadeTransition ft = new FadeTransition(Duration.millis(5000), ctfv);
     ft.setFromValue(0.0);
@@ -291,14 +295,18 @@ public class App extends Application {
         .heightProperty()
         .addListener(
             (obs, old, newV) -> {
-              double size = newV.doubleValue() * 0.6;
-              VBox.setMargin(text, new Insets(size, 0, 0, 0));
+              double size = newV.doubleValue() * 0.2;
+              VBox.setMargin(ctfv, new Insets(0, 0, newV.doubleValue()*0.6, 0));
+              //VBox.setMargin(text, new Insets(size, 0, 0, 0));
             });
     text.setStyle("-fx-fill: white ;");
     text.setOpacity(0);
-    root.getChildren().add(text);
+    
+    Text filler = new Text("");
+    root.getChildren().add(filler);
+    layer.getChildren().add(text);
 
-    VBox.setMargin(text, new Insets(150));
+    //VBox.setMargin(text, new Insets(150));
     startTransition = new FadeTransition(Duration.millis(1500), text);
     startTransition.setFromValue(0.1);
     startTransition.setToValue(1.0);
@@ -309,7 +317,7 @@ public class App extends Application {
     text.fontProperty()
         .bind(
             Bindings.createObjectBinding(
-                () -> Font.font("Century Gothic", mainStage.getWidth() / 50),
+                () -> Font.font("Century Gothic", mainStage.getWidth() / 40),
                 mainStage.widthProperty()));
     layer.getChildren().add(root);
 
