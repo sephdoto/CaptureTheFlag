@@ -20,6 +20,7 @@ stages: # List of stages for jobs, and their order of execution
   - test
   - build
   - install
+  - deploy
 
 variables:
   # This will suppress any download for dependencies and plugins or upload messages which would clutter the console log.
@@ -61,6 +62,12 @@ install-test-job: # This job runs in the install stage. Third Stage
     - ./mvnw $MAVEN_CLI_OPTS install
     - echo "No Install issues found."
 
+deloy-job: # This job runs in the final stage. Fourth Stage
+  stage: deploy 
+  script:
+    - echo "Testing Maven Deploy."
+    - ./mvnw $MAVEN_CLI_OPTS deploy
+    - echo "No Deploy issues found."
 
 #deploy-job:      # This job runs in the deploy stage.
 #  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
