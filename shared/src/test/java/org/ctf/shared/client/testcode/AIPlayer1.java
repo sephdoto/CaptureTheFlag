@@ -1,4 +1,4 @@
-package org.ctf.shared.client.testClasses;
+package org.ctf.shared.client.testcode;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

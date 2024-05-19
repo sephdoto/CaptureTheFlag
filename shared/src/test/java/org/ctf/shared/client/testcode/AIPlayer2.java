@@ -1,4 +1,4 @@
-package org.ctf.shared.client.testClasses;
+package org.ctf.shared.client.testcode;
 
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.client.AIClient;

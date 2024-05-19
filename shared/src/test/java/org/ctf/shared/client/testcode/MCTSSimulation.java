@@ -1,4 +1,4 @@
-package org.ctf.shared.client.testClasses;
+package org.ctf.shared.client.testcode;
 
 import com.google.gson.Gson;
 import org.ctf.shared.ai.AIController;
