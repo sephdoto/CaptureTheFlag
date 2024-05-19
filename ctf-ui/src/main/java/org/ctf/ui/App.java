@@ -15,6 +15,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
@@ -162,7 +163,30 @@ public class App extends Application {
             BackgroundPosition.CENTER,
             App.backgroundSize);
     App.wrapper.setBackground(new Background(background));
+    addServerPane(root);
     return root;
+  }
+  
+  private void addServerPane(StackPane stack) {
+    ServerPane serverPane = new ServerPane();
+    serverPane.prefWidthProperty().bind(stack.widthProperty().multiply(0.22));
+    serverPane.prefHeightProperty().bind(serverPane.widthProperty().multiply(0.35));
+    serverPane.maxWidthProperty().bind(stack.widthProperty().multiply(0.22));
+    serverPane.maxHeightProperty().bind(serverPane.widthProperty().multiply(0.35));
+    StackPane.setMargin(serverPane, new Insets(0, 10, 10, 0));
+    StackPane.setAlignment(serverPane, Pos.BOTTOM_RIGHT);
+    stack.heightProperty().addListener((obs, old, newV) -> {
+      StackPane.setMargin(serverPane,
+          new Insets(0, stack.heightProperty().multiply(0.02).doubleValue(),
+              stack.heightProperty().multiply(0.02).doubleValue(), 0));
+    });
+    stack.getChildren().add(serverPane);
+    serverPane.getField().setOnKeyPressed(event -> {
+      if (event.getCode() == KeyCode.ENTER) {
+        String port = serverPane.getField().getText();
+        
+      }
+    });
   }
 
   public static void adjustHomescreen(double width, double height) {
@@ -186,6 +210,7 @@ public class App extends Application {
   private void changeToHomeScreen() {
     startScene = new Scene(createParent());
     startScene.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
+    startScene.getStylesheets().add(getClass().getResource("ComboBox.css").toExternalForm());
     mainStage.setScene(startScene);
     backgroundMusic.startShuffle();
     startTransition.stop();

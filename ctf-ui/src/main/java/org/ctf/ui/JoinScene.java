@@ -115,7 +115,7 @@ public class JoinScene extends Scene {
    * @author aniemesc
    * @return ImageView that gets added to the scene
    */
-  private ImageView createHeader() {
+  private ImageView createHeader() { 
     Image mp = ImageController.loadThemedImage(ImageType.MISC, "multiplayerlogo");
     ImageView mpv = new ImageView(mp);
     mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.8));
