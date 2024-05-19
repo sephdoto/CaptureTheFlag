@@ -43,13 +43,16 @@ public class SoundController {
 
 //    for(Themes theme : Themes.values()) {
 //      for(SoundType type : SoundType.values()) {
-//      SoundType type = SoundType.MISC;
-//        saveSound("Button", theme, type, new File("D:\\Musik\\Audacity\\" + "Button.wav"), false);
+    String soundName = "Button";
+    String saveAs = "Button";
+    Themes theme = Themes.BAYERN;  
+    SoundType type = SoundType.MISC;
+        System.out.println("Sound can be changed? " + soundCanBeChanged(saveAs, theme, type));
+//        System.out.println(saveSound(saveAs, theme, type, new File("D:\\Musik\\Audacity\\" + soundName + ".wav"), false));
 //      }
 //    }
     playSound("Button", SoundType.MISC);
     System.out.println("Is default sound? " + isDefaultSound("notexisting", Themes.STARWARS, SoundType.CAPTURE));
-    System.out.println("Sound can be changed? " + soundCanBeChanged("notexisting", Themes.STARWARS, SoundType.CAPTURE));
     System.out.println("Can I override a default sound? " + 
         saveSound("Default", Themes.STARWARS, SoundType.CAPTURE, new File(
             soundFolderLocation + "starwars" + File.separator + SoundType.MOVE.getLocation() + "Default.wav"
