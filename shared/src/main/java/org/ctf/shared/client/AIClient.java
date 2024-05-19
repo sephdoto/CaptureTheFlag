@@ -1,6 +1,5 @@
 package org.ctf.shared.client;
 
-import java.util.ArrayDeque;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -9,6 +8,7 @@ import org.ctf.shared.ai.AIController;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.client.service.CommLayerInterface;
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.gameanalyzer.GameSaveHandler;
 import org.ctf.shared.state.GameState;
@@ -24,8 +24,8 @@ import org.ctf.shared.state.data.exceptions.SessionNotFound;
  */
 public class AIClient extends Client {
   // These two vars controls the client behaviour
-  private int aiClientRefreshTime = 1;
-  private int controllerThinkingTime = 3;
+  private int aiClientRefreshTime = Constants.aiClientDefaultRefreshTime;
+  private int controllerThinkingTime = Constants.aiDefaultThinkingTimeInSeconds;
 
   private AI selectedAI;
   private AIConfig aiConfig;

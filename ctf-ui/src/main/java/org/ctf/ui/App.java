@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import javafx.animation.FadeTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,7 +20,6 @@ import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -29,6 +29,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.ctf.shared.client.lib.ServerChecker;
+import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.ui.controllers.ImageController;
@@ -51,8 +53,9 @@ public class App extends Application {
   Process process;
   static StackPane wrapper;
   static StackPane root;
-  static Image backgroundImage; 
+  static Image backgroundImage;
   static BackgroundSize backgroundSize = new BackgroundSize(1, 1, true, true, true, true);
+  static boolean serverStartSuccess;
 
   /**
    * Starts a server at the designated port using the jar present in resources. Also sets the title
@@ -60,8 +63,9 @@ public class App extends Application {
    *
    * @author rsyed
    * @param port the port you want to start the server at
+   * @return boolean true if server is active, false if it fails
    */
-  public void startServer(String port) {
+  public boolean startServer(String port) {
     try {
       ProcessBuilder processBuilder =
           new ProcessBuilder(
@@ -77,6 +81,7 @@ public class App extends Application {
                   while ((line = reader.readLine()) != null) {
                     System.out.println(line);
                   }
+
                 } catch (IOException e) {
                   e.printStackTrace();
                 }
@@ -85,11 +90,39 @@ public class App extends Application {
 
     } catch (IOException e) {
       e.printStackTrace();
+      return false;
     }
-    setTitle("CFP 14" + " Local Server is active @ " + port);
+    Thread checkServerThread =
+        new Thread(
+            () -> {
+              boolean running = true;
+              while (running) {
+                try {
+                  Long sleep = 5000L;
+                  Thread.sleep(sleep);
+                  if (new ServerChecker().isServerActive(new ServerDetails("localhost", port))) {
+                    Constants.localServerPort = port;
+                    serverStartSuccess = true;
+                    System.out.println("Started Server");
+                    if(serverStartSuccess){
+                      Platform.runLater(() -> {
+                        setTitle("CFP 14" + " Local Server is active @ " + port);
+                           });
+                    }
+                  }
+                  running = false;
+                } catch (InterruptedException e) {
+                  serverStartSuccess = false;
+                  throw new Error("Server couldnt start");
+                }
+              }
+            });
+    checkServerThread.start();
+  
+    return serverStartSuccess;
   }
 
-   /**
+  /**
    * Kills the process holding the server instance inside of it. Closing the server
    *
    * @author rsyed
@@ -103,7 +136,7 @@ public class App extends Application {
   public void start(Stage stage) {
     mainStage = stage;
     Parameters params = getParameters();
-        String port = params.getNamed().get("port");
+    String port = params.getNamed().get("port");
     ssc = new HomeSceneController(mainStage);
     SettingsSetter.loadCustomSettings();
     ImageLoader.loadImages();
@@ -127,7 +160,6 @@ public class App extends Application {
         });
     SettingsSetter.giveMeTheAux(backgroundMusic);
     stage.show();
-    
   }
 
   /**
@@ -150,7 +182,7 @@ public class App extends Application {
     ctfv.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.8));
     ctfv.setPreserveRatio(true);
     StackPane.setAlignment(ctfv, Pos.TOP_CENTER);
-       HomeScreenButton i1 =
+    HomeScreenButton i1 =
         new HomeScreenButton(
             "CREATE MAP",
             mainStage,
@@ -194,25 +226,35 @@ public class App extends Application {
     vbox.setMaxWidth(50);
     App.wrapper = new StackPane();
     root.getChildren().addAll(wrapper, vbox);
-    BackgroundImage background = new BackgroundImage(App.backgroundImage, BackgroundRepeat.NO_REPEAT,
-        BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, App.backgroundSize);
+    BackgroundImage background =
+        new BackgroundImage(
+            App.backgroundImage,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundPosition.CENTER,
+            App.backgroundSize);
     App.wrapper.setBackground(new Background(background));
     return root;
   }
-  
-  public static void adjustHomescreen(double width,double height) {
+
+  public static void adjustHomescreen(double width, double height) {
     App.root.setPrefWidth(width);
     App.root.setPrefHeight(height);
   }
-  
+
   public static void chagngeHomescreenBackground() {
     Image bImage = ImageController.loadRandomThemedImage(ImageType.HOME);
     BackgroundSize backgroundSize = new BackgroundSize(1, 1, true, true, true, true);
-    BackgroundImage background = new BackgroundImage(bImage, BackgroundRepeat.NO_REPEAT,
-        BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
+    BackgroundImage background =
+        new BackgroundImage(
+            bImage,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundPosition.CENTER,
+            backgroundSize);
     App.wrapper.setBackground(new Background(background));
   }
-  
+
   private void changeToHomeScreen() {
     startScene = new Scene(createParent());
     startScene.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
@@ -228,13 +270,18 @@ public class App extends Application {
    * @return Root of the lock screen
    */
   private Parent createLockScreen() {
-//    Pane pane = new Pane();
-//    createBackground(pane);
+    //    Pane pane = new Pane();
+    //    createBackground(pane);
     StackPane layer = new StackPane();
-    //layer.getChildren().add(pane);
+    // layer.getChildren().add(pane);
     backgroundImage = ImageController.loadRandomThemedImage(ImageType.HOME);
-    BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT,
-        BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
+    BackgroundImage background =
+        new BackgroundImage(
+            backgroundImage,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundPosition.CENTER,
+            backgroundSize);
     layer.setBackground(new Background(background));
     layer
         .widthProperty()
@@ -245,44 +292,44 @@ public class App extends Application {
             });
     layer.setPadding(new Insets(50));
     VBox root = new VBox();
-   // layer.setStyle("-fx-background-color: black;");
+    // layer.setStyle("-fx-background-color: black;");
     root.setAlignment(Pos.CENTER);
-//    HBox pictureBox = new HBox();
-//    StackPane.setAlignment(pictureBox, Pos.BOTTOM_CENTER);
-//    pictureBox.setAlignment(Pos.CENTER);
-//    layer
-//        .widthProperty()
-//        .addListener(
-//            (obs, old, newV) -> {
-//              double size = newV.doubleValue() * 0.1;
-//              pictureBox.setSpacing(size);
-//            });
+    //    HBox pictureBox = new HBox();
+    //    StackPane.setAlignment(pictureBox, Pos.BOTTOM_CENTER);
+    //    pictureBox.setAlignment(Pos.CENTER);
+    //    layer
+    //        .widthProperty()
+    //        .addListener(
+    //            (obs, old, newV) -> {
+    //              double size = newV.doubleValue() * 0.1;
+    //              pictureBox.setSpacing(size);
+    //            });
     Image ctf = new Image(getClass().getResourceAsStream("CaptureTheFlag.png"));
     ImageView ctfv = new ImageView(ctf);
     ctfv.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.8));
     ctfv.setPreserveRatio(true);
-//    Image r2d2 = new Image(getClass().getResourceAsStream("R2D2.png"));
-//    ImageView r2d2v = new ImageView(r2d2);
-//    r2d2v.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.2));
-//    r2d2v.setPreserveRatio(true);
-//    Image yoda = new Image(getClass().getResourceAsStream("Yoda.png"));
-//    ImageView yodav = new ImageView(yoda);
-//    yodav.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.2));
-//    yodav.setPreserveRatio(true);
-//
-//    layer
-//        .heightProperty()
-//        .addListener(
-//            (obs, old, newV) -> {
-//              double size = newV.doubleValue() * 0.25;
-//              HBox.setMargin(yodav, new Insets(size, 0, 0, 0));
-//            });
-//    Image luke = new Image(getClass().getResourceAsStream("LukeSkywalker.png"));
-//    ImageView lukev = new ImageView(luke);
-//    lukev.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.2));
-//    lukev.setPreserveRatio(true);
-//    pictureBox.getChildren().addAll(r2d2v, yodav, lukev);
-//    layer.getChildren().add(pictureBox);
+    //    Image r2d2 = new Image(getClass().getResourceAsStream("R2D2.png"));
+    //    ImageView r2d2v = new ImageView(r2d2);
+    //    r2d2v.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.2));
+    //    r2d2v.setPreserveRatio(true);
+    //    Image yoda = new Image(getClass().getResourceAsStream("Yoda.png"));
+    //    ImageView yodav = new ImageView(yoda);
+    //    yodav.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.2));
+    //    yodav.setPreserveRatio(true);
+    //
+    //    layer
+    //        .heightProperty()
+    //        .addListener(
+    //            (obs, old, newV) -> {
+    //              double size = newV.doubleValue() * 0.25;
+    //              HBox.setMargin(yodav, new Insets(size, 0, 0, 0));
+    //            });
+    //    Image luke = new Image(getClass().getResourceAsStream("LukeSkywalker.png"));
+    //    ImageView lukev = new ImageView(luke);
+    //    lukev.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.2));
+    //    lukev.setPreserveRatio(true);
+    //    pictureBox.getChildren().addAll(r2d2v, yodav, lukev);
+    //    layer.getChildren().add(pictureBox);
 
     FadeTransition ft = new FadeTransition(Duration.millis(5000), ctfv);
     ft.setFromValue(0.0);
@@ -296,17 +343,17 @@ public class App extends Application {
         .addListener(
             (obs, old, newV) -> {
               double size = newV.doubleValue() * 0.2;
-              VBox.setMargin(ctfv, new Insets(0, 0, newV.doubleValue()*0.6, 0));
-              //VBox.setMargin(text, new Insets(size, 0, 0, 0));
+              VBox.setMargin(ctfv, new Insets(0, 0, newV.doubleValue() * 0.6, 0));
+              // VBox.setMargin(text, new Insets(size, 0, 0, 0));
             });
     text.setStyle("-fx-fill: white ;");
     text.setOpacity(0);
-    
+
     Text filler = new Text("");
     root.getChildren().add(filler);
     layer.getChildren().add(text);
 
-    //VBox.setMargin(text, new Insets(150));
+    // VBox.setMargin(text, new Insets(150));
     startTransition = new FadeTransition(Duration.millis(1500), text);
     startTransition.setFromValue(0.1);
     startTransition.setToValue(1.0);

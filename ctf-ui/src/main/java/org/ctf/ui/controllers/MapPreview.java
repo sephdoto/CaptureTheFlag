@@ -5,6 +5,7 @@ import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.Port;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.exceptions.Accepted;
@@ -49,13 +50,13 @@ public class MapPreview {
           ClientStepBuilder.newBuilder()
               .enableRestLayer(false)
               .onLocalHost()
-              .onPort("8888")
+              .onPort(Constants.userSelectedLocalServerPort)
               .enableSaveGame(false)
               .disableAutoJoin()
               .build();
       clients[i].joinExistingGame(
           "localhost",
-          "8888",
+          Constants.userSelectedLocalServerPort,
           server.getGameSessionID(),
           Integer.toString(i)); // Joins the other clients for team creation
       try {

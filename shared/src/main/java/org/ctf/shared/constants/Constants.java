@@ -30,6 +30,23 @@ public class Constants {
   public static double musicVolume = 0.4;
   public static Enums.Themes theme = Enums.Themes.STARWARS;
 
+  /**
+   * Static vars needed for Server and AI Config
+   *
+   * @author rsyed
+   */
+  ///////////////////////////////////////////////////////
+  //             Server Setting                        //
+  ///////////////////////////////////////////////////////
+  public static String userSelectedLocalServerPort = "8888";
+
+  ///////////////////////////////////////////////////////
+  //             AI Player Settings                    //
+  ///////////////////////////////////////////////////////
+
+  public static int aiDefaultThinkingTimeInSeconds = 10;
+  public static int aiClientDefaultRefreshTime = 1;
+
   ///////////////////////////////////////////////////////
   //                      Strings                      //
   ///////////////////////////////////////////////////////
@@ -52,10 +69,10 @@ public class Constants {
               + File.separator;
   public static final String sharedResourcesFolder = toUIResources + "game" + File.separator;
   public static final String toUIPictures = Constants.toUIResources + "pictures" + File.separator;
-  
+
   // to AI config folder
   public static final String aiConfigFolder = sharedResourcesFolder + "ai_configs" + File.separator;
-  //F:\VS Code Repo\cfp14\ctf-ui\src\main\resources\game\savegames\analyzerTestDataFile.savedgame
+  // F:\VS Code Repo\cfp14\ctf-ui\src\main\resources\game\savegames\analyzerTestDataFile.savedgame
   // Default folder for saving games for AI Analysis
   public static final String saveGameFolder = sharedResourcesFolder + "savegames" + File.separator;
   // package map, class JsonTools
@@ -98,16 +115,18 @@ public class Constants {
    * @author rsyed
    */
   public static final int BUFFER_SIZE = 8 * 1024;
+
   public static final String JAR_PREFIX = "jar:file:";
 
- /**
+  /**
    * Constants needed to point to the server JAR to start it
    *
    * @author rsyed
    */
   public static final String SERVERJARNAME =
-  "server.jar"; // executionLocationURL.substring(executionLocationURL.lastIndexOf("/") +1);
+      "server.jar"; // executionLocationURL.substring(executionLocationURL.lastIndexOf("/") +1);
+
   public static final String START_SERVER_JAR_COMMAND =
-  "java -jar \""+ Constants.toUIResources + Constants.SERVERJARNAME + "\" --server.port=8888";
+      "java -jar \"" + Constants.toUIResources + Constants.SERVERJARNAME + "\" --server.port=8888";
   public static String localServerPort;
 }
