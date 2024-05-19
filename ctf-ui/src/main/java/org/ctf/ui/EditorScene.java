@@ -1163,4 +1163,8 @@ public class EditorScene extends Scene {
     return this.soundPieceBox;
   }
 
+  public ComboBox<String> getPicturePieceBox() {
+    return picturePieceBox;
+  }
+
 }

@@ -407,7 +407,9 @@ public class TemplateEngine {
     pieces.put(result.getType(), result);
     editorscene.getCustomFigureBox().getItems().add(result.getType());
     editorscene.getSoundPieceBox().getItems().add(result.getType());
+    editorscene.getPicturePieceBox().getItems().add(result.getType());
     editorscene.inform(nameField.getText() + " was added succesfully!");
+    
   }
 
   /**
