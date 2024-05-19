@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.IdentityHashMap;
 import org.ctf.shared.ai.MonteCarloTreeNode;
 import org.ctf.shared.ai.ReferenceMove;
+import org.ctf.shared.gameanalyzer.NeedMoreTimeException;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Piece;
 
@@ -86,10 +87,14 @@ public class TreeNode implements MonteCarloTreeNode, Comparable<TreeNode> {
     * 
     * @return a deep copy of this node and its children
     */
-   public TreeNode deepCloneWithChildren() {
+   public TreeNode deepCloneWithChildren() throws NeedMoreTimeException {
      TreeNode node = deepClone();
      for(int i=0; i<getChildren().length; i++)
+       try {
        node.children[i] = children[i].deepClone();
+       } catch (NullPointerException npe) {
+         throw new NeedMoreTimeException();
+       }
      return node;
    }
    

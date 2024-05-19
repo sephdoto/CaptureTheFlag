@@ -21,7 +21,7 @@ public class GameAnalyzer extends AIController {
   SavedGame game;
   AnalyzedGameState[] results;
   int currentlyAnalyzing;
-  
+
   /**
    * Initializes the AIController with {@link calculatingTime} seconds calculating time per GameState.
    * 
@@ -41,32 +41,33 @@ public class GameAnalyzer extends AIController {
     this.game = game;
     this.results = new AnalyzedGameState[game.getMoves().size()];
     this.currentlyAnalyzing = 0;
-    
+
     startAnalyzing();
   }
-  
-  public void startAnalyzing(){
+
+  public void startAnalyzing() {
     for(; currentlyAnalyzing<game.getMoves().size(); currentlyAnalyzing++) {
       analyzeMove(currentlyAnalyzing +1);
       Move next = game.getMoves().get("" + (currentlyAnalyzing +1));
       if(next != null) {
         if(update(next));
-          getMcts().setExpansionCounter(getMcts().getRoot().getNK());
+        getMcts().setExpansionCounter(getMcts().getRoot().getNK());
       }
     }
   }
-  
-  void analyzeMove(int turn){
+
+  void analyzeMove(int turn) throws NeedMoreTimeException {
     try {
       Move best = getNormalizedGameState().normalizedMove(getNextMove());
       Move made = getNormalizedGameState().normalizedMove(game.getMoves().get("" +turn));
-     
-      results[currentlyAnalyzing] = new AnalyzedGameState(getMcts(), made, best);
-      
+      try {
+        results[currentlyAnalyzing] = new AnalyzedGameState(getMcts(), made, best);
+      } catch (NeedMoreTimeException nmte) {
+        nmte.mentionTime(getThinkingTime());
+        throw nmte;
+      }
     } catch (NoMovesLeftException | InvalidShapeException e) {
       e.printStackTrace();
     }
   }
-  
-
 }

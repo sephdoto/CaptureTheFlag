@@ -16,29 +16,29 @@ public class AnalyzedGameState {
   private int expansions;
   MoveEvaluation moveEvaluation;
   private int betterMoves;
-  
-  
-  
-  public AnalyzedGameState(MonteCarloTreeSearch mcts, Move userChoice, Move aiChoice) {
+
+
+
+  public AnalyzedGameState(MonteCarloTreeSearch mcts, Move userChoice, Move aiChoice) throws NeedMoreTimeException {
     this.previousState = mcts.getRoot().deepCloneWithChildren();
     this.userChoice = findNodeByMove(userChoice);
     this.aiChoice = findNodeByMove(aiChoice);
     this.expansions = mcts.getExpansionCounter().get();
-    
+
     generateInformation();
   }
-  
-  
+
+
   private void generateInformation() {
     this.moveEvaluation = evaluateMove();
-   
+
 
     MonteCarloTreeNode[] children = previousState.getChildren();
-    
+
     try {
       Arrays.sort(children);
     } catch (NullPointerException npe) {npe.printStackTrace();}
-    
+
     System.out.println("\ncurrent team: " + previousState.getGameState().getCurrentTeam() + " expansions: " + this.expansions);
     for(int child=0; child<children.length; child++) {
       if(AIController.moveEquals(children[child].getGameState().getLastMove(), userChoice.getGameState().getLastMove())) {
@@ -52,7 +52,7 @@ public class AnalyzedGameState {
       }
     }
   }
-  
+
   /**
    * TODO
    * Miss einbauen,
@@ -62,7 +62,7 @@ public class AnalyzedGameState {
     int goodMoves = 0;
     int badMoves = 0;
     MoveEvaluation moveEvaluation;
-    
+
     int difference = getPercentageDifference();
     if(difference <= 1)
       moveEvaluation = MoveEvaluation.BEST;
@@ -78,19 +78,19 @@ public class AnalyzedGameState {
       moveEvaluation = MoveEvaluation.MISTAKE;
     else
       moveEvaluation = MoveEvaluation.BLUNDER;    
-    
+
     for(int i=0; i<previousState.getChildren().length; i++)
 
-    moveEvaluation = (badMoves == 1 && moveEvaluation == MoveEvaluation.BLUNDER) ? MoveEvaluation.SUPERBLUNDER :
-      (goodMoves == 1 && moveEvaluation == MoveEvaluation.BEST) ? MoveEvaluation.GREAT :
-        moveEvaluation;
+      moveEvaluation = (badMoves == 1 && moveEvaluation == MoveEvaluation.BLUNDER) ? MoveEvaluation.SUPERBLUNDER :
+        (goodMoves == 1 && moveEvaluation == MoveEvaluation.BEST) ? MoveEvaluation.GREAT :
+          moveEvaluation;
     return moveEvaluation;
   }
 
   ///////////////////////////////////////
   //       private useful Methods      //
   ///////////////////////////////////////
-  
+
   private MonteCarloTreeNode findNodeByMove(Move move) {
     for(MonteCarloTreeNode child : this.previousState.getChildren()) {
       if(AIController.moveEquals(move, child.getGameState().getLastMove()))
@@ -98,7 +98,7 @@ public class AnalyzedGameState {
     }
     return null;
   }
-  
+
   private int getPercentageDifference() {
     return (int)Math.round((aiChoice.getV() - userChoice.getV()) * 100);
   }
@@ -106,11 +106,11 @@ public class AnalyzedGameState {
   ///////////////////////////////////////
   //         getter and setter         //
   ///////////////////////////////////////
-  
+
   public MoveEvaluation getMoveEvaluation() {
     return this.moveEvaluation;
   }
-  
+
   public GameState getPreviousGameState() {
     return previousState.getGameState();
   }
@@ -122,15 +122,15 @@ public class AnalyzedGameState {
   public GameState getAiChoice() {
     return aiChoice.getGameState();
   }
-  
+
   public int getUserWinPercentage() {
     return ((int)(Math.round((this.userChoice.getV() * 100) * 100))) /100 ;
   }
-  
+
   public int getAIWinPercentage() {
     return ((int)(Math.round((this.aiChoice.getV() * 100) * 100))) /100 ;
   }
-  
+
   public int howManyBetterMoves() {
     return this.betterMoves;
   }
