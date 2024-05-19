@@ -143,7 +143,7 @@ public class HomeSceneController {
 		//GameStatePuller g = new GameStatePuller(CreateGameController.getMainClient(), this);
 		//g.start();
 		
-		stage.setFullScreen(true);
+		//stage.setFullScreen(true);
 	}
 
 	public void setMainClient(Client mainClient) {

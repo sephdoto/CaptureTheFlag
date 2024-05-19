@@ -447,7 +447,7 @@ public class PlayGameScreenV2 extends Scene {
 	private HBox createClockBox(boolean movetimelimited, boolean gametimeLimited) {
 		HBox timerBox = new HBox();
 		timerBox.setAlignment(Pos.CENTER);
-		timerBox.getStyleClass().add("timer-box");
+		//timerBox.getStyleClass().add("timer-box");
 		timerBox.prefWidthProperty().bind(right.widthProperty());
 		timerBox.widthProperty().addListener((observable, oldValue, newValue) -> {
 			double newSpacing = newValue.doubleValue() * 0.09;

@@ -32,6 +32,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -117,15 +118,9 @@ public class CretaeGameScreenV2 extends Scene {
 		ImageLoader.loadImages();
 		StroeMaps.initDefaultMaps();
 		root.getStyleClass().add("join-root");
-		VBox mainBox = new VBox();
-		
-		root.getChildren().add(mainBox);
-		mainBox.getChildren().add(createTop());
+		VBox mainBox = createMainBox();
 		mainBox.setAlignment(Pos.TOP_CENTER);
-		mainBox.setSpacing(30);
-		sep = new HBox();
-		sep.setAlignment(Pos.CENTER);
-		sep.setSpacing(50);
+		sep = createMiddleSperator();
 		left = createOptionPane();
 		left.getChildren().add(createMiddleLeft());
 		selected = StroeMaps.getRandomMapName();
@@ -134,11 +129,7 @@ public class CretaeGameScreenV2 extends Scene {
 		sep.getChildren().add(right);
 		mainBox.getChildren().add(sep);
 		mainBox.getChildren().add(createLeave());
-		this.widthProperty().addListener((observable, oldValue, newValue) -> {
-			double newSpacing = newValue.doubleValue() * 0.05;
-			sep.setSpacing(newSpacing);
-		});
-		
+		root.getChildren().add(mainBox);
 	}
 	
 	/**
@@ -148,6 +139,7 @@ public class CretaeGameScreenV2 extends Scene {
 	 */
 	private VBox createMainBox() {
 		VBox mainBox = new VBox();
+		mainBox.setSpacing(30);
 		mainBox.getChildren().add(createTop());
 		mainBox.setAlignment(Pos.TOP_CENTER);
 		mainBox.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -222,6 +214,7 @@ public class CretaeGameScreenV2 extends Scene {
 	 */
 	private VBox createServerInfoBox(VBox parent) {
 		VBox serverInfoBox = new VBox();
+		VBox.setVgrow(serverInfoBox, Priority.ALWAYS);
 		serverInfoBox.getStyleClass().add("option-pane");
 		serverInfoBox.prefWidthProperty().bind(left.widthProperty());
 		serverInfoBox.setAlignment(Pos.TOP_CENTER);
@@ -532,7 +525,9 @@ public class CretaeGameScreenV2 extends Scene {
 		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
 		exit.setOnAction(e -> {
-			hsc.switchtoHomeScreen(e);
+			//hsc.switchtoHomeScreen(e);
+			PopupCreatorGameOver p = new PopupCreatorGameOver(this, root, hsc);
+			p.createEnterNamePopUp();
 		});
 		return exit;
 	}

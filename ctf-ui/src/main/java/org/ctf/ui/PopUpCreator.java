@@ -140,9 +140,6 @@ private ObjectProperty<Font> popUpLabel;
 			buttonBox.setSpacing(newSpacing);
 			buttonBox.setPadding(new Insets(0, padding, 0, padding));
 		});
-		
-		
-		
 		buttonBox.getChildren().addAll(createRandomButton(),
 				createAIPowerButton(AIConfigs.MCTS, 1));
 		HBox buttonBox2 = new HBox();

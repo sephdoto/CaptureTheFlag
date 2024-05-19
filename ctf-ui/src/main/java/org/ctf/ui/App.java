@@ -136,7 +136,7 @@ public class App extends Application {
             "SETTINGS",
             mainStage,
             () -> {
-    		SoundController.playSound("Button", SoundType.MISC);
+    			SoundController.playSound("Button", SoundType.MISC);
               root.getChildren().add(new ComponentCreator(startScene).createSettingsWindow(root));
             });
     VBox vbox = new VBox(ctfv, i1, i2, i3, i4);
