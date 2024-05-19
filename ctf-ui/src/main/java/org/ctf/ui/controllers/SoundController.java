@@ -41,13 +41,13 @@ public class SoundController {
   public static void main(String args[]) throws JSONException, IOException, InterruptedException {
     Platform.startup(() -> {});
 
-    /*for(Themes theme : Themes.values()) {
-      for(SoundType type : SoundType.values()) {
-        saveSound("Default", theme, type, new File(soundFolderLocation + "starwars" + File.separator +
-            SoundType.MOVE.getLocation() + "Default.wav"), false);
-      }
-    }*/
-    playSound("notexisting", SoundType.CAPTURE);
+//    for(Themes theme : Themes.values()) {
+//      for(SoundType type : SoundType.values()) {
+//      SoundType type = SoundType.MISC;
+//        saveSound("Button", theme, type, new File("D:\\Musik\\Audacity\\" + "Button.wav"), false);
+//      }
+//    }
+    playSound("Button", SoundType.MISC);
     System.out.println("Is default sound? " + isDefaultSound("notexisting", Themes.STARWARS, SoundType.CAPTURE));
     System.out.println("Sound can be changed? " + soundCanBeChanged("notexisting", Themes.STARWARS, SoundType.CAPTURE));
     System.out.println("Can I override a default sound? " + 
@@ -80,7 +80,9 @@ public class SoundController {
    * @param type The type the pieces sound belongs to (e.g. Move / Capture)
    */
   public static void playSound(String piece, SoundType type) {
-    getSound(piece, Constants.theme, type).play();
+    AudioClip audio = getSound(piece, Constants.theme, type);
+    audio.setVolume(Constants.soundVolume);
+    audio.play();
   }
 
   /**

@@ -14,6 +14,41 @@
     "custom": true
   },
   {
+    "pieceName": "Tobi",
+    "fileType": ".wav",
+    "type": "KILL",
+    "theme": "STARWARS",
+    "custom": true
+  },
+  {
+    "pieceName": "Default",
+    "fileType": ".wav",
+    "type": "MOVE",
+    "theme": "BAYERN",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "fileType": ".wav",
+    "type": "MOVE",
+    "theme": "STARWARS",
+    "custom": false
+  },
+  {
+    "pieceName": "Default",
+    "fileType": ".wav",
+    "type": "SELECT",
+    "theme": "STARWARS",
+    "custom": false
+  },
+  {
+    "pieceName": "Tobi",
+    "fileType": ".wav",
+    "type": "MOVE",
+    "theme": "STARWARS",
+    "custom": true
+  },
+  {
     "pieceName": "Default",
     "fileType": ".wav",
     "type": "DESELECT",
@@ -33,13 +68,6 @@
     "type": "KILL",
     "theme": "LOTR",
     "custom": false
-  },
-  {
-    "pieceName": "Tobi",
-    "fileType": ".wav",
-    "type": "KILL",
-    "theme": "STARWARS",
-    "custom": true
   },
   {
     "pieceName": "Default",
@@ -77,10 +105,24 @@
     "custom": false
   },
   {
-    "pieceName": "Default",
+    "pieceName": "Button",
     "fileType": ".wav",
-    "type": "MOVE",
+    "type": "MISC",
     "theme": "BAYERN",
+    "custom": false
+  },
+  {
+    "pieceName": "Button",
+    "fileType": ".wav",
+    "type": "MISC",
+    "theme": "STARWARS",
+    "custom": false
+  },
+  {
+    "pieceName": "Button",
+    "fileType": ".wav",
+    "type": "MISC",
+    "theme": "LOTR",
     "custom": false
   },
   {
@@ -93,20 +135,6 @@
   {
     "pieceName": "Default",
     "fileType": ".wav",
-    "type": "MOVE",
-    "theme": "STARWARS",
-    "custom": false
-  },
-  {
-    "pieceName": "Default",
-    "fileType": ".wav",
-    "type": "SELECT",
-    "theme": "STARWARS",
-    "custom": false
-  },
-  {
-    "pieceName": "Default",
-    "fileType": ".wav",
     "type": "MISC",
     "theme": "STARWARS",
     "custom": false
@@ -145,12 +173,5 @@
     "type": "MISC",
     "theme": "BAYERN",
     "custom": false
-  },
-  {
-    "pieceName": "Tobi",
-    "fileType": ".wav",
-    "type": "MOVE",
-    "theme": "STARWARS",
-    "custom": true
   }
 ]
