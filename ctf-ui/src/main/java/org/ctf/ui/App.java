@@ -210,7 +210,6 @@ public class App extends Application {
   private void changeToHomeScreen() {
     startScene = new Scene(createParent());
     startScene.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
-    startScene.getStylesheets().add(getClass().getResource("ComboBox.css").toExternalForm());
     mainStage.setScene(startScene);
     backgroundMusic.startShuffle();
     startTransition.stop();
