@@ -33,9 +33,11 @@ import org.ctf.shared.client.lib.ServerChecker;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
+import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.controllers.SettingsSetter;
+import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.customobjects.*;
 
 /**
@@ -109,7 +111,8 @@ public class App extends Application {
             "CREATE MAP",
             mainStage,
             () -> {
-              ssc.switchToMapEditorScene(mainStage);
+    		SoundController.playSound("Button", SoundType.MISC);
+             ssc.switchToMapEditorScene(mainStage);
             });
     HomeScreenButton i2 =
         new HomeScreenButton(
@@ -117,6 +120,7 @@ public class App extends Application {
             mainStage,
             () -> {
               // CreateGameScreen.initCreateGameScreen(mainStage);
+    		SoundController.playSound("Button", SoundType.MISC);
               ssc.switchToCreateGameScene(mainStage);
             });
     HomeScreenButton i3 =
@@ -124,6 +128,7 @@ public class App extends Application {
             "JOIN GAME",
             mainStage,
             () -> {
+    			SoundController.playSound("Button", SoundType.MISC);
               ssc.switchToJoinScene(mainStage);
             });
     HomeScreenButton i4 =
@@ -131,6 +136,7 @@ public class App extends Application {
             "SETTINGS",
             mainStage,
             () -> {
+    		SoundController.playSound("Button", SoundType.MISC);
               root.getChildren().add(new ComponentCreator(startScene).createSettingsWindow(root));
             });
     VBox vbox = new VBox(ctfv, i1, i2, i3, i4);
