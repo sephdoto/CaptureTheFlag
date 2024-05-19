@@ -846,7 +846,7 @@ private ObjectProperty<Font> popUpLabel;
 		topBox.getChildren().add(l);
 		HBox enterNameBox = new HBox();
 		enterNameBox.setAlignment(Pos.CENTER);
-		enterConfigNamefield = CretaeGameScreenV2.createTextfield("Enter the Config Name", 0.4);
+		enterConfigNamefield = CreateGameScreenV2.createTextfield("Enter the Config Name", 0.4);
 		enterConfigNamefield.prefWidthProperty().bind(enterNameBox.widthProperty().multiply(0.8));
 		enterNameBox.getChildren().add(enterConfigNamefield);
 		topBox.getChildren().add(enterNameBox);

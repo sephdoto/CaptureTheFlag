@@ -45,7 +45,7 @@ public class HomeSceneController {
 	ServerManager serverManager;
 	//TestThread t;
 	MapTemplate template;
-	CretaeGameScreenV2 createGameScreenV2;
+	CreateGameScreenV2 createGameScreenV2;
 	PlayGameScreenV2 playGameScreenV2;
 	WaitingScene waitingScene;
 	Client mainClient;
@@ -151,7 +151,7 @@ public class HomeSceneController {
 	}
 
 	public void switchToCreateGameScene(Stage stage) {
-		createGameScreenV2=  new CretaeGameScreenV2(this, stage.getWidth(), stage.getHeight());
+		createGameScreenV2=  new CreateGameScreenV2(this, stage.getWidth(), stage.getHeight());
 		stage.setScene(createGameScreenV2);
 	}
 

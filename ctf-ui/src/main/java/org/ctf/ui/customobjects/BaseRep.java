@@ -1,7 +1,7 @@
 package org.ctf.ui.customobjects;
 
 
-import org.ctf.ui.CretaeGameScreenV2;
+import org.ctf.ui.CreateGameScreenV2;
 import org.ctf.ui.Game;
 import org.ctf.ui.MyCustomColorPicker;
 import org.ctf.ui.PlayGameScreenV2;

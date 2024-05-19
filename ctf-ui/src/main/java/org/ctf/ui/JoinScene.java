@@ -479,7 +479,7 @@ public class JoinScene extends Scene {
     Button joinButton = createControlButton(vbox, "Join", "save-button");
     joinButton.setOnAction(e -> {
       if (nameField.getText().equals("")) {
-        CretaeGameScreenV2.informationmustBeEntered(nameField, "custom-search-field",
+        CreateGameScreenV2.informationmustBeEntered(nameField, "custom-search-field",
             "custom-search-field");
         return;
       }
@@ -527,7 +527,7 @@ public class JoinScene extends Scene {
     Button joinButton = createControlButton(vbox, "Join", "save-button");
     joinButton.setOnAction(e -> {
       if (nameField.getText().equals("")) {
-        CretaeGameScreenV2.informationmustBeEntered(nameField, "custom-search-field",
+        CreateGameScreenV2.informationmustBeEntered(nameField, "custom-search-field",
             "custom-search-field");
         return;
       }

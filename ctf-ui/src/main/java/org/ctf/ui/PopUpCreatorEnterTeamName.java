@@ -86,7 +86,7 @@ public class PopUpCreatorEnterTeamName {
 		top.getChildren().add(l);
 		HBox enterNameBox = new HBox();
 		enterNameBox.setAlignment(Pos.CENTER);
-		enterNamefield = CretaeGameScreenV2.createTextfield("Your Team Name",0.5);
+		enterNamefield = CreateGameScreenV2.createTextfield("Your Team Name",0.5);
 		enterNamefield.prefWidthProperty().bind(enterNameBox.widthProperty().multiply(0.8));
 		enterNameBox.getChildren().add(enterNamefield);
 		top.getChildren().add(enterNameBox);
@@ -113,10 +113,10 @@ public class PopUpCreatorEnterTeamName {
 		exit.setOnAction(e -> {
 			SoundController.playSound("Button", SoundType.MISC);
 			if (enterNamefield.getText().isEmpty()) {
-				CretaeGameScreenV2.informationmustBeEntered(enterNamefield, "custom-search-field2-mustEnter","custom-search-field2");
+				CreateGameScreenV2.informationmustBeEntered(enterNamefield, "custom-search-field2-mustEnter","custom-search-field2");
 			}
 				else if (CreateGameController.isNameUsed(enterNamefield.getText())) {
-					CretaeGameScreenV2.informationmustBeEntered(enterNamefield, "custom-search-field2-mustEnter","custom-search-field2");
+					CreateGameScreenV2.informationmustBeEntered(enterNamefield, "custom-search-field2-mustEnter","custom-search-field2");
 					enterNamefield.clear();
 					enterNamefield.setFont(new Font(enterNamefield.getHeight()*0.4));
 					enterNamefield.setPromptText("Enter a unique Teamname");

@@ -39,7 +39,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-public class CretaeGameScreenV2 extends Scene {
+public class CreateGameScreenV2 extends Scene {
 	
 	HomeSceneController hsc;
 	String selected;
@@ -72,7 +72,7 @@ public class CretaeGameScreenV2 extends Scene {
 	private ObjectProperty<Font> aiPowerText = new SimpleObjectProperty<Font>(Font.getDefault());
 	SimpleObjectProperty<Insets> padding = new SimpleObjectProperty<>(new Insets(10));
 
-	public CretaeGameScreenV2(HomeSceneController hsc, double width, double height) {
+	public CreateGameScreenV2(HomeSceneController hsc, double width, double height) {
 		super(new StackPane(), width, height);
 		this.hsc = hsc;
 		this.getStylesheets().add(getClass().getResource("ComboBox.css").toExternalForm());

@@ -148,7 +148,7 @@ public class ComponentCreator {
     submit.getStyleClass().add("save-button");
     submit.setOnAction(e -> {
       if(nameField.getText().equals("")) {
-        CretaeGameScreenV2.informationmustBeEntered(nameField, "custom-search-field", "custom-search-field");
+        CreateGameScreenV2.informationmustBeEntered(nameField, "custom-search-field", "custom-search-field");
         return;
       }     
       if (editorscene.getEngine().getTemplateNames().contains(nameField.getText())) {
