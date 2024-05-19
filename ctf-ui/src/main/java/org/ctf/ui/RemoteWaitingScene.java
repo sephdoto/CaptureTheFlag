@@ -61,7 +61,7 @@ public class RemoteWaitingScene extends Scene {
 	    root.setBackground(new Background(background));
 		VBox mainBox = new VBox();
 		mainBox.setAlignment(Pos.TOP_CENTER);
-		Image mp = new Image(getClass().getResourceAsStream("multiplayerlogo.png"));
+		Image mp = ImageController.loadThemedImage(ImageType.MISC, "multiplayerlogo");
 		ImageView mpv = new ImageView(mp);
 		mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.65));
 		mpv.setPreserveRatio(true);

@@ -24,24 +24,34 @@ public class RemoteWaitingThread extends Thread {
 		try {
 			
 			while (isactive) {
-			  Thread.sleep(2000); 
-			  Platform.runLater(() -> {
-		            System.out.println(rws.getClient().isGameStarted()+"");
-		            rws.getText().setText(rws.getClient().isGameStarted()+"");
-		            if(rws.getClient().isGameStarted()) {
-		            Button but = new Button("hello");
-		            rws.getRootPane().getChildren().add(but);
-		            but.setOnAction(e ->{
-		              rws.getHsc().switchToPlayGameScene(App.getStage(), rws.getClient(),true);
-		            });
-		            isactive = false;
-		            } 
-		            
+			  Thread.sleep(1000); 
+			  String begin = (rws.getClient().isGameStarted())?"Initiliazing Game \n":"Waiting for more Teams to Join ... \n";
+			  //String teams = "There are currently "+ rws.getClient().getCurrentNumberofTeams() +" in the lobby!";			 
+			  Platform.runLater(()->{
+			   
+			    rws.getText().setText(begin);
+			    
+			  });
+			  if(rws.getClient().isGameStarted()) {
+			    isactive = false;
+			    Thread.sleep(1000);
+			    Platform.runLater(()->{
+			      rws.getHsc().switchToPlayGameScene(App.getStage(), rws.getClient(), true);
+			    });
+			  }
+//			  Platform.runLater(() -> {
+//		            System.out.println(rws.getClient().isGameStarted()+"");
 		           
-		              
-		             
-				    		              
-		             });
+		            //if(rws.getClient().isGameStarted()) {
+//		            Button but = new Button("hello");
+//		             rws.getRootPane().getChildren().add(but);
+//		            but.setOnAction(e ->{
+//		              rws.getHsc().switchToPlayGameScene(App.getStage(), rws.getClient(),true);
+//		            });
+//		            rws.getHsc().switchToPlayGameScene(App.getStage(), rws.getClient(), true);
+//		            isactive = false;
+		          //  } 				    		              
+		          //   });
 				
 			}
 
