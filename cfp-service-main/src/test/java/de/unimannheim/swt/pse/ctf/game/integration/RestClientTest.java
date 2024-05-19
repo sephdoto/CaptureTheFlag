@@ -166,7 +166,6 @@ public class RestClientTest {
               getClass().getResourceAsStream("/maptemplates/10x10_2teams_example.json"),
               MapTemplate.class);
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
 

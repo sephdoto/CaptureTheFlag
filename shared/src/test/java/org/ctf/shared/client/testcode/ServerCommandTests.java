@@ -66,7 +66,6 @@ public class ServerCommandTests {
     try {
       endDate = sdf.parse("04/25/2024/12/40/00");
     } catch (ParseException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     Duration timeLimDuration =
@@ -126,7 +125,6 @@ public class ServerCommandTests {
       try {
         Thread.sleep(1000);
       } catch (InterruptedException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
     }
@@ -407,7 +405,6 @@ public class ServerCommandTests {
 
       client2.joinExistingGame("localhost", "8888", client.getSessionID(), "Seph2");
     } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } */
   }
@@ -447,7 +444,6 @@ public class ServerCommandTests {
        }
 
      } catch (InterruptedException e) {
-       // TODO Auto-generated catch block
        e.printStackTrace();
      }
   */

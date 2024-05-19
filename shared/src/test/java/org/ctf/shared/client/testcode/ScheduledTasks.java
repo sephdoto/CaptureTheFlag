@@ -292,7 +292,6 @@ public class ScheduledTasks {
                 try {
                   System.out.println(result2.get() + "of sresult 2");
                 } catch (InterruptedException | ExecutionException e) {
-                  // TODO Auto-generated catch block
                   e.printStackTrace();
                 }
               }
@@ -322,7 +321,6 @@ public class ScheduledTasks {
 
       scheduler.shutdown();
     } catch (Exception e) {
-      // TODO: handle exception
     }  */
    }  
 }

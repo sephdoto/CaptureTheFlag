@@ -14,11 +14,9 @@ import java.time.Duration;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -50,6 +48,7 @@ public class GameEngine implements Game {
   private Clock currentTime;
   private Map<Integer, String> integerToTeam;
   private Map<String, Integer> teamToInteger;
+  private Random random;
 
   // **************************************************
   // End of Required by GameState
@@ -93,6 +92,7 @@ public class GameEngine implements Game {
     this.integerToTeam = Collections.synchronizedMap(new LinkedHashMap<>());
     this.teamToInteger = Collections.synchronizedMap(new LinkedHashMap<>());
     this.weDoneZo = false;
+    random = new Random();
     gameState = new GameState();
     gameState.setTeams(new Team[template.getTeams()]);
 
@@ -120,8 +120,7 @@ public class GameEngine implements Game {
    */
   @Override
   public Team joinGame(String teamId) {
-    if (teamToInteger.containsKey(teamId) || 
-        getRemainingTeamSlots() == 0) {
+    if (teamToInteger.containsKey(teamId) || getRemainingTeamSlots() == 0) {
       throw new NoMoreTeamSlots();
     }
     int slot = EngineTools.getNextEmptyTeamSlot(this.gameState);
@@ -217,8 +216,6 @@ public class GameEngine implements Game {
     return (this.weDoneZo);
   }
 
-
-  //TODO There is a small bug with this method if you join one team and give up
   /**
    * If the game is over a String Array containing all winner IDs is returned. This method relies on
    * the fact that loser teams get set to null in the gameState.teams Array.
@@ -228,13 +225,11 @@ public class GameEngine implements Game {
    */
   @Override
   public String[] getWinner() {
-    if(!isGameOver())
-      return new String[] {};
+    if (!isGameOver()) return new String[] {};
     ArrayList<String> winners = new ArrayList<String>();
     if (this.isGameOver()) {
       for (int i = 0; i < gameState.getTeams().length; i++) {
-        if(gameState.getTeams()[i] != null)
-          winners.add(integerToTeam.get(i));
+        if (gameState.getTeams()[i] != null) winners.add(integerToTeam.get(i));
       }
     }
 
@@ -276,25 +271,24 @@ public class GameEngine implements Game {
     }
     return gameState;
   }
-  
+
   /**
-   * Replaces the TeamIDs with the Pattern:
-   * (IntegerID) + ("_") + (Name)
-   * It is assumed that each Name only exists once.
-   * 
+   * Replaces the TeamIDs with the Pattern: (IntegerID) + ("_") + (Name) It is assumed that each
+   * Name only exists once.
+   *
    * @author sistumpf
    * @param original the GameState which's deep copy gets altered and returned
    * @return a deep copy of original with adjusted TeamIDs
    */
   private GameState replaceIDs(GameState original) {
     GameState returnState = EngineTools.deepCopyGameState(original);
-    
+
     Stream.of(returnState.getTeams())
-    .filter(Objects::nonNull)
-    .forEach(
-        team -> team.setId(team.getId() + "_" + integerToTeam.get(Integer.parseInt(team.getId())))
-        );
-    
+        .filter(Objects::nonNull)
+        .forEach(
+            team ->
+                team.setId(team.getId() + "_" + integerToTeam.get(Integer.parseInt(team.getId()))));
+
     return returnState;
   }
 
@@ -653,7 +647,7 @@ public class GameEngine implements Game {
    * @author rsyed
    */
   private void setRandomStartingTeam() {
-    this.gameState.setCurrentTeam((int) (Math.random() * this.gameState.getTeams().length));
+    this.gameState.setCurrentTeam(random.nextInt(this.gameState.getTeams().length));
   }
 
   /**
@@ -663,16 +657,16 @@ public class GameEngine implements Game {
    * @return String containing a randomized color as a HEX Code
    */
   static String getRandColor(Team team) {
-    int i=3;
+    int i = 3;
     int r = pseudoRandomColorInt(team, i--);
     int g = pseudoRandomColorInt(team, i--);
     int b = pseudoRandomColorInt(team, i);
     return Color.rgb(r, g, b).toString();
   }
-  
+
   /**
    * generates a pseudo random int between 0 and 255.
-   * 
+   *
    * @param team which gets turned into a hashed int
    * @param modifier to modify the random seed.
    * @return random int between 0 and 255
@@ -681,28 +675,25 @@ public class GameEngine implements Game {
     Random random = new Random(hashTeam(team) * modifier);
     return random.nextInt(256);
   }
-  
+
   /**
    * turns a team into a hash code
-   * 
+   *
    * @param team
    * @return the teams hash code
    */
   private static int hashTeam(Team team) {
-    StringBuilder sb = new StringBuilder()
-        .append(
-            new Random(team.getId().hashCode() * 256).nextInt(256)
-            )
-        .append(
-            new Random(team.getPieces().length * 256).nextInt(256)
-            );
-    Stream.of(team.getPieces()).forEach(
-        piece -> sb.append(
-            new Random(piece.getId().hashCode()).nextInt(team.getPieces().length)
-            ));
+    StringBuilder sb =
+        new StringBuilder()
+            .append(new Random(team.getId().hashCode() * 256).nextInt(256))
+            .append(new Random(team.getPieces().length * 256).nextInt(256));
+    Stream.of(team.getPieces())
+        .forEach(
+            piece ->
+                sb.append(new Random(piece.getId().hashCode()).nextInt(team.getPieces().length)));
     return sb.toString().hashCode();
   }
-  
+
   // **************************************************
   // End of Private Internal Methods
   // **************************************************

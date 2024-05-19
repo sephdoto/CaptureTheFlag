@@ -156,7 +156,6 @@ public class AIPlayerSimulator {
               System.out.println(server.isServerActive());
               System.out.println(server.getCurrentNumberofTeams());
             } catch (InterruptedException e) {
-              // TODO Auto-generated catch block
               e.printStackTrace();
             }  
 

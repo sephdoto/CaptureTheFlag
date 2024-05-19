@@ -258,9 +258,7 @@ public class RestClientTests {
           "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
       javaClient.getStateFromServer();
       
-    } catch (Accepted e) {
-      // TODO: handle exception
-    }
+    } catch (Accepted expected) {}
     assertNotNull(javaClient.getTeams());
     
   }

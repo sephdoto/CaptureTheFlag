@@ -1,16 +1,16 @@
 package de.unimannheim.swt.pse.ctf.game.integration;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
 import java.io.IOException;
-
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.client.AIClient;
 import org.ctf.shared.client.AIClientStepBuilder;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
-import org.ctf.shared.constants.Enums;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.Port;
 import org.ctf.shared.state.data.map.MapTemplate;
@@ -51,11 +51,11 @@ public class AIClientTest {
             .gameData(server.getGameSessionID(), "Team2")
             .build();
 
-            try {
-                Thread.sleep(5000);
-            } catch (Exception e) {
-                // TODO: handle exception
-            }
+    try {
+      Thread.sleep(5000);
+    } catch (Exception e) {
+      fail();
+    }
   }
 
   private MapTemplate createGameTemplate() {

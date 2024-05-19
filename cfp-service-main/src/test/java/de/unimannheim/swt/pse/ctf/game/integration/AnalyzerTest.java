@@ -131,7 +131,6 @@ public class AnalyzerTest {
           p2.makeMove(controller2.getNextMove());
         }
       } catch (NoMovesLeftException | InvalidShapeException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
       p1.pullData();
@@ -220,7 +219,6 @@ public class AnalyzerTest {
           p2.makeMove(controller2.getNextMove());
         }
       } catch (NoMovesLeftException | InvalidShapeException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
       p1.pullData();
