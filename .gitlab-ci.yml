@@ -46,6 +46,7 @@ unit-test-job:   # This job runs in the test stage. First Stage
   script:
     - echo "Running unit tests..."
     - ./mvnw $MAVEN_CLI_OPTS test
+  needs: []
   artifacts:
     expire_in: 20 minutes
 
@@ -55,7 +56,7 @@ build-job: # This job runs in the build stage. Second Stage
     - echo "Compiling the code..."
     - ./mvnw $MAVEN_CLI_OPTS package
     - echo "Compile complete."
-  needs: ["test"]
+  needs: [unit-test-job]
   artifacts:
     expire_in: 20 minutes
 
@@ -65,7 +66,7 @@ install-test-job: # This job runs in the install stage. Third Stage
     - echo "Testing Maven install."
     - ./mvnw $MAVEN_CLI_OPTS install
     - echo "No Install issues found."
-  needs: ["test"]
+  needs: [unit-test-job]
   artifacts:
     expire_in: 20 minutes
 
