@@ -31,6 +31,8 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.shared.constants.Enums.Themes;
@@ -76,6 +78,9 @@ public class EditorScene extends Scene {
   Text invalid;
   File currentSound;
   File currentPicture;
+  boolean isGamePanedisplayed = true;
+
+
 
   /**
    * Starts the initialization process of the scene, generates different menu panes and connects it
@@ -100,10 +105,10 @@ public class EditorScene extends Scene {
     options[4] = createPictureCustomizer();
     createLayout();
     createInvalidText();
-    this.dragAndDropPaneSound =
-        new DragAndDropPane(this, "Drag and Drop a \n sound file in the .wav format!",DragAndDropPane.SOUNDS);
-    this.dragAndDropPaneImages = 
-        new DragAndDropPane(this, "Drag and Drop an \n image file!",DragAndDropPane.IMAGES);
+    this.dragAndDropPaneSound = new DragAndDropPane(this,
+        "Drag and Drop a \n sound file in the .wav format!", DragAndDropPane.SOUNDS);
+    this.dragAndDropPaneImages =
+        new DragAndDropPane(this, "Drag and Drop an \n image file!", DragAndDropPane.IMAGES);
     // TextGeneratorThread textGeneratorThread = new TextGeneratorThread();
     // textGeneratorThread.start();
 
@@ -510,16 +515,23 @@ public class EditorScene extends Scene {
         this.inform("You can not change the picture of default pieces!");
         return;
       }
-
-      if (currentSound == null) {
+      if (currentPicture == null) {
         this.inform("Please enter an image File!");
         return;
       }
       String filename = currentPicture.getName();
-      if (!filename.substring(filename.length() - 4, filename.length()).equals(".png")) {
-        this.inform("Please enter a file in the .png format!");
+      ArrayList<String> list = new ArrayList<>(Arrays.asList(".jpg", ".png"));
+      if (!list.contains(filename.substring(filename.length() - 4, filename.length()))) {
+        this.inform("Please enter a file \n in the .png or .jpg format!");
         return;
       }
+      if (!ImageController.canBeChanged(ImageType.PIECE, Themes.valueOf(themeBox.getValue()),
+          picturePieceBox.getValue())) {
+        this.inform("This piece already has custom "+ Themes.valueOf(themeBox.getValue()) +" textures!");
+        return;
+      }
+      ImageController.saveImage(currentPicture, ImageType.PIECE,
+          Themes.valueOf(themeBox.getValue()), picturePieceBox.getValue());
 
 
       this.inform(filename + " was saved!");
@@ -531,6 +543,10 @@ public class EditorScene extends Scene {
     return customRoot;
   }
 
+
+  public void setCurrentPicture(File currentPicture) {
+    this.currentPicture = currentPicture;
+  }
 
   /**
    * Creates the Container for displaying the different option tabs on the left side of the scene.
@@ -655,18 +671,21 @@ public class EditorScene extends Scene {
     MenuItem imageMenuItem = new MenuItem("Images");
     mb.getItems().addAll(mapMenuItem, figureMenuItem, configMenuItem, soundMenuItem, imageMenuItem);
     mapMenuItem.setOnAction(event -> {
+      this.isGamePanedisplayed = true;
       leftPane.getChildren().clear();
       leftPane.getChildren().add(options[0]);
       mb.setText("Edit Map");
       updateVisualRoot();
     });
     figureMenuItem.setOnAction(event -> {
+      this.isGamePanedisplayed = true;
       leftPane.getChildren().clear();
       leftPane.getChildren().add(options[1]);
       mb.setText("Add Pieces");
       updateVisualRoot();
     });
     configMenuItem.setOnAction(event -> {
+      this.isGamePanedisplayed = false;
       leftPane.getChildren().clear();
       leftPane.getChildren().add(options[2]);
       mb.setText("Custom Pieces");
@@ -674,6 +693,7 @@ public class EditorScene extends Scene {
       visualRoot.getChildren().add(directionsContainer);
     });
     soundMenuItem.setOnAction(event -> {
+      this.isGamePanedisplayed = false;
       leftPane.getChildren().clear();
       leftPane.getChildren().add(options[3]);
       mb.setText("Sounds");
@@ -681,6 +701,7 @@ public class EditorScene extends Scene {
       visualRoot.getChildren().add(dragAndDropPaneSound);
     });
     imageMenuItem.setOnAction(event -> {
+      this.isGamePanedisplayed = false;
       leftPane.getChildren().clear();
       leftPane.getChildren().add(options[4]);
       mb.setText("Images");
@@ -1145,5 +1166,9 @@ public class EditorScene extends Scene {
 
   public ComboBox<String> getSoundPieceBox() {
     return this.soundPieceBox;
+  }
+
+  public boolean isGamePanedisplayed() {
+    return isGamePanedisplayed;
   }
 }
