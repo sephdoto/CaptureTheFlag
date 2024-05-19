@@ -110,6 +110,25 @@ public class ServerManager {
   }
 
   /**
+   * Method which returns the max amount of players in a game session
+   *
+   * @author rsyed
+   */
+  public int getMaxNumberofTeams() {
+    return comm.getCurrentGameState(currentServer + "/" + gameSessionID).getTeams().length;
+  }
+
+  
+  /**
+   * Method which returns a GameState from a session
+   *
+   * @author rsyed
+   */
+  public GameState getGameStateFromSession() {
+    return comm.getCurrentGameState(currentServer + "/" + gameSessionID);
+  }
+
+  /**
    * Deletes the game session held in the object
    *
    * @return True on Success, False otherwise
