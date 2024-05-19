@@ -2,6 +2,8 @@ package org.ctf.ui;
 
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.constants.Enums.AI;
+import org.ctf.shared.constants.Enums.SoundType;
+import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.customobjects.PopUpPane;
 
 import javafx.beans.property.ObjectProperty;
@@ -109,6 +111,7 @@ public class PopUpCreatorEnterTeamName {
 		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
 		exit.setOnAction(e -> {
+			SoundController.playSound("Button", SoundType.MISC);
 			if (enterNamefield.getText().isEmpty()) {
 				CretaeGameScreenV2.informationmustBeEntered(enterNamefield, "custom-search-field2-mustEnter","custom-search-field2");
 			}

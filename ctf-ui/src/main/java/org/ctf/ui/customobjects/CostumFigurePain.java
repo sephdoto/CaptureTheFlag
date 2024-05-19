@@ -4,12 +4,13 @@ package org.ctf.ui.customobjects;
 
 import org.ctf.ui.Game;
 import org.ctf.ui.PlayGameScreenV2;
+import org.ctf.ui.controllers.ImageController;
 
 import configs.ImageLoader;
 
 import java.util.ArrayList;
 
-
+import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.state.Piece;
 
 import javafx.animation.Animation;
@@ -171,11 +172,13 @@ public class CostumFigurePain extends Pane {
 	}
 	
 	public void setImage() {
-		if(ImageLoader.getImageByName(type) != null) {
-			this.bImage = ImageLoader.getImageByName(type);
-		} else {
-			this.bImage = ImageLoader.getDefaultImage();
-		}
+//		if(ImageLoader.getImageByName(type) != null) {
+//			//this.bImage = ImageLoader.getImageByName(type);
+//			this.bImage = ImageController.loadThemedImage(ImageType.PIECE, type);
+//		} else {
+//			this.bImage = ImageLoader.getDefaultImage();
+//		}
+		this.bImage = ImageController.loadThemedImage(ImageType.PIECE, type);
 		this.vw = new ImageView(bImage);
 		vw.fitWidthProperty().bind(this.widthProperty());
 		vw.fitHeightProperty().bind(this.heightProperty());

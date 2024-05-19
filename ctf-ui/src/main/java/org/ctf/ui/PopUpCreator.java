@@ -5,6 +5,8 @@ import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.constants.Descriptions;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.AIConfigs;
+import org.ctf.shared.constants.Enums.SoundType;
+import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.customobjects.ButtonPane;
 import org.ctf.ui.customobjects.PopUpPane;
 import javafx.beans.binding.Bindings;
@@ -111,7 +113,7 @@ private ObjectProperty<Font> popUpLabel;
 	 */
 	public PopUpPane createAiLevelPopUp(PopUpPane aiOrHuman, TextField portText, TextField serverIPText) {
 		if(aiOrHuman!= null) {
-		aiorHumanpopup = aiOrHuman;
+			aiorHumanpopup = aiOrHuman;
 		root.getChildren().remove(aiorHumanpopup);
 		}
 		if(portText != null && serverIPText != null) {
@@ -229,13 +231,14 @@ private ObjectProperty<Font> popUpLabel;
 		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
 		exit.setOnAction(e -> {
-		  if(remote=true) {
+		  if(remote==true) {
 		    root.getChildren().remove(aiLevelPopUpPane);
 		    return;
 		  }
 			if(aiorHumanpopup != null) {
 			root.getChildren().remove(aiLevelPopUpPane);
 			root.getChildren().add(aiorHumanpopup);
+			System.out.println("Peter");
 			} else {
 				root.getChildren().remove(aiLevelPopUpPane);
 			}
@@ -767,12 +770,14 @@ private ObjectProperty<Font> popUpLabel;
 
 	private void performSave(Button b) {
 		b.setOnAction(e -> {
+			SoundController.playSound("Button", SoundType.MISC);
 			createSaveConfigPopUp();
 		});
 	}
 	
 	private void performPlay(Button b) {
 		b.setOnAction(e -> {
+			SoundController.playSound("Button", SoundType.MISC);
 			// ADD COnfig Starting Here
 			if(remote) {
 			  root.getChildren().remove(aiconfigPopUp);
