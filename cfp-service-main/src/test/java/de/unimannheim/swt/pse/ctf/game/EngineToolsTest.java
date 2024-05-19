@@ -51,40 +51,4 @@ class EngineToolsTest {
     gameState.setCurrentTeam(0);
     assertTrue(EngineTools.teamGotMovesLeft(gameState, 0));
   }
-
-  /**
-   * @author yannicksiebenhaar
-   * 
-   */
-/*   @Test
-  void testGetNeighbors() {
-    fail("Not yet implemented");
-  } */
-
-  /**
-   * @author yannicksiebenhaar
-   * 
-   */
-/*   @Test
-  void testValueOf() {
-    fail("Not yet implemented");
-  }
- */
-  /**
-   * @author yannicksiebenhaar
-   * 
-   */
-/*   @Test
-  void testGetBestState() {
-    fail("Not yet implemented");
-  } */
-
-  /**
-   * @author yannicksiebenhaar
-   * 
-   */
-/*   @Test
-  void testGetStrongest() {
-    fail("Not yet implemented");
-  } */
 }

@@ -30,22 +30,6 @@ class GameEngineTest {
     assertNotEquals(color2, color3);
   }
   
-  /*@Test
-  void testCreate() {
-    gameEngine.create(TestValues.getTestTemplate());
-    fail("Not yet implemented");
-  }*/
-
-  /*@Test
-  void testGetCurrentGameState() {
-    fail("Not yet implemented");
-  }*/
-
-  /*@Test
-  void testGetEndDate() {
-    fail("Not yet implemented");
-  }*/
-
   /**
    * @author sistumpf
    */
@@ -85,21 +69,6 @@ class GameEngineTest {
     assertEquals(gameEngine.getStartedDate(), started);
   }*/
 
-/*  @Test
-  void testGetWinner() {
-    fail("Not yet implemented");
-  }
-
-  @Test
-  void testGiveUp() {
-    fail("Not yet implemented");
-  }*/
-
-  /*@Test
-  void testIsGameOver() {
-    assertFalse(gameEngine.isGameOver());
-  }*/
-
   /**
    * @author sistumpf
    */
@@ -126,10 +95,6 @@ class GameEngineTest {
     assertTrue(gameEngine.isGameOver());                                        //game time over
   }*/
 
-  /*@Test
-  void testIsStarted() {
-    fail("Not yet implemented");
-  }*/
 
   /**
    * @author sistumpf
@@ -161,11 +126,6 @@ class GameEngineTest {
     assertFalse(gameEngine.isValidMove(move2));		//rook could not walk 3 blocks (just 2)
     move2.setNewPosition(new int[] {7,5});
     assertFalse(gameEngine.isValidMove(move2));		//piece could not walk onto its own position
-  }*/
-
-  /*@Test
-  void testJoinGame() {
-    fail("Not yet implemented");
   }*/
 
   /**
