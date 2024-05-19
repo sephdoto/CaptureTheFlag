@@ -21,7 +21,7 @@ public class MapPreviewThread extends Thread {
       Platform.runLater(() -> {
         //editorScene.inform("hey");
         StackPane root = editorScene.getVisualRoot();
-        if(root.getChildren().size() > 0 & editorScene.isGamePanedisplayed()) {
+        if(root.getChildren().size() > 0 && root.getChildren().get(0) instanceof GamePane ) {
           ((GamePane) root.getChildren().get(0)).destroyReferences();
         }
         root.getChildren().clear();

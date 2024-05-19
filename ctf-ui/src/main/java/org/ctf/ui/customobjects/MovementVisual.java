@@ -1,8 +1,12 @@
 package org.ctf.ui.customobjects;
 
 import java.util.function.Consumer;
+import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.ui.TemplateEngine;
+import org.ctf.ui.controllers.ImageController;
 import javafx.geometry.Pos;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -46,8 +50,13 @@ public class MovementVisual extends GridPane {
         pane.getChildren().add(c);
         circles[j][i] = c;
         if (i == 5 && j == 5) {
-          c.setStyle("-fx-fill: red;");
-          c.setOpacity(1);
+          c.setOpacity(0);
+          Image piece = ImageController.loadThemedImage(ImageType.PIECE, "Default");
+          ImageView pieceView = new ImageView(piece);
+          pieceView.fitWidthProperty().bind(pane.widthProperty().multiply(0.6));
+          pieceView.fitHeightProperty().bind(pieceView.fitWidthProperty());
+          pane.getChildren().add(pieceView);
+          
 
         }
 

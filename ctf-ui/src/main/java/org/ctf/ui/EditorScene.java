@@ -78,7 +78,7 @@ public class EditorScene extends Scene {
   Text invalid;
   File currentSound;
   File currentPicture;
-  boolean isGamePanedisplayed = true;
+  
 
 
 
@@ -671,21 +671,18 @@ public class EditorScene extends Scene {
     MenuItem imageMenuItem = new MenuItem("Images");
     mb.getItems().addAll(mapMenuItem, figureMenuItem, configMenuItem, soundMenuItem, imageMenuItem);
     mapMenuItem.setOnAction(event -> {
-      this.isGamePanedisplayed = true;
       leftPane.getChildren().clear();
       leftPane.getChildren().add(options[0]);
       mb.setText("Edit Map");
       updateVisualRoot();
     });
     figureMenuItem.setOnAction(event -> {
-      this.isGamePanedisplayed = true;
       leftPane.getChildren().clear();
       leftPane.getChildren().add(options[1]);
       mb.setText("Add Pieces");
       updateVisualRoot();
     });
     configMenuItem.setOnAction(event -> {
-      this.isGamePanedisplayed = false;
       leftPane.getChildren().clear();
       leftPane.getChildren().add(options[2]);
       mb.setText("Custom Pieces");
@@ -693,7 +690,6 @@ public class EditorScene extends Scene {
       visualRoot.getChildren().add(directionsContainer);
     });
     soundMenuItem.setOnAction(event -> {
-      this.isGamePanedisplayed = false;
       leftPane.getChildren().clear();
       leftPane.getChildren().add(options[3]);
       mb.setText("Sounds");
@@ -701,7 +697,6 @@ public class EditorScene extends Scene {
       visualRoot.getChildren().add(dragAndDropPaneSound);
     });
     imageMenuItem.setOnAction(event -> {
-      this.isGamePanedisplayed = false;
       leftPane.getChildren().clear();
       leftPane.getChildren().add(options[4]);
       mb.setText("Images");
@@ -1168,7 +1163,4 @@ public class EditorScene extends Scene {
     return this.soundPieceBox;
   }
 
-  public boolean isGamePanedisplayed() {
-    return isGamePanedisplayed;
-  }
 }
