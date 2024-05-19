@@ -11,6 +11,8 @@ import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.AI;
+import org.ctf.shared.constants.Enums.ImageType;
+import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.RemoteWaitingThread;
 import org.ctf.ui.customobjects.PopUpPane;
 import javafx.beans.binding.Bindings;
@@ -114,9 +116,7 @@ public class JoinScene extends Scene {
    * @return ImageView that gets added to the scene
    */
   private ImageView createHeader() {
-    Image mp = new Image(
-        new File(Constants.toUIResources + "pictures" + File.separator + "multiplayerlogo.png")
-            .toURI().toString());
+    Image mp = ImageController.loadThemedImage(ImageType.MISC, "multiplayerlogo");
     ImageView mpv = new ImageView(mp);
     mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.8));
     mpv.setPreserveRatio(true);
