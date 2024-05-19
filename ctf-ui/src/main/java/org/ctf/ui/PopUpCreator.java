@@ -134,7 +134,7 @@ public class PopUpCreator {
 		
 		
 		buttonBox.getChildren().addAll(createRandomButton(),
-				createAIPowerButton(AIConfigs.MCTS, 0.53, 1));
+				createAIPowerButton(AIConfigs.MCTS, 1));
 		HBox buttonBox2 = new HBox();
 		buttonBox2.setAlignment(Pos.CENTER);
 		aiLevelPopUpPane.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -143,8 +143,8 @@ public class PopUpCreator {
 			buttonBox2.setSpacing(newSpacing);
 			buttonBox2.setPadding(new Insets(0, padding, 0, padding));
 		});
-		buttonBox2.getChildren().addAll(createAIPowerButton(AIConfigs.IMPROVED, 0.05, 2),
-				createAIPowerButton(AIConfigs.EXPERIMENTAL, 0.15, 2));
+		buttonBox2.getChildren().addAll(createAIPowerButton(AIConfigs.IMPROVED, 2),
+				createAIPowerButton(AIConfigs.EXPERIMENTAL, 2));
 		top.getChildren().addAll(buttonBox, buttonBox2);
 		HBox centerLeaveButton = new HBox();
 		centerLeaveButton.prefHeightProperty().bind(aiLevelPopUpPane.heightProperty().multiply(0.2));
@@ -236,35 +236,17 @@ public class PopUpCreator {
 	}
 
 	/**
-	 * @author Manuel Krakowski Creates a button containing the name of the AI and
-	 *         an image
-	 * @param pow:       Name of the Ai
-	 * @param relSpacing
-	 * @return
+	 * Creates a {@link ButtonPane} for choosing an AI that can be customized by editing or
+	 * loading AI configs. The Container provides the name of the AI and am Icon
+	 * which provides additonal info when hovered over. When clicking the container
+	 * two new button appear that allow to edit or load AI configs.
+	 * 
+	 * @author Aaron Niemesch
+	 * @param aiName - AIConfigs value 
+	 * @param InfoPanePosition - Constant that determines positioning of info popup
+	 * @return {@link ButtonPane}
 	 */
-	private StackPane createAIPowerButton(AIConfigs aiName, double relSpacing, int InfoPanePosition) {
-//		Button power = new Button(aiName.toString());
-//		power.fontProperty().bind(aiPowerText);
-//		power.getStyleClass().add("ai-button-easy");
-//		Image mp = new Image(getClass().getResourceAsStream("i1.png"));
-//		ImageView vw = new ImageView(mp);
-//		power.setGraphic(vw);
-//		power.setContentDisplay(ContentDisplay.RIGHT);
-//		power.widthProperty().addListener((observable, oldValue, newValue) -> {
-//			double newSpacing = newValue.doubleValue() * relSpacing;
-//			power.setGraphicTextGap(newSpacing);
-//		});
-//		InfoPaneCreator.addInfoPane(power, App.getStage(), Descriptions.describe(aiName), InfoPanePosition);
-//		vw.fitWidthProperty().bind(power.widthProperty().divide(8));
-//		vw.setPreserveRatio(true);
-//		power.prefWidthProperty().bind(root.widthProperty().multiply(0.22));
-//		power.prefHeightProperty().bind(power.widthProperty().multiply(0.45));
-//		power.setOnAction(e -> {
-//			// hsc.switchToWaitGameScene(App.getStage());
-//			root.getChildren().remove(aiorHumanpopup);
-//			root.getChildren().add(createConfigPane(1, 1));
-//			defaultAiName = aiName.toString();
-//		});
+	private StackPane createAIPowerButton(AIConfigs aiName, int InfoPanePosition) {
 		ButtonPane pane = new ButtonPane(aiName, hsc.getStage(), InfoPanePosition,buttonPanes);
 		buttonPanes.add(pane);
 		pane.prefWidthProperty().bind(root.widthProperty().multiply(0.22));
@@ -277,7 +259,8 @@ public class PopUpCreator {
 			pane.reset();
 		});
 		pane.getLoadButton().setOnAction(e -> {
-			if(aiorHumanpopup!= null) {
+			this.aitype = AI.valueOf(aiName.name());
+		  if(aiorHumanpopup!= null) {
 			root.getChildren().remove(aiorHumanpopup);
 			}
 			root.getChildren().remove(aiLevelPopUpPane);
@@ -286,12 +269,6 @@ public class PopUpCreator {
 		});
 		return pane;
 	}
-
-	
-
-	
-
-	
 
   public StackPane getRoot() {
 		return root;

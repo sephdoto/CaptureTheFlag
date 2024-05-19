@@ -5,8 +5,9 @@ import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.constants.Descriptions;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.AIConfigs;
+import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.ui.InfoPaneCreator;
-
+import org.ctf.ui.controllers.ImageController;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -45,7 +46,7 @@ public class ButtonPane extends StackPane{
       text.setFill(Color.WHITE);
       text.setMouseTransparent(true);
       this.getChildren().add(text);
-      Image mp = new Image(getClass().getResourceAsStream("i1.png"));
+      Image mp = ImageController.loadThemedImage(ImageType.MISC, "i1");
       vw = new ImageView(mp);
       StackPane.setAlignment(vw, Pos.CENTER_RIGHT);
       vw.fitHeightProperty().bind(this.heightProperty().multiply(0.5));
