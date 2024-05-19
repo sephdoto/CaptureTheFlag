@@ -17,7 +17,6 @@
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
 stages: # List of stages for jobs, and their order of execution
-  - compile
   - test
   - build
   - install
@@ -42,26 +41,16 @@ variables:
     -DinstallAtEnd=true
     -DdeployAtEnd=true
 
-compile-job: # This job runs in the compile stage. First Stage
-  stage: compile # First job to check if it compiles
+unit-test-job: # This job runs in the test stage. First Stage
+  stage: test 
   script:
-    - echo "Running compile"
-    - ./mvnw $MAVEN_CLI_OPTS compile
-      - echo "Compiled successfully"
+    - echo "Running unit tests..."
+    - ./mvnw $MAVEN_CLI_OPTS test
   needs: []
   artifacts:
     expire_in: 20 minutes
 
-unit-test-job: # This job runs in the test stage. Second Stage
-  stage: test # It only starts when the job in the build stage completes successfully.
-  script:
-    - echo "Running unit tests..."
-    - ./mvnw $MAVEN_CLI_OPTS test
-  needs: [compile-job]
-  artifacts:
-    expire_in: 20 minutes
-
-build-job: # This job runs in the build stage. Third Stage
+build-job: # This job runs in the build stage. Second Stage
   stage: build
   script:
     - echo "Compiling the code..."
@@ -71,7 +60,7 @@ build-job: # This job runs in the build stage. Third Stage
   artifacts:
     expire_in: 20 minutes
 
-install-test-job: # This job runs in the install stage. Fourth Stage
+install-test-job: # This job runs in the install stage. Third Stage
   stage: install # Run the same time as build stage (in parallel).
   script:
     - echo "Testing Maven install."
