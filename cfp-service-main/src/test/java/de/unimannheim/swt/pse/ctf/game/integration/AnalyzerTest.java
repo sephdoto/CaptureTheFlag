@@ -148,12 +148,7 @@ public class AnalyzerTest {
   }
 
   @Test
-  void testGetSavedGame() {}
-
-  // @Test
-  // TODO This Test is failing. Fix it
   void testReadFile() {
-
     GameSaveHandler analyzer = new GameSaveHandler();
     boolean b = analyzer.readFile("analyzerTestDataFile");
     assertTrue(b);
@@ -161,16 +156,23 @@ public class AnalyzerTest {
     Gson gson = new Gson();
 
     Move move1 = new Move();
-    move1.setPieceId("p:0_16");
-    move1.setTeamId("p1");
-    move1.setNewPosition(new int[] {6, 9});
+    move1.setPieceId("p:1_12");
+    move1.setTeamId("p2");
+    move1.setNewPosition(new int[] {8, 7});
     assertTrue(
         move1.getPieceId().toString().equals(gameData.getMoves().get("1").getPieceId().toString()));
     assertTrue(
         move1.getTeamId().toString().equals(gameData.getMoves().get("1").getTeamId().toString()));
     assertArrayEquals(move1.getNewPosition(), gameData.getMoves().get("1").getNewPosition());
-    // System.out.println(gson.toJson(move1.getNewPosition()) +
-    // gson.toJson(gameData.getMoves().get("1").getNewPosition()));
+    Move move2 = new Move();
+    move2.setPieceId("p:0_4");
+    move2.setTeamId("p1");
+    move2.setNewPosition(new int[] {1, 3});
+    assertTrue(
+        move2.getPieceId().toString().equals(gameData.getMoves().get("2").getPieceId().toString()));
+    assertTrue(
+        move2.getTeamId().toString().equals(gameData.getMoves().get("2").getTeamId().toString()));
+    assertArrayEquals(move2.getNewPosition(), gameData.getMoves().get("2").getNewPosition());
   }
 
   @Test

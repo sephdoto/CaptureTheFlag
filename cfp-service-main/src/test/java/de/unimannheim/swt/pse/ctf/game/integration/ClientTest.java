@@ -8,14 +8,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
 import java.io.IOException;
-
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.ai.AIController;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
-import org.ctf.shared.client.Client;
-import org.ctf.shared.client.ClientStepBuilder;
-import org.ctf.shared.client.Client;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.ServerDetails;
@@ -42,7 +38,7 @@ class ClientTest {
   static Client javaClient2;
   final MapTemplate template = createGameTemplate();
   ServerManager server = new ServerManager(comm, new ServerDetails("localhost", "9998"), template);
-  
+
   @BeforeAll
   static void setup() {
     String[] args = new String[] {"--server.port=9998"};
@@ -55,7 +51,6 @@ class ClientTest {
             .enableSaveGame(false)
             .disableAutoJoin()
             .build();
-            
   }
 
   @BeforeEach
@@ -76,7 +71,6 @@ class ClientTest {
             .enableSaveGame(false)
             .disableAutoJoin()
             .build();
-    
   }
 
   @Test
@@ -179,8 +173,10 @@ class ClientTest {
         "localhost", "9998", javaClient.getCurrentGameSessionID(), "Team2");
     javaClient.pullData();
     javaClient2.pullData();
-    AIController Controller = new AIController(javaClient.getCurrentState(), AI.MCTS,new AIConfig(), 0);
-    AIController Controller2 = new AIController(javaClient2.getCurrentState(), AI.MCTS,new AIConfig(),0);
+    AIController Controller =
+        new AIController(javaClient.getCurrentState(), AI.MCTS, new AIConfig(), 0);
+    AIController Controller2 =
+        new AIController(javaClient2.getCurrentState(), AI.MCTS, new AIConfig(), 0);
     try {
       if (javaClient.isItMyTurn()) {
         javaClient.makeMove(Controller.getNextMove());
@@ -338,8 +334,10 @@ class ClientTest {
         "localhost", "9998", javaClient.getCurrentGameSessionID(), "Team2");
     javaClient.pullData();
     javaClient2.pullData();
-    AIController Controller = new AIController(javaClient.getCurrentState(), AI.MCTS,new AIConfig(),0);
-    AIController Controller2 = new AIController(javaClient2.getCurrentState(), AI.MCTS,new AIConfig(),0);
+    AIController Controller =
+        new AIController(javaClient.getCurrentState(), AI.MCTS, new AIConfig(), 0);
+    AIController Controller2 =
+        new AIController(javaClient2.getCurrentState(), AI.MCTS, new AIConfig(), 0);
     try {
       if (javaClient.isItMyTurn()) {
 
