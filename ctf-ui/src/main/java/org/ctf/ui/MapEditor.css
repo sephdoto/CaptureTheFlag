@@ -79,6 +79,14 @@
 .blur-pane{	
 	 -fx-background-color: rgb(255,255,255,0.25);	 
 }
+.loading-pane{
+	-fx-border-color: rgba(255,255,255,1);
+	 -fx-border-width: 2px;
+	 -fx-background-color: rgba(0,0,0,0.8);
+	 -fx-background-radius: 20px; 
+	 -fx-border-radius: 20px;
+}
+
 .leave-button {
 	 -fx-background-color: rgb(15,15,15); 
     -fx-text-fill: white; 

@@ -1,6 +1,8 @@
 package org.ctf.ui;
 
 import org.ctf.shared.client.Client;
+import org.ctf.shared.constants.Enums.ImageType;
+import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.RemoteWaitingThread;
 import javafx.animation.FadeTransition;
 import javafx.animation.Timeline;
@@ -10,6 +12,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -48,7 +54,11 @@ public class RemoteWaitingScene extends Scene {
 	}
 
 	private void createLayout() {
-		root.setStyle(" -fx-background-color: rgb(25,25,25);");
+		//root.setStyle(" -fx-background-color: rgb(25,25,25);");
+	 Image backgroundImage = ImageController.loadRandomThemedImage(ImageType.HOME);
+	    BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT,
+	        BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, App.backgroundSize);
+	    root.setBackground(new Background(background));
 		VBox mainBox = new VBox();
 		mainBox.setAlignment(Pos.TOP_CENTER);
 		Image mp = new Image(getClass().getResourceAsStream("multiplayerlogo.png"));
@@ -79,8 +89,19 @@ public class RemoteWaitingScene extends Scene {
 //	    startTransition.setAutoReverse(true); //
 //	    startTransition.setCycleCount(Timeline.INDEFINITE);
 //	    startTransition.play();
-	    StackPane.setAlignment(text, Pos.CENTER);
-	    root.getChildren().add(text);
+	    StackPane wrapper = new StackPane();
+	    wrapper.getStyleClass().add("loading-pane"); 
+	    wrapper.maxWidthProperty().bind(this.widthProperty().multiply(0.5));
+	    wrapper.maxHeightProperty().bind(this.heightProperty().multiply(0.4));
+	    wrapper.minWidthProperty().bind(this.widthProperty().multiply(0.5));
+        wrapper.maxWidthProperty().bind(this.heightProperty().multiply(0.4));
+	    
+	    
+	    wrapper.getChildren().add(text);
+	    
+		StackPane.setAlignment(text, Pos.CENTER);
+	    //root.getChildren().add(text);
+		root.getChildren().add(wrapper);
 		root.getChildren().add(mainBox);
 		
 		
