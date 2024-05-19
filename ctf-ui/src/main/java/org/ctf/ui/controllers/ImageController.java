@@ -2,6 +2,7 @@ package org.ctf.ui.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,15 +48,15 @@ public class ImageController {
    * @return 
    */
   public static Image loadImage(ImageType type, Themes theme, String imageName) {
+//    System.out.println(Constants.toUIPictures + theme.toString().toLowerCase() + File.separator + type.getFolderName()+ imageName);
     try {
       File locationFile = new File(Constants.toUIPictures + theme.toString().toLowerCase() + File.separator + type.getFolderName());
       String location = locationFile.toURI().toURL().toString();
       
       //try loading the image with all available extensions
       for(String extension : getAllExtensionsIn(locationFile)) {
-        try {
-          return new Image(location + imageName + "." + extension);
-        } catch (Exception e) {e.printStackTrace();}
+          if(new File(locationFile.getAbsolutePath() + File.separator + imageName+"."+extension).exists())
+            return new Image(location + imageName + "." + extension);
       }
       //try loading the default image if the previous step didn't work
       try {
