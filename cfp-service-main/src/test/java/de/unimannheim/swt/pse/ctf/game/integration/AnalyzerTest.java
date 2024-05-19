@@ -150,10 +150,10 @@ public class AnalyzerTest {
   @Test
   void testGetSavedGame() {}
 
-//  @Test
-//TODO This Test is failing. Fix it
+  // @Test
+  // TODO This Test is failing. Fix it
   void testReadFile() {
-    
+
     GameSaveHandler analyzer = new GameSaveHandler();
     boolean b = analyzer.readFile("analyzerTestDataFile");
     assertTrue(b);
@@ -208,8 +208,8 @@ public class AnalyzerTest {
         "p2");
     p1.pullData();
     p2.pullData();
-    AIController controller1 = new AIController(p1.getCurrentState(), AI.RANDOM,new AIConfig(), 0);
-    AIController controller2 = new AIController(p2.getCurrentState(), AI.RANDOM,new AIConfig(), 0);
+    AIController controller1 = new AIController(p1.getCurrentState(), AI.RANDOM, new AIConfig(), 0);
+    AIController controller2 = new AIController(p2.getCurrentState(), AI.RANDOM, new AIConfig(), 0);
     analyzer.addGameState(p1.getCurrentState());
     for (int i = 0; i < 5; i++) {
       try {
@@ -241,7 +241,6 @@ public class AnalyzerTest {
               getClass().getResourceAsStream("/maptemplates/10x10_2teams_example.json"),
               MapTemplate.class);
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
 

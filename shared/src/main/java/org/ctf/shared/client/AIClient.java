@@ -48,12 +48,13 @@ public class AIClient extends Client {
       () -> {
         try {
           getStateFromServer();
-          if(controllerToken){
+          if (controllerToken) {
             if (moveTimeLimitedGameTrigger) {
               controllerThinkingTime = getRemainingMoveTimeInSeconds() - 1;
               //  logger.info("We had " + controllerThinkingTime + " to think");
             }
-            controller = new AIController(getCurrentState(), selectedAI, aiConfig, controllerThinkingTime);
+            controller =
+                new AIController(getCurrentState(), selectedAI, aiConfig, controllerThinkingTime);
             controllerToken = false;
           }
           pullData();
@@ -241,7 +242,7 @@ public class AIClient extends Client {
       throw new UnknownError("Server Error or Setting error");
     }
     this.grid = gameState.getGrid();
-    if(enableQueue){
+    if (enableQueue) {
       if (isNewGameState(gameState)) {
         this.fifoQueue.offer(gameState);
       }

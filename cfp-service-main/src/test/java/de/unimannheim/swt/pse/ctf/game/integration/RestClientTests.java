@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
 import java.io.IOException;
-
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.ai.AIController;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
@@ -160,8 +159,10 @@ public class RestClientTests {
         "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
     javaClient.pullData();
     javaClient2.pullData();
-    AIController Controller = new AIController(javaClient.getCurrentState(), AI.MCTS,new AIConfig(), 0);
-    AIController Controller2 = new AIController(javaClient2.getCurrentState(), AI.MCTS,new AIConfig(), 0);
+    AIController Controller =
+        new AIController(javaClient.getCurrentState(), AI.MCTS, new AIConfig(), 0);
+    AIController Controller2 =
+        new AIController(javaClient2.getCurrentState(), AI.MCTS, new AIConfig(), 0);
     try {
       if (javaClient.isItMyTurn()) {
 
@@ -257,10 +258,10 @@ public class RestClientTests {
       javaClient2.joinExistingGame(
           "localhost", "9999", javaClient.getCurrentGameSessionID(), "Team2");
       javaClient.getStateFromServer();
-      
-    } catch (Accepted expected) {}
+
+    } catch (Accepted expected) {
+    }
     assertNotNull(javaClient.getTeams());
-    
   }
 
   @Test

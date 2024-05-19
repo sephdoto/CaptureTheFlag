@@ -13,13 +13,11 @@ public class Enums {
     STARWARS,
     LOTR,
     BAYERN;
-
   }
-  
+
   /**
-   * Move evaluations to represent how good or bad a move is.
-   * TODO add colors
-   * 
+   * Move evaluations to represent how good or bad a move is. TODO add colors
+   *
    * @author sistumpf
    */
   public enum MoveEvaluation {
@@ -74,7 +72,7 @@ public class Enums {
       return this.folderName;
     }
   }
-  
+
   /**
    * Contains the different Sound Types and their locations in the project.
    *
@@ -97,20 +95,14 @@ public class Enums {
     public String getLocation() {
       return this.location;
     }
-    
+
     /**
      * MISC is used for sounds like Button clicks, a user should not change that.
-     * 
+     *
      * @return An Array Containing the SoundTypes a user is allowed to change
      */
     public SoundType[] userChangeValues() {
-      return new SoundType[] {
-          MOVE,
-          KILL,
-          CAPTURE,
-          SELECT,
-          DESELECT
-      };
+      return new SoundType[] {MOVE, KILL, CAPTURE, SELECT, DESELECT};
     }
   }
 
@@ -151,39 +143,38 @@ public class Enums {
       return this.label;
     }
   }
-  
-  
-  	/**
-  	 * Enum for the UI to show COnfig Labels and their Description {@link Descriptions}
-  	 * 
-  	 * @author Manuel Krakowski
-  	 */
-	public enum AIConfigs {
-	  RANDOM("RANDOM"),
-	  MCTS("MCTS"),
-	  IMPROVED("MCTS-IMPROVED"),
-	  EXPERIMENTAL("EXPERIMENTAL"),
-	  
-	  C("UCT-C"), 
-	  MAX_STEPS("Max-Steps"),
-	  NUM_THREADS("Number of Threads "),
-	  
-	  ATTACK_POWER_MUL("Attack-Power"),
-	  PIECE_MUL("Pieces"),
-	  FLAG_MUL("Flags"),
-	  DIRECTION_MUL("Directions"),
-	  SHAPE_REACH_MUL("Shape-Reach"),
-	  BASE_DISTANCE_MUL("Base-Distance");
-	 
-	  private final String name;
 
-	  private AIConfigs(final String name) {
-		  this.name = name;
-	  }
+  /**
+   * Enum for the UI to show COnfig Labels and their Description {@link Descriptions}
+   *
+   * @author Manuel Krakowski
+   */
+  public enum AIConfigs {
+    RANDOM("RANDOM"),
+    MCTS("MCTS"),
+    IMPROVED("MCTS-IMPROVED"),
+    EXPERIMENTAL("EXPERIMENTAL"),
 
-	  @Override
-	  public String toString() {
-		  return this.name;
-	  }
-	}
+    C("UCT-C"),
+    MAX_STEPS("Max-Steps"),
+    NUM_THREADS("Number of Threads "),
+
+    ATTACK_POWER_MUL("Attack-Power"),
+    PIECE_MUL("Pieces"),
+    FLAG_MUL("Flags"),
+    DIRECTION_MUL("Directions"),
+    SHAPE_REACH_MUL("Shape-Reach"),
+    BASE_DISTANCE_MUL("Base-Distance");
+
+    private final String name;
+
+    private AIConfigs(final String name) {
+      this.name = name;
+    }
+
+    @Override
+    public String toString() {
+      return this.name;
+    }
+  }
 }

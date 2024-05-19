@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
 import java.io.IOException;
-
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
@@ -45,8 +44,7 @@ public class ServerManagerTest {
     ServerDetails serverDetails = new ServerDetails("localhost", "localhost");
     serverDetails.setHost("localhost");
     serverDetails.setPort("9995");
-    ServerManager manager =
-        new ServerManager(comm, serverDetails, template);
+    ServerManager manager = new ServerManager(comm, serverDetails, template);
     try {
       manager.createGame();
     } catch (Exception e) {
@@ -94,14 +92,14 @@ public class ServerManagerTest {
     MapTemplate template = createGameTemplate();
     ServerManager manager =
         new ServerManager(comm, new ServerDetails("localhost", "9995"), template);
-    assertTrue(manager.serverDetails.isLocalhost());    
+    assertTrue(manager.serverDetails.isLocalhost());
     try {
       manager.createGame();
     } catch (Exception e) {
       fail();
     }
     ServerManager manager2 =
-    new ServerManager(comm, new ServerDetails("localhost", "9995"), manager.getGameSessionID());
+        new ServerManager(comm, new ServerDetails("localhost", "9995"), manager.getGameSessionID());
     manager2.getGameSessionID();
     assertNotNull(manager2.getGameSessionID());
     assertTrue(manager2.isSessionActive());

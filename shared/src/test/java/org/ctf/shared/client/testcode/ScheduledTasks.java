@@ -1,18 +1,13 @@
 package org.ctf.shared.client.testcode;
 
 import com.google.gson.Gson;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import org.ctf.shared.ai.AIConfig;
-import org.ctf.shared.ai.AIController;
-import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
-import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.client.AIClient;
 import org.ctf.shared.client.AIClientStepBuilder;
 import org.ctf.shared.client.lib.ServerDetails;
@@ -197,58 +192,58 @@ public class ScheduledTasks {
 
     // AIController Controller1 = new AIController(client1.getCurrentState(), AI.RANDOM);
     //  AIController Controller2 = new AIController(client2.getCurrentState(), AI.MCTS);
-   /*  Runnable playTask =
-        () -> {
-          try {
-            System.out.println("running playtask 1");
-            int thinkingTime = 10;
-            if (client1.moveTimeLimitedGameTrigger) {
-              thinkingTime = client1.getRemainingMoveTimeInSeconds() - 1;
-              System.out.println("We had " +thinkingTime + " to think");
-            }
-            AIController controller = new AIController(client1.getCurrentState(), client1.selectedAI, thinkingTime);
-            client1.pullData();
-            controller.update(client1.getCurrentState());
-              client2.pullData();
-            Controller2.update(client2.getCurrentState()); 
-            if (client1.isItMyTurn()) {
-              client1.makeMove(controller.getNextMove());
-            }
-            /* else if (client2.isItMyTurn()) {
-              client2.makeMove(Controller2.getNextMove());
-            } 
-            client1.pullData();
-            controller.update(client1.getCurrentState());
+    /*  Runnable playTask =
+    () -> {
+      try {
+        System.out.println("running playtask 1");
+        int thinkingTime = 10;
+        if (client1.moveTimeLimitedGameTrigger) {
+          thinkingTime = client1.getRemainingMoveTimeInSeconds() - 1;
+          System.out.println("We had " +thinkingTime + " to think");
+        }
+        AIController controller = new AIController(client1.getCurrentState(), client1.selectedAI, thinkingTime);
+        client1.pullData();
+        controller.update(client1.getCurrentState());
           client2.pullData();
-            Controller2.update(client2.getCurrentState());
-            TimeUnit.MILLISECONDS.sleep(1500);
-          } catch (InterruptedException | NoMovesLeftException | InvalidShapeException e) {
-            e.printStackTrace();
-          }
-        }; */
+        Controller2.update(client2.getCurrentState());
+        if (client1.isItMyTurn()) {
+          client1.makeMove(controller.getNextMove());
+        }
+        /* else if (client2.isItMyTurn()) {
+          client2.makeMove(Controller2.getNextMove());
+        }
+        client1.pullData();
+        controller.update(client1.getCurrentState());
+      client2.pullData();
+        Controller2.update(client2.getCurrentState());
+        TimeUnit.MILLISECONDS.sleep(1500);
+      } catch (InterruptedException | NoMovesLeftException | InvalidShapeException e) {
+        e.printStackTrace();
+      }
+    }; */
 
-/*     Runnable playTask2 =
-        () -> {
-          try {
-            System.out.println("running playtask 2");
-            int thinkingTime = 10;
-            if (client2.moveTimeLimitedGameTrigger) {
-              thinkingTime = client1.getRemainingMoveTimeInSeconds() - 1;
-              System.out.println("We had " + thinkingTime + " to think");
-            }
-            AIController controller2 = new AIController(client2.getCurrentState(), client2.selectedAI, thinkingTime);
-            client2.pullData();
-            controller2.update(client2.getCurrentState());
-            if (client2.isItMyTurn()) {
-              client2.makeMove(controller2.getNextMove());
-            }
-            client2.pullData();
-            controller2.update(client2.getCurrentState());
-            TimeUnit.MILLISECONDS.sleep(1500);
-          } catch (InterruptedException | NoMovesLeftException | InvalidShapeException e) {
-            e.printStackTrace();
-          }
-        }; */
+    /*     Runnable playTask2 =
+    () -> {
+      try {
+        System.out.println("running playtask 2");
+        int thinkingTime = 10;
+        if (client2.moveTimeLimitedGameTrigger) {
+          thinkingTime = client1.getRemainingMoveTimeInSeconds() - 1;
+          System.out.println("We had " + thinkingTime + " to think");
+        }
+        AIController controller2 = new AIController(client2.getCurrentState(), client2.selectedAI, thinkingTime);
+        client2.pullData();
+        controller2.update(client2.getCurrentState());
+        if (client2.isItMyTurn()) {
+          client2.makeMove(controller2.getNextMove());
+        }
+        client2.pullData();
+        controller2.update(client2.getCurrentState());
+        TimeUnit.MILLISECONDS.sleep(1500);
+      } catch (InterruptedException | NoMovesLeftException | InvalidShapeException e) {
+        e.printStackTrace();
+      }
+    }; */
 
     Runnable printGson =
         () -> {
@@ -259,7 +254,7 @@ public class ScheduledTasks {
             e.printStackTrace();
           }
         };
-/* 
+    /*
     scheduler.schedule(CreateGame, 1, TimeUnit.SECONDS);
     scheduler.schedule(joinTask, 3, TimeUnit.SECONDS);
     scheduler.schedule(joinTask2, 5, TimeUnit.SECONDS);
@@ -271,45 +266,45 @@ public class ScheduledTasks {
     // scheduler.scheduleWithFixedDelay(playTask2, 11, 2, TimeUnit.SECONDS);
     try { */
 
-      Callable<Integer> task2 =
-          new Callable<Integer>() {
-            public Integer call() {
-              try {
-                Thread.sleep(5000);
-              } catch (InterruptedException ex) {
-                ex.printStackTrace();
-              }
-
-              return 1000000;
+    Callable<Integer> task2 =
+        new Callable<Integer>() {
+          public Integer call() {
+            try {
+              Thread.sleep(5000);
+            } catch (InterruptedException ex) {
+              ex.printStackTrace();
             }
-          };
 
-      Callable<Integer> task =
-          new Callable<Integer>() {
-            public Integer call() {
-              if (true) {
-                Future<Integer> result2 = scheduler.schedule(task2, 5, TimeUnit.SECONDS);
-                try {
-                  System.out.println(result2.get() + "of sresult 2");
-                } catch (InterruptedException | ExecutionException e) {
-                  e.printStackTrace();
-                }
-              }
+            return 1000000;
+          }
+        };
+
+    Callable<Integer> task =
+        new Callable<Integer>() {
+          public Integer call() {
+            if (true) {
+              Future<Integer> result2 = scheduler.schedule(task2, 5, TimeUnit.SECONDS);
               try {
-                Thread.sleep(5000);
-              } catch (InterruptedException ex) {
-                ex.printStackTrace();
+                System.out.println(result2.get() + "of sresult 2");
+              } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
               }
-
-              return 1000000;
             }
-          };
+            try {
+              Thread.sleep(5000);
+            } catch (InterruptedException ex) {
+              ex.printStackTrace();
+            }
 
-      int delay = 5;
+            return 1000000;
+          }
+        };
 
-      Future<Integer> result = scheduler.schedule(task, delay, TimeUnit.SECONDS);
+    int delay = 5;
 
-/*       try {
+    Future<Integer> result = scheduler.schedule(task, delay, TimeUnit.SECONDS);
+
+    /*       try {
 
         Integer value = result.get();
 
@@ -322,5 +317,5 @@ public class ScheduledTasks {
       scheduler.shutdown();
     } catch (Exception e) {
     }  */
-   }  
+  }
 }

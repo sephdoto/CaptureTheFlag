@@ -96,16 +96,16 @@ public class ServerManager {
    */
   public int getCurrentNumberofTeams() {
     int counter = 0;
-      try {
-        GameState gameState = comm.getCurrentGameState(currentServer + "/" + gameSessionID);
-        for (int i = 0; i < gameState.getTeams().length; i++) {
-          if (gameState.getTeams()[i] != null) {
-            counter++;
-          }
+    try {
+      GameState gameState = comm.getCurrentGameState(currentServer + "/" + gameSessionID);
+      for (int i = 0; i < gameState.getTeams().length; i++) {
+        if (gameState.getTeams()[i] != null) {
+          counter++;
         }
-      } catch (Exception e) {
-        return 0;
       }
+    } catch (Exception e) {
+      return 0;
+    }
     return counter;
   }
 

@@ -59,13 +59,13 @@ public class ServerChecker {
     CommLayer comm = new CommLayer();
     try {
       comm.getCurrentSessionState(
-        "http://"
-            + serverDetails.getHost()
-            + ":"
-            + serverDetails.getPort()
-            + "/api/gamesession"
-            + "/"
-            + sessionID);
+          "http://"
+              + serverDetails.getHost()
+              + ":"
+              + serverDetails.getPort()
+              + "/api/gamesession"
+              + "/"
+              + sessionID);
     } catch (SessionNotFound | UnknownError | URLError e) {
       return false;
     }

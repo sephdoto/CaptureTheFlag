@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
 import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
 import java.io.IOException;
-
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.exceptions.Accepted;

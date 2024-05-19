@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unimannheim.swt.pse.ctf.CtfApplication;
 import java.io.IOException;
-
 import org.ctf.shared.client.service.RestClientLayer;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.exceptions.Accepted;

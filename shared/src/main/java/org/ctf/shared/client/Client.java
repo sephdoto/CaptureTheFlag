@@ -476,14 +476,16 @@ public class Client implements GameClientInterface {
     try {
       gameState = comm.getCurrentGameState(currentServer);
       normaliseGameState(gameState);
-      if(gameState.getTeams()[myTeam] == null) this.gameOver = true;    //TODO review if this is OK. Works and everything but maybe you had other plans.
+      if (gameState.getTeams()[myTeam] == null)
+        this.gameOver =
+            true; // TODO review if this is OK. Works and everything but maybe you had other plans.
     } catch (SessionNotFound e) {
       throw new SessionNotFound("Session isnt available for this request");
     } catch (UnknownError e) {
       throw new UnknownError("Server Error or Setting error");
     }
     this.grid = gameState.getGrid();
-    if(enableQueue){
+    if (enableQueue) {
       if (isNewGameState(gameState)) {
         this.fifoQueue.offer(gameState);
       }
@@ -852,7 +854,8 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Method to interact with the queue storing different game states for the UI. Queue is thread safe.
+   * Method to interact with the queue storing different game states for the UI. Queue is thread
+   * safe.
    *
    * @author rsyed
    * @return The game state in the FIFO queue

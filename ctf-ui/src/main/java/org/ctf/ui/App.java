@@ -38,7 +38,6 @@ import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.controllers.SettingsSetter;
 import org.ctf.ui.customobjects.*;
 
-
 /**
  * @author mkrakows
  * @author rsyed (Bug fixer) startpoint for the GUI, server management features
@@ -105,26 +104,44 @@ public class App extends Application {
     ctfv.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.8));
     ctfv.setPreserveRatio(true);
     StackPane.setAlignment(ctfv, Pos.TOP_CENTER);
-    HomeScreenButton i1 = new HomeScreenButton("CREATE MAP", mainStage, () -> {
-      ssc.switchToMapEditorScene(mainStage);
-    });
-    HomeScreenButton i2 = new HomeScreenButton("CREATE GAME", mainStage, () -> {
-      // CreateGameScreen.initCreateGameScreen(mainStage);
-      ssc.switchToCreateGameScene(mainStage);
-    });
-    HomeScreenButton i3 = new HomeScreenButton("JOIN GAME", mainStage, () -> {
-      ssc.switchToJoinScene(mainStage);
-    });
-    HomeScreenButton i4 = new HomeScreenButton("SETTINGS", mainStage, () -> {
-      root.getChildren().add(new ComponentCreator(startScene).createSettingsWindow(root));
-    });
+    HomeScreenButton i1 =
+        new HomeScreenButton(
+            "CREATE MAP",
+            mainStage,
+            () -> {
+              ssc.switchToMapEditorScene(mainStage);
+            });
+    HomeScreenButton i2 =
+        new HomeScreenButton(
+            "CREATE GAME",
+            mainStage,
+            () -> {
+              // CreateGameScreen.initCreateGameScreen(mainStage);
+              ssc.switchToCreateGameScene(mainStage);
+            });
+    HomeScreenButton i3 =
+        new HomeScreenButton(
+            "JOIN GAME",
+            mainStage,
+            () -> {
+              ssc.switchToJoinScene(mainStage);
+            });
+    HomeScreenButton i4 =
+        new HomeScreenButton(
+            "SETTINGS",
+            mainStage,
+            () -> {
+              root.getChildren().add(new ComponentCreator(startScene).createSettingsWindow(root));
+            });
     VBox vbox = new VBox(ctfv, i1, i2, i3, i4);
     vbox.spacingProperty().bind(root.heightProperty().multiply(0.02));
-    root.heightProperty().addListener((observable, oldValue, newValue) -> {
-      double margin = newValue.doubleValue() * 0.1;
-      VBox.setMargin(i1, new Insets(margin, 0, 0, 0));
-      VBox.setMargin(ctfv, new Insets(margin, 0, 0, 0));
-    });
+    root.heightProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              double margin = newValue.doubleValue() * 0.1;
+              VBox.setMargin(i1, new Insets(margin, 0, 0, 0));
+              VBox.setMargin(ctfv, new Insets(margin, 0, 0, 0));
+            });
 
     StackPane.setAlignment(vbox, Pos.TOP_CENTER);
     vbox.setAlignment(Pos.TOP_CENTER);
@@ -132,8 +149,12 @@ public class App extends Application {
     App.wrapper = new StackPane();
     root.getChildren().addAll(wrapper, vbox);
     BackgroundImage background =
-        new BackgroundImage(App.backgroundImage, BackgroundRepeat.NO_REPEAT,
-            BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, App.backgroundSize);
+        new BackgroundImage(
+            App.backgroundImage,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundPosition.CENTER,
+            App.backgroundSize);
     App.wrapper.setBackground(new Background(background));
     return root;
   }
@@ -174,17 +195,25 @@ public class App extends Application {
   private Parent createLockScreen() {
     StackPane layer = new StackPane();
     backgroundImage = ImageController.loadRandomThemedImage(ImageType.HOME);
-    BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT,
-        BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
+    BackgroundImage background =
+        new BackgroundImage(
+            backgroundImage,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundPosition.CENTER,
+            backgroundSize);
     layer.setBackground(new Background(background));
-    layer.widthProperty().addListener((obs, old, newV) -> {
-      double size = newV.doubleValue() * 0.02;
-      layer.setPadding(new Insets(size));
-    });
-    layer.setPadding(new Insets(50));   
+    layer
+        .widthProperty()
+        .addListener(
+            (obs, old, newV) -> {
+              double size = newV.doubleValue() * 0.02;
+              layer.setPadding(new Insets(size));
+            });
+    layer.setPadding(new Insets(50));
     VBox root = new VBox();
     root.setAlignment(Pos.CENTER);
-    
+
     Image ctf = ImageController.loadThemedImage(ImageType.MISC, "CaptureTheFlag");
     ImageView ctfv = new ImageView(ctf);
     ctfv.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.8));
@@ -196,10 +225,13 @@ public class App extends Application {
     root.getChildren().add(ctfv);
 
     Text text = new Text("Press any Key to Start!");
-    layer.heightProperty().addListener((obs, old, newV) -> {
-      double size = newV.doubleValue() * 0.2;
-      VBox.setMargin(ctfv, new Insets(0, 0, newV.doubleValue() * 0.6, 0));
-    });
+    layer
+        .heightProperty()
+        .addListener(
+            (obs, old, newV) -> {
+              double size = newV.doubleValue() * 0.2;
+              VBox.setMargin(ctfv, new Insets(0, 0, newV.doubleValue() * 0.6, 0));
+            });
     text.setStyle("-fx-fill: white ;");
     text.setOpacity(0);
 
@@ -214,9 +246,12 @@ public class App extends Application {
     startTransition.setAutoReverse(true); //
     startTransition.setCycleCount(Timeline.INDEFINITE);
     startTransition.play();
-    text.fontProperty().bind(Bindings.createObjectBinding(
-        () -> Font.font("Century Gothic", mainStage.getWidth() / 40), mainStage.widthProperty()));
-   
+    text.fontProperty()
+        .bind(
+            Bindings.createObjectBinding(
+                () -> Font.font("Century Gothic", mainStage.getWidth() / 40),
+                mainStage.widthProperty()));
+
     layer.getChildren().add(root);
     return layer;
   }

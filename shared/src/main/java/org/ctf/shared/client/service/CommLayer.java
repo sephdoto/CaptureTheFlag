@@ -16,7 +16,6 @@ import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.ctf.shared.state.GameState;
-import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.exceptions.ForbiddenMove;
 import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
