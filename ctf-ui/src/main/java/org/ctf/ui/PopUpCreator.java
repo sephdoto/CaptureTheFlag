@@ -51,16 +51,15 @@ public class PopUpCreator {
 	private HashMap<AIConfigs, Integer> multipliers = new HashMap<AIConfigs, Integer>();
 	private SpinnerValueFactory<Integer> values;
 	private SpinnerValueFactory<Double> values2;
-	private ObjectProperty<Font> popUpLabel = new SimpleObjectProperty<Font>(Font.getDefault());
-	private ObjectProperty<Font> leaveButtonText = new SimpleObjectProperty<Font>(Font.getDefault());
-	private ObjectProperty<Font> aiPowerText = new SimpleObjectProperty<Font>(Font.getDefault());
-	private ObjectProperty<Font> aiConfigHeader = new SimpleObjectProperty<Font>(Font.getDefault());
-	private ObjectProperty<Font> configButtonText = new SimpleObjectProperty<Font>(Font.getDefault());
-	private ObjectProperty<Font> configDescriptionLabel = new SimpleObjectProperty<Font>(Font.getDefault());
-	private ObjectProperty<Font> spinnerLabel = new SimpleObjectProperty<Font>(Font.getDefault());
-	private ObjectProperty<Font> enterNameButtonText = new SimpleObjectProperty<Font>(Font.getDefault());
-	private ObjectProperty<Font> saveConfigLavel = new SimpleObjectProperty<Font>(Font.getDefault());
-
+private ObjectProperty<Font> popUpLabel;
+	private ObjectProperty<Font> leaveButtonText;
+	private ObjectProperty<Font> aiPowerText;
+	private ObjectProperty<Font> aiConfigHeader;
+	private ObjectProperty<Font> configButtonText; 
+	private ObjectProperty<Font> configDescriptionLabel;
+	private ObjectProperty<Font> spinnerLabel;
+	private ObjectProperty<Font> enterNameButtonText; 
+	private ObjectProperty<Font> saveConfigLavel; 
 	public PopUpCreator(Scene scene, StackPane root, HomeSceneController hsc) {
 		this.hsc = hsc;
 		this.scene = scene;
@@ -73,6 +72,15 @@ public class PopUpCreator {
 	 *         size of the screen
 	 */
 	private void manageFontSizes() {
+		 popUpLabel = new SimpleObjectProperty<Font>(Font.font(scene.getWidth()/50));
+		 leaveButtonText = new SimpleObjectProperty<Font>(Font.font(scene.getWidth()/80));
+		 aiPowerText = new SimpleObjectProperty<Font>(Font.font(scene.getWidth()/50));
+		 aiConfigHeader = new SimpleObjectProperty<Font>(Font.font(scene.getWidth()/40));
+		 configButtonText = new SimpleObjectProperty<Font>(Font.font(scene.getWidth()/60));
+		 configDescriptionLabel = new SimpleObjectProperty<Font>(Font.font(scene.getWidth()/70));
+		 spinnerLabel = new SimpleObjectProperty<Font>(Font.font(scene.getWidth()/50));
+		 enterNameButtonText = new SimpleObjectProperty<Font>(Font.font(scene.getWidth()/60));
+		 saveConfigLavel = new SimpleObjectProperty<Font>(Font.font(scene.getWidth()/35));
 		root.widthProperty().addListener(new ChangeListener<Number>() {
 			public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth, Number newWidth) {
 				popUpLabel.set(Font.font(newWidth.doubleValue() / 50));

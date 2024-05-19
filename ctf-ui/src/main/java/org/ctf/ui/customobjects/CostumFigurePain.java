@@ -201,8 +201,8 @@ public class CostumFigurePain extends Pane {
 
 	public void setParente(BackgroundCellV2 parent) {
 		this.parent = parent;
-		this.posX = parent.x;
-		this.posY = parent.y;
+		this.posX = parent.getX();
+		this.posY = parent.getY();
 	}
 	
 	

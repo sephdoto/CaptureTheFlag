@@ -19,33 +19,33 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 
 public class BackgroundCellV2 extends Pane {
-	public int x, y;
-	boolean occupied;
-	String name;
-	public Circle rc;
-	public Circle rc2;
-	public boolean active;
-	//public Game game;
-	public StackPane base;
-	CostumFigurePain child;
-	BaseRep teamBase;
+	private  int x, y;
+	private boolean occupied;
+	//private String name;
+	private Circle rc;
+	private Circle rc2;
+	private boolean active;
+	private StackPane base;
+	private CostumFigurePain child;
+	private BaseRep teamBase;
 	Color testColor;
 
 	public BackgroundCellV2(int x, int y) {
 		testColor = Color.rgb(173, 216, 230, 0.7);
 		this.setStyle( "-fx-border-color: black; " + "-fx-border-width: 1.2px ");
-	//	this.setStyle( "-fx-background-color: rgb(173, 216, 230, 0.3)");
-
 		this.x = x;
 		this.y = y;
 		this.occupied = false;
 		//this.maxHeightProperty().bind(pane.gridPane.heightProperty().divide(rows));
 		//this.maxWidthProperty().bind(pane.gridPane.widthProperty().divide(cols));
 		this.createBase();
-		//createCircle2();
 		createCircle();
 	}
 
+	/**
+	 * Creates the circle which is used to indicate a possible move on an empty cell
+	 * @author Manuel Krakowski
+	 */
 	public void createCircle() {
 		NumberBinding binding = Bindings.divide(widthProperty(), 6);
 		NumberBinding roundSize = Bindings.createIntegerBinding(() ->  binding.intValue(), binding);
@@ -58,6 +58,11 @@ public class BackgroundCellV2 extends Pane {
 		rc.setFill(null);
 		base.getChildren().add(rc);
 	}
+	
+	/**
+	 * Creates the circle which is drawn around a figure to inciate that it is curently selected
+	 * @author Manuel Krakowski
+	 */
 	public void createCircle2() {
 		NumberBinding binding = Bindings.divide(widthProperty(), 2.8);
 		NumberBinding roundSize = Bindings.createIntegerBinding(() ->  binding.intValue(), binding);
@@ -73,6 +78,10 @@ public class BackgroundCellV2 extends Pane {
 		base.getChildren().add(rc2);
 	}
 
+	/**
+	 * Adds a figure to the cell and resizes it with it
+	 * @param figure {@link CostumFigurePain}
+	 */
 	public void addFigure(CostumFigurePain figure) {
 		NumberBinding binding = Bindings.multiply(widthProperty(), 0.5);
 		NumberBinding roundSize = Bindings.createIntegerBinding(() ->  binding.intValue(), binding);
@@ -85,7 +94,22 @@ public class BackgroundCellV2 extends Pane {
 		figure.setParente(this);
 	}
 	
+	/**
+	 * removes the current figure from the Backgroundcell
+	 * @author Manuel Krakowski
+	 */
+	@Deprecated
+	public void removeFigure() {
+		occupied = false;
+		base.getChildren().remove(child);
+		this.child = null;
+	}
+	
 
+	/**
+	 * adds a Block to the cell and resizes it with it
+	 * 
+	 */
 	public void addBlock() {
 		NumberBinding binding = Bindings.multiply(widthProperty(), 0.5);
 		NumberBinding roundSize = Bindings.createIntegerBinding(() ->  binding.intValue(), binding);
@@ -198,6 +222,10 @@ public class BackgroundCellV2 extends Pane {
 		this.base = base;
 		this.getChildren().add(base);
 	}
+	public void performClickOnCell() {
+		int[] xk = { x, y };
+		Game.makeMoveRequest(xk);
+	}
 	
 
 	public int getX() {
@@ -216,11 +244,6 @@ public class BackgroundCellV2 extends Pane {
 		this.y = y;
 	}
 
-	public void performClickOnCell() {
-			int[] xk = { x, y };
-			Game.makeMoveRequest(xk);
-	}
-
 	public void setActive() {
 		this.active = true;
 	}
@@ -228,11 +251,8 @@ public class BackgroundCellV2 extends Pane {
 	public boolean isOccupied() {
 		return occupied;
 	}
-	public void removeFigure() {
-		occupied = false;
-		base.getChildren().remove(child);
-		this.child = null;
-	}
+	
+	
 	
 	public CostumFigurePain getChild() {
 		return child;

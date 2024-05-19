@@ -110,7 +110,7 @@ public class Game {
 		}
 		for (BackgroundCellV2 c : cb.getCells().values()) {
 			for (int[] pos : possibleMoves) {
-				if (c.x == pos[0] && c.y == pos[1]) {
+				if (c.getX() == pos[0] && c.getY() == pos[1]) {
 					System.out.println(" " + pos[0] + ", " + pos[1]);
 					if (!c.isOccupied()) {
 						c.showPossibleMove();

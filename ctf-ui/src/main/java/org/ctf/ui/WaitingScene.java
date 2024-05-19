@@ -42,6 +42,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+
+import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.ui.customobjects.BaseRep;
 import org.ctf.ui.customobjects.CostumFigurePain;
 
@@ -169,7 +171,7 @@ public class WaitingScene extends Scene {
         .addListener(
             (observable, oldValue, newValue) -> {
               double newSpacing = newValue.doubleValue() * 0.02;
-              double newPadding = newValue.doubleValue()*0.05;
+              double newPadding = newValue.doubleValue()*0.04;
               mainBox.setSpacing(newSpacing);
               mainBox.setPadding(new Insets(0,0, newPadding, 0));
             });
@@ -721,6 +723,7 @@ public class WaitingScene extends Scene {
     exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.35));
     exit.setOnAction(
         e -> {
+        CreateGameController.deleteGame();
           hsc.switchtoHomeScreen(e);
         });
     return exit;

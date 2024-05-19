@@ -66,7 +66,6 @@ public class TestScene  {
 		this.hsc = hsc;
 		 primaryStage.setMinWidth(720.0);
 	      primaryStage.setMinHeight(720.0);
-
 	      // main panes
 	      StackPane king = new StackPane();
 	      king.setAlignment(Pos.CENTER_LEFT);
@@ -79,8 +78,6 @@ public class TestScene  {
 	      nbR = new SimpleIntegerProperty(15);
 
 	      createPanes();
-	      //addWinLabel();
-	      //king.setPadding(new Insets(20));
 	      anchor.maxWidthProperty().bind(king.widthProperty().multiply(0.7));
 	      king.getChildren().add(anchor);
 
@@ -133,7 +130,7 @@ public class TestScene  {
 		         }
 		      }
 		     
-		      gPane.setGridLinesVisible(true);
+		      //gPane.setGridLinesVisible(true);
 		      stack.getChildren().addAll(gPane);
 		      anchor.getChildren().add(stack);
 		      AnchorPane.setTopAnchor(stack, 20.0);

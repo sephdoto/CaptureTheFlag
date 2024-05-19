@@ -64,7 +64,7 @@ public class CretaeGameScreenV2 extends Scene {
 	HashMap<MapTemplate, GameState> maps;
 	GamePane gm;
 	ComboBox<String> c;
-	private ObjectProperty<Font> addHumanButtonTextFontSIze = new SimpleObjectProperty<Font>(Font.getDefault());
+	private ObjectProperty<Font> addHumanButtonTextFontSIze;
 	private ObjectProperty<Font> addAiCOmboTextFontSIze = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> popUpLabel = new SimpleObjectProperty<Font>(Font.getDefault());
 	private ObjectProperty<Font> leaveButtonText = new SimpleObjectProperty<Font>(Font.getDefault());
@@ -77,8 +77,6 @@ public class CretaeGameScreenV2 extends Scene {
 		this.getStylesheets().add(getClass().getResource("ComboBox.css").toExternalForm());
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
 		this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
-		
-		
 		this.root = (StackPane) this.getRoot();
 		popUpCreator = new PopUpCreator(this, root,hsc);
 		createLayout();
@@ -90,6 +88,14 @@ public class CretaeGameScreenV2 extends Scene {
 	 * @author Manuel Krakowski
 	 */
 	private void manageFontSizes() {
+		 addAiCOmboTextFontSIze = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/60));
+		 addHumanButtonTextFontSIze = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/70));
+		 popUpLabel = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/50));
+		 leaveButtonText = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/50));
+		 addAiCOmboTextFontSIze = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/80));
+		 aiPowerText = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/50));
+
+
 		widthProperty().addListener(new ChangeListener<Number>() {
 			public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth, Number newWidth) {
 				addHumanButtonTextFontSIze.set(Font.font(newWidth.doubleValue() / 70));
@@ -224,7 +230,7 @@ public class CretaeGameScreenV2 extends Scene {
 			double spacing = newVal.doubleValue() * 0.09;
 			serverInfoBox.setSpacing(spacing);
 		});
-		serverInfoBox.getChildren().add(createHeader(parent, "select sever haha"));
+		serverInfoBox.getChildren().add(createHeader(parent, "select sever"));
 		HBox enterSeverInfoBox = new HBox();
 		enterSeverInfoBox.prefHeightProperty().bind(serverInfoBox.heightProperty().multiply(0.6));
 		enterSeverInfoBox.prefWidthProperty().bind(serverInfoBox.widthProperty());
