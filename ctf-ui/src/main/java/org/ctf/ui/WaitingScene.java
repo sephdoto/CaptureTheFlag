@@ -134,6 +134,7 @@ public class WaitingScene extends Scene {
     root.getStyleClass().add("join-root");
     root.prefHeightProperty().bind(this.heightProperty());
     root.prefWidthProperty().bind(this.widthProperty());
+    root.getChildren().add(createBackgroundImage(root));
     VBox mainBox = createMainBox(root);
     root.getChildren().add(mainBox);
     mainBox.getChildren().add(createHeader());
@@ -143,6 +144,16 @@ public class WaitingScene extends Scene {
     middle.getChildren().addAll(leftTop, rightTop);
     mainBox.getChildren().add(middle);
     }
+  
+  private ImageView createBackgroundImage(StackPane configRoot) {
+		Image mp = new Image(getClass().getResourceAsStream("waitingRoom2.jpg"));
+		ImageView mpv = new ImageView(mp);
+		mpv.fitHeightProperty().bind(configRoot.heightProperty().divide(1));
+		mpv.fitWidthProperty().bind(configRoot.widthProperty().divide(1));
+		//mpv.setPreserveRatio(true);
+		mpv.setOpacity(0.5);
+		return mpv;
+	}
 
   
   /**
@@ -163,7 +174,7 @@ public class WaitingScene extends Scene {
                 addHumanButtonTextFontSIze.set(Font.font(newWidth.doubleValue() / 50));
                 serverInfoDescription.set(Font.font(newWidth.doubleValue() / 50));
                 clipBoardInfoText.set(Font.font(newWidth.doubleValue() / 60));
-                tableHeader.set(Font.font(newWidth.doubleValue() / 50));
+                tableHeader.set(Font.font(newWidth.doubleValue() / 55));
               }
             });
   }
@@ -199,10 +210,10 @@ public class WaitingScene extends Scene {
    * @return ImageView containing the word 'Lobby'
    */
   private ImageView createHeader() {
-    Image mp = new Image(getClass().getResourceAsStream("multiplayerlogo.png"));
+    Image mp = new Image(getClass().getResourceAsStream("waiting-room.png"));
     ImageView mpv = new ImageView(mp);
     mpv.fitHeightProperty().bind(root.heightProperty().multiply(0.1));
-    mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.5));
+    mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.7));
     mpv.setPreserveRatio(true);
     return mpv;
   }
@@ -217,7 +228,7 @@ public class WaitingScene extends Scene {
   private HBox createMiddleHBox(VBox parent) {
     HBox sep = new HBox();
     // sep.setStyle("-fx-background-color: red");
-    sep.prefHeightProperty().bind(parent.heightProperty().multiply(0.9));
+    sep.prefHeightProperty().bind(parent.heightProperty().multiply(0.8));
     sep.prefWidthProperty().bind(parent.widthProperty());
     sep.setAlignment(Pos.CENTER);
     sep.widthProperty()
@@ -255,7 +266,8 @@ public class WaitingScene extends Scene {
   private VBox createWholeTable(VBox parent) {
 	  VBox v = new VBox();
 	  v.prefWidthProperty().bind(parent.widthProperty().multiply(1));
-	  v.prefHeightProperty().bind(parent.heightProperty().multiply(1));
+	  v.prefHeightProperty().bind(parent.heightProperty().multiply(0.6));
+	  //v.setStyle("-fx-background-color: blue");
 	  v.getChildren().add(createHeaderRow(v));
 	  v.getChildren().add(createScrollPane(v));
 	  return v;
@@ -752,6 +764,7 @@ public class WaitingScene extends Scene {
   private Button createLeave() {
     Button exit = new Button("Leave");
     exit.getStyleClass().add("leave-button");
+    exit.fontProperty().bind(serverInfoCOntentFontSize);
     exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
     exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.35));
     exit.setOnAction(

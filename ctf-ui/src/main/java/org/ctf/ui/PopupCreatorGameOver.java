@@ -27,8 +27,9 @@ import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 /**
- * Creator for the PopupPanes which are shown when the Game is over. Can create two different Popup-Panes
- * in case there is only one winner and in case there are more winners
+ * Creator for the PopupPanes which are shown when the Game is over. Can create 3 different Popup-Panes
+ * in case there is only one winner,in case there are more winners and in case somebody lost 
+ * while other teams keep playing
  *  @author Manuel Krakowski
  */
 
@@ -123,7 +124,7 @@ public class PopupCreatorGameOver {
         mainTransition.play();
         HBox x = createButtonBox();
 		x.getChildren().addAll(playAgainButton,analyseGameButton);
-		top.getChildren().add(createHeader(poproot));
+		top.getChildren().add(createHeader(poproot,"gameOver3.png"));
 		top.getChildren().add(l);
         top.getChildren().add(x);
 		poproot.getChildren().add(top);
@@ -153,13 +154,14 @@ public class PopupCreatorGameOver {
 		Button analyseGameButton = createConfigButton("Analyze Game");
         HBox x = createButtonBox();
 		x.getChildren().addAll(playAgainButton,analyseGameButton);
-		top.getChildren().add(createHeader(poproot));
+		top.getChildren().add(createHeader(poproot,"gameOver3.png"));
 		top.getChildren().add(createWinnersPane(names));
         top.getChildren().add(x);
 		poproot.getChildren().add(top);
 		gameOverPopUp.setContent(poproot);
 		root.getChildren().add(gameOverPopUp);
 	}
+	
 	
 	/**
 	 * Creates the scrollpane with the list of all the winners which is used for the Game Over Popup-Pane for more winners
@@ -218,8 +220,8 @@ public class PopupCreatorGameOver {
 	 * @param conRoot: StackPane on which the image is placed, used for relative resizing
 	 * @return Game-Over-Image
 	 */
-	 private ImageView createHeader(StackPane conRoot) {
-		    Image mp = new Image(getClass().getResourceAsStream("gameOver3.png"));
+	 private ImageView createHeader(StackPane conRoot, String imageName) {
+		    Image mp = new Image(getClass().getResourceAsStream(imageName));
 		    ImageView mpv = new ImageView(mp);
 		    mpv.fitHeightProperty().bind(conRoot.heightProperty().multiply(0.5));
 		    mpv.fitWidthProperty().bind(conRoot.widthProperty().multiply(0.8));
@@ -243,6 +245,9 @@ public class PopupCreatorGameOver {
 		mpv.setOpacity(0.7);
 		return mpv;
 	}
+	
+	
+	
 	
 	
 	/**
@@ -290,4 +295,47 @@ public class PopupCreatorGameOver {
 		}
 		return configButton;
 	}
+	
+	/**
+	 * Creates a PopupPane which  tells the user that he lost the game
+	 * @author Manuel Krakowski
+	 */
+	public void createGameOverPopUpYouLost() {
+		gameOverPopUp = new PopUpPane(scene, 0.6, 0.5);
+		StackPane poproot = new StackPane();
+		poproot.getChildren().add(createBackgroundscelett(poproot));
+		VBox top = new VBox();
+		top.heightProperty().addListener((obs, oldVal, newVal) -> {
+			double spacing = newVal.doubleValue() * 0.09;
+			double padding = newVal.doubleValue() * 0.15;
+			top.setSpacing(spacing);
+			top.setPadding(new Insets(padding, 0, 0, 0));
+		});
+		top.setAlignment(Pos.TOP_CENTER);
+		Button playAgainButton = createConfigButton("Play Again");
+		Button analyseGameButton = createConfigButton("Watch Game");
+        HBox x = createButtonBox();
+		x.getChildren().addAll(playAgainButton,analyseGameButton);
+		top.getChildren().add(createHeader(poproot,"youLost.png"));
+        top.getChildren().add(x);
+		poproot.getChildren().add(top);
+		gameOverPopUp.setContent(poproot);
+		root.getChildren().add(gameOverPopUp);
+	}
+	
+	/**
+	 * Creates a Background GIG of a skeleton
+	 * @author Manuel Krakowski
+	 * @param configRoot:parent for relative resizing
+	 * @return: Imageview of a skelton
+	 */
+	private ImageView createBackgroundscelett(StackPane configRoot) {
+		Image mp = new Image(getClass().getResourceAsStream("DootDoot.gif"));
+		ImageView mpv = new ImageView(mp);
+		mpv.fitHeightProperty().bind(configRoot.heightProperty().divide(1.1));
+		mpv.fitWidthProperty().bind(configRoot.widthProperty().divide(1.1));
+		mpv.setOpacity(0.65);
+		return mpv;
+	}
+	
 }

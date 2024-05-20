@@ -1,7 +1,11 @@
 package org.ctf.ui;
 
+import java.io.File;
+
 import org.ctf.shared.client.lib.ServerManager;
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.GameState;
+import org.ctf.shared.wave.WaveFunctionCollapse;
 import org.ctf.ui.customobjects.BackgroundCellV2;
 import org.ctf.ui.customobjects.PopUpPane;
 
@@ -16,6 +20,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -71,7 +77,7 @@ public class TestScene  {
 	      king.setAlignment(Pos.CENTER_LEFT);
 	      AnchorPane anchor2 = new AnchorPane();
 	      anchor = new AnchorPane();
-	      anchor.setStyle("-fx-background-color: red");
+	      //anchor.setStyle("-fx-background-color: red");
 	      scene = new Scene(king, WINDOW_SIZE, WINDOW_SIZE, Color.LIGHTBLUE);
 
 	      nbC = new SimpleIntegerProperty(10);
@@ -103,8 +109,8 @@ public class TestScene  {
 		      stack = new StackPane();
 		      stack.setStyle("-fx-background-color: green");
 		      gPane = new GridPane();
-		      cellSize = Bindings.min(scene.widthProperty().subtract(50).divide(nbC.getValue()),
-		            scene.heightProperty().subtract(50).divide(nbR.getValue()));
+		      cellSize = Bindings.min(scene.widthProperty().subtract(0).divide(nbC.getValue()),
+		            scene.heightProperty().subtract(0).divide(nbR.getValue()));
 
 		      for(int c = 0; c < nbC.getValue(); c++) {
 		         for(int r = 0; r < nbR.getValue(); r++) {
@@ -132,10 +138,22 @@ public class TestScene  {
 		     
 		      //gPane.setGridLinesVisible(true);
 		      stack.getChildren().addAll(gPane);
+		      stack.getChildren().add(createBackgroundKonfetti(stack));
 		      anchor.getChildren().add(stack);
+		      
 		      AnchorPane.setTopAnchor(stack, 20.0);
 		      AnchorPane.setLeftAnchor(stack, 20.0);
 		   }
+		   
+		   private ImageView createBackgroundKonfetti(StackPane configRoot) {
+				Image mp = new Image(getClass().getResourceAsStream("tuning1.png"));
+				ImageView mpv = new ImageView(mp);
+				mpv.fitHeightProperty().bind(configRoot.heightProperty());
+				mpv.fitWidthProperty().bind(configRoot.widthProperty());
+				//mpv.setPreserveRatio(true);
+				mpv.setOpacity(0.7);
+				return mpv;
+			}
 
 		   
 }
