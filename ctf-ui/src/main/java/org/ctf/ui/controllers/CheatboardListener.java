@@ -45,7 +45,7 @@ public class CheatboardListener extends NativeKeyAdapter {
   /**
    * creates the cheat codes and puts them into the list.
    */
-  private void initCheatCodes() {
+  private void initCheatCodes() {    
     this.cheatCodes = new ArrayList<ArrayList<Integer>>();
     ArrayList<Integer> rick = new ArrayList<Integer>();
     rick.add(NativeKeyEvent.VC_D);
@@ -99,6 +99,7 @@ public class CheatboardListener extends NativeKeyAdapter {
    */
   @Override
   public void nativeKeyPressed(NativeKeyEvent e) {
+    System.out.println(e.getKeyCode());
     currentCode.add(e.getKeyCode());
     checkTheCode();
 
