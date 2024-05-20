@@ -133,16 +133,17 @@ public class App extends Application {
     			SoundController.playSound("Button", SoundType.MISC);
               ssc.switchToJoinScene(mainStage);
             });
-    Runnable openSettings = () -> {
-      SoundController.playSound("Button", SoundType.MISC);
-      root.getChildren().add(new ComponentCreator(startScene).createSettingsWindow(root));
-    };
-    CheatboardListener.setSettings(openSettings);
+    
+    CheatboardListener.setSettings(root, startScene);
+    
     HomeScreenButton i4 =
         new HomeScreenButton(
             "SETTINGS",
             mainStage,
-            openSettings);
+            () -> {
+              SoundController.playSound("Button", SoundType.MISC);
+              root.getChildren().add(new ComponentCreator(startScene).createSettingsWindow(root));
+            });
     VBox vbox = new VBox(ctfv, i1, i2, i3, i4);
     vbox.spacingProperty().bind(root.heightProperty().multiply(0.02));
     root.heightProperty()
