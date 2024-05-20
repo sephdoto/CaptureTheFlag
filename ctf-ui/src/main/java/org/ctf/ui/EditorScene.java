@@ -436,7 +436,14 @@ public class EditorScene extends Scene {
     soundPieceBox.setValue(soundPieceBox.getItems().get(0));
     createFigureBox(soundPieceBox, 0.2, 0.18, 0.35);
     controlgrid.add(soundPieceBox, 1, 1);
-
+    String groupString = (TemplateEngine.defaultNames.contains(soundPieceBox.getItems().get(0)))?"Default":"Customs";
+    Text group = createHeaderText(customRoot, groupString, 35);
+    soundPieceBox.setOnAction(e -> {
+      String newGroup = (TemplateEngine.defaultNames.contains(soundPieceBox.getValue()))?"Default":"Custom";
+      group.setText(newGroup);
+    });
+    controlgrid.add(group, 2, 1);
+    
     HBox soundButtonBox = new HBox();
     soundButtonBox.setAlignment(Pos.CENTER);
     soundButtonBox.setSpacing(20);
@@ -512,6 +519,15 @@ public class EditorScene extends Scene {
     picturePieceBox.setValue(picturePieceBox.getItems().get(0));
     createFigureBox(picturePieceBox, 0.2, 0.18, 0.35);
     controlgrid.add(picturePieceBox, 1, 1);
+    String groupString = (TemplateEngine.defaultNames.contains(picturePieceBox.getItems().get(0)))?"Default":"Customs";
+    Text group = createHeaderText(customRoot, groupString, 35);
+    picturePieceBox.setOnAction(e -> {
+      String newGroup = (TemplateEngine.defaultNames.contains(picturePieceBox.getValue()))?"Default":"Custom";
+      group.setText(newGroup);
+    });
+    StackPane textWrapper = new StackPane();
+    textWrapper.getChildren().add(group);
+    controlgrid.add(textWrapper, 1, 2);
 
     HBox soundButtonBox = new HBox();
     soundButtonBox.setAlignment(Pos.CENTER);
@@ -544,7 +560,7 @@ public class EditorScene extends Scene {
       this.inform(filename + " was saved!");
     });
     soundButtonBox.getChildren().add(saveButton);
-    controlgrid.add(saveButton, 1, 2);
+    controlgrid.add(saveButton, 1, 3);
     customRoot.getChildren().add(wrapper);
     // customRoot.getChildren().add(soundButtonBox);
     return customRoot;
@@ -583,8 +599,8 @@ public class EditorScene extends Scene {
     menuButtonBox.setAlignment(Pos.CENTER);
     menuButtonBox.setSpacing(10);
     createMapMenuButton();
+    menuButtonBox.getChildren().add(createMenuButton());
     menuButtonBox.getChildren().add(mapMenuButton);
-    menuButtonBox.getChildren().add(createMenuButton());  
     return menuButtonBox;
   }
   

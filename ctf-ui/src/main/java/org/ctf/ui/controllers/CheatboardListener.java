@@ -1,13 +1,12 @@
 package org.ctf.ui.controllers;
 import java.util.ArrayList;
-import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.SoundType;
-import org.ctf.shared.constants.Enums.Themes;
-import org.ctf.ui.customobjects.HomeScreenButton;
+import org.ctf.ui.ComponentCreator;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import javafx.application.Platform;
-import javafx.scene.media.AudioClip;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import org.jnativehook.keyboard.NativeKeyAdapter;
 import org.jnativehook.NativeHookException;
 
@@ -173,11 +172,23 @@ public class CheatboardListener extends NativeKeyAdapter {
     } else if (match == cheatCodes.get(3)) {
       System.out.println("Settings");
       if(settings != null)
-        Platform.runLater(settings);
+        Platform.runLater(() -> {
+          SoundController.playSound("Button", SoundType.MISC);
+          settings.run();
+        });
     }
   }
   
-  public static void setSettings(Runnable settings) {
-    CheatboardListener.settings = settings;
+  /**
+   * Set settings so Settings Screen can be opened via typing settings
+   * 
+   * @param root StackPane
+   * @param startScene Scene
+   */
+  public static void setSettings(StackPane root, Scene startScene) {
+    CheatboardListener.settings = () -> {
+      SoundController.playSound("Button", SoundType.MISC);
+      root.getChildren().add(new ComponentCreator(startScene).createSettingsWindow(root));
+    };;
   }
 }
