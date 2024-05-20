@@ -61,6 +61,9 @@ public class App extends Application {
   static Image backgroundImage;
   static BackgroundSize backgroundSize = new BackgroundSize(1, 1, true, true, true, true);
   static boolean serverStartSuccess;
+  public static double stageOffset;
+  //public static ServerPane serverPane;
+  
 
   public void start(Stage stage) {
     mainStage = stage;
@@ -180,17 +183,19 @@ public class App extends Application {
     serverPane.maxHeightProperty().bind(serverPane.widthProperty().multiply(0.35));
     StackPane.setMargin(serverPane, new Insets(0, 10, 10, 0));
     StackPane.setAlignment(serverPane, Pos.BOTTOM_RIGHT);
-    stack.heightProperty().addListener((obs, old, newV) -> {
-      StackPane.setMargin(serverPane,
-          new Insets(0, stack.heightProperty().multiply(0.02).doubleValue(),
-              stack.heightProperty().multiply(0.02).doubleValue(), 0));
-    });
+//    stack.heightProperty().addListener((obs, old, newV) -> {
+//      StackPane.setMargin(serverPane,
+//          new Insets(0, stack.heightProperty().multiply(0.02).doubleValue(),
+//              stack.heightProperty().multiply(0.02).doubleValue(), 0));
+//    });
     stack.getChildren().add(serverPane);
     serverPane.getField().setOnKeyPressed(event -> {
       if (event.getCode() == KeyCode.ENTER) {
         String port = serverPane.getField().getText();
         if(this.startServer(port)) {
-          
+          serverPane.setFinished();
+        } else {
+          serverPane.updatePromtText();
         }
       }
     });
@@ -218,6 +223,8 @@ public class App extends Application {
     startScene = new Scene(createParent());
     startScene.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
     mainStage.setScene(startScene);
+    App.stageOffset = mainStage.getHeight()-startScene.getHeight();
+    System.out.println(App.stageOffset);
     backgroundMusic.startShuffle();
     startTransition.stop();
   }

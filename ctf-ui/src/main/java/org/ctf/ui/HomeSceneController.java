@@ -54,10 +54,12 @@ public class HomeSceneController {
 	public  ObjectProperty<Color> lastcolor;
 	boolean mainClientIsHuman;
 	
+	
 	public void switchtoHomeScreen(ActionEvent e) {
 		Scene scene = App.getScene();
 		stage = App.getStage();
-		App.adjustHomescreen(stage.getWidth(), stage.getHeight());
+		App.adjustHomescreen(stage.getWidth(), stage.getHeight()-App.stageOffset);
+		
 		stage.setScene(scene);
 	}
 	

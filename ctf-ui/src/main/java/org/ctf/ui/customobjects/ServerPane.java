@@ -55,4 +55,9 @@ public class ServerPane extends StackPane{
     this.setOnMouseClicked(e -> {});
   }
   
+  public void updatePromtText() {
+    field.setText("");
+    field.setPromptText("Port already in use");
+  }
+  
 }
