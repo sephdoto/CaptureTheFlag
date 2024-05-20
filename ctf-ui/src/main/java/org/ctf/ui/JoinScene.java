@@ -485,7 +485,7 @@ public class JoinScene extends Scene {
         return;
       }
       Client client = ClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(ip)
-          .onPort(port).enableSaveGame(false).enableAutoJoin(id, "teamname").build();
+          .onPort(port).enableSaveGame(false).enableAutoJoin(id, nameField.getText()).build();
       client.enableGameStateQueue(true);
       root.getChildren().remove(popUp);
       right.getChildren().clear();
