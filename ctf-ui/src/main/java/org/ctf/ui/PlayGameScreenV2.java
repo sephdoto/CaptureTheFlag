@@ -102,15 +102,17 @@ public class PlayGameScreenV2 extends Scene {
 //			}
 			if (mainClient.isGameOver()) {
 				String[] winners =mainClient.getWinners();
-				if(winners.length == 1) {
-					System.out.println("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv");
 					  Platform.runLater(() -> {
 						  PopupCreatorGameOver gameOverPop = new PopupCreatorGameOver(this, root, hsc);
-							gameOverPop.createGameOverPopUpforOneWinner(winners[0]);
+						  if(winners.length == 1) {
+							  gameOverPop.createGameOverPopUpforOneWinner(winners[0]);
+						  }else {
+							  gameOverPop.createGameOverPopUpforMoreWinners(winners);
+						  }
 					        });
 					scheduler.shutdown();
 					scheduler2.shutdown();
-				}
+				
 			}
 			GameState tmp = mainClient.getQueuedGameState();
 			if(tmp !=null) {

@@ -1,19 +1,32 @@
 
 
 .scroll-pane {
-    -fx-background: #202F3B;
-    -fx-border-color: #202F3B ; 
-    -fx-border-width: 0;
+    -fx-background-color: black;
+    -fx-border-color: gold;
+    -fx-border-width: 3;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
 }
 
+/* Anpassung der vertikalen Scrollbar */
+.scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
 
+.scroll-bar:vertical .thumb {
+    -fx-background-color: gold;
+    -fx-background-radius: 5;
+}
 
+.scroll-bar:vertical .increment-button,
+.scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+}
 
-
-.scroll-pane:focused {
-    -fx-border-color: #202F3B;
-    -fx-border-width: 0;
-    -fx-effect: none; 
+.scroll-bar:vertical .increment-arrow,
+.scroll-bar:vertical .decrement-arrow {
+    -fx-background-color: gold;
+    -fx-padding: 5;
 }
 			
 			

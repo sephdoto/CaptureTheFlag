@@ -525,8 +525,7 @@ public class CreateGameScreenV2 extends Scene {
 		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
 		exit.setOnAction(e -> {
-			//hsc.switchtoHomeScreen(e);
-			
+			hsc.switchtoHomeScreen(e);
 		});
 		return exit;
 	}
@@ -697,7 +696,7 @@ public class CreateGameScreenV2 extends Scene {
 	public StackPane createOptionPane() {
 		StackPane pane = new StackPane();
 		// pane.getStyleClass().add("option-pane");
-		pane.setPrefSize(250, 250);
+		//pane.setPrefSize(250, 250);
 		pane.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
 		pane.prefHeightProperty().bind(pane.widthProperty().multiply(0.8));
 
