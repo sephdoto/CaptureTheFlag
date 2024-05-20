@@ -16,7 +16,7 @@ import com.sun.javafx.util.Logging;
  */
 public class EntryPoint {
   public static CheatboardListener cbl;
-  
+
 
   public static void main(String[] args) {
     // suppress logging (red javafx text, keylogger text, jaudiotagger text)
@@ -26,7 +26,7 @@ public class EntryPoint {
     Logging.getCSSLogger().disableLogging();
     var pin = new Logger[]{ Logger.getLogger("org.jaudiotagger") };
     for (Logger l : pin)
-        l.setLevel(Level.OFF);
+      l.setLevel(Level.OFF);
     logger.setUseParentHandlers(false);
 
     if (Constants.ISJAR && !new File(Constants.JARRESOURCES).isDirectory()) {
@@ -34,12 +34,14 @@ public class EntryPoint {
     }
 
     String[] args2 = new String[] {};
+    boolean easterEggs = true;
     for(int i=0; i<args.length; i++) {
       if(args[i].equals("--disableEasterEggs"))
-        break;
-      cbl = new CheatboardListener();
+        easterEggs = false;
     }
-    
+    if(easterEggs)
+      cbl = new CheatboardListener();
+
     App.main(args2);
   }
 }
