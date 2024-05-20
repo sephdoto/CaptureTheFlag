@@ -11,12 +11,13 @@ import javafx.scene.text.Text;
 
 public class ServerPane extends StackPane{
   private TextField field;
+  private Text text;
   public ServerPane() {
     this.getStyleClass().add("server-pane");
     this.widthProperty().addListener((obs,old,newV) -> {
       this.setPadding(new Insets(newV.doubleValue()*0.1));
     });
-    Text text = new Text("START LOCAL SERVER");
+    text = new Text("START LOCAL SERVER");
     text.fontProperty().bind(Bindings.createObjectBinding(
         () -> Font.font("Century Gothic", this.getHeight() * 0.16), this.heightProperty()));
     text.setFill(Color.WHITE);
@@ -45,6 +46,13 @@ public class ServerPane extends StackPane{
   
   public TextField getField() {
     return this.field;
+  }
+  
+  public void setFinished() {
+    this.getChildren().clear();
+    this.text.setText("Server Started!");
+    this.getChildren().add(text);
+    this.setOnMouseClicked(e -> {});
   }
   
 }

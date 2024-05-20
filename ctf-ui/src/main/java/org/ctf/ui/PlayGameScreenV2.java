@@ -70,6 +70,7 @@ public class PlayGameScreenV2 extends Scene {
 	GameState currentState;
 	boolean first;
 	HBox top;
+	ImageView mpv;
 	private static Circle c;
 	private static Label idLabel;
 	private static Label typeLabel;
@@ -201,8 +202,33 @@ public class PlayGameScreenV2 extends Scene {
 //		left.prefHeightProperty().bind(this.heightProperty());
 //		left.prefWidthProperty().bind(this.widthProperty().multiply(0.7));
 //		left.getChildren().add(createShowMapPane("p2"));
-		top.getChildren().add(wrapper);
-		//top.getChildren().add(createShowMapPane());
+		showMapBox = new StackPane();
+        //showMapBox.getStyleClass().add("play-pane");      
+        showMapBox.paddingProperty().bind(padding);
+        showMapBox.paddingProperty().bind(padding);
+        showMapBox.prefWidthProperty().bind(this.widthProperty().multiply(0.7));
+         showMapBox.prefHeightProperty().bind(this.heightProperty().multiply(0.9));
+         showMapBox.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.7));
+         showMapBox.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.9));
+        showMapBox.getStyleClass().add("option-pane");        
+        Image mp =
+            new Image(new File(Constants.toUIResources + "pictures" + File.separator + "grid.png")
+                .toURI().toString());
+         mpv = new ImageView(mp);
+        StackPane.setAlignment(mpv, Pos.CENTER);
+        //mpv.fitWidthProperty().bind(this.widthProperty().multiply(0.2));
+        this.widthProperty().addListener((obs,old,newV)->{
+          mpv.setFitWidth(newV.doubleValue()*0.8);
+        });    
+        this.heightProperty().addListener((obs,old,newV)->{
+          mpv.setFitHeight(newV.doubleValue()*0.8);
+        });
+        //mpv.fitHeightProperty().bind(showMapBox.heightProperty().multiply(0.2));
+        mpv.setPreserveRatio(true);
+        showMapBox.getChildren().add(mpv);
+        top.getChildren().add(showMapBox);
+		//top.getChildren().add(wrapper);
+		//top.getChildren().add(createShowMaxxpPane());
 		right.getChildren().add(createTopCenter());
 		right.getChildren().add(imageTest());
 		right.getChildren().add(createClockBox(mainClient.isGameMoveTimeLimited(), mainClient.isGameTimeLimited()));
@@ -242,17 +268,19 @@ public class PlayGameScreenV2 extends Scene {
 		}
 		 gm = new GamePane(state);
 	     StackPane.setAlignment(gm, Pos.CENTER);
-	     gm.maxWidthProperty().bind(this.widthProperty().multiply(0.7));
-	     gm.maxHeightProperty().bind(this.heightProperty().multiply(0.9));
+	     gm.maxWidthProperty().bind(mpv.fitWidthProperty());
+         gm.maxHeightProperty().bind(mpv.fitHeightProperty());
+	     gm.prefWidthProperty().bind(mpv.fitWidthProperty());
+	     gm.prefHeightProperty().bind(mpv.fitHeightProperty());
 	     gm.enableBaseColors(this);
 //	     if (first) {
 //		     showMapBox.getChildren().add(createBackgroundImage(gm.vBox,state));
 //		     first = false;
 //		}
-	     wrapper.getChildren().remove(showMapBox);
-	     createShowMapPane();
+//	     wrapper.getChildren().remove(showMapBox);
+//	     createShowMapPane();
 	     showMapBox.getChildren().add(gm);
-	     wrapper.getChildren().add(showMapBox);
+//	     wrapper.getChildren().add(showMapBox);
 	}
 	
 	 private  String formatTime(int totalSeconds) {

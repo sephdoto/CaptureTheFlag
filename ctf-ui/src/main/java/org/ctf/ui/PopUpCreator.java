@@ -7,6 +7,7 @@ import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.AIConfigs;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.controllers.SoundController;
+import org.ctf.ui.creators.InfoPaneCreator;
 import org.ctf.ui.customobjects.ButtonPane;
 import org.ctf.ui.customobjects.PopUpPane;
 import javafx.beans.binding.Bindings;

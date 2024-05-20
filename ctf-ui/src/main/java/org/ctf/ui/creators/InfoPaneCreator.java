@@ -1,4 +1,4 @@
-package org.ctf.ui;
+package org.ctf.ui.creators;
 
 import javafx.beans.binding.Bindings;
 import javafx.event.EventHandler;

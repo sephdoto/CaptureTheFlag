@@ -1,6 +1,7 @@
 package org.ctf.ui;
 
 import configs.ImageLoader;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -188,7 +189,9 @@ public class App extends Application {
     serverPane.getField().setOnKeyPressed(event -> {
       if (event.getCode() == KeyCode.ENTER) {
         String port = serverPane.getField().getText();
-        
+        if(this.startServer(port)) {
+          
+        }
       }
     });
   }
