@@ -15,6 +15,8 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.shared.constants.Enums.Themes;
 import org.ctf.shared.tools.JsonTools;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -38,19 +40,19 @@ public class SoundController {
    * @throws IOException
    * @throws InterruptedException 
    */
-  public static void main(String args[]) throws JSONException, IOException, InterruptedException {
+  /*public static void main(String args[]) throws JSONException, IOException, InterruptedException {
     Platform.startup(() -> {});
 
-//    for(Themes theme : Themes.values()) {
-//      for(SoundType type : SoundType.values()) {
-    String soundName = "Button";
-    String saveAs = "Button";
+    //    for(Themes theme : Themes.values()) {
+    //      for(SoundType type : SoundType.values()) {
+    String soundName = "rick";
+    String saveAs = "rick";
     Themes theme = Themes.BAYERN;  
     SoundType type = SoundType.MISC;
-        System.out.println("Sound can be changed? " + soundCanBeChanged(saveAs, theme, type));
-//        System.out.println(saveSound(saveAs, theme, type, new File("D:\\Musik\\Audacity\\" + soundName + ".wav"), false));
-//      }
-//    }
+    System.out.println("Sound can be changed? " + soundCanBeChanged(saveAs, theme, type));
+    //        System.out.println(saveSound(saveAs, theme, type, new File("C:\\Users\\docto\\Downloads\\" + soundName + ".wav"), false));
+    //      }
+    //    }
     playSound("Button", SoundType.MISC);
     System.out.println("Is default sound? " + isDefaultSound("notexisting", Themes.STARWARS, SoundType.CAPTURE));
     System.out.println("Can I override a default sound? " + 
@@ -59,7 +61,7 @@ public class SoundController {
             ), false));
     Thread.sleep(5000);
     Platform.exit();
-  }
+  }*/
 
   /**
    * Initializes important folder and file locations,
@@ -170,12 +172,34 @@ public class SoundController {
   }
 
   /**
+   * Returns the time an Audio takes to play.
+   * 
+   * @author sistumpf
+   * @param piece name of the piece
+   * @param type the SoundType
+   * @return the total duration in ms
+   */
+  public static int getMs(String piece, SoundType type) {
+    try {
+      File file = new File(
+          audioClips.get(piece + Constants.theme.toString() + type.toString()).constructLocation()
+          );
+      AudioFile audioMetadata = AudioFileIO.read(file);
+      return (int) Math.round(audioMetadata.getAudioHeader().getPreciseTrackLength() * 1000);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return 0;
+  }
+
+  /**
    * Returns a pieces sound as AudioClip depending on the SoundType.
    * If a piece got no sounds associated with it the SoundTypes default sound is returned.
    * 
    * @author sistumpf
    * @param piece A pieces name given by the type String from PieceDescription
    * @param type The type the pieces sound belongs to (e.g. Move / Capture)
+   * @return the corresponding AudioClip
    */
   private static AudioClip getSound(String piece, Themes theme, SoundType type) {
     try {

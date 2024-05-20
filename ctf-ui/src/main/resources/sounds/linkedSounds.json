@@ -42,6 +42,13 @@
     "custom": false
   },
   {
+    "pieceName": "rick",
+    "fileType": ".wav",
+    "type": "MISC",
+    "theme": "BAYERN",
+    "custom": false
+  },
+  {
     "pieceName": "Tobi",
     "fileType": ".wav",
     "type": "MOVE",
@@ -98,6 +105,13 @@
     "custom": true
   },
   {
+    "pieceName": "rick",
+    "fileType": ".wav",
+    "type": "MISC",
+    "theme": "LOTR",
+    "custom": false
+  },
+  {
     "pieceName": "Default",
     "fileType": ".wav",
     "type": "CAPTURE",
@@ -130,6 +144,13 @@
     "fileType": ".wav",
     "type": "CAPTURE",
     "theme": "LOTR",
+    "custom": false
+  },
+  {
+    "pieceName": "rick",
+    "fileType": ".wav",
+    "type": "MISC",
+    "theme": "STARWARS",
     "custom": false
   },
   {

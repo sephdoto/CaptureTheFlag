@@ -22,10 +22,10 @@ import org.ctf.shared.constants.Enums.Themes;
 public class MusicPlayer {
   public static MediaPlayer mp;
   Themes theme;
-  Set<FadeIntoExistence> fadingIn;
+  static Set<FadeIntoExistence> fadingIn;
 
   public MusicPlayer() {
-    this.fadingIn = ConcurrentHashMap.newKeySet();
+    fadingIn = ConcurrentHashMap.newKeySet();
     start();
     this.theme = Constants.theme;
   }
@@ -74,6 +74,16 @@ public class MusicPlayer {
     fadeInAndOut();
   }
 
+  /**
+   * Fades the currently playing music to a lower volume,
+   * waits ms milliseconds, then fades the music loud again.
+   * 
+   * @param ms milliseconds the fade should take
+   */
+  public static void shortFade(int totalMs, int muteDivisor, double minVolume) {
+    new FadeLow(mp, totalMs, muteDivisor, minVolume).start();;
+  }
+  
   /**
    * Fades the old song out and creates a new MusicPlayer that slowly fades in.
    * 
@@ -143,7 +153,7 @@ public class MusicPlayer {
    * @param startScreen if true the start screen song gets looped.
    * @author sistumpf
    * @param startScreen
-   * @return
+   * @return a Runnable that plays a new Song and sets this Runnable on end of Media.
    */
   private Runnable infinitePlay(boolean startScreen) {
     Runnable runnable =
@@ -159,28 +169,61 @@ public class MusicPlayer {
   }
 
   /**
+   * Fades the music to a certain volume, stays there for a bit, fades it up again.
+   * 
+   * @author sistumpf
+   */
+  private static class FadeLow extends FadeIntoExistence {
+    int muteDivisor;
+    double minVolume;
+    
+    public FadeLow(MediaPlayer mp, int millisToTake, int muteDivisor, double minVolume) {
+      super(mp, millisToTake);
+      this.muteDivisor = muteDivisor;
+      this.minVolume = minVolume;
+    }
+    
+    @Override
+    public void run() {
+      for(FadeIntoExistence fade: MusicPlayer.fadingIn)
+        fade.allowedToRun = false;
+      
+      //fade quiet
+      for(double changePerMS = (mp.getVolume() - minVolume) / (millisTillFull / (double)muteDivisor); 
+          allowedToRun && mp.getVolume() > minVolume; 
+          millisTillFull -= 1) {
+        mp.setVolume(mp.getVolume() - changePerMS);
+        MusicPlayer.sleep(1);
+      }
+      //stay quiet
+      MusicPlayer.sleep((int)Math.round((millisTillFull / (double)muteDivisor) * (muteDivisor -1.5)));
+      //fade in again
+      new FadeIntoExistence(mp, (int)Math.round(millisTillFull / (double)muteDivisor)).start();
+    }
+  }
+  
+  /**
    * Fades a given MusicPlayer out.
    * Steadily decreases its volume till it reaches 0, then stops it.
    * 
    * @author sistumpf
    */
-  private class FadeOutOfExistence extends Thread {
+  private static class FadeOutOfExistence extends Thread {
     MediaPlayer mp;
     int millisTillStop;
 
     public FadeOutOfExistence(MediaPlayer mp, int millis) {
       this.mp = mp;
       this.millisTillStop = millis;
-      if(MusicPlayer.this.fadingIn != null)
+      if(MusicPlayer.fadingIn != null)
         fadingIn.forEach(t -> t.endNow());
     }
 
+    @Override
     public void run() {
       for(int millis = (int)(millisTillStop * mp.getVolume()); millis > 0; millis -= 1) {
         mp.setVolume((double)millis /millisTillStop);
-        try {
-          Thread.sleep(1);
-        } catch (InterruptedException e) { e.printStackTrace(); }
+        MusicPlayer.sleep(1);
       }
       mp.stop();
     }
@@ -192,7 +235,7 @@ public class MusicPlayer {
    * 
    * @author sistumpf
    */
-  private class FadeIntoExistence extends Thread {
+  private static class FadeIntoExistence extends Thread {
     MediaPlayer mp;
     int millisTillFull;
     boolean allowedToRun;
@@ -203,18 +246,31 @@ public class MusicPlayer {
       this.allowedToRun = true;
     }
 
+    @Override
     public void run() {
       for(int millis = 0; allowedToRun && (double)millis / millisTillFull < Constants.musicVolume; millis += 1) {
         mp.setVolume((double)millis / millisTillFull);
-        try {
-          Thread.sleep(1);
-        } catch (InterruptedException e) { e.printStackTrace(); }
+        MusicPlayer.sleep(1);
       }
-      MusicPlayer.this.fadingIn.remove(this);
+      MusicPlayer.fadingIn.remove(this);
     }
 
     public void endNow() {
       this.allowedToRun = false;
+    }
+  }
+  
+  /**
+   * Thread.sleep but catches the Exception
+   * 
+   * @author sistumpf
+   * @param ms
+   */
+  private static void sleep(int ms) {
+    try {
+      Thread.sleep(ms);
+    } catch (InterruptedException e) { 
+      e.printStackTrace(); 
     }
   }
 }
