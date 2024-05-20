@@ -51,7 +51,7 @@ public class TemplateEngine {
   public TemplateEngine(EditorScene editorscene) {
     this.editorscene = editorscene;
     initializeCustomBox(this.editorscene.getCustomFigureBox());
-    loadTemplate("test");
+    loadTemplate(this.getTemplateNames().get(0));
     tmpMovement.setDirections(new Directions());
     initializePieces();
   }
@@ -114,8 +114,10 @@ public class TemplateEngine {
         return true;
       case "TurnTime":
         tmpTemplate.setMoveTimeLimitInSeconds(newV);
+        editorscene.updateVisualRoot();
         return false;
       case "GameTime":
+        editorscene.updateVisualRoot();
         tmpTemplate.setTotalTimeLimitInSeconds(newV * 60);
         return false;
       case "Blocks":
