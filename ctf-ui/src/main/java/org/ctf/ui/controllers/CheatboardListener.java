@@ -23,8 +23,6 @@ public class CheatboardListener extends NativeKeyAdapter {
   int pivot;
   ArrayList<ArrayList<Integer>> pivotList;
   static Runnable settings;
-  static StackPane root;
-  static Scene scene;
   
   /**
    * Initializes the cheat codes, registers the key logger.
@@ -188,7 +186,6 @@ public class CheatboardListener extends NativeKeyAdapter {
    * @param startScene Scene
    */
   public static void setSettings(StackPane root, Scene startScene) {
-    CheatboardListener.root = root;
     CheatboardListener.settings = () -> {
       SoundController.playSound("Button", SoundType.MISC);
       root.getChildren().add(new ComponentCreator(startScene).createSettingsWindow(root));
