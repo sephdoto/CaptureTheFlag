@@ -1,11 +1,5 @@
 package org.ctf.ui;
-
-import static org.mockito.Mockito.doAnswer;
-
-import org.ctf.shared.ai.AIConfig;
-import org.ctf.shared.constants.Enums.AI;
 import org.ctf.ui.customobjects.PopUpPane;
-
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
@@ -32,36 +26,27 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
+/**
+ * Creator for the PopupPanes which are shown when the Game is over. Can create two different Popup-Panes
+ * in case there is only one winner and in case there are more winners
+ *  @author Manuel Krakowski
+ */
+
 public class PopupCreatorGameOver {
-	Scene scene;
-	boolean isMain;
-	boolean isAi;
-	StackPane root;
-	PopUpPane before;
-	TextField enterNamefield;
-	PopUpPane enterNamePopUp;
-	String teamName;
-	AIConfig config;
-	AI aitype;
-
-	public AI getAitype() {
-		return aitype;
-	}
-
-	public void setAitype(AI aitype) {
-		this.aitype = aitype;
-	}
-
-	HomeSceneController hsc;
+	//Attributes which are necessary to show the Popup-Pane on the corresponding scene
+	private Scene scene;
+	private StackPane root;
+	private PopUpPane gameOverPopUp;
+	private HomeSceneController hsc;
+	
+	//Attributes to manage the font-sizes
 	private ObjectProperty<Font> popUpLabel;
 	private ObjectProperty<Font> leaveButtonText; 
 	private ObjectProperty<Font> moreWinnerheader; 
 	private ObjectProperty<Font> moreWinnersName; 
 
 
-	
-	
-	
+
 	public PopupCreatorGameOver(Scene scene,StackPane root, HomeSceneController hsc) {
 		this.scene = scene;
 		this.root = root;
@@ -72,6 +57,11 @@ public class PopupCreatorGameOver {
 		moreWinnersName = new SimpleObjectProperty<Font>(Font.font(scene.getWidth()/50));
 		manageFontSizes();
 	}
+	
+	/**
+	 * Fits the font-sizes of all the text on the Popup to the screen size
+	 * @author Manuel Krakowski
+	 */
 	private void manageFontSizes() {
 		scene.widthProperty().addListener(new ChangeListener<Number>() {
 			public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth, Number newWidth) {
@@ -82,10 +72,17 @@ public class PopupCreatorGameOver {
 			}
 		});
 	}
+	
+	
+	/**
+	 * Creates a Game Over Popup-Pane in case that only one player wins the Game including some animations
+	 * @author Manuel Krakowski
+	 * @param name: Name of the winner
+	 */
 	public void createGameOverPopUpforOneWinner(String name) {
-		enterNamePopUp = new PopUpPane(scene, 0.6, 0.5);
+		gameOverPopUp = new PopUpPane(scene, 0.6, 0.5);
 		StackPane poproot = new StackPane();
-		poproot.getChildren().add(createBackgroundImage(poproot));
+		poproot.getChildren().add(createBackgroundKonfetti(poproot));
 		VBox top = new VBox();
 		top.heightProperty().addListener((obs, oldVal, newVal) -> {
 			double spacing = newVal.doubleValue() * 0.09;
@@ -95,14 +92,14 @@ public class PopupCreatorGameOver {
 		});
 		top.setAlignment(Pos.TOP_CENTER);
 		Label l = new Label("The Winner is " + name);
-		l.prefWidthProperty().bind(enterNamePopUp.widthProperty());
+		l.prefWidthProperty().bind(gameOverPopUp.widthProperty());
 		l.setAlignment(Pos.CENTER);
 		l.setTextFill(Color.GOLD);
 		l.setFont(Font.font(scene.getWidth()/50));
 		l.fontProperty().bind(popUpLabel);
 		Button playAgainButton = createConfigButton("Play Again");
 		playAgainButton.setVisible(false);
-		Button analyseGameButton = createConfigButton("Analyse Game");
+		Button analyseGameButton = createConfigButton("Analyze Game");
 		analyseGameButton.setVisible(false);
 		TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(2), l);
         translateTransition.setFromY(-scene.getHeight());
@@ -130,15 +127,20 @@ public class PopupCreatorGameOver {
 		top.getChildren().add(l);
         top.getChildren().add(x);
 		poproot.getChildren().add(top);
-		enterNamePopUp.setContent(poproot);
-		root.getChildren().add(enterNamePopUp);
+		gameOverPopUp.setContent(poproot);
+		root.getChildren().add(gameOverPopUp);
 	}
 	
 	
+	/**
+	 * Creates a Game Over Popup-Pane in case their is more than one Winner, showing the list of all Winners a scrollPane
+	 * @author Manuel Krakowski 
+	 * @param names: List of the names of all the winners
+	 */
 	public void createGameOverPopUpforMoreWinners(String[] names) {
-		enterNamePopUp = new PopUpPane(scene, 0.6, 0.8);
+		gameOverPopUp = new PopUpPane(scene, 0.6, 0.8);
 		StackPane poproot = new StackPane();
-		poproot.getChildren().add(createBackgroundImage(poproot));
+		poproot.getChildren().add(createBackgroundKonfetti(poproot));
 		VBox top = new VBox();
 		top.heightProperty().addListener((obs, oldVal, newVal) -> {
 			double spacing = newVal.doubleValue() * 0.09;
@@ -147,29 +149,34 @@ public class PopupCreatorGameOver {
 			top.setPadding(new Insets(padding, 0, 0, 0));
 		});
 		top.setAlignment(Pos.TOP_CENTER);
-		
-		
 		Button playAgainButton = createConfigButton("Play Again");
-		Button analyseGameButton = createConfigButton("Analyse Game");
+		Button analyseGameButton = createConfigButton("Analyze Game");
         HBox x = createButtonBox();
 		x.getChildren().addAll(playAgainButton,analyseGameButton);
 		top.getChildren().add(createHeader(poproot));
 		top.getChildren().add(createWinnersPane(names));
         top.getChildren().add(x);
 		poproot.getChildren().add(top);
-		enterNamePopUp.setContent(poproot);
-		root.getChildren().add(enterNamePopUp);
+		gameOverPopUp.setContent(poproot);
+		root.getChildren().add(gameOverPopUp);
 	}
+	
+	/**
+	 * Creates the scrollpane with the list of all the winners which is used for the Game Over Popup-Pane for more winners
+	 * @author Manuel Krakowski
+	 * @param winners: List of the names of all the winners
+	 * @return Vbox inclduing one header label and the scrollpane with all the winners names
+	 */
 	private VBox createWinnersPane(String[] winners) {
 		VBox winnerPane = new VBox();
-	    winnerPane.prefWidthProperty().bind(enterNamePopUp.widthProperty().multiply(0.3));
+	    winnerPane.prefWidthProperty().bind(gameOverPopUp.widthProperty().multiply(0.3));
 	    winnerPane.heightProperty().addListener((obs, oldVal, newVal) -> {
 			double spacing = newVal.doubleValue() * 0.065;
 			winnerPane.setSpacing(spacing);
 		});
 		winnerPane.setAlignment(Pos.TOP_CENTER);
 		Label header = new Label("Winners");
-		header.prefWidthProperty().bind(enterNamePopUp.widthProperty());
+		header.prefWidthProperty().bind(gameOverPopUp.widthProperty());
 		header.setAlignment(Pos.CENTER);
 		header.setTextFill(Color.GOLD);
 		header.setFont(Font.font(scene.getWidth()/50));
@@ -178,8 +185,8 @@ public class PopupCreatorGameOver {
 		 	//scroller.setStyle("-fx-background-color:blue");
 		    scroller.getStyleClass().clear();
 		    scroller.getStyleClass().add("scroll-pane");
-		    scroller.maxWidthProperty().bind(enterNamePopUp.widthProperty().multiply(0.3));
-		    scroller.minHeightProperty().bind(enterNamePopUp.heightProperty().multiply(0.2));
+		    scroller.maxWidthProperty().bind(gameOverPopUp.widthProperty().multiply(0.3));
+		    scroller.minHeightProperty().bind(gameOverPopUp.heightProperty().multiply(0.2));
 		    scroller.setHbarPolicy(ScrollBarPolicy.NEVER);
 		    VBox content = new VBox();
 		    content.prefWidthProperty().bind(scroller.widthProperty());
@@ -202,12 +209,15 @@ public class PopupCreatorGameOver {
 		    scroller.setContent(content);
 		    winnerPane.getChildren().addAll(header,scroller);
 		    return winnerPane;
-		    
 	}
 	
 
-	
-	
+	/**
+	 * Greates an Image containing the words 'Game Over' which is showed on top of the Popup-Pane
+	 * @author Manuel Krakowski
+	 * @param conRoot: StackPane on which the image is placed, used for relative resizing
+	 * @return Game-Over-Image
+	 */
 	 private ImageView createHeader(StackPane conRoot) {
 		    Image mp = new Image(getClass().getResourceAsStream("gameOver3.png"));
 		    ImageView mpv = new ImageView(mp);
@@ -217,7 +227,14 @@ public class PopupCreatorGameOver {
 		    return mpv;
 		  }
 	
-	private ImageView createBackgroundImage(StackPane configRoot) {
+	 
+	 /**
+	  * Creates a GIF which constantly shows Konfetti falling down in the background of the PopUp-Pane
+	  * @author Manuel Krakowski
+	  * @param configRoot: StackPane on which the Konfetti is placed
+	  * @return
+	  */
+	private ImageView createBackgroundKonfetti(StackPane configRoot) {
 		Image mp = new Image(getClass().getResourceAsStream("konfetti2.gif"));
 		ImageView mpv = new ImageView(mp);
 		mpv.fitHeightProperty().bind(configRoot.heightProperty().divide(1.1));
@@ -226,17 +243,29 @@ public class PopupCreatorGameOver {
 		mpv.setOpacity(0.7);
 		return mpv;
 	}
+	
+	
+	/**
+	 * Creates the Box in which the 'Play Again' and the 'Analyze Game' buttons are placed
+	 * @author Manuel Krakowski
+	 * @return Box for the buttons
+	 */
 	private HBox createButtonBox() {
 		HBox centerLeaveButton = new HBox();
-		enterNamePopUp.widthProperty().addListener((observable, oldValue, newValue) -> {
+		gameOverPopUp.widthProperty().addListener((observable, oldValue, newValue) -> {
 			double newSpacing = newValue.doubleValue() * 0.05;
 			centerLeaveButton.setSpacing(newSpacing);
 		});
-		centerLeaveButton.prefHeightProperty().bind(enterNamePopUp.heightProperty().multiply(0.3));
+		centerLeaveButton.prefHeightProperty().bind(gameOverPopUp.heightProperty().multiply(0.3));
 		centerLeaveButton.setAlignment(Pos.CENTER);
 		return centerLeaveButton;
 	}
 	
+	/**
+	 * performs the action that happens when the 'play Again' Button is clicked which is going back to the home-Screen
+	 * @author Manuel Krakowski
+	 * @param b: Play-Again-button
+	 */
 	private void perfromPlayAgain(Button b) {
 		b.setOnAction(e -> {
 			hsc.switchtoHomeScreen(e);
@@ -244,7 +273,12 @@ public class PopupCreatorGameOver {
 		});
 	}
 		
-		
+	/**
+	 * Creates a default button with a special style and size, method is used to create play-again	and analyze-game buttons
+	 * @author Manuel Krakowski
+	 * @param text: Text that is displayed on the button
+	 * @return Button
+	 */
 	private Button createConfigButton(String text) {
 		Button configButton = new Button(text);
 		configButton.fontProperty().bind(leaveButtonText);

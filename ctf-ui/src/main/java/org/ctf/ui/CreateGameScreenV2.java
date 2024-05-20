@@ -121,7 +121,7 @@ public class CreateGameScreenV2 extends Scene {
 		VBox mainBox = createMainBox();
 		mainBox.setAlignment(Pos.TOP_CENTER);
 		sep = createMiddleSperator();
-		left = createOptionPane();
+		left = createBasicPane();
 		left.getChildren().add(createMiddleLeft());
 		selected = StroeMaps.getRandomMapName();
 		right = createShowMapPane(selected);
@@ -453,11 +453,7 @@ public class CreateGameScreenV2 extends Scene {
 		}else {
 			this.createChooserPopup();
 		}
-//		hsc.setPort(port);
-//		hsc.setServerID(serverIP);
-//		hsc.setTemplate(template);
-//		hsc.createGameSession();
-		
+
 	}
 	
 	
@@ -693,10 +689,10 @@ public class CreateGameScreenV2 extends Scene {
 	}
 
 
-	public StackPane createOptionPane() {
+	public StackPane createBasicPane() {
 		StackPane pane = new StackPane();
 		// pane.getStyleClass().add("option-pane");
-		//pane.setPrefSize(250, 250);
+		pane.setPrefSize(250, 250);
 		pane.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
 		pane.prefHeightProperty().bind(pane.widthProperty().multiply(0.8));
 

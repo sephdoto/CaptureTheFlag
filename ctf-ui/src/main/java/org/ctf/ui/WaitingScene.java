@@ -50,23 +50,25 @@ import org.ctf.ui.customobjects.CostumFigurePain;
 import ch.qos.logback.core.net.SyslogOutputStream;
 
 public class WaitingScene extends Scene {
-  // Executor Service
+  // Executor Service and data which is changed by it
   private ScheduledExecutorService scheduler;
-  // TODO Remember to close the service before moving away from this scene
   private int currentNumber;
-  HomeSceneController hsc;
-  StackPane root;
-  StackPane left;
-  StackPane right;
-  Label curenntTeams;
-  VBox testBox;
-  Label howManyTeams;
-  Label clipboardInfo;
-  VBox leftBox;
-  GamePane gm;
-  HashMap<Integer, Label> teamNames = new HashMap<Integer, Label>();
-  HashMap<Integer, Label> teamTypes = new HashMap<Integer, Label>();
-  HashMap<Integer, HBox> colors = new HashMap<Integer, HBox>();
+  
+  //When a new team joines the corresponding Boxes need to be filled with a color, team-name and type team-id -> corresponding box
+  private HashMap<Integer, Label> teamNames = new HashMap<Integer, Label>();
+  private HashMap<Integer, Label> teamTypes = new HashMap<Integer, Label>();
+  private HashMap<Integer, HBox> colors = new HashMap<Integer, HBox>();
+  
+  //Controller which is used to switch to the play-game-scene
+  private HomeSceneController hsc;
+  
+  //Containers and Labels which need to be accessed from different methods
+  private StackPane root;
+  private Label curenntTeams;
+  private Label clipboardInfo;
+  private VBox leftBox;
+ 
+  
   private ObjectProperty<Color> sceneColorProperty = new SimpleObjectProperty<>(Color.BLUE);
   private ObjectProperty<Font> waitigFontSize = new SimpleObjectProperty<Font>(Font.getDefault());
   private ObjectProperty<Font> serverInfoHeaderFontSize =
@@ -85,13 +87,10 @@ public class WaitingScene extends Scene {
 		try {
 			if (CreateGameController.getMainClient() != null) {
 				if (CreateGameController.getMainClient().getStartDate() != null) {
-					 //leftBox.getChildren().add(createCountdownBox());
-					 //System.out.println("Game startet hahahahah");
 					scheduler.shutdown();
 					Platform.runLater(() -> {
 						 hsc.switchToPlayGameScene(App.getStage(), CreateGameController.getMainClient(), false);
 					});
-
 				} else {
 					if (CreateGameController.getServerManager().getCurrentNumberofTeams() != currentNumber) {
 						currentNumber = CreateGameController.getServerManager().getCurrentNumberofTeams();
@@ -99,17 +98,19 @@ public class WaitingScene extends Scene {
 						Platform.runLater(() -> {
 							this.setCUrrentTeams(currentNumber);
 						});
-
 					}
 				}
 			}
-			
-			
 		} catch (Exception e) {
 
 		}
 	};
 
+	
+	/**
+	 * Creates the scene with a StackPane as root container and starts the executor service which always updates the current number of teams in the lobby
+	 *@author Manuel Krakowski
+	 */
   public WaitingScene(HomeSceneController hsc, double width, double height) {
     super(new StackPane(), width, height);
     this.hsc = hsc;
@@ -119,12 +120,16 @@ public class WaitingScene extends Scene {
     this.getStylesheets().add(getClass().getResource("ComboBox.css").toExternalForm());
     this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
     createLayout();
-    
     currentNumber = 0;
 	scheduler = Executors.newScheduledThreadPool(1);
 	scheduler.scheduleAtFixedRate(updateTask, 0, 1, TimeUnit.SECONDS);
   }
-
+  
+  
+  /**
+   * Creates the whole layout of the scene
+   * @author Manuel Krakowski
+   */
   private void createLayout() {
     root.getStyleClass().add("join-root");
     root.prefHeightProperty().bind(this.heightProperty());
@@ -139,6 +144,11 @@ public class WaitingScene extends Scene {
     mainBox.getChildren().add(middle);
     }
 
+  
+  /**
+   * fits the size of all the text on the scene to the screen-size
+   * @author Manuel Krakowski
+   */
   private void manageFontSizes() {
     widthProperty()
         .addListener(
@@ -159,7 +169,12 @@ public class WaitingScene extends Scene {
   }
   
 
-
+  /**
+   * Creates a Vbox which is used to devide the Scene into two patrs, one for the header and one for the content
+   * @author Manuel Krakowski
+   * @param parent: Stackpane in which the Vbox is placed for relative resizing
+   * @return Vbox
+   */
   private VBox createMainBox(StackPane parent) {
     VBox mainBox = new VBox();
     mainBox.prefHeightProperty().bind(parent.heightProperty());
@@ -178,6 +193,11 @@ public class WaitingScene extends Scene {
     return mainBox;
   }
 
+  /**
+   * Creates the upper part of the scene which includes just one Image with the Text: 'Lobby'
+   * @author Manuel Krakowski
+   * @return ImageView containing the word 'Lobby'
+   */
   private ImageView createHeader() {
     Image mp = new Image(getClass().getResourceAsStream("multiplayerlogo.png"));
     ImageView mpv = new ImageView(mp);
@@ -187,6 +207,13 @@ public class WaitingScene extends Scene {
     return mpv;
   }
 
+  
+  /**
+   * Creates a HBox which devides the middle part of the screen into two pats vertically
+   * @author Manuel Krakowski
+   * @param parent: main Vbox in which it is placed used for relaive resizing
+   * @return seperator-Hbox
+   */
   private HBox createMiddleHBox(VBox parent) {
     HBox sep = new HBox();
     // sep.setStyle("-fx-background-color: red");
@@ -202,6 +229,8 @@ public class WaitingScene extends Scene {
     return sep;
   }
 
+  
+  
   private VBox createLeftVBox(HBox parent) {
     leftBox = new VBox();
     leftBox.heightProperty()
@@ -610,8 +639,6 @@ public class WaitingScene extends Scene {
   
 
   public void showTeamInformation() {
-    howManyTeams = new Label();
-    int maxteams = 2; // Add other Methode here
   }
 
  
