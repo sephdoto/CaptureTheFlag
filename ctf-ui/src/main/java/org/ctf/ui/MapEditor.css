@@ -16,7 +16,7 @@
 }
 
 .custom-menu-button:hover {
-    -fx-background-color: #252424; 
+    -fx-background-color: rgb(40,40,40); 
 }
 .custom-menu-button .label {
     -fx-text-fill: white; 
@@ -89,14 +89,15 @@
 
 .leave-button {
 	 -fx-background-color: rgb(15,15,15); 
-    -fx-text-fill: white; 
-    
-    
+    -fx-text-fill: white;     
 	 -fx-background-radius: 5px; 
     -fx-border-radius: 5px; 
     -fx-border-color: white; 
     -fx-border-width: 2px; 
     -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
+}
+.leave-button:hover{
+	 -fx-background-color: rgb(40,40,40); 
 }
 .save-button {
 	 -fx-background-color: rgb(30,90,30); 

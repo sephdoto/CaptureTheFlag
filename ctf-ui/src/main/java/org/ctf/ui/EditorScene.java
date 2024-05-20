@@ -5,12 +5,16 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventDispatchChain;
+import javafx.event.EventDispatcher;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Spinner;
@@ -19,6 +23,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -143,6 +149,7 @@ public class EditorScene extends Scene {
     leftPane = createLeftPane();
     leftPane.getChildren().add(options[0]);
     leftControl.getChildren().add(leftPane);
+    leftControl.getChildren().add(createButtonBar());
     createInfotext();
     StackPane textPane = new StackPane();
     textPane.getChildren().add(infoText);
@@ -572,26 +579,22 @@ public class EditorScene extends Scene {
    * @return HBox container
    */
   private HBox createControlBar() {
-    HBox controlBar = new HBox();
-    // controlBar.setStyle( "-fx-background-color: red;");
-    controlBar.setAlignment(Pos.CENTER_LEFT);
-    controlBar.setSpacing(10);
-
-    VBox menuButtonBox = new VBox();
+    HBox menuButtonBox = new HBox();
+    menuButtonBox.setAlignment(Pos.CENTER);
     menuButtonBox.setSpacing(10);
     createMapMenuButton();
     menuButtonBox.getChildren().add(mapMenuButton);
-    menuButtonBox.getChildren().add(createMenuButton());
-    controlBar.getChildren().add(menuButtonBox);
-
+    menuButtonBox.getChildren().add(createMenuButton());  
+    return menuButtonBox;
+  }
+  
+  private HBox createButtonBar() {
     HBox actionButtonBox = new HBox();
     actionButtonBox.setAlignment(Pos.CENTER);
     actionButtonBox.setSpacing(10);
     actionButtonBox.getChildren().add(createSubmit());
     actionButtonBox.getChildren().add(createExit());
-    controlBar.getChildren().add(actionButtonBox);
-
-    return controlBar;
+    return actionButtonBox;
   }
 
   /**
@@ -797,6 +800,8 @@ public class EditorScene extends Scene {
     spinner.setEditable(true);
     spinner.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
     spinner.prefHeightProperty().bind(spinner.widthProperty().multiply(0.25));
+    ContextMenu empty = new ContextMenu();
+    spinner.getEditor().setContextMenu(empty);  
     return spinner;
   }
 
