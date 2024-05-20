@@ -150,6 +150,7 @@ public class PlayGameScreenV2 extends Scene {
 
 	        });
 			} catch (Exception e) {
+				
 
 		}
 	};
