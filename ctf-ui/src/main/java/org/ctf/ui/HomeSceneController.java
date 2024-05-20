@@ -136,7 +136,12 @@ public class HomeSceneController {
 	public void switchToPlayGameScene(Stage stage, Client mainClient, boolean isRemote) {
 		playGameScreenV2 = new PlayGameScreenV2(this, stage.getWidth(), stage.getHeight(),mainClient, isRemote);
 		stage.setScene(playGameScreenV2);
-		CreateGameController.overWriteDefaultWithServerColors();
+		if(isRemote) {
+			CreateGameController.initColorHashMapForRemote(mainClient);
+		}else {
+			CreateGameController.overWriteDefaultWithServerColors();
+		}
+		
 //		if(t != null) {
 //			t.stopThread();
 //		}

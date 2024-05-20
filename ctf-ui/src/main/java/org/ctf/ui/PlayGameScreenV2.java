@@ -373,6 +373,7 @@ public class PlayGameScreenV2 extends Scene {
 		    teamname.prefWidthProperty().bind(this.widthProperty().multiply(0.2));
 		    teamname.fontProperty().bind(waitigFontSize);
 		    teamname.setAlignment(Pos.CENTER);
+		    
 		    teamname.textFillProperty().bind(CreateGameController.getColors().get(String.valueOf(mainClient.getCurrentTeamTurn())));
 		    layout.prefWidthProperty().bind(this.widthProperty().multiply(0.17));
 		    status.fontProperty().bind(waitigFontSize);

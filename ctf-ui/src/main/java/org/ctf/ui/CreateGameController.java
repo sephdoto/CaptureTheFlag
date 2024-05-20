@@ -98,6 +98,13 @@ public class CreateGameController {
 			colors.put(String.valueOf(i), new SimpleObjectProperty<>(Color.BLACK));
 		}
 	}
+	public static void initColorHashMapForRemote(Client client) {
+		for(int i=0; i<client.getTeams().length; i++) {
+				String colorString = client.getTeams()[i].getColor();
+				Color newColer = Color.web(colorString);
+				colors.put(String.valueOf(i), new SimpleObjectProperty<>(newColer));
+		}
+	}
 	
 	public static void overWriteDefaultWithServerColors() {
 		for(int i=0; i<CreateGameController.getMaxNumberofTeams(); i++) {
