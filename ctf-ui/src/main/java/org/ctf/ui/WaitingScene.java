@@ -618,7 +618,6 @@ public class WaitingScene extends Scene {
     //String color = CreateGameController.getMainClient().getTeams()[i-1].getColor();
     toAdd.getChildren().clear();
     toAdd.getChildren().add(createColorRec( toAdd,i-1));
-   
     String text = "";
     if(CreateGameController.getLasttype().equals("HUMAN")) {
     	text = "local Human";
@@ -628,6 +627,7 @@ public class WaitingScene extends Scene {
 		 teamNames.get(i-1).setText(CreateGameController.getLastTeamName());
 	}else if(CreateGameController.getLasttype().equals("UNKNOWN")) {
 		text = "Remote Player";
+		teamNames.get(i-1).setText(String.valueOf(i));
 	}
     CreateGameController.setLasttype("UNKNOWN");
     if(i-1 == 0 ) {
