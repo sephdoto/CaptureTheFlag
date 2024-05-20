@@ -3,8 +3,10 @@ import java.util.ArrayList;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.shared.constants.Enums.Themes;
+import org.ctf.ui.customobjects.HomeScreenButton;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.keyboard.NativeKeyEvent;
+import javafx.application.Platform;
 import javafx.scene.media.AudioClip;
 import org.jnativehook.keyboard.NativeKeyAdapter;
 import org.jnativehook.NativeHookException;
@@ -21,7 +23,8 @@ public class CheatboardListener extends NativeKeyAdapter {
   ArrayList<ArrayList<Integer>> cheatCodes;
   int pivot;
   ArrayList<ArrayList<Integer>> pivotList;
-
+  static Runnable settings;
+  
   /**
    * Initializes the cheat codes, registers the key logger.
    */
@@ -169,6 +172,12 @@ public class CheatboardListener extends NativeKeyAdapter {
       System.out.println("reimport resources");
     } else if (match == cheatCodes.get(3)) {
       System.out.println("Settings");
+      if(settings != null)
+        Platform.runLater(settings);
     }
+  }
+  
+  public static void setSettings(Runnable settings) {
+    CheatboardListener.settings = settings;
   }
 }

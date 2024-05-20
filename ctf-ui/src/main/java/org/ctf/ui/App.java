@@ -35,6 +35,7 @@ import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.SoundType;
+import org.ctf.ui.controllers.CheatboardListener;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.controllers.SettingsSetter;
@@ -132,14 +133,16 @@ public class App extends Application {
     			SoundController.playSound("Button", SoundType.MISC);
               ssc.switchToJoinScene(mainStage);
             });
+    Runnable openSettings = () -> {
+      SoundController.playSound("Button", SoundType.MISC);
+      root.getChildren().add(new ComponentCreator(startScene).createSettingsWindow(root));
+    };
+    CheatboardListener.setSettings(openSettings);
     HomeScreenButton i4 =
         new HomeScreenButton(
             "SETTINGS",
             mainStage,
-            () -> {
-    			SoundController.playSound("Button", SoundType.MISC);
-              root.getChildren().add(new ComponentCreator(startScene).createSettingsWindow(root));
-            });
+            openSettings);
     VBox vbox = new VBox(ctfv, i1, i2, i3, i4);
     vbox.spacingProperty().bind(root.heightProperty().multiply(0.02));
     root.heightProperty()

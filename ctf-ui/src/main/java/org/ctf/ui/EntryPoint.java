@@ -23,6 +23,7 @@ public class EntryPoint {
     java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
     logger.setLevel(java.util.logging.Level.OFF);
     Logging.getJavaFXLogger().disableLogging();
+    Logging.getCSSLogger().disableLogging();
     var pin = new Logger[]{ Logger.getLogger("org.jaudiotagger") };
     for (Logger l : pin)
         l.setLevel(Level.OFF);
@@ -33,10 +34,11 @@ public class EntryPoint {
     }
 
     String[] args2 = new String[] {};
-//    for(int i=0; i<args.length; i++) {
-//      if(args[i].equals("--easterEggs"))
-        cbl = new CheatboardListener();
-//    }
+    for(int i=0; i<args.length; i++) {
+      if(args[i].equals("--disableEasterEggs"))
+        break;
+      cbl = new CheatboardListener();
+    }
     
     App.main(args2);
   }
