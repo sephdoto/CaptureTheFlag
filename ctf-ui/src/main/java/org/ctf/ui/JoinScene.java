@@ -54,6 +54,7 @@ public class JoinScene extends Scene {
   String ip;
   String port;
   String id;
+  ServerManager ser;
 
   /**
    * This constructor starts the initialization process of the scene and connects it to a CSS file.
@@ -278,7 +279,7 @@ public class JoinScene extends Scene {
 //       PopUpCreator popUpCreator = new PopUpCreator(this, root, hsc);
 //       popUpCreator.createAiLevelPopUp(new PopUpPane(null, 0, 0), portText, serverIPText);
       try {
-        ServerManager ser = new ServerManager(new CommLayer(),
+         ser = new ServerManager(new CommLayer(),
             new ServerDetails(serverIPText.getText(), portText.getText()), sessionText.getText());
         if (!ser.isServerActive()) {
           info.setText(
@@ -490,7 +491,7 @@ public class JoinScene extends Scene {
       right.getChildren().clear();
       info.setText("Client hast joined!\n Waiting for the Game to start.");
       right.getChildren().add(info);
-      hsc.getStage().setScene(new RemoteWaitingScene(client, getWidth(), getHeight(), this.hsc));
+      hsc.getStage().setScene(new RemoteWaitingScene(client, getWidth(), getHeight(), this.hsc,this.ser));
     });
     Button cancelButton = createControlButton(vbox, "Cancel", "leave-button");
     cancelButton.setOnAction(e -> {
@@ -539,7 +540,7 @@ public class JoinScene extends Scene {
       right.getChildren().clear();
       info.setText("Client hast joined!\n Waiting for the Game to start.");
       right.getChildren().add(info);
-      hsc.getStage().setScene(new RemoteWaitingScene(aiClient, getWidth(), getHeight(), this.hsc));
+      hsc.getStage().setScene(new RemoteWaitingScene(aiClient, getWidth(), getHeight(), this.hsc,this.ser));
     });
     Button cancelButton = createControlButton(vbox, "Cancel", "leave-button");
     cancelButton.setOnAction(e -> {

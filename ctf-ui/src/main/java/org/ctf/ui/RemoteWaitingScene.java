@@ -1,6 +1,7 @@
 package org.ctf.ui;
 
 import org.ctf.shared.client.Client;
+import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.RemoteWaitingThread;
@@ -27,11 +28,16 @@ public class RemoteWaitingScene extends Scene {
 	Client client;
 	Text text;
 	HomeSceneController hsc;
+	ServerManager serverManager;
 
-	public RemoteWaitingScene(Client client, double width, double height,HomeSceneController hsc) {
+    
+
+
+  public RemoteWaitingScene(Client client, double width, double height,HomeSceneController hsc,ServerManager serverManager) {
 		super(new StackPane(), width, height);
 		this.hsc = hsc;
 		this.client = client;
+		this.serverManager = serverManager;
 		root = (StackPane) this.getRoot();
 		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
 		createLayout();
@@ -44,7 +50,10 @@ public class RemoteWaitingScene extends Scene {
     return hsc;
   }
 
-
+	public ServerManager getServerManager() {
+      return serverManager;
+    }
+	
   public Client getClient() {
 		return client;
 	}

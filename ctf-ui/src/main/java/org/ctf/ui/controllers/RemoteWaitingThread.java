@@ -40,11 +40,11 @@ public class RemoteWaitingThread extends Thread {
         Thread.sleep(1000);
         String begin = (rws.getClient().isGameStarted()) ? "Initiliazing Game \n"
             : "Waiting for more Teams to Join ... \n";
-        // String teams = "There are currently "+ rws.getClient().getCurrentNumberofTeams() +" in
+         String teams = "There are currently "+ rws.getServerManager().getCurrentNumberofTeams()+"/"+ rws.getServerManager().getMaxNumberofTeams()+" in the lobby!";
         // the lobby!";
         Platform.runLater(() -> {
 
-          rws.getText().setText(begin);
+          rws.getText().setText(begin+teams);
 
         });
         if (rws.getClient().isGameStarted()) {
