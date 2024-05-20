@@ -138,7 +138,7 @@ class ImageLoader {
     BufferedImage[] images = new BufferedImage[imagesAmount + 1];
     WaveFunctionCollapse.instance
       .setBlock(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator 
-           + "bayern" + File.separator + "WaveFunctionTiles" + File.separator + "noweed.png")));
+           + "bayern" + File.separator + "WaveFunctionTiles" + File.separator + "block.png")));
     
     WaveFunctionCollapse.instance
       .setBase(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator
@@ -208,10 +208,10 @@ class ImageLoader {
     BufferedImage[] images = new BufferedImage[imagesAmount + 1];
     WaveFunctionCollapse.instance
         .setBlock(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator
-            + "lotr" + File.separator + "WaveFunctionTiles" + File.separator + "tree.png")));
+            + "lotr" + File.separator + "WaveFunctionTiles" + File.separator + "block.png")));
     WaveFunctionCollapse.instance
         .setBase(ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator
-            + "lotr" + File.separator + "WaveFunctionTiles" + File.separator + "tree.png")));
+            + "lotr" + File.separator + "WaveFunctionTiles" + File.separator + "block.png")));
 
     images[0] = ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + "lotr"
         + File.separator + "WaveFunctionTiles" + File.separator + "p1.png"));

@@ -16,22 +16,25 @@ class WaveFunctionCollapseTest {
   @Test
   void gridToImgTest() {
     WaveFunctionCollapse wfc1 = new WaveFunctionCollapse(TestValues.getTestState().getGrid(), Enums.Themes.LOTR);
-    WaveFunctionCollapse wfc2 = new WaveFunctionCollapse(TestValues.getTestState().getGrid(), Enums.Themes.STARWARS);
-    WaveFunctionCollapse wfc3 = new WaveFunctionCollapse(TestValues.getTestState().getGrid(), Enums.Themes.BAYERN);
+    //WaveFunctionCollapse wfc2 = new WaveFunctionCollapse(TestValues.getTestState().getGrid(), Enums.Themes.STARWARS);
+    //WaveFunctionCollapse wfc3 = new WaveFunctionCollapse(TestValues.getTestState().getGrid(), Enums.Themes.BAYERN);
     
     //WaveFunctionCollapse wfc = new WaveFunctionCollapse(new String[3][3]);
-    //try {
- 
+    try {
+      WaveFunctionCollapse.makeGenericbackground(TestValues.getTestState().getGrid(), Enums.Themes.LOTR);
+      
+      //String[][] tester = new String[25][25];
+      //WaveFunctionCollapse wfc4 = new WaveFunctionCollapse(tester, Enums.Themes.BAYERN);
       //wfc.generateBackgroundRecursive(new WaveGrid(test, WaveFunctionCollapse.IMAGES_AMOUNT));
-      //ImageIO.write(wfc1.getBackground(), "png", new File(Constants.toUIResources + "gridLOTR.png"));
-      //ImageIO.write(wfc2.getBackground(), "png", new File(Constants.toUIResources + "gridSTARWARS.png"));
+      ImageIO.write(wfc1.getBackground(), "png", new File(Constants.toUIResources + "gridLOTR.png"));
+      //ImageIO.write(wfc4.getBackground(), "png", new File(Constants.toUIResources + "gridSTARWARS.png"));
       //ImageIO.write(wfc3.getBackground(), "png", new File(Constants.toUIResources + "gridBAYERN.png"));
      
       
-    //} catch (IOException e) {
+    } catch (IOException e) {
       // TODO Auto-generated catch block
-     // e.printStackTrace();
-    //}
+      e.printStackTrace();
+    }
 
   }
 }

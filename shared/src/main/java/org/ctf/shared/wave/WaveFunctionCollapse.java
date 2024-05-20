@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums;
 import org.ctf.shared.constants.Enums.Themes;
 import java.io.File;
 import java.io.IOException;
@@ -417,7 +418,7 @@ public class WaveFunctionCollapse {
 
     for (int y = 0; y < ogGrid.length; y++) {
       for (int x = 0; x < ogGrid[y].length; x++) {
-        if (ogGrid[y][x].equals("b")) {
+        if (ogGrid[y][x] != null && ogGrid[y][x].equals("b")) {
           Graphics g = result.getGraphics();
           g.drawImage(block, x * imageSize * 3, y * imageSize * 3,
               x * imageSize * 3 + imageSize * 3, y * imageSize * 3 + imageSize * 3, 0, 0,
@@ -485,6 +486,51 @@ public class WaveFunctionCollapse {
    */
   public BufferedImage getBackground() {
     return background;
+  }
+
+  /**
+   * Creates a generic background image for the Map Editor in order to save time and only use the
+   * proper algorithm for the actual game. Saves the background in resources/pictures/grid.png.
+   * 
+   * @param grid
+   * @param theme
+   * @throws IOException 
+   */
+  public static void makeGenericbackground(String[][] grid, Enums.Themes theme) throws IOException {
+ 
+      String themeFolder = "";
+      switch (theme) {
+        case STARWARS:
+          themeFolder = "starwars";
+          break;
+        case LOTR:
+          themeFolder = "lotr";
+          break;
+        case BAYERN:
+          themeFolder = "bayern";
+          break;
+      }
+      
+      BufferedImage block =
+          ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + themeFolder
+              + File.separator + "WaveFunctionTiles" + File.separator + "block.png"));
+      BufferedImage genericBackground =
+          ImageIO.read(new File(Constants.toUIResources + "pictures" + File.separator + themeFolder
+              + File.separator + "WaveFunctionTiles" + File.separator + "genericGrid.png"));
+      
+      int iSize = genericBackground.getHeight() / grid.length;
+      
+      for (int y = 0; y < grid.length; y++) {
+        for (int x = 0; x < grid[y].length; x++) {
+          if (grid[y][x] != null && grid[y][x].equals("b")) {
+            Graphics g = genericBackground.getGraphics();
+            g.drawImage(block, x * iSize, y * iSize, x * iSize + iSize, y * iSize + iSize, 0, 0,
+                block.getHeight(), block.getWidth(), null);
+          }
+        }
+      }
+      ImageIO.write(genericBackground, "png",
+          new File(Constants.toUIResources + "pictures" + File.separator + "grid.png"));
   }
 
   /**
