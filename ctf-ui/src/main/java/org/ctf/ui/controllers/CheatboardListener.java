@@ -99,7 +99,6 @@ public class CheatboardListener extends NativeKeyAdapter {
    */
   @Override
   public void nativeKeyPressed(NativeKeyEvent e) {
-    System.out.println(e.getKeyCode());
     currentCode.add(e.getKeyCode());
     checkTheCode();
 
