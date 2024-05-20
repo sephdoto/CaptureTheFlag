@@ -181,9 +181,7 @@ public class SoundController {
    */
   public static int getMs(String piece, SoundType type) {
     try {
-      File file = new File(
-          audioClips.get(piece + Constants.theme.toString() + type.toString()).constructLocation()
-          );
+      File file = getSoundFile(piece, Constants.theme, type);
       AudioFile audioMetadata = AudioFileIO.read(file);
       return (int) Math.round(audioMetadata.getAudioHeader().getPreciseTrackLength() * 1000);
     } catch (Exception e) {
@@ -203,9 +201,7 @@ public class SoundController {
    */
   private static AudioClip getSound(String piece, Themes theme, SoundType type) {
     try {
-      File file = new File(
-          audioClips.get(piece + theme.toString() + type.toString()).constructLocation()
-          );
+      File file = getSoundFile(piece, theme, type);
       return new AudioClip(file.toURI().toString());
     } catch (NullPointerException npe) {
       return new AudioClip(
@@ -215,6 +211,12 @@ public class SoundController {
                   ).constructLocation()).toURI().toString()
           );
     }
+  }
+
+  private static File getSoundFile(String piece, Themes theme, SoundType type) {
+    return new File(
+        audioClips.get(piece + theme.toString() + type.toString()).constructLocation()
+        );
   }
 
   /**

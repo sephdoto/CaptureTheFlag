@@ -66,8 +66,8 @@ public class SettingsSetter {
       jse.printStackTrace();
     }
     
-    if(currentPlayer != null && Constants.theme != currentPlayer.theme)
-      currentPlayer.updateTheme();
+    if(getCurrentPlayer() != null && Constants.theme != getCurrentPlayer().theme)
+      getCurrentPlayer().updateTheme();
   }
 
   /**
@@ -100,5 +100,14 @@ public class SettingsSetter {
     Constants.musicVolume = settingObject.getDouble(Enums.UserChangeable.MUSICVOLUME.getString());
     Constants.soundVolume = settingObject.getDouble(Enums.UserChangeable.SOUNDVOLUME.getString());
     Constants.theme = Enums.Themes.valueOf(settingObject.getString(Enums.UserChangeable.THEME.getString()));
+  }
+
+  /**
+   * Returns the current MusicPlayer to change the music.
+   * 
+   * @return current music player
+   */
+  public static MusicPlayer getCurrentPlayer() {
+    return currentPlayer;
   }
 }
