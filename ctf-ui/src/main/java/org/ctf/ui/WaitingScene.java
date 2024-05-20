@@ -627,7 +627,11 @@ public class WaitingScene extends Scene {
 		 teamNames.get(i-1).setText(CreateGameController.getLastTeamName());
 	}else if(CreateGameController.getLasttype().equals("UNKNOWN")) {
 		text = "Remote Player";
-		teamNames.get(i-1).setText(String.valueOf(i));
+		if(CreateGameController.getServerManager().getGameStateFromSession().getTeams()[i-1] != null) {
+			teamNames.get(i-1).setText(CreateGameController.getServerManager().getGameStateFromSession().getTeams()[i-1].getId());
+		}else {
+			teamNames.get(i-1).setText(String.valueOf(i));
+		}
 	}
     CreateGameController.setLasttype("UNKNOWN");
     if(i-1 == 0 ) {
