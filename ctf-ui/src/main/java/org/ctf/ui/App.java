@@ -52,6 +52,7 @@ import org.ctf.ui.customobjects.*;
 public class App extends Application {
   static Stage mainStage;
   static Scene startScene;
+  static Scene lockscreen;
   static MusicPlayer backgroundMusic;
   HomeSceneController ssc;
   FadeTransition startTransition;
@@ -62,6 +63,7 @@ public class App extends Application {
   static BackgroundSize backgroundSize = new BackgroundSize(1, 1, true, true, true, true);
   static boolean serverStartSuccess;
   public static double stageOffset;
+  
   //public static ServerPane serverPane;
   
 
@@ -72,7 +74,7 @@ public class App extends Application {
     ssc = new HomeSceneController(mainStage);
     SettingsSetter.loadCustomSettings();
     ImageLoader.loadImages();
-    Scene lockscreen = new Scene(createLockScreen(), 1000, 500);
+    lockscreen = new Scene(createLockScreen(), 1000, 500);
     lockscreen.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
     lockscreen.setOnKeyPressed(
         e -> {
@@ -106,7 +108,7 @@ public class App extends Application {
    */
   private Parent createParent() {
     root = new StackPane();
-    root.setPrefSize(mainStage.getWidth(), mainStage.getHeight());
+    root.setPrefSize(lockscreen.getWidth(), lockscreen.getHeight());
     Image ctf = ImageController.loadThemedImage(ImageType.MISC, "CaptureTheFlag");
     ImageView ctfv = new ImageView(ctf);
     ctfv.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.8));
@@ -177,18 +179,19 @@ public class App extends Application {
   
   private void addServerPane(StackPane stack) {
     ServerPane serverPane = new ServerPane();
-    serverPane.prefWidthProperty().bind(stack.widthProperty().multiply(0.22));
-    serverPane.prefHeightProperty().bind(serverPane.widthProperty().multiply(0.35));
-    serverPane.maxWidthProperty().bind(stack.widthProperty().multiply(0.22));
-    serverPane.maxHeightProperty().bind(serverPane.widthProperty().multiply(0.35));
-    StackPane.setMargin(serverPane, new Insets(0, 10, 10, 0));
-    StackPane.setAlignment(serverPane, Pos.BOTTOM_RIGHT);
-//    stack.heightProperty().addListener((obs, old, newV) -> {
-//      StackPane.setMargin(serverPane,
-//          new Insets(0, stack.heightProperty().multiply(0.02).doubleValue(),
-//              stack.heightProperty().multiply(0.02).doubleValue(), 0));
-//    });
-    stack.getChildren().add(serverPane);
+    StackPane serverPaneWrapper = new StackPane();
+    serverPaneWrapper.prefWidthProperty().bind(stack.widthProperty().multiply(0.22));
+    serverPaneWrapper.prefHeightProperty().bind(serverPane.widthProperty().multiply(0.35));
+    serverPaneWrapper.maxWidthProperty().bind(stack.widthProperty().multiply(0.22));
+    serverPaneWrapper.maxHeightProperty().bind(serverPane.widthProperty().multiply(0.35));
+    StackPane.setAlignment(serverPaneWrapper, Pos.BOTTOM_RIGHT);
+   serverPaneWrapper.setPadding(new Insets(10));
+    stack.widthProperty().addListener((obs, old, newV) -> {
+     double neu = newV.doubleValue();
+      serverPaneWrapper.setPadding(new Insets(0,neu*0.02,neu*0.02,0));
+    });
+    serverPaneWrapper.getChildren().add(serverPane);
+    stack.getChildren().add(serverPaneWrapper);
     serverPane.getField().setOnKeyPressed(event -> {
       if (event.getCode() == KeyCode.ENTER) {
         String port = serverPane.getField().getText();
