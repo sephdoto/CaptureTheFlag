@@ -166,6 +166,10 @@ public class HomeSceneController {
 	public void switchToJoinScene(Stage stage) {
 		stage.setScene(new JoinScene(this, stage.getWidth(), stage.getHeight()));
 	}
+	
+	public void switchToAnalyzerScene(Stage stage) {
+		stage.setScene(new AiAnalyzer(this, stage.getWidth(), stage.getHeight()));
+	}
 
 	public void switchToMapEditorScene(Stage stage) {
 		stage.setScene(new EditorScene(this, stage.getWidth(), stage.getHeight()));
