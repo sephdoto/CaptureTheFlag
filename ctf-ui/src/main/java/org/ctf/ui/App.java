@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import javafx.animation.FadeTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -41,6 +42,7 @@ import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.controllers.SettingsSetter;
 import org.ctf.ui.controllers.SoundController;
+import java.nio.file.Paths;
 import org.ctf.ui.customobjects.*;
 
 /**
@@ -75,7 +77,11 @@ public class App extends Application {
     SettingsSetter.loadCustomSettings();
     ImageLoader.loadImages();
     lockscreen = new Scene(createLockScreen(), 1000, 500);
-    lockscreen.getStylesheets().add(Constants.toUIStyles + "MapEditor.css");
+    try {
+      lockscreen.getStylesheets().add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    }
     lockscreen.setOnKeyPressed(
         e -> {
           this.changeToHomeScreen();
@@ -224,7 +230,11 @@ public class App extends Application {
 
   private void changeToHomeScreen() {
     startScene = new Scene(createParent());
-    startScene.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
+    try {
+      startScene.getStylesheets().add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    }
     mainStage.setScene(startScene);
     App.stageOffset = mainStage.getHeight()-startScene.getHeight();
     System.out.println(App.stageOffset);
