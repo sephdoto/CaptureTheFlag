@@ -39,11 +39,28 @@ public class AIClient extends Client {
 
   ScheduledExecutorService aiClientScheduler = Executors.newScheduledThreadPool(2);
 
+  /**
+   * Runnable task responsible for joining a game for the AI Client
+   * 
+   * @return int denoting the time left in seconds
+   *
+   * @author rsyed
+   */
+
   Runnable aiClientJoinTask =
       () ->
           joinExistingGame(
               serverInfo.getHost(), serverInfo.getPort(), gameIDString, constructorSetTeamName);
 
+  
+  /**
+   * Runnable task which contains the main automation logic for the server. The task always gets a state first, then inits the AI controller with data. The 
+   * task also handles the logger incase its enabled and performs its main function of making a move the client detects that it is its turn.
+   * 
+   * @return int denoting the time left in seconds
+   *
+   * @author rsyed
+   */
   Runnable playTask =
       () -> {
         try {
@@ -146,12 +163,13 @@ public class AIClient extends Client {
   }
 
   /**
-   * Changes the sessionID which this client object is pointing to. Functions as a join game command
+   * Changes the sessionID which this client object is pointing to. Functions as a join game command. Overridden as it has to perform extra functions when compared to the one in 
+   * Client
    *
-   * @param IP
-   * @param port
-   * @param gameSessionID
-   * @param teamName
+   * @param IP of the Server
+   * @param port of the Server
+   * @param gameSessionID of the Game you want to join
+   * @param teamName you want to join with
    * @throws SessionNotFound
    * @throws NoMoreTeamSlots
    * @throws UnknownError
@@ -164,7 +182,11 @@ public class AIClient extends Client {
     joinGame(teamName);
     getStateFromServer();
   }
-
+/**
+   * Combines refreshing the session and game state into one.
+   *
+   * @author rsyed
+   */
   @Override
   public void pullData() {
     getSessionFromServer();
@@ -172,7 +194,7 @@ public class AIClient extends Client {
   }
 
   /**
-   * Main method to call to start automation
+   * Main method to call to start automation. Schedules the join task to execute immediately and then starts the watcher thread which handles the playing logic.
    *
    * @author rsyed
    */
@@ -183,8 +205,7 @@ public class AIClient extends Client {
   }
 
   /**
-   * Main thread for the AI Client. Refreshes data on its own and check if it its turn, on true
-   * makes a move, pulls data anew from Server and updates the controller
+   * Starts the play task 
    *
    * @author rsyed
    */

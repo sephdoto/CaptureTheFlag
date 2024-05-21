@@ -15,7 +15,7 @@ import org.ctf.shared.state.dto.GameSessionResponse;
 public class ServerChecker {
 
   /**
-   * Checks if server is active through a dummy gameTemplate
+   * Checks if server is active through a dummy gameTemplate. Also deletes the session it creates right after so free up the server resources again.
    *
    * @param serverDetails object holding the IP and Port of the server
    * @return true if server is active and ready to make sessions, false if not
@@ -55,6 +55,13 @@ public class ServerChecker {
     return (gSessionResponse.getId() != null) ? true : false;
   }
 
+   /**
+   * Checks if a Session is active at the server specified in the input parameter.
+   * @param serverDetails object holding the IP and Port of the server
+   * @param sessionID the sessionID you want to check for activity
+   * @return true if the session is present, false if any exception comes back indicating that the session is not there.
+   * @author rsyed
+   */
   public boolean isSessionActive(ServerDetails serverDetails, String sessionID) {
     CommLayer comm = new CommLayer();
     try {

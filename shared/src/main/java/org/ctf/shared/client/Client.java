@@ -98,7 +98,7 @@ public class Client implements GameClientInterface {
   ConcurrentLinkedQueue<GameState> fifoQueue = new ConcurrentLinkedQueue<>();
 
   /**
-   * Constructor to set the IP and port on object creation
+   * Package constructor to set the IP and port on object creation. Cannot be called externally
    *
    * @param comm Sets the comm layer the client is going to use
    * @param IP the IP to connect to Exp "localhost" or "192.xxx.xxx.xxx"
@@ -121,7 +121,7 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Second constructor which is called when we want to schedule a joinTask. Joins a game 2 seconds
+   * Overloaded constructor used when auto join functionality is wished for. Joins a game 2 seconds
    * after object creation, starts watching for game start after 3
    *
    * @param gameID Sets the comm layer the client is going to use
@@ -142,6 +142,12 @@ public class Client implements GameClientInterface {
     scheduler.schedule(startWatcher, 3, TimeUnit.SECONDS);
   }
 
+  /**
+   * Runnable task which joins a session. The data is read from the current object. Is scheduled with the overloaded constructor by default
+   * 
+   * @throws NoMoreTeamSlots when the server returns a no more team slots exception
+   * @author rsyed
+   */
   Runnable joinTask =
       () -> {
         try {
@@ -152,6 +158,11 @@ public class Client implements GameClientInterface {
         }
       };
 
+  /**
+   * Runnable lamba task which inits a watcher thread. The thread watches the Game Session for data which indicates that a game has started. 
+   * 
+   * @author rsyed
+   */
   Runnable startWatcher = Client.this::startGameController;
 
   // **************************************************
@@ -161,8 +172,8 @@ public class Client implements GameClientInterface {
    * Method to set the server which this this object communicates with and save info into a
    * ServerDeatils object. Its automatically called from the Constructor.
    *
-   * @param IP
-   * @param port
+   * @param IP of the server this object should point to
+   * @param port of the server this object should point to
    * @author rsyed
    */
   public void setServer(String IP, String port) {
@@ -175,7 +186,7 @@ public class Client implements GameClientInterface {
    * Requests the server specified in the current object to create a GameSession using the map in
    * the MapTemplate parameter. Throws exceptions on acception and incase errors occour
    *
-   * @param map
+   * @param map the map template which is sent to the server as to create a session with
    * @throws UnknownError (500)
    * @throws URLError (404)
    * @author rsyed
@@ -187,7 +198,7 @@ public class Client implements GameClientInterface {
   /**
    * Method joins the requested game session
    *
-   * @param teamName
+   * @param teamName the team name you want to join the session with. The method saves the requested name incase its needed later
    * @throws SessionNotFound
    * @throws NoMoreTeamSlots
    * @throws UnknownError
@@ -202,7 +213,7 @@ public class Client implements GameClientInterface {
   /**
    * Method makes a move in the game
    *
-   * @param Move
+   * @param Move Move object which represents a move a client/player wants to make
    * @throws SessionNotFound (404)
    * @throws ForbiddenMove (403)
    * @throws InvalidMove (409)
@@ -217,7 +228,7 @@ public class Client implements GameClientInterface {
 
   /**
    * Requests a refresh of the GameState from the server. Parses the data and makes it available for
-   * consumption Throws exceptions listed incase of acceptance or errors. Functions as a REFRESH
+   * consumption. Throws exceptions listed incase of acceptance or errors. Functions as a REFRESH
    * COMMAND for GAMESTATE
    *
    * @throws SessionNotFound
@@ -275,12 +286,12 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Changes the sessionID which this client object is pointing to. Functions as a join game command
+   * Joins an existing game session
    *
-   * @param IP
-   * @param port
-   * @param gameSessionID
-   * @param teamName
+   * @param IP which the game server is located at
+   * @param port the server port
+   * @param gameSessionID the Game Session ID which you want to join
+   * @param teamName The team name you wish to join the session with 
    * @throws SessionNotFound
    * @throws NoMoreTeamSlots
    * @throws UnknownError
@@ -326,7 +337,7 @@ public class Client implements GameClientInterface {
   /**
    * Called from createGameCaller function. Recieves the response {@link GameSessionResponse} as a
    * param and converts it into a {@link GameSession} Object as well as parse the data into
-   * individual variables for easier consumption by the UI
+   * individual variables for easier consumption by the UI. Method is protected and synchronized so that the data being extracted doesnt run into any mutex issues.
    *
    * @param {@link GameSessionResponse} with feteched Data from server
    * @author rsyed
@@ -382,7 +393,7 @@ public class Client implements GameClientInterface {
 
   /**
    * Called from the joinGame function. Recieves the teamName wished for by the team as a param and
-   * returns the response from the server as a {@link JoinGameResponse}
+   * returns the response from the server as a {@link JoinGameResponse}.
    *
    * @param teamName with feteched Data from server
    * @return {@link JoinGameResponse} with returned data from the server
@@ -410,6 +421,7 @@ public class Client implements GameClientInterface {
    * the data from the object into individual variables for easier consumption by the UI
    *
    * @param {@link GameSessionResponse} with feteched Data from server
+   * @throws UnknownError with message indicating that no team color is set by the server
    * @author rsyed
    */
   protected void joinGameParser(JoinGameResponse joinGameResponse) {
@@ -419,6 +431,7 @@ public class Client implements GameClientInterface {
       this.teamColor = joinGameResponse.getTeamColor();
     } catch (NullPointerException e) {
       logger.info("No Team color has been set");
+      throw new UnknownError("No Team color has been set by the server");
     }
   }
 
@@ -575,7 +588,7 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Checks if server is active through a dummy gameTemplate
+   * Checks if server is active through a dummy gameTemplate. Calling this too often might lead to server overload if badly progarammed
    *
    * @return true if server is active and ready to make sessions, false if not
    * @author rsyed
@@ -649,11 +662,24 @@ public class Client implements GameClientInterface {
   // **************************************************
   // Start of Alt Game Data Getters
   // **************************************************
-
+/**
+   * Getter which returns how much time is left in the move
+   * 
+   * @return int denoting the time left in seconds
+   *
+   * @author rsyed
+   */
   public int getRemainingMoveTimeInSeconds() {
     return this.moveTimeLeft;
   }
 
+  /**
+   * Getter which returns how much time is left in the game
+   * 
+   * @return int denoting the time left in seconds
+   *
+   * @author rsyed
+   */
   public int getRemainingGameTimeInSeconds() {
     return this.turnTimeLimit;
   }
@@ -674,7 +700,7 @@ public class Client implements GameClientInterface {
 
   /**
    * A Watcher thread which calls GameSessionResponse periodically and hands over functionality to
-   * GameStartedThread when it has and then terminates itself.
+   * GameStartedThread when it detects that the same has started. Terminates itself right after to free resources.
    *
    * @author rsyed
    */
@@ -706,8 +732,8 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Thead which handles client logic for when game has started. Just pulls data periodically set by
-   * the refesh time var
+   * Main thread which handles client logic for when game has started. Just pulls data periodically set by
+   * the refesh time var. Also handles the logger incase logging is wished for by the player/ui
    *
    * @author rsyed
    */
@@ -735,7 +761,7 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Setter to change Refresh time period dynamically if desired
+   * Setter to change the refreshing period dynamically if desired
    *
    * @author rsyed
    */
