@@ -20,7 +20,7 @@ import org.ctf.shared.state.Move;
 public class GameAnalyzer extends AIController {
   SavedGame game;
   AnalyzedGameState[] results;
-  int currentlyAnalyzing;
+  AnalyzerThread analyze;
 
   /**
    * Initializes the AIController with {@link calculatingTime} seconds calculating time per GameState.
@@ -40,34 +40,69 @@ public class GameAnalyzer extends AIController {
     }
     this.game = game;
     this.results = new AnalyzedGameState[game.getMoves().size()];
-    this.currentlyAnalyzing = 0;
 
-    startAnalyzing();
+    this.analyze = new AnalyzerThread(game, results);
   }
 
-  public void startAnalyzing() {
-    for(; currentlyAnalyzing<game.getMoves().size(); currentlyAnalyzing++) {
-      analyzeMove(currentlyAnalyzing +1);
-      Move next = game.getMoves().get("" + (currentlyAnalyzing +1));
-      if(next != null) {
-        if(update(next));
-        getMcts().setExpansionCounter(getMcts().getRoot().getNK());
+  private class AnalyzerThread extends Thread{
+    SavedGame game;
+    AnalyzedGameState[] results;
+    int currentlyAnalyzing;
+    boolean isAnalyzing;
+
+    public AnalyzerThread(SavedGame game, AnalyzedGameState[] results) {
+      this.game = game;
+      this.results = results;
+      this.currentlyAnalyzing = 0;
+      this.isAnalyzing = true;
+      this.start();
+    }
+    
+    public void run() {
+      analyzeGame();
+      this.isAnalyzing = false;
+      GameAnalyzer.this.setActive(false);
+    }
+    
+    public void analyzeGame() {
+      for(; currentlyAnalyzing<game.getMoves().size(); currentlyAnalyzing++) {
+        analyzeMove(currentlyAnalyzing +1);
+        Move next = game.getMoves().get("" + (currentlyAnalyzing +1));
+        if(next != null) {
+          if(update(next));
+          getMcts().setExpansionCounter(getMcts().getRoot().getNK());
+        }
       }
     }
-  }
 
-  void analyzeMove(int turn) throws NeedMoreTimeException {
-    try {
-      Move best = getNormalizedGameState().normalizedMove(getNextMove());
-      Move made = getNormalizedGameState().normalizedMove(game.getMoves().get("" +turn));
+    void analyzeMove(int turn) throws NeedMoreTimeException {
       try {
-        results[currentlyAnalyzing] = new AnalyzedGameState(getMcts(), made, best);
-      } catch (NeedMoreTimeException nmte) {
-        nmte.mentionTime(getThinkingTime());
-        throw nmte;
+        Move best = getNormalizedGameState().normalizedMove(getNextMove());
+        Move made = getNormalizedGameState().normalizedMove(game.getMoves().get("" +turn));
+        try {
+          results[currentlyAnalyzing] = new AnalyzedGameState(getMcts(), made, best);
+        } catch (NeedMoreTimeException nmte) {
+          nmte.mentionTime(getThinkingTime());
+          throw nmte;
+        }
+      } catch (NoMovesLeftException | InvalidShapeException e) {
+        e.printStackTrace();
       }
-    } catch (NoMovesLeftException | InvalidShapeException e) {
-      e.printStackTrace();
     }
+    
+    public int getCurrentlyAnalyzing() {
+      return currentlyAnalyzing;
+    }
+
+    public boolean isAnalyzing() {
+      return isAnalyzing;
+    }
+  }
+  
+  public int getCurrentlyAnalyzing() {
+    return this.analyze.getCurrentlyAnalyzing();
+  }
+  public boolean isAnalyzing() {
+    return this.analyze.isAnalyzing();
   }
 }

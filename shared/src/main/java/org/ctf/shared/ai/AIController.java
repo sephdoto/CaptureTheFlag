@@ -122,8 +122,6 @@ public class AIController {
     for(int i=0; i<children.length; i++) {
       Move childMove = children[i].getGameState().getLastMove();
       if(moveEquals(childMove, move)) {
-        System.out.println("childmove found");
-//        this.normalizedGameState = new GameStateNormalizer(children[i].getGameState(), true);
         getMcts().setRoot(children[i]);
         getMcts().getRoot().getParent().getChildren()[i] = null;
         getMcts().getRoot().setParent(null);
@@ -147,7 +145,6 @@ public class AIController {
    * @throws InvalidShapeException
    */
   public Move getNextMove() throws NoMovesLeftException, InvalidShapeException {
-    System.out.println("make move " + this.isActive() + " in "  + thinkingTime);
     if (!this.isActive())
       return null;
 
@@ -155,11 +152,10 @@ public class AIController {
     
     if(getAi() == AI.MCTS || getAi() == AI.IMPROVED || getAi() == AI.EXPERIMENTAL) {
       move = getMcts().getMove(thinkingTime);
-      System.out.println(getMcts().printResults(move));
+//      System.out.println(getMcts().printResults(move));
     } else {
       move = RandomAI.pickMoveComplex(getNormalizedGameState().getNormalizedGameState(), new ReferenceMove(null, new int[] { 0, 0 })).toMove();
     }
-    System.out.println("made move ");
     return getNormalizedGameState().unnormalizeMove(move);
   }
   

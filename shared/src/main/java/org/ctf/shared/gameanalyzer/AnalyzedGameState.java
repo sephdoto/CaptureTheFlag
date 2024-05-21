@@ -38,19 +38,22 @@ public class AnalyzedGameState {
     try {
       Arrays.sort(children);
     } catch (NullPointerException npe) {npe.printStackTrace();}
-
-    System.out.println("\ncurrent team: " + previousState.getGameState().getCurrentTeam() + " expansions: " + this.expansions);
     for(int child=0; child<children.length; child++) {
       if(AIController.moveEquals(children[child].getGameState().getLastMove(), userChoice.getGameState().getLastMove())) {
-        System.out.println(
-            "\nYour move was AIs " + (child+1) 
-            + " choice with " 
-            + ((int)(Math.round((previousState.getChildren()[child].getV() * 100) * 100))) /100 
-            + " % win chance, making it " + this.moveEvaluation);
         this.betterMoves = child;
         break;
       }
     }
+  }
+
+  public void printMe() {
+    System.out.println("\ncurrent team: " + previousState.getGameState().getCurrentTeam() + " expansions: " + this.expansions);
+    System.out.println(
+        "\nYour move was AIs " + (this.betterMoves+1) 
+        + " choice with " 
+        + ((int)(Math.round((previousState.getChildren()[this.betterMoves].getV() * 100) * 100))) /100 
+        + " % win chance, making it " + this.moveEvaluation);
+
   }
 
   /**
