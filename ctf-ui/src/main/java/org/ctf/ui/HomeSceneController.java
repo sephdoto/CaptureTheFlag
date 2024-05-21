@@ -173,7 +173,7 @@ public class HomeSceneController {
     }
 	
 	public void switchToAnalyzerScene(Stage stage) {
-		stage.setScene(new AiAnalyzer(this, stage.getWidth(), stage.getHeight()));
+		stage.setScene(new AiAnalyserNew(this, stage.getWidth(), stage.getHeight()));
 	}
 
     /**
