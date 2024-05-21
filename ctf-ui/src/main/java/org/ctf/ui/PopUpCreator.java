@@ -179,7 +179,7 @@ private ObjectProperty<Font> popUpLabel;
       text.setFill(Color.WHITE);
       text.setMouseTransparent(true);
       stack.getChildren().add(text);
-      Image mp = new Image(getClass().getResourceAsStream("i1.png"));
+      Image mp = ImageController.loadThemedImage(ImageType.MISC, "i1");
       ImageView vw = new ImageView(mp);
       StackPane.setAlignment(vw, Pos.CENTER_RIGHT);
       vw.fitHeightProperty().bind(stack.heightProperty().multiply(0.5));
