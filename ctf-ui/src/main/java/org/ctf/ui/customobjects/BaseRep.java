@@ -1,11 +1,11 @@
 package org.ctf.ui.customobjects;
 
 
-import org.ctf.ui.CreateGameScreenV2;
 import org.ctf.ui.Game;
 import org.ctf.ui.MyCustomColorPicker;
 import org.ctf.ui.PlayGameScreenV2;
 import org.ctf.ui.WaitingScene;
+import org.ctf.ui.hostGame.CreateGameScreenV2;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;

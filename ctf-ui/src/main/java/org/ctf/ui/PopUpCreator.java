@@ -12,6 +12,8 @@ import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.creators.InfoPaneCreator;
 import org.ctf.ui.customobjects.ButtonPane;
 import org.ctf.ui.customobjects.PopUpPane;
+import org.ctf.ui.hostGame.CreateGameScreenV2;
+
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

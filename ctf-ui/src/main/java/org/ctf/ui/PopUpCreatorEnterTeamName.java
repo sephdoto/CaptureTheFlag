@@ -5,6 +5,7 @@ import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.customobjects.PopUpPane;
+import org.ctf.ui.hostGame.CreateGameScreenV2;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

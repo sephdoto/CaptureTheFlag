@@ -1,4 +1,4 @@
-package org.ctf.ui;
+package org.ctf.ui.hostGame;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,6 +13,13 @@ import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.tools.JsonTools;
 import org.ctf.shared.wave.WaveFunctionCollapse;
+import org.ctf.ui.App;
+import org.ctf.ui.CreateGameController;
+import org.ctf.ui.GamePane;
+import org.ctf.ui.HomeSceneController;
+import org.ctf.ui.PopUpCreator;
+import org.ctf.ui.PopUpCreatorEnterTeamName;
+import org.ctf.ui.StroeMaps;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.customobjects.PopUpPane;
 import configs.ImageLoader;

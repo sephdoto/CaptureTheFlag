@@ -15,6 +15,8 @@ import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.RemoteWaitingThread;
 import org.ctf.ui.customobjects.PopUpPane;
+import org.ctf.ui.hostGame.CreateGameScreenV2;
+
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

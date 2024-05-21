@@ -20,6 +20,7 @@ import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
+import org.ctf.ui.hostGame.CreateGameScreenV2;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.event.ActionEvent;
