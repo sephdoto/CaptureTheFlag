@@ -74,6 +74,8 @@ public class AIController {
    * @param gameState
    */
   public boolean update(GameState gameState) {
+    if(this.normalizedGameState.getOriginalGameState().getCurrentTeam() == gameState.getCurrentTeam())
+      return false;
     if (gameState.getCurrentTeam() < 0) {
       this.setActive(false);
       shutDown();
@@ -95,12 +97,14 @@ public class AIController {
    */
   public boolean update(Move move) {
     if(this.ai == AI.HUMAN || this.ai == AI.RANDOM) return false;
+    if(moveEquals(this.normalizedGameState.getOriginalGameState().getLastMove(), move)) return false;
     move = this.normalizedGameState.normalizedMove(move);
     
     MonteCarloTreeNode[] children = getMcts().getRoot().getChildren();
     for(int i=0; i<children.length; i++) {
       Move childMove = children[i].getGameState().getLastMove();
       if(moveEquals(childMove, move)) {
+        this.normalizedGameState = new GameStateNormalizer(children[i].getGameState(), true);
         getMcts().setRoot(children[i]);
         getMcts().getRoot().setParent(null);
         return true;
@@ -122,6 +126,7 @@ public class AIController {
    * @throws InvalidShapeException
    */
   public Move getNextMove() throws NoMovesLeftException, InvalidShapeException {
+    System.out.println("make move " + this.isActive() + " in "  + thinkingTime);
     if (!this.isActive())
       return null;
 
@@ -133,6 +138,7 @@ public class AIController {
     } else {
       move = RandomAI.pickMoveComplex(getNormalizedGameState().getNormalizedGameState(), new ReferenceMove(null, new int[] { 0, 0 })).toMove();
     }
+    System.out.println("made move ");
     return getNormalizedGameState().unnormalizeMove(move);
   }
   
@@ -144,6 +150,12 @@ public class AIController {
    * @return true if move1 and move2 are equal
    */
   public static boolean moveEquals(Move move1, Move move2) {
+    if(move1.getPieceId() == null)
+      return move2.getPieceId() == null;
+    else if(move2.getPieceId() == null)
+      return move1.getPieceId() == null;
+    
+      
     if(move1.getPieceId().equals(move2.getPieceId()))
       if(Arrays.equals(move1.getNewPosition(), move2.getNewPosition()))
         return true;

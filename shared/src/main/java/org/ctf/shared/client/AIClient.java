@@ -58,7 +58,12 @@ public class AIClient extends Client {
             controllerToken = false;
           }
           pullData();
-          controller.update(getCurrentState());
+          
+          if(selectedAI == AI.RANDOM)
+            controller.update(getCurrentState());
+          else 
+            controller.update(getCurrentState());
+          
           if (enableLogging) {
             this.analyzer.addMove(getCurrentState().getLastMove());
           }
@@ -66,7 +71,11 @@ public class AIClient extends Client {
             makeMove(controller.getNextMove());
           }
           pullData();
-          controller.update(getCurrentState());
+
+          if(selectedAI == AI.RANDOM)
+            controller.update(getCurrentState());
+          else 
+            controller.update(getCurrentState());
 
         } catch (NoMovesLeftException | InvalidShapeException e) {
           throw new UnknownError("Games most likely over");

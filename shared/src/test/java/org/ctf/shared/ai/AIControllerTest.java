@@ -32,10 +32,13 @@ class AIControllerTest {
   void testGetMove() {
     for(AI ai : AI.values()) {
       AIController aic = new AIController(TestValues.getTestState(), ai, new AIConfig(), 0);
-      try {
-        aic.getNextMove();
-      } catch (NoMovesLeftException | InvalidShapeException e) {
-        fail("Fehler bei getMove");
+      for(int i=0; i<6; i++) {
+        try {
+          Move move = aic.getNextMove();
+          aic.update(move);
+        } catch (NoMovesLeftException | InvalidShapeException e) {
+          fail("Fehler bei getMove");
+        }
       }
     }
   }
@@ -63,7 +66,7 @@ class AIControllerTest {
     Move move = aic.getNextMove();
     assertTrue(gridEquals(aic.getMcts().getRoot().getGameState().getGrid(), gsOld.getGrid()));
     
-    aic.update(move);
+    assertTrue(aic.update(move));
     
     assertFalse(gridEquals(aic.getMcts().getRoot().getGameState().getGrid(), gsOld.getGrid()));
   }

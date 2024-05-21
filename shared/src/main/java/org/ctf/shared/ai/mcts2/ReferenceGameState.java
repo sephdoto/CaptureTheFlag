@@ -83,7 +83,7 @@ public class ReferenceGameState {
     String[][] stringGrid = new String[grid.getGrid().length][grid.getGrid()[0].length];
     for(int y=0; y<grid.getGrid().length; y++)
       for(int x=0; x<grid.getGrid()[0].length; x++)
-        stringGrid[y][x] = grid.getPosition(x, y).toString();
+        stringGrid[y][x] = grid.getPosition(x, y) == null ? "" : grid.getPosition(x, y).toString();
     gameState.setGrid(stringGrid);
     return gameState;
   }

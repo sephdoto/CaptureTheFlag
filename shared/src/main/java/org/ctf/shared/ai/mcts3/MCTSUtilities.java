@@ -78,12 +78,12 @@ public class MCTSUtilities {
    */
   public static void removeTeam(ReferenceGameState gameState, int team) {
     gameState.getGrid().getGrid()
-    [gameState.getTeams()[team].getBase()[1]] 
-        [gameState.getTeams()[team].getBase()[0]]
+    [gameState.getTeams()[team].getBase()[0]] 
+        [gameState.getTeams()[team].getBase()[1]]
             = null;
 
     for (Piece p : gameState.getTeams()[team].getPieces())
-      gameState.getGrid().getGrid()[p.getPosition()[1]][p.getPosition()[0]]
+      gameState.getGrid().getGrid()[p.getPosition()[0]][p.getPosition()[1]]
           = null;
     gameState.getTeams()[team] = null;
   }
