@@ -85,11 +85,6 @@ public class AIConfig {
     this.distanceBaseMultiplier = settings.getInt("distanceBaseMultiplier");
   }
   
-  public static void main(String[] args) {
-//    new AIConfig("TestConfig").saveConfigAs("TestConfigCopy");
-    getTemplateNames().forEach(s -> System.out.println(s));
-  }
-  
   /**
    * Saves a config in the ai_configs folder with the name configName.
    * 

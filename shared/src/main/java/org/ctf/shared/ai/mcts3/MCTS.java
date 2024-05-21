@@ -505,6 +505,7 @@ public class MCTS implements MonteCarloTreeSearch {
    * @param best move chosen by getRootBest() method
    */
   public String printResults(Move move) {
+//    this.root.printGrid();
     StringBuilder sb = new StringBuilder();
     sb.append(
         "Piece "

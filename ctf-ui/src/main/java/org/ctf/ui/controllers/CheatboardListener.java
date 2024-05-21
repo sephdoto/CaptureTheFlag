@@ -216,10 +216,10 @@ public class CheatboardListener extends NativeKeyAdapter {
    * @param root StackPane
    * @param startScene Scene
    */
-  public static void setSettings(StackPane root, Scene startScene) {
+  public static void setSettings(StackPane root, Scene scene) {
     CheatboardListener.settings = () -> {
       SoundController.playSound("Button", SoundType.MISC);
-      root.getChildren().add(new ComponentCreator(startScene).createSettingsWindow(root));
-    };;
+      root.getChildren().add(new ComponentCreator(scene).createSettingsWindow(root));
+    };
   }
 }

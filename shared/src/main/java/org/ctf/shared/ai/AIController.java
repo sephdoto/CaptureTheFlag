@@ -35,7 +35,8 @@ public class AIController {
    */
   public AIController(GameState gameState, AI ai, AIConfig config, int thinkingTime) {
     setActive(false);
-    this.setThinkingTime(thinkingTime < 0 ? 5000 : thinkingTime == 0 ? 500 : thinkingTime * 1000);
+//    this.setThinkingTime(thinkingTime < 0 ? 5000 : thinkingTime == 0 ? 500 : thinkingTime * 1000);
+    this.setThinkingTime(1000);
     this.setAi(config == null ? AI.RANDOM : ai);
     this.normalizedGameState = new GameStateNormalizer(gameState, true);
     this.setConfig(config);
