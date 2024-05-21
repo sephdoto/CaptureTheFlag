@@ -75,7 +75,7 @@ public class App extends Application {
     SettingsSetter.loadCustomSettings();
     ImageLoader.loadImages();
     lockscreen = new Scene(createLockScreen(), 1000, 500);
-    lockscreen.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
+    lockscreen.getStylesheets().add(Constants.toUIStyles + "MapEditor.css");
     lockscreen.setOnKeyPressed(
         e -> {
           this.changeToHomeScreen();
