@@ -1,11 +1,9 @@
 package org.ctf.ui;
 
 import java.util.HashMap;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -33,7 +31,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -43,20 +40,15 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
-import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.ui.controllers.ImageController;
-import org.ctf.ui.customobjects.BaseRep;
-import org.ctf.ui.customobjects.CostumFigurePain;
-
-import ch.qos.logback.core.net.SyslogOutputStream;
 
 public class WaitingScene extends Scene {
   // Executor Service and data which is changed by it
   private ScheduledExecutorService scheduler;
   private int currentNumber;
   
-  //When a new team joines the corresponding Boxes need to be filled with a color, team-name and type team-id -> corresponding box
+  //When a new team joins the corresponding Boxes need to be filled with a color, team-name and type team-id -> corresponding box
   private HashMap<Integer, Label> teamNames = new HashMap<Integer, Label>();
   private HashMap<Integer, Label> teamTypes = new HashMap<Integer, Label>();
   private HashMap<Integer, HBox> colors = new HashMap<Integer, HBox>();
@@ -66,7 +58,6 @@ public class WaitingScene extends Scene {
   
   //Containers and Labels which need to be accessed from different methods
   private StackPane root;
-  private Label curenntTeams;
   private Label clipboardInfo;
   private VBox leftBox;
  
@@ -243,7 +234,12 @@ public class WaitingScene extends Scene {
   }
 
   
-  
+  /**
+   * Creates the left side of the screen containing a the waiting label and the table which shows the current players
+   * @author Manuel Krakowski
+   * @param parent: used for relative resizing
+   * @return 
+   */
   private VBox createLeftVBox(HBox parent) {
     leftBox = new VBox();
     leftBox.heightProperty()
@@ -257,41 +253,44 @@ public class WaitingScene extends Scene {
     leftBox.setAlignment(Pos.CENTER);
     leftBox.prefWidthProperty().bind(parent.widthProperty().multiply(0.55));
     leftBox.prefHeightProperty().bind(parent.heightProperty().multiply(1));
-    //leftBox.getChildren().add(createTestLabel(leftBox));
-   // leftBox.getChildren().add(createTestLabel2(leftBox));
     leftBox.getChildren().add(createTopCenter());
    leftBox.getChildren().add(createWholeTable(leftBox));
    leftBox.getChildren().add(createLeave());
     return leftBox;
   }
   
+  /**
+   * Creates the table which shows the players which are in the waiting-room
+   * @author Manuel Krakowski
+   * @param parent: used for relative resizing
+   * @return
+   */
   private VBox createWholeTable(VBox parent) {
 	  VBox v = new VBox();
 	  v.prefWidthProperty().bind(parent.widthProperty().multiply(1));
 	  v.prefHeightProperty().bind(parent.heightProperty().multiply(0.6));
-	  //v.setStyle("-fx-background-color: blue");
 	  v.getChildren().add(createHeaderRow(v));
 	  v.getChildren().add(createScrollPane(v));
 	  return v;
   }
 
+  /**
+   * Creates the Content 
+   * @param parent
+   * @return
+   */
   private ScrollPane createScrollPane(VBox parent) {
     ScrollPane scroller = new ScrollPane();
     scroller.getStyleClass().clear();
-    //scroller.getStyleClass().add("scroll-pane");
-   // scroller.prefHeightProperty().bind(parent.heightProperty().multiply(0.75));
     scroller.prefWidthProperty().bind(parent.widthProperty());
     scroller.setHbarPolicy(ScrollBarPolicy.NEVER);
-    
     VBox content = new VBox();
     for (int i = 0; i < CreateGameController.getMaxNumberofTeams(); i++) {
-      //content.getChildren().add(createNormalRow(scroller));
     	  HBox oneRow = new HBox();
     	    oneRow.prefHeightProperty().bind(this.heightProperty().multiply(0.1));
     	    oneRow.getStyleClass().add("lobby-table-header");
     	    oneRow.prefWidthProperty().bind(parent.widthProperty());
     	    HBox colorBox = new HBox();
-    	    
     	    colors.put(i, colorBox);
     	    Label defaultColorLabel = new Label("?");
     	    defaultColorLabel.setAlignment(Pos.CENTER);
@@ -303,11 +302,9 @@ public class WaitingScene extends Scene {
     	    }else {
     	    	defaultColorLabel.getStyleClass().add("lobby-normal-label-2");
     	    	colorBox.setStyle("-fx-background-color: grey");
-
     	    }
     	    defaultColorLabel.fontProperty().bind(tableHeader);
     	    colorBox.setAlignment(Pos.CENTER);
-    	    //colorBox.setStyle("-fx-border-color: black");
     	    colorBox.prefWidthProperty().bind(oneRow.widthProperty().divide(2.9));
     	    colorBox.getChildren().add(defaultColorLabel);
     	    Label l2 = createNormalLabel("?", oneRow,i);
@@ -645,25 +642,7 @@ public class WaitingScene extends Scene {
  
 
   
-  private VBox createLeft() {
-    VBox left = new VBox();
-    left.heightProperty()
-        .addListener(
-            (obs, oldVal, newVal) -> {
-              double spacing = newVal.doubleValue() * 0.1;
-              left.setPadding(new Insets(spacing, 0, 0, 0));
-            });
-    VBox labels = new VBox();
-    labels.setSpacing(30);
-    // labels.getChildren().add(createInfoLabel("port" , hsc.getPort()));
-    // labels.getChildren().add(createInfoLabel("Server-ID" , hsc.getServerID()));
-    // labels.getChildren().add(createInfoLabel("Session-ID", hsc.getSessionID()));
-    left.getChildren().add(labels);
-    //		Image mp = new Image(getClass().getResourceAsStream("ct2.png"));
-    //		ImageView mpv = new ImageView(mp);
-    //		left.getChildren().add(mpv);
-    return left;
-  }
+
 
  
   private VBox waitingBox() {

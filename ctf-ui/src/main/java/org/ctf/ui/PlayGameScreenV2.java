@@ -9,8 +9,10 @@ import java.util.concurrent.TimeUnit;
 import org.ctf.shared.client.AIClient;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.wave.WaveFunctionCollapse;
+import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.customobjects.BaseRep;
 import org.ctf.ui.customobjects.CostumFigurePain;
 import org.ctf.ui.customobjects.Timer;
@@ -601,7 +603,7 @@ public class PlayGameScreenV2 extends Scene {
 		HBox pict = new HBox();
 		//pict.setStyle("-fx-background-color: green");
 		pict.prefHeightProperty().bind(x.heightProperty().multiply(0.1));
-		typeLabel = new Label("Yoda");
+		typeLabel = new Label("-");
 		typeLabel.fontProperty().bind(pictureMainDiscription);
 		typeLabel.setAlignment(Pos.CENTER_LEFT);
 		typeLabel.prefHeightProperty().bind(pict.heightProperty());
@@ -610,7 +612,8 @@ public class PlayGameScreenV2 extends Scene {
 		StackPane p = new StackPane();
 		p.prefWidthProperty().bind(pict.widthProperty().multiply(0.3));
 		//p.setStyle("-fx-background-color: yellow");
-		Image mp = new Image(getClass().getResourceAsStream("Yoda.png"));
+	    Image mp = ImageController.loadThemedImage(ImageType.MISC, "question-mark");
+
 		c = new Circle();
 		c.radiusProperty().bind(Bindings.divide(widthProperty(), 23));
 		c.setFill(new ImagePattern(mp));
