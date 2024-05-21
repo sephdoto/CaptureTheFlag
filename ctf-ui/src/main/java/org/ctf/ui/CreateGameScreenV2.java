@@ -627,74 +627,6 @@ public class CreateGameScreenV2 extends Scene {
 		return exit;
 	}
 	
-	
-	
-	private void createEnterNamePopUp() {
-		enterNamePopUp = new PopUpPane(this, 0.5, 0.3);
-		root.getChildren().remove(aiOrHumanPop);
-		VBox top = new VBox();
-		top.heightProperty().addListener((obs, oldVal, newVal) -> {
-			double spacing = newVal.doubleValue() * 0.09;
-			top.setSpacing(spacing);
-		});
-		Label l = new Label("Select Team Name");
-		l.prefWidthProperty().bind(enterNamePopUp.widthProperty());
-		l.setAlignment(Pos.CENTER);
-		l.getStyleClass().add("custom-label");
-		l.fontProperty().bind(popUpLabel);
-		top.getChildren().add(l);
-		HBox enterNameBox = new HBox();
-		enterNameBox.setAlignment(Pos.CENTER);
-		enterNamefield = createTextfield("Your Team Name",0.5);
-		enterNamefield.prefWidthProperty().bind(enterNameBox.widthProperty().multiply(0.8));
-		enterNameBox.getChildren().add(enterNamefield);
-		top.getChildren().add(enterNameBox);
-		HBox centerLeaveButton = new HBox();
-		enterNamePopUp.widthProperty().addListener((observable, oldValue, newValue) -> {
-			double newSpacing = newValue.doubleValue() * 0.05; 
-			centerLeaveButton.setSpacing(newSpacing);
-		});
-		centerLeaveButton.prefHeightProperty().bind(enterNamePopUp.heightProperty().multiply(0.4));
-		centerLeaveButton.setAlignment(Pos.CENTER);
-		centerLeaveButton.getChildren().addAll(createEnterButton(),createBackButton("name"));
-		top.getChildren().add(centerLeaveButton);
-		enterNamePopUp.setContent(top);
-		root.getChildren().add(enterNamePopUp);
-	}
-
-	
-	
-	
-	private Button createBackButton(String text) {
-		Button exit = new Button("back");
-		exit.fontProperty().bind(leaveButtonText);
-		exit.getStyleClass().add("leave-button");
-		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
-		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
-		exit.setOnAction(e -> {
-				root.getChildren().remove(enterNamePopUp);
-				root.getChildren().add(aiOrHumanPop);
-		});
-		return exit;
-	}
-
-	private Button createEnterButton() {
-		Button exit = new Button("Enter");
-		exit.fontProperty().bind(leaveButtonText);
-		exit.getStyleClass().add("leave-button");
-		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
-		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
-		exit.setOnAction(e -> {
-			//hsc.setTeamName(enterNamefield.getText());
-			//hsc.createHumanClient();
-			teamName = enterNamefield.getText();
-			CreateGameController.createHumanClient(teamName, true);
-			hsc.switchToWaitGameScene(App.getStage());
-		});
-		return exit;
-	}
-
-
 	public StackPane createBasicPane() {
 		StackPane pane = new StackPane();
 		// pane.getStyleClass().add("option-pane");
@@ -705,27 +637,5 @@ public class CreateGameScreenV2 extends Scene {
 		return pane;
 	}
 
-//	public String getServerIP() {
-//		return serverIP;
-//	}
-//
-//	public void setServerIP(String serverIP) {
-//		this.serverIP = serverIP;
-//	}
-//
-//	public String getPort() {
-//		return port;
-//	}
-//
-//	public void setPort(String port) {
-//		this.port = port;
-//	}
-//
-//	public ServerManager getServerManager() {
-//		return serverManager;
-//	}
-//
-//	public void setServerManager(ServerManager serverManager) {
-//		this.serverManager = serverManager;
-//	}
+
 }
