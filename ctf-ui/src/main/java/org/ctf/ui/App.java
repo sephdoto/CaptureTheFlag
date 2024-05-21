@@ -338,6 +338,9 @@ public class App extends Application {
    * @return boolean true if server is active, false if it fails
    */
   public boolean startServer(String port) {
+    if(process != null)
+      process.destroy();
+    
     try {
       ProcessBuilder processBuilder =
           new ProcessBuilder(
@@ -390,7 +393,6 @@ public class App extends Application {
               }
             });
     checkServerThread.start();
-
     return serverStartSuccess;
   }
 
