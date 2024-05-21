@@ -76,28 +76,7 @@ public class WaitingScene extends Scene {
       new SimpleObjectProperty<Font>(Font.getDefault());
   private ObjectProperty<Font> tableHeader = new SimpleObjectProperty<Font>(Font.getDefault());
 
-	Runnable updateTask = () -> {
-		try {
-			if (CreateGameController.getMainClient() != null) {
-				if (CreateGameController.getMainClient().getStartDate() != null) {
-					scheduler.shutdown();
-					Platform.runLater(() -> {
-						 hsc.switchToPlayGameScene(App.getStage(), CreateGameController.getMainClient(), false);
-					});
-				} else {
-					if (CreateGameController.getServerManager().getCurrentNumberofTeams() != currentNumber) {
-						currentNumber = CreateGameController.getServerManager().getCurrentNumberofTeams();
-
-						Platform.runLater(() -> {
-							this.setCUrrentTeams(currentNumber);
-						});
-					}
-				}
-			}
-		} catch (Exception e) {
-
-		}
-	};
+	
 
 	
 	/**
@@ -273,11 +252,91 @@ public class WaitingScene extends Scene {
 	  v.getChildren().add(createScrollPane(v));
 	  return v;
   }
+  
+  /**
+   * Box to ensure that the waiting animation is always centered
+   * @author Manuel Krakowski
+   * @return HBox
+   */
+  private HBox createTopCenter() {
+	    HBox captureLoadingLabel = new HBox();
+	    captureLoadingLabel.setAlignment(Pos.CENTER);
+	    captureLoadingLabel.prefWidthProperty().bind(this.widthProperty().multiply(0.5));
+	    captureLoadingLabel.getChildren().add(waitingBox());
+	    return captureLoadingLabel;
+	  }
+  
+  /**
+   * Creates a VBox containing a label with an animation of 3 sequentially appearing and disappearing
+   * @author Manuel Krakowski
+   * @return Vbox
+   */
+  private VBox waitingBox() {
+	    final Label status = new Label("Waiting for Players");
+	    status.getStyleClass().add("spinner-des-label");
+	    final Timeline timeline =
+	        new Timeline(
+	            new KeyFrame(
+	                Duration.ZERO,
+	                new EventHandler() {
+	                  @Override
+	                  public void handle(Event event) {
+	                    String statusText = status.getText();
+	                    status.setText(
+	                        ("Waiting for Players . . .".equals(statusText))
+	                            ? "Waiting for Players ."
+	                            : statusText + " .");
+	                  }
+	                }),
+	            new KeyFrame(Duration.millis(1000)));
+	    timeline.setCycleCount(Timeline.INDEFINITE);
+	    timeline.play();
+	    VBox layout = new VBox();
+	    layout.prefWidthProperty().bind(this.widthProperty().multiply(0.17));
+	    status.fontProperty().bind(waitigFontSize);
+	    // layout.setStyle("-fx-background-color: blue");
+	    layout.getChildren().addAll(status);
+	    return layout;
+	  }
+  
+  
+  
+  /**
+   * Creates the top-row with the column headers
+   * @author Manuel Krakowski
+   * @param parent
+   * @return header-row
+   */
+  private HBox createHeaderRow(VBox parent) {
+	    HBox h = new HBox();
+	    h.getStyleClass().add("lobby-table-header");
+	    Label l = createHeaderLabel("Teamcolor", h);
+	    Label l2 = createHeaderLabel("Teamname", h);
+	    Label l3 = createHeaderLabel("Type", h);
+	    h.getChildren().addAll(l, l2, l3);
+	    return h;
+	  }
+  
+  /**
+   * Creates a header-label for the table
+   * @param : text of the label
+   * @param h: parent used for relative resizing
+   * @return header-label
+   */
+  private Label createHeaderLabel(String text, HBox h) {
+	    Label l = new Label(text);
+	    l.getStyleClass().add("lobby-header-label");
+	    l.setAlignment(Pos.CENTER);
+	    l.prefWidthProperty().bind(h.widthProperty().divide(2.9));
+	    l.fontProperty().bind(tableHeader);
+	    return l;
+	  }
 
   /**
-   * Creates the Content 
-   * @param parent
-   * @return
+   * Creates the Content of the table with all the players currently in the waiting room
+   * @author Manuel Krakowski
+   * @param parent: used for relative resizing
+   * @return Scrollpane with current players
    */
   private ScrollPane createScrollPane(VBox parent) {
     ScrollPane scroller = new ScrollPane();
@@ -320,16 +379,15 @@ public class WaitingScene extends Scene {
     return scroller;
   }
   
-  private HBox createCountdownBox() {
-	  HBox h = new HBox();
-	  Label l = new Label("Hey");
-	  h.getChildren().add(l);
-	  return h;
-	
-}
   
+ /**
+  * Creates a colored rectangle which indicates the team-color of one team and sets a tooltip to it
+  * @author Manuel Krakowski
+  * @param colorBox: parent used for relative resizing
+  * @param i: Number of the team the color belongs to
+  * @return color-rectangle
+  */
   private Rectangle createColorRec( HBox colorBox, int i) {
-
 	    Rectangle r = new Rectangle();
 	    r.setFill(Color.RED);
 	    r.widthProperty().bind(Bindings.divide(colorBox.widthProperty(), 2.5));
@@ -339,7 +397,6 @@ public class WaitingScene extends Scene {
 				showColorChooser(e, i);
 			}
 		});
-	    //InfoPaneCreator.addInfoPane(r, hsc.getStage(), "Select Team Color by clicking", InfoPaneCreator.RIGHT);
 	    Tooltip tooltip = new Tooltip("Select Team Color by clicking");
 		Duration delay = new Duration(1);
 		tooltip.setShowDelay(delay);
@@ -352,38 +409,35 @@ public class WaitingScene extends Scene {
 	    return r;
   }
   
+  /**
+   * Creates a color-chooser which can be used by the user to change the color of the different teams
+   * The selected color will be used as team-coler when the game starts
+   * @author Manuel Krakowski
+   * @param e: MouseEvent causing the activation of the popup
+   * @param i: team-number the color belongs to
+   */
   public void showColorChooser(MouseEvent e, int i) {
 	  MyCustomColorPicker myCustomColorPicker = new MyCustomColorPicker();
       myCustomColorPicker.setCurrentColor(sceneColorProperty.get());
       CustomMenuItem itemColor = new CustomMenuItem(myCustomColorPicker);
       itemColor.setHideOnClick(false);
-      //sceneColorProperty.bind(myCustomColorPicker.customColorProperty());
       CreateGameController.getColors().get(String.valueOf(i)).bind(myCustomColorPicker.customColorProperty());
       ContextMenu contextMenu = new ContextMenu(itemColor);
       contextMenu.setOnHiding(t->sceneColorProperty.unbind());
       contextMenu.show(this.getWindow(),e.getScreenX(),e.getScreenY());
 }
 
-  private HBox createHeaderRow(VBox parent) {
-    HBox h = new HBox();
-    h.getStyleClass().add("lobby-table-header");
-    Label l = createHeaderLabel("Teamcolor", h);
-    Label l2 = createHeaderLabel("Teamname", h);
-    Label l3 = createHeaderLabel("Type", h);
-    h.getChildren().addAll(l, l2, l3);
-    return h;
-  }
-
-  private Label createHeaderLabel(String text, HBox h) {
-    Label l = new Label(text);
-    l.getStyleClass().add("lobby-header-label");
-    l.setAlignment(Pos.CENTER);
-    l.prefWidthProperty().bind(h.widthProperty().divide(2.9));
-   // l.setStyle("-fx-border-color:black");
-    l.fontProperty().bind(tableHeader);
-    return l;
-  }
   
+  
+  
+  /**
+   * Creates a normal label to display the content in the table
+   * @author Manuel Krakowski
+   * @param text: String that is displayed by the label
+   * @param h: parent used for relative resizing
+   * @param i: number of the team the label belong to
+   * @return: Label
+   */
   private Label createNormalLabel(String text, HBox h,int i) {
 	    Label l = new Label(text);
 	    l.setAlignment(Pos.CENTER);
@@ -399,30 +453,15 @@ public class WaitingScene extends Scene {
 	    return l;
 	  }
 
-  private HBox createNormalRow(ScrollPane parent) {
-    HBox oneRow = new HBox();
-    oneRow.prefHeightProperty().bind(this.heightProperty().multiply(0.1));
-    oneRow.prefWidthProperty().bind(parent.widthProperty());
-    HBox colorBox = new HBox();
-    Pane colorRec = new Pane();
-    colorRec.setStyle("-fx-background-color: blue");
-    colorRec.prefWidthProperty().bind(Bindings.divide(colorBox.widthProperty(), 2.5));
-    colorRec.maxHeightProperty().bind(Bindings.divide(colorBox.heightProperty(), 2));
-    colorBox.setAlignment(Pos.CENTER);
-    colorBox.setStyle("-fx-border-color: black");
-    colorBox.prefWidthProperty().bind(oneRow.widthProperty().divide(3));
-    colorBox.getChildren().add(colorRec);
-    Label l2 = createHeaderLabel("Team", oneRow);
-    l2.prefHeightProperty().bind(this.heightProperty().multiply(0.1));
-    Label l3 = createHeaderLabel("Type", oneRow);
-    l3.prefHeightProperty().bind(this.heightProperty().multiply(0.1));
-    oneRow.getChildren().addAll(colorBox, l2, l3);
-    return oneRow;
-  }
-
+  
+  /**
+   * Creates the right side of the screen including server-infos and local players-buttons
+   * @author Manuel Krakowski
+   * @param parent: used for relative resizing
+   * @return vbox: top container of the right side
+   */
   private VBox createRightVBox(HBox parent) {
     VBox rightBox = new VBox();
-    //rightBox.setStyle("-fx-background-color: yellow");
     rightBox.getStyleClass().add("option-pane");
     rightBox.setAlignment(Pos.TOP_CENTER);
     rightBox
@@ -441,11 +480,16 @@ public class WaitingScene extends Scene {
     return rightBox;
   }
 
+  /**
+   * Creates the upper part of the right side with all the server-information
+   * @author Manuel Krakowski
+   * @param parent: used for relative resizing
+   * @return Vbox with all the server information
+   */
   private VBox createSeverInfoBox(VBox parent) {
     VBox serverInfoBox = new VBox();
     serverInfoBox.prefWidthProperty().bind(parent.widthProperty());
     serverInfoBox.prefHeightProperty().bind(parent.heightProperty().multiply(0.5));
-   // serverInfoBox.setStyle("-fx-background-color: blue");
     serverInfoBox.setAlignment(Pos.CENTER);
     serverInfoBox
         .widthProperty()
@@ -478,7 +522,69 @@ public class WaitingScene extends Scene {
     serverInfoBox.getChildren().add(createShowClipBoardInfoStackPane(serverInfoBox));
     return serverInfoBox;
   }
+  
+  
+  /**
+   * Creates a Label which states which server information is shown in a box
+   * @author Manuel Krakowski
+   * @param parent: used for relative resizing
+   * @param text: Text that is shown by the label
+   * @return
+   */
+  private Label createGeneralDescription(VBox parent, String text) {
+	    Label l = new Label(text);
+	    l.getStyleClass().add("aiConfig-label");
+	    l.setAlignment(Pos.CENTER);
+	    l.fontProperty().bind(serverInfoDescription);
+	    l.prefWidthProperty().bind(parent.widthProperty().multiply(0.7));
+	    return l;
+	  }
+  
+  /**
+   * Creates a info Label to show server information, shows animation when it is clicked
+   * @author Manuel Krakowski
+   * @param parent: used for relative resizing
+   * @param header: describes the text that is shown in the box
+   * @param content: server information
+   * @param relWidth: rel-width to the parent
+   * @return
+   */
+  private VBox createInfoLabel(VBox parent, String header, String content, double relWidth) {
+	    VBox labelBox = new VBox();
+	    labelBox.prefWidthProperty().bind(parent.widthProperty().multiply(relWidth));
+	    labelBox.getStyleClass().add("info-vbox");
+	    Label headerLabel = new Label(header);
+	    headerLabel.fontProperty().bind(serverInfoHeaderFontSize);
+	    headerLabel.getStyleClass().add("des-label");
+	    Label numberLabel = new Label(content);
+	    numberLabel.getStyleClass().add("number-label");
+	    numberLabel.fontProperty().bind(serverInfoCOntentFontSize);
+	    labelBox.setOnMouseClicked(
+	        event -> {
+	          System.out.println(content);
+	          copyTextToClipBoard(content);
+	          showClipInfo(header);
+	          FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), labelBox);
+	          fadeTransition.setFromValue(1.0);
+	          fadeTransition.setToValue(0.0);
+	          fadeTransition.setOnFinished(e -> {});
 
+	          fadeTransition.setFromValue(0.0);
+	          fadeTransition.setToValue(1.0);
+	          fadeTransition.play();
+	        });
+	    labelBox.getChildren().addAll(headerLabel, numberLabel);
+	    return labelBox;
+	  }
+
+  
+  /**
+   * Creates a Stackpane with a label that is used to inform the user that the text was successfully copied to 
+   * the clipboard
+   * @author Manuel Krakowski
+   * @param parent
+   * @return
+   */
   private StackPane createShowClipBoardInfoStackPane(VBox parent) {
     StackPane displayClipBoardText = new StackPane();
     displayClipBoardText.prefWidthProperty().bind(parent.widthProperty());
@@ -490,6 +596,11 @@ public class WaitingScene extends Scene {
     return displayClipBoardText;
   }
 
+  /**
+   * Copies text to the clipboard
+   * @author Manuel Krakowski
+   * @param text: text that is copied to the clipboard
+   */
   private void copyTextToClipBoard(String text) {
     Clipboard clipboard = Clipboard.getSystemClipboard();
     ClipboardContent content = new ClipboardContent();
@@ -497,7 +608,11 @@ public class WaitingScene extends Scene {
     clipboard.setContent(content);
   }
   
-
+  /**
+   * Shows an animation when informaton is successfully copied to the clipboard by the user
+   * @author Manuel Krakowski
+   * @param copyText: Text that was successfully copied
+   */
   private void showClipInfo(String copyText) {
     clipboardInfo.setText("Copied " + copyText + " to clipboard");
     FadeTransition fade = new FadeTransition(Duration.seconds(1), clipboardInfo);
@@ -512,43 +627,62 @@ public class WaitingScene extends Scene {
     fade.play();
   }
 
-  private Label createGeneralDescription(VBox parent, String text) {
-    Label l = new Label(text);
-    l.getStyleClass().add("aiConfig-label");
-    l.setAlignment(Pos.CENTER);
-    l.fontProperty().bind(serverInfoDescription);
-    l.prefWidthProperty().bind(parent.widthProperty().multiply(0.7));
-    return l;
-  }
+  
+  /**
+   * Creates the button that is used to add a local human-client
+   * @author Manuel Krakowski
+   * @param text: text displayed on the button
+   * @return add-human-button
+   */
+  private Button createAddHumanButton(String text) {
+	    Button button = new Button(text);
+	    button.getStyleClass().add("button25");
+	    button.fontProperty().bind(addHumanButtonTextFontSIze);
+	    Image mp = ImageController.loadThemedImage(ImageType.MISC, "humanForButton");
+	    ImageView vw = new ImageView(mp);
+	    button.setGraphic(vw);
+	    button.setContentDisplay(ContentDisplay.RIGHT);
+	    vw.fitWidthProperty().bind(button.widthProperty().divide(8));
+	    vw.setPreserveRatio(true);
+	    button.setOnAction(e -> {
+			PopUpCreatorEnterTeamName popi = new PopUpCreatorEnterTeamName(this, root, null, hsc,false,false);
+			popi.createEnterNamePopUp();
+		});
+	    button.setMaxWidth(Double.MAX_VALUE);
+	    return button;
+	  }
 
-  private VBox createInfoLabel(VBox parent, String header, String content, double relWidth) {
-    VBox labelBox = new VBox();
-    labelBox.prefWidthProperty().bind(parent.widthProperty().multiply(relWidth));
-    labelBox.getStyleClass().add("info-vbox");
-    Label headerLabel = new Label(header);
-    headerLabel.fontProperty().bind(serverInfoHeaderFontSize);
-    headerLabel.getStyleClass().add("des-label");
-    Label numberLabel = new Label(content);
-    numberLabel.getStyleClass().add("number-label");
-    numberLabel.fontProperty().bind(serverInfoCOntentFontSize);
-    labelBox.setOnMouseClicked(
-        event -> {
-          System.out.println(content);
-          copyTextToClipBoard(content);
-          showClipInfo(header);
-          FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), labelBox);
-          fadeTransition.setFromValue(1.0);
-          fadeTransition.setToValue(0.0);
-          fadeTransition.setOnFinished(e -> {});
-
-          fadeTransition.setFromValue(0.0);
-          fadeTransition.setToValue(1.0);
-          fadeTransition.play();
-        });
-    labelBox.getChildren().addAll(headerLabel, numberLabel);
-    return labelBox;
-  }
-
+  	/**
+  	 * Creates the button that is used to add a local ai-client
+  	 * @author Manuel Krakowski
+  	 * @param text: text displayed on the button
+  	 * @return: add-ai-button
+  	 */
+	  private Button createAddAIButton(String text) {
+	    Button button = new Button(text);
+	    button.getStyleClass().add("button25");
+	    button.fontProperty().bind(addHumanButtonTextFontSIze);
+	    Image mp = ImageController.loadThemedImage(ImageType.MISC, "robotForButton");
+	    ImageView vw = new ImageView(mp);
+	    button.setGraphic(vw);
+	    button.setContentDisplay(ContentDisplay.RIGHT);
+	    vw.fitWidthProperty().bind(button.widthProperty().divide(8));
+	    vw.setPreserveRatio(true);
+	    button.setOnAction(e -> {
+			PopUpCreator aiPopCreator = new PopUpCreator(this, root, hsc);
+			aiPopCreator.createAiLevelPopUp(null, null, null);
+		});
+	    button.setMaxWidth(Double.MAX_VALUE);
+	    return button;
+	  }
+  
+  
+/**
+ * Creates the box with the buttons to add local-players
+ * @author Manuel Krakowski
+ * @param parent: used for relative resizing
+ * @return buttonbox
+ */
   private VBox createAddButtons(VBox parent) {
     VBox v = new VBox();
     // v.setStyle("-fx-background-color: blue");
@@ -569,42 +703,62 @@ public class WaitingScene extends Scene {
     return v;
   }
 
-  private Button createAddHumanButton(String text) {
-    Button button = new Button(text);
-    button.getStyleClass().add("button25");
-    button.fontProperty().bind(addHumanButtonTextFontSIze);
-    Image mp = ImageController.loadThemedImage(ImageType.MISC, "humanForButton");
-    ImageView vw = new ImageView(mp);
-    button.setGraphic(vw);
-    button.setContentDisplay(ContentDisplay.RIGHT);
-    vw.fitWidthProperty().bind(button.widthProperty().divide(8));
-    vw.setPreserveRatio(true);
-    button.setOnAction(e -> {
-		PopUpCreatorEnterTeamName popi = new PopUpCreatorEnterTeamName(this, root, null, hsc,false,false);
-		popi.createEnterNamePopUp();
-	});
-    button.setMaxWidth(Double.MAX_VALUE);
-    return button;
-  }
+ /**
+  * Creates the leave-button on the bottom-part of the screen
+  * @author Manuel Krakowski
+  * @return leave-button
+  */
+  private Button createLeave() {
+	    Button exit = new Button("Leave");
+	    exit.getStyleClass().add("leave-button");
+	    exit.fontProperty().bind(serverInfoCOntentFontSize);
+	    exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
+	    exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.35));
+	    exit.setOnAction(
+	        e -> {
+	        //CreateGameController.deleteGame();
+	        CreateGameController.clearUsedNames();
+			CreateGameController.clearColors();
+	          hsc.switchtoHomeScreen(e);
+	        });
+	    return exit;
+	  }
+  
+  /**
+   * Task that regulary checks if the current number of teams in the session has changed
+   * If the game has started on the server the scheduler is shutdown and it switched to the play game screen
+   * if the game hasn#t started the team-number is updated in the scene
+   * @author Manuel Krakowski
+   */
+  Runnable updateTask = () -> {
+		try {
+			if (CreateGameController.getMainClient() != null) {
+				if (CreateGameController.getMainClient().getStartDate() != null) {
+					scheduler.shutdown();
+					Platform.runLater(() -> {
+						 hsc.switchToPlayGameScene(App.getStage(), CreateGameController.getMainClient(), false);
+					});
+				} else {
+					if (CreateGameController.getServerManager().getCurrentNumberofTeams() != currentNumber) {
+						currentNumber = CreateGameController.getServerManager().getCurrentNumberofTeams();
 
-  private Button createAddAIButton(String text) {
-    Button button = new Button(text);
-    button.getStyleClass().add("button25");
-    button.fontProperty().bind(addHumanButtonTextFontSIze);
-    Image mp = ImageController.loadThemedImage(ImageType.MISC, "robotForButton");
-    ImageView vw = new ImageView(mp);
-    button.setGraphic(vw);
-    button.setContentDisplay(ContentDisplay.RIGHT);
-    vw.fitWidthProperty().bind(button.widthProperty().divide(8));
-    vw.setPreserveRatio(true);
-    button.setOnAction(e -> {
-		PopUpCreator aiPopCreator = new PopUpCreator(this, root, hsc);
-		aiPopCreator.createAiLevelPopUp(null, null, null);
-	});
-    button.setMaxWidth(Double.MAX_VALUE);
-    return button;
-  }
+						Platform.runLater(() -> {
+							this.setCUrrentTeams(currentNumber);
+						});
+					}
+				}
+			}
+		} catch (Exception e) {
 
+		}
+	};
+
+	/**
+	 * Method that is called when the number of teams in the session has changed and the game hasn't started
+	 * Updates the table with team-name,type and color of the team that is new in the session
+	 * @author Manuel Krakowski
+	 * @param current number of teams
+	 */
   public void setCUrrentTeams(int i) {
     //System.out.println(i-1);
     if((i-1) >= 0){
@@ -645,57 +799,11 @@ public class WaitingScene extends Scene {
 
 
  
-  private VBox waitingBox() {
-    final Label status = new Label("Waiting for Players");
-    status.getStyleClass().add("spinner-des-label");
-    final Timeline timeline =
-        new Timeline(
-            new KeyFrame(
-                Duration.ZERO,
-                new EventHandler() {
-                  @Override
-                  public void handle(Event event) {
-                    String statusText = status.getText();
-                    status.setText(
-                        ("Waiting for Players . . .".equals(statusText))
-                            ? "Waiting for Players ."
-                            : statusText + " .");
-                  }
-                }),
-            new KeyFrame(Duration.millis(1000)));
-    timeline.setCycleCount(Timeline.INDEFINITE);
-    timeline.play();
-    VBox layout = new VBox();
-    layout.prefWidthProperty().bind(this.widthProperty().multiply(0.17));
-    status.fontProperty().bind(waitigFontSize);
-    // layout.setStyle("-fx-background-color: blue");
-    layout.getChildren().addAll(status);
-    return layout;
-  }
+  
 
-  private HBox createTopCenter() {
-    HBox captureLoadingLabel = new HBox();
-    captureLoadingLabel.setAlignment(Pos.CENTER);
-    captureLoadingLabel.prefWidthProperty().bind(this.widthProperty().multiply(0.5));
-    captureLoadingLabel.getChildren().add(waitingBox());
-    return captureLoadingLabel;
-  }
+ 
 
-  private Button createLeave() {
-    Button exit = new Button("Leave");
-    exit.getStyleClass().add("leave-button");
-    exit.fontProperty().bind(serverInfoCOntentFontSize);
-    exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
-    exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.35));
-    exit.setOnAction(
-        e -> {
-        //CreateGameController.deleteGame();
-        CreateGameController.clearUsedNames();
-		CreateGameController.clearColors();
-          hsc.switchtoHomeScreen(e);
-        });
-    return exit;
-  }
+ 
 
  
 }
