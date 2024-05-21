@@ -221,13 +221,13 @@ public class TreeNode implements MonteCarloTreeNode, Comparable<TreeNode> {
    * TODO print more important attributes.
    */
   public void printMe(String s) {
-    printGrids();
+    printGrid();
   }
 
   /**
    * prints the grids
    */
-  public void printGrids() {
+  public void printGrid() {
     for(int i=0; i<getReferenceGameState().getGrid().getGrid().length; i++) {
       for(int j=0; j<getReferenceGameState().getGrid().getGrid()[0].length; j++) {
         if(getReferenceGameState().getGrid().getGrid()[i][j] != null && getReferenceGameState().getGrid().getGrid()[i][j].getPiece() != null)

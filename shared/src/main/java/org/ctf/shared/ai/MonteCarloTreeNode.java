@@ -16,4 +16,6 @@ public interface MonteCarloTreeNode {
   public int getNK();
   public GameState getGameState();
   public void setParent(MonteCarloTreeNode node);
+  public MonteCarloTreeNode getParent();
+  public void printGrid();
 }

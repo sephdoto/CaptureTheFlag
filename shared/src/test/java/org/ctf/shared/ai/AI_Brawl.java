@@ -41,7 +41,7 @@ public class AI_Brawl {
       else System.out.println("ISTERMINAL??? " + mcts.isTerminal(playOn, new ReferenceMove(null, new int[] {0,0})));
       org.ctf.shared.ai.mcts2.TreeNode root2 =
           new org.ctf.shared.ai.mcts2.TreeNode(null, playOn, null);
-      root2.printGrids();
+      root2.printGrid();
       org.ctf.shared.ai.mcts2.MCTS mcts2 = new org.ctf.shared.ai.mcts2.MCTS(root2, new AIConfig());
       move = mcts2.getMove(milisForMove);
       System.out.println(

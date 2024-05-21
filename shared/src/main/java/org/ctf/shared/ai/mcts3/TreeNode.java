@@ -133,9 +133,9 @@ public class TreeNode implements MonteCarloTreeNode, Comparable<TreeNode> {
      for(int y=0; y<getReferenceGameState().getGrid().getGrid().length; y++) {
        for(int x=0; x<getReferenceGameState().getGrid().getGrid()[y].length; x++) {
          if(getReferenceGameState().getGrid().getPosition(x, y) == null)
-           System.out.print(" . ");
+           System.out.print(" .     ");
          else
-         System.out.print(getReferenceGameState().getGrid().getPosition(x, y));
+         System.out.print(" " + getReferenceGameState().getGrid().getPosition(x, y) + " ");
        }
        System.out.println();
      }

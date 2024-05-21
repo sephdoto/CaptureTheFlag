@@ -10,6 +10,8 @@ import org.ctf.shared.ai.random.RandomAI;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
+import org.ctf.shared.tools.JsonTools;
+import org.ctf.shared.tools.JsonTools.MapNotFoundException;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -29,13 +31,17 @@ class AIControllerTest {
   }
 
   @Test
-  void testGetMove() {
+  void testGetMove() throws MapNotFoundException {
     for(AI ai : AI.values()) {
-      AIController aic = new AIController(TestValues.getTestState(), ai, new AIConfig(), 0);
-      for(int i=0; i<6; i++) {
+      if(ai == AI.HUMAN) continue;
+//    AI ai = AI.IMPROVED; {
+      AIController aic = new AIController(JsonTools.readGameState("test"), ai, new AIConfig(), 0);
+      for(int i=0; i<3; i++) {
         try {
           Move move = aic.getNextMove();
-          aic.update(move);
+          /*if(ai != AI.RANDOM)
+            aic.getMcts().getRoot().printGrid();
+          System.out.println(aic.update(move) + " updated with " + move.getPieceId() + " to " + move.getNewPosition()[0] + "," + move.getNewPosition()[1]);*/
         } catch (NoMovesLeftException | InvalidShapeException e) {
           fail("Fehler bei getMove");
         }

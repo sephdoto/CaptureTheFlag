@@ -100,7 +100,7 @@ class MCTSTest {
       
       gameMCTS.alterGameStateAndGrid(gameMCTS.getRoot().getReferenceGameState(), new ReferenceMove(gameMCTS.getRoot().getReferenceGameState(), move));
 
-      gameMCTS.getRoot().printGrids();
+      gameMCTS.getRoot().printGrid();
       
       if(gameMCTS.isTerminal(gameMCTS.getRoot().getReferenceGameState()) != -1)
         break;
@@ -112,7 +112,7 @@ class MCTSTest {
       gameMCTS.removeTeamCheck(gameMCTS.getRoot().getReferenceGameState());
       System.out.println("\nROUND: " + mctsTillEnd + "\nRandom: Piece " + gameMCTS.getRoot().getReferenceGameState().getLastMove().getPiece().getId() + " to " 
           + gameMCTS.getRoot().getReferenceGameState().getLastMove().getNewPosition()[0] + "," + gameMCTS.getRoot().getReferenceGameState().getLastMove().getNewPosition()[1] + "\n");
-      gameMCTS.getRoot().printGrids();
+      gameMCTS.getRoot().printGrid();
 
       if(gameMCTS.getRoot().getParent() != null)
         for(int i=0; i<gameMCTS.getRoot().getParent().getChildren().length; i++) {

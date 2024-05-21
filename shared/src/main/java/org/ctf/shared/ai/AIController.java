@@ -69,6 +69,26 @@ public class AIController {
   }
 
   /**
+   * Tries to update with Move to build upon an older Search Tree.
+   * If it fails, it updates the GameState.
+   * 
+   * @param gameState GameState to update with
+   * @param move Move to update with
+   * @return true if the update was successful
+   */
+  public boolean update(GameState gameState, Move move) {
+    boolean update = false;
+    try {
+      update = update(move);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    if(!update)
+      update = update(gameState);
+    return update;
+  }
+  
+  /**
    * Update the Controller with a new GameState.
    * 
    * @param gameState
@@ -104,9 +124,12 @@ public class AIController {
     for(int i=0; i<children.length; i++) {
       Move childMove = children[i].getGameState().getLastMove();
       if(moveEquals(childMove, move)) {
-        this.normalizedGameState = new GameStateNormalizer(children[i].getGameState(), true);
+        System.out.println("childmove found");
+//        this.normalizedGameState = new GameStateNormalizer(children[i].getGameState(), true);
         getMcts().setRoot(children[i]);
+        getMcts().getRoot().getParent().getChildren()[i] = null;
         getMcts().getRoot().setParent(null);
+        System.gc();
         return true;
       }
     }
@@ -150,6 +173,11 @@ public class AIController {
    * @return true if move1 and move2 are equal
    */
   public static boolean moveEquals(Move move1, Move move2) {
+    if(move1 == null)
+      return move2  == null;
+    else if(move2 == null)
+      return move1 == null;
+    
     if(move1.getPieceId() == null)
       return move2.getPieceId() == null;
     else if(move2.getPieceId() == null)
