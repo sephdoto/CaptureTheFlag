@@ -157,17 +157,18 @@ public class HomeSceneController {
 		stage.setScene(createGameScreenV2);
 	}
 
-	public void switchToJoinScene(Stage stage) {
-		stage.setScene(new JoinScene(this, stage.getWidth(), stage.getHeight()));
-	}
+	
+    public void switchToJoinScene(Stage stage) {
+      stage.setScene(new JoinScene(this, stage.getWidth(), stage.getHeight()));
+    }
 	
 	public void switchToAnalyzerScene(Stage stage) {
 		stage.setScene(new AiAnalyzer(this, stage.getWidth(), stage.getHeight()));
 	}
 
-	public void switchToMapEditorScene(Stage stage) {
-		stage.setScene(new EditorScene(this, stage.getWidth(), stage.getHeight()));
-	}
+    public void switchToMapEditorScene(Stage stage) {
+      stage.setScene(new EditorScene(this, stage.getWidth(), stage.getHeight()));
+    }
 	
 	public void switchToTestScene(Stage stage) {
 		stage.setScene(new TestScene(this, stage).getScene());
