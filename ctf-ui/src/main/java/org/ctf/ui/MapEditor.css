@@ -67,6 +67,12 @@
 	 -fx-border-radius: 20px;
 	 -fx-alignment: top-center;
 }
+.visual-pane{
+	-fx-border-color: rgba(255,255,255,1);
+	-fx-border-width: 3px;
+	 
+}
+
 .pop-up-pane{
 	-fx-border-color: rgba(53, 89, 119,0.4);
 	 -fx-border-width: 5px;

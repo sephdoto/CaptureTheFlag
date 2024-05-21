@@ -26,6 +26,10 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -39,6 +43,7 @@ import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.shared.constants.Enums.Themes;
@@ -52,6 +57,7 @@ import org.ctf.ui.controllers.MapPreviewThread;
 import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.customobjects.DragAndDropPane;
 import org.ctf.ui.customobjects.MovementVisual;
+import configs.ImageLoader;
 
 /**
  * Represents a JavaFX scene for the map editor. It contains all necessary UI components for
@@ -1027,28 +1033,48 @@ public class EditorScene extends Scene {
    */
   private void createVisual() {
     visualRoot = new StackPane();
-    visualRoot.getStyleClass().add("option-pane");
+    visualRoot.getStyleClass().add("visual-pane");
+    
+    
     visualRoot.setPadding(new Insets(10));
     visualRoot.prefWidthProperty().bind(root.widthProperty().multiply(0.45));
     visualRoot.prefHeightProperty().bind(root.heightProperty().multiply(0.75));
-    visualRoot.setOnDragOver(event -> {
-      if (event.getGestureSource() != this && event.getDragboard().hasFiles()) {
-        event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-      }
-      event.consume();
-    });
-    visualRoot.setOnDragDropped(event -> {
-      Dragboard dragboard = event.getDragboard();
-      boolean success = false;
-      if (dragboard.hasFiles()) {
-        File file = dragboard.getFiles().get(0);
-        this.inform(file.getName() + " was loaded.");
-        this.currentSound = file;
-      }
-      event.setDropCompleted(success);
-      event.consume();
+    
+   // StackPane wrapper = new StackPane();
+    //wrapper.setStyle("-fx-background-color: black;");
+   // visualRoot.getChildren().add(wrapper);
 
-    });
+//    Image mp =
+//        new Image(new File(Constants.toUIResources + "pictures" + File.separator + "genericGrid.png")
+//            .toURI().toString());
+    Image mp = ImageController.loadThemedImage(ImageType.WAVE, "genericGrid");
+    BackgroundImage background =
+        new BackgroundImage(
+            mp,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundPosition.CENTER,
+            App.backgroundSize);
+    visualRoot.setBackground(new Background(background));
+   
+    //   visualRoot.setOnDragOver(event -> {
+//  if (event.getGestureSource() != this && event.getDragboard().hasFiles()) {
+//    event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+//  }
+//  event.consume();
+//});
+//    visualRoot.setOnDragDropped(event -> {
+//      Dragboard dragboard = event.getDragboard();
+//      boolean success = false;
+//      if (dragboard.hasFiles()) {
+//        File file = dragboard.getFiles().get(0);
+//        this.inform(file.getName() + " was loaded.");
+//        this.currentSound = file;
+//      }
+//      event.setDropCompleted(success);
+//      event.consume();
+//
+//    });
     // GamePane visual = new GamePane(CreateTextGameStates.createTestGameState1());
     createDirectionsVisual();
     updateVisualRoot();
@@ -1118,6 +1144,7 @@ public class EditorScene extends Scene {
     // }
     // TextGeneratorThread textGeneratorThread = new TextGeneratorThread();
     // textGeneratorThread.start();
+    
     MapPreviewThread mt = new MapPreviewThread(this);
     mt.start();
 
