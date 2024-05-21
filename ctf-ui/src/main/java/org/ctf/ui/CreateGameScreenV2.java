@@ -7,11 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.Themes;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.tools.JsonTools;
 import org.ctf.shared.wave.WaveFunctionCollapse;
+import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.customobjects.PopUpPane;
 import configs.ImageLoader;
 import javafx.animation.TranslateTransition;
@@ -155,7 +157,7 @@ public class CreateGameScreenV2 extends Scene {
 	 * @return
 	 */
 	private ImageView createTop() {
-		Image mp = new Image(getClass().getResourceAsStream("multiplayerlogo.png"));
+	    Image mp = ImageController.loadThemedImage(ImageType.MISC, "multiplayerlogo");
 		ImageView mpv = new ImageView(mp);
 		mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.8));
 		mpv.setPreserveRatio(true);
@@ -521,10 +523,10 @@ public class CreateGameScreenV2 extends Scene {
 		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
 		exit.setOnAction(e -> {
-			//hsc.switchtoHomeScreen(e);
+			hsc.switchtoHomeScreen(e);
 			//PopupCreatorGameOver g = new PopupCreatorGameOver(this, root, hsc);
 			//g.createGameOverPopUpYouLost();
-			hsc.switchToTestScene(App.getStage());
+			//hsc.switchToTestScene(App.getStage());
 		});
 		return exit;
 	}
@@ -553,9 +555,9 @@ public class CreateGameScreenV2 extends Scene {
 			double newSpacing = newValue.doubleValue() * 0.05; 
 			chooseButtonBox.setSpacing(newSpacing);
 		});
-		Button human = createAddHumanButton("Play as Human", "user-286.png");
+		Button human = createAddHumanButton("Play as Human", "humanForButton");
 		human.prefWidthProperty().bind(aiOrHumanPop.widthProperty().multiply(0.2));
-		Button ai = createAddAIButton("Play as AI", "robot1.png");
+		Button ai = createAddAIButton("Play as AI", "robotForButton");
 		ai.prefWidthProperty().bind(human.widthProperty());
 		ai.prefHeightProperty().bind(human.heightProperty());
 		chooseButtonBox.getChildren().addAll(human, ai);
@@ -574,7 +576,8 @@ public class CreateGameScreenV2 extends Scene {
 		Button button = new Button(text);
 		button.getStyleClass().add("button25");
 		button.fontProperty().bind(addHumanButtonTextFontSIze);
-		Image mp = new Image(getClass().getResourceAsStream(src));
+	    Image mp = ImageController.loadThemedImage(ImageType.MISC, src);
+
 		ImageView vw = new ImageView(mp);
 		button.setGraphic(vw);
 		button.setContentDisplay(ContentDisplay.RIGHT);
@@ -593,7 +596,7 @@ public class CreateGameScreenV2 extends Scene {
 		Button button = new Button(text);
 		button.getStyleClass().add("button25");
 		button.fontProperty().bind(addHumanButtonTextFontSIze);
-		Image mp = new Image(getClass().getResourceAsStream(src));
+	    Image mp = ImageController.loadThemedImage(ImageType.MISC, src);
 		ImageView vw = new ImageView(mp);
 		button.setGraphic(vw);
 		button.setContentDisplay(ContentDisplay.RIGHT);

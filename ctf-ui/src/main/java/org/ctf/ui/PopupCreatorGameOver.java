@@ -1,4 +1,6 @@
 package org.ctf.ui;
+import org.ctf.shared.constants.Enums.ImageType;
+import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.customobjects.PopUpPane;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
@@ -124,7 +126,7 @@ public class PopupCreatorGameOver {
         mainTransition.play();
         HBox x = createButtonBox();
 		x.getChildren().addAll(playAgainButton,analyseGameButton);
-		top.getChildren().add(createHeader(poproot,"gameOver3.png"));
+		top.getChildren().add(createHeader(poproot,"gameOver3"));
 		top.getChildren().add(l);
         top.getChildren().add(x);
 		poproot.getChildren().add(top);
@@ -154,7 +156,7 @@ public class PopupCreatorGameOver {
 		Button analyseGameButton = createConfigButton("Analyze Game");
         HBox x = createButtonBox();
 		x.getChildren().addAll(playAgainButton,analyseGameButton);
-		top.getChildren().add(createHeader(poproot,"gameOver3.png"));
+		top.getChildren().add(createHeader(poproot,"gameOver3"));
 		top.getChildren().add(createWinnersPane(names));
         top.getChildren().add(x);
 		poproot.getChildren().add(top);
@@ -221,7 +223,7 @@ public class PopupCreatorGameOver {
 	 * @return Game-Over-Image
 	 */
 	 private ImageView createHeader(StackPane conRoot, String imageName) {
-		    Image mp = new Image(getClass().getResourceAsStream(imageName));
+		    Image mp = ImageController.loadThemedImage(ImageType.MISC, imageName);
 		    ImageView mpv = new ImageView(mp);
 		    mpv.fitHeightProperty().bind(conRoot.heightProperty().multiply(0.5));
 		    mpv.fitWidthProperty().bind(conRoot.widthProperty().multiply(0.8));
@@ -237,7 +239,8 @@ public class PopupCreatorGameOver {
 	  * @return
 	  */
 	private ImageView createBackgroundKonfetti(StackPane configRoot) {
-		Image mp = new Image(getClass().getResourceAsStream("konfetti2.gif"));
+	    Image mp = ImageController.loadThemedImage(ImageType.MISC, "konfetti2");
+		//Image mp = new Image(getClass().getResourceAsStream("konfetti2.gif"));
 		ImageView mpv = new ImageView(mp);
 		mpv.fitHeightProperty().bind(configRoot.heightProperty().divide(1.1));
 		mpv.fitWidthProperty().bind(configRoot.widthProperty().divide(1.1));
@@ -274,7 +277,9 @@ public class PopupCreatorGameOver {
 	private void perfromPlayAgain(Button b) {
 		b.setOnAction(e -> {
 			hsc.switchtoHomeScreen(e);
-			CreateGameController.deleteGame();
+			CreateGameController.clearUsedNames();
+			CreateGameController.clearColors();
+			//CreateGameController.deleteGame();
 		});
 	}
 		
@@ -316,7 +321,7 @@ public class PopupCreatorGameOver {
 		Button analyseGameButton = createConfigButton("Watch Game");
         HBox x = createButtonBox();
 		x.getChildren().addAll(playAgainButton,analyseGameButton);
-		top.getChildren().add(createHeader(poproot,"youLost.png"));
+		top.getChildren().add(createHeader(poproot,"youLost"));
         top.getChildren().add(x);
 		poproot.getChildren().add(top);
 		gameOverPopUp.setContent(poproot);
@@ -330,7 +335,7 @@ public class PopupCreatorGameOver {
 	 * @return: Imageview of a skelton
 	 */
 	private ImageView createBackgroundscelett(StackPane configRoot) {
-		Image mp = new Image(getClass().getResourceAsStream("DootDoot.gif"));
+	    Image mp = ImageController.loadThemedImage(ImageType.MISC, "DootDoot");
 		ImageView mpv = new ImageView(mp);
 		mpv.fitHeightProperty().bind(configRoot.heightProperty().divide(1.1));
 		mpv.fitWidthProperty().bind(configRoot.widthProperty().divide(1.1));

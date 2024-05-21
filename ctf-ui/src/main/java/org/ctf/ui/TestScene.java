@@ -146,7 +146,7 @@ public class TestScene  {
 		   }
 		   
 		   private ImageView createBackgroundKonfetti(StackPane configRoot) {
-				Image mp = new Image(getClass().getResourceAsStream("tuning1.png"));
+				Image mp = new Image(getClass().getResourceAsStream("waitingRoom2.jpg"));
 				ImageView mpv = new ImageView(mp);
 				mpv.fitHeightProperty().bind(configRoot.heightProperty());
 				mpv.fitWidthProperty().bind(configRoot.widthProperty());

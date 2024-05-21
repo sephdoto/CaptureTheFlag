@@ -5,7 +5,9 @@ import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.constants.Descriptions;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.AIConfigs;
+import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.SoundType;
+import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.creators.InfoPaneCreator;
 import org.ctf.ui.customobjects.ButtonPane;
@@ -19,7 +21,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -350,7 +351,8 @@ private ObjectProperty<Font> popUpLabel;
 	 * @return background-image
 	 */
 	private ImageView createBackgroundImage(StackPane configRoot) {
-		Image mp = new Image(getClass().getResourceAsStream("tuning1.png"));
+	    Image mp = ImageController.loadThemedImage(ImageType.MISC, "tuning1");
+
 		ImageView mpv = new ImageView(mp);
 		mpv.fitHeightProperty().bind(configRoot.heightProperty().divide(1.2));
 		mpv.fitWidthProperty().bind(configRoot.widthProperty().divide(1.2));
@@ -384,7 +386,7 @@ private ObjectProperty<Font> popUpLabel;
 	 * @return Creates the Header of the whole scene with the name AI-Generator
 	 */
 	private ImageView createHeader() {
-		Image mp = new Image(getClass().getResourceAsStream("aiGenerator.png"));
+	    Image mp = ImageController.loadThemedImage(ImageType.MISC, "aiGenerator");
 		ImageView mpv = new ImageView(mp);
 		mpv.fitWidthProperty().bind(aiconfigPopUp.widthProperty().multiply(0.6));
 		mpv.setPreserveRatio(true);
@@ -572,7 +574,8 @@ private ObjectProperty<Font> popUpLabel;
 		HBox upperLeft = new HBox();
 		upperLeft.getChildren().add(l);
 		upperLeft.prefWidthProperty().bind(upperpart.widthProperty().multiply(0.7));
-		Image mp = new Image(getClass().getResourceAsStream("i1.png"));
+	    Image mp = ImageController.loadThemedImage(ImageType.MISC, "i1");
+
 		ImageView vw = new ImageView(mp);
 		vw.fitHeightProperty().bind(upperpart.heightProperty().multiply(0.7));
 		vw.fitWidthProperty().bind(upperpart.widthProperty().multiply(0.2));

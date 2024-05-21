@@ -44,6 +44,8 @@ import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 import org.ctf.shared.client.lib.ServerManager;
+import org.ctf.shared.constants.Enums.ImageType;
+import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.customobjects.BaseRep;
 import org.ctf.ui.customobjects.CostumFigurePain;
 
@@ -146,7 +148,7 @@ public class WaitingScene extends Scene {
     }
   
   private ImageView createBackgroundImage(StackPane configRoot) {
-		Image mp = new Image(getClass().getResourceAsStream("waitingRoom2.jpg"));
+	  	Image mp = ImageController.loadThemedImage(ImageType.MISC, "waitingRoom2");
 		ImageView mpv = new ImageView(mp);
 		mpv.fitHeightProperty().bind(configRoot.heightProperty().divide(1));
 		mpv.fitWidthProperty().bind(configRoot.widthProperty().divide(1));
@@ -210,7 +212,7 @@ public class WaitingScene extends Scene {
    * @return ImageView containing the word 'Lobby'
    */
   private ImageView createHeader() {
-    Image mp = new Image(getClass().getResourceAsStream("waiting-room.png"));
+	Image mp = ImageController.loadThemedImage(ImageType.MISC, "waitingRoomHeader");
     ImageView mpv = new ImageView(mp);
     mpv.fitHeightProperty().bind(root.heightProperty().multiply(0.1));
     mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.7));
@@ -561,8 +563,8 @@ public class WaitingScene extends Scene {
               v.setSpacing(spacing);
             });
     v.prefWidthProperty().bind(parent.widthProperty().multiply(0.6));
-    Button k = createAddHumanButton("add Human-Player", "user-286.png");
-    Button b = createAddAIButton("add Bot", "robot1.png");
+    Button k = createAddHumanButton("add Human-Player");
+    Button b = createAddAIButton("add Bot");
 
     v.getChildren().add(createGeneralDescription(v, "Add local players"));
     v.getChildren().add(b);
@@ -570,11 +572,11 @@ public class WaitingScene extends Scene {
     return v;
   }
 
-  private Button createAddHumanButton(String text, String src) {
+  private Button createAddHumanButton(String text) {
     Button button = new Button(text);
     button.getStyleClass().add("button25");
     button.fontProperty().bind(addHumanButtonTextFontSIze);
-    Image mp = new Image(getClass().getResourceAsStream(src));
+    Image mp = ImageController.loadThemedImage(ImageType.MISC, "humanForButton");
     ImageView vw = new ImageView(mp);
     button.setGraphic(vw);
     button.setContentDisplay(ContentDisplay.RIGHT);
@@ -588,11 +590,11 @@ public class WaitingScene extends Scene {
     return button;
   }
 
-  private Button createAddAIButton(String text, String src) {
+  private Button createAddAIButton(String text) {
     Button button = new Button(text);
     button.getStyleClass().add("button25");
     button.fontProperty().bind(addHumanButtonTextFontSIze);
-    Image mp = new Image(getClass().getResourceAsStream(src));
+    Image mp = ImageController.loadThemedImage(ImageType.MISC, "robotForButton");
     ImageView vw = new ImageView(mp);
     button.setGraphic(vw);
     button.setContentDisplay(ContentDisplay.RIGHT);
@@ -606,28 +608,10 @@ public class WaitingScene extends Scene {
     return button;
   }
 
-  private Label createTestLabel(VBox parent) {
-    Label test = new Label(" max teams:" + CreateGameController.getMaxNumberofTeams());
-    test.prefWidthProperty().bind(parent.widthProperty());
-    return test;
-  }
-
-  private Label createTestLabel2(VBox parent) {
-    curenntTeams = new Label(" current teams: 1");
-    curenntTeams.prefWidthProperty().bind(parent.widthProperty());
-    return curenntTeams;
-  }
-
-  public void updateData() {
-   // TODO Put in methods which you want run 
-  }
-
   public void setCUrrentTeams(int i) {
-    //curenntTeams.setText("Current Ts:" + String.valueOf(i));
-    System.out.println(i-1);
+    //System.out.println(i-1);
     if((i-1) >= 0){
     HBox toAdd = colors.get(i-1);
-    //String color = CreateGameController.getMainClient().getTeams()[i-1].getColor();
     toAdd.getChildren().clear();
     toAdd.getChildren().add(createColorRec( toAdd,i-1));
     String text = "";
@@ -656,44 +640,11 @@ public class WaitingScene extends Scene {
 
   
 
-  public void showTeamInformation() {
-  }
+  
 
  
 
-  private void createLayout2() {
-    HBox main = new HBox();
-    main.setAlignment(Pos.CENTER);
-    main.setSpacing(main.heightProperty().doubleValue() * 0.09);
-    main.heightProperty()
-        .addListener(
-            (obs, oldVal, newVal) -> {
-              double spacing = newVal.doubleValue() * 0.1;
-              main.setSpacing(spacing);
-            });
-    main.prefWidthProperty().bind(this.widthProperty());
-    main.getChildren().add(createLeft());
-    VBox middleBox = new VBox();
-    middleBox.getChildren().add(createHeader());
-    middleBox.getChildren().add(createTopCenter());
-    middleBox
-        .heightProperty()
-        .addListener(
-            (obs, oldVal, newVal) -> {
-              double spacing = newVal.doubleValue() * 0.04;
-              middleBox.setSpacing(spacing);
-            });
-    // middleBox.getChildren().add(createShowMapPane("p2"));
-    // middleBox.getChildren().add(createREctangleAnimation());
-    middleBox.getChildren().add(createLeave());
-    middleBox.getChildren().add(createCreateButton());
-    middleBox.setAlignment(Pos.TOP_CENTER);
-    // middleBox.setStyle("-fx-background-color:red");
-    main.getChildren().add(middleBox);
-    root.setStyle("-fx-background-color:black");
-    root.getChildren().add(main);
-  }
-
+  
   private VBox createLeft() {
     VBox left = new VBox();
     left.heightProperty()
@@ -714,17 +665,7 @@ public class WaitingScene extends Scene {
     return left;
   }
 
-  private HBox createIPandPortBox() {
-    HBox labelBox = new HBox();
-    this.widthProperty()
-        .addListener(
-            (observable, oldValue, newValue) -> {
-              double newSpacing = newValue.doubleValue() * 0.05;
-              labelBox.setSpacing(newSpacing);
-            });
-    return labelBox;
-  }
-
+ 
   private VBox waitingBox() {
     final Label status = new Label("Waiting for Players");
     status.getStyleClass().add("spinner-des-label");
@@ -769,29 +710,13 @@ public class WaitingScene extends Scene {
     exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.35));
     exit.setOnAction(
         e -> {
-        CreateGameController.deleteGame();
+        //CreateGameController.deleteGame();
+        CreateGameController.clearUsedNames();
+		CreateGameController.clearColors();
           hsc.switchtoHomeScreen(e);
         });
     return exit;
   }
 
-  private Button createCreateButton() {
-    Button search = new Button("Create");
-    search.getStyleClass().add("leave-button");
-    search.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
-    search.prefHeightProperty().bind(search.widthProperty().multiply(0.25));
-    search
-        .fontProperty()
-        .bind(
-            Bindings.createObjectBinding(
-                () -> Font.font("Century Gothic", search.getHeight() * 0.4),
-                search.heightProperty()));
-    search.setOnAction(
-        e -> {
-          //hsc.switchToPlayGameScene(App.getStage(),CreateGameController.getMainClient(), false);
-          // hsc.switchToTestScene(App.getStage());
-        });
-
-    return search;
-  }
+ 
 }

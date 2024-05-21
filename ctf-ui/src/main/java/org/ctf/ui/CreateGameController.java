@@ -74,7 +74,9 @@ public class CreateGameController {
 	private static String lasttype;
 	private static AI lastAitype;
 	
-	
+	public static void clearUsedNames() {
+		usedTeamNames.clear();
+	}
 	
 
 	public static String getLasttype() {
@@ -97,6 +99,10 @@ public class CreateGameController {
 		for(int i=0; i<CreateGameController.getMaxNumberofTeams(); i++) {
 			colors.put(String.valueOf(i), new SimpleObjectProperty<>(Color.BLACK));
 		}
+	}
+	
+	public static void clearColors() {
+		colors.clear();
 	}
 	public static void initColorHashMapForRemote(Client client) {
 		for(int i=0; i<client.getTeams().length; i++) {

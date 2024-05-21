@@ -244,6 +244,8 @@ public class PlayGameScreenV2 extends Scene {
 			showMapBox.getChildren().add(new Label("hallo"));
 		} else {
 			System.out.println(state.getCurrentTeam());
+			//System.out.println("Cuurent Team" + state.getCurrentTeam());
+			//System.out.println("last Move " + 			state.getLastMove().getNewPosition()[0] + ";" + state.getLastMove().getNewPosition()[0] );
 			System.out.println(state.getGrid()[0].length);
 			drawGamePane(state);
 			if (isRemote) {
