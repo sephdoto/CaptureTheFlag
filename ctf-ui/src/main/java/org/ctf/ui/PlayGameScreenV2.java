@@ -164,7 +164,6 @@ public class PlayGameScreenV2 extends Scene {
 		super(new StackPane(), width, height);
 		this.mainClient = mainClient;
 		this.isRemote = isRemote;
-		 this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
 		initalizePlayGameScreen(hsc);
 	}
 	
@@ -283,14 +282,8 @@ public class PlayGameScreenV2 extends Scene {
 	     gm.prefWidthProperty().bind(mpv.fitWidthProperty());
 	     gm.prefHeightProperty().bind(mpv.fitHeightProperty());
 	     gm.enableBaseColors(this);
-//	     if (first) {
-//		     showMapBox.getChildren().add(createBackgroundImage(gm.vBox,state));
-//		     first = false;
-//		}
-//	     wrapper.getChildren().remove(showMapBox);
-//	     createShowMapPane();
 	     showMapBox.getChildren().add(gm);
-//	     wrapper.getChildren().add(showMapBox);
+
 	}
 	
 	 private  String formatTime(int totalSeconds) {
@@ -303,7 +296,6 @@ public class PlayGameScreenV2 extends Scene {
 	
 	public ImageView createBackgroundImage(VBox vBox) {
 	      // Image mp = new Image(getClass().getResourceAsStream("gridSTARWARS.png"));
-	     
 	      Image mp =
 	          new Image(new File(Constants.toUIResources + "pictures" + File.separator + "grid.png")
 	              .toURI().toString());
@@ -311,8 +303,6 @@ public class PlayGameScreenV2 extends Scene {
 	      StackPane.setAlignment(mpv, Pos.CENTER);
 	      mpv.fitHeightProperty().bind(vBox.heightProperty().multiply(1));
 	      mpv.fitWidthProperty().bind(vBox.widthProperty().multiply(1));
-
-	      // mpv.setPreserveRatio(true);
 	      mpv.setOpacity(1);
 	      return mpv;
 	    }

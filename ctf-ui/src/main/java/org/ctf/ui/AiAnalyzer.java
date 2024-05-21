@@ -19,9 +19,11 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 
@@ -60,8 +62,8 @@ public class AiAnalyzer extends Scene {
 	 
 	    popUpLabel = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/50));
 		leaveButtonText = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/80));
-	    moveTableHeader = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/60));
-	    moveTableContent = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/70));
+	    moveTableHeader = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/50));
+	    moveTableContent = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/60));
 
 
 	    createLayout();
@@ -77,7 +79,7 @@ public class AiAnalyzer extends Scene {
 	                  Number newWidth) {
 	            	  popUpLabel.set(Font.font(newWidth.doubleValue() / 50));
 	            	  leaveButtonText.set(Font.font(newWidth.doubleValue() / 80));
-                      moveTableHeader.set(Font.font(newWidth.doubleValue() / 60));
+                      moveTableHeader.set(Font.font(newWidth.doubleValue() / 50));
                       moveTableContent.set(Font.font(newWidth.doubleValue() / 60));
 	              }
 	            });
@@ -94,6 +96,7 @@ public class AiAnalyzer extends Scene {
 	    VBox mainVBox = createMainBox(root);
 	    mainVBox.getChildren().add(createHeader());
 	    HBox sep = createMiddleHBox(mainVBox);
+	    sep.getChildren().add(createMapBox(sep));
 	    sep.getChildren().add(createAllMovesVBox(sep));
 	    mainVBox.getChildren().add(sep);
 	    root.getChildren().add(mainVBox);
@@ -158,6 +161,15 @@ public class AiAnalyzer extends Scene {
 	    return sep;
 	  }
 	  
+	  private VBox createMapBox(HBox parent) {
+	    VBox mapBox = new VBox();
+	    mapBox.prefHeightProperty().bind(parent.heightProperty());
+	    mapBox.prefWidthProperty().bind(parent.widthProperty().multiply(0.5));
+	    mapBox.setStyle("-fx-background-color: blue");
+	    
+	    return mapBox;
+	  }
+	  
 	  /**
 	   * Creates the right side of the screen containing a header and a scrollPane with all moves
 	   * @author Manuel Krakowski
@@ -169,7 +181,7 @@ public class AiAnalyzer extends Scene {
 	    leftBox.setAlignment(Pos.CENTER);
         leftBox.prefWidthProperty().bind(parent.widthProperty().multiply(0.2));
         leftBox.prefHeightProperty().bind(parent.heightProperty().multiply(1));
-        leftBox.setStyle("-fx-background-color: green");
+       // leftBox.setStyle("-fx-background-color: green");
 	    leftBox.heightProperty()
 	    .addListener(
 	        (observable, oldValue, newValue) -> {
@@ -194,7 +206,8 @@ public class AiAnalyzer extends Scene {
 	   */
 	  private Label createHeaderLabel(String text, VBox parent) {
 	        Label l = new Label(text);
-	        l.getStyleClass().add("lobby-header-label");
+	        l.setTextFill(Color.GOLD);
+	        //l.getStyleClass().add("lobby-header-label");
 	        l.setAlignment(Pos.CENTER);
 	        l.prefWidthProperty().bind(parent.widthProperty());
 	        l.fontProperty().bind(moveTableHeader);
@@ -210,7 +223,7 @@ public class AiAnalyzer extends Scene {
 	  private ScrollPane createScrollPane(VBox parent) {
 	    ScrollPane scroller = new ScrollPane();
 	    scroller.getStyleClass().clear();
-        scroller.setStyle("-fx-background-color: grey");
+        //scroller.setStyle("-fx-background-color: grey");
 	    scroller.prefWidthProperty().bind(parent.widthProperty());
 	    scroller.prefHeightProperty().bind(parent.heightProperty().multiply(0.93));
 	    scroller.setHbarPolicy(ScrollBarPolicy.NEVER);
@@ -253,7 +266,7 @@ public class AiAnalyzer extends Scene {
 	            l.getStyleClass().add("lobby-normal-label-2");
 	        }
 	       
-	        l.prefWidthProperty().bind(h.widthProperty().divide(2));
+	        l.prefWidthProperty().bind(h.widthProperty().multiply(0.25));
 	       // l.setStyle("-fx-border-color:black");
 	        l.fontProperty().bind(moveTableContent);
 	        return l;
@@ -275,10 +288,11 @@ public class AiAnalyzer extends Scene {
             }else {
                 l.getStyleClass().add("lobby-normal-label-2");
             }
-            l.prefWidthProperty().bind(h.widthProperty().divide(2));
+            l.prefWidthProperty().bind(h.widthProperty().multiply(0.75));
             l.fontProperty().bind(moveTableContent);
             return l;
           }
+      
 	  
 	
 	
