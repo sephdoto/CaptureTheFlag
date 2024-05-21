@@ -67,6 +67,7 @@ public class Constants {
               + File.separator
               + "resources"
               + File.separator;
+  public static final String toUIStyles = Constants.toUIResources + "styling" + File.separator;
   public static final String sharedResourcesFolder = toUIResources + "game" + File.separator;
   public static final String toUIPictures = Constants.toUIResources + "pictures" + File.separator;
 
