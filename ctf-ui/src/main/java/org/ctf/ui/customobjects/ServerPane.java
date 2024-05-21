@@ -9,13 +9,25 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-public class ServerPane extends StackPane{
+/**
+ * Allows users to start a server by entering a port.
+ * 
+ * @author aniemesc
+ */
+public class ServerPane extends StackPane {
   private TextField field;
   private Text text;
+
+  /**
+   * Creates a resizable and styled container. When clicked a {@link TextField} gets added for the
+   * user to enter the port number.
+   * 
+   * @author aniemesc
+   */
   public ServerPane() {
     this.getStyleClass().add("server-pane");
-    this.widthProperty().addListener((obs,old,newV) -> {
-      this.setPadding(new Insets(newV.doubleValue()*0.1));
+    this.widthProperty().addListener((obs, old, newV) -> {
+      this.setPadding(new Insets(newV.doubleValue() * 0.1));
     });
     text = new Text("START LOCAL SERVER");
     text.fontProperty().bind(Bindings.createObjectBinding(
@@ -24,12 +36,17 @@ public class ServerPane extends StackPane{
     this.getChildren().add(text);
     createPortField();
     this.setOnMouseClicked(e -> {
-     this.getChildren().clear();
+      this.getChildren().clear();
       this.getChildren().add(field);
     });
   }
-  
-  private void createPortField(){
+
+  /**
+   * Creates and styles the port {@link TextField} for the ServerPane.
+   * 
+   * @author aniemesc
+   */
+  private void createPortField() {
     field = new TextField();
     field.maxWidthProperty().bind(this.widthProperty().multiply(0.6));
     field.prefHeightProperty().bind(this.heightProperty().multiply(0.4));
@@ -41,23 +58,34 @@ public class ServerPane extends StackPane{
       field.setFont(new Font(newFontSize));
     });
     StackPane.setAlignment(field, Pos.CENTER_RIGHT);
-   
+
   }
-  
-  public TextField getField() {
-    return this.field;
-  }
-  
+
+  /**
+   * puts the ServerPane in a static condition.
+   * 
+   * @author aniemesc
+   */
   public void setFinished() {
     this.getChildren().clear();
     this.text.setText("Server Started!");
     this.getChildren().add(text);
-    this.setOnMouseClicked(e -> {});
+    this.setOnMouseClicked(e -> {
+    });
   }
-  
+
+  /**
+   * Updates the promt text of the {@link TextField} of the ServerPane.
+   * 
+   * @author aniemesc
+   */
   public void updatePromtText() {
     field.setText("");
     field.setPromptText("Port already in use");
   }
   
+  public TextField getField() {
+    return this.field;
+  }
+
 }

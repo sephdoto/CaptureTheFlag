@@ -511,6 +511,12 @@ public class TemplateEngine {
     return new ArrayList<String>();
   }
   
+  /**
+   * Return a list of all distinct piece types saved in the available map templates.
+   * 
+   * @author aniemesc
+   * @return list of piece types
+   */
   public ObservableList<String> getAllPieceNames() {
     ObservableList<String> options = FXCollections.observableArrayList();
     for (String type : pieces.keySet()) {
