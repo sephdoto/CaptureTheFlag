@@ -19,7 +19,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
- * This class represents a custom button which is showing an animation when
+ * displays a custom button  which is showing an animation when
  * hovering over it.
  * @author mkrakows
  * @author aniemesc
