@@ -1,5 +1,6 @@
 package org.ctf.ui.controllers;
 import java.util.ArrayList;
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.ComponentCreator;
 import org.jnativehook.GlobalScreen;
@@ -91,6 +92,27 @@ public class CheatboardListener extends NativeKeyAdapter {
     settings.add(NativeKeyEvent.VC_G);
     settings.add(NativeKeyEvent.VC_S);
     cheatCodes.add(settings);
+    
+    ArrayList<Integer> mute = new ArrayList<Integer>();
+    mute.add(NativeKeyEvent.VC_M);
+    mute.add(NativeKeyEvent.VC_U);
+    mute.add(NativeKeyEvent.VC_T);
+    mute.add(NativeKeyEvent.VC_E);
+    cheatCodes.add(mute);
+    
+    ArrayList<Integer> half = new ArrayList<Integer>();
+    half.add(NativeKeyEvent.VC_H);
+    half.add(NativeKeyEvent.VC_A);
+    half.add(NativeKeyEvent.VC_L);
+    half.add(NativeKeyEvent.VC_F);
+    cheatCodes.add(half);
+    
+    ArrayList<Integer> full = new ArrayList<Integer>();
+    full.add(NativeKeyEvent.VC_F);
+    full.add(NativeKeyEvent.VC_U);
+    full.add(NativeKeyEvent.VC_L);
+    full.add(NativeKeyEvent.VC_L);
+    cheatCodes.add(full);
   }
 
   /**
@@ -161,21 +183,30 @@ public class CheatboardListener extends NativeKeyAdapter {
    */
   private void letTheFunBegin(ArrayList<Integer> match) {
     if(match == cheatCodes.get(0)) {    //first list is, of course, rickroll
-      System.out.println("gotcha");
       MusicPlayer.shortFade((int)SoundController.getMs("rick", SoundType.MISC), 10, 0.1);
       SoundController.playSound("rick", SoundType.MISC);
-    } else if (match == cheatCodes.get(1)) {
-      System.out.println("skip");
+    } else if (match == cheatCodes.get(1)) {    // skip current song
       SettingsSetter.getCurrentPlayer().startShuffle();
     } else if (match == cheatCodes.get(2)) {
       System.out.println("reimport resources");
-    } else if (match == cheatCodes.get(3)) {
-      System.out.println("Settings");
+    } else if (match == cheatCodes.get(3)) {    // open settings
       if(settings != null)
         Platform.runLater(() -> {
           SoundController.playSound("Button", SoundType.MISC);
           settings.run();
         });
+    } else if (match == cheatCodes.get(4)) {    // mute music and sounds
+      MusicPlayer.mp.setVolume(0);
+      Constants.musicVolume = 0;
+      Constants.soundVolume = 0;
+    } else if (match == cheatCodes.get(5)) {    // set music and sounds to 50%
+      MusicPlayer.mp.setVolume(0.5);
+      Constants.musicVolume = 0.5;
+      Constants.soundVolume = 0.5;
+    } else if (match == cheatCodes.get(6)) {    // set music and sounds to 100%
+      MusicPlayer.mp.setVolume(1);
+      Constants.musicVolume = 1;
+      Constants.soundVolume = 1;
     }
   }
   
