@@ -1,7 +1,10 @@
 package org.ctf.ui;
 
+import java.net.MalformedURLException;
+import java.nio.file.Paths;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.client.lib.ServerManager;
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.RemoteWaitingThread;
@@ -39,7 +42,11 @@ public class RemoteWaitingScene extends Scene {
 		this.client = client;
 		this.serverManager = serverManager;
 		root = (StackPane) this.getRoot();
-		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
+		 try {
+		      this.getStylesheets().add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
+		    } catch (MalformedURLException e) {
+		      e.printStackTrace();
+		    }
 		createLayout();
 		RemoteWaitingThread rwt = new RemoteWaitingThread(this);
 		rwt.start();

@@ -690,11 +690,6 @@ public class EditorScene extends Scene {
     mb.getStyleClass().add("custom-menu-button");
     mb.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
     mb.prefHeightProperty().bind(mb.widthProperty().multiply(0.2));
-    // mb.prefHeightProperty().addListener((obs, oldv, newV) -> {
-    // System.out.println("hey");
-    // double size = newV.doubleValue() * 0.5;
-    // mb.setFont(Font.font("Century Gothic", size));
-    // });
     MenuItem mapMenuItem = new MenuItem("Edit Map");
     MenuItem figureMenuItem = new MenuItem("Add Pieces");
     MenuItem configMenuItem = new MenuItem("Custom Pieces");
@@ -748,7 +743,7 @@ public class EditorScene extends Scene {
     mapMenuButton.getStyleClass().add("custom-menu-button");
     mapMenuButton.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
     mapMenuButton.prefHeightProperty().bind(mapMenuButton.widthProperty().multiply(0.2));
-    for (String mapName : engine.getTemplateNames()) {
+    for (String mapName : TemplateEngine.getTemplateNames()) {
       addMapItem(mapName);
     }
 
@@ -773,7 +768,7 @@ public class EditorScene extends Scene {
       mb.setText("Edit Map");
       updateVisualRoot();
       this.validtemplate = true;
-      inform(mapName + "was loaded.");
+      inform(mapName + " was loaded.");
     });
     mapMenuButton.getItems().add(item);
   }

@@ -2,14 +2,12 @@ package org.ctf.ui;
 
 import java.text.DecimalFormat;
 import org.ctf.shared.ai.AIConfig;
-import org.ctf.shared.ai.mcts2.Grid;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.Themes;
 import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.controllers.SettingsSetter;
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
-
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,7 +22,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -61,12 +58,11 @@ public class ComponentCreator {
    */
   public StackPane createSubmitWindow() {
     PopUpPane popUp = new PopUpPane(editorscene, 0.4, 0.4);
-    // root.setContent(new Button("Hi"));
     VBox vbox = new VBox();
     vbox.setAlignment(Pos.TOP_CENTER);
     vbox.setPadding(new Insets(10));
     vbox.setSpacing(15);
-    Text header = editorscene.createHeaderText(vbox, "Save your Template", 15);
+    Text header = EditorScene.createHeaderText(vbox, "Save your Template", 15);
     vbox.getChildren().add(header);
     TextField nameField = createNameField(vbox);
     Text info = createinfo(vbox);
@@ -92,11 +88,11 @@ public class ComponentCreator {
   }
 
   /**
-   * Genreates the Textfield requiered for the submitting window.
+   * Generates resized TextField in the style for the submitting window.
    * 
    * @author aniemesc
-   * @param vBox - main container of the submitting window
-   * @return Textfield that can be added to the main container
+   * @param vBox - container used for resizing
+   * @return TextField that can be added to the main container
    */
   public static TextField createNameField(VBox vBox) {
     TextField nameField = new TextField();
@@ -152,7 +148,7 @@ public class ComponentCreator {
         CreateGameScreenV2.informationmustBeEntered(nameField, "custom-search-field", "custom-search-field");
         return;
       }     
-      if (editorscene.getEngine().getTemplateNames().contains(nameField.getText())) {
+      if (TemplateEngine.getTemplateNames().contains(nameField.getText())) {
         info.setText(nameField.getText() + " already exits!");
       } else {
         editorscene.getEngine().saveTemplate(nameField.getText());
