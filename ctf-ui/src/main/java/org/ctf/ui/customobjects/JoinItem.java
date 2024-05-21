@@ -2,19 +2,17 @@ package org.ctf.ui.customobjects;
 
 
 import javafx.animation.FadeTransition;
-import javafx.animation.FillTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 /**
- * class that represents a container that contains information and joining option 
+ *  represents a container that contains information and joining option 
  * for a game session 
  * 
  * @author aniemesc
