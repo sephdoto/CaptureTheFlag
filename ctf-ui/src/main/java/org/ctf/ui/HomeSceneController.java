@@ -36,7 +36,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Stop;
 import javafx.stage.Stage;
 
-
+/**
+ * Main controller of the application.
+ * 
+ * @author mkrakows
+ * @author aniemesc
+ */
 public class HomeSceneController {
 	private Stage stage;
 	WaitingThread waitingThread;
@@ -157,7 +162,12 @@ public class HomeSceneController {
 		stage.setScene(createGameScreenV2);
 	}
 
-	
+    /**
+     * Switches to a new instance of {@link JoinScene}.
+     * 
+     * @author aniemesc
+     * @param stage - Main stage of the application
+     */
     public void switchToJoinScene(Stage stage) {
       stage.setScene(new JoinScene(this, stage.getWidth(), stage.getHeight()));
     }
@@ -166,10 +176,17 @@ public class HomeSceneController {
 		stage.setScene(new AiAnalyzer(this, stage.getWidth(), stage.getHeight()));
 	}
 
+    /**
+     * Switches to a new instance of {@link EditorScene}.
+     * 
+     * @author aniemesc
+     * @param stage - Main stage of the application
+     */
     public void switchToMapEditorScene(Stage stage) {
       stage.setScene(new EditorScene(this, stage.getWidth(), stage.getHeight()));
     }
 	
+   
 	public void switchToTestScene(Stage stage) {
 		stage.setScene(new TestScene(this, stage).getScene());
 	}
