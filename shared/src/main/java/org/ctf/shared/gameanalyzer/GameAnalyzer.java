@@ -23,7 +23,7 @@ public class GameAnalyzer extends AIController {
   AnalyzerThread analyze;
 
   /**
-   * Initializes the AIController with {@link calculatingTime} seconds calculating time per GameState.
+   * Initializes the AIController with {@link secondsTimeToThink} seconds calculating time per GameState.
    * 
    * @param game the game which gets analyzed
    * @param ai needs to be an MCTS type, if it is not, it gets changed to MCTS improved
@@ -69,12 +69,20 @@ public class GameAnalyzer extends AIController {
       this.start();
     }
     
+    /**
+     * Analyzes the game, sets {@link isAnalyzing} and {@link GameAnalyzer.setActive()} false
+     */
+    @Override
     public void run() {
       analyzeGame();
       this.isAnalyzing = false;
       GameAnalyzer.this.setActive(false);
     }
     
+    /**
+     * Analyzes the complete game move for move.
+     * Every freshly analyzed move gets added to {@link results}
+     */
     public void analyzeGame() {
       for(; currentlyAnalyzing<game.getMoves().size(); currentlyAnalyzing++) {
         analyzeMove(currentlyAnalyzing +1);
@@ -86,7 +94,13 @@ public class GameAnalyzer extends AIController {
       }
     }
 
-    void analyzeMove(int turn) throws NeedMoreTimeException {
+    /**
+     * Analyzes only one move, adds it to {@link results}
+     * 
+     * @param turn index+1 of the current move
+     * @throws NeedMoreTimeException if more time is needed
+     */
+    public void analyzeMove(int turn) throws NeedMoreTimeException {
       try {
         Move best = getNormalizedGameState().normalizedMove(getNextMove());
         Move made = getNormalizedGameState().normalizedMove(game.getMoves().get("" +turn));
@@ -101,10 +115,18 @@ public class GameAnalyzer extends AIController {
       }
     }
     
+    /**
+     * Returns the index of the results array, which is currently being analyzed.
+     * 
+     * @return index of currently analyzing move
+     */
     protected int getCurrentlyAnalyzing() {
       return currentlyAnalyzing;
     }
-
+    
+    /**
+     * @return true if the game is currently being analyzed
+     */
     protected boolean isAnalyzing() {
       return isAnalyzing;
     }
@@ -131,7 +153,9 @@ public class GameAnalyzer extends AIController {
   }
   
   /**
-   * @return Returns how many moves were made in the saved game.
+   * Returns how many moves were made in the saved game.
+   * 
+   * @return how many moves were made in the saved game.
    */
   public int howManyMoves() {
     return this.game.getMoves().size();

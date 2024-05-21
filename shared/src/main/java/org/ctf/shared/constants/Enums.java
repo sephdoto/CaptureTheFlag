@@ -56,6 +56,11 @@ public class Enums {
     ;
   }
 
+  /**
+   * Contains the different image types and their location folder name.
+   * 
+   * @author sistumpf
+   */
   public enum ImageType {
     HOME("homescreen"),
     START("startscreen"),

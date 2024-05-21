@@ -12,22 +12,48 @@ public class Constants {
   ///////////////////////////////////////////////////////
   //              important stuff for jar              //
   ///////////////////////////////////////////////////////
+  /**
+   * Auto-generated String containing the jar files execution location
+   */
   private static final String executionLocationURL =
       Constants.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+  /**
+   * Name of the jar. Might be hardcoded to avoid Maven Test failures.
+   */
   public static final String JARNAME =
       "app.jar"; // executionLocationURL.substring(executionLocationURL.lastIndexOf("/") +1);
+  /**
+   * Automatically determines if the code is run via a jar.
+   */
   public static final boolean ISJAR = executionLocationURL.endsWith(JARNAME);
+  /**
+   * A String Path to the folder the jar is located in.
+   */
   public static final String JARPARENTFOLDER =
       Paths.get("").toAbsolutePath().toString().split(JARNAME)[0] + File.separator;
+  /**
+   * Name of the resource folder that gets generated and used for the jar.
+   */
   public static final String RESOURCEFOLDERNAME = "resources_ctf_team_14";
+  /**
+   * String Path pointing to the resource folder
+   */
   public static final String JARRESOURCES = JARPARENTFOLDER + RESOURCEFOLDERNAME + File.separator;
 
   ///////////////////////////////////////////////////////
   //             User changeable things                //
   ///////////////////////////////////////////////////////
-
+  /**
+   * Volume Sounds get played at. 0 to 1
+   */
   public static double soundVolume = 0.4;
+  /**
+   * Volume Music get played at. 0 to 1
+   */
   public static double musicVolume = 0.4;
+  /**
+   * The current {@link Themes}
+   */
   public static Enums.Themes theme = Enums.Themes.STARWARS;
 
   /**

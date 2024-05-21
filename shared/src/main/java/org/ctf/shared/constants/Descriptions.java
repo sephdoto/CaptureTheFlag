@@ -2,9 +2,20 @@ package org.ctf.shared.constants;
 
 import org.ctf.shared.constants.Enums.AIConfigs;
 
+/**
+ * Contains descriptions for different things to show in UI.
+ * 
+ * @author sistumpf
+ */
 public class Descriptions {
-  public static String describe(AIConfigs what) {
-    switch(what) {
+  /**
+   * Returns String descriptions for a given feature
+   * 
+   * @param feature the feature a description shall be returned for
+   * @return the matching description or a "no description available" String
+   */
+  public static String describe(AIConfigs feature) {
+    switch(feature) {
       //AIs
       case RANDOM:
         return "An AI that only does valid random moves.";
