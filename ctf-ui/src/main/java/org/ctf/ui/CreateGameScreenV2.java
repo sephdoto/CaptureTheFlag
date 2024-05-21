@@ -189,6 +189,18 @@ public class CreateGameScreenV2 extends Scene {
 	}
 	
 	/**
+	 * Creates a empty stackPane which is used for the left side
+	 * @author Manuel Krakowski
+	 */
+	public StackPane createBasicPane() {
+		StackPane pane = new StackPane();
+		pane.setPrefSize(250, 250);
+		pane.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
+		pane.prefHeightProperty().bind(pane.widthProperty().multiply(0.8));
+		return pane;
+	}
+	
+	/**
 	 * Creates the Vbox in the middle-left in which contains tow boxes in which the user can select a server and choose a map
 	 * @author Manuel Krakowski
 	 * @return
@@ -500,7 +512,6 @@ public class CreateGameScreenV2 extends Scene {
 	 * @return
 	 */
     public ImageView createBackgroundImage(VBox vBox) {
-      // Image mp = new Image(getClass().getResourceAsStream("gridSTARWARS.png"));
       WaveFunctionCollapse backgroundcreator =
           new WaveFunctionCollapse(state.getGrid(), Constants.theme);
       backgroundcreator.saveToResources();
@@ -517,6 +528,11 @@ public class CreateGameScreenV2 extends Scene {
       return mpv;
     }
 	
+    /**
+     * Creates the leave-button on the bottom of the scene
+     * @author Manuel Krakowski
+     * @return leave-button
+     */
 	private Button createLeave() {
 		Button exit = new Button("Leave");
 		exit.getStyleClass().add("leave-button");
@@ -528,6 +544,73 @@ public class CreateGameScreenV2 extends Scene {
 			//g.createGameOverPopUpYouLost();
 			//hsc.switchToTestScene(App.getStage());
 		});
+		return exit;
+	}
+	
+	/**
+	 * Creates the play as human button which is shown in the chooserPopup and fits its size to it
+	 * @author Manuel Krakowski
+	 * @param text: text displayed on the button
+	 * @param src: button-image-name
+	 * @return play-as-human-button
+	 */
+	private Button createAddHumanButton(String text, String src) {
+		Button button = new Button(text);
+		button.getStyleClass().add("button25");
+		button.fontProperty().bind(addHumanButtonTextFontSIze);
+	    Image mp = ImageController.loadThemedImage(ImageType.MISC, src);
+
+		ImageView vw = new ImageView(mp);
+		button.setGraphic(vw);
+		button.setContentDisplay(ContentDisplay.RIGHT);
+		vw.fitWidthProperty().bind(button.widthProperty().divide(5));
+		vw.setPreserveRatio(true);
+		button.setMaxWidth(Double.MAX_VALUE);
+		button.setOnAction(e -> {
+			PopUpCreatorEnterTeamName popi = new PopUpCreatorEnterTeamName(this, root, aiOrHumanPop, hsc,true,false);
+			popi.createEnterNamePopUp();
+		});
+		return button;
+	}
+
+	/**
+	 * Creates the play-as-Ai-button which is shown in the chooserPopup and fits its size to it
+	 * @param text: 
+	 * @param src
+	 * @return
+	 */
+	private Button createAddAIButton(String text, String src) {
+		Button button = new Button(text);
+		button.getStyleClass().add("button25");
+		button.fontProperty().bind(addHumanButtonTextFontSIze);
+	    Image mp = ImageController.loadThemedImage(ImageType.MISC, src);
+		ImageView vw = new ImageView(mp);
+		button.setGraphic(vw);
+		button.setContentDisplay(ContentDisplay.RIGHT);
+		vw.fitWidthProperty().bind(button.widthProperty().divide(8));
+		vw.setPreserveRatio(true);
+		button.setMaxWidth(Double.MAX_VALUE);
+		button.setOnAction(e -> {
+			popUpCreator.createAiLevelPopUp(aiOrHumanPop,portText,serverIPText);
+		});
+		return button;
+
+	}
+	
+	private Button createCancelButton() {
+		Button exit = new Button("Cancel");
+		exit.fontProperty().bind(leaveButtonText);
+		exit.getStyleClass().add("leave-button");
+		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
+		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
+		exit.setOnAction(e -> {
+			portText.setDisable(false);
+			serverIPText.setDisable(false);
+			CreateGameController.deleteGame();
+			//hsc.deleteGame();
+			root.getChildren().remove(aiOrHumanPop);
+		});
+		
 		return exit;
 	}
 	
@@ -572,70 +655,10 @@ public class CreateGameScreenV2 extends Scene {
 	}
 	
 	
-	private Button createAddHumanButton(String text, String src) {
-		Button button = new Button(text);
-		button.getStyleClass().add("button25");
-		button.fontProperty().bind(addHumanButtonTextFontSIze);
-	    Image mp = ImageController.loadThemedImage(ImageType.MISC, src);
-
-		ImageView vw = new ImageView(mp);
-		button.setGraphic(vw);
-		button.setContentDisplay(ContentDisplay.RIGHT);
-		vw.fitWidthProperty().bind(button.widthProperty().divide(5));
-		vw.setPreserveRatio(true);
-		button.setMaxWidth(Double.MAX_VALUE);
-		button.setOnAction(e -> {
-			//createEnterNamePopUp();
-			PopUpCreatorEnterTeamName popi = new PopUpCreatorEnterTeamName(this, root, aiOrHumanPop, hsc,true,false);
-			popi.createEnterNamePopUp();
-		});
-		return button;
-	}
-
-	private Button createAddAIButton(String text, String src) {
-		Button button = new Button(text);
-		button.getStyleClass().add("button25");
-		button.fontProperty().bind(addHumanButtonTextFontSIze);
-	    Image mp = ImageController.loadThemedImage(ImageType.MISC, src);
-		ImageView vw = new ImageView(mp);
-		button.setGraphic(vw);
-		button.setContentDisplay(ContentDisplay.RIGHT);
-		vw.fitWidthProperty().bind(button.widthProperty().divide(8));
-		vw.setPreserveRatio(true);
-		button.setMaxWidth(Double.MAX_VALUE);
-		button.setOnAction(e -> {
-			popUpCreator.createAiLevelPopUp(aiOrHumanPop,portText,serverIPText);
-		});
-		return button;
-
-	}
 	
-	private Button createCancelButton() {
-		Button exit = new Button("Cancel");
-		exit.fontProperty().bind(leaveButtonText);
-		exit.getStyleClass().add("leave-button");
-		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
-		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
-		exit.setOnAction(e -> {
-			portText.setDisable(false);
-			serverIPText.setDisable(false);
-			CreateGameController.deleteGame();
-			//hsc.deleteGame();
-			root.getChildren().remove(aiOrHumanPop);
-		});
-		
-		return exit;
-	}
 	
-	public StackPane createBasicPane() {
-		StackPane pane = new StackPane();
-		// pane.getStyleClass().add("option-pane");
-		pane.setPrefSize(250, 250);
-		pane.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
-		pane.prefHeightProperty().bind(pane.widthProperty().multiply(0.8));
-
-		return pane;
-	}
+	
+	
 
 
 }
