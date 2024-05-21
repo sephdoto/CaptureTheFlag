@@ -194,7 +194,7 @@ public class App extends Application {
    serverPaneWrapper.setPadding(new Insets(10));
     stack.widthProperty().addListener((obs, old, newV) -> {
      double neu = newV.doubleValue();
-      serverPaneWrapper.setPadding(new Insets(0,neu*0.02,neu*0.02,0));
+      serverPaneWrapper.setPadding(new Insets(0,neu*0.03,neu*0.03,0));
     });
     serverPaneWrapper.getChildren().add(serverPane);
     stack.getChildren().add(serverPaneWrapper);

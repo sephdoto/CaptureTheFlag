@@ -59,7 +59,7 @@ public class HomeSceneController {
 	public void switchtoHomeScreen(ActionEvent e) {
 		Scene scene = App.getScene();
 		stage = App.getStage();
-		App.adjustHomescreen(stage.getWidth(), stage.getHeight()-App.stageOffset);
+		App.adjustHomescreen(stage.getScene().getWidth(), stage.getScene().getHeight());
 		
 		stage.setScene(scene);
 	}
