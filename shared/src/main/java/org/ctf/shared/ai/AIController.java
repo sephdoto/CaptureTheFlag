@@ -80,9 +80,7 @@ public class AIController {
     boolean update = false;
     try {
       update = update(move);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    } catch (Exception e) {}
     if(!update)
       update = update(gameState);
     return update;
