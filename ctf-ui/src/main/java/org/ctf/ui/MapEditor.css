@@ -129,6 +129,9 @@
 	  -fx-fill: white;
 	  
 }
+.bayern-label{
+	-fx-fill: black;
+}
 .session-info {
 	-fx-border-color: rgba(255,255,255,1);
 	 -fx-border-width: 1px;

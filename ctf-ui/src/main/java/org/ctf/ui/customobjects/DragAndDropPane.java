@@ -1,6 +1,9 @@
 package org.ctf.ui.customobjects;
 
 import java.io.File;
+import org.apache.tomcat.util.bcel.Const;
+import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums.Themes;
 import org.ctf.ui.EditorScene;
 import org.ctf.ui.controllers.SoundController;
 import javafx.beans.binding.Bindings;
@@ -84,7 +87,11 @@ public class DragAndDropPane extends StackPane{
     }  
     
     Text text = new Text(label);
-    text.getStyleClass().add("custom-header");
+    if(Constants.theme.equals(Themes.BAYERN)) {
+      text.getStyleClass().add("bayern-label");
+    } else {
+      text.getStyleClass().add("custom-header");
+    }
     text.setTextAlignment(TextAlignment.CENTER);
     StackPane.setAlignment(text, Pos.CENTER); 
     text.fontProperty().bind(Bindings.createObjectBinding(
