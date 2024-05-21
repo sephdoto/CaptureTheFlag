@@ -1,6 +1,8 @@
 package org.ctf.ui;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.nio.file.Paths;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.client.AIClient;
 import org.ctf.shared.client.AIClientStepBuilder;
@@ -69,8 +71,12 @@ public class JoinScene extends Scene {
   public JoinScene(HomeSceneController hsc, double width, double height) {
     super(new StackPane(), width, height);
     this.hsc = hsc;
-    this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
-    this.getStylesheets().add(getClass().getResource("ComboBox.css").toExternalForm());
+    try {
+      this.getStylesheets().add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
+      this.getStylesheets().add(Paths.get(Constants.toUIStyles + "ComboBox.css").toUri().toURL().toString());
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    }
     this.root = (StackPane) this.getRoot();
     createLayout();
 

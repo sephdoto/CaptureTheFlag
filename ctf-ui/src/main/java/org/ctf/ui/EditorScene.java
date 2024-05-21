@@ -41,6 +41,8 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import org.ctf.shared.constants.Constants;
@@ -105,8 +107,12 @@ public class EditorScene extends Scene {
    */
   public EditorScene(HomeSceneController hsc, double width, double height) {
     super(new StackPane(), width, height);
-    this.hsc = hsc;
-    this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
+    this.hsc = hsc;   
+    try {
+      this.getStylesheets().add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+      }
     this.root = (StackPane) this.getRoot();
     engine = new TemplateEngine(this);
     options = new Parent[5];
