@@ -6,9 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.Consumer;
-
 import org.ctf.shared.constants.Constants;
-import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.Directions;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.data.map.Movement;
@@ -19,7 +17,6 @@ import org.ctf.shared.tools.JsonTools;
 import org.ctf.shared.tools.JsonTools.IncompleteMapTemplateException;
 import org.ctf.ui.controllers.MapPreview;
 import org.ctf.ui.controllers.MapPreviewThread;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
@@ -51,7 +48,7 @@ public class TemplateEngine {
   public TemplateEngine(EditorScene editorscene) {
     this.editorscene = editorscene;
     initializeCustomBox(this.editorscene.getCustomFigureBox());
-    loadTemplate(this.getTemplateNames().get(0));
+    loadTemplate("Default");
     tmpMovement.setDirections(new Directions());
     initializePieces();
   }
@@ -513,6 +510,14 @@ public class TemplateEngine {
     }
     return new ArrayList<String>();
   }
+  
+  public ObservableList<String> getAllPieceNames() {
+    ObservableList<String> options = FXCollections.observableArrayList();
+    for (String type : pieces.keySet()) {
+      options.add(type);
+    }
+    return options;
+  }
 
   /**
    * Returns the Movement object of the current map template.
@@ -532,11 +537,5 @@ public class TemplateEngine {
     this.tmpMovement.setShape(shape);
   }
 
-  public ObservableList<String> getAllPieceNames() {
-    ObservableList<String> options = FXCollections.observableArrayList();
-    for (String type : pieces.keySet()) {
-      options.add(type);
-    }
-    return options;
-  }
+  
 }

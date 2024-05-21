@@ -62,8 +62,9 @@ import org.ctf.ui.customobjects.MovementVisual;
 import configs.ImageLoader;
 
 /**
- * Represents a JavaFX scene for the map editor. It contains all necessary UI components for
- * loading, customizing, rendering and saving map templates.
+ * Provides a JavaFX scene for the map editor. It contains all necessary UI components for
+ * loading, customizing, rendering and saving map templates. Apart from that it allows to
+ * load image and sound files via drag and drop to further customizes pieces.
  * 
  * @author aniemesc
  */
@@ -127,13 +128,10 @@ public class EditorScene extends Scene {
         "Drag and Drop a \n sound file in the .wav format!", DragAndDropPane.SOUNDS);
     this.dragAndDropPaneImages =
         new DragAndDropPane(this, "Drag and Drop an \n image file!", DragAndDropPane.IMAGES);
-    // TextGeneratorThread textGeneratorThread = new TextGeneratorThread();
-    // textGeneratorThread.start();
-
   }
 
   /**
-   * This method creates the basic layout by adding all major top level containers to the scene.
+   * creates the basic layout by adding all major top level containers to the scene.
    * 
    * @author aniemesc
    */
@@ -173,7 +171,7 @@ public class EditorScene extends Scene {
   }
 
   /**
-   * This Method creates the header Image for the scene.
+   * creates the header Image for the scene.
    * 
    * @author aniemesc
    * @return ImageView that gets added to the scene
@@ -210,7 +208,7 @@ public class EditorScene extends Scene {
   }
 
   /**
-   * Presents text input on the UI by setting the infoText attribute and playing a FadeTransition.
+   * Displays text input on the UI by setting the infoText attribute and playing a FadeTransition.
    * 
    * @author aniemesc
    * @param info - String value that gets presented
@@ -258,11 +256,11 @@ public class EditorScene extends Scene {
     controlgrid.add(createText(mapRoot, "Rows", 30), 0, 0);
     controlgrid.add(createText(mapRoot, "Collums", 30), 0, 1);
     controlgrid.add(createText(mapRoot, "Teams", 30), 0, 2);
-    controlgrid.add(createText(mapRoot, "Flags", 30), 0, 3);
+    controlgrid.add(createText(mapRoot, "Flags", 30), 2,2);
     controlgrid.add(createText(mapRoot, "Blocks", 30), 2, 0);
-    controlgrid.add(createText(mapRoot, "Turn Time", 30), 2, 1);
-    controlgrid.add(createText(mapRoot, "Game Time", 30), 2, 2);
-    controlgrid.add(createText(mapRoot, "Placement", 30), 2, 3);
+    controlgrid.add(createText(mapRoot, "Turn Time \n (Seconds)", 30), 0, 3);
+    controlgrid.add(createText(mapRoot, "Game Time \n (Minutes)", 30), 2, 3);
+    controlgrid.add(createText(mapRoot, "Placement", 30), 2, 1);
     Spinner<Integer> rowsSpinner = createMapSpinner(1, 100, engine.tmpTemplate.getGridSize()[0]);
     createChangeListener(rowsSpinner, "Rows", false);
     controlgrid.add(rowsSpinner, 1, 0);
@@ -274,20 +272,20 @@ public class EditorScene extends Scene {
     controlgrid.add(teamSpinner, 1, 2);
     Spinner<Integer> flagSpinner = createMapSpinner(1, 100, engine.tmpTemplate.getFlags());
     createChangeListener(flagSpinner, "Flags", false);
-    controlgrid.add(flagSpinner, 1, 3);
+    controlgrid.add(flagSpinner, 3, 2);
     Spinner<Integer> blockSpinner = createMapSpinner(0, 500, engine.tmpTemplate.getBlocks());
     createChangeListener(blockSpinner, "Blocks", false);
     controlgrid.add(blockSpinner, 3, 0);
     Spinner<Integer> turnTimeSpinner =
         createMapSpinner(-1, 600, engine.tmpTemplate.getMoveTimeLimitInSeconds());
     createChangeListener(turnTimeSpinner, "TurnTime", false);
-    controlgrid.add(turnTimeSpinner, 3, 1);
+    controlgrid.add(turnTimeSpinner, 1, 3);
     int init = (engine.tmpTemplate.getTotalTimeLimitInSeconds() == -1) ? -1
         : engine.tmpTemplate.getTotalTimeLimitInSeconds() / 60;
     Spinner<Integer> gameTimeSpinner = createMapSpinner(-1, 600, init);
     createChangeListener(gameTimeSpinner, "GameTime", false);
-    controlgrid.add(gameTimeSpinner, 3, 2);
-    controlgrid.add(createPlacementBox(mapRoot), 3, 3);
+    controlgrid.add(gameTimeSpinner, 3, 3);
+    controlgrid.add(createPlacementBox(mapRoot), 3, 1);
     mapRoot.getChildren().add(controlgrid);
     return mapRoot;
   }
@@ -690,11 +688,6 @@ public class EditorScene extends Scene {
     mb.getStyleClass().add("custom-menu-button");
     mb.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
     mb.prefHeightProperty().bind(mb.widthProperty().multiply(0.2));
-    // mb.prefHeightProperty().addListener((obs, oldv, newV) -> {
-    // System.out.println("hey");
-    // double size = newV.doubleValue() * 0.5;
-    // mb.setFont(Font.font("Century Gothic", size));
-    // });
     MenuItem mapMenuItem = new MenuItem("Edit Map");
     MenuItem figureMenuItem = new MenuItem("Add Pieces");
     MenuItem configMenuItem = new MenuItem("Custom Pieces");
@@ -748,7 +741,7 @@ public class EditorScene extends Scene {
     mapMenuButton.getStyleClass().add("custom-menu-button");
     mapMenuButton.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
     mapMenuButton.prefHeightProperty().bind(mapMenuButton.widthProperty().multiply(0.2));
-    for (String mapName : engine.getTemplateNames()) {
+    for (String mapName : TemplateEngine.getTemplateNames()) {
       addMapItem(mapName);
     }
 
@@ -773,7 +766,7 @@ public class EditorScene extends Scene {
       mb.setText("Edit Map");
       updateVisualRoot();
       this.validtemplate = true;
-      inform(mapName + "was loaded.");
+      inform(mapName + " was loaded.");
     });
     mapMenuButton.getItems().add(item);
   }
