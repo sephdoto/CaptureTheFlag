@@ -1,6 +1,8 @@
 package org.ctf.ui.hostGame;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -84,9 +86,13 @@ public class CreateGameScreenV2 extends Scene {
 	public CreateGameScreenV2(HomeSceneController hsc, double width, double height) {
 		super(new StackPane(), width, height);
 		this.hsc = hsc;
-		this.getStylesheets().add(getClass().getResource("ComboBox.css").toExternalForm());
-		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
-		this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
+	    try {
+        this.getStylesheets().add(Paths.get(Constants.toUIStyles + "ComboBox.css").toUri().toURL().toString());
+        this.getStylesheets().add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
+        this.getStylesheets().add(Paths.get(Constants.toUIStyles + "color.css").toUri().toURL().toString());
+      } catch (MalformedURLException e) {
+        e.printStackTrace();
+      }
 		this.root = (StackPane) this.getRoot();
 		popUpCreator = new PopUpCreator(this, root,hsc);
 		createLayout();
@@ -546,10 +552,11 @@ public class CreateGameScreenV2 extends Scene {
 		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
 		exit.setOnAction(e -> {
-			hsc.switchtoHomeScreen(e);
+			//hsc.switchtoHomeScreen(e);
 			//PopupCreatorGameOver g = new PopupCreatorGameOver(this, root, hsc);
 			//g.createGameOverPopUpYouLost();
 			//hsc.switchToTestScene(App.getStage());
+		  hsc.switchToAnalyzerScene(App.getStage());
 		});
 		return exit;
 	}

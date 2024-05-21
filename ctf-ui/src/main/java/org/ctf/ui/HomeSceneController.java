@@ -136,27 +136,21 @@ public class HomeSceneController {
 		
 	}
 	
-	public void switchToPlayGameScene(Stage stage, Client mainClient, boolean isRemote) {
-		playGameScreenV2 = new PlayGameScreenV2(this, stage.getWidth(), stage.getHeight(),mainClient, isRemote);
-		stage.setScene(playGameScreenV2);
-		if(isRemote) {
-			CreateGameController.initColorHashMapForRemote(mainClient);
-		}else {
-			CreateGameController.overWriteDefaultWithServerColors();
-		}
-		
-//		if(t != null) {
-//			t.stopThread();
-//		}
-		//GameStatePuller g = new GameStatePuller(CreateGameController.getMainClient(), this);
-		//g.start();
-		
-		//stage.setFullScreen(true);
-	}
+    public void switchToPlayGameScene(Stage stage, Client mainClient, boolean isRemote) {
+      playGameScreenV2 =
+          new PlayGameScreenV2(this, stage.getWidth(), stage.getHeight(), mainClient, isRemote);
+      stage.setScene(playGameScreenV2);
+      if (isRemote) {
+        CreateGameController.initColorHashMapForRemote(mainClient);
+      } else {
+        CreateGameController.overWriteDefaultWithServerColors();
+      }
+    }
 
-	public void setMainClient(Client mainClient) {
-		this.mainClient = mainClient;
-	}
+	
+    public void setMainClient(Client mainClient) {
+      this.mainClient = mainClient;
+    }
 
 	public void switchToCreateGameScene(Stage stage) {
 		createGameScreenV2=  new CreateGameScreenV2(this, stage.getWidth(), stage.getHeight());

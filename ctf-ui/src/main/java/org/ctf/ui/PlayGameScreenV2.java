@@ -1,6 +1,8 @@
 package org.ctf.ui;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -174,10 +176,14 @@ public class PlayGameScreenV2 extends Scene {
 		this.hsc = hsc;
 		manageFontSizes();
 		first = true;
-		this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
+		try {
+	      this.getStylesheets().add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
+	      this.getStylesheets().add(Paths.get(Constants.toUIStyles + "color.css").toUri().toURL().toString());
+	    } catch (MalformedURLException e) {
+	      e.printStackTrace();
+	    }
 		this.root = (StackPane) this.getRoot();
 		createLayout();
-		this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
 		if(mainClient.isGameTimeLimited() || mainClient.isGameMoveTimeLimited()) {
 			scheduler2 = Executors.newScheduledThreadPool(1);
 			scheduler2.scheduleAtFixedRate(updateTask2, 0, 1, TimeUnit.SECONDS);

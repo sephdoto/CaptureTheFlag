@@ -1,5 +1,7 @@
 package org.ctf.ui;
 
+import java.net.MalformedURLException;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -39,7 +41,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
-
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.ui.controllers.ImageController;
 
@@ -87,10 +89,14 @@ public class WaitingScene extends Scene {
     super(new StackPane(), width, height);
     this.hsc = hsc;
     manageFontSizes();
-    this.getStylesheets().add(getClass().getResource("MapEditor.css").toExternalForm());
     this.root = (StackPane) this.getRoot();
-    this.getStylesheets().add(getClass().getResource("ComboBox.css").toExternalForm());
-    this.getStylesheets().add(getClass().getResource("color.css").toExternalForm());
+    try {
+      this.getStylesheets().add(Paths.get(Constants.toUIStyles + "ComboBox.css").toUri().toURL().toString());
+      this.getStylesheets().add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
+      this.getStylesheets().add(Paths.get(Constants.toUIStyles + "color.css").toUri().toURL().toString());
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    }
     createLayout();
     currentNumber = 0;
 	scheduler = Executors.newScheduledThreadPool(1);
