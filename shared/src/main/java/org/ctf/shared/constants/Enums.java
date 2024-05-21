@@ -60,7 +60,8 @@ public class Enums {
     HOME("homescreen"),
     START("startscreen"),
     PIECE("pieces"),
-    MISC("misc");
+    MISC("misc"),
+    WAVE("WaveFunctionTiles");
 
     private final String folderName;
 
