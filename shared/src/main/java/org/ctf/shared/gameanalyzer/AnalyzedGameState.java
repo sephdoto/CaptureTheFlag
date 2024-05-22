@@ -17,6 +17,8 @@ public class AnalyzedGameState {
   private MonteCarloTreeNode userChoice;
   private MonteCarloTreeNode aiChoice;
   private int expansions;
+  private int heuristic;
+  private int simulations;
   MoveEvaluation moveEvaluation;
   private int betterMoves;
 
@@ -33,6 +35,8 @@ public class AnalyzedGameState {
     this.userChoice = findNodeByMove(userChoice);
     this.aiChoice = findNodeByMove(aiChoice);
     this.expansions = mcts.getExpansionCounter().get();
+    this.simulations = mcts.getSimulationCounter().get();
+    this.heuristic = mcts.getHeuristicCounter().get();
 
     generateInformation();
   }
@@ -194,5 +198,16 @@ public class AnalyzedGameState {
    */
   public int howManyBetterMoves() {
     return this.betterMoves;
+  }
+
+  public int getExpansions() {
+    return expansions;
+  }
+  public int getHeuristic() {
+    return heuristic;
+  }
+
+  public int getSimulations() {
+    return simulations;
   }
 }

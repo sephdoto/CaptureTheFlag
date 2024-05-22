@@ -59,8 +59,8 @@ class MCTSTest {
         mcts.getMove(timeInMilis);
       } catch(NullPointerException npe) {crashes++;}
       expansions += mcts.getExpansionCounter().get();
-      simulations += mcts.simulationCounter.get();
-      heuristics += mcts.heuristicCounter.get();
+      simulations += mcts.getSimulationCounter().get();
+      heuristics += mcts.getHeuristicCounter().get();
     }
     simulations /= count;
     heuristics /= count;
@@ -91,8 +91,8 @@ class MCTSTest {
     MCTS gameMCTS = new MCTS(parent, new AIConfig());
     while(gameMCTS.isTerminal(gameMCTS.getRoot().getReferenceGameState()) == -1) {
       gameMCTS.setExpansionCounter(0);
-      gameMCTS.simulationCounter.set(0);
-      gameMCTS.heuristicCounter.set(0);
+      gameMCTS.getSimulationCounter().set(0);
+      gameMCTS.getHeuristicCounter().set(0);
       Move move = gameMCTS.getMove(1000);
       ++mctsTillEnd;      
       

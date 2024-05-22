@@ -31,8 +31,8 @@ public class MCTS implements MonteCarloTreeSearch {
   private int maxDistance;
   private TreeNode root;
   private ExecutorService executorService;
-  public AtomicInteger simulationCounter;
-  public AtomicInteger heuristicCounter;
+  private AtomicInteger simulationCounter;
+  private AtomicInteger heuristicCounter;
   private AtomicInteger expansionCounter;
 
   public MCTS(TreeNode root, AIConfig config) {
@@ -48,13 +48,8 @@ public class MCTS implements MonteCarloTreeSearch {
   }
 
 
-  /**
-   * Starts a Monte Carlo Tree Search from a given state of the game,
-   * if the given time runs out the best calculated move is returned.
-   * @param time in milliseconds the algorithm is allowed to take
-   * @param Constant C used in the UCT formula
-   * @return the algorithms choice for the best move
-   */
+
+  @Override
   public Move getMove(int milis){
     long time = System.currentTimeMillis();
 
@@ -158,7 +153,7 @@ public class MCTS implements MonteCarloTreeSearch {
    * @return an array containing a number of wins for the team at position teamId
    */
   int[] simulate(TreeNode simulateOn){      
-    simulationCounter.incrementAndGet();
+    getSimulationCounter().incrementAndGet();
     int isTerminal = isTerminal(simulateOn.getReferenceGameState());
     int[] winners = new int[this.teams];
     int count = config.MAX_STEPS;
@@ -175,8 +170,8 @@ public class MCTS implements MonteCarloTreeSearch {
       removeTeamCheck(simulateOn.getReferenceGameState());
     }
     if(isTerminal < 0) {  
-      simulationCounter.decrementAndGet();
-      heuristicCounter.incrementAndGet();
+      getSimulationCounter().decrementAndGet();
+      getHeuristicCounter().incrementAndGet();
       winners[terminalHeuristic(simulateOn)] += 1;
     } else {
       winners[isTerminal] += count;
@@ -555,7 +550,7 @@ public class MCTS implements MonteCarloTreeSearch {
   public String printResults(Move move) {
     StringBuilder sb = new StringBuilder();
     sb.append("Piece " + move.getPieceId() + " moves to " + move.getNewPosition()[0] + "," + move.getNewPosition()[1]);
-    sb.append("\nNodes expanded: " + getExpansionCounter() +", simulations till the end: " + simulationCounter + ", heuristic used: " + heuristicCounter);
+    sb.append("\nNodes expanded: " + getExpansionCounter() +", simulations till the end: " + getSimulationCounter() + ", heuristic used: " + getHeuristicCounter());
     sb.append("\nBest children:");
     //if not all children are expanded they cannot be sorted.
     try {
@@ -574,22 +569,43 @@ public class MCTS implements MonteCarloTreeSearch {
     return sb.toString();
   }
 
-
+  @Override
   public TreeNode getRoot() {
     return root;
   }
 
+  @Override
   public void setRoot(MonteCarloTreeNode root) {
     this.root = (TreeNode)root;
   }
 
-
+  @Override
   public AtomicInteger getExpansionCounter() {
     return expansionCounter;
   }
 
-
+  @Override
   public void setExpansionCounter(int expansionCounter) {
     this.expansionCounter.set(expansionCounter);
+  }
+
+  @Override
+  public AtomicInteger getHeuristicCounter() {
+    return heuristicCounter;
+  }
+
+  @Override
+  public void setHeuristicCounter(int heuristicCounter) {
+    this.heuristicCounter.set(heuristicCounter);
+  }
+
+  @Override
+  public AtomicInteger getSimulationCounter() {
+    return simulationCounter;
+  }
+
+  @Override
+  public void setSimulationCounter(int simulationCounter) {
+    this.simulationCounter.set(simulationCounter);
   }
 }

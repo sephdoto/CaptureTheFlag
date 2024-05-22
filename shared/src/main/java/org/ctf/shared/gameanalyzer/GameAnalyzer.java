@@ -133,6 +133,15 @@ public class GameAnalyzer extends AIController {
   }
   
   /**
+   * Returns the current results array
+   * 
+   * @return the current results array
+   */
+  public AnalyzedGameState[] getResults() {
+    return this.results;
+  }
+  
+  /**
    * Returns the index of the results array, which is currently being analyzed.
    * Use together with {@link isAnalyzing()} to call the already analyzed moves.
    * 

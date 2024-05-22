@@ -10,7 +10,6 @@ import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.ai.MonteCarloTreeNode;
 import org.ctf.shared.ai.ReferenceMove;
-import org.ctf.shared.ai.random.RandomAI;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
 
@@ -42,14 +41,7 @@ public class MCTS implements MonteCarloTreeSearch {
                         + Math.pow(root.getReferenceGameState().getGrid().getGrid()[0].length, 2)));
   }
 
-  /**
-   * Starts a Monte Carlo Tree Search from a given state of the game, if the given time runs out the
-   * best calculated move is returned.
-   *
-   * @param time in milliseconds the algorithm is allowed to take
-   * @param Constant C used in the UCT formula
-   * @return the algorithms choice for the best move
-   */
+  @Override
   public Move getMove(int milis) {
     long time = System.currentTimeMillis();
 
@@ -561,19 +553,43 @@ public class MCTS implements MonteCarloTreeSearch {
     return sb.toString();
   }
 
+  @Override
   public TreeNode getRoot() {
     return root;
   }
 
+  @Override
   public void setRoot(MonteCarloTreeNode root) {
     this.root = (TreeNode)root;
   }
 
+  @Override
   public AtomicInteger getExpansionCounter() {
     return expansionCounter;
   }
 
+  @Override
   public void setExpansionCounter(int expansionCounter) {
     this.expansionCounter.set(expansionCounter);
+  }
+
+  @Override
+  public AtomicInteger getHeuristicCounter() {
+    return heuristicCounter;
+  }
+
+  @Override
+  public void setHeuristicCounter(int heuristicCounter) {
+    this.heuristicCounter.set(heuristicCounter);
+  }
+
+  @Override
+  public AtomicInteger getSimulationCounter() {
+    return simulationCounter;
+  }
+
+  @Override
+  public void setSimulationCounter(int simulationCounter) {
+    this.simulationCounter.set(simulationCounter);
   }
 }
