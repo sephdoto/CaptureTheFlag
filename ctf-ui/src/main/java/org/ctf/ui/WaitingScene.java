@@ -144,11 +144,6 @@ public class WaitingScene extends Scene {
     serverInfoDescription  = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/50));
     clipBoardInfoText  = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/60));
     tableHeader  = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/55));
-
-
-
-
-
     widthProperty()
         .addListener(
             new ChangeListener<Number>() {
@@ -804,22 +799,4 @@ public class WaitingScene extends Scene {
 		
     }
   }
-
-  
-
-  
-
- 
-
-  
-
-
- 
-  
-
- 
-
- 
-
- 
 }

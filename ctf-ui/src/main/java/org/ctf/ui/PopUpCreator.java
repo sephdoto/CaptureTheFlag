@@ -37,8 +37,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 /**
- * @author Manuel Krakowski Creates the PopUpPanes to choose an AI an and custom
- *         it if possible
+ *  Creates the PopUpPanes to choose an AI an and custom it if possible
+ *  @author Manuel Krakowski
  */
 public class PopUpCreator {
 	private StackPane root;
@@ -74,8 +74,8 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
-	 * @author Manuel Krakowski fits the size of all text that is displayed to teh
-	 *         size of the screen
+	 *  fits the size of all text that is displayed to to the size of the screen
+	 *  @author Manuel Krakowski
 	 */
 	private void manageFontSizes() {
 		 popUpLabel = new SimpleObjectProperty<Font>(Font.font(scene.getWidth()/50));
@@ -104,9 +104,8 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
-	 * @author Manuel Krakowski Creates a PopupPane in which the user can choose one
-	 *         of 4 different AIs
-	 * 
+	 * Creates a PopupPane in which the user can choose one of 4 different AIs
+	 * @author Manuel Krakowski
 	 * @param aiOrHuman:    PopUpPane that is shown before this one, can be used to
 	 *                      go back to it
 	 * @param portText:     text which should be disabled in case of the create game
@@ -221,9 +220,8 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
-	 * @author Manuel Krakowski Creates a back button, which can be used to go back
-	 *         to the PopUpPane which was shown before the CHooseAi PopupPane
-	 * @param text
+	 * Creates a back button, which can be used to go back to the PopUpPane which was shown before the CHooseAi PopupPane
+	 * @author Manuel Krakowski
 	 */
 	private Button createBackButton() {
 		Button exit = new Button("back");
@@ -291,8 +289,8 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
-	 * @author Manuel Krakowski Creates the pane in that a user can customize an AI
-	 *         with all its components
+	 *Creates the pane in that a user can customize an AI with all its components
+	 *@author Manuel Krakowski
 	 * @param widht relative with in relation to the scene
 	 * @param hight relative height in relation to the scene
 	 * @return Popupane to custom Ai
@@ -347,8 +345,8 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
-	 * @author Manuel Krakowski Cretaes a transparent, resizbale Background Image
-	 *         for the whole scene
+	 * Creates a transparent Background Image for the whole scene
+	 * @author Manuel Krakowski
 	 * @param configRoot Stackpane on that the background-image should be placed
 	 * @return background-image
 	 */
@@ -364,11 +362,11 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
-	 * @author Manuel Krakowski Box which contains all the components of the scene.
-	 *         Divided into 3 parts: Header on top, Boxes with all Multipliers and
-	 *         hyperparams in the middle, Buttons to submit and leave in the bottom
+	 * Creates Box which contains all the components of the scene.
+	 * Divided into 3 parts: Header on top, Boxes with all Multipliers and hyperparams in the middle, Buttons to submit and leave in the bottom
+	 * @author Manuel Krakowski
 	 * @param parent StackPane in that the box is placed
-	 * @return
+	 * @return top-Vbox
 	 */
 	private VBox createMainBox(StackPane parent) {
 		VBox mainBox = new VBox();
@@ -384,8 +382,9 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
+	 * Creates the Header of the whole scene with the name AI-Generator
 	 * @author Manuel Krakowski
-	 * @return Creates the Header of the whole scene with the name AI-Generator
+	 * @return header-image
 	 */
 	private ImageView createHeader() {
 	    Image mp = ImageController.loadThemedImage(ImageType.MISC, "aiGenerator");
@@ -397,9 +396,9 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
+	 * Creates the HBox which is the top-Container of the middle part of the Screen
 	 * @author Manuel Krakowski
-	 * @return Creates the Hbox which is the top COntainer of the middle part of the
-	 *         Screen, which will contain the two vboxes
+	 * @return middle-seperator-Hbox
 	 */
 	private HBox createMiddleHBox() {
 		
@@ -415,10 +414,9 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
-	 * @author Manuel Krakowski Creates Left Side of the Screen in which the
-	 *         multipliers will be placed
-	 * @param HBOX which contains the two VBoxes for multipliers(this one) and for
-	 *             hyperparams
+	 * Creates Left Side of the Screen in which the multipliers will be placed
+	 * @author Manuel Krakowski
+	 * @param parent used for relative resizing
 	 * @return Box in that multipliers will be placed
 	 */
 	private VBox createLeftVBox(HBox parent) {
@@ -431,10 +429,9 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
-	 * @author Manuel Krakowski Creates Right Side of the Screen in which the
-	 *         hyperparams will be placed
-	 * @param HBOX which contains the two VBoxes for hyperparams(this one) and for
-	 *             mulitpliers
+	 *  Creates Right Side of the Screen in which the hyperparams will be placed
+	 *  @author Manuel Krakowski
+	 * @param parent used for relative resizing
 	 * @return Box in that multipliers will be placed
 	 */
 	private VBox createRightVBox(HBox parent) {
@@ -447,11 +444,10 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
-	 * @author Manuel Krakowski Creates the header-Text which can be used for the
-	 *         multiplier and the hyperparm-box
-	 * @param parent: VBox in which the header and the box with the content will be
-	 *                placed
-	 * @param text:   Text that the label should display
+	 * Creates the header-Text which can be used for the multiplier and the hyperparm-box
+	 * @author Manuel Krakowski
+	 * @param parent: used for relative resizing
+	 * @param text:Text that the label should display
 	 * @return
 	 */
 	private Label createHeader(VBox parent, String text) {
@@ -464,11 +460,11 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
+	 * Creates the box with border in which the parameters to modify the AI will be placed
 	 * @author Manuel Krakowski
 	 * @param relWidth  with in Relation two the whole screen
 	 * @param relHeight height in relation of the whole scene
-	 * @return: Creates the box with border in which the parameters to modify the AI
-	 *          will be placed
+	 * @return:  paramter-box
 	 */
 	public StackPane createContentStackPane(double relWidth, double relHeight) {
 		StackPane pane = new StackPane();
@@ -476,17 +472,16 @@ private ObjectProperty<Font> popUpLabel;
 		pane.getStyleClass().add("option-pane");
 		pane.setPrefSize(250, 250);
 		pane.prefWidthProperty().bind(aiconfigPopUp.widthProperty().multiply(relWidth));
-		pane.prefHeightProperty().bind(aiconfigPopUp.heightProperty().multiply(relHeight)); // maybe change aiconfig to
-																						// parent here to make resizing
-																						// more fluent
+		pane.prefHeightProperty().bind(aiconfigPopUp.heightProperty().multiply(relHeight)); 
+																						
 		return pane;
 	}
 
 	/**
+	 * Creates a HBox which is especially important in the left Box two divide it into two Columns
 	 * @author Manuel Krakowski
-	 * @param Stackpane Box with border
-	 * @return Creates a HBox which is espically imporant in the left Box two divide
-	 *         it into two Columns
+	 * @param StackPane Box with border
+	 * @return colum-Hbox
 	 */
 	private HBox createTopHbox(StackPane parent) {
 		HBox topBox = new HBox();
@@ -501,10 +496,11 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
+	 *creates a Column which will contain the content 
 	 * @author Manuel Krakowski
-	 * @param parent   Box in which columns will be placed
+	 * @param parent  Box in which columns will be placed
 	 * @param relWidth how much with of he Parent the column should fill relativly
-	 * @return Column which will contain the content
+	 * @return column-Vbox
 	 */
 	private VBox createColumnVbox(HBox parent, double relWidth) {
 		VBox column = new VBox();
@@ -518,15 +514,14 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
-	 * @author Manuel Krakowski Finally creates one row containg a short description
-	 *         label, info icon and spinner
-	 * @param parent:   Column in which the row should be placed
-	 * @param text:     Description Text for param
-	 * @param min:      min value for param
-	 * @param max:      max value for param
-	 * @param current:  default value for param
-	 * @param isDouble: if param is double value is set, only one param is a double
-	 *                  currently
+	 * creates one row containig a short description-label, info icon and spinner
+	 * @author Manuel Krakowski
+	 * @param parent Column in which the row should be placed
+	 * @param text  Description Text for param
+	 * @param min min value for param
+	 * @param max max value for param
+	 * @param current default value for param
+	 * @param isDouble if param is double value
 	 * @return Hbox: one row
 	 */
 	private HBox createOneRowHBox(VBox parent, AIConfigs text, int min, int max, int current, boolean isDouble) {
@@ -556,9 +551,9 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
-	 * @author Manuel Krakowski creates the upper Part of the row containg a short
-	 *         descrition label and a info icon which shows information when
-	 *         hovering
+	 * creates the upper Part of the row containing a short
+	 * description label and a info icon which shows information when hovering
+	 * @author Manuel Krakowski 
 	 * @param text:      Text of the Label
 	 * @param oneRow:    Row in which it is placed
 	 * @param divideRow: Vbox in which the whole row is placed
@@ -592,8 +587,8 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
-	 * @author Manuel Krakowski creates an Integer-Spinner which can be used to
-	 *         modify a param
+	 *  creates an Integer-Spinn
+	 * @author Manuel Krakowski
 	 * @param min:    min value of param
 	 * @param max;    max vallue of param
 	 * @param cur:    default value of param
@@ -613,12 +608,12 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
-	 * @author Manuel Krakowski creates an Double-Spinner which can be used to
-	 *         modify a param
-	 * @param min:    min value of param
-	 * @param max;    max vallue of param
-	 * @param cur:    default value of param
-	 * @param parent: Hbox in which Spinner will be placed
+	 *  creates an Double-Spinner which can be used to modify a param
+	 * @author Manuel Krakowski
+	 * @param min min value of param
+	 * @param max  max vallue of param
+	 * @param cur default value of param
+	 * @param parent Hbox in which Spinner will be placed
 	 * @return Double-spinner for one param
 	 */
 	private Spinner<Double> createConfigSpinnerDouble(double min, double max, double cur, HBox parent) {
@@ -635,9 +630,9 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
-	 * @author Manuel Krakowski Adds a Listener to a Integer-Spinner which changes
-	 *         the respective value
-	 * @param spinner:       Spinner to which Listener is added
+	 * Adds a Listener to a Integer-Spinner which changes the respective value
+	 * @author Manuel Krakowski 
+	 * @param spinner: Spinner to which Listener is added
 	 * @param valueToModify: Value that should be modified by the spinner
 	 */
 	private void createIntegerSpinnerListener(Spinner<Integer> spinner, AIConfigs valueToModify) {
@@ -647,10 +642,10 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
-	 * @author Manuel Krakowski Adds a Listener to a Double-Spinner which changes
-	 *         the respective value
-	 * @param spinner:       Spinner to which Listener is added
-	 * @param valueToModify: Value that should be modified by the spinner
+	 *  Adds a Listener to a Double-Spinner which changes the respective value
+	 * @author Manuel Krakowski
+	 * @param spinner Spinner to which Listener is added
+	 * @param valueToModify Value that should be modified by the spinner
 	 */
 	private void createDoubleSpinnerListener(Spinner<Double> spinner, AIConfigs valueToModify) {
 		spinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
@@ -661,7 +656,6 @@ private ObjectProperty<Font> popUpLabel;
 	/**
 	 * Helper method for Spinner Listener to change the respective value of the
 	 * config
-	 * 
 	 * @author Manuel Krakoski
 	 * @param config:   Config that should be changed
 	 * @param newValue: new value of the config
@@ -703,8 +697,9 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
-	 * @author Manuel Krakowski Initializes a Map with the names and default values
-	 *         of all ai-multiplier values to fill the containers faster
+	 *  Initializes a Map with the names and default values
+	 *  of all ai-multiplier values to fill the containers faster
+	 *  @author Manuel Krakowski
 	 */
 	private void createConfigMaps() {
 		multipliers.put(AIConfigs.ATTACK_POWER_MUL, defaultConfig.attackPowerMultiplier);
@@ -716,11 +711,11 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
-	 * @author Manuel Krakowski Finaly creates all the Multipliers and hyperparams
-	 *         with their spinners and sets their names and default values
-	 * @param multiplyerLeft:  Left Column of the multiplier-Box
-	 * @param multiplyerRight: Right Column of the multiplier-Box
-	 * @param hyperparam:      Only Column of the hyperparam-box
+	 *  Finaly creates all the Multipliers and hyperparams with their spinners and sets their names and default values
+	 * @author Manuel Krakowski
+	 * @param multiplyerLeft Left Column of the multiplier-Box
+	 * @param multiplyerRight Right Column of the multiplier-Box
+	 * @param hyperparam Only Column of the hyperparam-box
 	 */
 	private void fillColumns(VBox multiplyerLeft, VBox multiplyerRight, VBox hyperparam) {
 		int i = 0;
@@ -747,8 +742,8 @@ private ObjectProperty<Font> popUpLabel;
 	}
 
 	/**
-	 * @author Manuel Krakowski Creates the Hbox in the bottom of the screen which
-	 *         will contain 3 buttons
+	 *  Creates the Hbox in the bottom of the screen which will contain 3 buttons
+	 *  @author Manuel Krakowski
 	 * @return Hbox
 	 */
 	private HBox createButtomHBox() {
@@ -764,6 +759,11 @@ private ObjectProperty<Font> popUpLabel;
 		return buttonBox;
 	}
 
+	/**
+	 * performs the action when the leave button is clicked
+	 * @author Manuel Krakowski
+	 * @param b: leave-button
+	 */
 	private void performLeave(Button b) {
 		b.setOnAction(e -> {
 			root.getChildren().remove(aiconfigPopUp);
@@ -771,6 +771,11 @@ private ObjectProperty<Font> popUpLabel;
 		});
 	}
 
+	/**
+	 * Perfroms the action when the save-button is clicked
+	 * @author Manuel Krakowski
+	 * @param b: save-button
+	 */
 	private void performSave(Button b) {
 		b.setOnAction(e -> {
 			SoundController.playSound("Button", SoundType.MISC);
@@ -778,10 +783,14 @@ private ObjectProperty<Font> popUpLabel;
 		});
 	}
 	
+	/**
+	 * Performs the action when the play-button is clicked
+	 * @author Manuel Krakowski
+	 * @param b play-button
+	 */
 	private void performPlay(Button b) {
 		b.setOnAction(e -> {
 			SoundController.playSound("Button", SoundType.MISC);
-			// ADD COnfig Starting Here
 			if(remote) {
 			  root.getChildren().remove(aiconfigPopUp);
 			  JoinScene joinscene = (JoinScene) scene;
@@ -808,8 +817,8 @@ private ObjectProperty<Font> popUpLabel;
 	
 
 	/**
-	 * @author Manuel Krakowski creates a button to either save/play, play or leave
-	 *         with always the same design
+	 * creates a button to either save/play, play or leave with always the same design
+	 * @author Manuel Krakowski
 	 * @param text
 	 * @return
 	 */
@@ -835,7 +844,10 @@ private ObjectProperty<Font> popUpLabel;
 	}
 	
 	
-	
+	/**
+	 * Creates the popup which is shown when the user wants to save a config
+	 * @author Manuel Krakowski
+	 */
 	private void createSaveConfigPopUp() {
 		saveConfig = new PopUpPane(scene, 0.55, 0.4);
 		root.getChildren().remove(aiconfigPopUp);
@@ -869,7 +881,11 @@ private ObjectProperty<Font> popUpLabel;
 		root.getChildren().add(saveConfig);
 	}
 	
-	
+	/**
+	 * performs action when the user clicks back in the save-popup
+	 * @author Manuel Krakowski
+	 * @param b back button
+	 */
 	private void performSavePopUpBack(Button b) {
 		b.setOnAction(e -> {
 			root.getChildren().remove(saveConfig);
@@ -877,9 +893,13 @@ private ObjectProperty<Font> popUpLabel;
 		});
 	}
 	
+	/**
+	 * performs action when the save and play button is clicked
+	 * @author Manuel Krakowski
+	 * @param b save-and-play button
+	 */
 	private void performSavePopUpSaveAndPlay(Button b) {
 		b.setOnAction(e -> {
-			//ADD CONFIG START HERE
 			defaultConfig.saveConfigAs(enterConfigNamefield.getText());
 			if(aiorHumanpopup == null) {
 				PopUpCreatorEnterTeamName teamNamePopup = new PopUpCreatorEnterTeamName(scene, root, saveConfig, hsc, false, true);
@@ -893,12 +913,14 @@ private ObjectProperty<Font> popUpLabel;
 				teamNamePopup.setAitype(aitype);
 				teamNamePopup.createEnterNamePopUp();
 			}
-			
-
-			
 		});
 	}
 	
+	/**
+	 * performs the action when the save button is clicked on the save popup
+	 * @author Manuel Krakowski
+	 * @param b
+	 */
 	private void perfromSavePopUpSave(Button b) {
 		b.setOnAction(e -> {
 			defaultConfig.saveConfigAs(enterConfigNamefield.getText());
@@ -908,6 +930,12 @@ private ObjectProperty<Font> popUpLabel;
 		
 	}
 	
+	/**
+	 * Creates a button-type which is used for the save-popup
+	 * @author Manuel Krakowski
+	 * @param text button-text
+	 * @return default-button
+	 */
 	private Button createSavePopUpButton(String text) {
 		Button namePopButton = new Button(text);
 		namePopButton.fontProperty().bind(enterNameButtonText);
