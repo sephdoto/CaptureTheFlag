@@ -181,10 +181,10 @@ public class CheatboardListener extends NativeKeyAdapter {
         if(pList.get(pivot) == currentCode.get(pivot)) {
           oneListMatched = true;
           if(pivot +1 == pList.size()) {
-            letTheFunBegin(pList);
             pivotList.clear();
             pivot = 0;
             currentCode.clear();
+            letTheFunBegin(pList);
           }
         } else {
           pivotList.remove(pList);
