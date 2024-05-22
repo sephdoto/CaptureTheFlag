@@ -34,11 +34,9 @@ import test.CreateTextGameStates;
 
 /**
  * @mkrakows
- * This class contains a visual Representation of a Piece
+ * visual Representation of a Piece
  */
 public class CostumFigurePain extends Pane {
-	//Achtung: DIe Position von dem Piece, das zu einem Costumfigurepain gehört kann abweichen von der Position
-	//des CostumFigurePain, da das Piece sich während des Spiels bew
 	String teamID;
 	Piece piece;
 	String type;
@@ -53,20 +51,6 @@ public class CostumFigurePain extends Pane {
 	
 
 	ArrayList<int[]> possibleMoves;
-	
-	/**
-	 * @author mkrakows
-	 * A custom figure is created and a mouseListener is added to it. When clicking on the figure it is highlighted and the currently selected
-	 * figure in game is set 
-	 * {@link Game.current}
-	 * @param bImage: one can choose an Image that should represent a figure when creating one
-	 * @param name: Identifier of the Figure, Later the id should be used here
-	 * @param parent: A Figure always has the square it is placed on as an Parameter, this one represents the initial Cell
-	 * the figure is placed on in the GridPane
-	 * {@link BackgroundCell}
-	 * @param game: A figure always knows the game it is playing in (Access to Game has to be guaranteed when a figure is chosen with 
-	 * a MouseClick)
-	 */
 	public CostumFigurePain(Piece piece) {
 	this.piece = piece;
 	this.type = piece.getDescription().getType();
@@ -82,7 +66,6 @@ public class CostumFigurePain extends Pane {
 			if(attacable) {
 				performAttackClick();
 			}
-			//parent.getScene().getWindow().setWidth(parent.getScene().getWidth() + 0.001);
 		}
 	});
 	}
@@ -139,7 +122,6 @@ public class CostumFigurePain extends Pane {
 	
 	
 	public void performSelectClick() {
-	System.out.println("Hallo: " + posX + ", " + posY);
 	showPieceInformationWhenClicked();
 	Game.setCurrent(CostumFigurePain.this);
 	Game.showPossibleMoves();
@@ -239,7 +221,7 @@ public class CostumFigurePain extends Pane {
 
 	public void setAttacable() {
 		this.attacable = true;
-		parent.showattackCircle();
+		parent.showAttackable();
 		
 	}
 	

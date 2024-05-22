@@ -105,7 +105,7 @@ public class BaseRep extends Pane {
 
 	public void setAttackable() {
 		isAttackable = true;
-		parent.showattackCircle();
+		parent.showAttackable();
 	}
 	
 	public void setUnattacble() {
