@@ -182,7 +182,6 @@ public class AIClient extends Client {
     this.currentServer = shortURL + "/" + gameSessionID;
     joinGame(teamName);
     getStateFromServer();
-    this.isAlive = true;
   }
 /**
    * Combines refreshing the session and game state into one.

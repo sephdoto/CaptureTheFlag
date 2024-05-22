@@ -212,6 +212,7 @@ public class Client implements GameClientInterface {
   public void joinGame(String teamName) {
     this.requestedTeamName = teamName;
     joinGameParser(joinGameCaller(teamName));
+    this.isAlive = true;
   }
 
   /**
@@ -306,7 +307,6 @@ public class Client implements GameClientInterface {
     this.currentServer = "http://" + IP + ":" + port + "/api/gamesession";
     this.currentServer = shortURL + "/" + gameSessionID;
     joinGame(teamName);
-    this.isAlive = true;
   }
 
   // **************************************************
