@@ -365,6 +365,7 @@ public class PlayGameScreenV2 extends Scene {
         if (local.isItMyTurn()) {
           captureLoadingLabel.getChildren().add(showYourTurnBox());
           onelocal = true;
+          break;
         }
       }
       if (!onelocal) {

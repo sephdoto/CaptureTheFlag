@@ -305,7 +305,7 @@ public class PopupCreatorGameOver {
 	 * Creates a PopupPane which  tells the user that he lost the game
 	 * @author Manuel Krakowski
 	 */
-	public void createGameOverPopUpYouLost() {
+	public void createGameOverPopUpYouLost(String name) {
 		gameOverPopUp = new PopUpPane(scene, 0.6, 0.5);
 		StackPane poproot = new StackPane();
 		poproot.getChildren().add(createBackgroundscelett(poproot));
@@ -317,11 +317,18 @@ public class PopupCreatorGameOver {
 			top.setPadding(new Insets(padding, 0, 0, 0));
 		});
 		top.setAlignment(Pos.TOP_CENTER);
+		Label l = new Label(name);
+        l.prefWidthProperty().bind(top.widthProperty());
+        l.setAlignment(Pos.CENTER);
+        l.setTextFill(Color.RED);
+        l.setFont(Font.font(scene.getWidth()/50));
+        l.fontProperty().bind(popUpLabel);
 		Button playAgainButton = createConfigButton("Play Again");
 		Button analyseGameButton = createConfigButton("Watch Game");
         HBox x = createButtonBox();
 		x.getChildren().addAll(playAgainButton,analyseGameButton);
 		top.getChildren().add(createHeader(poproot,"youLost"));
+		top.getChildren().add(l);
         top.getChildren().add(x);
 		poproot.getChildren().add(top);
 		gameOverPopUp.setContent(poproot);
@@ -339,7 +346,7 @@ public class PopupCreatorGameOver {
 		ImageView mpv = new ImageView(mp);
 		mpv.fitHeightProperty().bind(configRoot.heightProperty().divide(1.1));
 		mpv.fitWidthProperty().bind(configRoot.widthProperty().divide(1.1));
-		mpv.setOpacity(0.65);
+		mpv.setOpacity(0.4);
 		return mpv;
 	}
 	

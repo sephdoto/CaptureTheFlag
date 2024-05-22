@@ -21,6 +21,7 @@ import org.ctf.ui.GamePane;
 import org.ctf.ui.HomeSceneController;
 import org.ctf.ui.PopUpCreator;
 import org.ctf.ui.PopUpCreatorEnterTeamName;
+import org.ctf.ui.PopupCreatorGameOver;
 import org.ctf.ui.StroeMaps;
 import org.ctf.ui.controllers.CheatboardListener;
 import org.ctf.ui.controllers.ImageController;
@@ -555,10 +556,10 @@ public class CreateGameScreenV2 extends Scene {
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
 		exit.setOnAction(e -> {
 			//hsc.switchtoHomeScreen(e);
-			//PopupCreatorGameOver g = new PopupCreatorGameOver(this, root, hsc);
-			//g.createGameOverPopUpYouLost();
+			PopupCreatorGameOver g = new PopupCreatorGameOver(this, root, hsc);
+			g.createGameOverPopUpYouLost("Ahaah");
 			//hsc.switchToTestScene(App.getStage());
-		  hsc.switchToAnalyzerScene(App.getStage());
+		  //hsc.switchToAnalyzerScene(App.getStage());
 		});
 		return exit;
 	}
