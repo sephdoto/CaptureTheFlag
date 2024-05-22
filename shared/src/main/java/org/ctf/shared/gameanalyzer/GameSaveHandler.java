@@ -177,8 +177,7 @@ public class GameSaveHandler {
    */
   public boolean deleteLastSavedFile() {
     try {
-      File myObj = new File(Constants.saveGameFolder + this.lastFileName + ".savedgame");
-      myObj.delete();
+      new File(Constants.saveGameFolder + this.lastFileName + ".savedgame").delete();
     } catch (Exception e) {
       return false;
     }
