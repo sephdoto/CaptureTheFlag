@@ -253,7 +253,7 @@ public class CreateGameScreenV2 extends Scene {
 			double spacing = newVal.doubleValue() * 0.09;
 			serverInfoBox.setSpacing(spacing);
 		});
-		serverInfoBox.getChildren().add(createHeader(parent, "select sever"));
+		serverInfoBox.getChildren().add(createHeader(parent, "select server"));
 		HBox enterSeverInfoBox = new HBox();
 		enterSeverInfoBox.prefHeightProperty().bind(serverInfoBox.heightProperty().multiply(0.6));
 		enterSeverInfoBox.prefWidthProperty().bind(serverInfoBox.widthProperty());
