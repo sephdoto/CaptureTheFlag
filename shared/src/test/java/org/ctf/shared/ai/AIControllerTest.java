@@ -167,42 +167,108 @@ class AIControllerTest {
         .enableSaveGame(false)
         .disableAutoJoin()
         .build();
-    client1.createGame(JsonTools.readMapTemplate("Default"));
+    Client client3 = ClientStepBuilder.newBuilder()
+        .enableRestLayer(false)
+        .onRemoteHost("127.0.0.1")
+        .onPort("9999")
+        .enableSaveGame(false)
+        .disableAutoJoin()
+        .build();
+    Client client4 = ClientStepBuilder.newBuilder()
+        .enableRestLayer(false)
+        .onRemoteHost("127.0.0.1")
+        .onPort("9999")
+        .enableSaveGame(false)
+        .disableAutoJoin()
+        .build();
+    client1.createGame(JsonTools.readMapTemplate("te"));
     String client1Name = "aic";
     client1.joinGame(client1Name);
-    String client2Name = "aic222";
+    String client2Name = "aic2";
     client2.joinExistingGame("127.0.0.1", "9999", client1.getCurrentGameSessionID(), client2Name);
+    String client3Name = "aic3";
+    client3.joinExistingGame("127.0.0.1", "9999", client1.getCurrentGameSessionID(), client3Name);
+    String client4Name = "aic4";
+    client4.joinExistingGame("127.0.0.1", "9999", client1.getCurrentGameSessionID(), client4Name);
     Thread.sleep(5000);
     String currentClient = "";
     try {
       client1.pullData();
       client2.pullData();
+      client3.pullData();
+      client4.pullData();
       AIController aic = new AIController(client1.getCurrentState(), AI.RANDOM, new AIConfig(), 1);
       AIController aic2 = new AIController(client2.getCurrentState(), AI.IMPROVED, new AIConfig(), 1);
+      AIController aic3 = new AIController(client3.getCurrentState(), AI.RANDOM, new AIConfig(), 1);
+      AIController aic4 = new AIController(client4.getCurrentState(), AI.IMPROVED, new AIConfig(), 1);
       aic2.getNextMove();
+      aic3.getNextMove();
+      aic4.getNextMove();
       for(int i=0; i<50; i++) {
         Move move = aic.getNextMove();
         if(move == null) throw new GameOver();
+        System.out.println(client1Name + ": " + (aic.getAi() == AI.RANDOM ? move.getPieceId() : aic.getMcts().printResults(move)));
         client1.makeMove(move);
-        System.out.println(client1Name + ": " + (aic.getAi() == AI.RANDOM ? "" : aic.getMcts().printResults(move)));
         currentClient = client1Name;
         Thread.sleep(50);
         client1.pullData();
         client2.pullData();
+        client3.pullData();
+        client4.pullData();
         Thread.sleep(50);
-        aic.update(client1.getCurrentState(), client1.getLastMove());
-        aic2.update(client2.getCurrentState(), client2.getLastMove());
+        aic.update(client1.getCurrentState());
+        aic2.update(client2.getCurrentState());
+        aic3.update(client3.getCurrentState());
+        aic4.update(client4.getCurrentState());
+        Thread.sleep(50);
         move = aic2.getNextMove();
         if(move == null) throw new GameOver();
+        System.out.println(client2Name + ": " + (aic2.getAi() == AI.RANDOM ? move.getPieceId() : aic2.getMcts().printResults(move)));
         client2.makeMove(move);
-        System.out.println(client2Name + ": " + (aic2.getAi() == AI.RANDOM ? "" : aic2.getMcts().printResults(move)));
         currentClient = client2Name;
         Thread.sleep(50);
         client1.pullData();
         client2.pullData();
+        client3.pullData();
+        client4.pullData();
         Thread.sleep(50);
-        aic.update(client1.getCurrentState(), client1.getLastMove());
-        aic2.update(client2.getCurrentState(), client2.getLastMove());
+        aic.update(client1.getCurrentState());
+        aic2.update(client2.getCurrentState());
+        aic3.update(client3.getCurrentState());
+        aic4.update(client4.getCurrentState());
+        Thread.sleep(50);
+        move = aic3.getNextMove();
+        if(move == null) throw new GameOver();
+        System.out.println(client3Name + ": " + (aic3.getAi() == AI.RANDOM ? move.getPieceId() : aic3.getMcts().printResults(move)));
+        client3.makeMove(move);
+        currentClient = client3Name;
+        Thread.sleep(50);
+        client1.pullData();
+        client2.pullData();
+        client3.pullData();
+        client4.pullData();
+        Thread.sleep(50);
+        aic.update(client1.getCurrentState());
+        aic2.update(client2.getCurrentState());
+        aic3.update(client3.getCurrentState());
+        aic4.update(client4.getCurrentState());
+        Thread.sleep(50);
+        move = aic4.getNextMove();
+        if(move == null) throw new GameOver();
+        System.out.println(client4Name + ": " + (aic4.getAi() == AI.RANDOM ? move.getPieceId() : aic4.getMcts().printResults(move)));
+        client4.makeMove(move);
+        currentClient = client4Name;
+        Thread.sleep(50);
+        client1.pullData();
+        client2.pullData();
+        client3.pullData();
+        client4.pullData();
+        Thread.sleep(50);
+        aic.update(client1.getCurrentState());
+        aic2.update(client2.getCurrentState());
+        aic3.update(client3.getCurrentState());
+        aic4.update(client4.getCurrentState());
+        Thread.sleep(50);
       }
     } catch(GameOver e) {
       System.out.println("\n"+ currentClient +" won!\n");

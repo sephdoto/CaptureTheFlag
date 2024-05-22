@@ -39,7 +39,10 @@ public class Team {
     public static Team[] toNewTeams(org.ctf.shared.state.Team[] teams) {
       Team newTeams[] = new Team[teams.length];
       for(int i=0; i<teams.length; i++)
-        newTeams[i] = new Team(teams[i]);
+        if(teams[i] != null)
+          newTeams[i] = new Team(teams[i]);
+        else 
+          newTeams[i] = null;
       return newTeams;
     }
     

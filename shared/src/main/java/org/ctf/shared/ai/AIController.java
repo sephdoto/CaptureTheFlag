@@ -49,6 +49,7 @@ public class AIController {
   
   @SuppressWarnings("incomplete-switch")
   protected void initMCTS() {
+    try {
     switch(ai) {
       case MCTS:
         org.ctf.shared.ai.mcts.TreeNode root = new org.ctf.shared.ai.mcts.TreeNode(
@@ -66,6 +67,10 @@ public class AIController {
             normalizedGameState.getNormalizedGameState(), null);
         setMcts(new org.ctf.shared.ai.mcts2.MCTS(root2, getConfig()));
         break;
+    }
+    } catch (Exception e ) {
+      System.out.println("error in init mcts");
+      e.printStackTrace();
     }
   }
 

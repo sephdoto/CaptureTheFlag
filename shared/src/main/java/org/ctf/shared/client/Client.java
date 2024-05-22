@@ -74,6 +74,7 @@ public class Client implements GameClientInterface {
   protected int myTeam = -1; // index of the team this client represents in teams array
   protected String gameIDtoJoin;
   protected String[] allTeamNames;
+  protected boolean isAlive;
 
   // Block for alt game mode data
   protected Date startDate;
@@ -226,7 +227,8 @@ public class Client implements GameClientInterface {
    */
   @Override
   public void makeMove(Move move) {
-    makeMoverCaller(teamID, teamSecret, move);
+    if(this.isAlive)
+      makeMoverCaller(teamID, teamSecret, move);
   }
 
   /**
@@ -304,6 +306,7 @@ public class Client implements GameClientInterface {
     this.currentServer = "http://" + IP + ":" + port + "/api/gamesession";
     this.currentServer = shortURL + "/" + gameSessionID;
     joinGame(teamName);
+    this.isAlive = true;
   }
 
   // **************************************************
@@ -494,8 +497,7 @@ public class Client implements GameClientInterface {
       gameState = comm.getCurrentGameState(currentServer);
       normaliseGameState(gameState);
       if (gameState.getTeams()[myTeam] == null)
-        this.gameOver =
-            true; // TODO review if this is OK. Works and everything but maybe you had other plans.
+        this.isAlive = false;
     } catch (SessionNotFound e) {
       throw new SessionNotFound("Session isnt available for this request");
     } catch (UnknownError e) {
@@ -912,5 +914,9 @@ public class Client implements GameClientInterface {
   // **************************************************
   // End of Getter Block
   // **************************************************
+
+  public boolean isAlive() {
+    return isAlive;
+  }
 
 }

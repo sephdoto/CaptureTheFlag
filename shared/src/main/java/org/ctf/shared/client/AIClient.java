@@ -104,6 +104,7 @@ public class AIClient extends Client {
             throw new GameOver();
           }
         } catch (NullPointerException e) {
+          e.printStackTrace();
           logger.info("nullpointer exception");
         }
       };
@@ -181,6 +182,7 @@ public class AIClient extends Client {
     this.currentServer = shortURL + "/" + gameSessionID;
     joinGame(teamName);
     getStateFromServer();
+    this.isAlive = true;
   }
 /**
    * Combines refreshing the session and game state into one.
