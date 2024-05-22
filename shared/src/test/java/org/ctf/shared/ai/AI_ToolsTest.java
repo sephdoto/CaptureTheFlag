@@ -33,6 +33,15 @@ public class AI_ToolsTest {
   }
 
   @Test
+  void testToNextTeam() {
+    GameState gameState = TestValues.getTestState();
+    gameState.getTeams()[1] = null;
+    gameState.setCurrentTeam(0);
+    GameUtilities.toNextTeam(gameState);
+    assertTrue(gameState.getCurrentTeam() != 1);
+  }
+  
+  @Test
   void testGetRandomShapeMove() {
     Move move1 = new Move();
     ArrayList<int[]> moveList = new ArrayList<int[]>();

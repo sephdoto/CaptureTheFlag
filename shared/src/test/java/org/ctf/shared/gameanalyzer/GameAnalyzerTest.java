@@ -14,7 +14,7 @@ class GameAnalyzerTest {
 
     int currentMove = 0;
     try {
-      GameAnalyzer analyzer = new GameAnalyzer(gsh.getSavedGame(), AI.IMPROVED, new AIConfig(), 0);
+      GameAnalyzer analyzer = new GameAnalyzer(gsh.getSavedGame(), AI.MCTS, new AIConfig(), 0);
       while(analyzer.isActive()){
         if(currentMove != analyzer.getCurrentlyAnalyzing())
           analyzer.results[currentMove++].printMe();

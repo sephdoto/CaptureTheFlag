@@ -1,5 +1,8 @@
 package org.ctf.shared.ai;
 
+import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
+import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
+import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.junit.jupiter.api.Test;
@@ -16,7 +19,7 @@ public class AI_Brawl {
 
   }*/
 
-//  @Test
+  //  @Test
   void mctsVSmcts2() {
     GameState playOn = TestValues.getTestState();
     playOn.setCurrentTeam(0);
@@ -55,5 +58,23 @@ public class AI_Brawl {
 
     //    org.ctf.ai.mcts2.TreeNode root2 = new org.ctf.ai.mcts2.TreeNode(null, playOn, null);
     //    root2.printGrids();
+  }
+
+//  @Test
+  //TODO MCTS 2 FEHLERHAFT!
+  void mcts3Brawl() throws NoMovesLeftException, InvalidShapeException {
+    AIController aic = new AIController(TestValues.getTestState(), AI.EXPERIMENTAL, new AIConfig(), 1);
+    AIController aic2 = new AIController(TestValues.getTestState(), AI.EXPERIMENTAL, new AIConfig(), 1);
+    aic2.getNextMove();
+    for(int i=0; i<9; i++) {
+      Move move = aic.getNextMove();
+      System.out.println(aic.getMcts().printResults(move));
+      aic.update(move);
+      aic2.update(move);
+      move = aic2.getNextMove();
+      System.out.println(aic2.getMcts().printResults(move));
+      aic.update(move);
+      aic2.update(move);
+    }
   }
 }

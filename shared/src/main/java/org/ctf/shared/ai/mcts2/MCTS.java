@@ -507,13 +507,14 @@ public class MCTS implements MonteCarloTreeSearch {
    */
   void removeTeamCheck(ReferenceGameState gameState) {
     for(int i=0; i<gameState.getTeams().length; i++) {
-      if(gameState.getTeams()[i] == null)
-        continue;
+      if(gameState.getTeams()[i] == null) continue;
       if(gameState.getTeams()[i].getFlags() == 0 ||
           gameState.getTeams()[i].getPieces().length == 0) {
         MCTSUtilities.removeTeam(gameState, i--);
       }
     }
+    if(gameState.getTeams()[gameState.getCurrentTeam()] == null)
+      MCTSUtilities.toNextTeam(gameState);
   }
 
   /**

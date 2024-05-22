@@ -296,6 +296,7 @@ public class MCTS implements MonteCarloTreeSearch {
     for (int i = gameState.getCurrentTeam();
         teamsLeft > 1;
         i = GameUtilities.toNextTeam(gameState).getCurrentTeam()) {
+
       boolean canMove = false;
       for (int j = 0; !canMove && j < gameState.getTeams()[i].getPieces().length; j++) {
         // only if a move can be made no exception is thrown
@@ -471,6 +472,8 @@ public class MCTS implements MonteCarloTreeSearch {
         GameUtilities.removeTeam(gameState, i--);
       }
     }
+    if(gameState.getTeams()[gameState.getCurrentTeam()] == null)
+      GameUtilities.toNextTeam(gameState);
   }
 
   /**

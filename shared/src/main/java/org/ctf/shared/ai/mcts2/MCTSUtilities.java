@@ -150,14 +150,17 @@ public class MCTSUtilities {
    * @return altered gameState
    */
   public static ReferenceGameState toNextTeam(ReferenceGameState gameState) {
+    int teams=gameState.getTeams().length;
     for (int i = (gameState.getCurrentTeam() + 1) % gameState.getTeams().length;
-        ;
+        teams > 0;
         i = (i + 1) % gameState.getTeams().length) {
       if (gameState.getTeams()[i] != null) {
         gameState.setCurrentTeam(i);
         return gameState;
       }
+      --teams;
     }
+    return gameState;
   }
 
   /**

@@ -62,7 +62,8 @@ public class EngineTools extends GameUtilities {
    * @return true if only one team is left
    */
   public static boolean removeMovelessTeams(GameState gameState) {
-    for (int i = 0; i < gameState.getTeams().length && gameState.getTeams()[i] != null; i++) {
+    for (int i = 0; i < gameState.getTeams().length; i++) {
+      if(gameState.getTeams()[i] == null) continue;
       if (gameState.getTeams()[i].getFlags() <= 0) removeTeam(gameState, i);
       else if (gameState.getTeams()[i].getPieces().length == 0) removeTeam(gameState, i);
     }
@@ -97,6 +98,8 @@ public class EngineTools extends GameUtilities {
    * @return true if the team got moves left
    */
   public static boolean teamGotMovesLeft(GameState gameState, int teamIndex) {
+    if(gameState.getTeams()[teamIndex] == null)
+      return false;
     for (int i = gameState.getTeams()[teamIndex].getPieces().length - 1; i >= 0; i--) {
       if (getPossibleMoves(gameState, gameState.getTeams()[teamIndex].getPieces()[i]).size() > 0)
         return true;
@@ -147,6 +150,8 @@ public class EngineTools extends GameUtilities {
    * @author sistumpf
    */
   public static void removeTeam(GameState gameState, int team) {
+    if(gameState.getTeams()[team] == null)
+      return;
     gameState
     .getGrid()
     [gameState.getTeams()[team].getBase()[0]]

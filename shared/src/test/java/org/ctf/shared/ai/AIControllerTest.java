@@ -10,6 +10,8 @@ import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.ai.mcts.MCTS;
 import org.ctf.shared.ai.mcts.TreeNode;
 import org.ctf.shared.ai.random.RandomAI;
+import org.ctf.shared.client.AIClient;
+import org.ctf.shared.client.AIClientStepBuilder;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.constants.Constants;
@@ -93,7 +95,47 @@ class AIControllerTest {
       aic.update(move);
     }
   }
-
+  
+  /*@SuppressWarnings("deprecation")
+  @Test
+  void aiClientIntegrationTesting() throws IOException, MapNotFoundException, InterruptedException {
+    Process process = startServer();    
+    Thread.sleep(7000);
+    Client serverBuilder = ClientStepBuilder.newBuilder()
+        .enableRestLayer(false)
+        .onRemoteHost("127.0.0.1")
+        .onPort("9999")
+        .enableSaveGame(false)
+        .disableAutoJoin()
+        .build();
+    serverBuilder.createGame(JsonTools.readMapTemplate("Default"));
+    AIClient ai0 = AIClientStepBuilder
+        .newBuilder()
+        .enableRestLayer(false)
+        .onRemoteHost("127.0.0.1")
+        .onPort("9999")
+        .aiPlayerSelector(AI.IMPROVED, new AIConfig())
+        .enableSaveGame(false)
+        .gameData(serverBuilder.getCurrentGameSessionID(), "ai0")
+        .build();
+    AIClient ai1 = AIClientStepBuilder
+        .newBuilder()
+        .enableRestLayer(false)
+        .onRemoteHost("127.0.0.1")
+        .onPort("9999")
+        .aiPlayerSelector(AI.IMPROVED, new AIConfig())
+        .enableSaveGame(false)
+        .gameData(serverBuilder.getCurrentGameSessionID(), "ai1")
+        .build();
+    Thread.sleep(100);
+    int lastTeam = -1;
+    while(!ai0.isGameOver()) {
+      System.out.println(ai0.getAllTeamNames()[0]);
+      if(ai0.getCurrentTeamTurn() != lastTeam)
+        System.out.println(ai0.getLastMove().getPieceId());
+    }
+    process.destroyForcibly();
+  }*/
 
   @SuppressWarnings("deprecation")
   @Test

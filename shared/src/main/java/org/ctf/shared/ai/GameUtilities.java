@@ -55,14 +55,17 @@ public class GameUtilities {
    * @return altered gameState
    */
   public static GameState toNextTeam(GameState gameState) {
+    int teams=gameState.getTeams().length;
     for (int i = (gameState.getCurrentTeam() + 1) % gameState.getTeams().length;
-        ;
+        teams>0;
         i = (i + 1) % gameState.getTeams().length) {
       if (gameState.getTeams()[i] != null) {
         gameState.setCurrentTeam(i);
         return gameState;
       }
+      --teams;
     }
+    return gameState;
   }
 
   /**
@@ -74,12 +77,12 @@ public class GameUtilities {
    */
   public static void removeTeam(GameState gameState, int team) {
     gameState
-    .getGrid()[gameState.getTeams()[team].getBase()[0]][
-                                                        gameState.getTeams()[team].getBase()[1]] =
-                                                        "";
+    .getGrid()[gameState.getTeams()
+               [team].getBase()[0]][gameState.getTeams()[team].getBase()[1]] = "";
     for (Piece p : gameState.getTeams()[team].getPieces())
       gameState.getGrid()[p.getPosition()[0]][p.getPosition()[1]] = "";
     gameState.getTeams()[team] = null;
+    toNextTeam(gameState);
   }
 
   /**
