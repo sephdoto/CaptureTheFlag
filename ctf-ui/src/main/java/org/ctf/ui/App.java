@@ -203,6 +203,8 @@ public class App extends Application {
       if (event.getCode() == KeyCode.ENTER) {
         String port = serverPane.getField().getText();
         if(this.startServer(port)) {
+          Constants.userSelectedLocalServerPort = port;
+          Constants.localServerPort = port;
           serverPane.setFinished();
         } else {
           serverPane.updatePromtText();

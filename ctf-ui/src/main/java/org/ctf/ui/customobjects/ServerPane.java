@@ -68,11 +68,11 @@ public class ServerPane extends StackPane {
    */
   public void setFinished() {
     this.getChildren().clear();
-    this.text.setText("Server Started");
+    this.text.setText("Change Port");
     this.getChildren().add(text);
     this.setOnMouseClicked(e -> {
-//      this.getChildren().clear();
-//      this.getChildren().add(field);
+      this.getChildren().clear();
+      this.getChildren().add(field);
     });
   }
 
