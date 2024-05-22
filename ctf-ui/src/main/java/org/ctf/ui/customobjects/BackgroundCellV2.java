@@ -113,11 +113,14 @@ public class BackgroundCellV2 extends Pane {
    * @author Manuel Krakowski
    * 
    */
-  public void addBlock() {
+  public void addBlock(boolean isVisible) {
     NumberBinding binding = Bindings.multiply(widthProperty(), 0.5);
     NumberBinding roundSize = Bindings.createIntegerBinding(() -> binding.intValue(), binding);
     occupied = true;
     BlockRepV3 blocki = new BlockRepV3();
+    if(!isVisible) {
+      blocki.setOpacitytoZero();
+    }
     blocki.maxWidthProperty().bind(roundSize);
     blocki.maxHeightProperty().bind(roundSize);
     base.getChildren().clear();
@@ -131,7 +134,7 @@ public class BackgroundCellV2 extends Pane {
    * @param r of a team
    */
   public void addBasis(BaseRep r) {
-    NumberBinding binding = Bindings.multiply(widthProperty(), 0.5);
+    NumberBinding binding = Bindings.multiply(widthProperty(), 0.6);
     NumberBinding roundSize = Bindings.createIntegerBinding(() -> binding.intValue(), binding);
     occupied = true;
     teamBase = r;
@@ -197,6 +200,7 @@ public class BackgroundCellV2 extends Pane {
   public void resetCircle() {
     rc.setFill(Color.WHITE);
   }
+  
 
   
   /**

@@ -54,12 +54,14 @@ public class GamePane extends HBox{
   SimpleObjectProperty<Double> minSize;
   SimpleObjectProperty<Double> min;
   NumberBinding binding;
+  private boolean blocksvisible;
 
-  public GamePane(GameState state) {
+  public GamePane(GameState state,boolean blocksVisible) {
     initSizes();
     //this.setStyle("-fx-background-color: yellow");
     this.state = state;
     this.map = state.getGrid();
+    this.blocksvisible = blocksVisible;
     this.currentTeam = state.getCurrentTeam();
     rows = map.length;
     cols = map[0].length;
@@ -206,13 +208,13 @@ public class GamePane extends HBox{
     }
   }
 
-  //	public  void setCurrentTeamActive() {
-  //		for (CostumFigurePain c : figures.values()) {
-  //			if (c.getTeamID().equals(String.valueOf(currentTeam))) {
-  //				c.setActive();
-  //			}
-  //		}
-  //	}
+  //    public  void setCurrentTeamActive() {
+  //        for (CostumFigurePain c : figures.values()) {
+  //            if (c.getTeamID().equals(String.valueOf(currentTeam))) {
+  //                c.setActive();
+  //            }
+  //        }
+  //    }
 
 
   public int generateKey(int x, int y) {
@@ -250,7 +252,11 @@ public class GamePane extends HBox{
         cells.put(generateKey(i, j),child);
         String objectOnMap = map[i][j];
         if(objectOnMap.equals("b")) {
-          child.addBlock();
+          if(blocksvisible) {
+            child.addBlock(true);
+          }else {
+            child.addBlock(false);
+          }
         } else if (objectOnMap.startsWith("b:")) {
 
         }else if (objectOnMap.startsWith("b:2")) {
@@ -269,6 +275,11 @@ public class GamePane extends HBox{
       int baseY = currenTeam.getBase()[1];
       String teamColor = currenTeam.getColor();
       BaseRep b = new BaseRep(currenTeam.getFlags(),teamColor, currenTeam.getId(), cells.get(generateKey(baseX, baseY)));
+      if(!CreateGameController.getColors().isEmpty()) {
+        b.showColor(CreateGameController.getColors().get(b.getTeamID()));
+      }else {
+        b.showDefaultTeamColor(teamColor);
+      }
       bases.put(i, b);
       cells.get(generateKey(baseX, baseY)).addBasis(b);
       Piece[] pieces = currenTeam.getPieces();

@@ -122,7 +122,7 @@ public class TestScene  {
 		            // }
 
 		            BackgroundCellV2 pane = new BackgroundCellV2(1,1);
-		            pane.addBlock();
+		            //pane.addBlock();
 
 		            // Weird to me to bind min and max width and height, prefer constant value and prefHeight / prefWidth binding with the cellSize
 		            pane.minWidthProperty().bind(cellSize);

@@ -236,7 +236,7 @@ public class AiAnalyserNew extends Scene {
         sep.widthProperty()
             .addListener(
                 (observable, oldValue, newValue) -> {
-                  double newSpacing = newValue.doubleValue() * 0.05;
+                  double newSpacing = newValue.doubleValue() * 0.03;
                   sep.setSpacing(newSpacing);
                 });
         return sep;
@@ -334,7 +334,7 @@ public class AiAnalyserNew extends Scene {
           //showMapBox.getStyleClass().add("show-GamePane");
           showMapBox.paddingProperty().bind(padding);
           GameState state = StroeMaps.getMap(name);
-          gm = new GamePane(state);
+          gm = new GamePane(state,true);
           StackPane.setAlignment(gm, Pos.CENTER);
           gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
           gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
@@ -355,7 +355,7 @@ public class AiAnalyserNew extends Scene {
       private VBox createAllMovesVBox(HBox parent) {
         leftBox = new VBox();
         leftBox.setAlignment(Pos.TOP_CENTER);
-        leftBox.prefWidthProperty().bind(parent.widthProperty().multiply(0.2));
+        leftBox.prefWidthProperty().bind(parent.widthProperty().multiply(0.3));
         leftBox.prefHeightProperty().bind(parent.heightProperty().multiply(0.85));
         leftBox.maxHeightProperty().bind(parent.heightProperty().multiply(0.85));
 
@@ -424,7 +424,8 @@ public class AiAnalyserNew extends Scene {
         oneRow.prefWidthProperty().bind(parent.widthProperty());
         Label moveNrLabel = createNormalLabel(oneRow, moveNr);
         Label teamLabel  = createTeamLabel(oneRow, moveNr);
-        oneRow.getChildren().addAll(moveNrLabel,teamLabel);
+        Label moveLabel = createMoveClassificationLabel(oneRow, moveNr, "");
+        oneRow.getChildren().addAll(moveNrLabel,teamLabel,moveLabel);
         rows[moveNr] = oneRow;
         return oneRow;
       }
@@ -461,7 +462,7 @@ public class AiAnalyserNew extends Scene {
                 l.getStyleClass().add("lobby-normal-label-2");
             }
            
-            l.prefWidthProperty().bind(h.widthProperty().multiply(0.25));
+            l.prefWidthProperty().bind(h.widthProperty().multiply(0.2));
            // l.setStyle("-fx-border-color:black");
             l.fontProperty().bind(moveTableContent);
             return l;
@@ -483,13 +484,22 @@ public class AiAnalyserNew extends Scene {
             }else {
                 l.getStyleClass().add("lobby-normal-label-2");
             }
-            l.prefWidthProperty().bind(h.widthProperty().multiply(0.75));
+            l.prefWidthProperty().bind(h.widthProperty().multiply(0.3));
             l.fontProperty().bind(moveTableContent);
             return l;
           }
       
-      
-    
-    
+      private Label createMoveClassificationLabel(HBox h,int i,String s) {
+        Label l = new Label("SUPERBLUNDER");
+        l.setAlignment(Pos.CENTER);
+        if((i % 2) == 0) {
+             l.getStyleClass().add("lobby-normal-label");
+        }else {
+            l.getStyleClass().add("lobby-normal-label-2");
+        }
+        l.prefWidthProperty().bind(h.widthProperty().multiply(0.5));
+        l.fontProperty().bind(moveTableContent);
+        return l;
+      }
 }
 

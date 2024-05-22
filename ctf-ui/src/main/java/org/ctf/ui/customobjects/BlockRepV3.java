@@ -6,18 +6,23 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class BlockRepV3 extends Region {
-	private Rectangle rc;
-	public BlockRepV3() {
-		rc = new Rectangle();
-		rc.setFill(Color.BLACK);
-		rc.setStroke(Color.BLACK);
-		rc.setStrokeWidth(1);
-		getChildren().add(rc);
-	}
-	protected void layoutChildren() {
-		super.layoutChildren();
-		rc.setWidth(this.getWidth());
-		rc.setHeight(this.getHeight());
+    private Rectangle rc;
+    public BlockRepV3() {
+        rc = new Rectangle();
+        rc.setFill(Color.BLACK);
+        rc.setStroke(Color.BLACK);
+        rc.setStrokeWidth(1);
+        getChildren().add(rc);
+    }
+    
+    public void setOpacitytoZero() {
+      rc.setOpacity(0);
+    }
+    
+    protected void layoutChildren() {
+        super.layoutChildren();
+        rc.setWidth(this.getWidth());
+        rc.setHeight(this.getHeight());
 
-	}
+    }
 }
