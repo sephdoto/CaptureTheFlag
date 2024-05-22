@@ -1,4 +1,4 @@
-package org.ctf.ui.controllers;
+package org.ctf.ui.remoteGame;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -7,8 +7,6 @@ import javax.imageio.ImageIO;
 import org.ctf.shared.constants.Constants;
 import org.ctf.ui.App;
 import org.ctf.ui.PlayGameScreenV2;
-import org.ctf.ui.RemoteWaitingScene;
-import org.ctf.ui.WaveCollapseThread;
 import javafx.application.Platform;
 
 /**

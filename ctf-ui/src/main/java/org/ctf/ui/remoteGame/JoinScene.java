@@ -1,4 +1,4 @@
-package org.ctf.ui;
+package org.ctf.ui.remoteGame;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -14,9 +14,11 @@ import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.ImageType;
+import org.ctf.ui.ComponentCreator;
+import org.ctf.ui.HomeSceneController;
+import org.ctf.ui.PopUpCreator;
 import org.ctf.ui.controllers.CheatboardListener;
 import org.ctf.ui.controllers.ImageController;
-import org.ctf.ui.controllers.RemoteWaitingThread;
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.editor.EditorScene;
 import org.ctf.ui.hostGame.CreateGameScreenV2;

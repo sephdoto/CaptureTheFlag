@@ -23,7 +23,7 @@ import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.ui.controllers.CheatboardListener;
 import org.ctf.ui.editor.EditorScene;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
-
+import org.ctf.ui.remoteGame.JoinScene;
 import javafx.beans.property.ObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

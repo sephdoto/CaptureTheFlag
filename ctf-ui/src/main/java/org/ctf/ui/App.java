@@ -61,7 +61,7 @@ public class App extends Application {
   Process process;
   static StackPane wrapper;
   static StackPane root;
-  static Image backgroundImage;
+  public static Image backgroundImage;
   public static BackgroundSize backgroundSize = new BackgroundSize(1, 1, true, true, true, true);
   static boolean serverStartSuccess;
   public static double stageOffset;
