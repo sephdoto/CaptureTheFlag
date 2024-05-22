@@ -92,7 +92,7 @@ class AIControllerTest {
     for(int i=0; i<100; i++) {
       Move move = aic.getNextMove();
       move = RandomAI.pickMoveComplex(aic.getMcts().getRoot().getGameState(), new ReferenceMove(null, new int[2])).toMove();
-      aic.update(move);
+      assertTrue(aic.update(move));
     }
   }
   
@@ -168,19 +168,24 @@ class AIControllerTest {
         .disableAutoJoin()
         .build();
     client1.createGame(JsonTools.readMapTemplate("Default"));
-    client1.joinGame("testClient1");
-    client2.joinExistingGame("127.0.0.1", "9999", client1.getCurrentGameSessionID(), "testClient2");
+    String client1Name = "aic";
+    client1.joinGame(client1Name);
+    String client2Name = "aic222";
+    client2.joinExistingGame("127.0.0.1", "9999", client1.getCurrentGameSessionID(), client2Name);
     Thread.sleep(5000);
+    String currentClient = "";
     try {
       client1.pullData();
       client2.pullData();
-      AIController aic = new AIController(client1.getCurrentState(), AI.IMPROVED, new AIConfig(), 1);
+      AIController aic = new AIController(client1.getCurrentState(), AI.RANDOM, new AIConfig(), 1);
       AIController aic2 = new AIController(client2.getCurrentState(), AI.IMPROVED, new AIConfig(), 1);
       aic2.getNextMove();
-      for(int i=0; i<9; i++) {
+      for(int i=0; i<50; i++) {
         Move move = aic.getNextMove();
-        System.out.println(aic.getMcts().printResults(move));
+        if(move == null) throw new GameOver();
         client1.makeMove(move);
+        System.out.println(client1Name + ": " + (aic.getAi() == AI.RANDOM ? "" : aic.getMcts().printResults(move)));
+        currentClient = client1Name;
         Thread.sleep(50);
         client1.pullData();
         client2.pullData();
@@ -188,8 +193,10 @@ class AIControllerTest {
         aic.update(client1.getCurrentState(), client1.getLastMove());
         aic2.update(client2.getCurrentState(), client2.getLastMove());
         move = aic2.getNextMove();
-        System.out.println(aic2.getMcts().printResults(move));
+        if(move == null) throw new GameOver();
         client2.makeMove(move);
+        System.out.println(client2Name + ": " + (aic2.getAi() == AI.RANDOM ? "" : aic2.getMcts().printResults(move)));
+        currentClient = client2Name;
         Thread.sleep(50);
         client1.pullData();
         client2.pullData();
@@ -198,6 +205,7 @@ class AIControllerTest {
         aic2.update(client2.getCurrentState(), client2.getLastMove());
       }
     } catch(GameOver e) {
+      System.out.println("\n"+ currentClient +" won!\n");
       //nice
     }catch(Exception e) {
       e.printStackTrace();

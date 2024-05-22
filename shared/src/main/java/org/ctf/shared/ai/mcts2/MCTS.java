@@ -67,6 +67,11 @@ public class MCTS implements MonteCarloTreeSearch {
     //      printResults(bestChild);
 
     this.executorService.shutdown();
+    
+    if(isTerminal(getRoot().getReferenceGameState()) >= 0 || 
+        isTerminal(getRoot().getReferenceGameState()) == -2)
+      return null;
+    
     return bestChild.getReferenceGameState().getLastMove().toMove();
   }
 

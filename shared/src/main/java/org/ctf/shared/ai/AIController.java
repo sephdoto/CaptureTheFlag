@@ -112,17 +112,19 @@ public class AIController {
    * Only works with an MCTS AI.
    * It is assumed that the move is unnormalized.
    * 
-   * @param gameState
+   * @param move a move that updates the gameState, if its different than the last one
    */
   public boolean update(Move move) {
     if(this.ai == AI.HUMAN || this.ai == AI.RANDOM) return false;
     if(moveEquals(this.normalizedGameState.getOriginalGameState().getLastMove(), move)) return false;
-    move = this.normalizedGameState.normalizedMove(move);
+    Move normove = this.normalizedGameState.normalizedMove(move);
+    this.normalizedGameState.getNormalizedGameState().setLastMove(normove);
+    this.normalizedGameState.getOriginalGameState().setLastMove(move);
     
     MonteCarloTreeNode[] children = getMcts().getRoot().getChildren();
     for(int i=0; i<children.length; i++) {
       Move childMove = children[i].getGameState().getLastMove();
-      if(moveEquals(childMove, move)) {
+      if(moveEquals(childMove, normove)) {
         getMcts().setRoot(children[i]);
         getMcts().getRoot().getParent().getChildren()[i] = null;
         getMcts().getRoot().setParent(null);
@@ -154,10 +156,11 @@ public class AIController {
     if(getAi() == AI.MCTS || getAi() == AI.IMPROVED || getAi() == AI.EXPERIMENTAL) {
       move = getMcts().getMove(thinkingTime);
 //      System.out.println(getMcts().printResults(move));
+//      getMcts().getRoot().printGrid();
     } else {
       move = RandomAI.pickMoveComplex(getNormalizedGameState().getNormalizedGameState(), new ReferenceMove(null, new int[] { 0, 0 })).toMove();
     }
-    return getNormalizedGameState().unnormalizeMove(move);
+    return move == null ? null : getNormalizedGameState().unnormalizeMove(move);
   }
   
   /**
