@@ -325,6 +325,14 @@ public class PlayGameScreenV2 extends Scene {
 		return showMapBox;
 	}
 	
+	/**
+	 * Updates the content of the container visualizing the Game. It reloads the dynamic background
+	 * image and redraws the {@link GamePane}. This method should be called to when dynamic 
+	 * background images are generated in a separate Thread.
+	 * 
+	 * 
+	 * @author aniemesc
+	 */
 	public void UpdateLeftSide() {
 	  showMapBox.getChildren().clear();
 	  Image mp =
@@ -332,7 +340,6 @@ public class PlayGameScreenV2 extends Scene {
               .toURI().toString());
        mpv = new ImageView(mp);
       StackPane.setAlignment(mpv, Pos.CENTER);
-      //mpv.fitWidthProperty().bind(this.widthProperty().multiply(0.2));
       mpv.setFitWidth(this.getWidth()*0.8);
       this.widthProperty().addListener((obs,old,newV)->{
         mpv.setFitWidth(newV.doubleValue()*0.8);
@@ -341,11 +348,9 @@ public class PlayGameScreenV2 extends Scene {
       this.heightProperty().addListener((obs,old,newV)->{
         mpv.setFitHeight(newV.doubleValue()*0.8);
       });
-      //mpv.fitHeightProperty().bind(showMapBox.heightProperty().multiply(0.2));
       mpv.setPreserveRatio(true);
       showMapBox.getChildren().add(mpv);
-      this.drawGamePane(currentState);
-      
+      this.drawGamePane(currentState);      
 	}
 	
 	
