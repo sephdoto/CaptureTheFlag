@@ -43,7 +43,9 @@ import javafx.scene.text.Font;
 import javafx.util.Duration;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
+import org.ctf.ui.controllers.CheatboardListener;
 import org.ctf.ui.controllers.ImageController;
+import org.ctf.ui.controllers.SettingsSetter;
 
 public class WaitingScene extends Scene {
   // Executor Service and data which is changed by it
@@ -101,6 +103,7 @@ public class WaitingScene extends Scene {
     currentNumber = 0;
 	scheduler = Executors.newScheduledThreadPool(1);
 	scheduler.scheduleAtFixedRate(updateTask, 0, 1, TimeUnit.SECONDS);
+	CheatboardListener.setSettings(root, this);
   }
   
   

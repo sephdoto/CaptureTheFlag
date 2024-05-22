@@ -22,6 +22,7 @@ import org.ctf.ui.HomeSceneController;
 import org.ctf.ui.PopUpCreator;
 import org.ctf.ui.PopUpCreatorEnterTeamName;
 import org.ctf.ui.StroeMaps;
+import org.ctf.ui.controllers.CheatboardListener;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.customobjects.PopUpPane;
 import configs.ImageLoader;
@@ -96,6 +97,7 @@ public class CreateGameScreenV2 extends Scene {
 		this.root = (StackPane) this.getRoot();
 		popUpCreator = new PopUpCreator(this, root,hsc);
 		createLayout();
+		CheatboardListener.setSettings(root, this);
 	}
 	
 	
