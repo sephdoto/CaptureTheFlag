@@ -403,7 +403,6 @@ public class EditorScene extends Scene {
     controlgrid.add(strenghthSpinner, 3, 0);
 
     Spinner<Integer> valueSpinner = createMapSpinner(0, 500, 0);
-    valueSpinner.getValueFactory().setValue(10);
     ComboBox<String> directionsBox = createDirectionsBox(valueSpinner);
     valueSpinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
       engine.handleDirectionValue(directionsBox, newValue);
