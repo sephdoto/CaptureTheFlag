@@ -1,9 +1,10 @@
-package org.ctf.ui;
+package org.ctf.ui.creators;
 
 import java.text.DecimalFormat;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.Themes;
+import org.ctf.ui.App;
 import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.controllers.SettingsSetter;
 import org.ctf.ui.customobjects.MovementVisual;

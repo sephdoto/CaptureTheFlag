@@ -46,6 +46,8 @@ import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.ui.controllers.CheatboardListener;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.SettingsSetter;
+import org.ctf.ui.creators.PopUpCreator;
+import org.ctf.ui.creators.PopUpCreatorEnterTeamName;
 
 public class WaitingScene extends Scene {
   // Executor Service and data which is changed by it

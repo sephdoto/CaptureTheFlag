@@ -1,8 +1,11 @@
-package org.ctf.ui;
+package org.ctf.ui.creators;
 
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.SoundType;
+import org.ctf.ui.App;
+import org.ctf.ui.CreateGameController;
+import org.ctf.ui.HomeSceneController;
 import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.hostGame.CreateGameScreenV2;

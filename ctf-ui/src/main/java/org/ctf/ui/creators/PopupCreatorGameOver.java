@@ -1,5 +1,7 @@
-package org.ctf.ui;
+package org.ctf.ui.creators;
 import org.ctf.shared.constants.Enums.ImageType;
+import org.ctf.ui.CreateGameController;
+import org.ctf.ui.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.customobjects.PopUpPane;
 import javafx.animation.FadeTransition;

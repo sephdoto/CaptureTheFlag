@@ -2,7 +2,7 @@ package org.ctf.ui.controllers;
 import java.util.ArrayList;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.SoundType;
-import org.ctf.ui.ComponentCreator;
+import org.ctf.ui.creators.ComponentCreator;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import javafx.application.Platform;
