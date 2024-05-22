@@ -43,7 +43,11 @@ import javafx.stage.Stage;
  * @author aniemesc
  */
 public class HomeSceneController {
-	private Stage stage;
+	public PlayGameScreenV2 getPlayGameScreenV2() {
+    return playGameScreenV2;
+  }
+
+  private Stage stage;
 	WaitingThread waitingThread;
 	String port;
 	String serverID;

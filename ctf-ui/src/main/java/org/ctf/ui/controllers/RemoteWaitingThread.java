@@ -59,12 +59,12 @@ public class RemoteWaitingThread extends Thread {
         });
         if (rws.getClient().isGameStarted()) {
           isactive = false;
-          WaveCollapseThread waveCollapseThread = new WaveCollapseThread(rws.getClient().getGrid());
-          waveCollapseThread.start();
           Thread.sleep(1000);
           Platform.runLater(() -> {
             rws.getHsc().switchToPlayGameScene(App.getStage(), rws.getClient(), true);
           });
+          WaveCollapseThread waveCollapseThread = new WaveCollapseThread(rws.getClient().getGrid(),rws.getHsc());
+          waveCollapseThread.start();
         }
       }
 

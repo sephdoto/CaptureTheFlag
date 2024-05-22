@@ -1,5 +1,6 @@
 package org.ctf.ui;
 
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
@@ -322,6 +323,29 @@ public class PlayGameScreenV2 extends Scene {
 		showMapBox.getStyleClass().add("option-pane");
 		showMapBox.getChildren().add(createBackgroundImage(gm.vBox));
 		return showMapBox;
+	}
+	
+	public void UpdateLeftSide() {
+	  showMapBox.getChildren().clear();
+	  Image mp =
+          new Image(new File(Constants.toUIResources + "pictures" + File.separator + "grid.png")
+              .toURI().toString());
+       mpv = new ImageView(mp);
+      StackPane.setAlignment(mpv, Pos.CENTER);
+      //mpv.fitWidthProperty().bind(this.widthProperty().multiply(0.2));
+      mpv.setFitWidth(this.getWidth()*0.8);
+      this.widthProperty().addListener((obs,old,newV)->{
+        mpv.setFitWidth(newV.doubleValue()*0.8);
+      });    
+      mpv.setFitHeight(this.getHeight()*0.8);
+      this.heightProperty().addListener((obs,old,newV)->{
+        mpv.setFitHeight(newV.doubleValue()*0.8);
+      });
+      //mpv.fitHeightProperty().bind(showMapBox.heightProperty().multiply(0.2));
+      mpv.setPreserveRatio(true);
+      showMapBox.getChildren().add(mpv);
+      this.drawGamePane(currentState);
+      
 	}
 	
 	
