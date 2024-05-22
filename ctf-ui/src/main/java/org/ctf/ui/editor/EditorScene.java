@@ -69,9 +69,9 @@ import configs.ImageLoader;
 import io.swagger.v3.oas.models.security.SecurityScheme.In;
 
 /**
- * Provides a JavaFX scene for the map editor. It contains all necessary UI components for
- * loading, customizing, rendering and saving map templates. Apart from that it allows to
- * load image and sound files via drag and drop to further customizes pieces.
+ * Provides a JavaFX scene for the map editor. It contains all necessary UI components for loading,
+ * customizing, rendering and saving map templates. Apart from that it allows to load image and
+ * sound files via drag and drop to further customizes pieces.
  * 
  * @author aniemesc
  */
@@ -102,16 +102,6 @@ public class EditorScene extends Scene {
   File currentPicture;
   GameState state;
 
-
-
-  public GameState getState() {
-    return state;
-  }
-
-  public void setState(GameState state) {
-    this.state = state;
-  }
-
   /**
    * Starts the initialization process of the scene, generates different menu panes and connects it
    * to a CSS file.
@@ -123,12 +113,13 @@ public class EditorScene extends Scene {
    */
   public EditorScene(HomeSceneController hsc, double width, double height) {
     super(new StackPane(), width, height);
-    this.hsc = hsc;   
+    this.hsc = hsc;
     try {
-      this.getStylesheets().add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
+      this.getStylesheets()
+          .add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
     } catch (MalformedURLException e) {
       e.printStackTrace();
-      }
+    }
     this.root = (StackPane) this.getRoot();
     engine = new TemplateEngine(this);
     options = new Parent[5];
@@ -272,7 +263,7 @@ public class EditorScene extends Scene {
     controlgrid.add(createText(mapRoot, "Rows", 30), 0, 0);
     controlgrid.add(createText(mapRoot, "Collums", 30), 0, 1);
     controlgrid.add(createText(mapRoot, "Teams", 30), 0, 2);
-    controlgrid.add(createText(mapRoot, "Flags", 30), 2,2);
+    controlgrid.add(createText(mapRoot, "Flags", 30), 2, 2);
     controlgrid.add(createText(mapRoot, "Blocks", 30), 2, 0);
     controlgrid.add(createText(mapRoot, "Turn Time \n (Seconds)", 30), 0, 3);
     controlgrid.add(createText(mapRoot, "Game Time \n (Minutes)", 30), 2, 3);
@@ -397,8 +388,8 @@ public class EditorScene extends Scene {
     controlgrid.add(createText(customRoot, "Value", 30), 2, 2);
     TextField namefield = (createNameField(customRoot));
     controlgrid.add(namefield, 1, 0);
-   
-    
+
+
     Spinner<Integer> strenghthSpinner = createMapSpinner(0, 500, 0);
     controlgrid.add(strenghthSpinner, 3, 0);
 
@@ -408,18 +399,19 @@ public class EditorScene extends Scene {
       engine.handleDirectionValue(directionsBox, newValue);
       movementVisual.updateMovementOptions(directionsBox.getValue());
     });
-    
+
     ComboBox<String> shapeBox = createShapeBox();
     shapeBox.setOnAction(e -> {
       switch (shapeBox.getValue()) {
         case "None":
           engine.getTmpMovement().setShape(null);
           movementVisual.updateMovementOptions("None");
-          SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 500, 0);
+          SpinnerValueFactory<Integer> valueFactory =
+              new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 500, 0);
           valueSpinner.setValueFactory(valueFactory);
-          valueFactory.valueProperty().addListener((obs,old,newV) ->{
-          engine.handleDirectionValue(directionsBox, newV);
-          movementVisual.updateMovementOptions(directionsBox.getValue());
+          valueFactory.valueProperty().addListener((obs, old, newV) -> {
+            engine.handleDirectionValue(directionsBox, newV);
+            movementVisual.updateMovementOptions(directionsBox.getValue());
           });
           break;
         case "L-Shape":
@@ -432,7 +424,7 @@ public class EditorScene extends Scene {
           movementVisual.updateMovementOptions("L-Shape");
       }
     });
-     controlgrid.add(shapeBox, 1, 1);
+    controlgrid.add(shapeBox, 1, 1);
     controlgrid.add(directionsBox, 3, 1);
     controlgrid.add(valueSpinner, 3, 2);
     controlgrid.add(createAddButton(customRoot, namefield, strenghthSpinner), 1, 2);
@@ -441,6 +433,13 @@ public class EditorScene extends Scene {
     return customRoot;
   }
 
+  /**
+   * Creates all necessary UI components for the option pane that allows users to play sounds of
+   * pieces from different themes and save custom sounds for pieces
+   * 
+   * @author aniemesc
+   * @return {@link VBox} container
+   */
   private VBox createSoundCustomizer() {
     VBox customRoot = new VBox();
     customRoot.widthProperty().addListener((obs, oldVal, newVal) -> {
@@ -486,14 +485,17 @@ public class EditorScene extends Scene {
     soundPieceBox.setValue(soundPieceBox.getItems().get(0));
     createFigureBox(soundPieceBox, 0.2, 0.18, 0.35);
     controlgrid.add(soundPieceBox, 1, 1);
-    String groupString = (TemplateEngine.defaultNames.contains(soundPieceBox.getItems().get(0)))?"Default":"Customs";
+    String groupString =
+        (TemplateEngine.defaultNames.contains(soundPieceBox.getItems().get(0))) ? "Default"
+            : "Customs";
     Text group = createHeaderText(customRoot, groupString, 35);
     soundPieceBox.setOnAction(e -> {
-      String newGroup = (TemplateEngine.defaultNames.contains(soundPieceBox.getValue()))?"Default":"Custom";
+      String newGroup =
+          (TemplateEngine.defaultNames.contains(soundPieceBox.getValue())) ? "Default" : "Custom";
       group.setText(newGroup);
     });
     controlgrid.add(group, 2, 1);
-    
+
     HBox soundButtonBox = new HBox();
     soundButtonBox.setAlignment(Pos.CENTER);
     soundButtonBox.setSpacing(20);
@@ -531,6 +533,11 @@ public class EditorScene extends Scene {
     return customRoot;
   }
 
+  /**
+   * Creates all necessary UI components for the option pane that allows users to save custom images
+   * 
+   * @return {@link VBox} container
+   */
   private VBox createPictureCustomizer() {
     VBox customRoot = new VBox();
     customRoot.widthProperty().addListener((obs, oldVal, newVal) -> {
@@ -569,10 +576,13 @@ public class EditorScene extends Scene {
     picturePieceBox.setValue(picturePieceBox.getItems().get(0));
     createFigureBox(picturePieceBox, 0.2, 0.18, 0.35);
     controlgrid.add(picturePieceBox, 1, 1);
-    String groupString = (TemplateEngine.defaultNames.contains(picturePieceBox.getItems().get(0)))?"Default":"Customs";
+    String groupString =
+        (TemplateEngine.defaultNames.contains(picturePieceBox.getItems().get(0))) ? "Default"
+            : "Customs";
     Text group = createHeaderText(customRoot, groupString, 35);
     picturePieceBox.setOnAction(e -> {
-      String newGroup = (TemplateEngine.defaultNames.contains(picturePieceBox.getValue()))?"Default":"Custom";
+      String newGroup =
+          (TemplateEngine.defaultNames.contains(picturePieceBox.getValue())) ? "Default" : "Custom";
       group.setText(newGroup);
     });
     StackPane textWrapper = new StackPane();
@@ -600,7 +610,8 @@ public class EditorScene extends Scene {
       }
       if (!ImageController.canBeChanged(ImageType.PIECE, Themes.valueOf(themeBox.getValue()),
           picturePieceBox.getValue())) {
-        this.inform("This piece already has custom "+ Themes.valueOf(themeBox.getValue()) +" textures!");
+        this.inform(
+            "This piece already has custom " + Themes.valueOf(themeBox.getValue()) + " textures!");
         return;
       }
       ImageController.saveImage(currentPicture, ImageType.PIECE,
@@ -653,7 +664,7 @@ public class EditorScene extends Scene {
     menuButtonBox.getChildren().add(mapMenuButton);
     return menuButtonBox;
   }
-  
+
   private HBox createButtonBar() {
     HBox actionButtonBox = new HBox();
     actionButtonBox.setAlignment(Pos.CENTER);
@@ -862,7 +873,7 @@ public class EditorScene extends Scene {
     spinner.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
     spinner.prefHeightProperty().bind(spinner.widthProperty().multiply(0.25));
     ContextMenu empty = new ContextMenu();
-    spinner.getEditor().setContextMenu(empty);  
+    spinner.getEditor().setContextMenu(empty);
     return spinner;
   }
 
@@ -1060,51 +1071,19 @@ public class EditorScene extends Scene {
   private void createVisual() {
     visualRoot = new StackPane();
     visualRoot.getStyleClass().add("visual-pane");
-    
-    
+
+
     visualRoot.setPadding(new Insets(10));
     visualRoot.prefWidthProperty().bind(root.widthProperty().multiply(0.45));
     visualRoot.prefHeightProperty().bind(root.heightProperty().multiply(0.75));
-    
-   // StackPane wrapper = new StackPane();
-    //wrapper.setStyle("-fx-background-color: black;");
-   // visualRoot.getChildren().add(wrapper);
 
-//    Image mp =
-//        new Image(new File(Constants.toUIResources + "pictures" + File.separator + "genericGrid.png")
-//            .toURI().toString());
     Image mp = ImageController.loadThemedImage(ImageType.WAVE, "genericGrid");
-    BackgroundImage background =
-        new BackgroundImage(
-            mp,
-            BackgroundRepeat.NO_REPEAT,
-            BackgroundRepeat.NO_REPEAT,
-            BackgroundPosition.CENTER,
-            App.backgroundSize);
+    BackgroundImage background = new BackgroundImage(mp, BackgroundRepeat.NO_REPEAT,
+        BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, App.backgroundSize);
     visualRoot.setBackground(new Background(background));
-   
-    //   visualRoot.setOnDragOver(event -> {
-//  if (event.getGestureSource() != this && event.getDragboard().hasFiles()) {
-//    event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-//  }
-//  event.consume();
-//});
-//    visualRoot.setOnDragDropped(event -> {
-//      Dragboard dragboard = event.getDragboard();
-//      boolean success = false;
-//      if (dragboard.hasFiles()) {
-//        File file = dragboard.getFiles().get(0);
-//        this.inform(file.getName() + " was loaded.");
-//        this.currentSound = file;
-//      }
-//      event.setDropCompleted(success);
-//      event.consume();
-//
-//    });
-    // GamePane visual = new GamePane(CreateTextGameStates.createTestGameState1());
     createDirectionsVisual();
     updateVisualRoot();
-    // visualRoot.getChildren().add(visual);
+
   }
 
   public void setCurrentSound(File currentSound) {
@@ -1161,24 +1140,8 @@ public class EditorScene extends Scene {
    * @author rsyed: Bug fixes
    */
   public void updateVisualRoot() {
-    // MapPreview mp = new MapPreview(engine.tmpTemplate);
-    // visualRoot.getChildren().clear();
-    // try {
-    // visualRoot.getChildren().add(new GamePane(mp.getGameState()));
-    // } catch (Accepted e) {
-    // e.getMessage();
-    // }
-    // TextGeneratorThread textGeneratorThread = new TextGeneratorThread();
-    // textGeneratorThread.start();
-    
     MapPreviewThread mt = new MapPreviewThread(this);
     mt.start();
-
-    // GridPane stack = new GridPane();
-    // Button but = new Button("hi");
-    // StackPane.setAlignment(but, Pos.CENTER);
-    // stack.getChildren().add(but);
-    // visualRoot.getChildren().add(directionsContainer);
   }
 
   public HomeSceneController getHsc() {
@@ -1199,6 +1162,19 @@ public class EditorScene extends Scene {
     movementVisual = new MovementVisual(directionsContainer, engine);
     directionsContainer.getChildren().add(movementVisual);
 
+  }
+
+  /**
+   * Creates the text that gets displayed if the Server finds an invalid template.
+   * 
+   * @author aniemesc
+   */
+  private void createInvalidText() {
+    String info = "The Configurations result in  an invalid map template bacuse the current"
+        + " seed does not provide enough space for one team. Please Change a Paraeter.";
+    this.invalid = createText(visualRoot, info, 18);
+    this.invalid.wrappingWidthProperty().bind(visualRoot.widthProperty().multiply(0.8));
+    StackPane.setAlignment(invalid, Pos.CENTER);
   }
 
   public ComboBox<String> getCustomFigureBox() {
@@ -1225,20 +1201,20 @@ public class EditorScene extends Scene {
     return this.invalid;
   }
 
-  private void createInvalidText() {
-    String info = "The Configurations result in  an invalid map template bacuse the current"
-        + " seed does not provide enough space for one team. Please Change a Paraeter.";
-    this.invalid = createText(visualRoot, info, 18);
-    this.invalid.wrappingWidthProperty().bind(visualRoot.widthProperty().multiply(0.8));
-    StackPane.setAlignment(invalid, Pos.CENTER);
-  }
-
   public ComboBox<String> getSoundPieceBox() {
     return this.soundPieceBox;
   }
 
   public ComboBox<String> getPicturePieceBox() {
     return picturePieceBox;
+  }
+  
+  public GameState getState() {
+    return state;
+  }
+
+  public void setState(GameState state) {
+    this.state = state;
   }
 
 }
