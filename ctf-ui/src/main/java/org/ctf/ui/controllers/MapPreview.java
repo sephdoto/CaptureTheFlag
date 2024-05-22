@@ -6,7 +6,6 @@ import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Constants;
-import org.ctf.shared.constants.Enums.Port;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.map.MapTemplate;
@@ -42,7 +41,7 @@ public class MapPreview {
     Client[] clients = new Client[mapTemplate.getTeams()];
     ServerManager server =
         new ServerManager(
-            new CommLayer(), new ServerDetails("localhost", Port.DEFAULT.toString()), mapTemplate);
+            new CommLayer(), new ServerDetails("localhost", Constants.userSelectedLocalServerPort), mapTemplate);
     server.createGame();
     // Init all clients
     for (int i = 0; i < clients.length; i++) {

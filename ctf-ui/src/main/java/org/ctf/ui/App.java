@@ -205,7 +205,6 @@ public class App extends Application {
         String port = serverPane.getField().getText();
         if(this.startServer(port)) {
           Constants.userSelectedLocalServerPort = port;
-          Constants.localServerPort = port;
           serverPane.setFinished();
         } else {
           serverPane.updatePromtText();
