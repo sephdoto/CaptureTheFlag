@@ -1,5 +1,6 @@
 package org.ctf.shared.gameanalyzer;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,19 +9,17 @@ import java.io.ObjectOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.JFileChooser;
-
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 
 /**
  * An service that can be used to save games as serialized object of {@link SavedGame} with
- * .savedgame extension for use in AI training. Saves files in
- * Save Game folder with time stamps as file names. Also has
- * a loader function "readFile()" which can either open a file picker to select and read a file or
- * takes a file name as String. In case of picker the {@link SavedGame} object is returned but if a
- * String file name is provided the GameSaveHandler holds it in its internal savedGame attribute. The
- * SavedGame object can then be fetched using the getSavedGame() command.
+ * .savedgame extension for use in AI training. Saves files in Save Game folder with time stamps as
+ * file names. Also has a loader function "readFile()" which can either open a file picker to select
+ * and read a file or takes a file name as String. In case of picker the {@link SavedGame} object is
+ * returned but if a String file name is provided the GameSaveHandler holds it in its internal
+ * savedGame attribute. The SavedGame object can then be fetched using the getSavedGame() command.
  *
  * @author rsyed
  */
@@ -31,8 +30,8 @@ public class GameSaveHandler {
   public String lastFileName;
 
   /**
-   * Main constructor just initialzes the {@link SavedGame} object this GameSaveHandler will use to save
-   * data into.
+   * Main constructor just initialzes the {@link SavedGame} object this GameSaveHandler will use to
+   * save data into.
    *
    * @author rsyed
    */
@@ -160,7 +159,7 @@ public class GameSaveHandler {
     this.savedGame.setInitialGameState(gameState);
   }
 
-   /**
+  /**
    * Getter for the last file name this object used while writing out.
    *
    * @author rsyed
@@ -168,5 +167,21 @@ public class GameSaveHandler {
    */
   public String getLastFileName() {
     return lastFileName;
+  }
+
+  /**
+   * Deletes the last file it wrote out
+   *
+   * @author rsyed
+   * @return true if the delete is successful, false if not
+   */
+  public boolean deleteLastSavedFile() {
+    try {
+      File myObj = new File(Constants.saveGameFolder + this.lastFileName + ".savedgame");
+      myObj.delete();
+    } catch (Exception e) {
+      return false;
+    }
+    return true;
   }
 }
