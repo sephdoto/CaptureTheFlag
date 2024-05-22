@@ -1,4 +1,4 @@
-package org.ctf.ui;
+package org.ctf.ui.hostGame;
 
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
@@ -43,11 +43,14 @@ import javafx.scene.text.Font;
 import javafx.util.Duration;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
+import org.ctf.ui.App;
 import org.ctf.ui.controllers.CheatboardListener;
+import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.SettingsSetter;
 import org.ctf.ui.creators.PopUpCreator;
 import org.ctf.ui.creators.PopUpCreatorEnterTeamName;
+import org.ctf.ui.customobjects.MyCustomColorPicker;
 
 public class WaitingScene extends Scene {
   // Executor Service and data which is changed by it

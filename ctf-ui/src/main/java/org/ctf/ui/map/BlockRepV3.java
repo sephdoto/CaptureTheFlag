@@ -1,4 +1,4 @@
-package org.ctf.ui.customobjects;
+package org.ctf.ui.map;
 
 import javafx.geometry.Pos;
 import javafx.scene.layout.Region;

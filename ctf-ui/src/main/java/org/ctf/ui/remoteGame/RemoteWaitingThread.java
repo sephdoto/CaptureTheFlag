@@ -6,7 +6,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import org.ctf.shared.constants.Constants;
 import org.ctf.ui.App;
-import org.ctf.ui.PlayGameScreenV2;
+import org.ctf.ui.hostGame.PlayGameScreenV2;
 import javafx.application.Platform;
 
 /**

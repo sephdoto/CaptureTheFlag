@@ -16,16 +16,16 @@ import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.tools.JsonTools;
 import org.ctf.shared.wave.WaveFunctionCollapse;
 import org.ctf.ui.App;
-import org.ctf.ui.CreateGameController;
-import org.ctf.ui.GamePane;
-import org.ctf.ui.HomeSceneController;
+
 import org.ctf.ui.StroeMaps;
 import org.ctf.ui.controllers.CheatboardListener;
+import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.creators.PopUpCreator;
 import org.ctf.ui.creators.PopUpCreatorEnterTeamName;
 import org.ctf.ui.creators.PopupCreatorGameOver;
 import org.ctf.ui.customobjects.PopUpPane;
+import org.ctf.ui.map.GamePane;
 import configs.ImageLoader;
 import javafx.animation.TranslateTransition;
 import javafx.beans.binding.Bindings;
@@ -387,7 +387,7 @@ public class CreateGameScreenV2 extends Scene {
         template = entry.getKey();
         state = entry.getValue();
       }
-      gm = new GamePane(state,false);
+      gm = new org.ctf.ui.map.GamePane(state,false);
       ImageView iv = this.createBackgroundImage(gm.vBox);
       StackPane.setAlignment(iv, Pos.CENTER);
       sep.getChildren().remove(showMapBox);

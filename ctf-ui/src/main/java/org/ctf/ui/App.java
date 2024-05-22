@@ -38,6 +38,7 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.controllers.CheatboardListener;
+import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.controllers.SettingsSetter;

@@ -1,13 +1,12 @@
-package org.ctf.ui;
+package org.ctf.ui.map;
 
 import java.util.HashMap;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.Team;
-import org.ctf.ui.customobjects.BackgroundCellV2;
-import org.ctf.ui.customobjects.BaseRep;
-import org.ctf.ui.customobjects.CostumFigurePain;
+import org.ctf.ui.hostGame.CreateGameController;
+import org.ctf.ui.hostGame.PlayGameScreenV2;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.SimpleObjectProperty;

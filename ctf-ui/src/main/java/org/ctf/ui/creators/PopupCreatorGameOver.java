@@ -1,9 +1,9 @@
 package org.ctf.ui.creators;
 import org.ctf.shared.constants.Enums.ImageType;
-import org.ctf.ui.CreateGameController;
-import org.ctf.ui.HomeSceneController;
+import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.customobjects.PopUpPane;
+import org.ctf.ui.hostGame.CreateGameController;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;

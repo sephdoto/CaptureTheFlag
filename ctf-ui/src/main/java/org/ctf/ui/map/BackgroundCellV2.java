@@ -1,8 +1,6 @@
-package org.ctf.ui.customobjects;
+package org.ctf.ui.map;
 
 import org.ctf.shared.constants.Enums.SoundType;
-import org.ctf.ui.Game;
-import org.ctf.ui.GamePane;
 import org.ctf.ui.controllers.SoundController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;

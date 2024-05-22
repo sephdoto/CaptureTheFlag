@@ -1,4 +1,4 @@
-package org.ctf.ui;
+package org.ctf.ui.gameAnalyzer;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -9,8 +9,12 @@ import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.tools.JsonTools;
+import org.ctf.ui.App;
+import org.ctf.ui.StroeMaps;
+import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.creators.InfoPaneCreator;
+import org.ctf.ui.map.GamePane;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;

@@ -1,11 +1,10 @@
-package org.ctf.ui.customobjects;
+package org.ctf.ui.map;
 
 
 
-import org.ctf.ui.Game;
-import org.ctf.ui.PlayGameScreenV2;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.SoundController;
+import org.ctf.ui.hostGame.PlayGameScreenV2;
 import configs.ImageLoader;
 
 import java.util.ArrayList;

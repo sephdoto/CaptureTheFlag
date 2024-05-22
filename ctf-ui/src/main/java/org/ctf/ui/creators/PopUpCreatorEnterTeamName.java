@@ -4,12 +4,11 @@ import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.App;
-import org.ctf.ui.CreateGameController;
-import org.ctf.ui.HomeSceneController;
+import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.customobjects.PopUpPane;
+import org.ctf.ui.hostGame.CreateGameController;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;

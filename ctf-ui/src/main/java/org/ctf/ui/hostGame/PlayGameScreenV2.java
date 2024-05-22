@@ -1,4 +1,4 @@
-package org.ctf.ui;
+package org.ctf.ui.hostGame;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -12,13 +12,17 @@ import org.ctf.shared.client.Client;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.state.GameState;
+import org.ctf.ui.App;
 import org.ctf.ui.controllers.CheatboardListener;
+import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.creators.PopupCreatorGameOver;
-import org.ctf.ui.customobjects.BaseRep;
-import org.ctf.ui.customobjects.CostumFigurePain;
+import org.ctf.ui.customobjects.MyCustomColorPicker;
 import org.ctf.ui.customobjects.Timer;
-
+import org.ctf.ui.map.BaseRep;
+import org.ctf.ui.map.CostumFigurePain;
+import org.ctf.ui.map.Game;
+import org.ctf.ui.map.GamePane;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;

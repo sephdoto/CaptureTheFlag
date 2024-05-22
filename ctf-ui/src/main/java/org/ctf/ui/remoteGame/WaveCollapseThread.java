@@ -2,8 +2,8 @@ package org.ctf.ui.remoteGame;
 
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.wave.WaveFunctionCollapse;
-import org.ctf.ui.HomeSceneController;
-import org.ctf.ui.PlayGameScreenV2;
+import org.ctf.ui.controllers.HomeSceneController;
+import org.ctf.ui.hostGame.PlayGameScreenV2;
 import javafx.application.Platform;
 
 /**

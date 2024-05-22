@@ -1,4 +1,4 @@
-package org.ctf.ui;
+package org.ctf.ui.hostGame;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,8 +19,8 @@ import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.state.data.map.MapTemplate;
-import org.ctf.ui.customobjects.CostumFigurePain;
-
+import org.ctf.ui.controllers.HomeSceneController;
+import org.ctf.ui.map.CostumFigurePain;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.paint.Color;

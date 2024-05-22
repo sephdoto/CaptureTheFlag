@@ -1,4 +1,4 @@
-package org.ctf.ui;
+package org.ctf.ui.customobjects;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
@@ -227,7 +227,7 @@ public class MyCustomColorPicker extends VBox {
 	        return currentColorProperty.get();
 	    }
 
-	    final ObjectProperty<Color> customColorProperty() {
+	    public final ObjectProperty<Color> customColorProperty() {
 	        return customColorProperty;
 	    }
 

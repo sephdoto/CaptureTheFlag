@@ -1,4 +1,4 @@
-package org.ctf.ui;
+package org.ctf.ui.map;
 
 import configs.Dialogs;
 import configs.GameMode;
@@ -13,9 +13,6 @@ import org.ctf.shared.state.data.exceptions.ForbiddenMove;
 import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
-import org.ctf.ui.customobjects.BackgroundCellV2;
-import org.ctf.ui.customobjects.BaseRep;
-import org.ctf.ui.customobjects.CostumFigurePain;
 
 public class Game {
 

@@ -8,7 +8,7 @@ import org.ctf.shared.constants.Enums.AIConfigs;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.App;
-import org.ctf.ui.HomeSceneController;
+import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.customobjects.ButtonPane;

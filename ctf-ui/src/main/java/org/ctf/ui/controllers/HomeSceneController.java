@@ -1,4 +1,4 @@
-package org.ctf.ui;
+package org.ctf.ui.controllers;
 
 import java.io.BufferedReader;
 /**
@@ -20,9 +20,13 @@ import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
-import org.ctf.ui.controllers.CheatboardListener;
+import org.ctf.ui.App;
 import org.ctf.ui.editor.EditorScene;
+import org.ctf.ui.gameAnalyzer.AiAnalyserNew;
+import org.ctf.ui.hostGame.CreateGameController;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
+import org.ctf.ui.hostGame.PlayGameScreenV2;
+import org.ctf.ui.hostGame.WaitingScene;
 import org.ctf.ui.remoteGame.JoinScene;
 import javafx.beans.property.ObjectProperty;
 import javafx.event.ActionEvent;
