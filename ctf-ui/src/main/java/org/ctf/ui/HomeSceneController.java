@@ -51,7 +51,6 @@ public class HomeSceneController {
   }
 
   private Stage stage;
-	WaitingThread waitingThread;
 	String port;
 	String serverID;
 	String sessionID;
@@ -194,9 +193,7 @@ public class HomeSceneController {
     }
 	
    
-	public void switchToTestScene(Stage stage) {
-		stage.setScene(new TestScene(this, stage).getScene());
-	}
+	
 
 	public MapTemplate getTemplate() {
 		return template;
