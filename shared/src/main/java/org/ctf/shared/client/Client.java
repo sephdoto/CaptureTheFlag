@@ -143,8 +143,9 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Runnable task which joins a session. The data is read from the current object. Is scheduled with the overloaded constructor by default
-   * 
+   * Runnable task which joins a session. The data is read from the current object. Is scheduled
+   * with the overloaded constructor by default
+   *
    * @throws NoMoreTeamSlots when the server returns a no more team slots exception
    * @author rsyed
    */
@@ -159,8 +160,9 @@ public class Client implements GameClientInterface {
       };
 
   /**
-   * Runnable lamba task which inits a watcher thread. The thread watches the Game Session for data which indicates that a game has started. 
-   * 
+   * Runnable lamba task which inits a watcher thread. The thread watches the Game Session for data
+   * which indicates that a game has started.
+   *
    * @author rsyed
    */
   Runnable startWatcher = Client.this::startGameController;
@@ -198,7 +200,8 @@ public class Client implements GameClientInterface {
   /**
    * Method joins the requested game session
    *
-   * @param teamName the team name you want to join the session with. The method saves the requested name incase its needed later
+   * @param teamName the team name you want to join the session with. The method saves the requested
+   *     name incase its needed later
    * @throws SessionNotFound
    * @throws NoMoreTeamSlots
    * @throws UnknownError
@@ -291,7 +294,7 @@ public class Client implements GameClientInterface {
    * @param IP which the game server is located at
    * @param port the server port
    * @param gameSessionID the Game Session ID which you want to join
-   * @param teamName The team name you wish to join the session with 
+   * @param teamName The team name you wish to join the session with
    * @throws SessionNotFound
    * @throws NoMoreTeamSlots
    * @throws UnknownError
@@ -337,7 +340,8 @@ public class Client implements GameClientInterface {
   /**
    * Called from createGameCaller function. Recieves the response {@link GameSessionResponse} as a
    * param and converts it into a {@link GameSession} Object as well as parse the data into
-   * individual variables for easier consumption by the UI. Method is protected and synchronized so that the data being extracted doesnt run into any mutex issues.
+   * individual variables for easier consumption by the UI. Method is protected and synchronized so
+   * that the data being extracted doesnt run into any mutex issues.
    *
    * @param {@link GameSessionResponse} with feteched Data from server
    * @author rsyed
@@ -588,7 +592,8 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Checks if server is active through a dummy gameTemplate. Calling this too often might lead to server overload if badly progarammed
+   * Checks if server is active through a dummy gameTemplate. Calling this too often might lead to
+   * server overload if badly progarammed
    *
    * @return true if server is active and ready to make sessions, false if not
    * @author rsyed
@@ -662,11 +667,10 @@ public class Client implements GameClientInterface {
   // **************************************************
   // Start of Alt Game Data Getters
   // **************************************************
-/**
+  /**
    * Getter which returns how much time is left in the move
-   * 
-   * @return int denoting the time left in seconds
    *
+   * @return int denoting the time left in seconds
    * @author rsyed
    */
   public int getRemainingMoveTimeInSeconds() {
@@ -675,9 +679,8 @@ public class Client implements GameClientInterface {
 
   /**
    * Getter which returns how much time is left in the game
-   * 
-   * @return int denoting the time left in seconds
    *
+   * @return int denoting the time left in seconds
    * @author rsyed
    */
   public int getRemainingGameTimeInSeconds() {
@@ -700,7 +703,8 @@ public class Client implements GameClientInterface {
 
   /**
    * A Watcher thread which calls GameSessionResponse periodically and hands over functionality to
-   * GameStartedThread when it detects that the same has started. Terminates itself right after to free resources.
+   * GameStartedThread when it detects that the same has started. Terminates itself right after to
+   * free resources.
    *
    * @author rsyed
    */
@@ -732,8 +736,9 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Main thread which handles client logic for when game has started. Just pulls data periodically set by
-   * the refesh time var. Also handles the logger incase logging is wished for by the player/ui
+   * Main thread which handles client logic for when game has started. Just pulls data periodically
+   * set by the refesh time var. Also handles the logger incase logging is wished for by the
+   * player/ui
    *
    * @author rsyed
    */
@@ -890,8 +895,19 @@ public class Client implements GameClientInterface {
     return this.fifoQueue.poll();
   }
 
+  /**
+   * Enables the queue generation logic
+   *
+   * @param selector true to enable the game state queue for the UI, ,false to disable
+   * @author rsyed
+   * @return The game state in the FIFO queue
+   */
   public void enableGameStateQueue(boolean selector) {
     this.enableQueue = selector;
+  }
+
+  public GameSaveHandler getGameSaveHandler() {
+    return this.analyzer;
   }
   // **************************************************
   // End of Getter Block

@@ -21,18 +21,23 @@ public class AIClientStepBuilder {
     return new Steps();
   }
 
-  /** Defining the First Step in the Step Builder. Allows the creator to enable or 
-   * disable the rest client
-  */
+  /**
+   * Defining the First Step in the Step Builder. Allows the creator to enable or disable the rest
+   * client
+   */
   public static interface LayerSelectionStep {
     /**
-     *  RestClient Selector 
+     * RestClient Selector
+     *
      * @param enableRestClient enables on true, disables on false
      */
     HostStep enableRestLayer(boolean enableRestClient);
   }
 
-  /** Second Step where you can set the server... Two options in this step. Either Local or Remote host. */
+  /**
+   * Second Step where you can set the server... Two options in this step. Either Local or Remote
+   * host.
+   */
   public static interface HostStep {
     /** This method sets the client to use LocalHost as IP */
     PortSelectionStep onLocalHost();
@@ -65,10 +70,7 @@ public class AIClientStepBuilder {
     PlayerTypeSelectionStep onPort(Port def);
   }
 
-  /**
-   * Fourth step. Selects what kind of AI the client is going to use to make moves. 
-   * from
-   */
+  /** Fourth step. Selects what kind of AI the client is going to use to make moves. from */
   public static interface PlayerTypeSelectionStep {
     /**
      * Method which creates an instance of AIClient.java. Extension has builtin support for AI
