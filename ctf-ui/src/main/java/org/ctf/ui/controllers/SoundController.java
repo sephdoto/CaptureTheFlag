@@ -44,7 +44,11 @@ public class SoundController {
     Platform.startup(() -> {});
 
     //    for(Themes theme : Themes.values()) {
-    //      for(SoundType type : SoundType.values()) {
+          for(SoundType type : SoundType.values()) {
+            playSound("Default", type);
+            Thread.sleep(1000);
+          }
+            
     String soundName = "rick";
     String saveAs = "rick";
     Themes theme = Themes.BAYERN;  
@@ -53,12 +57,11 @@ public class SoundController {
     //        System.out.println(saveSound(saveAs, theme, type, new File("C:\\Users\\docto\\Downloads\\" + soundName + ".wav"), false));
     //      }
     //    }
-    playSound("Button", SoundType.MISC);
     System.out.println("Is default sound? " + isDefaultSound("notexisting", Themes.STARWARS, SoundType.CAPTURE));
-    System.out.println("Can I override a default sound? " + 
-        saveSound("Default", Themes.STARWARS, SoundType.CAPTURE, new File(
-            soundFolderLocation + "starwars" + File.separator + SoundType.MOVE.getLocation() + "Default.wav"
-            ), false));
+//    System.out.println("Can I override a default sound? " + 
+//        saveSound("Default", Themes.STARWARS, SoundType.CAPTURE, new File(
+//            soundFolderLocation + "starwars" + File.separator + SoundType.MOVE.getLocation() + "Default.wav"
+//            ), false));
     Thread.sleep(5000);
     Platform.exit();
   }*/
