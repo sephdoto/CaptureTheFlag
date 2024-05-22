@@ -373,6 +373,7 @@ public class TemplateEngine {
       shape.setType(tmpMovement.getShape().getType());
       movement.setShape(shape);
       movement.setDirections(null);
+      return movement;
     }
     Directions result = new Directions();
     result.setLeft(this.tmpMovement.getDirections().getLeft());
@@ -401,7 +402,6 @@ public class TemplateEngine {
     }
     PieceDescription result = new PieceDescription();
     Movement movement = genrateMovementCopy();
-    movement.setDirections(null);
     result.setMovement(movement);
     result.setType(nameField.getText());
     result.setAttackPower(strengthSpinner.getValueFactory().getValue());

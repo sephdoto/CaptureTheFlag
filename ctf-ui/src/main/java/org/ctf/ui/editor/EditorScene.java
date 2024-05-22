@@ -403,7 +403,7 @@ public class EditorScene extends Scene {
     controlgrid.add(strenghthSpinner, 3, 0);
 
     Spinner<Integer> valueSpinner = createMapSpinner(0, 500, 0);
-
+    valueSpinner.getValueFactory().setValue(10);
     ComboBox<String> directionsBox = createDirectionsBox(valueSpinner);
     valueSpinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
       engine.handleDirectionValue(directionsBox, newValue);
@@ -419,20 +419,21 @@ public class EditorScene extends Scene {
           SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 500, 0);
           valueSpinner.setValueFactory(valueFactory);
           valueFactory.valueProperty().addListener((obs,old,newV) ->{
-            engine.handleDirectionValue(directionsBox, newV);
-            movementVisual.updateMovementOptions(directionsBox.getValue());
+          engine.handleDirectionValue(directionsBox, newV);
+          movementVisual.updateMovementOptions(directionsBox.getValue());
           });
           break;
         case "L-Shape":
           Shape shape = new Shape();
           shape.setType(ShapeType.lshape);
           engine.setTmpShape(shape);
+          valueSpinner.getValueFactory().setValue(0);
           valueSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0));
           engine.getTmpMovement().setDirections(new Directions());
           movementVisual.updateMovementOptions("L-Shape");
       }
     });
-     controlgrid.add(createShapeBox(), 1, 1);
+     controlgrid.add(shapeBox, 1, 1);
     controlgrid.add(directionsBox, 3, 1);
     controlgrid.add(valueSpinner, 3, 2);
     controlgrid.add(createAddButton(customRoot, namefield, strenghthSpinner), 1, 2);
