@@ -166,6 +166,13 @@ private ObjectProperty<Font> popUpLabel;
 		return aiLevelPopUpPane;
 	}
 	
+	/**
+	 * @author aniemesc
+	 * Creates a clickable container similar to the {@link ButtonPane} for the RANDOM Ai type.
+	 * This is required as there are not Ai configurations for the RANDOM Ai 
+	 * 
+	 * @return {@link StackPane} container
+	 */
 	private StackPane createRandomButton() {
 	  StackPane stack = new StackPane();
 	  stack.getStyleClass().add("ai-button-easy");
@@ -245,40 +252,40 @@ private ObjectProperty<Font> popUpLabel;
 		return exit;
 	}
 
-	/**
-	 * Creates a {@link ButtonPane} for choosing an AI that can be customized by editing or
-	 * loading AI configs. The Container provides the name of the AI and am Icon
-	 * which provides additonal info when hovered over. When clicking the container
-	 * two new button appear that allow to edit or load AI configs.
-	 * 
-	 * @author Aaron Niemesch
-	 * @param aiName - AIConfigs value 
-	 * @param InfoPanePosition - Constant that determines positioning of info popup
-	 * @return {@link ButtonPane}
-	 */
-	private StackPane createAIPowerButton(AIConfigs aiName, int InfoPanePosition) {
-		ButtonPane pane = new ButtonPane(aiName, hsc.getStage(), InfoPanePosition,buttonPanes);
-		buttonPanes.add(pane);
-		pane.prefWidthProperty().bind(root.widthProperty().multiply(0.22));
-		pane.prefHeightProperty().bind(pane.widthProperty().multiply(0.45));
-		pane.maxWidthProperty().bind(root.widthProperty().multiply(0.22));
-		pane.maxHeightProperty().bind(pane.widthProperty().multiply(0.45));
-		pane.getEditButton().setOnAction(e -> {		
-		  this.aitype =  AI.valueOf(aiName.name()); 
-		  root.getChildren().add(createConfigPane(1, 1,null));
-			pane.reset();
-		});
-		pane.getLoadButton().setOnAction(e -> {
-			this.aitype = AI.valueOf(aiName.name());
-		  if(aiorHumanpopup!= null) {
-			root.getChildren().remove(aiorHumanpopup);
-			}
-			root.getChildren().remove(aiLevelPopUpPane);
-			root.getChildren().add(ComponentCreator.createAIWindow(this));
-			pane.reset();
-		});
-		return pane;
-	}
+    /**
+     * Creates a {@link ButtonPane} for choosing an AI that can be customized by editing or loading
+     * AI configs. The Container provides the name of the AI and am Icon which provides additonal
+     * info when hovered over. When clicking the container two new button appear that allow to edit
+     * or load AI configs.
+     * 
+     * @author Aaron Niemesch
+     * @param aiName - AIConfigs value
+     * @param InfoPanePosition - Constant that determines positioning of info popup
+     * @return {@link ButtonPane}
+     */
+    private StackPane createAIPowerButton(AIConfigs aiName, int InfoPanePosition) {
+      ButtonPane pane = new ButtonPane(aiName, hsc.getStage(), InfoPanePosition, buttonPanes);
+      buttonPanes.add(pane);
+      pane.prefWidthProperty().bind(root.widthProperty().multiply(0.22));
+      pane.prefHeightProperty().bind(pane.widthProperty().multiply(0.45));
+      pane.maxWidthProperty().bind(root.widthProperty().multiply(0.22));
+      pane.maxHeightProperty().bind(pane.widthProperty().multiply(0.45));
+      pane.getEditButton().setOnAction(e -> {
+        this.aitype = AI.valueOf(aiName.name());
+        root.getChildren().add(createConfigPane(1, 1, null));
+        pane.reset();
+      });
+      pane.getLoadButton().setOnAction(e -> {
+        this.aitype = AI.valueOf(aiName.name());
+        if (aiorHumanpopup != null) {
+          root.getChildren().remove(aiorHumanpopup);
+        }
+        root.getChildren().remove(aiLevelPopUpPane);
+        root.getChildren().add(ComponentCreator.createAIWindow(this));
+        pane.reset();
+      });
+      return pane;
+    }
 
   public StackPane getRoot() {
 		return root;
