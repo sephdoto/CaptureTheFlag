@@ -53,6 +53,7 @@ import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.exceptions.UnknownError;
 import org.ctf.shared.state.data.map.Shape;
 import org.ctf.shared.state.data.map.ShapeType;
+import org.ctf.ui.controllers.CheatboardListener;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.MapPreview;
 import org.ctf.ui.controllers.MapPreviewThread;
@@ -128,6 +129,7 @@ public class EditorScene extends Scene {
         "Drag and Drop a \n sound file in the .wav format!", DragAndDropPane.SOUNDS);
     this.dragAndDropPaneImages =
         new DragAndDropPane(this, "Drag and Drop an \n image file!", DragAndDropPane.IMAGES);
+    CheatboardListener.setSettings(root, this);
   }
 
   /**

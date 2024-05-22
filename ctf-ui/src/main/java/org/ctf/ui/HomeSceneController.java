@@ -20,6 +20,7 @@ import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
+import org.ctf.ui.controllers.CheatboardListener;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
 
 import javafx.beans.property.ObjectProperty;
@@ -32,6 +33,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Stop;
 import javafx.stage.Stage;
@@ -68,9 +70,9 @@ public class HomeSceneController {
 	public void switchtoHomeScreen(ActionEvent e) {
 		Scene scene = App.getScene();
 		stage = App.getStage();
-		App.adjustHomescreen(stage.getScene().getWidth(), stage.getScene().getHeight());
-		
+		App.adjustHomescreen(stage.getScene().getWidth(), stage.getScene().getHeight());		
 		stage.setScene(scene);
+		CheatboardListener.setSettings((StackPane)scene.getRoot(),scene);
 	}
 	
 	public HomeSceneController(Stage stage) {

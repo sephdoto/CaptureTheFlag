@@ -14,6 +14,7 @@ import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.ImageType;
+import org.ctf.ui.controllers.CheatboardListener;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.RemoteWaitingThread;
 import org.ctf.ui.customobjects.PopUpPane;
@@ -79,7 +80,7 @@ public class JoinScene extends Scene {
     }
     this.root = (StackPane) this.getRoot();
     createLayout();
-
+    CheatboardListener.setSettings(root, this);
   }
 
   /**
