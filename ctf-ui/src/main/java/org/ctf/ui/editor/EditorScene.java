@@ -1,4 +1,4 @@
-package org.ctf.ui;
+package org.ctf.ui.editor;
 
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
@@ -53,6 +53,9 @@ import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.exceptions.UnknownError;
 import org.ctf.shared.state.data.map.Shape;
 import org.ctf.shared.state.data.map.ShapeType;
+import org.ctf.ui.App;
+import org.ctf.ui.ComponentCreator;
+import org.ctf.ui.HomeSceneController;
 import org.ctf.ui.controllers.CheatboardListener;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.MapPreview;

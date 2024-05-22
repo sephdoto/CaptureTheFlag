@@ -18,6 +18,7 @@ import org.ctf.ui.controllers.CheatboardListener;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.RemoteWaitingThread;
 import org.ctf.ui.customobjects.PopUpPane;
+import org.ctf.ui.editor.EditorScene;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
 
 import javafx.beans.binding.Bindings;

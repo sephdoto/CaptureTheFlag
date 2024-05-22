@@ -62,7 +62,7 @@ public class App extends Application {
   static StackPane wrapper;
   static StackPane root;
   static Image backgroundImage;
-  static BackgroundSize backgroundSize = new BackgroundSize(1, 1, true, true, true, true);
+  public static BackgroundSize backgroundSize = new BackgroundSize(1, 1, true, true, true, true);
   static boolean serverStartSuccess;
   public static double stageOffset;
   

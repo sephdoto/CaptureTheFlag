@@ -1,4 +1,4 @@
-package org.ctf.ui;
+package org.ctf.ui.editor;
 
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.data.map.PieceDescription;

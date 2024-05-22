@@ -1,8 +1,8 @@
 package org.ctf.ui.controllers;
 
 import org.ctf.shared.state.data.exceptions.UnknownError;
-import org.ctf.ui.EditorScene;
 import org.ctf.ui.GamePane;
+import org.ctf.ui.editor.EditorScene;
 import javafx.application.Platform;
 import javafx.scene.layout.StackPane;
 

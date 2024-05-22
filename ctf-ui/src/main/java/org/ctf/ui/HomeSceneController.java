@@ -21,6 +21,7 @@ import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.ui.controllers.CheatboardListener;
+import org.ctf.ui.editor.EditorScene;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
 
 import javafx.beans.property.ObjectProperty;

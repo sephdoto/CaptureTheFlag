@@ -8,6 +8,8 @@ import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.controllers.SettingsSetter;
 import org.ctf.ui.customobjects.MovementVisual;
 import org.ctf.ui.customobjects.PopUpPane;
+import org.ctf.ui.editor.EditorScene;
+import org.ctf.ui.editor.TemplateEngine;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;

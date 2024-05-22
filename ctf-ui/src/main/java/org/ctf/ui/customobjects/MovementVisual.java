@@ -2,8 +2,8 @@ package org.ctf.ui.customobjects;
 
 import java.util.function.Consumer;
 import org.ctf.shared.constants.Enums.ImageType;
-import org.ctf.ui.TemplateEngine;
 import org.ctf.ui.controllers.ImageController;
+import org.ctf.ui.editor.TemplateEngine;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
