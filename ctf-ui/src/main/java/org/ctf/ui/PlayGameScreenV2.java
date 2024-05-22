@@ -149,7 +149,7 @@ public class PlayGameScreenV2 extends Scene {
     widthProperty().addListener(new ChangeListener<Number>() {
       public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth,
           Number newWidth) {
-        timerLabel.set(Font.font(newWidth.doubleValue() / 40));
+        timerLabel.set(Font.font(newWidth.doubleValue() / 42));
         timerDescription.set(Font.font(newWidth.doubleValue() / 60));
         pictureMainDiscription.set(Font.font(newWidth.doubleValue() / 40));
         figureDiscription.set(Font.font(newWidth.doubleValue() / 45));
@@ -485,10 +485,18 @@ public class PlayGameScreenV2 extends Scene {
   // **************************************************
 
   // **************************************************
-  // Start of CRUD Call Parsers
+  //  Start Color Chooser-Usage method
   // **************************************************
 
 
+  /**
+   * Opens a color-chooser window when a teams base is clicked
+   * the user can select its team color there
+   * @author Manuel Krakowski
+   * @param d: Mouse-click x-coordinate
+   * @param e: mouse-click y-coordinate
+   * @param r: Base which was clicked
+   */
   public void showColorChooser(double d, double e, BaseRep r) {
     MyCustomColorPicker myCustomColorPicker = new MyCustomColorPicker();
     myCustomColorPicker.setCurrentColor(sceneColorProperty.get());
@@ -516,14 +524,20 @@ public class PlayGameScreenV2 extends Scene {
 
 
   // **************************************************
-  // End of CRUD Call Methods
+  // End of Color Chooser-Usage method
   // **************************************************
 
   // **************************************************
-  // Start of CRUD Call Parsers
+  // Start of timer methods
   // **************************************************
 
-
+/**
+ * Creates a box containing the timers for the move-time and for the game-time
+ * @author Manuel Krakowski
+ * @param movetimelimited true if the move time is limited, false otherwise
+ * @param gametimeLimited true if the game time is limited, false otherwise
+ * @return
+ */
   private HBox createClockBox(boolean movetimelimited, boolean gametimeLimited) {
     HBox timerBox = new HBox();
     timerBox.setAlignment(Pos.CENTER);
@@ -537,24 +551,30 @@ public class PlayGameScreenV2 extends Scene {
     VBox timer1;
     VBox timer2;
     if (movetimelimited) {
-      timer1 = createTimer2(timerBox, "Move Time");
+      timer1 = createMoveTimeLimitTimer(timerBox, "Move Time");
       System.out.println("move time limited");
     } else {
-      timer1 = createTimer(timerBox, "Move Time");
+      timer1 = createNoMoveTimeLimitTimer(timerBox, "Move Time");
     }
     if (gametimeLimited) {
-      timer2 = createTimer2(timerBox, "Game Time");
+      timer2 = createMoveTimeLimitTimer(timerBox, "Game Time");
       System.out.println("Game time limited");
     } else {
-      timer2 = createTimer(timerBox, "Game Time");
+      timer2 = createNoMoveTimeLimitTimer(timerBox, "Game Time");
     }
 
     timerBox.getChildren().addAll(timer1, timer2);
     return timerBox;
   }
 
-
-  private VBox createTimer(HBox timerBox, String text) {
+/**
+ * Creates a not move-time-limited timer which is counting the time up using a custom {@link Timer} 
+ * @author Manuel Krakowski
+ * @param timerBox: Box in which the timer is placed used for relative resizing in it
+ * @param text: text describing which timer it is
+ * @return not move-time-limited timer
+ */
+  private VBox createNoMoveTimeLimitTimer(HBox timerBox, String text) {
     VBox timerwithDescrip = new VBox();
     timerwithDescrip.setAlignment(Pos.CENTER);
     timerwithDescrip.prefWidthProperty().bind(timerBox.widthProperty().multiply(0.35));
@@ -582,8 +602,14 @@ public class PlayGameScreenV2 extends Scene {
     return timerwithDescrip;
   }
 
-
-  private VBox createTimer2(HBox timerBox, String text) {
+  /**
+   * Creates a move-time-limited timer which is using data from the server to refresh the time
+   * @author Manuel Krakowski
+   * @param timerBox: box 
+   * @param text
+   * @return
+   */
+  private VBox createMoveTimeLimitTimer(HBox timerBox, String text) {
     VBox timerwithDescrip = new VBox();
     timerwithDescrip.setAlignment(Pos.CENTER);
     timerwithDescrip.prefWidthProperty().bind(timerBox.widthProperty().multiply(0.35));
