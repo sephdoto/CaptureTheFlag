@@ -1,6 +1,7 @@
 package org.ctf.shared.constants;
 
 import java.io.File;
+import javafx.scene.paint.Color;
 
 public class Enums {
 
@@ -16,21 +17,32 @@ public class Enums {
   }
 
   /**
-   * Move evaluations to represent how good or bad a move is. TODO add colors
+   * Move evaluations to represent how good or bad a move is.
+   * Contains the colors associated with the evaluation.
    *
    * @author sistumpf
    */
   public enum MoveEvaluation {
-    GREAT,
-    BEST,
-    EXCELLENT,
-    GOOD,
-    OK,
-    INACCURACY,
-    MISTAKE,
-    MISS,
-    BLUNDER,
-    SUPERBLUNDER;
+    GREAT(Color.valueOf("#78b8ff")),
+    BEST(Color.valueOf("#78ffb8")),
+    EXCELLENT(Color.valueOf("#90ff78")),
+    GOOD(Color.valueOf("#b4ff78")),
+    OK(Color.valueOf("#c6ff78")),
+    INACCURACY(Color.valueOf("#fffd78")),
+    MISTAKE(Color.valueOf("#ff942a")),
+    MISS(Color.valueOf("#ff887f")),
+    BLUNDER(Color.valueOf("#f44336")),
+    SUPERBLUNDER(Color.valueOf("#b51a0f"));
+    
+    private final Color color;
+    
+    private MoveEvaluation(final Color color) {
+      this.color = color;
+    }
+    
+    public Color getColor() {
+      return this.color;
+    }
   }
 
   /**
