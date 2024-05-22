@@ -247,7 +247,7 @@ public class TemplateEngine {
   public void saveTemplate(String name) {
     try {
       JsonTools.saveTemplateWithGameState(name, tmpTemplate,
-          new MapPreview(tmpTemplate).getGameState());
+         new MapPreview(tmpTemplate).getGameState());
     } catch (IOException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
@@ -372,6 +372,7 @@ public class TemplateEngine {
       Shape shape = new Shape();
       shape.setType(tmpMovement.getShape().getType());
       movement.setShape(shape);
+      movement.setDirections(null);
     }
     Directions result = new Directions();
     result.setLeft(this.tmpMovement.getDirections().getLeft());
@@ -400,6 +401,7 @@ public class TemplateEngine {
     }
     PieceDescription result = new PieceDescription();
     Movement movement = genrateMovementCopy();
+    movement.setDirections(null);
     result.setMovement(movement);
     result.setType(nameField.getText());
     result.setAttackPower(strengthSpinner.getValueFactory().getValue());

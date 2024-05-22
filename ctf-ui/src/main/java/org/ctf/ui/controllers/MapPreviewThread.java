@@ -1,5 +1,6 @@
 package org.ctf.ui.controllers;
 
+import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.exceptions.UnknownError;
 import org.ctf.ui.GamePane;
 import org.ctf.ui.editor.EditorScene;
@@ -37,7 +38,9 @@ public class MapPreviewThread extends Thread {
   public void run() {
     try {
       MapPreview mp = new MapPreview(editorScene.getEngine().getTmpTemplate());
-      GamePane gp = new GamePane(mp.getGameState());
+      GameState state = mp.getGameState();
+      editorScene.setState(state);
+      GamePane gp = new GamePane(state);
       Platform.runLater(() -> {
         StackPane root = editorScene.getVisualRoot();
         if(root.getChildren().size() > 0 && root.getChildren().get(0) instanceof GamePane ) {

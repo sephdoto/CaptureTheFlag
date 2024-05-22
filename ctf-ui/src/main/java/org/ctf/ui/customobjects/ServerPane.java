@@ -68,9 +68,11 @@ public class ServerPane extends StackPane {
    */
   public void setFinished() {
     this.getChildren().clear();
-    this.text.setText("Server Started!");
+    this.text.setText("Server Started");
     this.getChildren().add(text);
     this.setOnMouseClicked(e -> {
+//      this.getChildren().clear();
+//      this.getChildren().add(field);
     });
   }
 
@@ -83,6 +85,8 @@ public class ServerPane extends StackPane {
     field.setText("");
     field.setPromptText("Port already in use");
   }
+  
+  
   
   public TextField getField() {
     return this.field;

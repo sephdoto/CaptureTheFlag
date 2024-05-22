@@ -49,8 +49,10 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.shared.constants.Enums.Themes;
+import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.exceptions.Accepted;
 import org.ctf.shared.state.data.exceptions.UnknownError;
+import org.ctf.shared.state.data.map.Directions;
 import org.ctf.shared.state.data.map.Shape;
 import org.ctf.shared.state.data.map.ShapeType;
 import org.ctf.ui.App;
@@ -64,6 +66,7 @@ import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.customobjects.DragAndDropPane;
 import org.ctf.ui.customobjects.MovementVisual;
 import configs.ImageLoader;
+import io.swagger.v3.oas.models.security.SecurityScheme.In;
 
 /**
  * Provides a JavaFX scene for the map editor. It contains all necessary UI components for
@@ -97,9 +100,17 @@ public class EditorScene extends Scene {
   Text invalid;
   File currentSound;
   File currentPicture;
-  
+  GameState state;
 
 
+
+  public GameState getState() {
+    return state;
+  }
+
+  public void setState(GameState state) {
+    this.state = state;
+  }
 
   /**
    * Starts the initialization process of the scene, generates different menu panes and connects it
@@ -386,8 +397,8 @@ public class EditorScene extends Scene {
     controlgrid.add(createText(customRoot, "Value", 30), 2, 2);
     TextField namefield = (createNameField(customRoot));
     controlgrid.add(namefield, 1, 0);
-    controlgrid.add(createShapeBox(), 1, 1);
-
+   
+    
     Spinner<Integer> strenghthSpinner = createMapSpinner(0, 500, 0);
     controlgrid.add(strenghthSpinner, 3, 0);
 
@@ -398,6 +409,30 @@ public class EditorScene extends Scene {
       engine.handleDirectionValue(directionsBox, newValue);
       movementVisual.updateMovementOptions(directionsBox.getValue());
     });
+    
+    ComboBox<String> shapeBox = createShapeBox();
+    shapeBox.setOnAction(e -> {
+      switch (shapeBox.getValue()) {
+        case "None":
+          engine.getTmpMovement().setShape(null);
+          movementVisual.updateMovementOptions("None");
+          SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 500, 0);
+          valueSpinner.setValueFactory(valueFactory);
+          valueFactory.valueProperty().addListener((obs,old,newV) ->{
+            engine.handleDirectionValue(directionsBox, newV);
+            movementVisual.updateMovementOptions(directionsBox.getValue());
+          });
+          break;
+        case "L-Shape":
+          Shape shape = new Shape();
+          shape.setType(ShapeType.lshape);
+          engine.setTmpShape(shape);
+          valueSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0));
+          engine.getTmpMovement().setDirections(new Directions());
+          movementVisual.updateMovementOptions("L-Shape");
+      }
+    });
+     controlgrid.add(createShapeBox(), 1, 1);
     controlgrid.add(directionsBox, 3, 1);
     controlgrid.add(valueSpinner, 3, 2);
     controlgrid.add(createAddButton(customRoot, namefield, strenghthSpinner), 1, 2);
@@ -904,19 +939,6 @@ public class EditorScene extends Scene {
     shapeBox.prefHeightProperty().addListener((obs, oldv, newV) -> {
       double size = newV.doubleValue() * 0.4;
       shapeBox.setStyle("-fx-font-size: " + size + "px;");
-    });
-    shapeBox.setOnAction(e -> {
-      switch (shapeBox.getValue()) {
-        case "None":
-          engine.getTmpMovement().setShape(null);
-          movementVisual.updateMovementOptions("None");
-          break;
-        case "L-Shape":
-          Shape shape = new Shape();
-          shape.setType(ShapeType.lshape);
-          engine.setTmpShape(shape);
-          movementVisual.updateMovementOptions("L-Shape");
-      }
     });
     return shapeBox;
   }
