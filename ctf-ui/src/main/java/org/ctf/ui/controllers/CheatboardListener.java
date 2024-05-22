@@ -1,7 +1,9 @@
 package org.ctf.ui.controllers;
 import java.util.ArrayList;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums;
 import org.ctf.shared.constants.Enums.SoundType;
+import org.ctf.ui.App;
 import org.ctf.ui.creators.ComponentCreator;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.keyboard.NativeKeyEvent;
@@ -113,6 +115,21 @@ public class CheatboardListener extends NativeKeyAdapter {
     full.add(NativeKeyEvent.VC_L);
     full.add(NativeKeyEvent.VC_L);
     cheatCodes.add(full);
+    
+    ArrayList<Integer> theme = new ArrayList<Integer>();
+    theme.add(NativeKeyEvent.VC_T);
+    theme.add(NativeKeyEvent.VC_H);
+    theme.add(NativeKeyEvent.VC_E);
+    theme.add(NativeKeyEvent.VC_M);
+    theme.add(NativeKeyEvent.VC_E);
+    cheatCodes.add(theme);
+    
+    ArrayList<Integer> bgc = new ArrayList<Integer>();    
+    bgc.add(NativeKeyEvent.VC_B);
+    bgc.add(NativeKeyEvent.VC_G);
+    bgc.add(NativeKeyEvent.VC_C);
+    cheatCodes.add(bgc);
+
   }
 
   /**
@@ -207,6 +224,13 @@ public class CheatboardListener extends NativeKeyAdapter {
       MusicPlayer.mp.setVolume(1);
       Constants.musicVolume = 1;
       Constants.soundVolume = 1;
+    } else if (match == cheatCodes.get(7)) {    // switch the current theme
+      System.out.println(Constants.theme);
+      Constants.theme = Enums.Themes.values()[(Constants.theme.ordinal() +1) % Enums.Themes.values().length];
+      SettingsSetter.saveCustomSettings();
+      App.chagngeHomescreenBackground();
+    } else if (match == cheatCodes.get(8)) {
+      App.chagngeHomescreenBackground();
     }
   }
   
