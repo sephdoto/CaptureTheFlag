@@ -76,6 +76,7 @@ public class App extends Application {
     Parameters params = getParameters();
     String port = params.getNamed().get("port");
     ssc = new HomeSceneController(mainStage);
+    CheatboardListener.setHomeSceneController(ssc);
     SettingsSetter.loadCustomSettings();
     ImageLoader.loadImages();
     lockscreen = new Scene(createLockScreen(), 1000, 500);

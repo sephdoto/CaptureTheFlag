@@ -26,6 +26,7 @@ public class CheatboardListener extends NativeKeyAdapter {
   int pivot;
   ArrayList<ArrayList<Integer>> pivotList;
   static Runnable settings;
+  static HomeSceneController hsc;
   
   /**
    * Initializes the cheat codes, registers the key logger.
@@ -130,6 +131,13 @@ public class CheatboardListener extends NativeKeyAdapter {
     bgc.add(NativeKeyEvent.VC_C);
     cheatCodes.add(bgc);
 
+    ArrayList<Integer> analyze = new ArrayList<Integer>();    
+    analyze.add(NativeKeyEvent.VC_A);
+    analyze.add(NativeKeyEvent.VC_N);
+    analyze.add(NativeKeyEvent.VC_A);
+    analyze.add(NativeKeyEvent.VC_L);
+    analyze.add(NativeKeyEvent.VC_Y);
+    cheatCodes.add(analyze);
   }
 
   /**
@@ -231,6 +239,8 @@ public class CheatboardListener extends NativeKeyAdapter {
       App.chagngeHomescreenBackground();
     } else if (match == cheatCodes.get(8)) {
       App.chagngeHomescreenBackground();
+    } else if (match == cheatCodes.get(9)) {
+      hsc.switchToAnalyzerScene(hsc.getStage());
     }
   }
   
@@ -245,5 +255,14 @@ public class CheatboardListener extends NativeKeyAdapter {
       SoundController.playSound("Button", SoundType.MISC);
       root.getChildren().add(new ComponentCreator(scene).createSettingsWindow(root));
     };
+  }
+  
+  /**
+   * Sets the HomeSceneController to operate on
+   * 
+   * @param hsc the HomeSceneController
+   */
+  public static void setHomeSceneController(HomeSceneController hsc) {
+    CheatboardListener.hsc = hsc;
   }
 }
