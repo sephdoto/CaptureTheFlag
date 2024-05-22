@@ -40,7 +40,7 @@ public class MapPreviewThread extends Thread {
       MapPreview mp = new MapPreview(editorScene.getEngine().getTmpTemplate());
       GameState state = mp.getGameState();
       editorScene.setState(state);
-      GamePane gp = new GamePane(state);
+      GamePane gp = new GamePane(state,true);
       Platform.runLater(() -> {
         StackPane root = editorScene.getVisualRoot();
         if(root.getChildren().size() > 0 && root.getChildren().get(0) instanceof GamePane ) {

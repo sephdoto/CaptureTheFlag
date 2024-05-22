@@ -56,7 +56,7 @@ public class MovementVisual extends GridPane {
           pieceView.fitWidthProperty().bind(pane.widthProperty().multiply(0.6));
           pieceView.fitHeightProperty().bind(pieceView.fitWidthProperty());
           pane.getChildren().add(pieceView);
-          
+
 
         }
 
@@ -122,16 +122,13 @@ public class MovementVisual extends GridPane {
         handle(engine.getTmpMovement().getDirections().getDownRight(), changeDownRight);
         break;
       case "L-Shape":
-    	 handleLShape(0.4);
-    	 break;
+        this.clear();
+        handleLShape(0.4);
+        break;
       case "None":
-    	  handleLShape(0);
-    	  updateMovementOptions("Up");
-    	  updateMovementOptions("Down");
-    	  updateMovementOptions("Left");
-    	  updateMovementOptions("Right");
-    	  
-    	  break;
+        this.clear();
+
+        break;
       default:
         System.out.println("Unknown");
         break;
@@ -146,32 +143,41 @@ public class MovementVisual extends GridPane {
    * @param change - Consumer that takes grid coordinate and opacity value
    */
   private void handle(int till, Consumer<Integer[]> change) {
-//    if (6 + till > circles.length) {
-//      return;
-//    }
+    // if (6 + till > circles.length) {
+    // return;
+    // }
     for (int i = 6; i < circles.length; i++) {
       Integer[] arr = {i, 0};
       change.accept(arr);
     }
-    if(engine.getTmpMovement().getShape()!=null) {
-    	handleLShape(0.4);
+    if (engine.getTmpMovement().getShape() != null) {
+      handleLShape(0.4);
     }
     for (int i = 6; i < 6 + till; i++) {
-      if(i==circles.length) {
-    	  return;
+      if (i == circles.length) {
+        return;
       }
       Integer[] arr = {i, 1};
       change.accept(arr);
     }
   }
-  
+
   private void handleLShape(double opacity) {
-	  for(int i=3;i<8;i++) {
- 		 for(int j=3;j<8;j++) {
- 			 if(i!=j&&!(i+j==10)) {
- 				circles[i][j].setOpacity(opacity); 
- 			 }
- 		 }
- 	 }
+   
+    for (int i = 3; i < 8; i++) {
+      for (int j = 3; j < 8; j++) {
+        if (i != j && !(i + j == 10)) {
+          circles[i][j].setOpacity(opacity);
+        }
+      }
+    }
+  }
+  
+  private void clear() {
+    for (int i = 0; i < 11; i++) {
+      for (int j = 0; j < 11; j++) {
+        circles[i][j].setOpacity(0);
+      }
+    }
   }
 }
