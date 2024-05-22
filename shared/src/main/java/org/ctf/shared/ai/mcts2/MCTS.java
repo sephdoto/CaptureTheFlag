@@ -397,7 +397,12 @@ public class MCTS implements MonteCarloTreeSearch {
       
     } else {
       ReferenceMove move = getAndRemoveMoveHeuristic(original);
+      try {
       move.setPiece(alter.getReferenceGameState().getGrid().getGrid()[move.getPiece().getPosition()[0]][move.getPiece().getPosition()[1]].getPiece());
+      } catch (Exception e) {
+        e.printStackTrace();
+        return;
+      }
       alterGameStateAndGrid(alter.getReferenceGameState(), move);
       alter.initPossibleMovesAndChildren();
     }

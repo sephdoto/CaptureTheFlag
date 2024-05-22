@@ -29,7 +29,9 @@ public class Descriptions {
       case EXPERIMENTAL:
         return "A Monte Carlo Tree Search implementation that uses a heavy playout and improved Data Structures. "
             + "It uses multithreadding and due to fundamentally different algorithms an enourmous ammount of RAM. "
-            + "Due to time limitations it couldn't be optimised perfectly and might be worse than the other MCTS. ";
+            + "Due to time limitations it couldn't be optimised perfectly and might be worse than the other MCTS. "
+            + "It is experimental and could contain bugs, it might not be able to make moves sometimes. "
+            + "Use at your own risk. ";
       // AI_Config
       case C:
         return "A value used in the UCT formular that describes if the MCTS tree is build based on exploration or exploitation. "

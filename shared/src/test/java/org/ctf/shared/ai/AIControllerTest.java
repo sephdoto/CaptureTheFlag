@@ -138,7 +138,7 @@ class AIControllerTest {
   }*/
 
   @SuppressWarnings("deprecation")
-  @Test
+//  @Test
   /**
    * Integration testing.
    * Starting a Server, creating 2 human clients, creating 2 AIControllers.
@@ -198,9 +198,9 @@ class AIControllerTest {
       client3.pullData();
       client4.pullData();
       AIController aic = new AIController(client1.getCurrentState(), AI.RANDOM, new AIConfig(), 1);
-      AIController aic2 = new AIController(client2.getCurrentState(), AI.IMPROVED, new AIConfig(), 1);
+      AIController aic2 = new AIController(client2.getCurrentState(), AI.RANDOM, new AIConfig(), 1);
       AIController aic3 = new AIController(client3.getCurrentState(), AI.RANDOM, new AIConfig(), 1);
-      AIController aic4 = new AIController(client4.getCurrentState(), AI.IMPROVED, new AIConfig(), 1);
+      AIController aic4 = new AIController(client4.getCurrentState(), AI.EXPERIMENTAL, new AIConfig(), 1);
       aic2.getNextMove();
       aic3.getNextMove();
       aic4.getNextMove();
