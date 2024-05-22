@@ -1,8 +1,9 @@
 package org.ctf.ui.customobjects;
 
+import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.Game;
 import org.ctf.ui.GamePane;
-
+import org.ctf.ui.controllers.SoundController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.collections.ObservableList;
@@ -243,6 +244,7 @@ public class BackgroundCellV2 extends Pane {
    * @author Manuel Krakowski
    */
   public void performClickOnCell() {
+    SoundController.playSound(Game.getCurrent().getPiece().getDescription().getType(), SoundType.MOVE);
     int[] xk = {x, y};
     Game.makeMoveRequest(xk);
   }

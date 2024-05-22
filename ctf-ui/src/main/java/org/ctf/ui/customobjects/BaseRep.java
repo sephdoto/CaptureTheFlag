@@ -1,10 +1,12 @@
 package org.ctf.ui.customobjects;
 
 
+import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.Game;
 import org.ctf.ui.MyCustomColorPicker;
 import org.ctf.ui.PlayGameScreenV2;
 import org.ctf.ui.WaitingScene;
+import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
 
 import javafx.beans.binding.Bindings;
@@ -59,9 +61,11 @@ public class BaseRep extends Pane {
         this.getChildren().add(label);
          clickHandler = event -> {
                 if(showBasecolers && !isAttackable) {
+                 SoundController.playSound("default", SoundType.DESELECT);
                 scene.showColorChooser(event.getSceneX(), event.getSceneY(),this);
                 }
                 if (isAttackable) {
+                  SoundController.playSound(Game.getCurrent().getPiece().getDescription().getType(), SoundType.CAPTURE);
                     BaseRep.this.flags = BaseRep.this.flags -1;
                     label.setText(String.valueOf(flags));
                     int[] xy = {parent.getX(), parent.getY()};

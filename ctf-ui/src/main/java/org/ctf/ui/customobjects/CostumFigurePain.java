@@ -5,12 +5,13 @@ package org.ctf.ui.customobjects;
 import org.ctf.ui.Game;
 import org.ctf.ui.PlayGameScreenV2;
 import org.ctf.ui.controllers.ImageController;
-
+import org.ctf.ui.controllers.SoundController;
 import configs.ImageLoader;
 
 import java.util.ArrayList;
 
 import org.ctf.shared.constants.Enums.ImageType;
+import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.shared.state.Piece;
 
 import javafx.animation.Animation;
@@ -115,6 +116,7 @@ public class CostumFigurePain extends Pane {
 	
 	
 	public void performAttackClick() {
+	   SoundController.playSound(piece.getDescription().getType(), SoundType.KILL);
 		int[] xk = { posX, posY };
 		Game.makeMoveRequest(xk);
 	}
@@ -122,6 +124,7 @@ public class CostumFigurePain extends Pane {
 	
 	
 	public void performSelectClick() {
+	SoundController.playSound(piece.getDescription().getType(), SoundType.SELECT);
 	showPieceInformationWhenClicked();
 	Game.setCurrent(CostumFigurePain.this);
 	Game.showPossibleMoves();
