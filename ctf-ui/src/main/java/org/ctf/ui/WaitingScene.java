@@ -67,18 +67,13 @@ public class WaitingScene extends Scene {
  
   
   private ObjectProperty<Color> sceneColorProperty = new SimpleObjectProperty<>(Color.BLUE);
-  private ObjectProperty<Font> waitigFontSize = new SimpleObjectProperty<Font>(Font.getDefault());
-  private ObjectProperty<Font> serverInfoHeaderFontSize =
-      new SimpleObjectProperty<Font>(Font.getDefault());
-  private ObjectProperty<Font> serverInfoCOntentFontSize =
-      new SimpleObjectProperty<Font>(Font.getDefault());
-  private ObjectProperty<Font> addHumanButtonTextFontSIze =
-      new SimpleObjectProperty<Font>(Font.getDefault());
-  private ObjectProperty<Font> serverInfoDescription =
-      new SimpleObjectProperty<Font>(Font.getDefault());
-  private ObjectProperty<Font> clipBoardInfoText =
-      new SimpleObjectProperty<Font>(Font.getDefault());
-  private ObjectProperty<Font> tableHeader = new SimpleObjectProperty<Font>(Font.getDefault());
+  private ObjectProperty<Font> waitigFontSize;
+  private ObjectProperty<Font> serverInfoHeaderFontSize;
+  private ObjectProperty<Font> serverInfoCOntentFontSize;
+  private ObjectProperty<Font> addHumanButtonTextFontSIze;
+  private ObjectProperty<Font> serverInfoDescription;
+  private ObjectProperty<Font> clipBoardInfoText;
+  private ObjectProperty<Font> tableHeader;
 
 	
 
@@ -142,6 +137,18 @@ public class WaitingScene extends Scene {
    * @author Manuel Krakowski
    */
   private void manageFontSizes() {
+    waitigFontSize  = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/60));
+    serverInfoHeaderFontSize  = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/100));
+    serverInfoCOntentFontSize  = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/68));
+    addHumanButtonTextFontSIze  = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/50));
+    serverInfoDescription  = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/50));
+    clipBoardInfoText  = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/60));
+    tableHeader  = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/55));
+
+
+
+
+
     widthProperty()
         .addListener(
             new ChangeListener<Number>() {

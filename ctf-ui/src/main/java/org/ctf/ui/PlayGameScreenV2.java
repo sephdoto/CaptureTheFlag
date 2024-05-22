@@ -66,11 +66,8 @@ public class PlayGameScreenV2 extends Scene {
 
   private GamePane gm;
   private VBox right;
-
   private HBox top;
   private ImageView mpv;
-
-
   private static Circle c;
   private static Label idLabel;
   private static Label typeLabel;
@@ -80,14 +77,12 @@ public class PlayGameScreenV2 extends Scene {
   private Button giveUpButton;
   private StackPane showMapBox;
   private ObjectProperty<Color> sceneColorProperty = new SimpleObjectProperty<>(Color.BLUE);
-  private ObjectProperty<Font> timerLabel = new SimpleObjectProperty<Font>(Font.getDefault());
-  private ObjectProperty<Font> timerDescription = new SimpleObjectProperty<Font>(Font.getDefault());
-  private static ObjectProperty<Font> pictureMainDiscription =
-      new SimpleObjectProperty<Font>(Font.getDefault());
-  private ObjectProperty<Font> figureDiscription =
-      new SimpleObjectProperty<Font>(Font.getDefault());
-  private ObjectProperty<Font> waitigFontSize = new SimpleObjectProperty<Font>(Font.getDefault());
   private SimpleObjectProperty<Insets> padding = new SimpleObjectProperty<>(new Insets(10));
+  private ObjectProperty<Font> timerLabel; 
+  private ObjectProperty<Font> timerDescription;
+  private static ObjectProperty<Font> pictureMainDiscription;
+  private ObjectProperty<Font> figureDiscription;
+  private ObjectProperty<Font> waitigFontSize;
 
 
 /**
@@ -146,6 +141,11 @@ public class PlayGameScreenV2 extends Scene {
    * @author Manuel Krakowski
    */
   private void manageFontSizes() {
+    timerLabel  = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/42));
+    timerDescription  = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/60));
+    pictureMainDiscription  = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/40));
+    figureDiscription  = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/45));
+    waitigFontSize  = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/55));
     widthProperty().addListener(new ChangeListener<Number>() {
       public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth,
           Number newWidth) {
@@ -605,9 +605,9 @@ public class PlayGameScreenV2 extends Scene {
   /**
    * Creates a move-time-limited timer which is using data from the server to refresh the time
    * @author Manuel Krakowski
-   * @param timerBox: box 
-   * @param text
-   * @return
+   * @param timerBox: box in which timer is placed used for relative resizing
+   * @param text: Text to describe which timer it is
+   * @return move-time-limited timer
    */
   private VBox createMoveTimeLimitTimer(HBox timerBox, String text) {
     VBox timerwithDescrip = new VBox();
@@ -637,11 +637,16 @@ public class PlayGameScreenV2 extends Scene {
     return timerwithDescrip;
   }
 
+  /**
+   * Converts the time from seconds to the String-format which is used in the timers
+   * @author Manuel Krakowski
+   * @param totalSeconds time which
+   * @return time in seconds as formatted String
+   */
   private String formatTime(int totalSeconds) {
     int hours = totalSeconds / 3600;
     int minutes = (totalSeconds % 3600) / 60;
     int seconds = totalSeconds % 60;
-
     return String.format("%d:%02d:%02d", hours, minutes, seconds);
   }
 
