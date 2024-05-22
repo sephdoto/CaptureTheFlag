@@ -157,7 +157,9 @@ public class CreateGameController {
 	 */
 	public static void createHumanClient(String teamName, boolean isMain) {
 		sessionID = serverManager.getGameSessionID();
-		Client c =
+		Client c;
+		if(!isMain) {
+		c =
 		ClientStepBuilder.newBuilder()
 		.enableRestLayer(false)
 		.onRemoteHost(serverIP)
@@ -165,8 +167,16 @@ public class CreateGameController {
 		.enableSaveGame(false)
 		.enableAutoJoin(sessionID, teamName)
 		.build();
-		if (isMain) {
-			setMainClient(c);
+		}
+		else {
+          c = ClientStepBuilder.newBuilder()
+              .enableRestLayer(false).
+              onRemoteHost(serverIP)
+              .onPort(port)
+              .enableSaveGame(true)
+              .enableAutoJoin(sessionID, teamName)
+              .build();
+              setMainClient(c);
 		}
 		localHumanClients.add(c);
 	}
@@ -192,17 +202,17 @@ public class CreateGameController {
 	 */
 	public static  void createAiClient(String teamName, AI aitype, AIConfig config, boolean isMain) {
 		sessionID = serverManager.getGameSessionID();
-		AIClient aiClient = 
-		AIClientStepBuilder.newBuilder()
-		.enableRestLayer(false)
-		.onRemoteHost(serverIP)
-		.onPort(port)
-		.aiPlayerSelector(aitype, config)
-		.enableSaveGame(false)
-		.gameData(sessionID, teamName)
-		.build();
-		if(isMain) {
-			setMainClient(aiClient);
+		AIClient aiClient;
+        if (!isMain) {
+          aiClient = AIClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(serverIP)
+              .onPort(port).aiPlayerSelector(aitype, config).enableSaveGame(false)
+              .gameData(sessionID, teamName).build();
+        }
+        else{
+          aiClient = AIClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(serverIP)
+              .onPort(port).aiPlayerSelector(aitype, config).enableSaveGame(true)
+              .gameData(sessionID, teamName).build();
+          setMainClient(aiClient);
 		}
 		//localAIClients.add(aiClient);
 	}

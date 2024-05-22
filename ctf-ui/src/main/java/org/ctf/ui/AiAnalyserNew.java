@@ -10,16 +10,20 @@ import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.tools.JsonTools;
 import org.ctf.ui.controllers.ImageController;
+import org.ctf.ui.creators.InfoPaneCreator;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -29,6 +33,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
+import javafx.util.Duration;
 
 
 
@@ -43,12 +50,19 @@ public class AiAnalyserNew extends Scene {
       private VBox leftBox;
       private StackPane showMapBox;
       private GamePane gm;
+      private ScrollPane scroller;
+      private VBox content;
+      private double[] savedscrollvalues;
       
       private ObjectProperty<Font> popUpLabel;
       private ObjectProperty<Font> leaveButtonText;
       private ObjectProperty<Font> moveTableHeader; 
       private ObjectProperty<Font> moveTableContent; 
       SimpleObjectProperty<Insets> padding = new SimpleObjectProperty<>(new Insets(this.getWidth()*0.01));
+      HBox[] rows;
+      private final int totalmoves = 60;
+      private int scrollBackIndicator;
+      int currentMove;
       
 
 
@@ -59,7 +73,11 @@ public class AiAnalyserNew extends Scene {
         super(new StackPane(), width, height);
         this.hsc = hsc;
         manageFontSizes();
+        rows = new HBox[totalmoves];
+        scrollBackIndicator = 0;
         this.root = (StackPane) this.getRoot();
+        currentMove = 0;
+        savedscrollvalues = new double[totalmoves];
         try {
           this.getStylesheets().add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
           this.getStylesheets().add(Paths.get(Constants.toUIStyles + "ComboBox.css").toUri().toURL().toString());
@@ -106,11 +124,64 @@ public class AiAnalyserNew extends Scene {
         VBox mainVBox = createMainBox(root);
         mainVBox.getChildren().add(createHeader());
         HBox sep = createMiddleHBox(mainVBox);
+        sep.getChildren().add(createProgressBar(sep));
+
         sep.getChildren().add(createMapBox(sep));
         sep.getChildren().add(createAllMovesVBox(sep));
         mainVBox.getChildren().add(sep);
         root.getChildren().add(mainVBox);
         }
+      
+      
+      private VBox createProgressBar(HBox parent) {
+     VBox progresscontainer = new VBox();
+     progresscontainer.setAlignment(Pos.CENTER);
+     progresscontainer.prefWidthProperty().bind(parent.widthProperty().multiply(0.1));
+     progresscontainer.prefHeightProperty().bind(parent.heightProperty().multiply(0.85));
+     progresscontainer.maxHeightProperty().bind(parent.heightProperty().multiply(0.85));
+     VBox progressBar = new VBox();
+     progressBar.setPadding(new Insets(progressBar.getHeight()*0.01));
+     progressBar
+     .widthProperty()
+     .addListener(
+         (observable, oldValue, newValue) -> {
+           double newPadding = newValue.doubleValue()*0.01;
+           progressBar.setPadding(new Insets(newPadding,newPadding, newPadding, newPadding));
+         });
+     progressBar.getStyleClass().add("option-pane");
+     //progressBar.setAlignment(Pos.BOTTOM_CENTER);
+     Tooltip tooltip = new Tooltip("Expandierte Knoten:" + "\n" + "angewendete Heuristiken:" + "\n" + "Angewendete Simulationen:" );
+     tooltip.setStyle("-fx-background-color: blue");
+     Duration delay = new Duration(1);
+     tooltip.setShowDelay(delay);
+     Duration displayTime = new Duration(10000);
+     tooltip.setShowDuration(displayTime);
+     tooltip.setFont(new Font(15));
+     progressBar.setPickOnBounds(true);
+     Tooltip.install(progressBar, tooltip);
+     progressBar.prefWidthProperty().bind(progresscontainer.widthProperty().divide(2));
+     progressBar.maxWidthProperty().bind(progresscontainer.widthProperty().divide(2));
+     progressBar.prefHeightProperty().bind(progresscontainer.heightProperty());
+     progresscontainer.getChildren().add(progressBar);
+     VBox progress = new VBox();
+     progress.prefHeightProperty().bind(progressBar.heightProperty().multiply(0.85));
+     progress.prefWidthProperty().bind(progressBar.widthProperty());
+     progress.getStyleClass().add("progress-pane");
+     Label l = new Label("0.85");
+     l.fontProperty().bind(moveTableContent);
+//     Rotate rotate = new Rotate(90, 0, 0);
+//     Scale scaleY = new Scale(1, -1);
+//     l.getTransforms().addAll(rotate, scaleY);
+     l.getStyleClass().add("vertical-label");
+     
+     progress.getChildren().add(l);
+
+     progressBar.getChildren().add(progress);
+     return progresscontainer;
+
+     
+        
+     }
       
       /**
        * Creates a Vbox which is used to devide the Scene into two patrs, one for the header and one for the content
@@ -161,11 +232,11 @@ public class AiAnalyserNew extends Scene {
         HBox sep = new HBox();
         sep.prefHeightProperty().bind(parent.heightProperty().multiply(0.85));
         sep.prefWidthProperty().bind(parent.widthProperty());
-        sep.setAlignment(Pos.CENTER);
+        sep.setAlignment(Pos.TOP_CENTER);
         sep.widthProperty()
             .addListener(
                 (observable, oldValue, newValue) -> {
-                  double newSpacing = newValue.doubleValue() * 0.03;
+                  double newSpacing = newValue.doubleValue() * 0.05;
                   sep.setSpacing(newSpacing);
                 });
         return sep;
@@ -202,20 +273,55 @@ public class AiAnalyserNew extends Scene {
         Button b = new Button();
         b.prefHeightProperty().bind(h.heightProperty().multiply(1));
         b.prefWidthProperty().bind(h.widthProperty().divide(10));
+        b.setOnAction(e -> {
+          perfromNextClick();
+      });
         b.getStyleClass().add("triangle-button");
         b.fontProperty().bind(leaveButtonText);
-        Button rec = new Button("Show KI's Choice");
+        Button rec = new Button("Show AI's Choice");
         rec.prefHeightProperty().bind(h.heightProperty().multiply(1));
         rec.prefWidthProperty().bind(h.widthProperty().divide(4));
         rec.getStyleClass().add("rectangle-button");
         rec.fontProperty().bind(leaveButtonText);
         Button leftRec = new Button("");
+        leftRec.setOnAction(e -> {
+          perfomBackClick();
+      });
         leftRec.prefHeightProperty().bind(h.heightProperty().multiply(1));
         leftRec.prefWidthProperty().bind(h.widthProperty().divide(10));
         leftRec.getStyleClass().add("triangle-button-left");
         leftRec.fontProperty().bind(leaveButtonText);
         h.getChildren().addAll(leftRec,rec,b);
         return h;
+      }
+      
+      private void perfomBackClick() {
+        if(currentMove > 0 ) {
+        rows[currentMove].getStyleClass().clear();
+        rows[--currentMove].getStyleClass().add("blue-glow-hbox");
+       if((currentMove %5 == 0)) {
+         //scroller.setVvalue(savedscrollvalues[scrollBackIndicator--]);
+         System.out.println(scrollBackIndicator);
+       }
+        }
+        
+      }
+      
+      private void perfromNextClick() {
+        if(currentMove < 59) {
+        rows[currentMove].getStyleClass().clear();
+        rows[++currentMove].getStyleClass().add("blue-glow-hbox");
+       if((currentMove %5 == 0 )) {
+       //savedscrollvalues[scrollBackIndicator++] = scroller.getVvalue();
+       System.out.println(scrollBackIndicator);
+       scrollToLabel(scroller, content, content.getChildren().get(currentMove-5)); 
+       }
+       }
+        
+      }
+      
+      private void perfromShowAiBestMove() {
+        
       }
       
       private StackPane createShowMapPane(String name, VBox parent) {
@@ -236,6 +342,10 @@ public class AiAnalyserNew extends Scene {
           return showMapBox;
         }
       
+      private void showCurrentMove() {
+        
+      }
+      
       /**
        * Creates the right side of the screen containing a header and a scrollPane with all moves
        * @author Manuel Krakowski
@@ -244,9 +354,11 @@ public class AiAnalyserNew extends Scene {
        */
       private VBox createAllMovesVBox(HBox parent) {
         leftBox = new VBox();
-        leftBox.setAlignment(Pos.CENTER);
+        leftBox.setAlignment(Pos.TOP_CENTER);
         leftBox.prefWidthProperty().bind(parent.widthProperty().multiply(0.2));
-        leftBox.prefHeightProperty().bind(parent.heightProperty().multiply(1));
+        leftBox.prefHeightProperty().bind(parent.heightProperty().multiply(0.85));
+        leftBox.maxHeightProperty().bind(parent.heightProperty().multiply(0.85));
+
        // leftBox.setStyle("-fx-background-color: green");
         leftBox.heightProperty()
         .addListener(
@@ -287,33 +399,50 @@ public class AiAnalyserNew extends Scene {
        * @return Scrollpane with current players
        */
       private ScrollPane createScrollPane(VBox parent) {
-        ScrollPane scroller = new ScrollPane();
+        scroller = new ScrollPane();
         scroller.getStyleClass().clear();
+        
         //scroller.setStyle("-fx-background-color: grey");
         scroller.prefWidthProperty().bind(parent.widthProperty());
         scroller.prefHeightProperty().bind(parent.heightProperty().multiply(0.93));
         scroller.setHbarPolicy(ScrollBarPolicy.NEVER);
-        VBox content = new VBox();
+        content = new VBox();
+
         content.prefWidthProperty().bind(scroller.widthProperty());
         content.prefHeightProperty().bind(scroller.heightProperty());
         content.setAlignment(Pos.CENTER);
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 60; i++) {
              content.getChildren().add(createOneRow(content, i));
         }
         scroller.setContent(content);
+       
         return scroller;
       }
       
       private HBox createOneRow(VBox parent, int moveNr) {
         HBox oneRow = new HBox();
-        oneRow.setStyle("-fx-background-color: blue");
-        //oneRow.prefHeightProperty().bind(parent.heightProperty().multiply(0.1));
         oneRow.prefWidthProperty().bind(parent.widthProperty());
         Label moveNrLabel = createNormalLabel(oneRow, moveNr);
         Label teamLabel  = createTeamLabel(oneRow, moveNr);
         oneRow.getChildren().addAll(moveNrLabel,teamLabel);
+        rows[moveNr] = oneRow;
         return oneRow;
       }
+      
+     
+      
+      
+      
+      private void scrollToLabel(ScrollPane scrollPane, VBox vbox, javafx.scene.Node label) {
+        Bounds viewportBounds = scrollPane.getViewportBounds();
+        Bounds contentBounds = label.getBoundsInParent();
+
+        double viewportHeight = viewportBounds.getHeight();
+        double contentHeight = vbox.getHeight();
+
+        double scrollOffset = contentBounds.getMinY() / (contentHeight - viewportHeight);
+        scrollPane.setVvalue(scrollOffset);
+    }
       
       /**
        * Creates a normal label to display the content in the table
