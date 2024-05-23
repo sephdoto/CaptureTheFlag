@@ -80,18 +80,21 @@ public class AIController {
    * Tries to update with Move to build upon an older Search Tree.
    * If it fails, it updates the GameState.
    * 
+   * !! temporarily set to only update with gameState, cant find the error !! TODO
+   * 
    * @param gameState GameState to update with
    * @param move Move to update with
    * @return true if the update was successful
    */
   public boolean update(GameState gameState, Move move) {
-    boolean update = false;
+    /*boolean update = false;
     try {
       update = update(move);
-    } catch (Exception e) {}
+    } catch (Exception e) {e.printStackTrace();}
     if(!update)
       update = update(gameState);
-    return update;
+    System.out.println(update);*/
+    return update(gameState);
   }
   
   /**
@@ -126,8 +129,10 @@ public class AIController {
     if(this.ai == AI.HUMAN || this.ai == AI.RANDOM) return false;
     if(moveEquals(this.normalizedGameState.getOriginalGameState().getLastMove(), move)) return false;
     Move normove = this.normalizedGameState.normalizedMove(move);
-    this.normalizedGameState.getNormalizedGameState().setLastMove(normove);
-    this.normalizedGameState.getOriginalGameState().setLastMove(move);
+//    this.normalizedGameState.getNormalizedGameState().setLastMove(normove);
+    GameUtilities.toNextTeam(this.normalizedGameState.getNormalizedGameState());
+//    this.normalizedGameState.getOriginalGameState().setLastMove(move);
+    GameUtilities.toNextTeam(this.normalizedGameState.getOriginalGameState());
     
     MonteCarloTreeNode[] children = getMcts().getRoot().getChildren();
     for(int i=0; i<children.length; i++) {

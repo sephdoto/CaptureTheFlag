@@ -88,8 +88,11 @@ public class GameAnalyzer extends AIController {
         analyzeMove(currentlyAnalyzing +1);
         Move next = game.getMoves().get("" + (currentlyAnalyzing +1));
         if(next != null) {
-          if(update(next))
+          if(update(next)) {
             getMcts().setExpansionCounter(getMcts().getRoot().getNK());
+            getMcts().setHeuristicCounter(0);
+            getMcts().setSimulationCounter(0);
+          }
         }
       }
     }
