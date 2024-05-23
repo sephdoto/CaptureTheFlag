@@ -67,8 +67,8 @@ public class MCTS implements MonteCarloTreeSearch {
    * Selects a node to simulate on using the UCT formula. expands a children if a node in the chain
    * has unexpanded ones.
    *
-   * @param parent node, from it on the nodes will be checked for one to simulate on
-   * @param constant C used in UCT formula
+   * @param node parent, from it on the nodes will be checked for one to simulate on
+   * @param C used in UCT formula
    * @return the node to simulate on
    */
   TreeNode selectAndExpand(TreeNode node, double C) {
@@ -87,7 +87,7 @@ public class MCTS implements MonteCarloTreeSearch {
    * Adds one child to the parent node, the child is identical to the parent but simulated one move
    * further.
    *
-   * @param the selected node which gets expanded
+   * @param parent the selected node which gets expanded
    * @return the new child
    * @return null if anything unforeseen happens
    */
@@ -148,7 +148,7 @@ public class MCTS implements MonteCarloTreeSearch {
    * simulation), First checks if a node is in a terminal state, if thats the case the simulation
    * ends and the result is returned.
    *
-   * @param the node from which a game is going to be simulated
+   * @param node from which a game is going to be simulated
    * @return an array containing a number of wins for the team at position teamId
    */
   int[] simulate(TreeNode simulateOn) {
@@ -183,7 +183,7 @@ public class MCTS implements MonteCarloTreeSearch {
   /**
    * A heuristic to evaluate the winner of a given nodes gameState.
    *
-   * @param a node which will be analyzed
+   * @param node which will be analyzed
    * @return the best teams teamId (as an int)
    */
   int terminalHeuristic(TreeNode node) {
@@ -258,8 +258,8 @@ public class MCTS implements MonteCarloTreeSearch {
   /**
    * Propagates the simulation result up the tree until the root element is reached.
    *
-   * @param node on which the simulation was executed
-   * @param an int Array containing as many spaces as teams are left, a place in the Array
+   * @param child node on which the simulation was executed
+   * @param wins an int Array containing as many spaces as teams are left, a place in the Array
    *     corresponds to the teamId and contains the number of wins of that team.
    */
   void backpropagate(TreeNode child, int[] wins) {
@@ -274,7 +274,7 @@ public class MCTS implements MonteCarloTreeSearch {
   /**
    * Checks if a game is in a terminal state.
    *
-   * @param a node to check if it is terminal
+   * @param gameState to check if it is terminal
    * @param change a Reference move that gets altered instead of creating and abandoning a new object
    * @return -1: the game is not in a terminal state 0 - Integer.MAX_VALUE: winner team id -2: error
    */
@@ -354,7 +354,7 @@ public class MCTS implements MonteCarloTreeSearch {
    * Checks all children from a given node for the best move, assuming all nodes are expanded and
    * already simulated.
    *
-   * @param a node where all children will be checked for the best move
+   * @param node where all children will be checked for the best move
    * @return the TreeNode containing the best Move
    */
   TreeNode getRootBest(TreeNode root) {
