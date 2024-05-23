@@ -184,7 +184,7 @@ public class AiAnalyserNew extends Scene {
           heuristics[currentMove] = g.getHeuristic();
           expansions[currentMove] = g.getExpansions();
          
-          userStates[currentMove] = state;
+          userStates[currentMove] = g.getUserChoice();
           aiStates[currentMove] = g.getAiChoice();
           currentMove++;
         }
@@ -539,7 +539,7 @@ public class AiAnalyserNew extends Scene {
   
   private void setNewAiState() {
     showMapBox.getChildren().clear();
-    GameState statebefore = aiStates[currentMove-1];
+    GameState statebefore = userStates[currentMove-1];
    Move m = aiStates[currentMove].getLastMove();
     Piece p = 
         Arrays.stream(
