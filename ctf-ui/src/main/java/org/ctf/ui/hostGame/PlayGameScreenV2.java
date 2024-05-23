@@ -51,54 +51,64 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
+/**
+ * Scene which is shown when a game is played
+ * 
+ * @author Manuel Krakowski
+ */
+
 public class PlayGameScreenV2 extends Scene {
 
+  // Data which is used to always refresh the scene with the newest state
   private ScheduledExecutorService scheduler;
   private ScheduledExecutorService scheduler2;
-
   private Client mainClient;
-
   private HomeSceneController hsc;
-  private StackPane root;
-  private HBox captureLoadingLabel;
   private boolean isRemote;
   private GameState currentState;
 
-
+  // Time-limits
   private Label moveTimeLimit;
   private Label gameTimeLimit;
   private Timer noMoveTimeLimit;
 
+  // Components that need to be accessed from everywhere in the scene
   private GamePane gm;
   private VBox right;
   private HBox top;
   private ImageView mpv;
   private static Circle c;
+  private Button giveUpButton;
+  private StackPane showMapBox;
+  private StackPane root;
+  private HBox captureLoadingLabel;
+
+  // Piece-information that need to be set from outside
   private static Label idLabel;
   private static Label typeLabel;
   private static Label attackPowLabel;
   private static Label teamLabel;
   private static Label countLabel;
-  private Button giveUpButton;
-  private StackPane showMapBox;
+
   private ObjectProperty<Color> sceneColorProperty = new SimpleObjectProperty<>(Color.BLUE);
   private SimpleObjectProperty<Insets> padding = new SimpleObjectProperty<>(new Insets(10));
-  private ObjectProperty<Font> timerLabel; 
+  private ObjectProperty<Font> timerLabel;
   private ObjectProperty<Font> timerDescription;
   private static ObjectProperty<Font> pictureMainDiscription;
   private ObjectProperty<Font> figureDiscription;
   private ObjectProperty<Font> waitigFontSize;
 
 
-/**
- * Sets all important attributes and initializes the scene
- * @author Manuel Krakowski
- * @param hsc Controller to switch to different scenes
- * @param width initial width of the screen
- * @param height initial height of the screen
- * @param mainClient Client which is used to pull the newest Data from the server
- * @param isRemote true if the screen is used from remote-join
- */
+  /**
+   * Sets all important attributes and initializes the scene
+   * 
+   * @author Manuel Krakowski
+   * @param hsc Controller to switch to different scenes
+   * @param width initial width of the screen
+   * @param height initial height of the screen
+   * @param mainClient Client which is used to pull the newest Data from the server
+   * @param isRemote true if the screen is used from remote-join
+   */
   public PlayGameScreenV2(HomeSceneController hsc, double width, double height, Client mainClient,
       boolean isRemote) {
     super(new StackPane(), width, height);
@@ -111,14 +121,15 @@ public class PlayGameScreenV2 extends Scene {
   }
 
 
-  
 
   // **************************************************
   // Start of scene initialization methods
   // **************************************************
 
   /**
-   * initializes the scene by adding css-Stylesheets and starting the schedulers which are used to refresh the data
+   * initializes the scene by adding css-Stylesheets and starting the schedulers which are used to
+   * refresh the data
+   * 
    * @author Manuel Krakowski
    */
   public void initalizePlayGameScreen() {
@@ -140,17 +151,18 @@ public class PlayGameScreenV2 extends Scene {
     scheduler.scheduleAtFixedRate(updateTask, 0, 100, TimeUnit.MILLISECONDS);
   }
 
-  
+
   /**
    * Manages the font-sizes of all text of the screen when the screen size changes
+   * 
    * @author Manuel Krakowski
    */
   private void manageFontSizes() {
-    timerLabel  = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/42));
-    timerDescription  = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/60));
-    pictureMainDiscription  = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/40));
-    figureDiscription  = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/45));
-    waitigFontSize  = new SimpleObjectProperty<Font>(Font.font(this.getWidth()/55));
+    timerLabel = new SimpleObjectProperty<Font>(Font.font(this.getWidth() / 42));
+    timerDescription = new SimpleObjectProperty<Font>(Font.font(this.getWidth() / 60));
+    pictureMainDiscription = new SimpleObjectProperty<Font>(Font.font(this.getWidth() / 40));
+    figureDiscription = new SimpleObjectProperty<Font>(Font.font(this.getWidth() / 45));
+    waitigFontSize = new SimpleObjectProperty<Font>(Font.font(this.getWidth() / 55));
     widthProperty().addListener(new ChangeListener<Number>() {
       public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth,
           Number newWidth) {
@@ -168,6 +180,7 @@ public class PlayGameScreenV2 extends Scene {
 
   /**
    * Creates the whole layout of the scene
+   * 
    * @author Manuel Krakowski
    */
   public void createLayout() {
@@ -224,8 +237,9 @@ public class PlayGameScreenV2 extends Scene {
   // **************************************************
 
   /**
-   * used by a scheduler to always update the map with the latest GameState from the Queue
-   * and constantly check whether the game is over
+   * used by a scheduler to always update the map with the latest GameState from the Queue and
+   * constantly check whether the game is over
+   * 
    * @author Manuel Krakowski
    */
   Runnable updateTask = () -> {
@@ -243,13 +257,13 @@ public class PlayGameScreenV2 extends Scene {
         scheduler.shutdown();
         scheduler2.shutdown();
       }
-//      System.out.println(mainClient.isAlive());
-//      if(!mainClient.isAlive()) {
-//        Platform.runLater(() -> {
-//          PopupCreatorGameOver g = new PopupCreatorGameOver(this, root, hsc);
-//          g.createGameOverPopUpYouLost(mainClient.getTeamID());
-//        });
-//      }
+      // System.out.println(mainClient.isAlive());
+      // if(!mainClient.isAlive()) {
+      // Platform.runLater(() -> {
+      // PopupCreatorGameOver g = new PopupCreatorGameOver(this, root, hsc);
+      // g.createGameOverPopUpYouLost(mainClient.getTeamID());
+      // });
+      // }
       GameState tmp = mainClient.getQueuedGameState();
       if (tmp != null) {
         currentState = tmp;
@@ -266,8 +280,9 @@ public class PlayGameScreenV2 extends Scene {
   };
 
   /**
-   * Redraws the grid and checks if it's one local player's turn to set its figures active
-   * Give-Up button is only enabled in case it's one local players turn
+   * Redraws the grid and checks if it's one local player's turn to set its figures active Give-Up
+   * button is only enabled in case it's one local players turn
+   * 
    * @author Manuel Krakowski
    * @param state current state which used to redraw the map
    */
@@ -298,7 +313,9 @@ public class PlayGameScreenV2 extends Scene {
   }
 
   /**
-   * Draws the map which belongs to a gameState and saves the last figures to show the last move on the map
+   * Draws the map which belongs to a gameState and saves the last figures to show the last move on
+   * the map
+   * 
    * @author Manuel Krakowski
    * @param state GameState which is shown on the map
    */
@@ -307,7 +324,7 @@ public class PlayGameScreenV2 extends Scene {
       CreateGameController.setFigures(gm.getFigures());
       showMapBox.getChildren().remove(gm);
     }
-    gm = new GamePane(state, false,"");
+    gm = new GamePane(state, false, "");
     StackPane.setAlignment(gm, Pos.CENTER);
     gm.maxWidthProperty().bind(mpv.fitWidthProperty());
     gm.maxHeightProperty().bind(mpv.fitHeightProperty());
@@ -357,9 +374,11 @@ public class PlayGameScreenV2 extends Scene {
   // Start of current team turn visualization methods
   // **************************************************
 
-  
+
   /**
-   * Shows the team-name of the current team turn using two different methods in case it it's a local clients turn or not
+   * Shows the team-name of the current team turn using two different methods in case it it's a
+   * local clients turn or not
+   * 
    * @author Manuel Krakowski
    */
   public void setTeamTurn() {
@@ -388,6 +407,7 @@ public class PlayGameScreenV2 extends Scene {
 
   /**
    * Creates the box in which the String for the current team-turn is shown
+   * 
    * @author Manuel Krakowski
    * @return team-turn-box
    */
@@ -401,6 +421,7 @@ public class PlayGameScreenV2 extends Scene {
 
   /**
    * Shows an waiting animation with the team-name in case it's not the turn of one local client
+   * 
    * @author Manuel Krakowski
    * @return box with waiting animation and team-name
    */
@@ -439,6 +460,7 @@ public class PlayGameScreenV2 extends Scene {
 
   /**
    * Shows the team-name without animation in case it's one local client's turn
+   * 
    * @author Manuel Krakowski
    * @return box with 'your turn' String and team-name
    */
@@ -467,6 +489,7 @@ public class PlayGameScreenV2 extends Scene {
 
   /**
    * Creates the button which is used to give up
+   * 
    * @author Manuel Krakowski
    * @return Box containing only the give-up-button
    */
@@ -483,8 +506,8 @@ public class PlayGameScreenV2 extends Scene {
       CreateGameController.clearUsedNames();
       CreateGameController.clearColors();
       scheduler.shutdown();
-      if(scheduler2 != null) {
-      scheduler2.shutdown();
+      if (scheduler2 != null) {
+        scheduler2.shutdown();
       }
     });
     giveUpBox.getChildren().add(giveUpButton);
@@ -498,13 +521,14 @@ public class PlayGameScreenV2 extends Scene {
   // **************************************************
 
   // **************************************************
-  //  Start Color Chooser-Usage method
+  // Start Color Chooser-Usage method
   // **************************************************
 
 
   /**
-   * Opens a color-chooser window when a teams base is clicked
-   * the user can select its team color there
+   * Opens a color-chooser window when a teams base is clicked the user can select its team color
+   * there
+   * 
    * @author Manuel Krakowski
    * @param d: Mouse-click x-coordinate
    * @param e: mouse-click y-coordinate
@@ -544,13 +568,14 @@ public class PlayGameScreenV2 extends Scene {
   // Start of timer methods
   // **************************************************
 
-/**
- * Creates a box containing the timers for the move-time and for the game-time
- * @author Manuel Krakowski
- * @param movetimelimited true if the move time is limited, false otherwise
- * @param gametimeLimited true if the game time is limited, false otherwise
- * @return
- */
+  /**
+   * Creates a box containing the timers for the move-time and for the game-time
+   * 
+   * @author Manuel Krakowski
+   * @param movetimelimited true if the move time is limited, false otherwise
+   * @param gametimeLimited true if the game time is limited, false otherwise
+   * @return
+   */
   private HBox createClockBox(boolean movetimelimited, boolean gametimeLimited) {
     HBox timerBox = new HBox();
     timerBox.setAlignment(Pos.CENTER);
@@ -580,13 +605,15 @@ public class PlayGameScreenV2 extends Scene {
     return timerBox;
   }
 
-/**
- * Creates a not move-time-limited timer which is counting the time up using a custom {@link Timer} 
- * @author Manuel Krakowski
- * @param timerBox: Box in which the timer is placed used for relative resizing in it
- * @param text: text describing which timer it is
- * @return not move-time-limited timer
- */
+  /**
+   * Creates a not move-time-limited timer which is counting the time up using a custom
+   * {@link Timer}
+   * 
+   * @author Manuel Krakowski
+   * @param timerBox: Box in which the timer is placed used for relative resizing in it
+   * @param text: text describing which timer it is
+   * @return not move-time-limited timer
+   */
   private VBox createNoMoveTimeLimitTimer(HBox timerBox, String text) {
     VBox timerwithDescrip = new VBox();
     timerwithDescrip.setAlignment(Pos.CENTER);
@@ -617,6 +644,7 @@ public class PlayGameScreenV2 extends Scene {
 
   /**
    * Creates a move-time-limited timer which is using data from the server to refresh the time
+   * 
    * @author Manuel Krakowski
    * @param timerBox: box in which timer is placed used for relative resizing
    * @param text: Text to describe which timer it is
@@ -652,6 +680,7 @@ public class PlayGameScreenV2 extends Scene {
 
   /**
    * Converts the time from seconds to the String-format which is used in the timers
+   * 
    * @author Manuel Krakowski
    * @param totalSeconds time which
    * @return time in seconds as formatted String
@@ -663,7 +692,11 @@ public class PlayGameScreenV2 extends Scene {
     return String.format("%d:%02d:%02d", hours, minutes, seconds);
   }
 
-
+  /**
+   * updtaes the time with data from the client if move time or game time limits are set
+   * 
+   * @author Manuel Krakowski
+   */
   Runnable updateTask2 = () -> {
     try {
       Platform.runLater(() -> {
@@ -690,15 +723,20 @@ public class PlayGameScreenV2 extends Scene {
   };
 
   // **************************************************
-  // End of CRUD Call Methods
+  // End of timer methods
   // **************************************************
 
   // **************************************************
-  // Start of CRUD Call Parsers
+  // Start of figure description box creation methods
   // **************************************************
 
 
-
+  /**
+   * Creates a box in which information about a piece and a picture of it is shown
+   * 
+   * @author Manuel Krakowski
+   * @return piece-description-Hbox
+   */
   private HBox createFigureDesBox() {
     HBox h1 = new HBox();
     h1.prefHeightProperty().bind(this.heightProperty().multiply(0.65));
@@ -745,7 +783,12 @@ public class PlayGameScreenV2 extends Scene {
   }
 
 
-
+  /**
+   * Creates A Label which is used to display piece-information
+   * 
+   * @author Manuel Krakowski
+   * @return description label
+   */
   private VBox createDeslabelBox() {
     VBox deBox = new VBox(10);
     deBox.heightProperty().addListener((observable, oldValue, newValue) -> {
@@ -765,6 +808,13 @@ public class PlayGameScreenV2 extends Scene {
     return deBox;
   }
 
+  /**
+   * styles description label
+   * 
+   * @author Manuel Krakowski
+   * @param l label
+   * @param parent used for relative resizing
+   */
   private void handleLabel(Label l, VBox parent) {
     l.fontProperty().bind(figureDiscription);
     l.prefWidthProperty().bind(parent.widthProperty());
@@ -772,11 +822,11 @@ public class PlayGameScreenV2 extends Scene {
   }
 
   // **************************************************
-  // End of CRUD Call Methods
+  // End of of figure description box creation methods
   // **************************************************
 
   // **************************************************
-  // Start of CRUD Call Parsers
+  // Start of Getters and Setters
   // **************************************************
 
 
