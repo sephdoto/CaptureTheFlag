@@ -230,8 +230,9 @@ public class AnalyzerTest {
       controller2.update(p2.getCurrentState());
     }
     assertTrue(analyzer.writeOut());
-    File myObj = new File(Constants.saveGameFolder + analyzer.lastFileName + ".savedgame");
-    myObj.delete();
+//    File myObj = new File(Constants.saveGameFolder + analyzer.lastFileName + ".savedgame");
+//    myObj.delete();
+    analyzer.deleteLastSavedFile();
   }
 
   private MapTemplate createGameTemplate() {
