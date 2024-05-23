@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 /**
  * @author sistumpf
  */
-class MCTS_ToolsTest {
+class MCTSUtilitiesTest {
   static ReferenceGameState rGameState;
   
   @BeforeEach

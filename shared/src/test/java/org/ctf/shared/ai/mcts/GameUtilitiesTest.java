@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 /**
  * @author sistumpf
  */
-class MCTSTest {
+class GameUtilitiesTest {
   static MCTS mcts;
   static GameState gameState;
   static Random random;
@@ -111,7 +111,7 @@ class MCTSTest {
     for (; count < 1; count++) {
 
       //      MCTS_TestDouble mcts = new
-      // MCTS_TestDouble(MCTSTest.mcts.root.clone(MCTSTest.mcts.root.copyGameState()));
+      // MCTS_TestDouble(GameUtilitiesTest.mcts.root.clone(GameUtilitiesTest.mcts.root.copyGameState()));
       mcts.setRoot(rootclone.clone(rootclone.copyGameState()));
       mcts.getRoot().setParent(null);
       try {
