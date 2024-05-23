@@ -1,18 +1,11 @@
 package org.ctf.ui.map;
 
-
-
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.hostGame.PlayGameScreenV2;
-import configs.ImageLoader;
-
-import java.util.ArrayList;
-
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.shared.state.Piece;
-
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -21,36 +14,46 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
-import test.CreateTextGameStates;
 
 /**
- * @mkrakows
+ * 
  * visual Representation of a Piece
+ * @author Manuel Krakowski
  */
 public class CostumFigurePain extends Pane {
-	String teamID;
-	Piece piece;
-	String type;
-	Image bImage;
-	ImageView vw;
-	int posX;	
-	int posY;
-	boolean active;
-	boolean attacable;
-	BackgroundCellV2 parent;
-	DropShadow borderGlow;
+  //Data about the corresponding piece
+	private String teamID;
+	private Piece piece;
+	private String type;
+	
+	//Data about the position
+	private int posX;	
+	private int posY;
+	private BackgroundCellV2 parent;
+	
+	//Data about the condition
+	private boolean active;
+	private boolean attacable;
+	
+	//Data about the image belonging to the piece
+	private Image bImage;
+    private ImageView vw;
+    private DropShadow borderGlow;
 	
 
-	ArrayList<int[]> possibleMoves;
+    /**
+     * Initialazes the CostumfigurePain with the corresponding piece, sets its image and sets a 
+     * Mouse-Listener to it
+     * @author Manuel Krakowski
+     * @param piece corresponding piece
+     */
 	public CostumFigurePain(Piece piece) {
 	this.piece = piece;
 	this.type = piece.getDescription().getType();
@@ -71,9 +74,9 @@ public class CostumFigurePain extends Pane {
 	}
 	
 	/**
-	 * @author mkrakows
-	 * creates a Shadow which can be used to highlight the currently selected Figure
-	 * @param ImageView
+	 * Creates a glow based on a color which is selected by the server representing the team-color
+	 * @author Manuel Krakowski
+	 * @param colorString team-color given by the server
 	 */
 	public void showTeamColor(String colorString) {
 		Color col = Color.valueOf(colorString);
@@ -83,22 +86,12 @@ public class CostumFigurePain extends Pane {
         borderGlow.setOffsetY(0f);
         vw.setEffect(borderGlow);
 	}
-	public int getPosX() {
-		return posX;
-	}
-
-	public void setPosX(int posX) {
-		this.posX = posX;
-	}
-
-	public int getPosY() {
-		return posY;
-	}
-
-	public void setPosY(int posY) {
-		this.posY = posY;
-	}
-
+	
+	/**
+     * Creates a glow based on a color-property which can be selected by the user
+     * @author Manuel Krakowski
+     * @param colorString team-color given by the server
+     */
 	public void showTeamColorWhenSelecting(ObjectProperty<Color> sceneColorProperty) {
 		borderGlow = new DropShadow();
         borderGlow.colorProperty().bind(sceneColorProperty);
@@ -224,8 +217,22 @@ public class CostumFigurePain extends Pane {
 	public void setAttacable() {
 		this.attacable = true;
 		parent.showAttackable();
-		
 	}
+	public int getPosX() {
+      return posX;
+  }
+
+  public void setPosX(int posX) {
+      this.posX = posX;
+  }
+
+  public int getPosY() {
+      return posY;
+  }
+
+  public void setPosY(int posY) {
+      this.posY = posY;
+  }
 	
 	public void setUnattacble() {
 		parent.deselect();

@@ -387,7 +387,7 @@ public class CreateGameScreenV2 extends Scene {
         template = entry.getKey();
         state = entry.getValue();
       }
-      gm = new org.ctf.ui.map.GamePane(state,false);
+      gm = new org.ctf.ui.map.GamePane(state,false,"");
       ImageView iv = this.createBackgroundImage(gm.vBox);
       StackPane.setAlignment(iv, Pos.CENTER);
       sep.getChildren().remove(showMapBox);
@@ -512,7 +512,7 @@ public class CreateGameScreenV2 extends Scene {
         state = entry.getValue();
       }
 
-      gm = new GamePane(state,false);
+      gm = new GamePane(state,false,"");
       StackPane.setAlignment(gm, Pos.CENTER);
       gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
       gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
@@ -556,10 +556,10 @@ public class CreateGameScreenV2 extends Scene {
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
 		exit.setOnAction(e -> {
 			//hsc.switchtoHomeScreen(e);
-			PopupCreatorGameOver g = new PopupCreatorGameOver(this, root, hsc);
-			g.createGameOverPopUpYouLost("Ahaah");
+//			PopupCreatorGameOver g = new PopupCreatorGameOver(this, root, hsc);
+//			g.createGameOverPopUpYouLost("Ahaah");
 			//hsc.switchToTestScene(App.getStage());
-		  //hsc.switchToAnalyzerScene(App.getStage());
+		  hsc.switchToAnalyzerScene(App.getStage());
 		});
 		return exit;
 	}

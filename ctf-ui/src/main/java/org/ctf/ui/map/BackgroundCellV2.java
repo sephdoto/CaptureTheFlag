@@ -162,6 +162,27 @@ public class BackgroundCellV2 extends Pane {
     this.setStyle("-fx-background-color: rgb(0, 0, 255, 0.2);" + "-fx-border-color: blue; "
         + "-fx-border-width: 1.2px");
   }
+  
+  public void showLastMoveForAnalyzer(String col) {
+    this.setStyle("-fx-background-color: " + hextoString(col) + "; -fx-border-color: " + col + ";"
+        + "-fx-border-width: 1.2px");
+  }
+  
+  private String hextoString(String col) {
+    col = col.replace("#", "");
+    String s = "rgb(";
+    int r = Integer.parseInt(col.substring(0, 2), 16);
+    s+= r;
+    s+= ",";
+    int g = Integer.parseInt(col.substring(2, 4), 16);
+    s+= g;
+    s+= ",";
+    int b = Integer.parseInt(col.substring(4, 6), 16);
+    s+= b;
+    s+= ",";
+    s+= "0.2)";
+    return s;
+  }
 
   /**
    * Draws a little circle on the cell which indicates that the currently selcted piece can move on it

@@ -243,6 +243,13 @@ public class PlayGameScreenV2 extends Scene {
         scheduler.shutdown();
         scheduler2.shutdown();
       }
+//      System.out.println(mainClient.isAlive());
+//      if(!mainClient.isAlive()) {
+//        Platform.runLater(() -> {
+//          PopupCreatorGameOver g = new PopupCreatorGameOver(this, root, hsc);
+//          g.createGameOverPopUpYouLost(mainClient.getTeamID());
+//        });
+//      }
       GameState tmp = mainClient.getQueuedGameState();
       if (tmp != null) {
         currentState = tmp;
@@ -300,7 +307,7 @@ public class PlayGameScreenV2 extends Scene {
       CreateGameController.setFigures(gm.getFigures());
       showMapBox.getChildren().remove(gm);
     }
-    gm = new GamePane(state, false);
+    gm = new GamePane(state, false,"");
     StackPane.setAlignment(gm, Pos.CENTER);
     gm.maxWidthProperty().bind(mpv.fitWidthProperty());
     gm.maxHeightProperty().bind(mpv.fitHeightProperty());

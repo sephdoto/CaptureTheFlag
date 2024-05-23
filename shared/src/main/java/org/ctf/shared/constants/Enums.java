@@ -23,24 +23,24 @@ public class Enums {
    * @author sistumpf
    */
   public enum MoveEvaluation {
-    GREAT(Color.valueOf("#78b8ff")),
-    BEST(Color.valueOf("#78ffb8")),
-    EXCELLENT(Color.valueOf("#90ff78")),
-    GOOD(Color.valueOf("#b4ff78")),
-    OK(Color.valueOf("#c6ff78")),
-    INACCURACY(Color.valueOf("#fffd78")),
-    MISTAKE(Color.valueOf("#ff942a")),
-    MISS(Color.valueOf("#ff887f")),
-    BLUNDER(Color.valueOf("#f44336")),
-    SUPERBLUNDER(Color.valueOf("#b51a0f"));
+    GREAT("#78b8ff"),
+    BEST("#78ffb8"),
+    EXCELLENT("#90ff78"),
+    GOOD("#b4ff78"),
+    OK("#c6ff78"),
+    INACCURACY("#fffd78"),
+    MISTAKE("#ff942a"),
+    MISS("#ff887f"),
+    BLUNDER("#f44336"),
+    SUPERBLUNDER("#b51a0f");
     
-    private final Color color;
+    private final String color;
     
-    private MoveEvaluation(final Color color) {
+    private MoveEvaluation(final String color) {
       this.color = color;
     }
     
-    public Color getColor() {
+    public String getColor() {
       return this.color;
     }
   }

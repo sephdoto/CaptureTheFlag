@@ -37,6 +37,18 @@ public class GamePane extends HBox{
   int rows;
   int cols;
   int currentTeam;
+  
+  private String colerforAnlyzer;
+private int[] oldPosinAnalyzer;
+  public int[] getOldPosinAnalyzer() {
+  return oldPosinAnalyzer;
+  
+}
+
+public void setOldPosinAnalyzer(int[] oldPosinAnalyzer) {
+  this.oldPosinAnalyzer = oldPosinAnalyzer;
+  cells.get(generateKey(oldPosinAnalyzer[0], oldPosinAnalyzer[1])).showLastMoveForAnalyzer(colerforAnlyzer);
+}
 
   public VBox vBox;
   int anzTeams;
@@ -54,13 +66,15 @@ public class GamePane extends HBox{
   SimpleObjectProperty<Double> min;
   NumberBinding binding;
   private boolean blocksvisible;
+  private boolean inAnalyser;
 
-  public GamePane(GameState state,boolean blocksVisible) {
+  public GamePane(GameState state,boolean blocksVisible,String col) {
     initSizes();
     //this.setStyle("-fx-background-color: yellow");
     this.state = state;
     this.map = state.getGrid();
     this.blocksvisible = blocksVisible;
+    this.colerforAnlyzer = col;
     this.currentTeam = state.getCurrentTeam();
     rows = map.length;
     cols = map[0].length;
@@ -166,8 +180,14 @@ public class GamePane extends HBox{
       Move lastMove = state.getLastMove();
       int xNewPos = lastMove.getNewPosition()[0];
       int yNewPos = lastMove.getNewPosition()[1];
-      cells.get(generateKey(xNewPos, yNewPos)).showLastMove();
-      if(CreateGameController.getLastFigures() != null) {
+      if(!colerforAnlyzer.equals("")) {
+        cells.get(generateKey(xNewPos, yNewPos)).showLastMoveForAnalyzer(colerforAnlyzer);
+
+      }else {
+        cells.get(generateKey(xNewPos, yNewPos)).showLastMove();
+
+      }
+      if(CreateGameController.getLastFigures() != null && colerforAnlyzer.equals("")) {
         CostumFigurePain old = CreateGameController.getLastFigures().get(lastMove.getPieceId());
         int xOldPosX = old.getPosX();
         int oldPosY = old.getPosY();
