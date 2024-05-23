@@ -1,5 +1,7 @@
 package org.ctf.ui.gameAnalyzer;
 
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -19,10 +21,12 @@ import org.ctf.ui.StroeMaps;
 import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.map.GamePane;
+import org.springframework.util.StringUtils;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -39,6 +43,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
 
@@ -91,7 +96,10 @@ public class AiAnalyserNew extends Scene {
 
   public AiAnalyserNew(HomeSceneController hsc, double width, double height) {
     super(new StackPane(), width, height);
-    createGameSaver();
+    if(!createGameSaver()) {
+      this.hsc.switchtoHomeScreen(new ActionEvent());
+      return;
+    }
     // totalmoves = 10;
     this.hsc = hsc;
     manageFontSizes();
@@ -132,10 +140,25 @@ public class AiAnalyserNew extends Scene {
     initalize();
   }
   
-  private void createGameSaver() {
+  /**
+   * Opens a FileChooser so the user can select a game
+   * 
+   * @author sistumpf
+   * @return true if a file was choosen
+   */
+  private boolean createGameSaver() {
     gsh = new GameSaveHandler();
-    gsh.readFile("20240523-065940");
+    FileChooser choose = new FileChooser();
+    choose.setInitialDirectory(new File(Constants.saveGameFolder));
+    choose.setTitle("choose your saved game");
+    File file = choose.showOpenDialog(null);
+    if(file != null)
+      gsh.readFile(file.getName().substring(0, file.getName().lastIndexOf(".")));
+    else
+      return false;
+    System.out.println(file.getName().substring(0, file.getName().lastIndexOf(".")));
     totalmoves = gsh.savedGame.getMoves().size();
+    return true;
   }
 
   private void initalize() {

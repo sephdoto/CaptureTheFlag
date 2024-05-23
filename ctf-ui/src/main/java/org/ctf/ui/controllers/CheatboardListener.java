@@ -27,7 +27,7 @@ public class CheatboardListener extends NativeKeyAdapter {
   ArrayList<ArrayList<Integer>> pivotList;
   static Runnable settings;
   static HomeSceneController hsc;
-  
+
   /**
    * Initializes the cheat codes, registers the key logger.
    */
@@ -95,28 +95,28 @@ public class CheatboardListener extends NativeKeyAdapter {
     settings.add(NativeKeyEvent.VC_G);
     settings.add(NativeKeyEvent.VC_S);
     cheatCodes.add(settings);
-    
+
     ArrayList<Integer> mute = new ArrayList<Integer>();
     mute.add(NativeKeyEvent.VC_M);
     mute.add(NativeKeyEvent.VC_U);
     mute.add(NativeKeyEvent.VC_T);
     mute.add(NativeKeyEvent.VC_E);
     cheatCodes.add(mute);
-    
+
     ArrayList<Integer> half = new ArrayList<Integer>();
     half.add(NativeKeyEvent.VC_H);
     half.add(NativeKeyEvent.VC_A);
     half.add(NativeKeyEvent.VC_L);
     half.add(NativeKeyEvent.VC_F);
     cheatCodes.add(half);
-    
+
     ArrayList<Integer> full = new ArrayList<Integer>();
     full.add(NativeKeyEvent.VC_F);
     full.add(NativeKeyEvent.VC_U);
     full.add(NativeKeyEvent.VC_L);
     full.add(NativeKeyEvent.VC_L);
     cheatCodes.add(full);
-    
+
     ArrayList<Integer> theme = new ArrayList<Integer>();
     theme.add(NativeKeyEvent.VC_T);
     theme.add(NativeKeyEvent.VC_H);
@@ -124,7 +124,7 @@ public class CheatboardListener extends NativeKeyAdapter {
     theme.add(NativeKeyEvent.VC_M);
     theme.add(NativeKeyEvent.VC_E);
     cheatCodes.add(theme);
-    
+
     ArrayList<Integer> bgc = new ArrayList<Integer>();    
     bgc.add(NativeKeyEvent.VC_B);
     bgc.add(NativeKeyEvent.VC_G);
@@ -236,13 +236,19 @@ public class CheatboardListener extends NativeKeyAdapter {
       Constants.theme = Enums.Themes.values()[(Constants.theme.ordinal() +1) % Enums.Themes.values().length];
       SettingsSetter.saveCustomSettings();
       App.chagngeHomescreenBackground();
-    } else if (match == cheatCodes.get(8)) {
+    } else if (match == cheatCodes.get(8)) {    // switch home screen background
       App.chagngeHomescreenBackground();
-    } else if (match == cheatCodes.get(9)) {
-      hsc.switchToAnalyzerScene(hsc.getStage());
+    } else if (match == cheatCodes.get(9)) {    // open analyser
+      Platform.runLater(
+          new Runnable() {
+            public void run(){
+              hsc.switchToAnalyzerScene(hsc.getStage());
+            }
+          }
+          );
     }
   }
-  
+
   /**
    * Set settings so Settings Screen can be opened via typing settings
    * 
@@ -255,7 +261,7 @@ public class CheatboardListener extends NativeKeyAdapter {
       root.getChildren().add(new ComponentCreator(scene).createSettingsWindow(root));
     };
   }
-  
+
   /**
    * Sets the HomeSceneController to operate on
    * 
