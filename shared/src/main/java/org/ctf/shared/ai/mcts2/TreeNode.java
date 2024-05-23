@@ -12,6 +12,7 @@ import org.ctf.shared.state.Piece;
  * This class represents a node in the MCTS Tree.
  * It contains the current gameState, wins, possibleMoves for the current team, its parent and the children.
  * The parent is the game one move prior, the children are the game one move further.
+ * 
  * @author sistumpf
  */
 public class TreeNode implements MonteCarloTreeNode, Comparable<TreeNode> {
@@ -24,6 +25,7 @@ public class TreeNode implements MonteCarloTreeNode, Comparable<TreeNode> {
   /**
    * Creates a new TreeNode with given Parameters.
    * This should be the default way to generate a TreeNode.
+   * 
    * @param parent
    * @param gameState
    * @param grid : the nodes grid containing the current piece positions. pieceVisions and pieceVisionGrid are getting generated from it
@@ -52,6 +54,7 @@ public class TreeNode implements MonteCarloTreeNode, Comparable<TreeNode> {
 
   /**
    * Initializes a TreeNode from a ReferenceGameState.
+   * 
    * @param parent
    * @param gameState
    * @param wins
@@ -67,6 +70,7 @@ public class TreeNode implements MonteCarloTreeNode, Comparable<TreeNode> {
 
   /**
    * Initializes a TreeNode from a GameState, should only be used once per MCTS for the root node.
+   * 
    * @param parent
    * @param gameState
    * @param wins
@@ -114,7 +118,8 @@ public class TreeNode implements MonteCarloTreeNode, Comparable<TreeNode> {
   /**
    * This Method only updates a certain amount of pieces from possibleMoves, making it more
    * efficient for simulating only one node till the end.
-   * It should only be used with simulating.
+   * It should only be used with simulating.#
+   * 
    * @param pieces
    */
   public void updateGrids(HashSet<Piece> pieces) {
@@ -127,6 +132,13 @@ public class TreeNode implements MonteCarloTreeNode, Comparable<TreeNode> {
       }
     }
   }
+  
+  /**
+   * Adds a piece and all its visible locations to pieceVisions
+   * 
+   * @param p piece to add tp piece visions
+   * @param positions the positions the piece can see
+   */
   void addToPieceVisions(Piece p, ArrayList<int[]> positions){
     for(int[] pos : positions) {
       if(this.getReferenceGameState().getGrid().getPieceVisionGrid()[pos[0]][pos[1]] == null)
@@ -158,6 +170,7 @@ public class TreeNode implements MonteCarloTreeNode, Comparable<TreeNode> {
 
   /** 
    * Returns the average wins for the team which's move lead to this node.
+   * 
    * @return V value for UCT
    */
   public double getV() {
@@ -176,6 +189,7 @@ public class TreeNode implements MonteCarloTreeNode, Comparable<TreeNode> {
    * Copies the current TreeNode, requires the ReferenceGameState contained in the node.
    * The gameState won't be copied here, giving a new GameState that gets inserted into the new node is required.
    * Using the ReferenceGameState.clone() method to deep copy and alter the ReferenceGameState is recommended.
+   * 
    * @param ReferenceGameState
    * @return a copy of the current node
    */
@@ -209,6 +223,7 @@ public class TreeNode implements MonteCarloTreeNode, Comparable<TreeNode> {
   /**
    * Compares two nodes with their V value.
    * @param node to compare to
+   * 
    * @return as super.compareTo
    */
   @Override

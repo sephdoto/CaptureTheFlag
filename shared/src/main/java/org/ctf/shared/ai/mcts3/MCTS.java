@@ -14,6 +14,9 @@ import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
 
 /**
+ * An implementation of {@link MonteCarloTreeSearch}, using a light playout and no multithreadding.
+ * It uses a custom grid.
+ * 
  * @author sistumpf
  */
 public class MCTS implements MonteCarloTreeSearch {

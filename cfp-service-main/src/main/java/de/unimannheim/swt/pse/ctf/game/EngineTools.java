@@ -322,6 +322,7 @@ public class EngineTools extends GameUtilities {
   /**
    * Updates the positions of the pieces based on their position in the Team Object
    *
+   * @param gs GameState to update a grid from
    * @author ysiebenh, sistumpf
    */
   static void updateGrid(GameState gs) {

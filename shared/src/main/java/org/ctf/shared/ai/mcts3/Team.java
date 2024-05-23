@@ -5,6 +5,8 @@ import java.util.Arrays;
 import org.ctf.shared.state.Piece;
 /**
  * This class represents a team together with all its pieces.
+ * It is slightly modified, to safe pieces differently.
+ * 
  * @author Marcus Kessel, sistumpf
  */
 public class Team {
@@ -33,8 +35,9 @@ public class Team {
     
     /**
      * Converts an Array of Teams to instances from this Team class.
-     * @param teams
-     * @return instances of this Team
+     * 
+     * @param teams original Team array
+     * @return instances of this Team class
      */
     public static Team[] toNewTeams(org.ctf.shared.state.Team[] teams) {
       Team newTeams[] = new Team[teams.length];

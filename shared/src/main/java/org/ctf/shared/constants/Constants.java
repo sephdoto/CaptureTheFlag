@@ -19,6 +19,7 @@ public class Constants {
       Constants.class.getProtectionDomain().getCodeSource().getLocation().getFile();
   /**
    * Name of the jar. Might be hardcoded to avoid Maven Test failures.
+   * TODO remove "app.jar" for exporting as jar.
    */
   public static final String JARNAME =
       "app.jar"; // executionLocationURL.substring(executionLocationURL.lastIndexOf("/") +1);

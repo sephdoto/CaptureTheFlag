@@ -20,7 +20,7 @@ public class RandomAI extends GameUtilities {
    * lot faster or a lot slower than {@link #pickMoveComplex(GameState gameState)}. This Method is
    * not able to notice when there are no moves left.
    *
-   * @param gameState
+   * @param gameState GameState to pick moves from
    * @return a valid random Move
    * @throws InvalidShapeException
    */
@@ -54,7 +54,7 @@ public class RandomAI extends GameUtilities {
    * new piece is chosen from the remaining pieces. If no move is possible a NoMovesLeftException is
    * thrown. If a piece moves in an unknown Shape an InvalidShapeException is thrown.
    *
-   * @param gameState
+   * @param gameState GameState to pick moves from
    * @return a valid random Move
    * @throws NoMovesLeftException
    * @throws InvalidShapeException

@@ -23,6 +23,14 @@ public class TreeNode implements MonteCarloTreeNode, Comparable<TreeNode> {
   private int[] wins;
   private ReferenceMove operateOn;
   
+  /**
+   * Initialize a treenode
+   * 
+   * @param parent parent node, put null if it is a root node
+   * @param gameState the nodes GameState
+   * @param wins how many wins this node has, null if none
+   * @param operateOn a ReferenceGameState to operate on
+   */
   public TreeNode(TreeNode parent, ReferenceGameState gameState, int[] wins, ReferenceMove operateOn) {
     this.setParent(parent);
     this.setReferenceGameState(gameState);

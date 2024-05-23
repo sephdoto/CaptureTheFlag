@@ -20,6 +20,7 @@ public class Grid {
   /**
    * Creates a grid from an array of teams.
    * Use this to clone a grid with cloned references to pieces.
+   * 
    * @param teams
    * @param height
    * @param width
@@ -37,6 +38,11 @@ public class Grid {
     }
   }
   
+  /**
+   * Initialize a grid with another grid
+   * 
+   * @param grid
+   */
   public Grid(Grid grid) {
     this.grid = new GridObjectContainer[grid.getGrid().length][grid.getGrid()[0].length];
     for(int y=0; y<this.grid.length; y++) {
@@ -47,6 +53,11 @@ public class Grid {
     }
   }
   
+  /**
+   * Initialize a Grid with a GameState
+   * 
+   * @param gameState
+   */
   public Grid(GameState gameState) {
     this.grid = new GridObjectContainer[gameState.getGrid().length][gameState.getGrid()[0].length];
     LinkedList<int[]> blocks = new LinkedList<int[]>();

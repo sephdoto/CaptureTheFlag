@@ -602,22 +602,6 @@ public class GameEngine implements Game {
   }
 
   /**
-   * Checks how many teams are still standing in the Team Array 0 if no teams left standing
-   *
-   * @author rsyed
-   * @return number of remaining team slots
-   */
-  private int teamsLeft() {
-    int counter = copyOfTemplate.getTeams();
-    for (Team t : gameState.getTeams()) {
-      if (t != null) {
-        counter--;
-      }
-    }
-    return counter;
-  }
-
-  /**
    * Checks if we can start the game. Call this after adding a team to the game
    *
    * @throws GameOver if there are too many pieces compared to the map size

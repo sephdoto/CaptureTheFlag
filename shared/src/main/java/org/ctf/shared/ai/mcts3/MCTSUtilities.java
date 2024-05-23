@@ -74,7 +74,6 @@ public class MCTSUtilities {
   /**
    * Removes a certain team from the ReferenceGameState. team is the place of the team in the
    * ReferenceGameState.getTeams Array.
-   *TODO statt int team direkt das Team übergeben?
    *
    * @param gameState
    * @param team

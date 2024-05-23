@@ -16,6 +16,7 @@ import de.unimannheim.swt.pse.ctf.game.state.Piece;
 class GameUtilities {
   /**
    * This method is needed to respawn a piece, it adds all positions in a certain radius around the base to an Array.
+   * 
    * @param xTrans translations on x-axis
    * @param distance to a base
    * @return Array containing Transformations to use on the base position
@@ -38,6 +39,7 @@ class GameUtilities {
 
   /**
    * This method is needed to respawn a piece, it adds all positions in a certain radius around the base to an Array.
+   * 
    * @param yTrans translations on y-axis
    * @param distance to a base
    * @return Array containing Transformations to use on the base position
@@ -60,6 +62,7 @@ class GameUtilities {
 
   /**
    * Creates an ArrayList with all valid Moves a piece with shape movement can do.
+   * 
    * @param gameState
    * @param piece
    * @return ArrayList containing all valid moves
@@ -124,6 +127,7 @@ class GameUtilities {
    * Creates an ArrayList containing all a pieces valid directions and its maximum reach into that direction in int[direction, reach] pairs.
    * This map only applies for the Piece picked. The reach value is directly
    * from MapTemplate, this method only checks if the positions adjacent to a piece are occupied.
+   * 
    * @param gameState
    * @param picked
    * @return ArrayList<int[direction,reach]>
@@ -146,6 +150,7 @@ class GameUtilities {
   /**
    * This method tests if a piece could walk into a given direction. It does not test if a pieces
    * reach in a direction is >0. The direction is given as an int (0-7).
+   * 
    * @param gameState
    * @param piece
    * @param direction
@@ -159,6 +164,7 @@ class GameUtilities {
    * Returns the Move if a piece can occupy specific position. This method does not test if a pieces
    * reach in a direction is >0. The direction is given as an int (0-7) and reach as an int that
    * specifies how many fields into that direction.
+   * 
    * @param gameState
    * @param piece
    * @param direction
@@ -188,6 +194,7 @@ class GameUtilities {
    * minus the reach in the negative direction the piece took to get to newPos. In simpler words, if
    * a piece went from 2,2 to 2,0 (2 to left) newPos would be [2,0], reach would be 2 and the
    * direction 0 (left)
+   * 
    * @param gameState
    * @param newPos
    * @param direction
@@ -214,7 +221,8 @@ class GameUtilities {
 
   /**
    * Updates the y,x position of a piece. A given int[2] positional Array is altered by going a
-   * given amount of steps (reach) into a given direction.
+   * given amount of steps (reach) into a given direction.#
+   *
    * @param pos
    * @param direction
    * @param reach
@@ -256,6 +264,7 @@ class GameUtilities {
 
   /**
    * Checks if a piece can occupy a given position.
+   * 
    * @param pos
    * @param piece
    * @param gameState
@@ -276,6 +285,7 @@ class GameUtilities {
 
   /**
    * Checks if a position is not contained in the grid.
+   * 
    * @param grid
    * @param pos
    * @return true if the position is out of bounds
@@ -286,6 +296,7 @@ class GameUtilities {
 
   /**
    * Checks if a position on the grid contains an empty String.
+   * 
    * @param grid
    * @param pos
    * @return true if the position is an empty Field "" and can be occupied
@@ -296,6 +307,7 @@ class GameUtilities {
 
   /**
    * Checks if a position on the grid contains a block.
+   * 
    * @param grid
    * @param pos
    * @return true if the position is occupied by a block and cannot be walked on
@@ -306,6 +318,7 @@ class GameUtilities {
 
   /**
    * Checks if a position on the grid is occupied by a piece from the current team.
+   * 
    * @param grid
    * @param pos
    * @return true if the position is occupied by a Piece of the same Team
@@ -317,6 +330,7 @@ class GameUtilities {
   /**
    * Checks if a position on the grid is occupied by a piece with a weaker or the same AttackPower
    * as a given piece.
+   * 
    * @param gameState
    * @param pos
    * @param picked
@@ -340,6 +354,7 @@ class GameUtilities {
 
   /**
    * Checks if a position on the grid is occupied by an opponents base.
+   * 
    * @param grid
    * @param pos
    * @param picked
@@ -356,6 +371,7 @@ class GameUtilities {
   /**
    * This method returns an occupants (piece/base) team.
    * It splits it Id and parses the enclosed TeamId to Integer.
+   * 
    * @param gameState
    * @param pos
    * @return
@@ -369,6 +385,7 @@ class GameUtilities {
   /**
    * Returns a pieces maximum reach into a certain direction. Assumes the direction is valid,
    * doesn't catch Null Pointer Exceptions.
+   * 
    * @param directions
    * @param dir
    * @return reach into direction dir

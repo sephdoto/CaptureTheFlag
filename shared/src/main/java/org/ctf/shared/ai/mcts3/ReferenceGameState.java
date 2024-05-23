@@ -7,6 +7,7 @@ import org.ctf.shared.state.Piece;
 
 /**
  * This class is an adjusted version of GameState, using the Grid class instead of a String[][] Array.
+ * 
  * @author sistumpf
  */
 public class ReferenceGameState {
@@ -17,6 +18,7 @@ public class ReferenceGameState {
 
   /**
    * Initializes a ReferenceGameState from a normal GameState.
+   * 
    * @param gameState
    */
   public ReferenceGameState(GameState gameState) {
@@ -25,10 +27,11 @@ public class ReferenceGameState {
   
   /**
    * Default Constructor to initialize a ReferenceGameState.
-   * @param grid
-   * @param teams
-   * @param currentTeam
-   * @param lastMove
+   * 
+   * @param grid the grid
+   * @param teams the teams
+   * @param currentTeam the current team
+   * @param lastMove the last made move
    */
   public ReferenceGameState(Grid grid, Team[] teams, int currentTeam, ReferenceMove lastMove) {
     this.grid = grid;
@@ -40,6 +43,7 @@ public class ReferenceGameState {
 
   /**
    * Creates and returns a GameState representing this ReferenceGameState
+   * 
    * @return a GameState representation of this ReferenceGameState
    */
   public GameState toGameState() {
@@ -61,6 +65,7 @@ public class ReferenceGameState {
   
   /**
    * This method only deep copies the Grid.grid, the pieceVisionGrid and pieceVisions should be initialized in TreeNode.
+   * 
    * @return clone of this ReferenceGameState
    */
   @Override
