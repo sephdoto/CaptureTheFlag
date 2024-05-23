@@ -7,6 +7,7 @@ import org.ctf.shared.ai.MonteCarloTreeSearch;
 import org.ctf.shared.constants.Enums.MoveEvaluation;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
+import org.ctf.shared.state.Team;
 
 /**
  * Represents the most important information that can be extracted out of a move.
@@ -19,8 +20,9 @@ public class AnalyzedGameState {
   private int expansions;
   private int heuristic;
   private int simulations;
-  MoveEvaluation moveEvaluation;
+  private MoveEvaluation moveEvaluation;
   private int betterMoves;
+  private GameState initialGameState;
 
   /**
    * Generates all the accessible information when getting initialized.
@@ -28,15 +30,17 @@ public class AnalyzedGameState {
    * @param mcts the MCTS which analyzed the game
    * @param userChoice the user made move
    * @param aiChoice the ai's best choice
+   * @param the initial GameState to get the colors from. Otherwise colors would not be set.
    * @throws NeedMoreTimeException if the game could not be analyzed because too little time was given
    */
-  public AnalyzedGameState(MonteCarloTreeSearch mcts, Move userChoice, Move aiChoice) throws NeedMoreTimeException {
+  public AnalyzedGameState(MonteCarloTreeSearch mcts, Move userChoice, Move aiChoice, GameState initialGameState) throws NeedMoreTimeException {
     this.previousState = mcts.getRoot().deepCloneWithChildren();
     this.userChoice = findNodeByMove(userChoice);
     this.aiChoice = findNodeByMove(aiChoice);
     this.expansions = mcts.getExpansionCounter().get();
     this.simulations = mcts.getSimulationCounter().get();
     this.heuristic = mcts.getHeuristicCounter().get();
+    this.initialGameState = initialGameState;
 
     generateInformation();
   }
@@ -133,6 +137,19 @@ public class AnalyzedGameState {
     return (int)Math.round((aiChoice.getV() - userChoice.getV()) * 100);
   }
 
+  /**
+   * AI generated GameStates don't have colors.
+   * The initial GameState got colors, so this method replaces a GameStates colors with another GameStates colors.
+   * 
+   * @param gameState GameState to replace colors with
+   * @return the same GameState but with colors
+   */
+  private GameState setColors(GameState gameState) {
+    for(int i=0; i<gameState.getTeams().length; i++)
+      if(gameState.getTeams()[i] != null)
+        gameState.getTeams()[i].setColor(this.initialGameState.getTeams()[i].getColor());
+    return gameState;
+  }
   ///////////////////////////////////////
   //         getter and setter         //
   ///////////////////////////////////////
@@ -152,7 +169,7 @@ public class AnalyzedGameState {
    * @return the GameState from which the user made his move
    */
   public GameState getPreviousGameState() {
-    return previousState.getGameState();
+    return setColors(previousState.getGameState());
   }
   
   /**
@@ -161,7 +178,7 @@ public class AnalyzedGameState {
    * @return the GameState representing the users move
    */
   public GameState getUserChoice() {
-    return userChoice.getGameState();
+    return setColors(userChoice.getGameState());
   }
   
   /**
@@ -170,7 +187,7 @@ public class AnalyzedGameState {
    * @return the GameState representing the AIs best choice
    */
   public GameState getAiChoice() {
-    return aiChoice.getGameState();
+    return setColors(aiChoice.getGameState());
   }
   
   /**

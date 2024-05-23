@@ -11,6 +11,7 @@ import org.ctf.shared.ai.mcts3.MCTS;
 import org.ctf.shared.ai.mcts3.ReferenceGameState;
 import org.ctf.shared.ai.mcts3.TreeNode;
 import org.ctf.shared.ai.random.RandomAI;
+import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +23,7 @@ class AnalyzedGameStateTest {
     Move user = RandomAI.pickMoveComplex(mcts.getRoot().getGameState(), new ReferenceMove(null, new int[2])).toMove();
     Move ai = mcts.getMove(100);
     
-    AnalyzedGameState ags = new AnalyzedGameState(mcts, user, ai);
+    AnalyzedGameState ags = new AnalyzedGameState(mcts, user, ai, new GameState());
     ags.getAiChoice();
     System.out.println(ags.getMoveEvaluation());
   }
@@ -33,7 +34,7 @@ class AnalyzedGameStateTest {
     Move user = RandomAI.pickMoveComplex(mcts.getRoot().getGameState(), new ReferenceMove(null, new int[2])).toMove();
     Move ai = mcts.getMove(100);
     
-    AnalyzedGameState ags = new AnalyzedGameState(mcts, user, ai);
+    AnalyzedGameState ags = new AnalyzedGameState(mcts, user, ai, new GameState());
     ags.getAiChoice();
 //    System.out.println(getPercentageDifference(ags));
   }

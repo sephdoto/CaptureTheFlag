@@ -88,8 +88,8 @@ public class GameAnalyzer extends AIController {
         analyzeMove(currentlyAnalyzing +1);
         Move next = game.getMoves().get("" + (currentlyAnalyzing +1));
         if(next != null) {
-          if(update(next));
-          getMcts().setExpansionCounter(getMcts().getRoot().getNK());
+          if(update(next))
+            getMcts().setExpansionCounter(getMcts().getRoot().getNK());
         }
       }
     }
@@ -105,7 +105,7 @@ public class GameAnalyzer extends AIController {
         Move best = getNormalizedGameState().normalizedMove(getNextMove());
         Move made = getNormalizedGameState().normalizedMove(game.getMoves().get("" +turn));
         try {
-          results[currentlyAnalyzing] = new AnalyzedGameState(getMcts(), made, best);
+          results[currentlyAnalyzing] = new AnalyzedGameState(getMcts(), made, best, this.game.getInitialState());
         } catch (NeedMoreTimeException nmte) {
           nmte.mentionTime(getThinkingTime());
           throw nmte;
