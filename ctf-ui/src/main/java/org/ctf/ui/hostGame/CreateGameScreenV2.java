@@ -555,11 +555,7 @@ public class CreateGameScreenV2 extends Scene {
 		exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
 		exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
 		exit.setOnAction(e -> {
-			//hsc.switchtoHomeScreen(e);
-//			PopupCreatorGameOver g = new PopupCreatorGameOver(this, root, hsc);
-//			g.createGameOverPopUpYouLost("Ahaah");
-			//hsc.switchToTestScene(App.getStage());
-		  hsc.switchToAnalyzerScene(App.getStage());
+		hsc.switchtoHomeScreen(e);
 		});
 		return exit;
 	}

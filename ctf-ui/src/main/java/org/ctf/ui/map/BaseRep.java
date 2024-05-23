@@ -78,12 +78,12 @@ public class BaseRep extends Pane {
         scene.showColorChooser(event.getSceneX(), event.getSceneY(), this);
       }
       if (isAttackable) {
-        SoundController.playSound(Game.getCurrent().getPiece().getDescription().getType(),
+        SoundController.playSound(MoveVisualizer.getCurrent().getPiece().getDescription().getType(),
             SoundType.CAPTURE);
         BaseRep.this.flags = BaseRep.this.flags - 1;
         label.setText(String.valueOf(flags));
         int[] xy = {parent.getX(), parent.getY()};
-        Game.makeMoveRequest(xy);
+        MoveVisualizer.makeMoveRequest(xy);
       }
     };
     this.setOnMouseClicked(clickHandler);

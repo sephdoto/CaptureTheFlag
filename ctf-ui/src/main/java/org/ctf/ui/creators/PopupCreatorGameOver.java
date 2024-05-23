@@ -1,5 +1,6 @@
 package org.ctf.ui.creators;
 import org.ctf.shared.constants.Enums.ImageType;
+import org.ctf.ui.App;
 import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.customobjects.PopUpPane;
@@ -281,17 +282,16 @@ public class PopupCreatorGameOver {
 			hsc.switchtoHomeScreen(e);
 			CreateGameController.clearUsedNames();
 			CreateGameController.clearColors();
-			//CreateGameController.deleteGame();
 		});
 	}
 	
 	
 	private void perfromAnalyseGame(Button b) {
       b.setOnAction(e -> {
-          hsc.switchtoHomeScreen(e);
+          hsc.switchToAnalyzerScene(App.getStage());
           CreateGameController.clearUsedNames();
           CreateGameController.clearColors();
-          //CreateGameController.deleteGame();
+        
       });
   }
 		

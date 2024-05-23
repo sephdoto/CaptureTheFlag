@@ -3,8 +3,6 @@ package org.ctf.ui.map;
 import configs.Dialogs;
 import configs.GameMode;
 import java.util.ArrayList;
-import javafx.scene.effect.Glow;
-import javafx.scene.paint.Color;
 import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.state.GameState;
@@ -14,7 +12,7 @@ import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
 
-public class Game {
+public class MoveVisualizer {
 
 	static GamePane cb; 
 	static ArrayList<int[]> possibleMoves;

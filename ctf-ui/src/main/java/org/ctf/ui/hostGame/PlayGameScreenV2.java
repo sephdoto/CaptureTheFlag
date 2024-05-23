@@ -21,7 +21,7 @@ import org.ctf.ui.customobjects.MyCustomColorPicker;
 import org.ctf.ui.customobjects.Timer;
 import org.ctf.ui.map.BaseRep;
 import org.ctf.ui.map.CostumFigurePain;
-import org.ctf.ui.map.Game;
+import org.ctf.ui.map.MoveVisualizer;
 import org.ctf.ui.map.GamePane;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -279,12 +279,12 @@ public class PlayGameScreenV2 extends Scene {
       drawGamePane(state);
       if (isRemote) {
         if (mainClient.isItMyTurn() && !(mainClient instanceof AIClient)) {
-          Game.initializeGame(gm, mainClient);
+          MoveVisualizer.initializeGame(gm, mainClient);
         }
       } else {
         for (Client local : CreateGameController.getLocalHumanClients()) {
           if (local.isItMyTurn()) {
-            Game.initializeGame(gm, local);
+            MoveVisualizer.initializeGame(gm, local);
             oneClientCanGiveUp = true;
           }
         }

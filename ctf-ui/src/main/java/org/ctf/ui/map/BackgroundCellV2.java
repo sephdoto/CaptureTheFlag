@@ -12,7 +12,15 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+/**
+ * Visual representation of a quadratic cell in the grid in which objects can be placed
+ * 
+ * @author Manuel Krakowski
+ */
+
 public class BackgroundCellV2 extends Pane {
+
+
   private int x, y; // Coordinates of the cell in the grid
   private boolean occupied; // indicates whether there currently is an object on the cell
   private Circle rc; // Circle to show possible move on empty cell
@@ -21,8 +29,15 @@ public class BackgroundCellV2 extends Pane {
   private StackPane base; // StackPane as base of the cell where objects are placed on
   private CostumFigurePain child; // if there is a piece on the cell, null otherwise
   private BaseRep teamBase; // if there is a base on the cell, null otherwise
-  Color testColor;
+  private Color testColor;
 
+  /**
+   * Initializes a background-cell in the grid
+   * 
+   * @author Manuel Krakowski
+   * @param x x-coordinate in the grid
+   * @param y y-coordinate in the grid
+   */
   public BackgroundCellV2(int x, int y) {
     testColor = Color.rgb(173, 216, 230, 0.7);
     this.setStyle("-fx-border-color: black; " + "-fx-border-width: 1.2px ");
@@ -104,6 +119,7 @@ public class BackgroundCellV2 extends Pane {
 
   /**
    * adds a Block to the cell and resizes it with it
+   * 
    * @author Manuel Krakowski
    * 
    */
@@ -112,7 +128,7 @@ public class BackgroundCellV2 extends Pane {
     NumberBinding roundSize = Bindings.createIntegerBinding(() -> binding.intValue(), binding);
     occupied = true;
     BlockRepV3 blocki = new BlockRepV3();
-    if(!isVisible) {
+    if (!isVisible) {
       blocki.setOpacitytoZero();
     }
     blocki.maxWidthProperty().bind(roundSize);
@@ -124,6 +140,7 @@ public class BackgroundCellV2 extends Pane {
 
   /**
    * Adds a teams base to the cell
+   * 
    * @author Manuel Krakowski
    * @param r of a team
    */
@@ -142,6 +159,7 @@ public class BackgroundCellV2 extends Pane {
 
   /**
    * Changes the background-color of the cell when the piece or base on it is attackable
+   * 
    * @author Manuel Krakowski
    */
   public void showAttackable() {
@@ -151,15 +169,17 @@ public class BackgroundCellV2 extends Pane {
 
   /**
    * Changes the color of the cell to indicate that it was part of the last-move
+   * 
    * @author Manuel Krakowski
    */
   public void showLastMove() {
     this.setStyle("-fx-background-color: rgb(0, 0, 255, 0.2);" + "-fx-border-color: blue; "
         + "-fx-border-width: 1.2px");
   }
-  
+
   /**
    * Changes the color of the cell based on a specific coler-code to show the last-move
+   * 
    * @author Manuel Krakowski
    * @param col Color which the last move representation has
    */
@@ -167,9 +187,10 @@ public class BackgroundCellV2 extends Pane {
     this.setStyle("-fx-background-color: " + hextoString(col) + "; -fx-border-color: " + col + ";"
         + "-fx-border-width: 1.2px");
   }
-  
+
   /**
    * transform a hex-color to a rgb-color which is necessary to change the opacity
+   * 
    * @author Manuel Krakowski
    * @param col Color in hex-representation
    * @return Coler in rgb representation with a lower opacity
@@ -178,20 +199,22 @@ public class BackgroundCellV2 extends Pane {
     col = col.replace("#", "");
     String s = "rgb(";
     int r = Integer.parseInt(col.substring(0, 2), 16);
-    s+= r;
-    s+= ",";
+    s += r;
+    s += ",";
     int g = Integer.parseInt(col.substring(2, 4), 16);
-    s+= g;
-    s+= ",";
+    s += g;
+    s += ",";
     int b = Integer.parseInt(col.substring(4, 6), 16);
-    s+= b;
-    s+= ",";
-    s+= "0.2)";
+    s += b;
+    s += ",";
+    s += "0.2)";
     return s;
   }
 
   /**
-   * Draws a little circle on the cell which indicates that the currently selcted piece can move on it
+   * Draws a little circle on the cell which indicates that the currently selcted piece can move on
+   * it
+   * 
    * @author Manuel Krakowski
    */
   public void showPossibleMove() {
@@ -201,6 +224,7 @@ public class BackgroundCellV2 extends Pane {
 
   /**
    * Draws a bigger circle around the figure which is currently selected
+   * 
    * @author Manuel Krakowski
    */
   public void showSelected() {
@@ -211,6 +235,7 @@ public class BackgroundCellV2 extends Pane {
 
   /**
    * resets the cell to is default-style
+   * 
    * @author Manuel Krakowski
    */
   public void deselect() {
@@ -221,16 +246,17 @@ public class BackgroundCellV2 extends Pane {
       base.getChildren().remove(rc2);
     }
   }
-  
+
   @Deprecated
   public void resetCircle() {
     rc.setFill(Color.WHITE);
   }
-  
 
-  
+
+
   /**
    * Creates the base of the Cell Where all objects on it are placed
+   * 
    * @author Manuel Krakowski
    */
   public void createBase() {
@@ -256,7 +282,7 @@ public class BackgroundCellV2 extends Pane {
         if (active) {
           performClickOnCell();
         } else if (!occupied) {
-          Game.deselectFigure();
+          MoveVisualizer.deselectFigure();
         }
       }
     });
@@ -266,21 +292,23 @@ public class BackgroundCellV2 extends Pane {
 
   /**
    * When the cell is clicked a move-request is sent
+   * 
    * @author Manuel Krakowski
    */
   public void performClickOnCell() {
-    SoundController.playSound(Game.getCurrent().getPiece().getDescription().getType(), SoundType.MOVE);
+    SoundController.playSound(MoveVisualizer.getCurrent().getPiece().getDescription().getType(),
+        SoundType.MOVE);
     int[] xk = {x, y};
-    Game.makeMoveRequest(xk);
+    MoveVisualizer.makeMoveRequest(xk);
   }
-  
-  
- //Getters and Setters
- /////////////////////////////////////////////////////////////////////////////////
- //////////////////////////////////////////////////////////////////////////////////
-  
-  
-  
+
+
+  // Getters and Setters
+  /////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////
+
+
+
   public BaseRep getTeamBase() {
     return teamBase;
   }
@@ -288,7 +316,7 @@ public class BackgroundCellV2 extends Pane {
   public void setTeamBase(BaseRep teamBase) {
     this.teamBase = teamBase;
   }
-  
+
   public int[] getPosition() {
     int[] s = {x, y};
     return s;

@@ -142,15 +142,15 @@ public void setOldPosinAnalyzer(int[] oldPosinAnalyzer) {
   private void addListeners() {
     this.heightListener = new ChangeListener<Number>() {
       public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth, Number newWidth) {
-        if(Game.getCurrent()!=null) {
-          Game.getCurrent().performSelectClick();
+        if(MoveVisualizer.getCurrent()!=null) {
+          MoveVisualizer.getCurrent().performSelectClick();
         }
       }
     };
     vBox.heightProperty().addListener(this.heightListener);
     this.widthListener = new ChangeListener<Number>() {
       public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth, Number newWidth) {
-        if(Game.getCurrent()!=null) {
+        if(MoveVisualizer.getCurrent()!=null) {
           //Game.getCurrent().performSelectClick();
         }
 

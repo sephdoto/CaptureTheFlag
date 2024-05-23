@@ -123,7 +123,7 @@ public class CostumFigurePain extends Pane {
   public void performAttackClick() {
     SoundController.playSound(piece.getDescription().getType(), SoundType.KILL);
     int[] xk = {posX, posY};
-    Game.makeMoveRequest(xk);
+    MoveVisualizer.makeMoveRequest(xk);
   }
 
 
@@ -136,8 +136,8 @@ public class CostumFigurePain extends Pane {
   public void performSelectClick() {
     SoundController.playSound(piece.getDescription().getType(), SoundType.SELECT);
     showPieceInformationWhenClicked();
-    Game.setCurrent(CostumFigurePain.this);
-    Game.showPossibleMoves();
+    MoveVisualizer.setCurrent(CostumFigurePain.this);
+    MoveVisualizer.showPossibleMoves();
     parent.showSelected();
   }
 
