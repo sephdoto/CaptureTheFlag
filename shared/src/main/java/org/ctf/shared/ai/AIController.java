@@ -23,7 +23,6 @@ public class AIController {
   private int thinkingTime;
   private GameStateNormalizer normalizedGameState;
   private MonteCarloTreeSearch mcts;
-  private boolean backgroundCalculate;
   
   
   /**
@@ -36,8 +35,8 @@ public class AIController {
    */
   public AIController(GameState gameState, AI ai, AIConfig config, int thinkingTime) {
     setActive(false);
-//    setThinkingTime(thinkingTime < 0 ? 5000 : thinkingTime == 0 ? 500 : thinkingTime * 1000);
-    this.setThinkingTime(2000);
+    setThinkingTime(thinkingTime < 0 ? 5000 : thinkingTime == 0 ? 700 : thinkingTime * 1000);
+//    this.setThinkingTime(2000);
     this.setAi(config == null ? AI.RANDOM : ai);
     this.normalizedGameState = new GameStateNormalizer(gameState, true);
     this.setConfig(config);
@@ -62,7 +61,6 @@ public class AIController {
             new org.ctf.shared.ai.mcts3.ReferenceGameState(
                 normalizedGameState.getNormalizedGameState()), null, new ReferenceMove(null, new int[2]));
         setMcts(new org.ctf.shared.ai.mcts3.MCTS(root3, getConfig()));
-        this.backgroundCalculate = true;
         break;
       case EXPERIMENTAL:
         org.ctf.shared.ai.mcts2.TreeNode root2 = new org.ctf.shared.ai.mcts2.TreeNode(null, 

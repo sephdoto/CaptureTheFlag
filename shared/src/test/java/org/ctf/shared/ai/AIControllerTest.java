@@ -44,7 +44,7 @@ class AIControllerTest {
     for(AI ai : AI.values()) {
       if(ai == AI.HUMAN) continue;
       //    AI ai = AI.IMPROVED; {
-      AIController aic = new AIController(JsonTools.readGameState("test"), ai, new AIConfig(), 0);
+      AIController aic = new AIController(JsonTools.readGameState("Default"), ai, new AIConfig(), 0);
       for(int i=0; i<3; i++) {
         try {
           Move move = aic.getNextMove();

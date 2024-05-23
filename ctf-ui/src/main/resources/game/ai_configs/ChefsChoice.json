@@ -1,11 +1,11 @@
 {
-  "pieceMultiplier": 3,
+  "pieceMultiplier": 2,
   "directionMultiplier": 1,
   "shapeReachMultiplier": 1,
   "C": 1.3591409142295225,
-  "distanceBaseMultiplier": 5,
+  "distanceBaseMultiplier": 7,
   "attackPowerMultiplier": 2,
   "MAX_STEPS": 100,
-  "numThreads": 2,
+  "numThreads": 4,
   "flagMultiplier": 1000
 }
