@@ -29,7 +29,7 @@ public interface MonteCarloTreeSearch {
   /**
    * Sets the root of this MCTS instance
    *
-   * @param MonteCarloTreeNode new root node
+   * @param root new root node
    */
   public void setRoot(MonteCarloTreeNode root);
   
@@ -78,7 +78,7 @@ public interface MonteCarloTreeSearch {
   /**
    * Sets the current heuristic counter to a given int value.
    * 
-   * @param simulationCounter new heurstic counter value
+   * @param heuristicCounter new heurstic counter value
    */
   public void setHeuristicCounter(int heuristicCounter);
   

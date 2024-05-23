@@ -67,7 +67,7 @@ public class BoardController {
    * Helper Method for initializing the Grid with Empty spaces
    *
    * @author rsyed
-   * @return String[][] with empty boxes
+   * @return string grid with empty boxes
    */
   public void initEmptyGrid() {
     String[][] grid = new String[this.gridSize[0]][this.gridSize[1]];
@@ -83,7 +83,8 @@ public class BoardController {
    * A team gets initialized and put in the GameState.
    *
    * @author sistumpf, ysiebenh
-   * @param int teamID, MapTemplate template
+   * @param teamID int 
+   * @param MapTemplate template
    * @return initialized team
    */
   public Team initializeTeam(int teamID, MapTemplate template) {
@@ -139,8 +140,7 @@ public class BoardController {
    * The upper and lower boundary is inclusive.
    * 
    * @author sistumpf
-   * @return int[][] containing a team and its boundaries as
-   *    {team index}{lower y, upper y, lower x, upper x}
+   * @return two dimensional int array containing a team and its boundaries as {team index}{lower y, upper y, lower x, upper x}
    */
   public int[][] getBoundaries(){
     int[][] boundaries = new int[this.numberOfTeams][4];
@@ -163,10 +163,9 @@ public class BoardController {
    * This is a helper method to place the blocks on the board in the create method
    *
    * @author sistumpf
-   * @param MapTemplate mt, used as a seed for pseudo random number generating
-   * @param String[][] grid
-   * @param int blocks, number of blocks to be placed
-   * @return String[][] grid with blocks placed on it
+   * @param mt, used as a seed for pseudo random number generating
+   * @param grid
+   * @param blocks, number of blocks to be placed
    */
   void placeBlocks(MapTemplate mt, String[][] grid, int blocks) {
     ArrayList<Integer[]> freeList = new ArrayList<Integer[]>();
@@ -190,10 +189,10 @@ public class BoardController {
    * random values. Changing modifier changes the resulting output for the same seed.
    *
    * @author sistumpf
-   * @param MapTemplate mt, gets converted to a random seed
-   * @param int modifier, to get different random values with the same seed
-   * @param upperBound, upper bound for returned random values, upperBound = 3 -> values 0 to 2
-   * @return
+   * @param mt gets converted to a random seed
+   * @param modifier to get different random values with the same seed
+   * @param upperBound upper bound for returned random values, upperBound = 3 -> values 0 to 2
+   * @return a pseudo random number
    */
   int seededRandom(MapTemplate mt, int modifier, int upperBound) {
     int seed = (new Gson().toJson(mt) + String.valueOf(modifier)).hashCode();
@@ -204,8 +203,8 @@ public class BoardController {
    * Places the bases on the grid.
    *
    * @author sistumpf
-   * @param GameState gameState
-   * @param MapTemplate template
+   * @param gameState
+   * @param template
    */
   public void placeBases(GameState gameState) {
     String[][] grid = gameState.getGrid();
@@ -221,7 +220,7 @@ public class BoardController {
    * Returns the partition size to cut the board in a(n) = floor(n^2/4) partitions, where teams <= a(n)
    * 
    * @author sistumpf
-   * @return int[]{yPartitionsSize, xPartitionsSize}
+   * @return {yPartitionsSize, xPartitionsSize}
    */
   private double[] getPartitionSizes() {
     int yCuts = 1;
@@ -244,8 +243,8 @@ public class BoardController {
    * Chooses the correct method to place the pieces onto the grid.
    *
    * @author sistumpf
-   * @param GameState gameState
-   * @param MapTemplate template
+   * @param gameState
+   * @param template
    * @throws TooManyPiecesException
    */
   void initPieces(PlacementType placement) throws TooManyPiecesException {

@@ -68,7 +68,7 @@ public class MoveVisualizer {
   /**
    * sends a move-request by using the local client who currently has its turn. can be either called
    * by {@link BackgroundCellV2} when an empty cell is clicked {@link CostumFigurePain} when a piece
-   * is attacked or {@BaseRep} when a base is conquered
+   * is attacked or BaseRep when a base is conquered
    * 
    * @author Manuel Krakowski
    * @param newPos: position where the current piece wants to move

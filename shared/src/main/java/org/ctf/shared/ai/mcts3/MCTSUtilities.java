@@ -212,9 +212,9 @@ public class MCTSUtilities {
    *
    * @param gameState
    * @param piece
-   * @param ArrayList<int[]> possibleMoves, will be cleared and filled
+   * @param possibleMoves, will be cleared and filled
    * @param change a Reference move that gets altered instead of creating and abandoning a new object
-   * @return ArrayList<int[]> that contains all valid positions a piece could move to
+   * @return arraylist that contains all valid positions a piece could move to
    */
   public static ArrayList<int[]> getPossibleMoves(
       ReferenceGameState gameState, Piece piece, ArrayList<int[]> possibleMoves, ReferenceMove change) {
@@ -258,8 +258,8 @@ public class MCTSUtilities {
    *
    * @param gameState
    * @param piece
-   * @return positions an ArrayList containing all valid moves
-   * @param change a Reference move that gets altered instead of creating and abandoning a new object
+   * @param positions an ArrayList containing all valid moves
+   * @return arraylist with all shape moves
    * @throws InvalidShapeException if the Shape is not yet implemented here
    */
   public static ArrayList<int[]> getShapeMoves(
@@ -347,8 +347,8 @@ public class MCTSUtilities {
 
   /**
    * Returns a Move from a given HashMap of possible directions and and their reach to move in. This
-   * method picks a random dirction-reach pair and returns a Move to this position using {@link
-   * #checkMoveValidity(ReferenceGameState gameState, Piece piece, int direction, int reach)}. If the
+   * method picks a random dirction-reach pair and returns a Move to this position using 
+   * checkMoveValidity. If the
    * position is invalid this process is tried again till a valid move is generated. If a random
    * position is invalid the HashMap reach value is lowered to ensure the same position is not
    * picked again. This method assumes the HashMap contains elements and all directions contain at

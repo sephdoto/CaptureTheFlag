@@ -210,8 +210,8 @@ public class MCTSUtilities {
    * for a piece (if it's caused by another piece), so the PieceVision Grid can be correctly
    * initialized.
    *
-   * @param ReferenceGameState gameState
-   * @param Piece piece that moves
+   * @param gameState
+   * @param piece that moves
    * @param possibleMoves will contain all possible moves after the method is finished.
    * @return ArrayList<int[]> that contains all first sightline violations could move to but they
    *     are occupied by another piece.
@@ -258,7 +258,7 @@ public class MCTSUtilities {
    *
    * @param gameState
    * @param picked
-   * @return ArrayList<int[direction,reach]>
+   * @return direction, reach list
    */
   public static ArrayList<int[]> createDirectionMapWithPieceVision(
       ReferenceGameState gameState, Piece picked, ArrayList<int[]> dirMap) {
@@ -356,7 +356,7 @@ public class MCTSUtilities {
    * location on the grid.
    *
    * @param gameState
-   * @param pieceID
+   * @param piece
    * @return ArrayList<int[]> that contains all valid positions a piece could move to
    */
   public static ArrayList<int[]> getPossibleMoves(
@@ -455,7 +455,7 @@ public class MCTSUtilities {
    *
    * @param gameState
    * @param picked
-   * @return ArrayList<int[direction,reach]>
+   * @return direction, piece list
    */
   public static ArrayList<int[]> createDirectionMap(
       ReferenceGameState gameState, Piece picked, ArrayList<int[]> dirMap) {
@@ -788,7 +788,7 @@ public class MCTSUtilities {
    * Selects and returns a random Move from an ArrayList which only contains valid Moves.
    *
    * @param positionArrayList
-   * @param pieceId
+   * @param piece
    * @return randomly picked move
    */
   public static ReferenceMove getRandomShapeMove(ArrayList<int[]> positionArrayList, Piece piece) {

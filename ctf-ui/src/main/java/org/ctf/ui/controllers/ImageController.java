@@ -108,7 +108,7 @@ public class ImageController {
    * Picks a random picture out of the folder, allowing several backgrounds ...
    * 
    * @author sistumpf
-   * @param  folderName Name of the requested picture types folder name, like "homescreen"
+   * @param  type the ImageType
    * @return a fitting picture
    */
   public static Image loadRandomThemedImage(ImageType type) {

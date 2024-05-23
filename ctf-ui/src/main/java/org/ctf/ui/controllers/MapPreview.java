@@ -35,7 +35,7 @@ public class MapPreview {
    * Waits 80ms between commands in case the server is slow.
    *
    * @return GameState object containing all data from the server (including blocks and placement)
-   * @author rsyed & ysiebenh
+   * @author rsyed, ysiebenh
    */
   public GameState getGameState() throws Accepted {
     Client[] clients = new Client[mapTemplate.getTeams()];

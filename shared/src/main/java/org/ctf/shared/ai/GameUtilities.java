@@ -207,9 +207,9 @@ public class GameUtilities {
    *
    * @param gameState
    * @param piece
-   * @param ArrayList<int[]> possibleMoves, will be cleared and filled
+   * @param possibleMoves, will be cleared and filled
    * @param change a Reference move that gets altered instead of creating and abandoning a new object
-   * @return ArrayList<int[]> that contains all valid positions a piece could move to
+   * @return arraylist that contains all valid positions a piece could move to
    */
   public static ArrayList<int[]> getPossibleMoves(
       GameState gameState, Piece piece, ArrayList<int[]> possibleMoves, ReferenceMove change) {
@@ -519,7 +519,7 @@ public class GameUtilities {
   /**
    * Checks if a position on the grid is occupied by a piece from the current team.
    *
-   * @param grid
+   * @param gameState
    * @param pos
    * @return true if the position is occupied by a Piece of the same Team
    */
