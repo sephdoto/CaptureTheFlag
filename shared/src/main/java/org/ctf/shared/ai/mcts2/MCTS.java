@@ -10,6 +10,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.ai.MonteCarloTreeNode;
@@ -425,11 +426,13 @@ public class MCTS implements MonteCarloTreeSearch {
           continue;
         }
         if(MCTSUtilities.otherTeamsBase(parent.getReferenceGameState().getGrid(), pos, piece.getPosition())) {
-          return new ReferenceMove(piece, pos);
+          if(ThreadLocalRandom.current().nextInt(10) != 3)  //90% chance to take a flag
+            return new ReferenceMove(piece, pos);
         }
         if(!MCTSUtilities.occupiedBySameTeam(parent.getReferenceGameState(), piece.getPosition(), pos)
             && MCTSUtilities.occupiedByWeakerOpponent(parent.getReferenceGameState().getGrid().getPosition(pos[1], pos[0]).getPiece(), piece)) {
-          return new ReferenceMove(piece, pos);
+          if(ThreadLocalRandom.current().nextInt(2) < 1)  //50% chance to take a piece
+            return new ReferenceMove(piece, pos);
         }
       }
     }
