@@ -412,9 +412,7 @@ public class AiAnalyserNew extends Scene {
     Button b = new Button();
     b.prefHeightProperty().bind(h.heightProperty().multiply(1));
     b.prefWidthProperty().bind(h.widthProperty().divide(10));
-    b.setOnAction(e -> {
-      perfromNextClick();
-    });
+    
     b.getStyleClass().add("triangle-button");
     b.fontProperty().bind(leaveButtonText);
     Button rec = new Button("Show AI's Choice");
@@ -422,12 +420,15 @@ public class AiAnalyserNew extends Scene {
     rec.setOnAction(e -> {
       performAiButtonClick(rec);
     });
+    b.setOnAction(e -> {
+      perfromNextClick(rec);
+    });
     rec.prefWidthProperty().bind(h.widthProperty().divide(4));
     rec.getStyleClass().add("rectangle-button");
     rec.fontProperty().bind(leaveButtonText);
     Button leftRec = new Button("");
     leftRec.setOnAction(e -> {
-      perfomBackClick();
+      perfomBackClick(rec);
     });
     leftRec.prefHeightProperty().bind(h.heightProperty().multiply(1));
     leftRec.prefWidthProperty().bind(h.widthProperty().divide(10));
@@ -455,9 +456,9 @@ public class AiAnalyserNew extends Scene {
     
   }
 
-  private void perfomBackClick() {
+  private void perfomBackClick(Button aiButton) {
     if (currentMove > 1) {
-      
+      aiButton.setText("Show AI's Choice");
       rows[currentMove].getStyleClass().clear();
       rows[--currentMove].getStyleClass().add("blue-glow-hbox");
       System.out.println(currentMove);
@@ -471,15 +472,16 @@ public class AiAnalyserNew extends Scene {
 
   }
 
-  private void perfromNextClick() {
+  private void perfromNextClick(Button aiButton) {
     if (currentMove < totalmoves - 1) {
-     
+      aiButton.setText("Show AI's Choice");
       rows[currentMove].getStyleClass().clear();
       rows[++currentMove].getStyleClass().add("blue-glow-hbox");
       System.out.println(currentMove);
       setNewProgress();
       setNewToolTip();
       setNewGameState();
+      
       if ((currentMove % 5 == 0)) {
         scrollToLabel(scroller, content, content.getChildren().get(currentMove - 5));
       }
