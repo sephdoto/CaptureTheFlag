@@ -4,18 +4,13 @@ import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.controllers.SoundController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Polygon;
 
 public class BackgroundCellV2 extends Pane {
   private int x, y; // Coordinates of the cell in the grid
@@ -163,11 +158,22 @@ public class BackgroundCellV2 extends Pane {
         + "-fx-border-width: 1.2px");
   }
   
+  /**
+   * Changes the color of the cell based on a specific coler-code to show the last-move
+   * @author Manuel Krakowski
+   * @param col Color which the last move representation has
+   */
   public void showLastMoveForAnalyzer(String col) {
     this.setStyle("-fx-background-color: " + hextoString(col) + "; -fx-border-color: " + col + ";"
         + "-fx-border-width: 1.2px");
   }
   
+  /**
+   * transform a hex-color to a rgb-color which is necessary to change the opacity
+   * @author Manuel Krakowski
+   * @param col Color in hex-representation
+   * @return Coler in rgb representation with a lower opacity
+   */
   private String hextoString(String col) {
     col = col.replace("#", "");
     String s = "rgb(";
