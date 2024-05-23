@@ -145,9 +145,10 @@ public class AnalyzedGameState {
    * @return the same GameState but with colors
    */
   private GameState setColors(GameState gameState) {
-    for(int i=0; i<gameState.getTeams().length; i++)
-      if(gameState.getTeams()[i] != null)
-        gameState.getTeams()[i].setColor(this.initialGameState.getTeams()[i].getColor());
+    if(this.initialGameState != null)
+      for(int i=0; i<gameState.getTeams().length; i++)
+        if(gameState.getTeams()[i] != null)
+          gameState.getTeams()[i].setColor(this.initialGameState.getTeams()[i].getColor());
     return gameState;
   }
   ///////////////////////////////////////

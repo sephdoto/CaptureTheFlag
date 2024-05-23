@@ -493,6 +493,10 @@ class MCTSTest {
   void testBackpropagate() {
     mcts.getRoot().getChildren()[0] = mcts.expand(mcts.getRoot());
     mcts.backpropagate(mcts.getRoot().getChildren()[0], mcts.simulate(mcts.getRoot().getChildren()[0]));
+    mcts.getRoot().getChildren()[0] = mcts.expand(mcts.getRoot());
+    mcts.backpropagate(mcts.getRoot().getChildren()[0], mcts.simulate(mcts.getRoot().getChildren()[0]));
+    mcts.getRoot().getChildren()[0] = mcts.expand(mcts.getRoot());
+    mcts.backpropagate(mcts.getRoot().getChildren()[0], mcts.simulate(mcts.getRoot().getChildren()[0]));
 
     assertTrue(Arrays.stream(mcts.getRoot().getChildren()[0].getWins()).sum() > 0);
     assertTrue(Arrays.stream(mcts.getRoot().getWins()).sum() > 0);
