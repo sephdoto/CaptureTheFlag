@@ -233,7 +233,6 @@ public class CheatboardListener extends NativeKeyAdapter {
       Constants.musicVolume = 1;
       Constants.soundVolume = 1;
     } else if (match == cheatCodes.get(7)) {    // switch the current theme
-      System.out.println(Constants.theme);
       Constants.theme = Enums.Themes.values()[(Constants.theme.ordinal() +1) % Enums.Themes.values().length];
       SettingsSetter.saveCustomSettings();
       App.chagngeHomescreenBackground();

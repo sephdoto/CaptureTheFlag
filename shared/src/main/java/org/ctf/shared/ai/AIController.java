@@ -23,6 +23,7 @@ public class AIController {
   private int thinkingTime;
   private GameStateNormalizer normalizedGameState;
   private MonteCarloTreeSearch mcts;
+  private boolean backgroundCalculate;
   
   
   /**
@@ -61,6 +62,7 @@ public class AIController {
             new org.ctf.shared.ai.mcts3.ReferenceGameState(
                 normalizedGameState.getNormalizedGameState()), null, new ReferenceMove(null, new int[2]));
         setMcts(new org.ctf.shared.ai.mcts3.MCTS(root3, getConfig()));
+        this.backgroundCalculate = true;
         break;
       case EXPERIMENTAL:
         org.ctf.shared.ai.mcts2.TreeNode root2 = new org.ctf.shared.ai.mcts2.TreeNode(null, 
@@ -120,6 +122,7 @@ public class AIController {
    * @param move a move that updates the gameState, if its different than the last one
    */
   public boolean update(Move move) {
+    try {
     if(this.ai == AI.HUMAN || this.ai == AI.RANDOM) return false;
     if(moveEquals(this.normalizedGameState.getOriginalGameState().getLastMove(), move)) return false;
     Move normove = this.normalizedGameState.normalizedMove(move);
@@ -128,6 +131,7 @@ public class AIController {
     
     MonteCarloTreeNode[] children = getMcts().getRoot().getChildren();
     for(int i=0; i<children.length; i++) {
+      if(children[i] == null) continue;
       Move childMove = children[i].getGameState().getLastMove();
       if(moveEquals(childMove, normove)) {
         getMcts().setRoot(children[i]);
@@ -138,6 +142,10 @@ public class AIController {
       }
     }
     return false;
+    } catch (Exception e) {
+      e.printStackTrace();
+      return false;
+    }
   }
 
   public void shutDown() {
