@@ -284,6 +284,16 @@ public class PopupCreatorGameOver {
 			//CreateGameController.deleteGame();
 		});
 	}
+	
+	
+	private void perfromAnalyseGame(Button b) {
+      b.setOnAction(e -> {
+          hsc.switchtoHomeScreen(e);
+          CreateGameController.clearUsedNames();
+          CreateGameController.clearColors();
+          //CreateGameController.deleteGame();
+      });
+  }
 		
 	/**
 	 * Creates a default button with a special style and size, method is used to create play-again	and analyze-game buttons
@@ -299,6 +309,8 @@ public class PopupCreatorGameOver {
 		configButton.prefHeightProperty().bind(configButton.widthProperty().multiply(0.25));
 		if(text.equals("Play Again")) {
 			perfromPlayAgain(configButton);
+		}else {
+		  perfromAnalyseGame(configButton);
 		}
 		return configButton;
 	}
