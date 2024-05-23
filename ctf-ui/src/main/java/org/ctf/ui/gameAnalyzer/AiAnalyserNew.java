@@ -1,6 +1,5 @@
 package org.ctf.ui.gameAnalyzer;
 
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
@@ -17,11 +16,9 @@ import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
 import org.ctf.ui.App;
-import org.ctf.ui.StroeMaps;
 import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.map.GamePane;
-import org.springframework.util.StringUtils;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -47,7 +44,11 @@ import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
 
-
+/**
+ * Analyzed a saved Game and classifies the users moves by comparing them to the moves of an AI
+ * 
+ * @author Manuel Krakowski
+ */
 public class AiAnalyserNew extends Scene {
 
   // Controller which is used to switch to the play-game-scene
@@ -70,10 +71,10 @@ public class AiAnalyserNew extends Scene {
   private ObjectProperty<Font> moveTableContent;
   SimpleObjectProperty<Insets> padding =
       new SimpleObjectProperty<>(new Insets(this.getWidth() * 0.01));
-  
+
   private HBox[] rows;
-  
-  
+
+
   private Label[] teamLabels;
   private Label[] classificationlabels;
   private Double[] percentagesbyUser;
@@ -85,7 +86,7 @@ public class AiAnalyserNew extends Scene {
   private int[] heuristics;
   private int[] simulations;
   private VBox progressBar;
-  private  int totalmoves;
+  private int totalmoves;
   private int scrollBackIndicator;
   int currentMove;
   private AnalyzedGameState[] analysedGames;
@@ -96,11 +97,10 @@ public class AiAnalyserNew extends Scene {
 
   public AiAnalyserNew(HomeSceneController hsc, double width, double height) {
     super(new StackPane(), width, height);
-    if(!createGameSaver()) {
+    if (!createGameSaver()) {
       this.hsc.switchtoHomeScreen(new ActionEvent());
       return;
     }
-    // totalmoves = 10;
     this.hsc = hsc;
     manageFontSizes();
     rows = new HBox[totalmoves];
@@ -139,7 +139,7 @@ public class AiAnalyserNew extends Scene {
     createLayout();
     initalize();
   }
-  
+
   /**
    * Opens a FileChooser so the user can select a game
    * 
@@ -152,7 +152,7 @@ public class AiAnalyserNew extends Scene {
     choose.setInitialDirectory(new File(Constants.saveGameFolder));
     choose.setTitle("choose your saved game");
     File file = choose.showOpenDialog(null);
-    if(file != null)
+    if (file != null)
       gsh.readFile(file.getName().substring(0, file.getName().lastIndexOf(".")));
     else
       return false;
@@ -161,15 +161,21 @@ public class AiAnalyserNew extends Scene {
     return true;
   }
 
+
+  /**
+   * goes thorugh all the moves that were made in the game and saved them internally to handle the
+   * data
+   * 
+   * @author Manuel Krakowski
+   */
   private void initalize() {
-    
     int currentMove = 0;
     try {
       GameAnalyzer analyzer = new GameAnalyzer(gsh.getSavedGame(), AI.MCTS, new AIConfig(), 10);
       analysedGames = analyzer.getResults();
-      while (analyzer.isActive()|| (currentMove < analyzer.howManyMoves())) {
+      while (analyzer.isActive() || (currentMove < analyzer.howManyMoves())) {
         if (currentMove != analyzer.getCurrentlyAnalyzing()) {
-         
+
           AnalyzedGameState g = analyzer.getResults()[currentMove];
           g.printMe();
           GameState state = g.getPreviousGameState();
@@ -178,12 +184,12 @@ public class AiAnalyserNew extends Scene {
           String col = g.getMoveEvaluation().getColor();
           classificationlabels[currentMove].setStyle("-fx-text-fill: " + col);
           moveColors[currentMove] = col;
-          percentagesbyUser[currentMove] =Double.valueOf(g.getUserWinPercentage());
+          percentagesbyUser[currentMove] = Double.valueOf(g.getUserWinPercentage());
           percentagesbyAI[currentMove] = Double.valueOf(g.getAIWinPercentage());
           simulations[currentMove] = g.getSimulations();
           heuristics[currentMove] = g.getHeuristic();
           expansions[currentMove] = g.getExpansions();
-         
+
           userStates[currentMove] = g.getUserChoice();
           aiStates[currentMove] = g.getAiChoice();
           currentMove++;
@@ -202,7 +208,11 @@ public class AiAnalyserNew extends Scene {
     }
   }
 
-
+  /**
+   * Manages the font-sizes on the whole scene
+   * 
+   * @author Manuel Krakowski
+   */
   private void manageFontSizes() {
     widthProperty().addListener(new ChangeListener<Number>() {
       public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth,
@@ -239,6 +249,13 @@ public class AiAnalyserNew extends Scene {
   }
 
 
+  /**
+   * Creates a custom progress-bar which shows how good the move of the user was in %
+   * 
+   * @author Manuel Krakowski
+   * @param parent used for relative resizing
+   * @return progress-bar
+   */
   private VBox createProgressBar(HBox parent) {
     VBox progresscontainer = new VBox();
     progresscontainer.setAlignment(Pos.CENTER);
@@ -253,51 +270,62 @@ public class AiAnalyserNew extends Scene {
     });
     progressBar.getStyleClass().add("option-pane");
     // progressBar.setAlignment(Pos.BOTTOM_CENTER);
-   Tooltip tooltip = new Tooltip("Expandierte Knoten:" + "\n" + "angewendete Heuristiken:" + "\n"
-       + "Angewendete Simulationen:");
+    Tooltip tooltip = new Tooltip("Expandierte Knoten:" + "\n" + "angewendete Heuristiken:" + "\n"
+        + "Angewendete Simulationen:");
     tooltip.setStyle("-fx-background-color: blue");
     Duration delay = new Duration(1);
     tooltip.setShowDelay(delay);
     Duration displayTime = new Duration(10000);
     tooltip.setShowDuration(displayTime);
     tooltip.setFont(new Font(15));
-    progressBar.setPickOnBounds(true);    Tooltip.install(progressBar, tooltip);
+    progressBar.setPickOnBounds(true);
+    Tooltip.install(progressBar, tooltip);
     progressBar.prefWidthProperty().bind(progresscontainer.widthProperty().divide(2));
     progressBar.maxWidthProperty().bind(progresscontainer.widthProperty().divide(2));
     progressBar.prefHeightProperty().bind(progresscontainer.heightProperty());
- progresscontainer.getChildren().add(progressBar);
+    progresscontainer.getChildren().add(progressBar);
     VBox progress = new VBox();
     progress.prefHeightProperty().bind(progressBar.heightProperty().multiply(1));
     progress.prefWidthProperty().bind(progressBar.widthProperty());
     progress.getStyleClass().add("progress-pane");
-    Label l = new Label("100.0");    l.fontProperty().bind(moveTableContent);
+    Label l = new Label("100.0");
+    l.fontProperty().bind(moveTableContent);
     l.getStyleClass().add("vertical-label");
     progress.getChildren().add(l);
     progressBar.getChildren().add(progress);
     return progresscontainer;
 
   }
-  
+
+  /**
+   * Changes the percentage qualification of the move when the move that currently is looked at
+   * changes
+   * 
+   * @author Manuel Krakowski
+   */
   private void setNewProgress() {
     progressBar.getChildren().clear();
     VBox progress = new VBox();
-    progress.prefHeightProperty().bind(progressBar.heightProperty().multiply(percentagesbyUser[currentMove]/100));
+    progress.prefHeightProperty()
+        .bind(progressBar.heightProperty().multiply(percentagesbyUser[currentMove] / 100));
     progress.prefWidthProperty().bind(progressBar.widthProperty());
     progress.getStyleClass().add("progress-pane");
-//    progress.setStyle(" -fx-background-color: " + userStates[currentMove].getTeams()[userStates[currentMove].getCurrentTeam()].getColor()+ "; \r\n"
-//        + "     -fx-background-radius: 20px; \r\n"
-//        + "     -fx-border-radius: 20px;\r\n"
-//        + "     -fx-alignment: center;");
-    Label l = new Label(String.valueOf(percentagesbyUser[currentMove])+ "%");
+    Label l = new Label(String.valueOf(percentagesbyUser[currentMove]) + "%");
     l.fontProperty().bind(moveTableContent);
     l.getStyleClass().add("vertical-label");
     progress.getChildren().add(l);
     progressBar.getChildren().add(progress);
   }
-  
+
+  /**
+   * Changes the data in the tooltip when the move that is currently lloked at changes
+   * 
+   * @author Manuel Krakowski
+   */
   private void setNewToolTip() {
-    Tooltip tooltip = new Tooltip("Expandierte Knoten: " + expansions[currentMove] + "\n" + "angewendete Heuristiken: " + heuristics[currentMove]+ "\n"
-        +  "Angewendete Simulationen: " + simulations[currentMove]);
+    Tooltip tooltip = new Tooltip("Expandierte Knoten: " + expansions[currentMove] + "\n"
+        + "angewendete Heuristiken: " + heuristics[currentMove] + "\n"
+        + "Angewendete Simulationen: " + simulations[currentMove]);
     tooltip.setStyle("-fx-background-color: blue");
     Duration delay = new Duration(1);
     tooltip.setShowDelay(delay);
@@ -307,25 +335,31 @@ public class AiAnalyserNew extends Scene {
     progressBar.setPickOnBounds(true);
     Tooltip.install(progressBar, tooltip);
   }
-  
+
+  /**
+   * Changes the percentage qualification of the move by an Ai when the ai-button is clicked
+   * 
+   * @author Manuel Krakowski
+   */
   private void setNewProgressAi() {
     progressBar.getChildren().clear();
     VBox progress = new VBox();
-    progress.prefHeightProperty().bind(progressBar.heightProperty().multiply(percentagesbyAI[currentMove]/100));
+    progress.prefHeightProperty()
+        .bind(progressBar.heightProperty().multiply(percentagesbyAI[currentMove] / 100));
     progress.prefWidthProperty().bind(progressBar.widthProperty());
     progress.getStyleClass().add("progress-pane");
-//    progress.setStyle(" -fx-background-color: " + moveColors[currentMove] + "; \r\n"
-//        + "     -fx-background-radius: 20px; \r\n"
-//        + "     -fx-border-radius: 20px;\r\n"
-//        + "     -fx-alignment: center;");
-    Label l = new Label(String.valueOf(percentagesbyAI[currentMove])+ "%");
+    // progress.setStyle(" -fx-background-color: " + moveColors[currentMove] + "; \r\n"
+    // + " -fx-background-radius: 20px; \r\n"
+    // + " -fx-border-radius: 20px;\r\n"
+    // + " -fx-alignment: center;");
+    Label l = new Label(String.valueOf(percentagesbyAI[currentMove]) + "%");
     l.fontProperty().bind(moveTableContent);
     l.getStyleClass().add("vertical-label");
     progress.getChildren().add(l);
     progressBar.getChildren().add(progress);
   }
-  
-  
+
+
 
   /**
    * Creates a Vbox which is used to devide the Scene into two patrs, one for the header and one for
@@ -351,10 +385,11 @@ public class AiAnalyserNew extends Scene {
   }
 
   /**
-   * Creates the upper part of the scene which includes just one Image with the Text: 'Lobby'
+   * Creates the upper part of the scene which includes just one Image with the Text:
+   * 'Game-Analyzer'
    * 
    * @author Manuel Krakowski
-   * @return ImageView containing the word 'Lobby'
+   * @return ImageView containing the word 'Game-Analyzer'
    */
   private ImageView createHeader() {
     Image mp = ImageController.loadThemedImage(ImageType.MISC, "GameAnalyzerHeader");
@@ -385,6 +420,13 @@ public class AiAnalyserNew extends Scene {
     return sep;
   }
 
+  /**
+   * Box in which the map is shwon
+   * 
+   * @author Manuel Krakowski
+   * @param parent used for relative resizing
+   * @return map-box
+   */
   private VBox createMapBox(HBox parent) {
     VBox mapBox = new VBox();
     mapBox.prefHeightProperty().bind(parent.heightProperty());
@@ -400,6 +442,13 @@ public class AiAnalyserNew extends Scene {
     return mapBox;
   }
 
+  /**
+   * Creates the box to control which move is currently shown on the map
+   * 
+   * @author Manuel Krakowski
+   * @param parent used for relative resizing
+   * @return
+   */
   private HBox createControlMapBox(VBox parent) {
     HBox h = new HBox();
     h.prefHeightProperty().bind(parent.heightProperty().multiply(0.1));
@@ -412,7 +461,7 @@ public class AiAnalyserNew extends Scene {
     Button b = new Button();
     b.prefHeightProperty().bind(h.heightProperty().multiply(1));
     b.prefWidthProperty().bind(h.widthProperty().divide(10));
-    
+
     b.getStyleClass().add("triangle-button");
     b.fontProperty().bind(leaveButtonText);
     Button rec = new Button("Show AI's Choice");
@@ -437,25 +486,35 @@ public class AiAnalyserNew extends Scene {
     h.getChildren().addAll(leftRec, rec, b);
     return h;
   }
-  
+
+  /**
+   * When the Ai-button is clicked the Ai's Move is shown
+   * 
+   * @param aiButton
+   * @author Manuel Krakowski
+   */
   private void performAiButtonClick(Button aiButton) {
-    if(currentMove >=1) {
-    if(!showHuman) {
-    setNewAiState();
-    setNewProgressAi();
-    aiButton.setText("Show Your Choice");
-    showHuman = true;
-    }else {
-      setNewGameState();
-      setNewProgress();
-      aiButton.setText("Show AI's Choice");
-      showHuman = false;
+    if (currentMove >= 1) {
+      if (!showHuman) {
+        setNewAiState();
+        setNewProgressAi();
+        aiButton.setText("Show Your Choice");
+        showHuman = true;
+      } else {
+        setNewGameState();
+        setNewProgress();
+        aiButton.setText("Show AI's Choice");
+        showHuman = false;
+      }
     }
-    }
-    
-    
   }
 
+  /**
+   * When the back-button is clicked the move one before is shown
+   * 
+   * @author Manuel Krakowski
+   * @param aiButton
+   */
   private void perfomBackClick(Button aiButton) {
     if (currentMove > 1) {
       aiButton.setText("Show AI's Choice");
@@ -472,6 +531,12 @@ public class AiAnalyserNew extends Scene {
 
   }
 
+  /**
+   * When the next button is clicked the next move is shown
+   * 
+   * @author Manuel Krakowski
+   * @param aiButton
+   */
   private void perfromNextClick(Button aiButton) {
     if (currentMove < totalmoves - 1) {
       aiButton.setText("Show AI's Choice");
@@ -481,7 +546,7 @@ public class AiAnalyserNew extends Scene {
       setNewProgress();
       setNewToolTip();
       setNewGameState();
-      
+
       if ((currentMove % 5 == 0)) {
         scrollToLabel(scroller, content, content.getChildren().get(currentMove - 5));
       }
@@ -489,9 +554,15 @@ public class AiAnalyserNew extends Scene {
 
   }
 
-  private void perfromShowAiBestMove() {
 
-  }
+  /**
+   * Creates a Stackpane in which the map is shown
+   * 
+   * @author Manuel Krakowski
+   * @param name
+   * @param parent
+   * @return
+   */
 
   private StackPane createShowMapPane(String name, VBox parent) {
     showMapBox = new StackPane();
@@ -508,47 +579,24 @@ public class AiAnalyserNew extends Scene {
     l.prefWidthProperty().bind(showMapBox.widthProperty());
     l.prefHeightProperty().bind(showMapBox.heightProperty());
     showMapBox.getChildren().add(l);
-//    GameState state = StroeMaps.getMap(name);
-//    gm = new GamePane(state, true,"");
-//    StackPane.setAlignment(gm, Pos.CENTER);
-//    gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
-//    gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
-//    showMapBox.getChildren().add(gm);
     return showMapBox;
   }
-  
+
+  /**
+   * Shows a new gameState in the map
+   * 
+   * @author Manuel Krakowski
+   */
   private void setNewGameState() {
     showMapBox.getChildren().clear();
-    GameState statebefore = userStates[currentMove-1];
-   Move m = userStates[currentMove].getLastMove();
-    Piece p = 
-        Arrays.stream(
-            statebefore.getTeams()[Integer.parseInt(m.getPieceId().split(":")[1].split("_")[0])]
-                .getPieces())
-        .filter(pe -> pe.getId().equals(m.getPieceId()))
-        .findFirst()
-        .get();
-    
-    gm = new GamePane(userStates[currentMove], true,moveColors[currentMove]);
-    gm.setOldPosinAnalyzer(p.getPosition());
-    StackPane.setAlignment(gm, Pos.CENTER);
-    gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
-    gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
-    showMapBox.getChildren().add(gm);
-  }
-  
-  private void setNewAiState() {
-    showMapBox.getChildren().clear();
-    GameState statebefore = userStates[currentMove-1];
-   Move m = aiStates[currentMove].getLastMove();
-    Piece p = 
-        Arrays.stream(
-            statebefore.getTeams()[Integer.parseInt(m.getPieceId().split(":")[1].split("_")[0])]
-                .getPieces())
-        .filter(pe -> pe.getId().equals(m.getPieceId()))
-        .findFirst()
-        .get();
-    gm = new GamePane(aiStates[currentMove], true,moveColors[currentMove]);
+    GameState statebefore = userStates[currentMove - 1];
+    Move m = userStates[currentMove].getLastMove();
+    Piece p = Arrays
+        .stream(statebefore.getTeams()[Integer.parseInt(m.getPieceId().split(":")[1].split("_")[0])]
+            .getPieces())
+        .filter(pe -> pe.getId().equals(m.getPieceId())).findFirst().get();
+
+    gm = new GamePane(userStates[currentMove], true, moveColors[currentMove]);
     gm.setOldPosinAnalyzer(p.getPosition());
     StackPane.setAlignment(gm, Pos.CENTER);
     gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
@@ -556,7 +604,28 @@ public class AiAnalyserNew extends Scene {
     showMapBox.getChildren().add(gm);
   }
 
- 
+  /**
+   * Shows the move of the ai in the map
+   * 
+   * @author Manuel Krakowski
+   */
+  private void setNewAiState() {
+    showMapBox.getChildren().clear();
+    GameState statebefore = userStates[currentMove - 1];
+    Move m = aiStates[currentMove].getLastMove();
+    Piece p = Arrays
+        .stream(statebefore.getTeams()[Integer.parseInt(m.getPieceId().split(":")[1].split("_")[0])]
+            .getPieces())
+        .filter(pe -> pe.getId().equals(m.getPieceId())).findFirst().get();
+    gm = new GamePane(aiStates[currentMove], true, moveColors[currentMove]);
+    gm.setOldPosinAnalyzer(p.getPosition());
+    StackPane.setAlignment(gm, Pos.CENTER);
+    gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
+    gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
+    showMapBox.getChildren().add(gm);
+  }
+
+
 
   /**
    * Creates the right side of the screen containing a header and a scrollPane with all moves
@@ -629,6 +698,14 @@ public class AiAnalyserNew extends Scene {
     return scroller;
   }
 
+  /**
+   * Creates one row containg one move
+   * 
+   * @author Manuel Krakowski
+   * @param parent
+   * @param moveNr
+   * @return
+   */
   private HBox createOneRow(VBox parent, int moveNr) {
     HBox oneRow = new HBox();
     oneRow.prefWidthProperty().bind(parent.widthProperty());
@@ -643,7 +720,14 @@ public class AiAnalyserNew extends Scene {
   }
 
 
-
+  /**
+   * Changes where the scrollpane's content is shown when the next button is clicked
+   * 
+   * @author Manuel Krakowski
+   * @param scrollPane
+   * @param vbox
+   * @param label
+   */
   private void scrollToLabel(ScrollPane scrollPane, VBox vbox, javafx.scene.Node label) {
     Bounds viewportBounds = scrollPane.getViewportBounds();
     Bounds contentBounds = label.getBoundsInParent();
@@ -654,6 +738,7 @@ public class AiAnalyserNew extends Scene {
     double scrollOffset = contentBounds.getMinY() / (contentHeight - viewportHeight);
     scrollPane.setVvalue(scrollOffset);
   }
+
 
   /**
    * Creates a normal label to display the content in the table
@@ -701,6 +786,15 @@ public class AiAnalyserNew extends Scene {
     return l;
   }
 
+  /**
+   * Creates a Label to classificate a move
+   * 
+   * @author Manuel Krakowski
+   * @param h
+   * @param i
+   * @param s
+   * @return
+   */
   private Label createMoveClassificationLabel(HBox h, int i, String s) {
     Label l = new Label("?");
     l.setAlignment(Pos.CENTER);
