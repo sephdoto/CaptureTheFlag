@@ -8,6 +8,7 @@ import org.ctf.ui.creators.ComponentCreator;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import org.jnativehook.keyboard.NativeKeyAdapter;
@@ -138,6 +139,13 @@ public class CheatboardListener extends NativeKeyAdapter {
     analyze.add(NativeKeyEvent.VC_L);
     analyze.add(NativeKeyEvent.VC_Y);
     cheatCodes.add(analyze);
+    
+    ArrayList<Integer> home = new ArrayList<Integer>();    
+    home.add(NativeKeyEvent.VC_H);
+    home.add(NativeKeyEvent.VC_O);
+    home.add(NativeKeyEvent.VC_M);
+    home.add(NativeKeyEvent.VC_E);
+    cheatCodes.add(home);
   }
 
   /**
@@ -243,6 +251,14 @@ public class CheatboardListener extends NativeKeyAdapter {
           new Runnable() {
             public void run(){
               hsc.switchToAnalyzerScene(hsc.getStage());
+            }
+          }
+          );
+    } else if(match == cheatCodes.get(10)) {    // switch to home screen
+      Platform.runLater(
+          new Runnable() {
+            public void run(){
+              hsc.switchtoHomeScreen(new ActionEvent());
             }
           }
           );
