@@ -25,6 +25,13 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.text.Font;
 
+/**
+ * Displays a custom color-chooser which used to select the team-color
+ * Code initially developed by 
+ * @author Jose Perada (found on StackOverflow)
+ * improved by me 
+ * @author Manuel Krakowski
+ */
 public class MyCustomColorPicker extends VBox {
 	private final ObjectProperty<Color> currentColorProperty = 
 	        new SimpleObjectProperty<>(Color.WHITE);
