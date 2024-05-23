@@ -33,7 +33,7 @@ class GameUtilitiesTest {
   }
 
 //    @Test
-  void bestMctsAlgorithm() {
+  /*void bestMctsAlgorithm() {
     gameState = TestValues.getTestState();
     TreeNode parent = new TreeNode(null, gameState, new int[] {0, 0}, new ReferenceMove(null, new int[] {0,0}));
     MCTS_TestDouble mcts = new MCTS_TestDouble(parent, new AIConfig());
@@ -94,7 +94,7 @@ class GameUtilitiesTest {
     tn.setParent(null);
     for (int i = 0; i < tn.getChildren().length; i++) tn.getChildren()[i] = null;
     tn.setWins(new int[] {0, 0});
-  }
+  }*/
 
 //  @Test
   void testPerformance() throws InterruptedException {
