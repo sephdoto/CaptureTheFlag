@@ -146,6 +146,28 @@ public class CheatboardListener extends NativeKeyAdapter {
     home.add(NativeKeyEvent.VC_M);
     home.add(NativeKeyEvent.VC_E);
     cheatCodes.add(home);
+    
+    ArrayList<Integer> map = new ArrayList<Integer>();    
+    map.add(NativeKeyEvent.VC_M);
+    map.add(NativeKeyEvent.VC_A);
+    map.add(NativeKeyEvent.VC_P);
+    cheatCodes.add(map);
+    
+    ArrayList<Integer> create = new ArrayList<Integer>();    
+    create.add(NativeKeyEvent.VC_C);
+    create.add(NativeKeyEvent.VC_R);
+    create.add(NativeKeyEvent.VC_E);
+    create.add(NativeKeyEvent.VC_A);
+    create.add(NativeKeyEvent.VC_T);
+    create.add(NativeKeyEvent.VC_E);
+    cheatCodes.add(create);
+   
+    ArrayList<Integer> join = new ArrayList<Integer>();    
+    join.add(NativeKeyEvent.VC_J);   
+    join.add(NativeKeyEvent.VC_O);   
+    join.add(NativeKeyEvent.VC_I);   
+    join.add(NativeKeyEvent.VC_N);
+    cheatCodes.add(join);
   }
 
   /**
@@ -259,6 +281,30 @@ public class CheatboardListener extends NativeKeyAdapter {
           new Runnable() {
             public void run(){
               hsc.switchtoHomeScreen(new ActionEvent());
+            }
+          }
+          );
+    } else if(match == cheatCodes.get(11)) {    // switch to map
+      Platform.runLater(
+          new Runnable() {
+            public void run(){
+              hsc.switchToMapEditorScene(hsc.getStage());
+            }
+          }
+          );
+    } else if(match == cheatCodes.get(12)) {    // switch to create game scene
+      Platform.runLater(
+          new Runnable() {
+            public void run(){
+              hsc.switchToCreateGameScene(hsc.getStage());
+            }
+          }
+          );
+    } else if(match == cheatCodes.get(13)) {    // switch to join game scene
+      Platform.runLater(
+          new Runnable() {
+            public void run(){
+              hsc.switchToJoinScene(hsc.getStage());
             }
           }
           );
