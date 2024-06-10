@@ -14,6 +14,7 @@ import org.json.JSONObject;
  * Every AI got its own AI_Config that contains important constants.
  * AI_Config either contains default values (default constructor)
  * or fine tuned values, which are loaded in as a json String.
+ * TODO add time as variable
  * 
  * @author sistumpf
  */
