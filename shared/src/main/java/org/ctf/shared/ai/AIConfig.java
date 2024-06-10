@@ -15,6 +15,7 @@ import org.json.JSONObject;
  * AI_Config either contains default values (default constructor)
  * or fine tuned values, which are loaded in as a json String.
  * TODO add time as variable
+ * TODO take some default time for old configs (?)
  * 
  * @author sistumpf
  */
