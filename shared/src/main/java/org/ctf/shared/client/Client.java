@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import org.ctf.shared.ai.GameStateNormalizer;
 import org.ctf.shared.client.lib.GameClientInterface;
 import org.ctf.shared.client.lib.ServerChecker;
 import org.ctf.shared.client.lib.ServerDetails;
@@ -41,13 +42,14 @@ import org.ctf.shared.state.dto.MoveRequest;
 public class Client implements GameClientInterface {
 
   // Main DataStore block
+  protected GameStateNormalizer normalizer;
   protected volatile GameState currentState;
   protected String[][] grid;
   protected int currentTeamTurn;
   protected Move lastMove;
   protected Team[] teams;
   protected Clock currentTime;
-
+  
   protected Gson gson; // Gson object for conversions incase needed
   // Two CommLayers Available CommLayer and RestClientLayer
   protected CommLayerInterface comm; // Layer instance which is used for communication
@@ -457,6 +459,8 @@ public class Client implements GameClientInterface {
    * @author rsyed
    */
   protected void makeMoverCaller(String teamID, String teamSecret, Move move) {
+    move = normalizer.unnormalizeMove(move);
+    move.setTeamId(teamID);
     if (move != null) {
       try {
         MoveRequest moveReq = new MoveRequest();
@@ -495,25 +499,32 @@ public class Client implements GameClientInterface {
     GameState gameState = new GameState();
     try {
       gameState = comm.getCurrentGameState(currentServer);
-      normaliseGameState(gameState);
-      if (gameState.getTeams()[myTeam] == null)
-        this.isAlive = false;
+      initMyTeam(gameState);
+      if (gameState.getTeams()[myTeam] == null) this.isAlive = false;
     } catch (SessionNotFound e) {
       throw new SessionNotFound("Session isnt available for this request");
     } catch (UnknownError e) {
       throw new UnknownError("Server Error or Setting error");
     }
-    this.grid = gameState.getGrid();
-    if (enableQueue) {
-      if (isNewGameState(gameState)) {
+//    if(gameState.getCurrentTeam() == this.currentTeamTurn)
+    //      return;
+    if (isNewGameState(gameState)) {
+      gameState = normalizeGameState(gameState);
+      this.currentTeamTurn = gameState.getCurrentTeam();
+      this.currentState = gameState;
+      this.teams = gameState.getTeams();
+      this.lastMove = gameState.getLastMove();
+      updateLastTeam();
+      this.grid = gameState.getGrid();
+
+      if (enableQueue) {
         this.fifoQueue.offer(gameState);
       }
+
+      if (enableLogging) {
+        this.analyzer.addMove(gameState.getLastMove());
+      }
     }
-    this.currentTeamTurn = gameState.getCurrentTeam();
-    this.lastMove = gameState.getLastMove();
-    updateLastTeam();
-    this.teams = gameState.getTeams();
-    this.currentState = gameState;
   }
 
   /**
@@ -564,15 +575,15 @@ public class Client implements GameClientInterface {
    * @param gameState the gameState to get normalized
    * @author rsyed, sistumpf
    */
-  protected synchronized void normaliseGameState(GameState gameState) {
-    if (allTeamNames == null && gameState.getCurrentTeam() >= 0) initAllTeamNames(gameState);
-
-    for (int teamID = 0; teamID < gameState.getTeams().length; teamID++) {
-      Team team = gameState.getTeams()[teamID];
-      if (team == null) continue;
-
-      team.setId("" + teamID);
-    }
+  protected synchronized GameState normalizeGameState(GameState gameState) {
+    if (allTeamNames == null && gameState.getCurrentTeam() >= 0) 
+      initAllTeamNames(gameState);
+    if(this.normalizer == null)
+      this.normalizer = new GameStateNormalizer(gameState, true, true);
+    else
+      normalizer.update(gameState);
+    
+    return normalizer.getNormalizedGameState();
   }
 
   /**
@@ -586,10 +597,23 @@ public class Client implements GameClientInterface {
 
     for (int teamID = 0; teamID < gameState.getTeams().length; teamID++) {
       String name = gameState.getTeams()[teamID].getId();
-      if (this.requestedTeamName.equals(name.substring(name.indexOf("_") + 1)))
+      allTeamNames[teamID] = name;
+    }
+  }
+  
+  /**
+   * Looks for the clients team index in the gameState and saves it.
+   * 
+   * @param gameState the GameState to look for the team
+   */
+  protected synchronized void initMyTeam(GameState gameState) {
+    for (int teamID = 0; teamID < gameState.getTeams().length; teamID++) {
+      if(gameState.getTeams()[teamID] == null) continue;
+      String name = gameState.getTeams()[teamID].getId();
+      if (this.requestedTeamName.equals(name)) {
         this.myTeam = teamID;
-
-      allTeamNames[teamID] = name.substring(name.indexOf("_") + 1);
+        break;
+      }
     }
   }
 

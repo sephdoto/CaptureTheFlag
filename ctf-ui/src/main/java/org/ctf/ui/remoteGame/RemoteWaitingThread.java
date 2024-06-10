@@ -55,7 +55,7 @@ public class RemoteWaitingThread extends Thread {
         Platform.runLater(() -> {
           rws.getText().setText(begin + teams);
         });
-        if (rws.getClient().isGameStarted()) {
+        if (rws.getClient().isGameStarted() && rws.getClient().getGrid() != null) {
           isactive = false;
           Thread.sleep(1000);
           Platform.runLater(() -> {

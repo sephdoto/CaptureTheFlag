@@ -24,6 +24,30 @@ class GameStateNormalizerTest {
       "Rickrolled"
   };
 
+  /*@Test
+  void testIDMap() {
+    GameState gs = unnormalizedGameState();
+    GameStateNormalizer gsn = new GameStateNormalizer(gs, true);
+    for(int i=0; i<gsn.idMap.size(); i++)
+      System.out.println(gsn.idMap.keySet().toArray()[i] + " : " + gsn.idMap.get(gsn.idMap.keySet().toArray()[i]));
+  }*/
+  
+  @Test
+  void testUpdate() {
+    GameState gs = unnormalizedGameState();
+    
+    GameStateNormalizer gsn = new GameStateNormalizer(gs, true);
+    Move move = new Move();
+    move.setNewPosition(new int[] {0,0});
+    move.setPieceId(gs.getTeams()[0].getPieces()[0].getId());
+    move.setTeamId("0");
+    gs.setLastMove(move);
+    String oldID = gs.getLastMove().getPieceId();
+    gsn.update(gs);
+    String newID = gsn.getNormalizedGameState().getLastMove().getPieceId();
+    assertNotEquals(oldID, newID);
+  }
+  
   @Test
   void testNormalize() {
     //create unnormalized GameState

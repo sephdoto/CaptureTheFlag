@@ -266,25 +266,35 @@ public class AIClient extends Client {
     GameState gameState = new GameState();
     try {
       gameState = comm.getCurrentGameState(currentServer);
-      normaliseGameState(gameState);
+      initMyTeam(gameState);
+      if (gameState.getTeams()[myTeam] == null) {
+        this.isAlive = false;
+        //Kill the client? IDK TODO
+//        this.gameOver = true;
+      }
     } catch (SessionNotFound e) {
       throw new SessionNotFound("Session isnt available for this request");
     } catch (UnknownError e) {
       throw new UnknownError("Server Error or Setting error");
     }
-    this.grid = gameState.getGrid();
-    if (enableQueue) {
-      if (isNewGameState(gameState)) {
+
+
+    if (isNewGameState(gameState)) {
+      gameState = normalizeGameState(gameState);
+      this.currentTeamTurn = gameState.getCurrentTeam();
+      this.currentState = gameState;
+      this.teams = gameState.getTeams();
+      this.lastMove = gameState.getLastMove();
+      updateLastTeam();
+      this.grid = gameState.getGrid();
+
+      if (enableQueue) {
         this.fifoQueue.offer(gameState);
       }
+
+      if (enableLogging) {
+        this.analyzer.addMove(gameState.getLastMove());
+      }
     }
-    this.currentTeamTurn = gameState.getCurrentTeam();
-    this.lastMove = gameState.getLastMove();
-    if (enableLogging) {
-      this.analyzer.addMove(gameState.getLastMove());
-    }
-    updateLastTeam();
-    this.teams = gameState.getTeams();
-    this.currentState = gameState;
   }
 }

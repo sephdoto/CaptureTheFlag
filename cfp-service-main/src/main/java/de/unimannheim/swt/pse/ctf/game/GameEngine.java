@@ -75,6 +75,7 @@ public class GameEngine implements Game {
   private Clock turnEndsBy;
   private Duration turnTime;
   private int graceTime = 1; // Time added to be fair for processing delays
+  private GameState nameState;
 
   // **************************************************
   // END of Alt Mode Data
@@ -138,6 +139,7 @@ public class GameEngine implements Game {
 
   /**
    * Here a move, if valid, updates the grid, a pieces position, a teams flags and the time.
+   * The GameState with Team Names instead of IDs gets updated too.
    *
    * @author sistumpf
    * @param move {@link Move}
@@ -146,9 +148,19 @@ public class GameEngine implements Game {
    */
   @Override
   public void makeMove(Move move) {
-    if (!movePreconditionsMet(move)) return;
+    //if piece IDs get send as "17" instead of "p:0_17", this code provides compatibility.
+    //note that this only works with incoming moves, last move in GameState cannot be tailored to a specific client.
+    if(!move.getPieceId().startsWith("p:" + move.getTeamId() + "_"))
+      move.setPieceId("p:" + move.getTeamId() + "_" + move.getPieceId());
+    
+    if (!new NameIDChanger(integerToTeam, teamToInteger).putMoveIDs(move) 
+        || !movePreconditionsMet(move)) 
+      throw new InvalidMove();
     EngineTools.computeMove(this.gameState, move);
     afterMoveCleanup();
+
+    NameIDChanger nidChanger = new NameIDChanger(integerToTeam, teamToInteger);
+    this.nameState = nidChanger.putGameStateNames(gameState);
   }
 
   /**
@@ -163,7 +175,7 @@ public class GameEngine implements Game {
   public void giveUp(String teamId) {
     if (teamToInteger.get(teamId)
         == this.gameState
-            .getCurrentTeam()) { // test is also in controller but doppelt gemoppelt hält besser
+        .getCurrentTeam()) { // test is also in controller but doppelt gemoppelt hält besser
       EngineTools.removeTeam(gameState, teamToInteger.get(teamId)); // removed and set to null
       this.gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
     }
@@ -182,12 +194,12 @@ public class GameEngine implements Game {
     if (isStarted()) {
       Piece picked =
           Arrays.stream(
-                  gameState
-                      .getTeams()[Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0])]
-                      .getPieces())
-              .filter(p -> p.getId().equals(move.getPieceId()))
-              .findFirst()
-              .get();
+              gameState
+              .getTeams()[Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0])]
+                  .getPieces())
+          .filter(p -> p.getId().equals(move.getPieceId()))
+          .findFirst()
+          .get();
       return EngineTools.getPossibleMoves(this.gameState, picked).stream()
           .anyMatch(i -> i[0] == move.getNewPosition()[0] && i[1] == move.getNewPosition()[1]);
     }
@@ -259,37 +271,24 @@ public class GameEngine implements Game {
   }
 
   /**
-   * Simple Getter for the GameState Object
+   * Returns the current GameState.
+   * If the game is started, the GameState with Team Names (instead of IDs) gets returned.
    *
-   * @author rsyed
+   * @author sistumpf, rsyed
    * @return Current {@link GameState} of the Session
    */
   @Override
   public GameState getCurrentGameState() {
-    if (gameState.getCurrentTeam() != -1) {
-      return replaceIDs(gameState);
+    if(this.isStarted()) {
+      while(this.nameState == null) {
+        try {
+          Thread.sleep(1);
+        } catch (InterruptedException e) {e.printStackTrace();}
+      }
+      return this.nameState;
+    } else {
+      return this.gameState;
     }
-    return gameState;
-  }
-
-  /**
-   * Replaces the TeamIDs with the Pattern: (IntegerID) + ("_") + (Name) It is assumed that each
-   * Name only exists once.
-   *
-   * @author sistumpf
-   * @param original the GameState which's deep copy gets altered and returned
-   * @return a deep copy of original with adjusted TeamIDs
-   */
-  private GameState replaceIDs(GameState original) {
-    GameState returnState = EngineTools.deepCopyGameState(original);
-
-    Stream.of(returnState.getTeams())
-        .filter(Objects::nonNull)
-        .forEach(
-            team ->
-                team.setId(team.getId() + "_" + integerToTeam.get(Integer.parseInt(team.getId()))));
-
-    return returnState;
   }
 
   /**
@@ -526,10 +525,10 @@ public class GameEngine implements Game {
   private void altGameModeGameOverHandler() {
     ArrayList<Team> teamList = new ArrayList<Team>();
     Stream.of(this.gameState.getTeams())
-        .forEach(
-            team -> {
-              if (team != null) teamList.add(team);
-            });
+    .forEach(
+        team -> {
+          if (team != null) teamList.add(team);
+        });
     teamList.sort(
         new Comparator<Team>() {
           public int compare(Team team1, Team team2) {
@@ -616,12 +615,15 @@ public class GameEngine implements Game {
       } catch (TooManyPiecesException e) {
         throw new GameOver();
       }
-      for (int i = 0; i < gameState.getTeams().length; i++) {
-        gameState.getTeams()[i].setId("" + i);
-      }
+      
       setRandomStartingTeam();
       startAltGameController();
       this.startedDate = new Date();
+
+      //inits the current GameState with Names and IDs
+      NameIDChanger nidChanger = new NameIDChanger(integerToTeam, teamToInteger);
+      this.gameState = nidChanger.putGameStateIDs(gameState);
+      this.nameState = nidChanger.putGameStateNames(gameState);
     }
   }
 
@@ -669,12 +671,12 @@ public class GameEngine implements Game {
   private static int hashTeam(Team team) {
     StringBuilder sb =
         new StringBuilder()
-            .append(new Random(team.getId().hashCode() * 256).nextInt(256))
-            .append(new Random(team.getPieces().length * 256).nextInt(256));
+        .append(new Random(team.getId().hashCode() * 256).nextInt(256))
+        .append(new Random(team.getPieces().length * 256).nextInt(256));
     Stream.of(team.getPieces())
-        .forEach(
-            piece ->
-                sb.append(new Random(piece.getId().hashCode()).nextInt(team.getPieces().length)));
+    .forEach(
+        piece ->
+        sb.append(new Random(piece.getId().hashCode()).nextInt(team.getPieces().length)));
     return sb.toString().hashCode();
   }
 
