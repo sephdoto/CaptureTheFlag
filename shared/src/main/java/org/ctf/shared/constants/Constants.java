@@ -79,7 +79,7 @@ public class Constants {
   ///////////////////////////////////////////////////////
 
   // to resources folder
-  private static final String CFP14 = "CaptureTheFlag";
+  private static final String CFP14 = "cfp14";
   public static final String toUIResources =
       ISJAR
           ? JARRESOURCES
