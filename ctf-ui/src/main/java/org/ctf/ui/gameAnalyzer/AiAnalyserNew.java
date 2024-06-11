@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.SoundType;
@@ -159,7 +160,7 @@ public class AiAnalyserNew extends Scene {
       gsh.readFile(file.getName().substring(0, file.getName().lastIndexOf(".")));
     else
       return false;
-    System.out.println(file.getName().substring(0, file.getName().lastIndexOf(".")));
+//    System.out.println(file.getName().substring(0, file.getName().lastIndexOf(".")));
     totalmoves = gsh.savedGame.getMoves().size();
     return true;
   }
@@ -559,7 +560,7 @@ public class AiAnalyserNew extends Scene {
       aiButton.setText("Show AI's Choice");
       if(currentMove >= 0)  rows[currentMove].getStyleClass().clear();
       rows[++currentMove].getStyleClass().add("blue-glow-hbox");
-      System.out.println(currentMove);
+//      System.out.println(currentMove);
       setNewProgress();
       setNewToolTip();
       setNewGameState();
@@ -619,7 +620,6 @@ public class AiAnalyserNew extends Scene {
         .filter(pe -> pe.getId().equals(m.getPieceId())).findFirst().get();
     gm = new GamePane(userStates[currentMove], true, moveColors[currentMove]);
     gm.setOldPosinAnalyzer(p.getPosition());
-
     StackPane.setAlignment(gm, Pos.CENTER);
     gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
     gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
@@ -629,7 +629,7 @@ public class AiAnalyserNew extends Scene {
   /**
    * Shows the move of the ai in the map
    * 
-   * @author Manuel Krakowski
+   * @author sistumpf, Manuel Krakowski
    */
   private void setNewAiState() {
     showMapBox.getChildren().clear();
@@ -639,7 +639,7 @@ public class AiAnalyserNew extends Scene {
         .stream(statebefore.getTeams()[Integer.parseInt(m.getPieceId().split(":")[1].split("_")[0])]
             .getPieces())
         .filter(pe -> pe.getId().equals(m.getPieceId())).findFirst().get();
-    gm = new GamePane(aiStates[currentMove], true, moveColors[currentMove]);
+    gm = new GamePane(aiStates[currentMove], true, Enums.MoveEvaluation.BEST.getColor());
     gm.setOldPosinAnalyzer(p.getPosition());
     StackPane.setAlignment(gm, Pos.CENTER);
     gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
