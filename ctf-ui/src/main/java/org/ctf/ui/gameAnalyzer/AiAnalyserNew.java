@@ -8,6 +8,7 @@ import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.ImageType;
+import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.shared.gameanalyzer.AnalyzedGameState;
 import org.ctf.shared.gameanalyzer.GameAnalyzer;
 import org.ctf.shared.gameanalyzer.GameSaveHandler;
@@ -18,7 +19,9 @@ import org.ctf.shared.state.Piece;
 import org.ctf.ui.App;
 import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
+import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.map.GamePane;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -118,7 +121,7 @@ public class AiAnalyserNew extends Scene {
 
     scrollBackIndicator = 0;
     this.root = (StackPane) this.getRoot();
-    currentMove = 0;
+    currentMove = -1;
     savedscrollvalues = new double[totalmoves];
     try {
       this.getStylesheets()
@@ -166,42 +169,50 @@ public class AiAnalyserNew extends Scene {
    * goes thorugh all the moves that were made in the game and saved them internally to handle the
    * data
    * 
-   * @author Manuel Krakowski
+   * @author sistumpf, Manuel Krakowski
    */
   private void initalize() {
-    int currentMove = 0;
     try {
+      // TODO
       GameAnalyzer analyzer = new GameAnalyzer(gsh.getSavedGame(), AI.MCTS, new AIConfig(), 10);
       analysedGames = analyzer.getResults();
-      while (analyzer.isActive() || (currentMove < analyzer.howManyMoves())) {
-        if (currentMove != analyzer.getCurrentlyAnalyzing()) {
-
-          AnalyzedGameState g = analyzer.getResults()[currentMove];
-          g.printMe();
-          GameState state = g.getPreviousGameState();
-          teamLabels[currentMove].setText("Team:" + state.getCurrentTeam());
-          classificationlabels[currentMove].setText(g.getMoveEvaluation().name());
-          String col = g.getMoveEvaluation().getColor();
-          classificationlabels[currentMove].setStyle("-fx-text-fill: " + col);
-          moveColors[currentMove] = col;
-          percentagesbyUser[currentMove] = Double.valueOf(g.getUserWinPercentage());
-          percentagesbyAI[currentMove] = Double.valueOf(g.getAIWinPercentage());
-          simulations[currentMove] = g.getSimulations();
-          heuristics[currentMove] = g.getHeuristic();
-          expansions[currentMove] = g.getExpansions();
-
-          userStates[currentMove] = g.getUserChoice();
-          aiStates[currentMove] = g.getAiChoice();
-          currentMove++;
+      Thread initThread = new Thread() {
+        public void run() {
+          int movePointer = 0;
+          while (analyzer.isActive() || (movePointer < analyzer.howManyMoves())) {
+            if (movePointer != analyzer.getCurrentlyAnalyzing()) {
+//              int currentMove = analyzer.getCurrentlyAnalyzing() -1;
+              int currentMove = movePointer;
+              AnalyzedGameState g = analyzer.getResults()[currentMove];
+              Runnable showResults = new Runnable() {
+                @Override
+                public void run() {
+                  GameState state = g.getPreviousGameState();
+                  teamLabels[currentMove].setText("Team:" + state.getCurrentTeam());
+                  classificationlabels[currentMove].setText(g.getMoveEvaluation().name());
+                  String col = g.getMoveEvaluation().getColor();
+                  classificationlabels[currentMove].setStyle("-fx-text-fill: " + col);
+                  moveColors[currentMove] = col;
+                  percentagesbyUser[currentMove] = Double.valueOf(g.getUserWinPercentage());
+                  percentagesbyAI[currentMove] = Double.valueOf(g.getAIWinPercentage());
+                  simulations[currentMove] = g.getSimulations();
+                  heuristics[currentMove] = g.getHeuristic();
+                  expansions[currentMove] = g.getExpansions();
+                  userStates[currentMove] = g.getUserChoice();
+                  aiStates[currentMove] = g.getAiChoice();
+                }};
+                Platform.runLater(showResults);
+                movePointer ++;
+            }
+            try {
+              Thread.sleep(100);
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
+          }
         }
-        try {
-          Thread.sleep(100);
-        } catch (InterruptedException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-      }
-
+      };
+      initThread.start();
     } catch (NeedMoreTimeException nmte) {
       System.err.println(
           "Error in " + getClass().getCanonicalName() + ":\n\t" + nmte.getLocalizedMessage());
@@ -494,13 +505,16 @@ public class AiAnalyserNew extends Scene {
    * @author Manuel Krakowski
    */
   private void performAiButtonClick(Button aiButton) {
-    if (currentMove >= 1) {
+    if(!isClickable(0)) return;
+    if (currentMove >= 0) {
       if (!showHuman) {
+        SoundController.playSound("AIButton", SoundType.MISC);
         setNewAiState();
         setNewProgressAi();
         aiButton.setText("Show Your Choice");
         showHuman = true;
       } else {
+        SoundController.playSound("HumanButton", SoundType.MISC);
         setNewGameState();
         setNewProgress();
         aiButton.setText("Show AI's Choice");
@@ -516,16 +530,17 @@ public class AiAnalyserNew extends Scene {
    * @param aiButton
    */
   private void perfomBackClick(Button aiButton) {
-    if (currentMove > 1) {
+    if(!isClickable(-1)) return;
+    SoundController.playSound("BackButton", SoundType.MISC);
+    if (currentMove >= 1) {
       aiButton.setText("Show AI's Choice");
       rows[currentMove].getStyleClass().clear();
       rows[--currentMove].getStyleClass().add("blue-glow-hbox");
-      System.out.println(currentMove);
       setNewProgress();
       setNewToolTip();
       setNewGameState();
       if ((currentMove % 5 == 0)) {
-        // scroller.setVvalue(savedscrollvalues[scrollBackIndicator--]);
+//         scroller.setVvalue(savedscrollvalues[scrollBackIndicator--]);
       }
     }
 
@@ -538,20 +553,27 @@ public class AiAnalyserNew extends Scene {
    * @param aiButton
    */
   private void perfromNextClick(Button aiButton) {
+    if(!isClickable(1)) return;
+    SoundController.playSound("NextButton", SoundType.MISC);
     if (currentMove < totalmoves - 1) {
       aiButton.setText("Show AI's Choice");
-      rows[currentMove].getStyleClass().clear();
+      if(currentMove >= 0)  rows[currentMove].getStyleClass().clear();
       rows[++currentMove].getStyleClass().add("blue-glow-hbox");
       System.out.println(currentMove);
       setNewProgress();
       setNewToolTip();
       setNewGameState();
 
-      if ((currentMove % 5 == 0)) {
+      if (currentMove > 0 && (currentMove % 5 == 0)) {
         scrollToLabel(scroller, content, content.getChildren().get(currentMove - 5));
       }
     }
-
+  }
+  
+  private boolean isClickable(int modifier) {
+    return currentMove + modifier >= 0 
+        && currentMove + modifier < this.analysedGames.length 
+        && userStates[currentMove + modifier] != null;
   }
 
 
@@ -584,20 +606,20 @@ public class AiAnalyserNew extends Scene {
 
   /**
    * Shows a new gameState in the map
-   * 
-   * @author Manuel Krakowski
+   * TODO
+   * @author sistumpf, Manuel Krakowski
    */
   private void setNewGameState() {
     showMapBox.getChildren().clear();
-    GameState statebefore = userStates[currentMove - 1];
+    GameState statebefore = analysedGames[currentMove].getPreviousGameState();
     Move m = userStates[currentMove].getLastMove();
     Piece p = Arrays
         .stream(statebefore.getTeams()[Integer.parseInt(m.getPieceId().split(":")[1].split("_")[0])]
             .getPieces())
         .filter(pe -> pe.getId().equals(m.getPieceId())).findFirst().get();
-
     gm = new GamePane(userStates[currentMove], true, moveColors[currentMove]);
     gm.setOldPosinAnalyzer(p.getPosition());
+
     StackPane.setAlignment(gm, Pos.CENTER);
     gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
     gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
@@ -611,7 +633,7 @@ public class AiAnalyserNew extends Scene {
    */
   private void setNewAiState() {
     showMapBox.getChildren().clear();
-    GameState statebefore = userStates[currentMove - 1];
+    GameState statebefore = analysedGames[currentMove].getPreviousGameState();
     Move m = aiStates[currentMove].getLastMove();
     Piece p = Arrays
         .stream(statebefore.getTeams()[Integer.parseInt(m.getPieceId().split(":")[1].split("_")[0])]
