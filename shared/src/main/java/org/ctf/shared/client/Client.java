@@ -508,7 +508,7 @@ public class Client implements GameClientInterface {
     }
 //    if(gameState.getCurrentTeam() == this.currentTeamTurn)
     //      return;
-    if (isNewGameState(gameState)) {
+    if (isNewGameState(gameState) && isAlive() && !isGameOver()) {
       gameState = normalizeGameState(gameState);
       this.currentTeamTurn = gameState.getCurrentTeam();
       this.currentState = gameState;
@@ -577,7 +577,7 @@ public class Client implements GameClientInterface {
    */
   protected synchronized GameState normalizeGameState(GameState gameState) {
     if (allTeamNames == null && gameState.getCurrentTeam() >= 0) 
-      initAllTeamNames(gameState);
+      initAllTeamNames(gameState);      
     if(this.normalizer == null)
       this.normalizer = new GameStateNormalizer(gameState, true, true);
     else
@@ -772,8 +772,7 @@ public class Client implements GameClientInterface {
     Thread gameThread =
         new Thread(
             () -> {
-              boolean running = true;
-              while (running) {
+              while (!isGameOver()) {
                 try {
                   pullData();
                   if (enableLogging) {
