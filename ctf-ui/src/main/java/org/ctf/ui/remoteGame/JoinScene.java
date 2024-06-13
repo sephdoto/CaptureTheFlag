@@ -496,14 +496,23 @@ public class JoinScene extends Scene {
             "custom-search-field");
         return;
       }
-      Client client = ClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(ip)
-          .onPort(port).enableSaveGame(false).enableAutoJoin(id, nameField.getText()).build();
+      
+      Client client = 
+          ClientStepBuilder
+          .newBuilder()
+          .enableRestLayer(false)
+          .onRemoteHost(ip)
+          .onPort(port)
+          .enableSaveGame(true)
+          .enableAutoJoin(id, nameField.getText())
+          .build();
       client.enableGameStateQueue(true);
+      
       root.getChildren().remove(popUp);
       right.getChildren().clear();
       info.setText("Client hast joined!\n Waiting for the Game to start.");
       right.getChildren().add(info);
-      hsc.getStage().setScene(new RemoteWaitingScene(client, getWidth(), getHeight(), this.hsc,this.ser));
+      hsc.getStage().setScene(new RemoteWaitingScene(client, getWidth(), getHeight(), this.hsc, this.ser));
     });
     Button cancelButton = createControlButton(vbox, "Cancel", "leave-button");
     cancelButton.setOnAction(e -> {
@@ -544,9 +553,16 @@ public class JoinScene extends Scene {
             "custom-search-field");
         return;
       }
-      AIClient aiClient = AIClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(ip)
-          .onPort(port).aiPlayerSelector(type, config).enableSaveGame(false)
-          .gameData(id, nameField.getText()).build();
+      AIClient aiClient = 
+          AIClientStepBuilder
+          .newBuilder()
+          .enableRestLayer(false)
+          .onRemoteHost(ip)
+          .onPort(port)
+          .aiPlayerSelector(type, config)
+          .enableSaveGame(true)
+          .gameData(id, nameField.getText())
+          .build();
       aiClient.enableGameStateQueue(true);
       root.getChildren().remove(popUp);
       right.getChildren().clear();

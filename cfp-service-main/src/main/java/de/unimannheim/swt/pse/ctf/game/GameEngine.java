@@ -279,7 +279,7 @@ public class GameEngine implements Game {
    */
   @Override
   public GameState getCurrentGameState() {
-    if(this.isStarted()) {
+    if(this.isStarted() || this.isGameOver()) {
       while(this.nameState == null) {
         try {
           Thread.sleep(1);

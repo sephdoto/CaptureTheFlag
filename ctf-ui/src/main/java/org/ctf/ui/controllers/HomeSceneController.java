@@ -99,19 +99,6 @@ public class HomeSceneController {
 		serverManager.deleteGame();
 	}
 	
-	public void createHumanClient() {
-		sessionID = serverManager.getGameSessionID();
-		System.out.println(teamName);
-		mainClient =
-		ClientStepBuilder.newBuilder()
-		.enableRestLayer(false)
-		.onLocalHost()
-		.onPort(port)
-		.enableSaveGame(false)
-		.enableAutoJoin(sessionID, teamName)
-		.build();
-	}
-	
 	public String getTeamName() {
 		return teamName;
 	}
@@ -165,6 +152,10 @@ public class HomeSceneController {
 	
     public void setMainClient(Client mainClient) {
       this.mainClient = mainClient;
+    }
+    
+    public Client getMainClient() {
+      return mainClient;
     }
 
 	public void switchToCreateGameScene(Stage stage) {

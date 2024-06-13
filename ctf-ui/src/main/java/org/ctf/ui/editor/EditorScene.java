@@ -65,7 +65,6 @@ import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.creators.ComponentCreator;
 import org.ctf.ui.customobjects.DragAndDropPane;
 import org.ctf.ui.customobjects.MovementVisual;
-import configs.ImageLoader;
 import io.swagger.v3.oas.models.security.SecurityScheme.In;
 
 /**

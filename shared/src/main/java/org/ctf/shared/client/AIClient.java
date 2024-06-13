@@ -99,6 +99,7 @@ public class AIClient extends Client {
         } catch (NoMovesLeftException | InvalidShapeException e) {
           throw new UnknownError("Games most likely over");
         } catch (GameOver e) {
+          analyzer.writeOut();
           this.gameOver = true;
           this.isAlive = false;
           this.aiClientScheduler.shutdown();
@@ -284,7 +285,7 @@ public class AIClient extends Client {
     }
 
 
-    if (isNewGameState(gameState) && isAlive() && !isGameOver()) {
+    if (isNewGameState(gameState)) {
       gameState = normalizeGameState(gameState);
       this.currentTeamTurn = gameState.getCurrentTeam();
       this.currentState = gameState;

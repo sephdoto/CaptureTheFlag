@@ -2,9 +2,8 @@ package configs;
 
 import java.util.HashMap;
 import java.util.Objects;
-
-
-
+import org.ctf.shared.constants.Enums.ImageType;
+import org.ctf.ui.controllers.ImageController;
 import javafx.scene.image.Image;
 
 public class ImageLoader {
@@ -28,15 +27,15 @@ public class ImageLoader {
 	 */
 	public static void loadImages() {
 		images = new HashMap<>();
-		Image r2d2 = initImage(ROOK);
-		images.put("Rook", r2d2);
-		Image yoda = initImage(QUEEN);
-		images.put("Queen", yoda);
-		Image luke = initImage(BISHOP);
-		images.put("Bishop", luke);
-		defauImage = initImage(DEFAULTIMAGE);
-		Image boba = initImage(Knight);
-		images.put("Knight", boba);
+//		Image r2d2 = initImage(ROOK);
+		images.put("Rook", ImageController.loadThemedImage(ImageType.PIECE, "Rook"));
+//		Image yoda = initImage(QUEEN);
+		images.put("Queen", ImageController.loadThemedImage(ImageType.PIECE, "Queen"));
+//		Image luke = initImage(BISHOP);
+		images.put("Bishop", ImageController.loadThemedImage(ImageType.PIECE, "Bishop"));
+		defauImage = ImageController.loadThemedImage(ImageType.PIECE, "Default");
+//		Image boba = initImage(Knight);
+		images.put("Knight", ImageController.loadThemedImage(ImageType.PIECE, "Knight"));
 	}
 
 	/**

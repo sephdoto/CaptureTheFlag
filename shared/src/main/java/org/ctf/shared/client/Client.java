@@ -76,7 +76,6 @@ public class Client implements GameClientInterface {
   protected int myTeam = -1; // index of the team this client represents in teams array
   protected String gameIDtoJoin;
   protected String[] allTeamNames;
-  protected boolean isAlive;
 
   // Block for alt game mode data
   protected Date startDate;
@@ -93,6 +92,7 @@ public class Client implements GameClientInterface {
   protected boolean enableQueue = false;
   protected boolean moveTimeLimitedGameTrigger = false;
   protected boolean timeLimitedGameTrigger = false;
+  protected boolean isAlive;
 
   // Services
   ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
@@ -508,7 +508,7 @@ public class Client implements GameClientInterface {
     }
 //    if(gameState.getCurrentTeam() == this.currentTeamTurn)
     //      return;
-    if (isNewGameState(gameState) && isAlive() && !isGameOver()) {
+    if (isNewGameState(gameState)) {
       gameState = normalizeGameState(gameState);
       this.currentTeamTurn = gameState.getCurrentTeam();
       this.currentState = gameState;
@@ -786,6 +786,8 @@ public class Client implements GameClientInterface {
                   throw new Error("Something went wrong in the Client Thread");
                 }
               }
+
+              analyzer.writeOut();
             });
     gameThread.start();
   }
