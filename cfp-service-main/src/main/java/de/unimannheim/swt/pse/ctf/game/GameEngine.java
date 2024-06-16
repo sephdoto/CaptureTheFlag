@@ -180,6 +180,9 @@ public class GameEngine implements Game {
       this.gameState.setCurrentTeam(EngineTools.getNextTeam(gameState));
     }
     if (EngineTools.removeMovelessTeams(this.gameState)) setGameOver();
+
+    NameIDChanger nidChanger = new NameIDChanger(integerToTeam, teamToInteger);
+    this.nameState = nidChanger.putGameStateNames(gameState);
   }
 
   /**
