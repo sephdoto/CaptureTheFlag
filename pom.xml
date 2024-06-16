@@ -90,14 +90,13 @@
     <dependency>
       <groupId>de.uni-mannheim.swt.pse</groupId>
       <artifactId>ctf</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>1.0.0</version>
     </dependency>
   </dependencies>
 
   <modules>
     <module>ctf-ui</module>
     <module>shared</module>
-    <module>cfp-service-main</module>
   </modules>
 
   <build>
