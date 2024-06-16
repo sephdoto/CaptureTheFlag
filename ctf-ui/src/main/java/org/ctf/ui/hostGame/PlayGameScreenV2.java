@@ -493,7 +493,7 @@ public class PlayGameScreenV2 extends Scene {
   /**
    * Creates the button which is used to give up
    * 
-   * @author Manuel Krakowski
+   * @author sistumpf, Manuel Krakowski
    * @return Box containing only the give-up-button
    */
   private HBox createGiveUpBox() {
@@ -505,13 +505,20 @@ public class PlayGameScreenV2 extends Scene {
     giveUpButton.prefWidthProperty().bind(giveUpBox.widthProperty().multiply(0.25));
     giveUpButton.getStyleClass().add("leave-button");
     giveUpButton.setOnAction(e -> {
-      hsc.switchtoHomeScreen(e);
+      for (Client client : CreateGameController.getLocalHumanClients()) {
+        if (client.isItMyTurn()) {
+          client.giveUp();
+          break;
+        }
+      }
+      
+      /*hsc.switchtoHomeScreen(e);
       CreateGameController.clearUsedNames();
       CreateGameController.clearColors();
       scheduler.shutdown();
       if (scheduler2 != null) {
         scheduler2.shutdown();
-      }
+      }*/
     });
     giveUpBox.getChildren().add(giveUpButton);
     return giveUpBox;
