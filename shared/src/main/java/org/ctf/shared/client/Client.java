@@ -99,6 +99,7 @@ public class Client implements GameClientInterface {
   Logger logger = Logger.getLogger(getClass().getName());
   // Queue for storing different game states
   ConcurrentLinkedQueue<GameState> fifoQueue = new ConcurrentLinkedQueue<>();
+  Thread watcherThread;
 
   /**
    * Package constructor to set the IP and port on object creation. Cannot be called externally
@@ -685,6 +686,22 @@ public class Client implements GameClientInterface {
     }
     return counter;
   }
+  
+  /**
+   * Kills all Client processes, shutting it down.
+   * 
+   * @author sistumpf
+   */
+  public void shutdown() {
+    try {
+      this.watcherThread.interrupt();
+    } catch(Exception e) {
+      e.printStackTrace();
+    }
+    this.scheduler.shutdown();
+    this.gameOver = true;
+    this.isAlive = false;
+  }
 
   // **************************************************
   // End of Client Funtional Methods
@@ -732,33 +749,39 @@ public class Client implements GameClientInterface {
    * GameStartedThread when it detects that the same has started. Terminates itself right after to
    * free resources.
    *
-   * @author rsyed
+   * @author rsyed, sistumpf
    */
   protected void gameStartWatcher() {
-    Thread watcherThread =
-        new Thread(
-            () -> {
-              boolean running = true;
-              while (running) {
-                try {
-                  Long sleep = 1000L;
-                  Thread.sleep(sleep);
-                  this.getSessionFromServer(); // Gets Session from server
-                  if (getStartDate() != null) {
-                    if (enableLogging) {
-                      getStateFromServer();
-                      analyzer.addGameState(getCurrentState());
-                    }
-                    gameStartedThread();
-                    running = false;
-                  }
-                  Thread.sleep(sleep);
-                } catch (InterruptedException e) {
-                  throw new Error("Something went wrong in the Client Thread");
-                }
+    watcherThread = new Thread() {
+      boolean active = true;
+      
+      public void interrupt() {
+        this.active = false;
+      }
+      
+      public void run() {
+        while (active) {
+          try {
+            Long sleep = 1000L;
+            Client.this.getSessionFromServer(); // Gets Session from server
+            if (getStartDate() != null) {
+              if (enableLogging) {
+                getStateFromServer();
+                analyzer.addGameState(getCurrentState());
               }
-            });
-    watcherThread.start();
+              gameStartedThread();
+              active = false;
+            }
+            Thread.sleep(sleep);
+          } catch (InterruptedException e) {
+            throw new Error("Something went wrong in the Client Thread");
+          } catch(SessionNotFound e) {
+            active = false;
+            Client.this.shutdown();
+          }
+        }
+      }};
+      watcherThread.start();
   }
 
   /**

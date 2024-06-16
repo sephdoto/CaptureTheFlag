@@ -5,9 +5,13 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.ui.App;
+import org.ctf.ui.controllers.CheatboardListener;
 import org.ctf.ui.hostGame.PlayGameScreenV2;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.scene.layout.StackPane;
 
 /**
  * Updates a {@link RemoteWaitingScene} and initializes a Scene switch to the
@@ -47,26 +51,49 @@ public class RemoteWaitingThread extends Thread {
     }
     try {
       while (isactive) {
-        Thread.sleep(1000);
-        String begin = (rws.getClient().isGameStarted()) ? "Initiliazing Game \n"
-            : "Waiting for more Teams to Join ... \n";
-        String teams = "There are currently " + rws.getServerManager().getCurrentNumberofTeams()
-            + "/" + rws.getServerManager().getMaxNumberofTeams() + " in the lobby!";
-        Platform.runLater(() -> {
-          rws.getText().setText(begin + teams);
-        });
-        if (rws.getClient().isGameStarted() && rws.getClient().getGrid() != null) {
-          isactive = false;
+        try {
           Thread.sleep(1000);
+          String begin = (rws.getClient().isGameStarted()) ? "Initiliazing Game \n"
+              : "Waiting for more Teams to Join ... \n";
+          String teams = "There are currently " + rws.getServerManager().getCurrentNumberofTeams()
+              + "/" + rws.getServerManager().getMaxNumberofTeams() + " in the lobby!";
           Platform.runLater(() -> {
-            rws.getHsc().switchToPlayGameScene(App.getStage(), rws.getClient(), true);
+            rws.getText().setText(begin + teams);
           });
+          if (rws.getClient().isGameStarted() && rws.getClient().getGrid() != null) {
+            isactive = false;
+            Thread.sleep(100);
+            Platform.runLater(() -> {
+              rws.getHsc().switchToPlayGameScene(App.getStage(), rws.getClient(), true);
+            });
+          }
+        } catch (SessionNotFound e) {
+          this.isactive = false;
+          this.rws.getClient().shutdown();
+
+          for(int i=0; i<Constants.globalWaitingTime; i++) {
+            final int ms = i;
+            Platform.runLater(() -> {
+              rws.getText().setText("Server closed by host. \nReturning to Home Screen in " 
+            + Math.round((Constants.globalWaitingTime - ms)/100)/10.
+            + " s");
+            });
+            Thread.sleep(1);
+          }
+          Platform.runLater(
+              new Runnable() {
+                public void run(){
+                  rws.getHsc().switchtoHomeScreen(new ActionEvent());
+                  CheatboardListener.setSettings((StackPane) rws.getHsc().getStage().getScene().getRoot(), rws.getHsc().getStage().getScene());
+                }
+              }
+              );
         }
       }
 
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+  } catch (InterruptedException e) {
+    e.printStackTrace();
+}
   }
 
 }

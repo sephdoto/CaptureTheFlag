@@ -56,6 +56,10 @@ public class Constants {
    * The current {@link Themes}
    */
   public static Enums.Themes theme = Enums.Themes.STARWARS;
+  /**
+   * Global waiting time in ms.
+   */
+  public static int globalWaitingTime = 3000;
 
   /**
    * Static vars needed for Server and AI Config

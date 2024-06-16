@@ -745,7 +745,9 @@ public class WaitingScene extends Scene {
     exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
     exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.35));
     exit.setOnAction(e -> {
-      // CreateGameController.deleteGame();
+      CreateGameController.getMainClient().shutdown();
+      scheduler.shutdown();
+      CreateGameController.deleteGame();
       CreateGameController.clearUsedNames();
       CreateGameController.clearColors();
       hsc.switchtoHomeScreen(e);
