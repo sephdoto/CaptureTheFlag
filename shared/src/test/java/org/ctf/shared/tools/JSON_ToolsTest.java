@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import org.ctf.shared.ai.TestValues;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.tools.JsonTools.IncompleteMapTemplateException;
 import org.ctf.shared.tools.JsonTools.MapNotFoundException;
@@ -29,19 +30,27 @@ class JSON_ToolsTest {
   MapTemplate mapTemplate;
 
   @Test
-  //TODO
   void getTemplateAndGameState() {
-    HashMap map = JsonTools.getTemplateAndGameState("test");
+    try {
+      JsonTools.saveTemplateWithGameState("test", mapTemplate, TestValues.getTestState());
+    } catch (IOException e) {
+      fail(e.getMessage());
+    }
+    HashMap<MapTemplate, GameState> map = JsonTools.getTemplateAndGameState("test");
+    assertTrue(map.keySet().size() > 0);
+    File file = new File(JsonTools.gameStates + "test.json");
+    assertTrue(file.delete());
   }
   
   @Test
-  //TODO
   void saveTemplateWithGameState() {
     try {
       JsonTools.saveTemplateWithGameState("test", mapTemplate, TestValues.getTestState());
     } catch (Exception e) {
       fail("saving template with gamestate should be possible");
     }
+    File file = new File(JsonTools.gameStates + "test.json");
+    assertTrue(file.delete());
   }
   
   @Test
