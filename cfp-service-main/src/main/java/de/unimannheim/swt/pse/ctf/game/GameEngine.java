@@ -290,7 +290,10 @@ public class GameEngine implements Game {
       }
       return this.nameState;
     } else {
-      return this.gameState;
+
+      //inits the current GameState with Names and IDs
+      NameIDChanger nidChanger = new NameIDChanger(integerToTeam, teamToInteger);
+      return nidChanger.putGameStateNames(gameState);
     }
   }
 
@@ -480,6 +483,8 @@ public class GameEngine implements Game {
                   }
                   if (currentTime.instant().isAfter(turnEndsBy.instant())) {
                     this.gameState.setCurrentTeam(EngineTools.getNextTeam(this.gameState));
+                    NameIDChanger nidChanger = new NameIDChanger(integerToTeam, teamToInteger);
+                    this.nameState = nidChanger.putGameStateNames(gameState);
                     increaseTurnTimer(); // UPDATES when the next turn should end
                   }
                   if (isGameOver()) { // Checks if game is over
@@ -622,7 +627,7 @@ public class GameEngine implements Game {
       setRandomStartingTeam();
       startAltGameController();
       this.startedDate = new Date();
-
+      
       //inits the current GameState with Names and IDs
       NameIDChanger nidChanger = new NameIDChanger(integerToTeam, teamToInteger);
       this.gameState = nidChanger.putGameStateIDs(gameState);

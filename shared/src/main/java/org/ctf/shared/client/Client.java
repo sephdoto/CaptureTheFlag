@@ -696,7 +696,7 @@ public class Client implements GameClientInterface {
     try {
       this.watcherThread.interrupt();
     } catch(Exception e) {
-      e.printStackTrace();
+//      e.printStackTrace();
     }
     this.scheduler.shutdown();
     this.gameOver = true;
