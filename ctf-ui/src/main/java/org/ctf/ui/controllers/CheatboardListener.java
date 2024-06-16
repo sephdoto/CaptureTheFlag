@@ -28,6 +28,7 @@ public class CheatboardListener extends NativeKeyAdapter {
   ArrayList<ArrayList<Integer>> pivotList;
   static Runnable settings;
   static HomeSceneController hsc;
+  static Scene lastScene;
 
   /**
    * Initializes the cheat codes, registers the key logger.
@@ -168,6 +169,13 @@ public class CheatboardListener extends NativeKeyAdapter {
     join.add(NativeKeyEvent.VC_I);   
     join.add(NativeKeyEvent.VC_N);
     cheatCodes.add(join);
+    
+    ArrayList<Integer> back = new ArrayList<Integer>();    
+    back.add(NativeKeyEvent.VC_B);   
+    back.add(NativeKeyEvent.VC_A);   
+    back.add(NativeKeyEvent.VC_C);   
+    back.add(NativeKeyEvent.VC_K);
+    cheatCodes.add(back);
   }
 
   /**
@@ -273,6 +281,7 @@ public class CheatboardListener extends NativeKeyAdapter {
           new Runnable() {
             public void run(){
               hsc.switchToAnalyzerScene(hsc.getStage());
+              setSettings((StackPane) hsc.getStage().getScene().getRoot(), hsc.getStage().getScene());
             }
           }
           );
@@ -281,6 +290,7 @@ public class CheatboardListener extends NativeKeyAdapter {
           new Runnable() {
             public void run(){
               hsc.switchtoHomeScreen(new ActionEvent());
+              setSettings((StackPane) hsc.getStage().getScene().getRoot(), hsc.getStage().getScene());
             }
           }
           );
@@ -289,6 +299,7 @@ public class CheatboardListener extends NativeKeyAdapter {
           new Runnable() {
             public void run(){
               hsc.switchToMapEditorScene(hsc.getStage());
+              setSettings((StackPane) hsc.getStage().getScene().getRoot(), hsc.getStage().getScene());
             }
           }
           );
@@ -297,6 +308,7 @@ public class CheatboardListener extends NativeKeyAdapter {
           new Runnable() {
             public void run(){
               hsc.switchToCreateGameScene(hsc.getStage());
+              setSettings((StackPane) hsc.getStage().getScene().getRoot(), hsc.getStage().getScene());
             }
           }
           );
@@ -305,6 +317,20 @@ public class CheatboardListener extends NativeKeyAdapter {
           new Runnable() {
             public void run(){
               hsc.switchToJoinScene(hsc.getStage());
+              setSettings((StackPane) hsc.getStage().getScene().getRoot(), hsc.getStage().getScene());
+            }
+          }
+          );
+    } else if(match == cheatCodes.get(14)) {    // switch to the last scene
+      Platform.runLater(
+          new Runnable() {
+            public void run(){
+              if(lastScene != null) {
+                Scene scene = lastScene;
+                lastScene = hsc.getStage().getScene();
+                hsc.getStage().setScene(scene);
+                setSettings((StackPane) hsc.getStage().getScene().getRoot(), hsc.getStage().getScene());
+              }
             }
           }
           );
@@ -331,5 +357,14 @@ public class CheatboardListener extends NativeKeyAdapter {
    */
   public static void setHomeSceneController(HomeSceneController hsc) {
     CheatboardListener.hsc = hsc;
+  }
+  
+  /**
+   * Sets the last Scene to switch back to
+   * 
+   * @param scene the last Scene
+   */
+  public static void setLastScene(Scene scene) {
+    CheatboardListener.lastScene = scene;
   }
 }

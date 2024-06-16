@@ -28,6 +28,9 @@ import org.ctf.ui.hostGame.CreateGameScreenV2;
 import org.ctf.ui.hostGame.PlayGameScreenV2;
 import org.ctf.ui.hostGame.WaitingScene;
 import org.ctf.ui.remoteGame.JoinScene;
+import org.ctf.ui.remoteGame.RemoteWaitingThread;
+import org.ctf.ui.remoteGame.WaveCollapseThread;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -46,212 +49,227 @@ import javafx.stage.Stage;
 /**
  * Main controller of the application.
  * 
+ * @author sistumpf
  * @author mkrakows
  * @author aniemesc
  */
 public class HomeSceneController {
-	public PlayGameScreenV2 getPlayGameScreenV2() {
+  public PlayGameScreenV2 getPlayGameScreenV2() {
     return playGameScreenV2;
   }
 
   private Stage stage;
-	String port;
-	String serverID;
-	String sessionID;
-	ServerManager serverManager;
-	//TestThread t;
-	MapTemplate template;
-	CreateGameScreenV2 createGameScreenV2;
-	PlayGameScreenV2 playGameScreenV2;
-	WaitingScene waitingScene;
-	Client mainClient;
-	String teamName;
-	String teamTurn;
-	public  ObjectProperty<Color> lastcolor;
-	boolean mainClientIsHuman;
-	
-	
-	public void switchtoHomeScreen(ActionEvent e) {
-		Scene scene = App.getScene();
-		stage = App.getStage();
-		App.adjustHomescreen(stage.getScene().getWidth(), stage.getScene().getHeight());		
-		stage.setScene(scene);
-		CheatboardListener.setSettings((StackPane)scene.getRoot(),scene);
-	}
-	
-	public HomeSceneController(Stage stage) {
-	  this.stage = stage;
-	}
-	
-	public void createGameSession() {
-		System.out.println("Hallo ch bin der Manger");
-		System.out.println(serverID);
-		System.out.println(port);
-		serverManager = new ServerManager(new CommLayer(), new ServerDetails(serverID, port),template);
-		if(serverManager.createGame()) {
-			System.out.println("Session erstellt" );
-		}else {
-			System.out.println("None");
-		}
-	}
-	
-	public void deleteGame() {
-		serverManager.deleteGame();
-	}
-	
-	public String getTeamName() {
-		return teamName;
-	}
+  String port;
+  String serverID;
+  String sessionID;
+  ServerManager serverManager;
+  //TestThread t;
+  MapTemplate template;
+  CreateGameScreenV2 createGameScreenV2;
+  PlayGameScreenV2 playGameScreenV2;
+  WaitingScene waitingScene;
+  Client mainClient;
+  String teamName;
+  String teamTurn;
+  public  ObjectProperty<Color> lastcolor;
+  boolean mainClientIsHuman;
 
-	public void setTeamName(String teamName) {
-		this.teamName = teamName;
-	}
-	
-	public void updateTeamsinWaitingScene(String text) {
-		//waitingScene.setCUrrentTeams(text);
-	}
-	
-	public void redraw(GameState state) {
-		//playGameScreenV2.redrawGrid(state, this);
-	}
-	
-	public ObjectProperty<Color> getLastcolor() {
-		return lastcolor;
-	}
 
-	public void setLastcolor(ObjectProperty<Color> lastcolor) {
-		this.lastcolor = lastcolor;
-	}
+  public void switchtoHomeScreen(ActionEvent e) {
+    CheatboardListener.setLastScene(stage.getScene());
+    Scene scene = App.getScene();
+    stage = App.getStage();
+    App.adjustHomescreen(stage.getScene().getWidth(), stage.getScene().getHeight());		
+    stage.setScene(scene);
+    CheatboardListener.setSettings((StackPane)scene.getRoot(),scene);
+  }
 
-	public void setTeamTurn(String s) {
-		this.teamTurn = s;
-		//playGameScreenV2.setTeamTurn(s);
-	}
+  public HomeSceneController(Stage stage) {
+    this.stage = stage;
+  }
 
-	public void switchToWaitGameScene(Stage stage) {
-		CreateGameController.initColorHashMap();
-		waitingScene = new WaitingScene(this, stage.getWidth(), stage.getHeight());
-		stage.setScene(waitingScene);
-		//t = new TestThread(this, serverManager);
-		//t.start();
-		//CreateGameController.startWaitingLobbyThread();
-		
-	}
-	
-    public void switchToPlayGameScene(Stage stage, Client mainClient, boolean isRemote) {
-      playGameScreenV2 =
-          new PlayGameScreenV2(this, stage.getWidth(), stage.getHeight(), mainClient, isRemote);
-      stage.setScene(playGameScreenV2);
-      if (isRemote) {
-        CreateGameController.initColorHashMapForRemote(mainClient);
-      } else {
-        CreateGameController.overWriteDefaultWithServerColors();
+  public void createGameSession() {
+    System.out.println("Hallo ch bin der Manger");
+    System.out.println(serverID);
+    System.out.println(port);
+    serverManager = new ServerManager(new CommLayer(), new ServerDetails(serverID, port),template);
+    if(serverManager.createGame()) {
+      System.out.println("Session erstellt" );
+    }else {
+      System.out.println("None");
+    }
+  }
+
+  public void deleteGame() {
+    serverManager.deleteGame();
+  }
+
+  public String getTeamName() {
+    return teamName;
+  }
+
+  public void setTeamName(String teamName) {
+    this.teamName = teamName;
+  }
+
+  public void updateTeamsinWaitingScene(String text) {
+    //waitingScene.setCUrrentTeams(text);
+  }
+
+  public void redraw(GameState state) {
+    //playGameScreenV2.redrawGrid(state, this);
+  }
+
+  public ObjectProperty<Color> getLastcolor() {
+    return lastcolor;
+  }
+
+  public void setLastcolor(ObjectProperty<Color> lastcolor) {
+    this.lastcolor = lastcolor;
+  }
+
+  public void setTeamTurn(String s) {
+    this.teamTurn = s;
+    //playGameScreenV2.setTeamTurn(s);
+  }
+
+  public void switchToWaitGameScene(Stage stage) {
+    CheatboardListener.setLastScene(stage.getScene());
+    CreateGameController.initColorHashMap();
+    waitingScene = new WaitingScene(this, stage.getWidth(), stage.getHeight());
+    stage.setScene(waitingScene);
+    //t = new TestThread(this, serverManager);
+    //t.start();
+    //CreateGameController.startWaitingLobbyThread();
+
+  }
+
+  /**
+   * Switches to the PlayGameScene, calls the WaveCollapseThread to generate and change the background.
+   * Always calls the WaveCollapseThread, in case not our server is used to generate the GameState.
+   * 
+   * @author sistumpf
+   * @param stage
+   * @param mainClient
+   * @param isRemote
+   */
+  public void switchToPlayGameScene(Stage stage, Client mainClient, boolean isRemote) {
+    CheatboardListener.setLastScene(stage.getScene());
+    playGameScreenV2 =
+        new PlayGameScreenV2(this, stage.getWidth(), stage.getHeight(), mainClient, isRemote);
+    stage.setScene(playGameScreenV2);
+    if (isRemote) {
+      CreateGameController.initColorHashMapForRemote(mainClient);
+    } else {
+      CreateGameController.overWriteDefaultWithServerColors(); 
+    }
+    new WaveCollapseThread(mainClient.getGrid(), this).start();
+  }
+
+  public void switchToCreateGameScene(Stage stage) {
+    CheatboardListener.setLastScene(stage.getScene());
+    createGameScreenV2=  new CreateGameScreenV2(this, stage.getWidth(), stage.getHeight());
+    stage.setScene(createGameScreenV2);
+  }
+
+  /**
+   * Switches to a new instance of {@link JoinScene}.
+   * 
+   * @author aniemesc
+   * @param stage - Main stage of the application
+   */
+  public void switchToJoinScene(Stage stage) {
+    CheatboardListener.setLastScene(stage.getScene());
+    stage.setScene(new JoinScene(this, stage.getWidth(), stage.getHeight()));
+  }
+
+  public void switchToAnalyzerScene(Stage stage) {
+    CheatboardListener.setLastScene(stage.getScene());
+    stage.setScene(new AiAnalyserNew(this, stage.getWidth(), stage.getHeight()));
+  }
+
+  /**
+   * Switches to a new instance of {@link EditorScene}.
+   * 
+   * @author aniemesc
+   * @param stage - Main stage of the application
+   */
+  public void switchToMapEditorScene(Stage stage) {
+    CheatboardListener.setLastScene(stage.getScene());
+    stage.setScene(new EditorScene(this, stage.getWidth(), stage.getHeight()));
+  }
+
+
+
+
+  public MapTemplate getTemplate() {
+    return template;
+  }
+
+  public void setTemplate(MapTemplate template) {
+    this.template = template;
+  }
+
+  public int getMaxNumberofTemas() {
+    return template.getTeams();
+  }
+
+  public Stage getStage() {
+    return stage;
+  }
+
+  public String getPort() {
+    return port;
+  }
+
+  public void setPort(String port) {
+    this.port = port;
+  }
+
+  public String getServerID() {
+    if (serverID.equals("localhost")) {
+      URL url;
+      try {
+        url = new URL("https://api.ipify.org");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+        String ipAddress = reader.readLine();
+        System.out.println("Öffentliche IP-Adresse: " + ipAddress);
+        reader.close();
+
+        // return ipAddress;
+        return InetAddress.getLocalHost().getHostAddress();
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
       }
+
     }
+    return serverID;
+  }
 
-	
-    public void setMainClient(Client mainClient) {
-      this.mainClient = mainClient;
-    }
-    
-    public Client getMainClient() {
-      return mainClient;
-    }
+  public void setServerID(String serverID) {
+    this.serverID = serverID;
+  }
+  public ServerManager getServerManager() {
+    return serverManager;
+  }
+  public String getSessionID() {
+    return sessionID;
+  }
 
-	public void switchToCreateGameScene(Stage stage) {
-		createGameScreenV2=  new CreateGameScreenV2(this, stage.getWidth(), stage.getHeight());
-		stage.setScene(createGameScreenV2);
-	}
+  public void setSessionID(String sessionID) {
+    this.sessionID = sessionID;
+  }
 
-    /**
-     * Switches to a new instance of {@link JoinScene}.
-     * 
-     * @author aniemesc
-     * @param stage - Main stage of the application
-     */
-    public void switchToJoinScene(Stage stage) {
-      stage.setScene(new JoinScene(this, stage.getWidth(), stage.getHeight()));
-    }
-	
-	public void switchToAnalyzerScene(Stage stage) {
-		stage.setScene(new AiAnalyserNew(this, stage.getWidth(), stage.getHeight()));
-	}
+  public void setServerManager(ServerManager serverManager) {
+    this.serverManager = serverManager;
+  }
 
-    /**
-     * Switches to a new instance of {@link EditorScene}.
-     * 
-     * @author aniemesc
-     * @param stage - Main stage of the application
-     */
-    public void switchToMapEditorScene(Stage stage) {
-      stage.setScene(new EditorScene(this, stage.getWidth(), stage.getHeight()));
-    }
-	
-   
-	
+  public void setMainClient(Client mainClient) {
+    this.mainClient = mainClient;
+  }
 
-	public MapTemplate getTemplate() {
-		return template;
-	}
-
-	public void setTemplate(MapTemplate template) {
-		this.template = template;
-	}
-	
-	public int getMaxNumberofTemas() {
-		return template.getTeams();
-	}
-
-	public Stage getStage() {
-		return stage;
-	}
-
-	public String getPort() {
-		return port;
-	}
-
-	public void setPort(String port) {
-		this.port = port;
-	}
-
-	public String getServerID() {
-		if (serverID.equals("localhost")) {
-			  URL url;
-			try {
-				url = new URL("https://api.ipify.org");
-				BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-	            String ipAddress = reader.readLine();
-	            System.out.println("Öffentliche IP-Adresse: " + ipAddress);
-	            reader.close();
-	            
-	           // return ipAddress;
-	            return InetAddress.getLocalHost().getHostAddress();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	            
-		}
-		return serverID;
-	}
-
-	public void setServerID(String serverID) {
-		this.serverID = serverID;
-	}
-	public ServerManager getServerManager() {
-		return serverManager;
-	}
-	public String getSessionID() {
-		return sessionID;
-	}
-
-	public void setSessionID(String sessionID) {
-		this.sessionID = sessionID;
-	}
-
-	public void setServerManager(ServerManager serverManager) {
-		this.serverManager = serverManager;
-	}
-	
-	
+  public Client getMainClient() {
+    return mainClient;
+  }
 }

@@ -175,7 +175,7 @@ public class AiAnalyserNew extends Scene {
   private void initalize() {
     try {
       // TODO
-      GameAnalyzer analyzer = new GameAnalyzer(gsh.getSavedGame(), AI.MCTS, new AIConfig(), 10);
+      GameAnalyzer analyzer = new GameAnalyzer(gsh.getSavedGame(), AI.MCTS, new AIConfig(), 1);
       analysedGames = analyzer.getResults();
       Thread initThread = new Thread() {
         public void run() {
@@ -540,8 +540,8 @@ public class AiAnalyserNew extends Scene {
       setNewProgress();
       setNewToolTip();
       setNewGameState();
-      if ((currentMove % 5 == 0)) {
-//         scroller.setVvalue(savedscrollvalues[scrollBackIndicator--]);
+      if (currentMove > 0 && (currentMove % 5 == 0)) {
+        scrollToLabel(scroller, content, content.getChildren().get(currentMove - 5));
       }
     }
 

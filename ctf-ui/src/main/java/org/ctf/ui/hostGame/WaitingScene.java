@@ -756,7 +756,7 @@ public class WaitingScene extends Scene {
   /**
    * Task that regulary checks if the current number of teams in the session has changed If the game
    * has started on the server the scheduler is shutdown and it switched to the play game screen if
-   * the game hasn#t started the team-number is updated in the scene
+   * the game hasnt started the team-number is updated in the scene
    * 
    * @author Manuel Krakowski
    */
