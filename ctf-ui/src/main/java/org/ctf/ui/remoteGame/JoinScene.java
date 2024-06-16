@@ -14,18 +14,21 @@ import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.ImageType;
+import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.controllers.CheatboardListener;
 import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
+import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.creators.ComponentCreator;
 import org.ctf.ui.creators.PopUpCreator;
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.editor.EditorScene;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
-
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -275,7 +278,7 @@ public class JoinScene extends Scene {
   /**
    * This Method creates the search button for the left StackPane.
    * 
-   * @author aniemesc
+   * @author aniemesc, sistumpf
    * @return Button that gets added to the left StackPane
    */
   private Button createSearch() {
@@ -285,48 +288,115 @@ public class JoinScene extends Scene {
     search.prefHeightProperty().bind(search.widthProperty().multiply(0.25));
     search.fontProperty().bind(Bindings.createObjectBinding(
         () -> Font.font("Century Gothic", search.getHeight() * 0.4), search.heightProperty()));
+    
     search.setOnAction(e -> {
-     
-      //       hsc.getStage().setScene(new RemoteWaitingScene(null, this.getWidth(), this.getHeight()));
-//       PopUpCreator popUpCreator = new PopUpCreator(this, root, hsc);
-//       popUpCreator.createAiLevelPopUp(new PopUpPane(null, 0, 0), portText, serverIPText);
-      try {
-         ser = new ServerManager(new CommLayer(),
-            new ServerDetails(serverIPText.getText(), portText.getText()), sessionText.getText());
-        if (!ser.isServerActive()) {
-          info.setText(
-              "The Server \n cannot be found!\n Please check the Server IP\n and select the right Port!");
-        } else if (!ser.isSessionActive()) {
-          info.setText("The Session is not active!\n" + "Please check your Session ID!");
-        } else {
-          right.getChildren().clear();
-          right.getChildren().add(createRightContent(sessionText.getText(),
-              ser.getCurrentNumberofTeams(), serverIPText.getText(), portText.getText()));
-          this.ip =  serverIPText.getText();
-          this.port = portText.getText();
-          this.id =sessionText.getText();
-        }
-      } catch (IllegalArgumentException e2) {
-        // TODO: handle exception
-        e2.printStackTrace();
-        right.getChildren().clear();
-        info.setText("Please enter a valid \n IP-adress and port!");
-        right.getChildren().add(info);
-      }
-
-
+      search.setDisable(true);
+      SoundController.playSound("Button", SoundType.MISC);
+      ServerCheckTask task = new ServerCheckTask(search);
+      task.setOnSucceeded(event -> {
+          if (!task.getValue()) {
+            info.setText(
+                "The Server \n cannot be found!\n Please check the Server IP\n and select the right Port!");
+          } else if (!ser.isSessionActive()) {
+            info.setText("The Session is not active!\n" + "Please check your Session ID!");
+          } else {
+            right.getChildren().clear();
+            right.getChildren().add(createRightContent(sessionText.getText(),
+                ser.getCurrentNumberofTeams(), serverIPText.getText(), portText.getText()));
+            JoinScene.this.ip =  serverIPText.getText();
+            JoinScene.this.port = portText.getText();
+            JoinScene.this.id =sessionText.getText();
+          }
+      });
+      new Thread(task).start();
     });
-
-    // ser.getCurrentNumberofTeams();
-    //
-    // Client client =
-    // ClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost("ip").onPort("port").enableSaveGame(false).enableAutoJoin("session",
-    // "teamname").build();
-
-
+    
     return search;
   }
+  
+  /**
+   * Task to check if the server is active to prevent UI freezing while waiting for a boolean.
+   * 
+   * @author sistumpf
+   */
+  private class ServerCheckTask extends Task<Boolean> {
+    Button button;
+    Thread buttonTextThread;
+    
+    /**
+     * A buttons text will be changed to display internal updates.
+     * Contains a Thread to dynamically change the button text to show something is calculated.
+     * 
+     * @param searchButton used to show internal updates
+     */
+    public ServerCheckTask(Button searchButton) {
+      this.button = searchButton;
+      this.buttonTextThread = new Thread() {
+        private boolean active = true;
+        
+        @Override
+        public void interrupt() {
+          this.active = false;
+        }
+        
+        /**
+         * Changes the button text to display a little animation
+         */
+        @Override
+        public void run() {
+          for(int i=0; active; i++) {
+            i %= 4;
+            StringBuilder points = new StringBuilder();
+            switch(i) {
+              case 0: points.append("      "); break;
+              case 1: points.append(".     "); break;
+              case 2: points.append(". .   "); break;
+              case 3: points.append(". . . "); break;
+            }
+            Platform.runLater(() -> button.setText("checking " + points.toString()));
+            try {
+              Thread.sleep(175);
+            } catch (InterruptedException e) { e.printStackTrace(); }
+          }
+        }
+      };
+      buttonTextThread.start();
+    }
+    
+    @Override
+    /**
+     * Calls the server and sets the searchButton text accordingly.
+     */
+    protected Boolean call() {
+      try {
+        if(serverIPText.getText().equals("") 
+            || portText.getText().equals("") 
+            || sessionText.getText().equals(""))
+          throw new IllegalArgumentException();
+        ser = new ServerManager(new CommLayer(),
+            new ServerDetails(serverIPText.getText(), portText.getText()), sessionText.getText());
+        boolean isActive = ser.isServerActive();
+        buttonTextThread.interrupt();
+        Platform.runLater(() -> {
+          button.setText("Search");
+          button.setDisable(false);
+        });
+        return isActive;
+      } catch (IllegalArgumentException e2) {
+        buttonTextThread.interrupt();
+        Platform.runLater(() -> {
+          button.setText("enter all details");
+          button.setDisable(false);
+          right.getChildren().clear();
+          info.setText("Please enter a valid \n IP-adress and port!");
+          right.getChildren().add(info);
+        });
+        return false;
+      }
+    }
+  }
 
+  
   /**
    * Method that creates styled text that can be used within the scene.
    * 
