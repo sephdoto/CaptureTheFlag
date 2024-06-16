@@ -1,4 +1,4 @@
-package de.unimannheim.swt.pse.ctf.game.integration;
+package org.ctf.shared.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
