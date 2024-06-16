@@ -1,6 +1,7 @@
 package org.ctf.shared.gameanalyzer;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.ai.AIController;
 import org.ctf.shared.ai.GameStateNormalizer;
@@ -9,6 +10,7 @@ import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.ai.MonteCarloTreeNode;
 import org.ctf.shared.constants.Enums.AI;
+import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 
 /**
@@ -105,10 +107,21 @@ public class GameAnalyzer extends AIController {
      */
     public void analyzeMove(int turn) throws NeedMoreTimeException {
       try {
+        if(!game.getMoves().get("" + (turn)).getTeamId().equals("" + getMcts().getRoot().getGameState().getCurrentTeam())) {
+          System.out.println("Team " + getMcts().getRoot().getGameState().getCurrentTeam() + " gave up, after move " + (currentlyAnalyzing -1));
+          HashMap<String, String> unToNorm = getNormalizedGameState().unToNorm;
+          HashMap<String, String> normToUn = getNormalizedGameState().normToUn;
+          GameState gameState = getMcts().getRoot().getGameState();
+          GameUtilities.removeTeam(gameState, gameState.getCurrentTeam());
+          setNormalizedGameState(new GameStateNormalizer(gameState, true));
+          getNormalizedGameState().unToNorm = unToNorm;
+          getNormalizedGameState().normToUn = normToUn;
+          initMCTS();
+        }
         Move best = getNormalizedGameState().normalizedMove(getNextMove());
         Move made = getNormalizedGameState().normalizedMove(game.getMoves().get("" +turn));
         try {
-          results[currentlyAnalyzing] = new AnalyzedGameState(getMcts(), made, best, this.game.getInitialState());
+          results[turn-1] = new AnalyzedGameState(getMcts(), made, best, this.game.getInitialState());
         } catch (NeedMoreTimeException nmte) {
           nmte.mentionTime(getThinkingTime());
           throw nmte;

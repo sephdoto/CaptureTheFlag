@@ -248,6 +248,10 @@ public class AIController {
   public GameStateNormalizer getNormalizedGameState() {
     return normalizedGameState;
   }
+  
+  public void setNormalizedGameState(GameStateNormalizer normalizedGameState) {
+    this.normalizedGameState = normalizedGameState;
+  }
 
   public MonteCarloTreeSearch getMcts() {
     return mcts;

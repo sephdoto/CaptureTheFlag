@@ -12,7 +12,7 @@ import com.sun.javafx.util.Logging;
 /**
  * Accessor File to allow proper exposure of dependencies
  *
- * @author rsyed
+ * @author rsyed, sistumpf
  */
 public class EntryPoint {
   public static CheatboardListener cbl;
