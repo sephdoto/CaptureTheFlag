@@ -66,7 +66,8 @@ public class PlayGameScreenV2 extends Scene {
   private HomeSceneController hsc;
   private boolean isRemote;
   private GameState currentState;
-
+  private boolean showBlocks;
+  
   // Time-limits
   private Label moveTimeLimit;
   private Label gameTimeLimit;
@@ -116,6 +117,7 @@ public class PlayGameScreenV2 extends Scene {
     this.isRemote = isRemote;
     this.root = (StackPane) this.getRoot();
     this.hsc = hsc;
+    this.showBlocks = true;
     initalizePlayGameScreen();
     CheatboardListener.setSettings(root, this);
   }
@@ -324,7 +326,7 @@ public class PlayGameScreenV2 extends Scene {
       CreateGameController.setFigures(gm.getFigures());
       showMapBox.getChildren().remove(gm);
     }
-    gm = new GamePane(state, false, "");
+    gm = new GamePane(state, showBlocks, "");
     StackPane.setAlignment(gm, Pos.CENTER);
     gm.maxWidthProperty().bind(mpv.fitWidthProperty());
     gm.maxHeightProperty().bind(mpv.fitHeightProperty());
@@ -346,6 +348,7 @@ public class PlayGameScreenV2 extends Scene {
    */
   public void UpdateLeftSide() {
     showMapBox.getChildren().clear();
+    this.showBlocks = false;
     Image mp =
         new Image(new File(Constants.toUIResources + "pictures" + File.separator + "grid.png")
             .toURI().toString());
@@ -361,7 +364,7 @@ public class PlayGameScreenV2 extends Scene {
     });
     mpv.setPreserveRatio(true);
     showMapBox.getChildren().add(mpv);
-    this.drawGamePane(currentState);
+    this.redrawGrid(currentState);
   }
 
 
