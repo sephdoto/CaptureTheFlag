@@ -65,7 +65,9 @@ public class CreateGameController {
 
   // List of all Human-Clients on one device
   private static ArrayList<Client> localHumanClients = new ArrayList<Client>();
-
+  // List of all AI-Clients on one device
+  private static ArrayList<Client> localAIClients = new ArrayList<Client>();
+  
   // To comunicate between diferent scenes
   private static HomeSceneController hsc;
   private static WaitingScene waitingScene;
@@ -201,6 +203,7 @@ public class CreateGameController {
           .gameData(sessionID, teamName).build();
       setMainClient(aiClient);
     }
+    localAIClients.add(aiClient);
   }
 
 
@@ -358,6 +361,14 @@ public class CreateGameController {
 
   public static void setLocalHumanClients(ArrayList<Client> localHumanClients) {
     CreateGameController.localHumanClients = localHumanClients;
+  }
+  
+  public static ArrayList<Client> getLocalAIClients() {
+    return localAIClients;
+  }
+
+  public static void setLocalAIClients(ArrayList<Client> localAIClients) {
+    CreateGameController.localAIClients = localAIClients;
   }
 
   public static HashMap<String, ObjectProperty<Color>> getColors() {

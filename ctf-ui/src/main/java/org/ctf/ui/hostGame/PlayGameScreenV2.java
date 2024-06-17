@@ -1,12 +1,14 @@
 package org.ctf.ui.hostGame;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
+import javax.imageio.ImageIO;
 import org.ctf.shared.client.AIClient;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.constants.Constants;
@@ -203,8 +205,10 @@ public class PlayGameScreenV2 extends Scene {
     showMapBox.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.7));
     showMapBox.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.9));
     showMapBox.getStyleClass().add("option-pane");
+    File grid = new File(Constants.toUIPictures + File.separator + "grid.png");
+    String gridPicName = grid.exists() ? "grid.png" : "tuning1.png";
     Image mp =
-        new Image(new File(Constants.toUIResources + "pictures" + File.separator + "grid.png")
+        new Image(new File(Constants.toUIResources + "pictures" + File.separator + gridPicName)
             .toURI().toString());
     mpv = new ImageView(mp);
     StackPane.setAlignment(mpv, Pos.CENTER);
@@ -297,14 +301,27 @@ public class PlayGameScreenV2 extends Scene {
       if (isRemote) {
         if (mainClient.isItMyTurn() && !(mainClient instanceof AIClient)) {
           MoveVisualizer.initializeGame(gm, mainClient);
+          giveUpButton.setDisable(false);
+        } else if (mainClient.isItMyTurn() && mainClient instanceof AIClient) {
+          giveUpButton.setDisable(false);
+        } else {
+          giveUpButton.setDisable(true);
         }
       } else {
+        //check for human clients
         for (Client local : CreateGameController.getLocalHumanClients()) {
           if (local.isItMyTurn()) {
             MoveVisualizer.initializeGame(gm, local);
             oneClientCanGiveUp = true;
           }
         }
+        //check for AI clients
+        if(!oneClientCanGiveUp)
+          for (Client local : CreateGameController.getLocalAIClients()) {
+            if (local.isItMyTurn()) {
+              oneClientCanGiveUp = true;
+            } //TODO
+          }
         if (oneClientCanGiveUp) {
           giveUpButton.setDisable(false);
         } else {
@@ -493,9 +510,11 @@ public class PlayGameScreenV2 extends Scene {
   /**
    * Creates the button which is used to give up
    * 
-   * @author sistumpf, Manuel Krakowski
+   * @author sistumpf
+   * @author Manuel Krakowski
    * @return Box containing only the give-up-button
    */
+  // TODO
   private HBox createGiveUpBox() {
     HBox giveUpBox = new HBox();
     giveUpBox.prefWidthProperty().bind(right.widthProperty());
@@ -505,7 +524,10 @@ public class PlayGameScreenV2 extends Scene {
     giveUpButton.prefWidthProperty().bind(giveUpBox.widthProperty().multiply(0.25));
     giveUpButton.getStyleClass().add("leave-button");
     giveUpButton.setOnAction(e -> {
-      for (Client client : CreateGameController.getLocalHumanClients()) {
+      ArrayList<Client> allClients = new ArrayList<Client>();
+      allClients.addAll(CreateGameController.getLocalHumanClients());
+      allClients.addAll(CreateGameController.getLocalAIClients());
+      for (Client client : allClients) {
         if (client.isItMyTurn()) {
           client.giveUp();
           break;

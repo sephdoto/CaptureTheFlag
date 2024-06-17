@@ -1,6 +1,7 @@
 package org.ctf.ui.controllers;
 
 import java.io.BufferedReader;
+import java.io.File;
 /**
  * @author mkrakows & aniemesc
 This Class controls what happens when clicking the buttons on the HomeScreen
@@ -18,6 +19,7 @@ import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.ui.App;
@@ -155,6 +157,10 @@ public class HomeSceneController {
    */
   public void switchToPlayGameScene(Stage stage, Client mainClient, boolean isRemote) {
     CheatboardListener.setLastScene(stage.getScene());
+    //delete last grid
+    File grid = new File(Constants.toUIPictures + File.separator + "grid.png");
+    grid.delete();
+    
     playGameScreenV2 =
         new PlayGameScreenV2(this, stage.getWidth(), stage.getHeight(), mainClient, isRemote);
     stage.setScene(playGameScreenV2);
@@ -163,6 +169,8 @@ public class HomeSceneController {
     } else {
       CreateGameController.overWriteDefaultWithServerColors(); 
     }
+    
+    //generate new grid
     new WaveCollapseThread(mainClient.getGrid(), this).start();
   }
 

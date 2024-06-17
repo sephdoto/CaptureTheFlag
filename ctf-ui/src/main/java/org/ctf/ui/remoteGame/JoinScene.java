@@ -23,7 +23,9 @@ import org.ctf.ui.creators.ComponentCreator;
 import org.ctf.ui.creators.PopUpCreator;
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.editor.EditorScene;
+import org.ctf.ui.hostGame.CreateGameController;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
+import org.ctf.ui.threads.PointAnimation;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -51,6 +53,7 @@ import javafx.stage.Stage;
  * components for search game sessions and to join them as a human player or a selected AI client.
  * 
  * @author aniemesc
+ * @author sistumpf
  */
 public class JoinScene extends Scene {
   HomeSceneController hsc;
@@ -331,35 +334,7 @@ public class JoinScene extends Scene {
      */
     public ServerCheckTask(Button searchButton) {
       this.button = searchButton;
-      this.buttonTextThread = new Thread() {
-        private boolean active = true;
-        
-        @Override
-        public void interrupt() {
-          this.active = false;
-        }
-        
-        /**
-         * Changes the button text to display a little animation
-         */
-        @Override
-        public void run() {
-          for(int i=0; active; i++) {
-            i %= 4;
-            StringBuilder points = new StringBuilder();
-            switch(i) {
-              case 0: points.append("      "); break;
-              case 1: points.append(".     "); break;
-              case 2: points.append(". .   "); break;
-              case 3: points.append(". . . "); break;
-            }
-            Platform.runLater(() -> button.setText("checking " + points.toString()));
-            try {
-              Thread.sleep(175);
-            } catch (InterruptedException e) { e.printStackTrace(); }
-          }
-        }
-      };
+      this.buttonTextThread = new PointAnimation(button, "checking", 3, 175);
       buttonTextThread.start();
     }
     
@@ -577,6 +552,7 @@ public class JoinScene extends Scene {
           .enableAutoJoin(id, nameField.getText())
           .build();
       client.enableGameStateQueue(true);
+      CreateGameController.getLocalHumanClients().add(client);
       
       root.getChildren().remove(popUp);
       right.getChildren().clear();
@@ -634,6 +610,8 @@ public class JoinScene extends Scene {
           .gameData(id, nameField.getText())
           .build();
       aiClient.enableGameStateQueue(true);
+      CreateGameController.getLocalAIClients().add(aiClient);
+      
       root.getChildren().remove(popUp);
       right.getChildren().clear();
       info.setText("Client hast joined!\n Waiting for the Game to start.");
