@@ -7,15 +7,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.HashMap;
 import java.util.HashSet;
 import javafx.application.Platform;
-import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.shared.constants.Enums.Themes;
-import org.ctf.shared.tools.JsonTools;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.json.JSONArray;
@@ -41,29 +38,29 @@ public class SoundController {
    * @throws IOException
    * @throws InterruptedException 
    */
-  public static void main(String args[]) throws JSONException, IOException, InterruptedException {
+  /*public static void main(String args[]) throws JSONException, IOException, InterruptedException {
     Platform.startup(() -> {});
 
-    for(Themes theme : Themes.values()) {
+//    for(Themes theme : Themes.values()) {
 //      for(SoundType type : SoundType.values()) {
 //        playSound("Default", type);
 //        Thread.sleep(1000);
 //      }
-
+    Themes theme = Themes.STARWARS;
       String soundName = "mech-keyboard-02-102918";
-      String saveAs = "NextButton";
+      String saveAs = "NextButtonXXX";
       //    Themes theme = Themes.BAYERN;  
       SoundType type = SoundType.MISC;
       saveSound(saveAs, theme, type, new File("C:\\Users\\Simon Stumpf\\Downloads\\" + soundName + ".mp3"), false);
-    }
+//    }
     //    }
     //    System.out.println("Can I override a default sound? " + 
     //        saveSound("Default", Themes.STARWARS, SoundType.CAPTURE, new File(
     //            soundFolderLocation + "starwars" + File.separator + SoundType.MOVE.getLocation() + "Default.wav"
     //            ), false));
-    Thread.sleep(1000);
+    Thread.sleep(5000);
     Platform.exit();
-  }
+  }*/
 
   /**
    * Initializes important folder and file locations.
@@ -120,9 +117,7 @@ public class SoundController {
   }
 
   /**
-   * Creates an AudioObject.class Object from a given sound and its information,
-   * copies it to its according place in ui.resources, adds it to linkedSounds.json
-   * and reinitializes {@link audioClips}.
+   * Copies a Sound File to its according place in ui.resources
    * 
    * @author sistumpf
    * @param pieceName The Pieces name, gets used to name the .wav file and identify it
@@ -132,8 +127,23 @@ public class SoundController {
    * @return true if the sound got saved successfully
    */
   public static void saveSound(String pieceName, Themes theme, SoundType type, File sound, boolean custom) {
-    AudioObject audio = new AudioObject(pieceName, theme, type, custom);
-    copyAudioFile(sound, audio);
+    Path sourcePath = sound.toPath();
+    Path targetPath = Paths.get(
+        soundFolderLocation 
+        + theme.toString().toLowerCase() 
+        + File.separator 
+        + type.toString().toLowerCase() 
+        + File.separator 
+        + pieceName 
+        + "."
+        + StringUtils.getFilenameExtension(sound.getPath())
+        );
+
+    try {
+      Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -205,29 +215,6 @@ public class SoundController {
       e.printStackTrace();
       return new JSONArray();
     }
-  }
-
-  /**
-   * Copies a given file into its according SoundType folder.
-   * The file gets named after the AudioObjects pieceName.
-   * The file should be a .wav, we got strange errors with mp3.
-   * 
-   * @author sistumpf
-   * @param audioFile the file that gets copied
-   * @param audio containing the name and new location of the file
-   * @return true if the file got copied successfully
-   */
-  private static boolean copyAudioFile(File audioFile, AudioObject audio) {
-    Path sourcePath = audioFile.toPath();
-    Path targetPath = Paths.get(audio.constructLocation());
-
-    try {
-      Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
-    } catch (IOException e) {
-      e.printStackTrace();
-      return false;
-    }
-    return true;
   }
   
   /**
