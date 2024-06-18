@@ -655,7 +655,8 @@ public class CreateGameScreenV2 extends Scene {
     protected ImageView call() {
       this.wfc =
           new WaveFunctionCollapse(state.getGrid(), Constants.theme, allowedToRun);
-      wfc.saveToResources();
+      if(!new File(Constants.toUIResources + "pictures" + File.separator + "grid.png").exists()) 
+        wfc.saveToResources();
       Image mp =
           new Image(new File(Constants.toUIResources + "pictures" + File.separator + "grid.png")
               .toURI().toString());

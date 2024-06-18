@@ -1,5 +1,6 @@
 package org.ctf.ui.remoteGame;
 
+import java.io.File;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.wave.WaveFunctionCollapse;
 import org.ctf.ui.controllers.HomeSceneController;
@@ -31,7 +32,14 @@ public class WaveCollapseThread extends Thread {
    */
   public void run() {
     WaveFunctionCollapse backgroundcreator = new WaveFunctionCollapse(grid, Constants.theme);
-    backgroundcreator.saveToResources();
+    if(!new File(Constants.toUIResources + "pictures" + File.separator + "grid.png").exists()) 
+      backgroundcreator.saveToResources();
+    while(!new File(Constants.toUIResources + "pictures" + File.separator + "grid.png").exists())
+      try {
+        Thread.sleep(1);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
     Platform.runLater(() -> {
       hsc.getPlayGameScreenV2().UpdateLeftSide();
     });

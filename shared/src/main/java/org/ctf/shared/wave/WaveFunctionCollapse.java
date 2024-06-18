@@ -7,8 +7,14 @@ import javax.imageio.ImageIO;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums;
 import org.ctf.shared.constants.Enums.Themes;
+import javafx.scene.image.Image;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -75,6 +81,10 @@ public class WaveFunctionCollapse {
    * @param allowedToRun a boolean Array to allow changes from outside
    */
   public WaveFunctionCollapse(String[][] grid, Themes theme, boolean[] allowedToRun) {
+    //delete old grids
+    File pic = new File(Constants.toUIResources + "pictures" + File.separator + "grid.png");
+    if(pic.exists()) pic.delete();
+    
     this.allowedToRun = allowedToRun;
     instance = this;
     ogGrid = grid;
@@ -118,6 +128,10 @@ public class WaveFunctionCollapse {
    * @param theme 
    */
   public WaveFunctionCollapse(String[][] grid, Themes theme) {
+    //delete old grids
+    File pic = new File(Constants.toUIResources + "pictures" + File.separator + "grid.png");
+    if(pic.exists()) pic.delete();
+    
     this.allowedToRun = new boolean[] {true};
     instance = this;
     ogGrid = grid;
@@ -513,12 +527,30 @@ public class WaveFunctionCollapse {
   /**
    * Saves the current image to the UI Resources folder. Only use when an image has already been
    * created.
+   * A new file gets created and locked
+   *
+   * @author sistumpf
    */
   public void saveToResources() {
     if (this.collapsed) {
-      try {
-        ImageIO.write(this.getBackground(), "png", new File(
-            Constants.toUIResources + File.separator + "pictures" + File.separator + "grid.png"));
+      String path = Constants.toUIResources + "pictures" + File.separator + "grid.png";
+      File saveTo = new File(path);
+      try (RandomAccessFile file = new RandomAccessFile(path, "rw")){
+        FileChannel channel = file.getChannel();
+        FileLock lock = channel.lock();
+
+        try {
+          ByteArrayOutputStream baos = new ByteArrayOutputStream();
+          ImageIO.write(this.getBackground(), "png", baos);
+          byte[] imageBytes = baos.toByteArray();
+
+          file.setLength(imageBytes.length);
+          file.write(imageBytes);
+
+        } finally {
+          lock.release();
+        }
+
       } catch (IOException e) {
         e.printStackTrace();
       }

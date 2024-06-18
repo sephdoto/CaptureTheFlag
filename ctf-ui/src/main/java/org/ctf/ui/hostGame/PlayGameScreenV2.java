@@ -2,7 +2,11 @@ package org.ctf.ui.hostGame;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.MalformedURLException;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
@@ -368,9 +372,32 @@ public class PlayGameScreenV2 extends Scene {
   public void UpdateLeftSide() {
     showMapBox.getChildren().clear();
     this.showBlocks = false;
-    Image mp =
-        new Image(new File(Constants.toUIResources + "pictures" + File.separator + "grid.png")
-            .toURI().toString());
+
+    Image mp = ImageController.loadFallbackImage(ImageType.MISC);
+    String path = Constants.toUIResources + "pictures" + File.separator + "grid.png";
+    while(!new File(Constants.toUIResources + "pictures" + File.separator + "grid.png").exists())
+      try {
+        Thread.sleep(1);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    try (RandomAccessFile file = new RandomAccessFile(path, "r")){
+      FileChannel channel = file.getChannel();
+      FileLock lock = channel.lock(0, Long.MAX_VALUE, true);
+
+      try {
+        mp = new Image(new File(path).toURI().toString());
+      } finally {
+        lock.release();
+      }
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+//    Image mp =
+//        new Image(new File(Constants.toUIResources + "pictures" + File.separator + "grid.png")
+//            .toURI().toString());
     mpv = new ImageView(mp);
     StackPane.setAlignment(mpv, Pos.CENTER);
     mpv.setFitWidth(this.getWidth() * 0.8);
