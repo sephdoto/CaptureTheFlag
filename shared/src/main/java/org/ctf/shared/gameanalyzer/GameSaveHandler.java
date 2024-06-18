@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.ThreadLocalRandom;
 import javax.swing.JFileChooser;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.GameState;
@@ -50,7 +51,7 @@ public class GameSaveHandler {
     try {
       localDateTime = LocalDateTime.now();
       DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss");
-      String fileName = localDateTime.format(df);
+      String fileName = localDateTime.format(df) + "_" + this.hashCode();
       this.lastFileName = fileName;
       FileOutputStream fileOutStream =
           new FileOutputStream(Constants.saveGameFolder + fileName + ".savedgame");
