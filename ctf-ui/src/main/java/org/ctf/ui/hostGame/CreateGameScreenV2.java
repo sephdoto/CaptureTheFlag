@@ -608,6 +608,9 @@ public class CreateGameScreenV2 extends Scene {
           gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
           gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
           ImageView iv = task.getValue();
+          iv.fitWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
+          iv.fitHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
+          iv.setPreserveRatio(true);
           showMapBox.getChildren().add(iv);
           showMapBox.getChildren().add(gm);
           generateBackgroundThread = null;
