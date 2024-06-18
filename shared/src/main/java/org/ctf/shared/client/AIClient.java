@@ -12,9 +12,12 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.gameanalyzer.GameSaveHandler;
 import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.data.exceptions.ForbiddenMove;
 import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.NoMoreTeamSlots;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
+import org.ctf.shared.state.data.exceptions.URLError;
+import org.ctf.shared.state.data.exceptions.UnknownError;
 
 /**
  * Extension of Client with support for additional functionality needed by the AI to perform its
@@ -169,6 +172,24 @@ public class AIClient extends Client {
     startAIGameController();
   }
 
+  /**
+   * Used to send a give up request to the current session. Throws exceptions depending on errors
+   *
+   * @throws SessionNotFound (404)
+   * @throws ForbiddenMove (403)
+   * @throws GameOver (410)
+   * @throws UnknownError (500)
+   * @throws URLError (404)
+   * @author rsyed
+   * @author sistumpf
+   */
+  @Override
+  public void giveUp() {
+    //  logger.info(requestedTeamName + " wants to give up");
+    comm.giveUp(currentServer, requestedTeamName, teamSecret);
+    aiClientScheduler.scheduleWithFixedDelay(playTask, 10, aiClientRefreshTime, TimeUnit.MILLISECONDS);
+  }
+  
   /**
    * Changes the sessionID which this client object is pointing to. Functions as a join game command. Overridden as it has to perform extra functions when compared to the one in 
    * Client
