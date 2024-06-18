@@ -54,7 +54,13 @@ public class PopupCreatorGameOver {
   private ObjectProperty<Font> moreWinnersName;
 
 
-
+/**
+ * Clears local clients on creation, as they are not needed after the game has ended.
+ * 
+ * @param scene
+ * @param root
+ * @param hsc
+ */
   public PopupCreatorGameOver(Scene scene, StackPane root, HomeSceneController hsc) {
     this.scene = scene;
     this.root = root;
@@ -64,6 +70,7 @@ public class PopupCreatorGameOver {
     moreWinnerheader = new SimpleObjectProperty<Font>(Font.font(scene.getWidth() / 40));
     moreWinnersName = new SimpleObjectProperty<Font>(Font.font(scene.getWidth() / 50));
     manageFontSizes();
+    CreateGameController.clearLocalClients();
   }
 
   /**

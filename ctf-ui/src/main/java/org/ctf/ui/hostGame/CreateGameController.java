@@ -395,6 +395,8 @@ public class CreateGameController {
     return usedTeamNames.contains(name);
   }
 
-
-
+  public static void clearLocalClients() {
+    localHumanClients.clear();
+    localAIClients.clear();
+  }
 }

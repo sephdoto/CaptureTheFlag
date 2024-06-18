@@ -313,6 +313,7 @@ public class PlayGameScreenV2 extends Scene {
           if (local.isItMyTurn()) {
             MoveVisualizer.initializeGame(gm, local);
             oneClientCanGiveUp = true;
+            break;
           }
         }
         //check for AI clients
@@ -320,6 +321,7 @@ public class PlayGameScreenV2 extends Scene {
           for (Client local : CreateGameController.getLocalAIClients()) {
             if (local.isItMyTurn()) {
               oneClientCanGiveUp = true;
+              break;
             } //TODO
           }
         if (oneClientCanGiveUp) {

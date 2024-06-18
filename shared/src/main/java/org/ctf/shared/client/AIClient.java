@@ -187,7 +187,7 @@ public class AIClient extends Client {
   public void giveUp() {
     //  logger.info(requestedTeamName + " wants to give up");
     comm.giveUp(currentServer, requestedTeamName, teamSecret);
-    aiClientScheduler.scheduleWithFixedDelay(playTask, 10, aiClientRefreshTime, TimeUnit.MILLISECONDS);
+    aiClientScheduler.scheduleWithFixedDelay(playTask, 1, aiClientRefreshTime, TimeUnit.MILLISECONDS);
   }
   
   /**
@@ -238,7 +238,7 @@ public class AIClient extends Client {
    * @author rsyed
    */
   protected void aiPlayerStart() {
-    aiClientScheduler.scheduleWithFixedDelay(playTask, 1, aiClientRefreshTime, TimeUnit.SECONDS);
+    aiClientScheduler.scheduleWithFixedDelay(playTask, 10, aiClientRefreshTime, TimeUnit.MILLISECONDS);
   }
 
   /**

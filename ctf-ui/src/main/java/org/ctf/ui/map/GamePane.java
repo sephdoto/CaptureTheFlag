@@ -180,7 +180,7 @@ public class GamePane extends HBox {
    * @author Manuel Krakowski
    */
   private void showLastMove() {
-    if (state.getLastMove() != null && state.getLastMove().getNewPosition() != null) {
+    if (state.getLastMove() != null && state.getLastMove().getNewPosition() != null && !state.getLastMove().getPieceId().equals("")) {
       Move lastMove = state.getLastMove();
       int xNewPos = lastMove.getNewPosition()[0];
       int yNewPos = lastMove.getNewPosition()[1];
