@@ -204,8 +204,7 @@ private ObjectProperty<Font> popUpLabel;
         if (remote) {
           root.getChildren().remove(aiLevelPopUpPane);
           JoinScene joinscene = (JoinScene) scene;
-          joinscene.createJoinWindowAI(joinscene.getId(), joinscene.getIp(), joinscene.getPort(),
-              AI.RANDOM, null);
+          joinscene.createJoinWindow(joinscene.getId(), joinscene.getIp(), joinscene.getPort(), true, AI.RANDOM, null);
           return;
         }
         if (aiorHumanpopup == null) {
@@ -802,7 +801,7 @@ private ObjectProperty<Font> popUpLabel;
 			if(remote) {
 			  root.getChildren().remove(aiconfigPopUp);
 			  JoinScene joinscene = (JoinScene) scene;
-			  joinscene.createJoinWindowAI(joinscene.getId(), joinscene.getIp(), joinscene.getPort(), aitype, defaultConfig);
+			  joinscene.createJoinWindow(joinscene.getId(), joinscene.getIp(), joinscene.getPort(), true, aitype, defaultConfig);
 			  return;
 			}
 		  

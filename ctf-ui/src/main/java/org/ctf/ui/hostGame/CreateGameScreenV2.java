@@ -589,7 +589,7 @@ public class CreateGameScreenV2 extends Scene {
     text.setOpacity(1);
     background.setOpacity(0.3);
 
-    Thread pointAnimation = new PointAnimation(text, "background is being generated,\nplease wait", 18, 125);
+    Thread pointAnimation = new PointAnimation(text, "background is being generated,\nplease wait", "action interrupted", 18, 125);
     showMapBox.getChildren().add(gm);
     showMapBox.getChildren().add(background);
     showMapBox.getChildren().add(text);

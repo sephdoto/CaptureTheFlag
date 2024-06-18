@@ -66,6 +66,7 @@ public class Client implements GameClientInterface {
   protected GameSessionResponse gameResponse;
   protected String[] winners;
   protected int turnTimeLimit;
+  protected String couldJoin;
 
   // Block for Team Data
   protected String teamSecret;
@@ -112,6 +113,7 @@ public class Client implements GameClientInterface {
    */
   Client(CommLayerInterface comm, String IP, String port, boolean enableLogging) {
     this.currentTeamTurn = -1;
+    this.couldJoin = "unjoined";
     this.gson = new Gson();
     this.currentState = new GameState();
     this.currentSession = new GameSession();
@@ -142,8 +144,8 @@ public class Client implements GameClientInterface {
     this(comm, IP, port, enableLogging);
     this.gameIDtoJoin = gameID;
     this.requestedTeamName = teamName;
-    scheduler.schedule(joinTask, 2, TimeUnit.SECONDS);
-    scheduler.schedule(startWatcher, 3, TimeUnit.SECONDS);
+    scheduler.schedule(joinTask, 100, TimeUnit.MILLISECONDS);
+    scheduler.schedule(startWatcher, 100, TimeUnit.MILLISECONDS);
   }
 
   /**
@@ -309,7 +311,13 @@ public class Client implements GameClientInterface {
   public void joinExistingGame(String IP, String port, String gameSessionID, String teamName) {
     this.currentServer = "http://" + IP + ":" + port + "/api/gamesession";
     this.currentServer = shortURL + "/" + gameSessionID;
-    joinGame(teamName);
+    try {
+      joinGame(teamName);
+      this.couldJoin = "joined";
+      getStateFromServer();
+    } catch (Exception e) {
+      this.couldJoin = "declined";
+    }
   }
 
   // **************************************************
@@ -762,7 +770,7 @@ public class Client implements GameClientInterface {
       public void run() {
         while (active) {
           try {
-            Long sleep = 1000L;
+            Long sleep = 100L;
             Client.this.getSessionFromServer(); // Gets Session from server
             if (getStartDate() != null) {
               if (enableLogging) {
@@ -965,6 +973,10 @@ public class Client implements GameClientInterface {
 
   public boolean isAlive() {
     return isAlive;
+  }
+
+  public String couldJoin() {
+    return couldJoin;
   }
 
 }

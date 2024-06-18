@@ -13,7 +13,8 @@ import javafx.application.Platform;
  */
 public class PointAnimation extends Thread {
   private Object object;
-  private String string;
+  private String text;
+  private String interruptedText;
   private int numberOfPoints;
   private int refreshTimeMS;
   private Random random;
@@ -26,12 +27,13 @@ public class PointAnimation extends Thread {
    * @param numberOfPoints how many dots are placed at max
    * @param refreshTimeMS time in ms to switch between animation frames
    */
-  public PointAnimation(Object object, String string, int numberOfPoints, int refreshTimeMS) {
+  public PointAnimation(Object object, String text, String interruptedText, int numberOfPoints, int refreshTimeMS) {
     this.object = object;
-    this.string = string;
+    this.text = text;
+    this.interruptedText = interruptedText;
     this.numberOfPoints = numberOfPoints;
     this.refreshTimeMS = refreshTimeMS;
-    random = new Random(string.hashCode());
+    random = new Random(text.hashCode());
   }
   
   /**
@@ -41,7 +43,7 @@ public class PointAnimation extends Thread {
   public void interrupt() {
     Platform.runLater(() ->  {
       try {
-        object.getClass().getMethod("setText", String.class).invoke(object, ("action interrputed"));
+        object.getClass().getMethod("setText", String.class).invoke(object, (interruptedText));
       } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
           | NoSuchMethodException | SecurityException e) {
         e.printStackTrace();
@@ -85,7 +87,7 @@ public class PointAnimation extends Thread {
 
       Platform.runLater(() ->  {
         try {
-          object.getClass().getMethod("setText", String.class).invoke(object, (string + points.toString()));
+          object.getClass().getMethod("setText", String.class).invoke(object, (text + points.toString()));
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
             | NoSuchMethodException | SecurityException e) {
           this.active = false;

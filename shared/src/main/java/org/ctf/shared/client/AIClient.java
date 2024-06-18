@@ -187,7 +187,7 @@ public class AIClient extends Client {
   public void giveUp() {
     //  logger.info(requestedTeamName + " wants to give up");
     comm.giveUp(currentServer, requestedTeamName, teamSecret);
-    aiClientScheduler.scheduleWithFixedDelay(playTask, 1, aiClientRefreshTime, TimeUnit.MILLISECONDS);
+    aiClientScheduler.scheduleWithFixedDelay(playTask, 50, aiClientRefreshTime, TimeUnit.MILLISECONDS);
   }
   
   /**
@@ -205,10 +205,7 @@ public class AIClient extends Client {
    */
   @Override
   public void joinExistingGame(String IP, String port, String gameSessionID, String teamName) {
-    this.currentServer = "http://" + IP + ":" + port + "/api/gamesession";
-    this.currentServer = shortURL + "/" + gameSessionID;
-    joinGame(teamName);
-    getStateFromServer();
+    super.joinExistingGame(IP, port, gameSessionID, teamName);
   }
 /**
    * Combines refreshing the session and game state into one.
