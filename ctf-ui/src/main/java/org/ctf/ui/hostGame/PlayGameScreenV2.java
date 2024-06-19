@@ -68,6 +68,7 @@ public class PlayGameScreenV2 extends Scene {
   // Data which is used to always refresh the scene with the newest state
   private ScheduledExecutorService scheduler;
   private ScheduledExecutorService scheduler2;
+  private boolean schedulerStep;
   private Client mainClient;
   private HomeSceneController hsc;
   private boolean isRemote;
@@ -119,6 +120,7 @@ public class PlayGameScreenV2 extends Scene {
   public PlayGameScreenV2(HomeSceneController hsc, double width, double height, Client mainClient,
       boolean isRemote) {
     super(new StackPane(), width, height);
+    schedulerStep = true;
     this.mainClient = mainClient;
     this.isRemote = isRemote;
     this.root = (StackPane) this.getRoot();
@@ -151,12 +153,13 @@ public class PlayGameScreenV2 extends Scene {
       e.printStackTrace();
     }
     createLayout();
+    //TODO 2 scheduler sind dumm, zeit als variable machen die dynamisch verändert wird??
     if (mainClient.isGameTimeLimited() || mainClient.isGameMoveTimeLimited()) {
       scheduler2 = Executors.newScheduledThreadPool(1);
       scheduler2.scheduleAtFixedRate(updateTask2, 0, 1, TimeUnit.SECONDS);
     }
     scheduler = Executors.newScheduledThreadPool(1);
-    scheduler.scheduleAtFixedRate(updateTask, 0, 100, TimeUnit.MILLISECONDS);
+    scheduler.scheduleAtFixedRate(updateTask, 0, 10, TimeUnit.MILLISECONDS);
   }
 
 
@@ -254,7 +257,7 @@ public class PlayGameScreenV2 extends Scene {
    */
   Runnable updateTask = () -> {
     try {
-      if (mainClient.isGameOver()) {
+      if (mainClient.isGameOver() && mainClient.queuedGameStates() <= 0) {
         String[] winners = mainClient.getWinners();
         Platform.runLater(() -> {
           PopupCreatorGameOver gameOverPop = new PopupCreatorGameOver(this, root, hsc);
@@ -274,16 +277,25 @@ public class PlayGameScreenV2 extends Scene {
       // g.createGameOverPopUpYouLost(mainClient.getTeamID());
       // });
       // }
-      GameState tmp = mainClient.getQueuedGameState();
-      if (tmp != null) {
-        currentState = tmp;
-        Platform.runLater(() -> {
-          if (!mainClient.isGameMoveTimeLimited()) {
-            noMoveTimeLimit.reset();
-          }
-          this.redrawGrid(currentState);
-          this.setTeamTurn();
-        });
+      if(!(mainClient instanceof AIClient))
+        schedulerStep = true;
+      if (mainClient.queuedGameStates() > 0) {
+        if(schedulerStep) {
+          schedulerStep = false;
+          Platform.runLater(() -> {
+            GameState tmp = mainClient.getQueuedGameState();
+            currentState = tmp;
+            if (!mainClient.isGameMoveTimeLimited()) {
+              noMoveTimeLimit.reset();
+            }
+            this.redrawGrid(currentState);
+            this.setTeamTurn();
+            //            System.out.println(tmp.getCurrentTeam() + " " + mainClient.isAlive() + " " + mainClient.queuedGameStates());
+            //            if(mainClient.queuedGameStates() == 0 && tmp.getLastMove() != null)
+            //              System.out.println("\t" + tmp.getLastMove().getPieceId() + " " + tmp.getLastMove().getNewPosition()[0] + ", " + tmp.getLastMove().getNewPosition()[1]);
+            schedulerStep = true;
+          });
+        }
       }
     } catch (Exception e) {
     }
@@ -299,7 +311,7 @@ public class PlayGameScreenV2 extends Scene {
   public void redrawGrid(GameState state) {
     boolean oneClientCanGiveUp = false;
     if (state == null) {
-      showMapBox.getChildren().add(new Label("hallo"));
+      showMapBox.getChildren().add(new Label("GameState is null"));
     } else {
       drawGamePane(state);
       if (isRemote) {
