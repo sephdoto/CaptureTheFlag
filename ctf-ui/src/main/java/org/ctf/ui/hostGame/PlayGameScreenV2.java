@@ -159,7 +159,7 @@ public class PlayGameScreenV2 extends Scene {
       scheduler2.scheduleAtFixedRate(updateTask2, 0, 1, TimeUnit.SECONDS);
     }
     scheduler = Executors.newScheduledThreadPool(1);
-    scheduler.scheduleAtFixedRate(updateTask, 0, 10, TimeUnit.MILLISECONDS);
+    scheduler.scheduleAtFixedRate(updateTask, 0, 50, TimeUnit.MILLISECONDS);
   }
 
 
@@ -261,13 +261,15 @@ public class PlayGameScreenV2 extends Scene {
         String[] winners = mainClient.getWinners();
         Platform.runLater(() -> {
           PopupCreatorGameOver gameOverPop = new PopupCreatorGameOver(this, root, hsc);
-          if (winners.length == 1) {
+          if (winners.length <= 1) {
             gameOverPop.createGameOverPopUpforOneWinner(winners[0]);
           } else {
             gameOverPop.createGameOverPopUpforMoreWinners(winners);
           }
         });
-        scheduler.shutdown();
+        if(scheduler != null)
+        scheduler.shutdown();        
+        if(scheduler2 != null)
         scheduler2.shutdown();
       }
       // System.out.println(mainClient.isAlive());
@@ -284,20 +286,23 @@ public class PlayGameScreenV2 extends Scene {
           schedulerStep = false;
           Platform.runLater(() -> {
             GameState tmp = mainClient.getQueuedGameState();
-            currentState = tmp;
-            if (!mainClient.isGameMoveTimeLimited()) {
-              noMoveTimeLimit.reset();
+            if(tmp != null) {
+              currentState = tmp;
+              if (!mainClient.isGameMoveTimeLimited()) {
+                noMoveTimeLimit.reset();
+              }
+              this.redrawGrid(currentState);
+              this.setTeamTurn();
+              //            System.out.println(tmp.getCurrentTeam() + " " + mainClient.isAlive() + " " + mainClient.queuedGameStates());
+              //            if(mainClient.queuedGameStates() == 0 && tmp.getLastMove() != null)
+              //              System.out.println("\t" + tmp.getLastMove().getPieceId() + " " + tmp.getLastMove().getNewPosition()[0] + ", " + tmp.getLastMove().getNewPosition()[1]);
             }
-            this.redrawGrid(currentState);
-            this.setTeamTurn();
-            //            System.out.println(tmp.getCurrentTeam() + " " + mainClient.isAlive() + " " + mainClient.queuedGameStates());
-            //            if(mainClient.queuedGameStates() == 0 && tmp.getLastMove() != null)
-            //              System.out.println("\t" + tmp.getLastMove().getPieceId() + " " + tmp.getLastMove().getNewPosition()[0] + ", " + tmp.getLastMove().getNewPosition()[1]);
             schedulerStep = true;
           });
         }
       }
     } catch (Exception e) {
+      e.printStackTrace();
     }
   };
 

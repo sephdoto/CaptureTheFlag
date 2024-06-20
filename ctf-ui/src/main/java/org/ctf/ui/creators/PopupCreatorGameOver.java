@@ -99,7 +99,7 @@ public class PopupCreatorGameOver {
    * @param name: Name of the winner
    */
   public void createGameOverPopUpforOneWinner(String name) {
-    gameOverPopUp = new PopUpPane(scene, 0.6, 0.5);
+    gameOverPopUp = new PopUpPane(scene, 0.6, 0.5, 0.6); // TODO
     StackPane poproot = new StackPane();
     poproot.getChildren().add(createBackgroundKonfetti(poproot));
     VBox top = new VBox();
@@ -161,7 +161,7 @@ public class PopupCreatorGameOver {
    * @param names: List of the names of all the winners
    */
   public void createGameOverPopUpforMoreWinners(String[] names) {
-    gameOverPopUp = new PopUpPane(scene, 0.6, 0.8);
+    gameOverPopUp = new PopUpPane(scene, 0.6, 0.8, 0.6); //TODO
     StackPane poproot = new StackPane();
     poproot.getChildren().add(createBackgroundKonfetti(poproot));
     VBox top = new VBox();
@@ -345,7 +345,7 @@ public class PopupCreatorGameOver {
    * @author Manuel Krakowski
    */
   public void createGameOverPopUpYouLost(String name) {
-    gameOverPopUp = new PopUpPane(scene, 0.6, 0.5);
+    gameOverPopUp = new PopUpPane(scene, 0.6, 0.5, 0.6);    //TODO
     StackPane poproot = new StackPane();
     poproot.getChildren().add(createBackgroundscelett(poproot));
     VBox top = new VBox();

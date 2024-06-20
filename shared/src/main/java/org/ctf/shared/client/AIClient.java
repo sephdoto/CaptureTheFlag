@@ -87,7 +87,16 @@ public class AIClient extends Client {
           if (enableLogging) {
             this.analyzer.addMove(getCurrentState().getLastMove());
           }
+          
+//          System.out.println(currentState.getTeams()[currentState.getCurrentTeam()].getId() + " " + this.requestedTeamName);
           if (isItMyTurn()) {
+//            System.out.println("yep");
+            try {
+              Thread.sleep(10);
+            } catch (InterruptedException e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+            }
             makeMove(controller.getNextMove());
           }
           pullData();

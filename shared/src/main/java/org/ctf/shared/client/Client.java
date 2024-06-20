@@ -2,6 +2,7 @@ package org.ctf.shared.client;
 
 import com.google.gson.Gson;
 import java.time.Clock;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
@@ -17,6 +18,7 @@ import org.ctf.shared.client.service.CommLayerInterface;
 import org.ctf.shared.gameanalyzer.GameSaveHandler;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
+import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.Team;
 import org.ctf.shared.state.data.exceptions.ForbiddenMove;
 import org.ctf.shared.state.data.exceptions.GameOver;
@@ -478,15 +480,32 @@ public class Client implements GameClientInterface {
         moveReq.setPieceId(move.getPieceId());
         moveReq.setNewPosition(move.getNewPosition());
         comm.makeMove(currentServer, moveReq);
+//        System.out.println("dop");
       } catch (SessionNotFound e) {
+        System.out.println("SessionNotFound");
         throw new SessionNotFound();
       } catch (ForbiddenMove e) {
+        System.out.println("ForbiddenMove");
         throw new ForbiddenMove();
       } catch (InvalidMove e) {
+        System.out.println(move.getPieceId() + " " + move.getTeamId() + " " +
+            move.getNewPosition()[0] + " " + move.getNewPosition()[1]);
+        final String pieceId = move.getPieceId();
+        Piece picked = null;
+        for(Piece p : currentState
+            .getTeams()[Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0])]
+                .getPieces()){
+                  if(p.getId().equals(pieceId))
+                    picked = p;
+                }
+        System.out.println(picked.getDescription().getType());
+        System.out.println("InvalidMove");
         throw new InvalidMove();
       } catch (GameOver e) {
+        System.out.println("GameOver");
         throw new GameOver();
       } catch (UnknownError e) {
+        System.out.println("UnknownError");
         throw new UnknownError();
       }
     }
@@ -877,6 +896,7 @@ public class Client implements GameClientInterface {
   }
 
   public String[] getWinners() {
+    getSessionFromServer();
     return winners;
   }
 
@@ -951,6 +971,16 @@ public class Client implements GameClientInterface {
    */
   public GameState getQueuedGameState() {
     return this.fifoQueue.poll();
+  }
+  
+  /**
+   * Returns the number of GameStates in the queue.
+   * 
+   * @author sistumpf
+   * @return number of GameStates in the queue.
+   */
+  public int queuedGameStates() {
+    return this.fifoQueue.size();
   }
 
   /**

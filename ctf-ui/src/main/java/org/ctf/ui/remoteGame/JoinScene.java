@@ -469,7 +469,7 @@ public class JoinScene extends Scene {
     aiButton.setOnAction(e -> {
        PopUpCreator popUpCreator = new PopUpCreator(this, root, hsc);
        popUpCreator.setRemote(true);
-       popUpCreator.createAiLevelPopUp(new PopUpPane(null, 0, 0), portText, serverIPText);
+       popUpCreator.createAiLevelPopUp(new PopUpPane(null, 0, 0, 0.95), portText, serverIPText);
     
 //      AIClient aiClient = AIClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(ip)
 //          .onPort(port).aiPlayerSelector(popUpCreator.getAitype(), popUpCreator.getDefaultConfig()).enableSaveGame(false)
@@ -517,7 +517,7 @@ public class JoinScene extends Scene {
    * @return StackPane for Submitting templates
    */
   public void createJoinWindow(String id, String ip, String port, boolean isAI, AI type, AIConfig config) {
-    PopUpPane popUp = new PopUpPane(this, 0.4, 0.4);
+    PopUpPane popUp = new PopUpPane(this, 0.4, 0.4, 0.95);
     VBox vbox = new VBox();
     vbox.setAlignment(Pos.TOP_CENTER);
     vbox.setPadding(new Insets(10));

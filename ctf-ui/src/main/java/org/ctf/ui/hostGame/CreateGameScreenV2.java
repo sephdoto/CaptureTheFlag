@@ -772,7 +772,7 @@ public class CreateGameScreenV2 extends Scene {
    * @author Manuel Krakowski
    */
   private void createChooserPopup() {
-    aiOrHumanPop = new PopUpPane(this, 0.5, 0.3);
+    aiOrHumanPop = new PopUpPane(this, 0.5, 0.3, 0.95);
     portText.setDisable(true);
     serverIPText.setDisable(true);
     root.getChildren().add(aiOrHumanPop);

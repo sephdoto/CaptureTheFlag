@@ -67,7 +67,7 @@ public class ComponentCreator {
    * @return StackPane for Submitting templates
    */
   public StackPane createSubmitWindow() {
-    PopUpPane popUp = new PopUpPane(editorscene, 0.4, 0.4);
+    PopUpPane popUp = new PopUpPane(editorscene, 0.4, 0.4, 0.95);
     VBox vbox = new VBox();
     vbox.setAlignment(Pos.TOP_CENTER);
     vbox.setPadding(new Insets(10));
@@ -242,7 +242,7 @@ public class ComponentCreator {
    * @return {@link PopUpPane} for settings
    */
   public StackPane createSettingsWindow(StackPane root) {
-    PopUpPane popUp = new PopUpPane(scene, 0.5, 0.6);
+    PopUpPane popUp = new PopUpPane(scene, 0.5, 0.6, 0.7);
     VBox vbox = new VBox();
     vbox.setAlignment(Pos.TOP_CENTER);
     vbox.setPadding(new Insets(10));
@@ -405,7 +405,7 @@ public class ComponentCreator {
    * @return {@link PopUpPane} providing the option to load AI configurations.
    */
   public static PopUpPane createAIWindow(PopUpCreator popUpCreator) {
-    PopUpPane popUp = new PopUpPane(App.getStage().getScene(), 0.6, 0.4);
+    PopUpPane popUp = new PopUpPane(App.getStage().getScene(), 0.6, 0.4, 0.95);
     VBox vbox = new VBox();
     vbox.setAlignment(Pos.TOP_CENTER);
     vbox.setPadding(new Insets(10));

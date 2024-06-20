@@ -248,7 +248,8 @@ public class CreateGameController {
         // return ipAddress;
         return InetAddress.getLocalHost().getHostAddress();
       } catch (IOException e) {
-        e.printStackTrace();
+//        e.printStackTrace();
+        System.out.println("no internet connection");
       }
     }
     return serverIP;

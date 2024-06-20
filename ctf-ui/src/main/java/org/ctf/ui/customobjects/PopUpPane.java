@@ -20,12 +20,13 @@ public class PopUpPane extends StackPane {
    * @param widthRatio - Percentage of Width that PopUpPane should cover
    * @param heightRatio - Percentage of Height that PopUpP
    */
-  public PopUpPane(Scene scene, double width, double height) {
+  public PopUpPane(Scene scene, double width, double height, double opacity) {
     this.getStyleClass().add("blur-pane");
     popUp = new StackPane();
     popUp.maxWidthProperty().bind(this.widthProperty().multiply(width));
     popUp.maxHeightProperty().bind(this.heightProperty().multiply(height));
     popUp.getStyleClass().add("pop-up-pane");
+    popUp.setStyle("-fx-background-color: rgba(0, 0, 0, " + opacity + ");");
     this.getChildren().add(popUp);
   }
 

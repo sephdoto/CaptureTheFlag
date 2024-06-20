@@ -126,7 +126,7 @@ private ObjectProperty<Font> popUpLabel;
 		portText.setDisable(true);
 		serverIPText.setDisable(true);
 		}*/
-		aiLevelPopUpPane = new PopUpPane(scene, 0.6, 0.4);
+		aiLevelPopUpPane = new PopUpPane(scene, 0.6, 0.4, 0.95);
 		VBox top = new VBox();
 		top.heightProperty().addListener((obs, oldVal, newVal) -> {
 			double spacing = newVal.doubleValue() * 0.1;
@@ -312,7 +312,7 @@ private ObjectProperty<Font> popUpLabel;
           defaultConfig = new AIConfig();
         }
 		createConfigMaps();
-		aiconfigPopUp = new PopUpPane(scene, widht, hight);
+		aiconfigPopUp = new PopUpPane(scene, widht, hight, 0.95);
 		StackPane configRoot = new StackPane();
 		configRoot.getChildren().add(createBackgroundImage(configRoot));
 		configRoot.getStyleClass().add("join-root");
@@ -858,7 +858,7 @@ private ObjectProperty<Font> popUpLabel;
 	 * @author Manuel Krakowski
 	 */
 	private void createSaveConfigPopUp() {
-		saveConfig = new PopUpPane(scene, 0.55, 0.4);
+		saveConfig = new PopUpPane(scene, 0.55, 0.4, 0.95);
 		root.getChildren().remove(aiconfigPopUp);
 		VBox topBox = new VBox();
 		topBox.heightProperty().addListener((obs, oldVal, newVal) -> {
