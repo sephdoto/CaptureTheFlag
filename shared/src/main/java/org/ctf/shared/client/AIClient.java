@@ -92,7 +92,7 @@ public class AIClient extends Client {
           if (isItMyTurn()) {
 //            System.out.println("yep");
             try {
-              Thread.sleep(10);
+              Thread.sleep(15);
             } catch (InterruptedException e) {
               // TODO Auto-generated catch block
               e.printStackTrace();
@@ -196,7 +196,6 @@ public class AIClient extends Client {
   public void giveUp() {
     //  logger.info(requestedTeamName + " wants to give up");
     comm.giveUp(currentServer, requestedTeamName, teamSecret);
-    aiClientScheduler.scheduleWithFixedDelay(playTask, 50, aiClientRefreshTime, TimeUnit.MILLISECONDS);
   }
   
   /**

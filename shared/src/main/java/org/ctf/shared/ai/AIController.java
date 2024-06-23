@@ -152,7 +152,7 @@ public class AIController {
   }
 
   public void shutDown() {
-    System.out.println("AI shut down");
+    System.out.println(this.ai +"-AI shut down");
     throw new GameOver();
   }
 

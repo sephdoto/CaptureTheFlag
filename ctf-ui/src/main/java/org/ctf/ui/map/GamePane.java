@@ -191,11 +191,13 @@ public class GamePane extends HBox {
         cells.get(generateKey(xNewPos, yNewPos)).showLastMove();
 
       }
-      if (CreateGameController.getLastFigures() != null && colerforAnlyzer.equals("")) {
+      if(CreateGameController.getLastFigures() != null) {
         CostumFigurePain old = CreateGameController.getLastFigures().get(lastMove.getPieceId());
-        int xOldPosX = old.getPosX();
-        int oldPosY = old.getPosY();
-        cells.get(generateKey(xOldPosX, oldPosY)).showLastMove();
+        if (CreateGameController.getLastFigures() != null && !colerforAnlyzer.equals("") && old != null) {
+          int xOldPosX = old.getPosX();
+          int oldPosY = old.getPosY();
+          cells.get(generateKey(xOldPosX, oldPosY)).showLastMove();
+        }
       }
     }
   }

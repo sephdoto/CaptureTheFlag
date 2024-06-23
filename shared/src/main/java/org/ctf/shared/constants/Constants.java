@@ -60,6 +60,10 @@ public class Constants {
    * Global waiting time in ms.
    */
   public static int globalWaitingTime = 3000;
+  /**
+   * Time in ms the UI waits till it refreshes.
+   */
+  public static int UIupdateTime = 50;
 
   /**
    * Static vars needed for Server and AI Config

@@ -118,6 +118,7 @@ public class CreateGameController {
    * @author Manuel Krakowski
    */
   public static void overWriteDefaultWithServerColors() {
+    try {
     for (int i = 0; i < CreateGameController.getMaxNumberofTeams(); i++) {
       Color colorSetByUser = colors.get(String.valueOf(i)).get();
       if (colorSetByUser.equals(Color.BLACK)) {
@@ -126,6 +127,9 @@ public class CreateGameController {
         colors.get(String.valueOf(i)).set(newColer);
       }
     }
+    } catch(Exception e) {
+      e.printStackTrace();
+    } 
   }
 
   /**

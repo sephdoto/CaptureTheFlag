@@ -488,10 +488,11 @@ public class Client implements GameClientInterface {
         System.out.println("ForbiddenMove");
         throw new ForbiddenMove();
       } catch (InvalidMove e) {
-        System.out.println(move.getPieceId() + " " + move.getTeamId() + " " +
-            move.getNewPosition()[0] + " " + move.getNewPosition()[1]);
+        System.out.println(move.getPieceId() + ", team: " + move.getTeamId() + " [" +
+            move.getNewPosition()[0] + "-" + move.getNewPosition()[1] + "], I am " + this.requestedTeamName);
         final String pieceId = move.getPieceId();
         Piece picked = null;
+        try {
         for(Piece p : currentState
             .getTeams()[Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0])]
                 .getPieces()){
@@ -499,6 +500,9 @@ public class Client implements GameClientInterface {
                     picked = p;
                 }
         System.out.println(picked.getDescription().getType());
+        } catch (Exception e1) {
+          e1.printStackTrace();
+        };
         System.out.println("InvalidMove");
         throw new InvalidMove();
       } catch (GameOver e) {

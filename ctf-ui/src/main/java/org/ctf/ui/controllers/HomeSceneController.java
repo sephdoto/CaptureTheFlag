@@ -161,6 +161,16 @@ public class HomeSceneController {
     File grid = new File(Constants.toUIPictures + File.separator + "grid.png");
     grid.delete();
     
+    //update main client if necessary
+    //TODO
+    for(int i=0; i<mainClient.getTeams().length; i++) {
+      if(mainClient.getTeams()[i] == null){
+        System.out.println("team " + i + " is null??");
+//        while(mainClient.getTeams()[i] == null)
+        mainClient.pullData();
+      }
+    }
+    
     playGameScreenV2 =
         new PlayGameScreenV2(this, stage.getWidth(), stage.getHeight(), mainClient, isRemote);
     stage.setScene(playGameScreenV2);
