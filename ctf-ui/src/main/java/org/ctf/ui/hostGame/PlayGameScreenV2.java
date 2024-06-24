@@ -35,6 +35,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -47,6 +48,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Control;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -63,6 +65,7 @@ import javafx.util.Duration;
 /**
  * Scene which is shown when a game is played
  * 
+ * @author sistumpf
  * @author Manuel Krakowski
  */
 
@@ -199,6 +202,7 @@ public class PlayGameScreenV2 extends Scene {
   /**
    * Creates the whole layout of the scene
    * 
+   * @author sistumpf
    * @author Manuel Krakowski
    */
   public void createLayout() {
@@ -225,13 +229,20 @@ public class PlayGameScreenV2 extends Scene {
         new Image(new File(Constants.toUIResources + "pictures" + File.separator + gridPicName)
             .toURI().toString());
     mpv = new ImageView(mp);
-    StackPane.setAlignment(mpv, Pos.CENTER);
+    StackPane.setAlignment(mpv, Pos.CENTER);if(gm != null) {
+      mpv.fitWidthProperty().bind(gm.maxWidthProperty());
+      mpv.fitHeightProperty().bind(gm.maxHeightProperty());
+    } else {
+      mpv.fitWidthProperty().bind(showMapBox.widthProperty().multiply(0.8));
+      mpv.fitHeightProperty().bind(showMapBox.heightProperty().multiply(0.8));
+    }
+    /*
     this.widthProperty().addListener((obs, old, newV) -> {
       mpv.setFitWidth(newV.doubleValue() * 0.8);
     });
     this.heightProperty().addListener((obs, old, newV) -> {
       mpv.setFitHeight(newV.doubleValue() * 0.8);
-    });
+    });*/
     mpv.setPreserveRatio(true);
     showMapBox.getChildren().add(mpv);
     top.getChildren().add(showMapBox);
@@ -294,23 +305,25 @@ public class PlayGameScreenV2 extends Scene {
         
         Platform.runLater(() -> {
           redrawTask.setOnSucceeded(event -> {
-            GamePane oldGm = null;
-            if (gm != null) {
-              oldGm = gm;
-            }
+            GamePane oldGm = gm;
             if(redrawTask.getValue() != null) {
               this.gm = redrawTask.getValue();
-            } else {
+              if(oldGm != null) {
+                CreateGameController.setFigures(oldGm.getFigures());
+                oldGm.destroyReferences();
+              }
+              
+              
+              StackPane.setAlignment(gm, Pos.CENTER);
+              gm.maxWidthProperty().bind(showMapBox.widthProperty().multiply(0.8));
+              gm.maxHeightProperty().bind(showMapBox.heightProperty().multiply(0.8));
+              gm.enableBaseColors(this);
+              
+              showMapBox.getChildren().add(gm);
+              showMapBox.getChildren().remove(oldGm);
               
             }
-            //            System.out.println(gm);
-            showMapBox.getChildren().add(gm);
-            if(oldGm != gm) {
-              if(oldGm != null) CreateGameController.setFigures(oldGm.getFigures());
-              showMapBox.getChildren().remove(oldGm);
-            }
-
-
+           
             //update the giveUp button and the clickable pieces
             Client active = isALocalClientsTurn();
             if(active != null && !(active instanceof AIClient)) {
@@ -467,6 +480,7 @@ public class PlayGameScreenV2 extends Scene {
    * images are generated in a separate Thread.
    * 
    * 
+   * @author sistumpf
    * @author aniemesc
    */
   public void UpdateLeftSide() {
@@ -496,16 +510,19 @@ public class PlayGameScreenV2 extends Scene {
     }
     mpv = new ImageView(mp);
     StackPane.setAlignment(mpv, Pos.CENTER);
-    mpv.setFitWidth(this.getWidth() * 0.8);
-    this.widthProperty().addListener((obs, old, newV) -> {
-      mpv.setFitWidth(newV.doubleValue() * 0.8);
-    });
-    mpv.setFitHeight(this.getHeight() * 0.8);
-    this.heightProperty().addListener((obs, old, newV) -> {
-      mpv.setFitHeight(newV.doubleValue() * 0.8);
-    });
+
+    if(gm != null) {
+      mpv.fitWidthProperty().bind(gm.maxWidthProperty());
+      mpv.fitHeightProperty().bind(gm.maxHeightProperty());
+    } else {
+      mpv.fitWidthProperty().bind(showMapBox.widthProperty().multiply(0.8));
+      mpv.fitHeightProperty().bind(showMapBox.heightProperty().multiply(0.8));
+    }
+    
     mpv.setPreserveRatio(true);
+    
     showMapBox.getChildren().add(mpv);
+    
     if(gm != null)
       updateUI(true);
   }
@@ -715,14 +732,6 @@ public class PlayGameScreenV2 extends Scene {
           break;
         }
       }
-      
-      /*hsc.switchtoHomeScreen(e);
-      CreateGameController.clearUsedNames();
-      CreateGameController.clearColors();
-      scheduler.shutdown();
-      if (scheduler2 != null) {
-        scheduler2.shutdown();
-      }*/
     });
     giveUpBox.getChildren().add(giveUpButton);
     return giveUpBox;

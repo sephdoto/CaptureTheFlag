@@ -66,7 +66,8 @@ public class App extends Application {
   public static Image backgroundImage;
   public static BackgroundSize backgroundSize = new BackgroundSize(1, 1, true, true, true, true);
   static boolean serverStartSuccess;
-  public static double stageOffset;
+  public static double offsetHeight;
+  public static double offsetWidth;
   
   //public static ServerPane serverPane;
   
@@ -79,7 +80,7 @@ public class App extends Application {
     CheatboardListener.setHomeSceneController(ssc);
     SettingsSetter.loadCustomSettings();
     ImageLoader.loadImages();
-    lockscreen = new Scene(createLockScreen(), 1000, 500);
+    lockscreen = new Scene(createLockScreen(), 1100, 600);
     try {
       lockscreen.getStylesheets().add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
     } catch (MalformedURLException e) {
@@ -240,8 +241,9 @@ public class App extends Application {
       e.printStackTrace();
     }
     mainStage.setScene(startScene);
-    App.stageOffset = mainStage.getHeight()-startScene.getHeight();
-    System.out.println(App.stageOffset);
+    App.offsetHeight = mainStage.getHeight()-startScene.getHeight();
+    App.offsetWidth = mainStage.getWidth()-startScene.getWidth();
+    System.out.println("offsetHeight: " + App.offsetHeight + ", offsetWidth: " + App.offsetWidth);
     backgroundMusic.startShuffle();
     startTransition.stop();
   }

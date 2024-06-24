@@ -85,13 +85,15 @@ public class GamePane extends HBox {
     vBox.alignmentProperty().set(Pos.CENTER);
     alignmentProperty().set(Pos.CENTER);
     gridPane = new GridPane();
+    
     binding = Bindings.min(widthProperty().divide(cols), heightProperty().divide(rows));
-    NumberBinding roundSize = Bindings.createIntegerBinding(() -> binding.intValue(), binding);
+    NumberBinding roundSize = Bindings.createDoubleBinding(() -> binding.doubleValue(), binding);
     vBox.prefWidthProperty().bind(roundSize.multiply(cols));
     vBox.prefHeightProperty().bind(roundSize.multiply(rows));
     vBox.setMaxSize(Control.USE_PREF_SIZE, Control.USE_PREF_SIZE);
     vBox.setFillWidth(true);
-    gridPane.setSnapToPixel(false);
+    
+    gridPane.setSnapToPixel(true);
     VBox.setVgrow(gridPane, Priority.ALWAYS);
     for (int i = 0; i < cols; i++) {
       ColumnConstraints columnConstraints =
