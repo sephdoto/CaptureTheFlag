@@ -328,7 +328,9 @@ public class PlayGameScreenV2 extends Scene {
   }
   
   /**
-   * A Task to redraw the UI, so it does not lag.
+   * A Task to generate the new GamePane for the UI, so it does not happen in javaFX main Thread.
+   * Also saves the time it started to generate the GamePane for later analysis.
+   * If an Exception or anything else stops the Task, the schedulerLock gets opened again.
    * 
    * @author sistumpf
    */
@@ -339,12 +341,13 @@ public class PlayGameScreenV2 extends Scene {
     public RedrawTask(GameState toDraw) {
       this.startTimeMillis = System.currentTimeMillis();
       this.toDraw = toDraw;
+      this.setOnCancelled((e) -> {schedulerLock = true; System.out.println("Redraw Task Cancelled");});
+      this.setOnFailed((e) -> {schedulerLock = true; System.out.println("Redraw Task Failed");});
     }
     
     @Override
     protected GamePane call() throws Exception {
       GamePane gp = null;
-      
       if(toDraw != null) {
         if (!mainClient.isGameMoveTimeLimited()) {
           noMoveTimeLimit.reset();
@@ -359,7 +362,6 @@ public class PlayGameScreenV2 extends Scene {
     public long getStartTimeMillis() {
       return startTimeMillis;
     }
-    
   }
   
   /**
