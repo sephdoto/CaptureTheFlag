@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.ctf.shared.client.lib.ServerDetails;
-import org.ctf.shared.client.lib.ServerManager;
-import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.state.GameState;
@@ -27,9 +24,7 @@ import org.ctf.ui.creators.PopUpCreatorEnterTeamName;
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.map.GamePane;
 import org.ctf.ui.threads.PointAnimation;
-import configs.ImageLoader;
 import javafx.animation.TranslateTransition;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -163,7 +158,6 @@ public class CreateGameScreenV2 extends Scene {
    */
   private void createLayout() {
     manageFontSizes();
-    ImageLoader.loadImages();
     StroeMaps.initDefaultMaps();
     root.getStyleClass().add("join-root");
     VBox mainBox = createMainBox();

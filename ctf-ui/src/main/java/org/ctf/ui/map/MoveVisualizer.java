@@ -1,7 +1,6 @@
 package org.ctf.ui.map;
 
 import configs.Dialogs;
-import configs.GameMode;
 import java.util.ArrayList;
 import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.client.Client;

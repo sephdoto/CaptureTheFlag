@@ -1,7 +1,5 @@
 package org.ctf.ui;
 
-import configs.ImageLoader;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,11 +21,8 @@ import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -74,12 +69,11 @@ public class App extends Application {
 
   public void start(Stage stage) {
     mainStage = stage;
-    Parameters params = getParameters();
-    String port = params.getNamed().get("port");
+//    Parameters params = getParameters();
+//    String port = params.getNamed().get("port");
     ssc = new HomeSceneController(mainStage);
     CheatboardListener.setHomeSceneController(ssc);
     SettingsSetter.loadCustomSettings();
-    ImageLoader.loadImages();
     lockscreen = new Scene(createLockScreen(), 1100, 600);
     try {
       lockscreen.getStylesheets().add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
@@ -292,7 +286,7 @@ public class App extends Application {
         .heightProperty()
         .addListener(
             (obs, old, newV) -> {
-              double size = newV.doubleValue() * 0.2;
+//              double size = newV.doubleValue() * 0.2;
               VBox.setMargin(ctfv, new Insets(0, 0, newV.doubleValue() * 0.6, 0));
             });
     text.setStyle("-fx-fill: white ;");
@@ -317,22 +311,6 @@ public class App extends Application {
 
     layer.getChildren().add(root);
     return layer;
-  }
-
-  /**
-   * Creates a star filled background for the STARWARS theme.
-   *
-   * @author aniemesc
-   * @param layer - Base container of the lockscreen
-   */
-  @Deprecated
-  private void createBackground(Pane layer) {
-    Circle c = new Circle();
-    for (int i = 0; i < 200; i++) {
-      c = new Circle(Math.random() * 1500, Math.random() * 1000, 0.5 + Math.random() * 1);
-      c.setFill(Color.WHITE);
-      layer.getChildren().add(c);
-    }
   }
 
   /**
