@@ -9,11 +9,13 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.LongStream;
 import javax.imageio.ImageIO;
+import org.ctf.shared.ai.AIController;
 import org.ctf.shared.client.AIClient;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.constants.Constants;
@@ -60,6 +62,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 /**
@@ -298,7 +301,13 @@ public class PlayGameScreenV2 extends Scene {
         schedulerLock = false;
 
         GameState newState = mainClient.getQueuedGameState();
-        if(newState != null) currentState = newState;
+        if(gm != null)
+          while((newState == null || !isNewGameState(this.gm.getState(), newState) && mainClient.queuedGameStates() > 0))
+            newState = mainClient.getQueuedGameState();
+          
+        if(newState != null) 
+          currentState = newState;
+
         
         RedrawTask redrawTask = new RedrawTask(newState);
         new Thread(redrawTask).start();
@@ -310,20 +319,27 @@ public class PlayGameScreenV2 extends Scene {
               this.gm = redrawTask.getValue();
               if(oldGm != null) {
                 CreateGameController.setFigures(oldGm.getFigures());
+                showMapBox.getChildren().remove(oldGm);
                 oldGm.destroyReferences();
               }
-              
-              
               StackPane.setAlignment(gm, Pos.CENTER);
               gm.maxWidthProperty().bind(showMapBox.widthProperty().multiply(0.8));
               gm.maxHeightProperty().bind(showMapBox.heightProperty().multiply(0.8));
               gm.enableBaseColors(this);
-              
               showMapBox.getChildren().add(gm);
-              showMapBox.getChildren().remove(oldGm);
+
+              ///////////////
+              //  TEST CODE
+              Text text = new Text("queued gs: " + mainClient.queuedGameStates());
+              if(oldText != null)
+                showMapBox.getChildren().remove(oldText);
+              showMapBox.getChildren().add(text);
+              oldText = text;
+              // END OF TEST CODE
+              ///////////////////// TODO
               
             }
-           
+
             //update the giveUp button and the clickable pieces
             Client active = isALocalClientsTurn();
             if(active != null && !(active instanceof AIClient)) {
@@ -339,6 +355,20 @@ public class PlayGameScreenV2 extends Scene {
       }
     }
   }
+  
+  ///////////////
+  //  TEST CODE
+  Text oldText;
+  public static boolean isNewGameState(GameState newState, GameState gameState) {
+    if(newState.getCurrentTeam() == -1 && gameState.getCurrentTeam() == -1)
+      return false;
+    
+    if(AIController.moveEquals(newState.getLastMove(), gameState.getLastMove()))
+      return newState.getCurrentTeam() != gameState.getCurrentTeam();
+    return true;
+  }
+  // END OF TEST CODE
+  /////////////////////TODO
   
   /**
    * A Task to generate the new GamePane for the UI, so it does not happen in javaFX main Thread.
@@ -440,8 +470,8 @@ public class PlayGameScreenV2 extends Scene {
             break;  
           } //TODO
         }
-      disableGiveUpButton(isMyTurn == null);
     }
+    disableGiveUpButton(isMyTurn == null);
     return isMyTurn;
   }
 
@@ -609,7 +639,12 @@ public class PlayGameScreenV2 extends Scene {
    * @return an approximation of the time it takes to show the remaining GameStates in the queue (in s)
    */
   private float approximateWaitingTime() {
-    double median = timeToShowGameState.stream().mapToLong(l -> l).average().getAsDouble();
+    double median;
+    try {
+      median = timeToShowGameState.stream().mapToLong(l -> l).average().getAsDouble();
+    } catch (NoSuchElementException nsee) {
+      return Float.NaN;
+    }
     median = median > Constants.UIupdateTime ? median : Constants.UIupdateTime;
     double multiplier = Constants.UIupdateTime > median ? Constants.UIupdateTime :
       ((median - Constants.UIupdateTime) / 1.5) + Constants.UIupdateTime;

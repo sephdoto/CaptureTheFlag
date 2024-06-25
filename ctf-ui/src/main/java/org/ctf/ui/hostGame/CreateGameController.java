@@ -118,18 +118,23 @@ public class CreateGameController {
    * @author Manuel Krakowski
    */
   public static void overWriteDefaultWithServerColors() {
-    try {
     for (int i = 0; i < CreateGameController.getMaxNumberofTeams(); i++) {
-      Color colorSetByUser = colors.get(String.valueOf(i)).get();
-      if (colorSetByUser.equals(Color.BLACK)) {
-        String colorString = mainClient.getTeams()[i].getColor();
-        Color newColer = Color.web(colorString);
-        colors.get(String.valueOf(i)).set(newColer);
+      try {
+        Color colorSetByUser = colors.get(String.valueOf(i)).get();
+        if (colorSetByUser.equals(Color.BLACK)) {
+          String colorString;
+          if(mainClient.getGameSaveHandler().getSavedGame().getInitialState() != null)
+            colorString = mainClient.getGameSaveHandler().getSavedGame().getInitialState().getTeams()[i].getColor();
+          else 
+            colorString = mainClient.getTeams()[i].getColor();
+          Color newColer = Color.web(colorString);
+          colors.get(String.valueOf(i)).set(newColer);
+        }
+      } catch(Exception e) {
+        e.printStackTrace();
+        colors.get(String.valueOf(i)).set(Color.RED);
       }
     }
-    } catch(Exception e) {
-      e.printStackTrace();
-    } 
   }
 
   /**

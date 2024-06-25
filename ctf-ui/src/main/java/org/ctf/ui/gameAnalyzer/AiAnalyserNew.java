@@ -102,7 +102,7 @@ public class AiAnalyserNew extends Scene {
   public AiAnalyserNew(HomeSceneController hsc, double width, double height) {
     super(new StackPane(), width, height);
     if (!createGameSaver()) {
-      this.hsc.switchtoHomeScreen(new ActionEvent());
+      hsc.switchtoHomeScreen(new ActionEvent());
       return;
     }
     this.hsc = hsc;

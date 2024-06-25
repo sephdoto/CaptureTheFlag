@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import org.ctf.shared.ai.AIController;
 import org.ctf.shared.ai.GameStateNormalizer;
 import org.ctf.shared.client.lib.GameClientInterface;
 import org.ctf.shared.client.lib.ServerChecker;
@@ -491,18 +492,6 @@ public class Client implements GameClientInterface {
         System.out.println(move.getPieceId() + ", team: " + move.getTeamId() + " [" +
             move.getNewPosition()[0] + "-" + move.getNewPosition()[1] + "], I am " + this.requestedTeamName);
         final String pieceId = move.getPieceId();
-        Piece picked = null;
-        try {
-        for(Piece p : currentState
-            .getTeams()[Integer.parseInt(move.getPieceId().split(":")[1].split("_")[0])]
-                .getPieces()){
-                  if(p.getId().equals(pieceId))
-                    picked = p;
-                }
-        System.out.println(picked.getDescription().getType());
-        } catch (Exception e1) {
-          e1.printStackTrace();
-        };
         System.out.println("InvalidMove");
         throw new InvalidMove();
       } catch (GameOver e) {
@@ -685,14 +674,23 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Calculates if the last team is different than current team
+   * Compares the current and new GameStates last moves.
+   * If they are equal, the current team gets compared, if they are equal the GameState is not new.
+   * This must happen that way, as a team can giveUp, the last Move stays the same, but the current Team changes.
    *
-   * @author rsyed
+   * @author sistumpf
+   * @return true if newState is a new GameState
+   * @return false if the game has not started yet or newState is not new
    */
-  protected boolean isNewGameState(GameState gameState) {
-    return this.currentTeamTurn != gameState.getCurrentTeam();
+  protected boolean isNewGameState(GameState newState) {
+    if(newState.getCurrentTeam() == -1 && this.currentTeamTurn == -1)
+      return false;
+    
+    if(AIController.moveEquals(newState.getLastMove(), currentState.getLastMove()))
+      return newState.getCurrentTeam() != currentState.getCurrentTeam();
+    return true;
   }
-
+  
   /**
    * Method which returns which team made the last move -1 if no last move. 0 to n otherwise
    *
