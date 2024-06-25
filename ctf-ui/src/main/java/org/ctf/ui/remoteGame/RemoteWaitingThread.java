@@ -18,6 +18,7 @@ import javafx.scene.layout.StackPane;
  * {@link PlayGameScreenV2} according to data pulled from a Client.
  * 
  * @author aniemesc
+ * @author sistumpf
  */
 public class RemoteWaitingThread extends Thread {
   private RemoteWaitingScene rws;
@@ -39,20 +40,21 @@ public class RemoteWaitingThread extends Thread {
  * will finally generate the background picture.
  * 
  * @author aniemesc
+ * @author sistumpf
  */
   public void run() {
-    try {
+    /*try {
       BufferedImage image = ImageIO.read(new File(
           Constants.toUIResources + File.separator + "pictures" + File.separator + "tuning1.png"));
       ImageIO.write(image, "png", new File(
           Constants.toUIResources + File.separator + "pictures" + File.separator + "grid.png"));
     } catch (IOException e) {
       e.printStackTrace();
-    }
+    }*/
     try {
       while (isactive) {
         try {
-          Thread.sleep(1000);
+          Thread.sleep(50);
           String begin = (rws.getClient().isGameStarted()) ? "Initiliazing Game \n"
               : "Waiting for more Teams to Join ... \n";
           String teams = "There are currently " + rws.getServerManager().getCurrentNumberofTeams()

@@ -15,6 +15,7 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.SoundType;
+import org.ctf.shared.state.data.exceptions.NoMoreTeamSlots;
 import org.ctf.ui.controllers.CheatboardListener;
 import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
@@ -23,7 +24,9 @@ import org.ctf.ui.creators.ComponentCreator;
 import org.ctf.ui.creators.PopUpCreator;
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.editor.EditorScene;
+import org.ctf.ui.hostGame.CreateGameController;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
+import org.ctf.ui.threads.PointAnimation;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -51,6 +54,7 @@ import javafx.stage.Stage;
  * components for search game sessions and to join them as a human player or a selected AI client.
  * 
  * @author aniemesc
+ * @author sistumpf
  */
 public class JoinScene extends Scene {
   HomeSceneController hsc;
@@ -66,6 +70,7 @@ public class JoinScene extends Scene {
   String port;
   String id;
   ServerManager ser;
+  Thread joinChecker;
 
   /**
    * This constructor starts the initialization process of the scene and connects it to a CSS file.
@@ -331,35 +336,7 @@ public class JoinScene extends Scene {
      */
     public ServerCheckTask(Button searchButton) {
       this.button = searchButton;
-      this.buttonTextThread = new Thread() {
-        private boolean active = true;
-        
-        @Override
-        public void interrupt() {
-          this.active = false;
-        }
-        
-        /**
-         * Changes the button text to display a little animation
-         */
-        @Override
-        public void run() {
-          for(int i=0; active; i++) {
-            i %= 4;
-            StringBuilder points = new StringBuilder();
-            switch(i) {
-              case 0: points.append("      "); break;
-              case 1: points.append(".     "); break;
-              case 2: points.append(". .   "); break;
-              case 3: points.append(". . . "); break;
-            }
-            Platform.runLater(() -> button.setText("checking " + points.toString()));
-            try {
-              Thread.sleep(175);
-            } catch (InterruptedException e) { e.printStackTrace(); }
-          }
-        }
-      };
+      this.buttonTextThread = new PointAnimation(button, "checking", "action interrupted", 3, 175);
       buttonTextThread.start();
     }
     
@@ -485,14 +462,14 @@ public class JoinScene extends Scene {
     });
     Button playerButton = createJoinButton("Join as Player");
     playerButton.setOnAction(e -> {
-      this.root.getChildren().add(createJoinWindow(id, ip, port));
+      createJoinWindow(id, ip, port, false, null, null);
     });
     buttonBox.add(playerButton, 0, 0);
     Button aiButton = createJoinButton("Join as AI-Client");
     aiButton.setOnAction(e -> {
        PopUpCreator popUpCreator = new PopUpCreator(this, root, hsc);
        popUpCreator.setRemote(true);
-       popUpCreator.createAiLevelPopUp(new PopUpPane(null, 0, 0), portText, serverIPText);
+       popUpCreator.createAiLevelPopUp(new PopUpPane(null, 0, 0, 0.95), portText, serverIPText);
     
 //      AIClient aiClient = AIClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(ip)
 //          .onPort(port).aiPlayerSelector(popUpCreator.getAitype(), popUpCreator.getDefaultConfig()).enableSaveGame(false)
@@ -536,10 +513,11 @@ public class JoinScene extends Scene {
    * Generates a Window for submitting a map template in an editor scene.
    * 
    * @author aniemesc
+   * @author sistumpf
    * @return StackPane for Submitting templates
    */
-  public StackPane createJoinWindow(String id, String ip, String port) {
-    PopUpPane popUp = new PopUpPane(this, 0.4, 0.4);
+  public void createJoinWindow(String id, String ip, String port, boolean isAI, AI type, AIConfig config) {
+    PopUpPane popUp = new PopUpPane(this, 0.4, 0.4, 0.95);
     VBox vbox = new VBox();
     vbox.setAlignment(Pos.TOP_CENTER);
     vbox.setPadding(new Insets(10));
@@ -559,15 +537,80 @@ public class JoinScene extends Scene {
       VBox.setMargin(buttonBox, new Insets(size));
     });
     VBox.setMargin(buttonBox, new Insets(25));
+    
+    Button cancelButton = createControlButton(vbox, "Cancel", "leave-button");
+    cancelButton.setOnAction(e -> {
+      if(joinChecker != null)
+        joinChecker.interrupt();
+      root.getChildren().remove(popUp);
+    });
+    
     Button joinButton = createControlButton(vbox, "Join", "save-button");
     joinButton.setOnAction(e -> {
+      joinButton.setDisable(true);
       if (nameField.getText().equals("")) {
         CreateGameScreenV2.informationmustBeEntered(nameField, "custom-search-field",
             "custom-search-field");
         return;
       }
       
-      Client client = 
+      cancelButton.setDisable(true);
+      JoinCheckTask task = new JoinCheckTask(header, joinButton, cancelButton, isAI, type, config);
+      task.setOnSucceeded(
+          event -> {
+            if(task.getValue() != null) {
+              root.getChildren().remove(popUp);
+              right.getChildren().clear();
+              info.setText("Client hast joined!\n Waiting for the Game to start.");
+              right.getChildren().add(info);
+              hsc.getStage().setScene(new RemoteWaitingScene(task.getValue(), getWidth(), getHeight(), JoinScene.this.hsc, JoinScene.this.ser));
+            }
+          });
+      this.joinChecker = new Thread() {
+        @Override
+        public void run() {task.run();}
+        @Override
+        public void interrupt() {task.interrupt();}
+      };
+      joinChecker.start();
+    });
+    
+    buttonBox.getChildren().addAll(joinButton, cancelButton);
+    StackPane.setAlignment(buttonBox, Pos.BOTTOM_CENTER);
+    vbox.getChildren().add(buttonBox);
+    popUp.setContent(vbox);
+    this.root.getChildren().add(popUp);
+  }
+  
+  private class JoinCheckTask extends Task<Client> {
+    private boolean allowedToRun;
+    private boolean isAI;
+    private AI type;
+    private AIConfig config;
+    private Button cancelButton;
+    private Button joinButton;
+    private Text header;
+    private String headerText;
+    PointAnimation pointAnimation;
+    
+    public JoinCheckTask(Text header, Button joinButton, Button cancelButton, boolean isAI, AI type, AIConfig config) {
+      allowedToRun = true;
+      this.isAI = isAI;
+      this.type = type;
+      this.config = config;
+      this.cancelButton = cancelButton;
+      this.joinButton = joinButton;
+      this.header = header;
+      this.headerText = header.getText();
+    }
+    
+    @Override
+    protected Client call() throws Exception {
+      pointAnimation = new PointAnimation(header, "checking name", "Enter a UNIQUE name!", 3, 175);
+      pointAnimation.start();
+      Client client;
+      if(!isAI) {
+      client = 
           ClientStepBuilder
           .newBuilder()
           .enableRestLayer(false)
@@ -576,80 +619,59 @@ public class JoinScene extends Scene {
           .enableSaveGame(true)
           .enableAutoJoin(id, nameField.getText())
           .build();
-      client.enableGameStateQueue(true);
+      } else {
+        client = 
+            AIClientStepBuilder
+            .newBuilder()
+            .enableRestLayer(false)
+            .onRemoteHost(ip)
+            .onPort(port)
+            .aiPlayerSelector(type, config)
+            .enableSaveGame(true)
+            .gameData(id, nameField.getText())
+            .build();
+        client.enableGameStateQueue(true);
+        CreateGameController.getLocalAIClients().add(client);
+      }
+
+      while(client.couldJoin().equals("unjoined")) {
+        try {
+          Thread.sleep(1);
+        } catch (InterruptedException e1) {
+          e1.printStackTrace();
+        }
+      }
       
-      root.getChildren().remove(popUp);
-      right.getChildren().clear();
-      info.setText("Client hast joined!\n Waiting for the Game to start.");
-      right.getChildren().add(info);
-      hsc.getStage().setScene(new RemoteWaitingScene(client, getWidth(), getHeight(), this.hsc, this.ser));
-    });
-    Button cancelButton = createControlButton(vbox, "Cancel", "leave-button");
-    cancelButton.setOnAction(e -> {
-      root.getChildren().remove(popUp);
-    });
-    buttonBox.getChildren().addAll(joinButton, cancelButton);
-    StackPane.setAlignment(buttonBox, Pos.BOTTOM_CENTER);
-    vbox.getChildren().add(buttonBox);
-    popUp.setContent(vbox);
-    return popUp;
+      if(client.couldJoin().equals("declined")) {
+        client.shutdown();
+        client = null;
+      } else {
+        client.enableGameStateQueue(true);
+        CreateGameController.getLocalHumanClients().add(client);
+      }
+      
+      originalState();
+      
+      if(allowedToRun)
+        return client;
+      else
+        return null;
+    }
+    
+    public void interrupt() {
+      this.allowedToRun = false;
+      originalState();
+    }
+    
+    private void originalState() {
+      pointAnimation.interrupt();
+      header.setText(headerText);
+      cancelButton.setDisable(false);
+      joinButton.setDisable(false);
+      
+    }
   }
   
-  public void createJoinWindowAI(String id, String ip, String port,AI type,AIConfig config) {
-    PopUpPane popUp = new PopUpPane(this, 0.4, 0.4);
-    VBox vbox = new VBox();
-    vbox.setAlignment(Pos.TOP_CENTER);
-    vbox.setPadding(new Insets(10));
-    vbox.setSpacing(15);
-    Text header = EditorScene.createHeaderText(vbox, "Enter a Team name!", 15);
-    vbox.getChildren().add(header);
-    nameField = ComponentCreator.createNameField(vbox);
-    vbox.getChildren().add(nameField);
-    HBox buttonBox = new HBox();
-    buttonBox.setAlignment(Pos.CENTER);
-    vbox.widthProperty().addListener((obs, oldv, newV) -> {
-      double size = newV.doubleValue() * 0.05;
-      buttonBox.setSpacing(size);
-    });
-    vbox.heightProperty().addListener((obs, oldv, newV) -> {
-      double size = newV.doubleValue() * 0.1;
-      VBox.setMargin(buttonBox, new Insets(size));
-    });
-    VBox.setMargin(buttonBox, new Insets(25));
-    Button joinButton = createControlButton(vbox, "Join", "save-button");
-    joinButton.setOnAction(e -> {
-      if (nameField.getText().equals("")) {
-        CreateGameScreenV2.informationmustBeEntered(nameField, "custom-search-field",
-            "custom-search-field");
-        return;
-      }
-      AIClient aiClient = 
-          AIClientStepBuilder
-          .newBuilder()
-          .enableRestLayer(false)
-          .onRemoteHost(ip)
-          .onPort(port)
-          .aiPlayerSelector(type, config)
-          .enableSaveGame(true)
-          .gameData(id, nameField.getText())
-          .build();
-      aiClient.enableGameStateQueue(true);
-      root.getChildren().remove(popUp);
-      right.getChildren().clear();
-      info.setText("Client hast joined!\n Waiting for the Game to start.");
-      right.getChildren().add(info);
-      hsc.getStage().setScene(new RemoteWaitingScene(aiClient, getWidth(), getHeight(), this.hsc,this.ser));
-    });
-    Button cancelButton = createControlButton(vbox, "Cancel", "leave-button");
-    cancelButton.setOnAction(e -> {
-      root.getChildren().remove(popUp);
-    });
-    buttonBox.getChildren().addAll(joinButton, cancelButton);
-    StackPane.setAlignment(buttonBox, Pos.BOTTOM_CENTER);
-    vbox.getChildren().add(buttonBox);
-    popUp.setContent(vbox);
-    this.root.getChildren().add(popUp);
-  }
 
   private Button createControlButton(VBox vBox, String label, String style) {
     Button joinButton = new Button(label);

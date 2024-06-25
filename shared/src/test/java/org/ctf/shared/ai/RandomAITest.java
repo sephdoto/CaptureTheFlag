@@ -3,6 +3,7 @@ package org.ctf.shared.ai;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ctf.shared.ai.random.RandomAI;
@@ -24,6 +25,23 @@ class RandomAITest {
     gameState = TestValues.getTestState();
   }
 
+  @Test
+  void testMakeRandomMoves() throws NoMovesLeftException, InvalidShapeException {
+    GameState gs = TestValues.getOneTestPieceGS();
+    HashSet<String> moveSet = new HashSet<String>();
+    ReferenceMove rm = new ReferenceMove(null, new int[2]);
+    
+    for(int i=0; i<1000000; i++) {
+      rm = RandomAI.pickMoveComplex(gs, rm);
+      moveSet.add(rm.getPiece().getId() + " [" + rm.getNewPosition()[0] + "-" + rm.getNewPosition()[1] + "]");
+    }
+    
+//    for(String s: moveSet)
+//      System.out.println(s);
+    
+    assertEquals(2, moveSet.size());
+  }
+  
   /**
    * testPickMoveSimple does not know if there are no more possible moves.
    * 

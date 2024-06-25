@@ -65,7 +65,9 @@ public class CreateGameController {
 
   // List of all Human-Clients on one device
   private static ArrayList<Client> localHumanClients = new ArrayList<Client>();
-
+  // List of all AI-Clients on one device
+  private static ArrayList<Client> localAIClients = new ArrayList<Client>();
+  
   // To comunicate between diferent scenes
   private static HomeSceneController hsc;
   private static WaitingScene waitingScene;
@@ -117,11 +119,20 @@ public class CreateGameController {
    */
   public static void overWriteDefaultWithServerColors() {
     for (int i = 0; i < CreateGameController.getMaxNumberofTeams(); i++) {
-      Color colorSetByUser = colors.get(String.valueOf(i)).get();
-      if (colorSetByUser.equals(Color.BLACK)) {
-        String colorString = mainClient.getTeams()[i].getColor();
-        Color newColer = Color.web(colorString);
-        colors.get(String.valueOf(i)).set(newColer);
+      try {
+        Color colorSetByUser = colors.get(String.valueOf(i)).get();
+        if (colorSetByUser.equals(Color.BLACK)) {
+          String colorString;
+          if(mainClient.getGameSaveHandler().getSavedGame().getInitialState() != null)
+            colorString = mainClient.getGameSaveHandler().getSavedGame().getInitialState().getTeams()[i].getColor();
+          else 
+            colorString = mainClient.getTeams()[i].getColor();
+          Color newColer = Color.web(colorString);
+          colors.get(String.valueOf(i)).set(newColer);
+        }
+      } catch(Exception e) {
+        e.printStackTrace();
+        colors.get(String.valueOf(i)).set(Color.RED);
       }
     }
   }
@@ -201,6 +212,7 @@ public class CreateGameController {
           .gameData(sessionID, teamName).build();
       setMainClient(aiClient);
     }
+    localAIClients.add(aiClient);
   }
 
 
@@ -245,7 +257,8 @@ public class CreateGameController {
         // return ipAddress;
         return InetAddress.getLocalHost().getHostAddress();
       } catch (IOException e) {
-        e.printStackTrace();
+//        e.printStackTrace();
+        System.out.println("no internet connection");
       }
     }
     return serverIP;
@@ -359,6 +372,14 @@ public class CreateGameController {
   public static void setLocalHumanClients(ArrayList<Client> localHumanClients) {
     CreateGameController.localHumanClients = localHumanClients;
   }
+  
+  public static ArrayList<Client> getLocalAIClients() {
+    return localAIClients;
+  }
+
+  public static void setLocalAIClients(ArrayList<Client> localAIClients) {
+    CreateGameController.localAIClients = localAIClients;
+  }
 
   public static HashMap<String, ObjectProperty<Color>> getColors() {
     return colors;
@@ -384,6 +405,8 @@ public class CreateGameController {
     return usedTeamNames.contains(name);
   }
 
-
-
+  public static void clearLocalClients() {
+    localHumanClients.clear();
+    localAIClients.clear();
+  }
 }

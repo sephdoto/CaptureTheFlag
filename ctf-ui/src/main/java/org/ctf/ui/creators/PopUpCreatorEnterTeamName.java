@@ -91,7 +91,7 @@ public class PopUpCreatorEnterTeamName {
    * @author Manuel Krakowski
    */
   public void createEnterNamePopUp() {
-    enterNamePopUp = new PopUpPane(scene, 0.5, 0.3);
+    enterNamePopUp = new PopUpPane(scene, 0.5, 0.3, 0.95);
     root.getChildren().remove(before);
     VBox top = new VBox();
     top.heightProperty().addListener((obs, oldVal, newVal) -> {

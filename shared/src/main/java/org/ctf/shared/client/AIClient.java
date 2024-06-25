@@ -1,5 +1,6 @@
 package org.ctf.shared.client;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -12,9 +13,14 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.gameanalyzer.GameSaveHandler;
 import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.Move;
+import org.ctf.shared.state.data.exceptions.ForbiddenMove;
 import org.ctf.shared.state.data.exceptions.GameOver;
+import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.exceptions.NoMoreTeamSlots;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
+import org.ctf.shared.state.data.exceptions.URLError;
+import org.ctf.shared.state.data.exceptions.UnknownError;
 
 /**
  * Extension of Client with support for additional functionality needed by the AI to perform its
@@ -36,8 +42,10 @@ public class AIClient extends Client {
   private String constructorSetTeamName;
   private boolean saveToken = true;
   private boolean controllerToken = true;
+  private boolean firstGameStateToken = true;
 
-  ScheduledExecutorService aiClientScheduler = Executors.newScheduledThreadPool(2);
+  ScheduledExecutorService aiClientScheduler = Executors.newScheduledThreadPool(1);
+  ExecutorService aiPlayScheduler = Executors.newSingleThreadExecutor();
 
   /**
    * Runnable task responsible for joining a game for the AI Client
@@ -68,40 +76,26 @@ public class AIClient extends Client {
           if (controllerToken) {
             if (moveTimeLimitedGameTrigger) {
               controllerThinkingTime = getRemainingMoveTimeInSeconds() - 1;
-              //  logger.info("We had " + controllerThinkingTime + " to think");
             }
             controller =
                 new AIController(getCurrentState(), selectedAI, aiConfig, controllerThinkingTime);
             controllerToken = false;
           }
           pullData();
-          
-          if(selectedAI == AI.RANDOM)
-            controller.update(getCurrentState());
-          else 
-            controller.update(getCurrentState(), getCurrentState().getLastMove());
-          
-          if (enableLogging) {
-            this.analyzer.addMove(getCurrentState().getLastMove());
-          }
-          if (isItMyTurn()) {
-            makeMove(controller.getNextMove());
-          }
-          pullData();
-
-          if(selectedAI == AI.RANDOM)
-            controller.update(getCurrentState());
-          else 
-            controller.update(getCurrentState(), getCurrentState().getLastMove());
-          
+          tryMakeMove();
           if(this.isGameOver())
-            this.aiClientScheduler.shutdown();
+            this.aiPlayScheduler.shutdown();
+          else
+            startPlayTask();
+
         } catch (NoMovesLeftException | InvalidShapeException e) {
+          System.out.println(e instanceof NoMovesLeftException ? "no moves left" :"invalid shape");
           throw new UnknownError("Games most likely over");
         } catch (GameOver e) {
           analyzer.writeOut();
           this.gameOver = true;
           this.isAlive = false;
+          this.aiPlayScheduler.shutdown();
           this.aiClientScheduler.shutdown();
           if (saveToken && enableLogging) {
             this.analyzer.writeOut();
@@ -111,11 +105,38 @@ public class AIClient extends Client {
           }
         } catch (NullPointerException e) {
           e.printStackTrace();
-          logger.info("nullpointer exception");
+          logger.info("nullpointer exception for " + this.requestedTeamName +" , he is " + (isAlive ? "alive" : "dead"));
         }
       };
 
-  /**
+      /**
+       * Tries to update the AIController.
+       * If it succeeds, the currentGameState is a new one, so its last Move is added to the analyzer.
+       * If it is this clients turn, it makes a move.
+       * In case the update returns false, a short delay can be added to postpone the next playTask.
+       * 
+       * @author sistumpf
+       * @throws NoMovesLeftException
+       * @throws InvalidShapeException
+       */
+      private void tryMakeMove() throws NoMovesLeftException, InvalidShapeException {
+        boolean updated = controller.update(getCurrentState());
+        if(updated || firstGameStateToken) {
+          if(updated)
+            firstGameStateToken = false;
+          if (enableLogging) {
+            this.analyzer.addMove(getCurrentState().getLastMove());
+          }
+          if (isItMyTurn()) {
+            makeMove(controller.getNextMove());
+          }
+        } else {
+          // delay can be added HERE, does not have to tho. depends on the resource usage, AI or idk ...
+          // Gedanken machen, bei random braucht man keinen delay TODO
+        }
+      }
+
+      /**
    * Base constructor.
    *
    * @param comm Sets the comm layer the client is going to use
@@ -170,6 +191,23 @@ public class AIClient extends Client {
   }
 
   /**
+   * Used to send a give up request to the current session. Throws exceptions depending on errors
+   *
+   * @throws SessionNotFound (404)
+   * @throws ForbiddenMove (403)
+   * @throws GameOver (410)
+   * @throws UnknownError (500)
+   * @throws URLError (404)
+   * @author rsyed
+   * @author sistumpf
+   */
+  @Override
+  public void giveUp() {
+    //  logger.info(requestedTeamName + " wants to give up");
+    comm.giveUp(currentServer, requestedTeamName, teamSecret);
+  }
+  
+  /**
    * Changes the sessionID which this client object is pointing to. Functions as a join game command. Overridden as it has to perform extra functions when compared to the one in 
    * Client
    *
@@ -184,10 +222,7 @@ public class AIClient extends Client {
    */
   @Override
   public void joinExistingGame(String IP, String port, String gameSessionID, String teamName) {
-    this.currentServer = "http://" + IP + ":" + port + "/api/gamesession";
-    this.currentServer = shortURL + "/" + gameSessionID;
-    joinGame(teamName);
-    getStateFromServer();
+    super.joinExistingGame(IP, port, gameSessionID, teamName);
   }
 /**
    * Combines refreshing the session and game state into one.
@@ -216,8 +251,9 @@ public class AIClient extends Client {
    *
    * @author rsyed
    */
-  protected void aiPlayerStart() {
-    aiClientScheduler.scheduleWithFixedDelay(playTask, 1, aiClientRefreshTime, TimeUnit.SECONDS);
+  protected void startPlayTask() {
+//    aiClientScheduler.scheduleWithFixedDelay(playTask, 10, aiClientRefreshTime, TimeUnit.MILLISECONDS);
+    aiPlayScheduler.submit(playTask);
   }
 
   /**
@@ -242,8 +278,13 @@ public class AIClient extends Client {
                     if (enableLogging) {
                       analyzer.addGameState(currentState);
                     }
-                    aiPlayerStart();
                     running = false;
+                    new Thread(() -> {
+                      try {
+                        Thread.sleep(100);
+                      } catch(Exception e) {e.printStackTrace();};
+                      startPlayTask();
+                      }).start();
                   }
                   Thread.sleep(sleep);
                 } catch (InterruptedException e) {

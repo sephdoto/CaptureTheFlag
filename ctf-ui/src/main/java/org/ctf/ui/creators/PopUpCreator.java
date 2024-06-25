@@ -109,22 +109,24 @@ private ObjectProperty<Font> popUpLabel;
 	 * @author Manuel Krakowski
 	 * @param aiOrHuman:    PopUpPane that is shown before this one, can be used to
 	 *                      go back to it
-	 * @param portText:     text which should be disabled in case of the create game
-	 *                      screen
-	 * @param serverIPText: text which should be disabled in case of the create game
-	 *                      screen
 	 * @return PopUpPane that should be shown
+	 */
+	/*
+	 * @param portText:     text which should be disabled in case of the create game
+     *                      screen
+     * @param serverIPText: text which should be disabled in case of the create game
+     *                      screen
 	 */
 	public PopUpPane createAiLevelPopUp(PopUpPane aiOrHuman, TextField portText, TextField serverIPText) {
 		if(aiOrHuman!= null) {
 			aiorHumanpopup = aiOrHuman;
 		root.getChildren().remove(aiorHumanpopup);
 		}
-		if(portText != null && serverIPText != null) {
+		/*if(portText != null && serverIPText != null) {
 		portText.setDisable(true);
 		serverIPText.setDisable(true);
-		}
-		aiLevelPopUpPane = new PopUpPane(scene, 0.6, 0.4);
+		}*/
+		aiLevelPopUpPane = new PopUpPane(scene, 0.6, 0.4, 0.95);
 		VBox top = new VBox();
 		top.heightProperty().addListener((obs, oldVal, newVal) -> {
 			double spacing = newVal.doubleValue() * 0.1;
@@ -204,8 +206,7 @@ private ObjectProperty<Font> popUpLabel;
         if (remote) {
           root.getChildren().remove(aiLevelPopUpPane);
           JoinScene joinscene = (JoinScene) scene;
-          joinscene.createJoinWindowAI(joinscene.getId(), joinscene.getIp(), joinscene.getPort(),
-              AI.RANDOM, null);
+          joinscene.createJoinWindow(joinscene.getId(), joinscene.getIp(), joinscene.getPort(), true, AI.RANDOM, null);
           return;
         }
         if (aiorHumanpopup == null) {
@@ -311,7 +312,7 @@ private ObjectProperty<Font> popUpLabel;
           defaultConfig = new AIConfig();
         }
 		createConfigMaps();
-		aiconfigPopUp = new PopUpPane(scene, widht, hight);
+		aiconfigPopUp = new PopUpPane(scene, widht, hight, 0.95);
 		StackPane configRoot = new StackPane();
 		configRoot.getChildren().add(createBackgroundImage(configRoot));
 		configRoot.getStyleClass().add("join-root");
@@ -802,7 +803,7 @@ private ObjectProperty<Font> popUpLabel;
 			if(remote) {
 			  root.getChildren().remove(aiconfigPopUp);
 			  JoinScene joinscene = (JoinScene) scene;
-			  joinscene.createJoinWindowAI(joinscene.getId(), joinscene.getIp(), joinscene.getPort(), aitype, defaultConfig);
+			  joinscene.createJoinWindow(joinscene.getId(), joinscene.getIp(), joinscene.getPort(), true, aitype, defaultConfig);
 			  return;
 			}
 		  
@@ -857,7 +858,7 @@ private ObjectProperty<Font> popUpLabel;
 	 * @author Manuel Krakowski
 	 */
 	private void createSaveConfigPopUp() {
-		saveConfig = new PopUpPane(scene, 0.55, 0.4);
+		saveConfig = new PopUpPane(scene, 0.55, 0.4, 0.95);
 		root.getChildren().remove(aiconfigPopUp);
 		VBox topBox = new VBox();
 		topBox.heightProperty().addListener((obs, oldVal, newVal) -> {

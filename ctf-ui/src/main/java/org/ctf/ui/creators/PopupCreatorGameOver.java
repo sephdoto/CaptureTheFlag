@@ -54,7 +54,13 @@ public class PopupCreatorGameOver {
   private ObjectProperty<Font> moreWinnersName;
 
 
-
+/**
+ * Clears local clients on creation, as they are not needed after the game has ended.
+ * 
+ * @param scene
+ * @param root
+ * @param hsc
+ */
   public PopupCreatorGameOver(Scene scene, StackPane root, HomeSceneController hsc) {
     this.scene = scene;
     this.root = root;
@@ -64,6 +70,7 @@ public class PopupCreatorGameOver {
     moreWinnerheader = new SimpleObjectProperty<Font>(Font.font(scene.getWidth() / 40));
     moreWinnersName = new SimpleObjectProperty<Font>(Font.font(scene.getWidth() / 50));
     manageFontSizes();
+    CreateGameController.clearLocalClients();
   }
 
   /**
@@ -92,7 +99,7 @@ public class PopupCreatorGameOver {
    * @param name: Name of the winner
    */
   public void createGameOverPopUpforOneWinner(String name) {
-    gameOverPopUp = new PopUpPane(scene, 0.6, 0.5);
+    gameOverPopUp = new PopUpPane(scene, 0.6, 0.5, 0.6); // TODO
     StackPane poproot = new StackPane();
     poproot.getChildren().add(createBackgroundKonfetti(poproot));
     VBox top = new VBox();
@@ -154,7 +161,7 @@ public class PopupCreatorGameOver {
    * @param names: List of the names of all the winners
    */
   public void createGameOverPopUpforMoreWinners(String[] names) {
-    gameOverPopUp = new PopUpPane(scene, 0.6, 0.8);
+    gameOverPopUp = new PopUpPane(scene, 0.6, 0.8, 0.6); //TODO
     StackPane poproot = new StackPane();
     poproot.getChildren().add(createBackgroundKonfetti(poproot));
     VBox top = new VBox();
@@ -338,7 +345,7 @@ public class PopupCreatorGameOver {
    * @author Manuel Krakowski
    */
   public void createGameOverPopUpYouLost(String name) {
-    gameOverPopUp = new PopUpPane(scene, 0.6, 0.5);
+    gameOverPopUp = new PopUpPane(scene, 0.6, 0.5, 0.6);    //TODO
     StackPane poproot = new StackPane();
     poproot.getChildren().add(createBackgroundscelett(poproot));
     VBox top = new VBox();

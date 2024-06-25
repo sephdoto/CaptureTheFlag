@@ -85,13 +85,15 @@ public class GamePane extends HBox {
     vBox.alignmentProperty().set(Pos.CENTER);
     alignmentProperty().set(Pos.CENTER);
     gridPane = new GridPane();
+    
     binding = Bindings.min(widthProperty().divide(cols), heightProperty().divide(rows));
-    NumberBinding roundSize = Bindings.createIntegerBinding(() -> binding.intValue(), binding);
+    NumberBinding roundSize = Bindings.createDoubleBinding(() -> binding.doubleValue(), binding);
     vBox.prefWidthProperty().bind(roundSize.multiply(cols));
     vBox.prefHeightProperty().bind(roundSize.multiply(rows));
     vBox.setMaxSize(Control.USE_PREF_SIZE, Control.USE_PREF_SIZE);
     vBox.setFillWidth(true);
-    gridPane.setSnapToPixel(false);
+    
+    gridPane.setSnapToPixel(true);
     VBox.setVgrow(gridPane, Priority.ALWAYS);
     for (int i = 0; i < cols; i++) {
       ColumnConstraints columnConstraints =
@@ -180,7 +182,7 @@ public class GamePane extends HBox {
    * @author Manuel Krakowski
    */
   private void showLastMove() {
-    if (state.getLastMove() != null && state.getLastMove().getNewPosition() != null) {
+    if (state.getLastMove() != null && state.getLastMove().getNewPosition() != null && !state.getLastMove().getPieceId().equals("")) {
       Move lastMove = state.getLastMove();
       int xNewPos = lastMove.getNewPosition()[0];
       int yNewPos = lastMove.getNewPosition()[1];
@@ -191,11 +193,13 @@ public class GamePane extends HBox {
         cells.get(generateKey(xNewPos, yNewPos)).showLastMove();
 
       }
-      if (CreateGameController.getLastFigures() != null && colerforAnlyzer.equals("")) {
+      if(CreateGameController.getLastFigures() != null) {
         CostumFigurePain old = CreateGameController.getLastFigures().get(lastMove.getPieceId());
-        int xOldPosX = old.getPosX();
-        int oldPosY = old.getPosY();
-        cells.get(generateKey(xOldPosX, oldPosY)).showLastMove();
+        if (CreateGameController.getLastFigures() != null && !colerforAnlyzer.equals("") && old != null) {
+          int xOldPosX = old.getPosX();
+          int oldPosY = old.getPosY();
+          cells.get(generateKey(xOldPosX, oldPosY)).showLastMove();
+        }
       }
     }
   }

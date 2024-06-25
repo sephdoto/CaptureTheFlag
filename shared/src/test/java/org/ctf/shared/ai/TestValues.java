@@ -4,9 +4,10 @@ import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.Team;
+import org.ctf.shared.state.data.map.Directions;
 import org.ctf.shared.state.data.map.MapTemplate;
-import org.ctf.shared.tools.JsonTools;
-import org.ctf.shared.tools.JsonTools.MapNotFoundException;
+import org.ctf.shared.state.data.map.Movement;
+import org.ctf.shared.state.data.map.PieceDescription;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -17,6 +18,51 @@ import com.google.gson.reflect.TypeToken;
  * @author sistumpf
  */
 public class TestValues {
+  public static GameState getOneTestPieceGS() {
+    Team team1 = new Team();
+    team1.setBase(new int[] {0,0});
+    team1.setColor("red");
+    team1.setId("0");
+
+    Piece[] pieces1 = new Piece[1];
+    Piece piece = new Piece();
+    piece.setId("p:0_0");
+    piece.setPosition(new int[] {4,4});
+    piece.setTeamId("0");
+    PieceDescription pd = new PieceDescription();
+    pd.setAttackPower(0);
+    pd.setCount(1);
+    pd.setType("einer");
+    Movement movement = new Movement();
+    Directions directions = new Directions();
+    directions.setLeft(1);
+    directions.setRight(1);
+    movement.setDirections(directions);
+    pd.setMovement(movement);
+    piece.setDescription(pd);
+    pieces1[0] = piece;
+    team1.setPieces(pieces1);
+    team1.setBase(new int[] {0,0});
+    GameState testState = new GameState();
+    testState.setCurrentTeam(0);
+    String[][] grid = new String[][] {
+      {"b:0","","","","","","","","",""},
+      {"","","","","","","","","",""},
+      {"","","","","","","","","",""},
+      {"","","","","","","","","",""},
+      {"","","","","p:0_0","","","","",""},
+      {"","","","","","","","","",""},
+      {"","","","","","","","","",""},
+      {"","","","","","","","","",""},
+      {"","","","","","","","","",""},
+      {"","","","","","","","","",""}
+    };
+    testState.setGrid(grid);
+    testState.setTeams(new Team[]{team1});
+
+    return testState;
+  }
+
   public static GameState getThreeTeamsEmptyTestState() {
     Team team1 = new Team();
     team1.setBase(new int[] {0,0});
@@ -27,12 +73,12 @@ public class TestValues {
     team2.setBase(new int[] {4,4});
     team2.setColor("blue");
     team2.setId("1");
-    
+
     Team team3 = new Team();
     team3.setBase(new int[] {9,9});
     team3.setColor("green");
     team3.setId("2");
-    
+
     Piece[] pieces1 = new Piece[0];
     team1.setPieces(pieces1);
 
@@ -41,7 +87,7 @@ public class TestValues {
 
     Piece[] pieces3 = new Piece[0];
     team3.setPieces(pieces3);
-    
+
     GameState testState = new GameState();
     testState.setCurrentTeam(1);
     String[][] example = new String[][] {

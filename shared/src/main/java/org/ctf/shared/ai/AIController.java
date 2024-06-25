@@ -101,8 +101,9 @@ public class AIController {
    * @param gameState
    */
   public boolean update(GameState gameState) {
-    if(this.normalizedGameState.getOriginalGameState().getCurrentTeam() == gameState.getCurrentTeam())
-      return false;
+    if(moveEquals(gameState.getLastMove(), this.normalizedGameState.getOriginalGameState().getLastMove()))
+      if (gameState.getCurrentTeam() == this.normalizedGameState.getOriginalGameState().getCurrentTeam())
+        return false;
     if (gameState.getCurrentTeam() < 0) {
       this.setActive(false);
       shutDown();
@@ -152,7 +153,7 @@ public class AIController {
   }
 
   public void shutDown() {
-    System.out.println("AI shut down");
+    System.out.println(this.ai +"-AI shut down");
     throw new GameOver();
   }
 
@@ -199,8 +200,9 @@ public class AIController {
     
       
     if(move1.getPieceId().equals(move2.getPieceId()))
-      if(Arrays.equals(move1.getNewPosition(), move2.getNewPosition()))
-        return true;
+      return move1.getNewPosition()[0] == move2.getNewPosition()[0]
+          && move1.getNewPosition()[1] == move2.getNewPosition()[1];
+    
     return false;
   }
 

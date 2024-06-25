@@ -7,8 +7,14 @@ import javax.imageio.ImageIO;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums;
 import org.ctf.shared.constants.Enums.Themes;
+import javafx.scene.image.Image;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -59,19 +65,27 @@ public class WaveFunctionCollapse {
   private BufferedImage block;  
   private BufferedImage base;
   
+  private boolean[] allowedToRun;
+  
 
   // **************************************************
   // Constructor
   // **************************************************
   
+
   /**
-   * Constructor that parses the String[][] grid (created by the GameEngine) into an integer which the
-   * algorithm is going to use internally to keep track which image goes where.
+   * Copy of the other constructor but with another variable that allows killing this process from outside.
    * 
    * @param grid
    * @param theme 
+   * @param allowedToRun a boolean Array to allow changes from outside
    */
-  public WaveFunctionCollapse(String[][] grid, Themes theme) {
+  public WaveFunctionCollapse(String[][] grid, Themes theme, boolean[] allowedToRun) {
+    //delete old grids
+    File pic = new File(Constants.toUIResources + "pictures" + File.separator + "grid.png");
+    if(pic.exists()) pic.delete();
+    
+    this.allowedToRun = allowedToRun;
     instance = this;
     ogGrid = grid;
     collapsed = false;
@@ -97,10 +111,59 @@ public class WaveFunctionCollapse {
     
     int[][] intGrid = stringToInt(grid);
     this.grid = generateBackground(intGrid);
-    try {
-      background = gridToImg(this.grid);
-    } catch (IOException e) {
-      e.printStackTrace();
+    if(allowedToRun[0]) {
+      try {
+        background = gridToImg(this.grid);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+  
+  /**
+   * Constructor that parses the String[][] grid (created by the GameEngine) into an integer which the
+   * algorithm is going to use internally to keep track which image goes where.
+   * 
+   * @param grid
+   * @param theme 
+   */
+  public WaveFunctionCollapse(String[][] grid, Themes theme) {
+    //delete old grids
+    File pic = new File(Constants.toUIResources + "pictures" + File.separator + "grid.png");
+    if(pic.exists()) pic.delete();
+    
+    this.allowedToRun = new boolean[] {true};
+    instance = this;
+    ogGrid = grid;
+    collapsed = false;
+    
+    this.theme = theme;
+    if(theme == Themes.STARWARS) {
+      imagesAmount = 36;
+      imageSize = 14;
+    }
+    else if(theme == Themes.BAYERN) {
+      imagesAmount = 4;
+      imageSize = 42;
+    }
+    else if(theme == Themes.LOTR) {
+ 
+      imagesAmount = 9;
+      imageSize = 64;
+      /*
+      imagesAmount = 48;
+      imageSize = 48;
+      */
+    }
+    
+    int[][] intGrid = stringToInt(grid);
+    this.grid = generateBackground(intGrid);
+    if(allowedToRun[0]) {
+      try {
+        background = gridToImg(this.grid);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
   }
   
@@ -183,11 +246,9 @@ public class WaveFunctionCollapse {
    * @return the finished grid
    */
   private int[][] generateBackground(int[][] grid) {
-
     WaveGrid wGrid = new WaveGrid(grid, imagesAmount, theme);       //creating the Grid  
-    
     //The main algorithm:
-    while (!collapsed) {
+    while (!collapsed && allowedToRun[0]) {
       ArrayList<Tile> tileCopy = new ArrayList<Tile>(wGrid.tiles);  //create a copy of all the tiles 
       
       this.removeCollapsedTiles(tileCopy);
@@ -466,12 +527,30 @@ public class WaveFunctionCollapse {
   /**
    * Saves the current image to the UI Resources folder. Only use when an image has already been
    * created.
+   * A new file gets created and locked
+   *
+   * @author sistumpf
    */
   public void saveToResources() {
     if (this.collapsed) {
-      try {
-        ImageIO.write(this.getBackground(), "png", new File(
-            Constants.toUIResources + File.separator + "pictures" + File.separator + "grid.png"));
+      String path = Constants.toUIResources + "pictures" + File.separator + "grid.png";
+      File saveTo = new File(path);
+      try (RandomAccessFile file = new RandomAccessFile(path, "rw")){
+        FileChannel channel = file.getChannel();
+        FileLock lock = channel.lock();
+
+        try {
+          ByteArrayOutputStream baos = new ByteArrayOutputStream();
+          ImageIO.write(this.getBackground(), "png", baos);
+          byte[] imageBytes = baos.toByteArray();
+
+          file.setLength(imageBytes.length);
+          file.write(imageBytes);
+
+        } finally {
+          lock.release();
+        }
+
       } catch (IOException e) {
         e.printStackTrace();
       }

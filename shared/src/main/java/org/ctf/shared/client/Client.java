@@ -2,12 +2,14 @@ package org.ctf.shared.client;
 
 import com.google.gson.Gson;
 import java.time.Clock;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import org.ctf.shared.ai.AIController;
 import org.ctf.shared.ai.GameStateNormalizer;
 import org.ctf.shared.client.lib.GameClientInterface;
 import org.ctf.shared.client.lib.ServerChecker;
@@ -17,6 +19,7 @@ import org.ctf.shared.client.service.CommLayerInterface;
 import org.ctf.shared.gameanalyzer.GameSaveHandler;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
+import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.Team;
 import org.ctf.shared.state.data.exceptions.ForbiddenMove;
 import org.ctf.shared.state.data.exceptions.GameOver;
@@ -66,6 +69,7 @@ public class Client implements GameClientInterface {
   protected GameSessionResponse gameResponse;
   protected String[] winners;
   protected int turnTimeLimit;
+  protected String couldJoin;
 
   // Block for Team Data
   protected String teamSecret;
@@ -112,6 +116,7 @@ public class Client implements GameClientInterface {
    */
   Client(CommLayerInterface comm, String IP, String port, boolean enableLogging) {
     this.currentTeamTurn = -1;
+    this.couldJoin = "unjoined";
     this.gson = new Gson();
     this.currentState = new GameState();
     this.currentSession = new GameSession();
@@ -142,8 +147,8 @@ public class Client implements GameClientInterface {
     this(comm, IP, port, enableLogging);
     this.gameIDtoJoin = gameID;
     this.requestedTeamName = teamName;
-    scheduler.schedule(joinTask, 2, TimeUnit.SECONDS);
-    scheduler.schedule(startWatcher, 3, TimeUnit.SECONDS);
+    scheduler.schedule(joinTask, 100, TimeUnit.MILLISECONDS);
+    scheduler.schedule(startWatcher, 100, TimeUnit.MILLISECONDS);
   }
 
   /**
@@ -309,7 +314,13 @@ public class Client implements GameClientInterface {
   public void joinExistingGame(String IP, String port, String gameSessionID, String teamName) {
     this.currentServer = "http://" + IP + ":" + port + "/api/gamesession";
     this.currentServer = shortURL + "/" + gameSessionID;
-    joinGame(teamName);
+    try {
+      joinGame(teamName);
+      this.couldJoin = "joined";
+      getStateFromServer();
+    } catch (Exception e) {
+      this.couldJoin = "declined";
+    }
   }
 
   // **************************************************
@@ -470,15 +481,24 @@ public class Client implements GameClientInterface {
         moveReq.setPieceId(move.getPieceId());
         moveReq.setNewPosition(move.getNewPosition());
         comm.makeMove(currentServer, moveReq);
+//        System.out.println("dop");
       } catch (SessionNotFound e) {
+        System.out.println("SessionNotFound");
         throw new SessionNotFound();
       } catch (ForbiddenMove e) {
+        System.out.println("ForbiddenMove");
         throw new ForbiddenMove();
       } catch (InvalidMove e) {
+        System.out.println(move.getPieceId() + ", team: " + move.getTeamId() + " [" +
+            move.getNewPosition()[0] + "-" + move.getNewPosition()[1] + "], I am " + this.requestedTeamName);
+        final String pieceId = move.getPieceId();
+        System.out.println("InvalidMove");
         throw new InvalidMove();
       } catch (GameOver e) {
+        System.out.println("GameOver");
         throw new GameOver();
       } catch (UnknownError e) {
+        System.out.println("UnknownError");
         throw new UnknownError();
       }
     }
@@ -654,14 +674,23 @@ public class Client implements GameClientInterface {
   }
 
   /**
-   * Calculates if the last team is different than current team
+   * Compares the current and new GameStates last moves.
+   * If they are equal, the current team gets compared, if they are equal the GameState is not new.
+   * This must happen that way, as a team can giveUp, the last Move stays the same, but the current Team changes.
    *
-   * @author rsyed
+   * @author sistumpf
+   * @return true if newState is a new GameState
+   * @return false if the game has not started yet or newState is not new
    */
-  protected boolean isNewGameState(GameState gameState) {
-    return this.currentTeamTurn != gameState.getCurrentTeam();
+  protected boolean isNewGameState(GameState newState) {
+    if(newState.getCurrentTeam() == -1 && this.currentTeamTurn == -1)
+      return false;
+    
+    if(AIController.moveEquals(newState.getLastMove(), currentState.getLastMove()))
+      return newState.getCurrentTeam() != currentState.getCurrentTeam();
+    return true;
   }
-
+  
   /**
    * Method which returns which team made the last move -1 if no last move. 0 to n otherwise
    *
@@ -762,7 +791,7 @@ public class Client implements GameClientInterface {
       public void run() {
         while (active) {
           try {
-            Long sleep = 1000L;
+            Long sleep = 100L;
             Client.this.getSessionFromServer(); // Gets Session from server
             if (getStartDate() != null) {
               if (enableLogging) {
@@ -869,6 +898,7 @@ public class Client implements GameClientInterface {
   }
 
   public String[] getWinners() {
+    getSessionFromServer();
     return winners;
   }
 
@@ -944,6 +974,16 @@ public class Client implements GameClientInterface {
   public GameState getQueuedGameState() {
     return this.fifoQueue.poll();
   }
+  
+  /**
+   * Returns the number of GameStates in the queue.
+   * 
+   * @author sistumpf
+   * @return number of GameStates in the queue.
+   */
+  public int queuedGameStates() {
+    return this.fifoQueue.size();
+  }
 
   /**
    * Enables the queue generation logic
@@ -965,6 +1005,10 @@ public class Client implements GameClientInterface {
 
   public boolean isAlive() {
     return isAlive;
+  }
+
+  public String couldJoin() {
+    return couldJoin;
   }
 
 }

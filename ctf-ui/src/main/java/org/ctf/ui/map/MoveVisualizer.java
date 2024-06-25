@@ -1,7 +1,6 @@
 package org.ctf.ui.map;
 
 import configs.Dialogs;
-import configs.GameMode;
 import java.util.ArrayList;
 import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.client.Client;
@@ -48,7 +47,6 @@ public class MoveVisualizer {
     currentPlayer = null;
     currentTeam = cb.getState().getCurrentTeam();
     setCurrentTeamActive();
-
   }
 
   /**
@@ -79,6 +77,7 @@ public class MoveVisualizer {
     move.setNewPosition(newPos);
     try {
       cliento.makeMove(move);
+      resetStateAfterMoveRequest();
     } catch (SessionNotFound e) {
       Dialogs.showExceptionDialog("Session not found", e.getMessage());
     } catch (ForbiddenMove e) {
@@ -90,7 +89,6 @@ public class MoveVisualizer {
     } catch (UnknownError e) {
       Dialogs.showExceptionDialog("Unknown Error", e.getMessage());
     }
-    resetStateAfterMoveRequest();
   }
 
 
@@ -137,7 +135,7 @@ public class MoveVisualizer {
     for (BackgroundCellV2 c : cb.getCells().values()) {
       for (int[] pos : possibleMoves) {
         if (c.getX() == pos[0] && c.getY() == pos[1]) {
-          System.out.println(" " + pos[0] + ", " + pos[1]);
+//          System.out.println(" " + pos[0] + ", " + pos[1]);
           if (!c.isOccupied()) {
             c.showPossibleMove();
           } else if (c.isOccupied()) {

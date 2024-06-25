@@ -1,6 +1,7 @@
 package org.ctf.ui.controllers;
 
 import java.io.BufferedReader;
+import java.io.File;
 /**
  * @author mkrakows & aniemesc
 This Class controls what happens when clicking the buttons on the HomeScreen
@@ -18,6 +19,7 @@ import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.ui.App;
@@ -30,6 +32,7 @@ import org.ctf.ui.hostGame.WaitingScene;
 import org.ctf.ui.remoteGame.JoinScene;
 import org.ctf.ui.remoteGame.RemoteWaitingThread;
 import org.ctf.ui.remoteGame.WaveCollapseThread;
+import org.ctf.ui.threads.ResizeFixThread;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.event.ActionEvent;
@@ -89,14 +92,13 @@ public class HomeSceneController {
   }
 
   public void createGameSession() {
-    System.out.println("Hallo ch bin der Manger");
     System.out.println(serverID);
     System.out.println(port);
     serverManager = new ServerManager(new CommLayer(), new ServerDetails(serverID, port),template);
     if(serverManager.createGame()) {
-      System.out.println("Session erstellt" );
+      System.out.println("Session created" );
     }else {
-      System.out.println("None");
+      System.out.println("No Session created");
     }
   }
 
@@ -136,12 +138,9 @@ public class HomeSceneController {
   public void switchToWaitGameScene(Stage stage) {
     CheatboardListener.setLastScene(stage.getScene());
     CreateGameController.initColorHashMap();
-    waitingScene = new WaitingScene(this, stage.getWidth(), stage.getHeight());
+    waitingScene = new WaitingScene(this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight);
     stage.setScene(waitingScene);
-    //t = new TestThread(this, serverManager);
-    //t.start();
-    //CreateGameController.startWaitingLobbyThread();
-
+    new ResizeFixThread(stage).start();
   }
 
   /**
@@ -155,21 +154,39 @@ public class HomeSceneController {
    */
   public void switchToPlayGameScene(Stage stage, Client mainClient, boolean isRemote) {
     CheatboardListener.setLastScene(stage.getScene());
+    //delete last grid
+    File grid = new File(Constants.toUIPictures + File.separator + "grid.png");
+    grid.delete();
+    
+    //update main client if necessary
+    //TODO
+    for(int i=0; i<mainClient.getTeams().length; i++) {
+      if(mainClient.getTeams()[i] == null){
+        System.out.println("team " + i + " is null??");
+//        while(mainClient.getTeams()[i] == null)
+        mainClient.pullData();
+      }
+    }
+    
     playGameScreenV2 =
-        new PlayGameScreenV2(this, stage.getWidth(), stage.getHeight(), mainClient, isRemote);
+        new PlayGameScreenV2(this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight, mainClient, isRemote);
     stage.setScene(playGameScreenV2);
+    
     if (isRemote) {
       CreateGameController.initColorHashMapForRemote(mainClient);
     } else {
       CreateGameController.overWriteDefaultWithServerColors(); 
     }
+    
+    //generate new grid
     new WaveCollapseThread(mainClient.getGrid(), this).start();
   }
 
   public void switchToCreateGameScene(Stage stage) {
     CheatboardListener.setLastScene(stage.getScene());
-    createGameScreenV2=  new CreateGameScreenV2(this, stage.getWidth(), stage.getHeight());
+    createGameScreenV2=  new CreateGameScreenV2(this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight);
     stage.setScene(createGameScreenV2);
+    new ResizeFixThread(stage).start();
   }
 
   /**
@@ -180,12 +197,14 @@ public class HomeSceneController {
    */
   public void switchToJoinScene(Stage stage) {
     CheatboardListener.setLastScene(stage.getScene());
-    stage.setScene(new JoinScene(this, stage.getWidth(), stage.getHeight()));
+    stage.setScene(new JoinScene(this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight));
+    new ResizeFixThread(stage).start();
   }
 
   public void switchToAnalyzerScene(Stage stage) {
     CheatboardListener.setLastScene(stage.getScene());
-    stage.setScene(new AiAnalyserNew(this, stage.getWidth(), stage.getHeight()));
+    stage.setScene(new AiAnalyserNew(this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight));
+    new ResizeFixThread(stage).start();
   }
 
   /**
@@ -196,7 +215,8 @@ public class HomeSceneController {
    */
   public void switchToMapEditorScene(Stage stage) {
     CheatboardListener.setLastScene(stage.getScene());
-    stage.setScene(new EditorScene(this, stage.getWidth(), stage.getHeight()));
+    stage.setScene(new EditorScene(this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight));
+    new ResizeFixThread(stage).start();
   }
 
 

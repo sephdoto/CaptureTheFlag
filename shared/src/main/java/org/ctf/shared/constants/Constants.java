@@ -60,6 +60,10 @@ public class Constants {
    * Global waiting time in ms.
    */
   public static int globalWaitingTime = 3000;
+  /**
+   * Time in ms the UI waits till it refreshes.
+   */
+  public static int UIupdateTime = 50;
 
   /**
    * Static vars needed for Server and AI Config
@@ -81,9 +85,15 @@ public class Constants {
   ///////////////////////////////////////////////////////
   //                      Strings                      //
   ///////////////////////////////////////////////////////
-
+  
   // to resources folder
-  private static final String CFP14 = "cfp14";
+  private static final String CFP14 = 
+      new File(
+          Paths.get("").toAbsolutePath().toString().
+          substring(0, 
+              Paths.get("").toAbsolutePath().toString().lastIndexOf(File.separator))
+          ).getName();
+
   public static final String toUIResources =
       ISJAR
           ? JARRESOURCES

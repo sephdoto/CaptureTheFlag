@@ -23,13 +23,14 @@ import org.ctf.ui.creators.PopUpCreator;
 import org.ctf.ui.creators.PopUpCreatorEnterTeamName;
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.map.GamePane;
-import configs.ImageLoader;
+import org.ctf.ui.threads.PointAnimation;
 import javafx.animation.TranslateTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -45,7 +46,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -64,7 +68,8 @@ public class CreateGameScreenV2 extends Scene {
   private HashMap<MapTemplate, GameState> maps;
   private String serverIP;
   private String port;
-
+  private Thread generateBackgroundThread;
+  
   // Components that need to be accessed from everywhere
   private StackPane root;
   private StackPane left;
@@ -153,7 +158,6 @@ public class CreateGameScreenV2 extends Scene {
    */
   private void createLayout() {
     manageFontSizes();
-    ImageLoader.loadImages();
     StroeMaps.initDefaultMaps();
     root.getStyleClass().add("join-root");
     VBox mainBox = createMainBox();
@@ -377,6 +381,7 @@ public class CreateGameScreenV2 extends Scene {
     c.prefWidthProperty().bind(parent.widthProperty().multiply(0.8));
     c.prefHeightProperty().bind(parent.heightProperty().multiply(0.1));
     c.setCellFactory(param -> new ListCell<String>() {
+      @Override
       protected void updateItem(String item, boolean empty) {
         super.updateItem(item, empty);
         if (empty || item == null) {
@@ -388,6 +393,7 @@ public class CreateGameScreenV2 extends Scene {
       }
     });
     c.setButtonCell(new ListCell<String>() {
+      @Override
       protected void updateItem(String item, boolean empty) {
         super.updateItem(item, empty);
         if (empty || item == null) {
@@ -412,7 +418,8 @@ public class CreateGameScreenV2 extends Scene {
    * 
    * @author Manuel Krakowski
    * @author aniemesc
-   * @param c: ChoiceBox from which the user selects the map
+   * @author sistumpf
+   * @param c ChoiceBox from which the user selects the map
    */
   private void perfromChoiceBoxAction(ComboBox<String> c) {
     selected = c.getValue();
@@ -423,11 +430,11 @@ public class CreateGameScreenV2 extends Scene {
       template = entry.getKey();
       state = entry.getValue();
     }
-    gm = new org.ctf.ui.map.GamePane(state, false, "");
-    ImageView iv = this.createBackgroundImage(gm.getvBox());
-    StackPane.setAlignment(iv, Pos.CENTER);
+//    gm = new GamePane(state, false, "");
+//    ImageView iv = this.createBackgroundImage(gm.getvBox());  
+//    StackPane.setAlignment(iv, Pos.CENTER);
     sep.getChildren().remove(showMapBox);
-    createShowMapPane();
+    showMapBox = createShowMapPane();
     sep.getChildren().add(showMapBox);
   }
 
@@ -482,9 +489,9 @@ public class CreateGameScreenV2 extends Scene {
    * Creates a wobbling animation of a textfield
    * 
    * @author Manuel Krakowski
-   * @param t: Textfield on which the animation is shown
-   * @param mustEnterStyle: Style of the Textfield during the animation
-   * @param defaultStyle: default Style of the textfield before and after the animation
+   * @param t Textfield on which the animation is shown
+   * @param mustEnterStyle Style of the Textfield during the animation
+   * @param defaultStyle default Style of the textfield before and after the animation
    */
   public static void informationmustBeEntered(TextField t, String mustEnterStyle,
       String defaultStyle) {
@@ -509,6 +516,11 @@ public class CreateGameScreenV2 extends Scene {
    * @author Manuel Krakowski
    */
   private void perfromCreateButtonClick() {
+    //TODO
+    if(generateBackgroundThread != null) {
+      generateBackgroundThread.interrupt();
+    }
+    
     serverIP = serverIPText.getText();
     port = portText.getText();
     CreateGameController.setPort(port);
@@ -527,12 +539,13 @@ public class CreateGameScreenV2 extends Scene {
 
 
   /**
-   * Cretaes the Stackpane on the right side, which will always contain the currently selected map
-   * from the ComboBox
+   * Creates the Stackpane on the right side, which always contains the currently selected map from the ComboBox.
+   * Also creates an animated text to show progress is being made whilst generating the background.
+   * Calls a Task to generate the background, the Task can be interrupted when changing the template.
    * 
    * @author Manuel Krakowski
    * @author aniemesc
-   * @param name: Hier muss man das noch ändern
+   * @author sistumpf
    * @return
    */
   private StackPane createShowMapPane() {
@@ -552,35 +565,102 @@ public class CreateGameScreenV2 extends Scene {
       state = entry.getValue();
     }
 
-    gm = new GamePane(state, false, "");
+    gm = new GamePane(state, true, "");
     StackPane.setAlignment(gm, Pos.CENTER);
     gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
     gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
-    showMapBox.getChildren().add(createBackgroundImage(gm.getvBox()));
+
+    //Text to show progress is made
+    Text text = new Text();
+    text.setFill(Color.CORNFLOWERBLUE); 
+    text.setFont(Font.font("Arial", FontWeight.BOLD, 15));
+    Rectangle background = new Rectangle();
+    background.setFill(Color.DARKBLUE);
+    background.widthProperty().bind(Bindings.createDoubleBinding(
+        () -> text.getBoundsInLocal().getWidth() + 10, text.boundsInLocalProperty()));
+    background.heightProperty().bind(Bindings.createDoubleBinding(
+        () -> text.getBoundsInLocal().getHeight() + 10, text.boundsInLocalProperty()));
+    text.setOpacity(1);
+    background.setOpacity(0.3);
+
+    Thread pointAnimation = new PointAnimation(text, "background is being generated,\nplease wait", "action interrupted", 18, 125);
     showMapBox.getChildren().add(gm);
+    showMapBox.getChildren().add(background);
+    showMapBox.getChildren().add(text);
+    pointAnimation.start();
+    
+    //TODO
+    CreateBackgroundTask task = new CreateBackgroundTask(gm.getvBox());
+    task.setOnSucceeded(
+        event -> {
+          pointAnimation.interrupt();
+          showMapBox.getChildren().remove(text);
+          showMapBox.getChildren().remove(background);
+          showMapBox.getChildren().remove(gm);
+          gm = new GamePane(state, false, "");
+          StackPane.setAlignment(gm, Pos.CENTER);
+          gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
+          gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
+          ImageView iv = task.getValue();
+          iv.fitWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
+          iv.fitHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
+          iv.setPreserveRatio(true);
+          showMapBox.getChildren().add(iv);
+          showMapBox.getChildren().add(gm);
+          generateBackgroundThread = null;
+        });
+    if(generateBackgroundThread != null) {
+      generateBackgroundThread.interrupt();
+    }
+    generateBackgroundThread = new Thread() {
+      @Override
+      public void run() {task.run();}
+      @Override
+      public void interrupt() {task.stop(); pointAnimation.interrupt(); CreateGameScreenV2.this.generateBackgroundThread = null;}
+    };
+    generateBackgroundThread.start();
     return showMapBox;
   }
 
   /**
+   * Task to check if the server is active to prevent UI freezing while waiting for a boolean.
    * 
-   * @author Manuel Krakowski
-   * @author aniemesc
-   * @param vBox
-   * @return
+   * @author sistumpf
    */
-  public ImageView createBackgroundImage(VBox vBox) {
-    WaveFunctionCollapse backgroundcreator =
-        new WaveFunctionCollapse(state.getGrid(), Constants.theme);
-    backgroundcreator.saveToResources();
-    Image mp =
-        new Image(new File(Constants.toUIResources + "pictures" + File.separator + "grid.png")
-            .toURI().toString());
-    ImageView mpv = new ImageView(mp);
-    StackPane.setAlignment(mpv, Pos.CENTER);
-    mpv.fitHeightProperty().bind(vBox.heightProperty().multiply(1));
-    mpv.fitWidthProperty().bind(vBox.widthProperty().multiply(1));
-    mpv.setOpacity(1);
-    return mpv;
+  private class CreateBackgroundTask extends Task<ImageView> {
+    private VBox vBox;
+    private WaveFunctionCollapse wfc;
+    private boolean[] allowedToRun;
+    
+    public CreateBackgroundTask(VBox vBox) {
+      this.allowedToRun = new boolean[] {true};
+      this.vBox = vBox;
+    }
+
+    public void stop() {
+      allowedToRun[0] = false;
+      this.cancel();
+    }
+    
+    @Override
+    /**
+     * Calls the server and sets the searchButton text accordingly.
+     */
+    protected ImageView call() {
+      this.wfc =
+          new WaveFunctionCollapse(state.getGrid(), Constants.theme, allowedToRun);
+      if(!new File(Constants.toUIResources + "pictures" + File.separator + "grid.png").exists()) 
+        wfc.saveToResources();
+      Image mp =
+          new Image(new File(Constants.toUIResources + "pictures" + File.separator + "grid.png")
+              .toURI().toString());
+      ImageView mpv = new ImageView(mp);
+      StackPane.setAlignment(mpv, Pos.CENTER);
+      mpv.fitHeightProperty().bind(vBox.heightProperty().multiply(1));
+      mpv.fitWidthProperty().bind(vBox.widthProperty().multiply(1));
+      mpv.setOpacity(1);
+      return mpv;
+    }
   }
 
   /**
@@ -595,6 +675,9 @@ public class CreateGameScreenV2 extends Scene {
     exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
     exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
     exit.setOnAction(e -> {
+      if(generateBackgroundThread != null) {
+        generateBackgroundThread.interrupt();
+      }
       hsc.switchtoHomeScreen(e);
     });
     return exit;
@@ -683,7 +766,7 @@ public class CreateGameScreenV2 extends Scene {
    * @author Manuel Krakowski
    */
   private void createChooserPopup() {
-    aiOrHumanPop = new PopUpPane(this, 0.5, 0.3);
+    aiOrHumanPop = new PopUpPane(this, 0.5, 0.3, 0.95);
     portText.setDisable(true);
     serverIPText.setDisable(true);
     root.getChildren().add(aiOrHumanPop);
