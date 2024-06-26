@@ -16,11 +16,9 @@ public interface ServerInterface {
    */
   public boolean startServer(String port);
 
-  public int checkStatus();
+  public boolean checkStatus();
 
   public boolean restartServer();
 
   public boolean stopServer();
-
-  public boolean killServer();
 }

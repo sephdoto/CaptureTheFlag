@@ -16,6 +16,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class ServerContainer implements ServerInterface {
   ConfigurableApplicationContext appContext;
   ServerManager seManager;
+  String port;
 
   /**
    * Starts a Server instance and checks if it is functional.
@@ -26,39 +27,40 @@ public class ServerContainer implements ServerInterface {
    */
   @Override
   public boolean startServer(String port) {
-
+    this.port = port;
     try {
       appContext = SpringApplication.run(CtfApplication.class, "--server.port=" + port);
     } catch (BeanCreationException ex) {
       throw new PortInUseException();
     }
     if (appContext.isRunning()) {
-      return new ServerChecker().isServerActive(new ServerDetails("localhost", port));
+      return checkStatus();
     }
     return false;
   }
 
   @Override
-  public int checkStatus() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'checkStatus'");
+  public boolean checkStatus() {
+    return new ServerChecker().isServerActive(new ServerDetails("localhost", port));
   }
 
   @Override
   public boolean restartServer() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'restartServer'");
+    if (appContext != null) {
+      appContext.refresh();
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @Override
   public boolean stopServer() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'stopServer'");
-  }
-
-  @Override
-  public boolean killServer() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'killServer'");
+    if (appContext != null && checkStatus()) {
+      appContext.close();
+      return true;
+    } else {
+      return false;
+    }
   }
 }
