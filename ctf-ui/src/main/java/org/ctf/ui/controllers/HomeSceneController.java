@@ -2,20 +2,17 @@ package org.ctf.ui.controllers;
 
 import java.io.BufferedReader;
 import java.io.File;
-/**
- * @author mkrakows & aniemesc
-This Class controls what happens when clicking the buttons on the HomeScreen
- */
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
-
+import javafx.beans.property.ObjectProperty;
+import javafx.event.ActionEvent;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import org.ctf.shared.client.Client;
-import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
@@ -30,28 +27,13 @@ import org.ctf.ui.hostGame.CreateGameScreenV2;
 import org.ctf.ui.hostGame.PlayGameScreenV2;
 import org.ctf.ui.hostGame.WaitingScene;
 import org.ctf.ui.remoteGame.JoinScene;
-import org.ctf.ui.remoteGame.RemoteWaitingThread;
 import org.ctf.ui.remoteGame.WaveCollapseThread;
 import org.ctf.ui.threads.ResizeFixThread;
-import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Stop;
-import javafx.stage.Stage;
 
 /**
- * Main controller of the application.
- * 
+ * Main controller of the application. This Class controls what happens when clicking the buttons on
+ * the HomeScreen
+ *
  * @author sistumpf
  * @author mkrakows
  * @author aniemesc
@@ -66,7 +48,7 @@ public class HomeSceneController {
   String serverID;
   String sessionID;
   ServerManager serverManager;
-  //TestThread t;
+  // TestThread t;
   MapTemplate template;
   CreateGameScreenV2 createGameScreenV2;
   PlayGameScreenV2 playGameScreenV2;
@@ -74,17 +56,16 @@ public class HomeSceneController {
   Client mainClient;
   String teamName;
   String teamTurn;
-  public  ObjectProperty<Color> lastcolor;
+  public ObjectProperty<Color> lastcolor;
   boolean mainClientIsHuman;
-
 
   public void switchtoHomeScreen(ActionEvent e) {
     CheatboardListener.setLastScene(stage.getScene());
     Scene scene = App.getScene();
     stage = App.getStage();
-    App.adjustHomescreen(stage.getScene().getWidth(), stage.getScene().getHeight());		
+    App.adjustHomescreen(stage.getScene().getWidth(), stage.getScene().getHeight());
     stage.setScene(scene);
-    CheatboardListener.setSettings((StackPane)scene.getRoot(),scene);
+    CheatboardListener.setSettings((StackPane) scene.getRoot(), scene);
   }
 
   public HomeSceneController(Stage stage) {
@@ -94,10 +75,10 @@ public class HomeSceneController {
   public void createGameSession() {
     System.out.println(serverID);
     System.out.println(port);
-    serverManager = new ServerManager(new CommLayer(), new ServerDetails(serverID, port),template);
-    if(serverManager.createGame()) {
-      System.out.println("Session created" );
-    }else {
+    serverManager = new ServerManager(new CommLayer(), new ServerDetails(serverID, port), template);
+    if (serverManager.createGame()) {
+      System.out.println("Session created");
+    } else {
       System.out.println("No Session created");
     }
   }
@@ -115,11 +96,11 @@ public class HomeSceneController {
   }
 
   public void updateTeamsinWaitingScene(String text) {
-    //waitingScene.setCUrrentTeams(text);
+    // waitingScene.setCUrrentTeams(text);
   }
 
   public void redraw(GameState state) {
-    //playGameScreenV2.redrawGrid(state, this);
+    // playGameScreenV2.redrawGrid(state, this);
   }
 
   public ObjectProperty<Color> getLastcolor() {
@@ -132,21 +113,24 @@ public class HomeSceneController {
 
   public void setTeamTurn(String s) {
     this.teamTurn = s;
-    //playGameScreenV2.setTeamTurn(s);
+    // playGameScreenV2.setTeamTurn(s);
   }
 
   public void switchToWaitGameScene(Stage stage) {
     CheatboardListener.setLastScene(stage.getScene());
     CreateGameController.initColorHashMap();
-    waitingScene = new WaitingScene(this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight);
+    waitingScene =
+        new WaitingScene(
+            this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight);
     stage.setScene(waitingScene);
     new ResizeFixThread(stage).start();
   }
 
   /**
-   * Switches to the PlayGameScene, calls the WaveCollapseThread to generate and change the background.
-   * Always calls the WaveCollapseThread, in case not our server is used to generate the GameState.
-   * 
+   * Switches to the PlayGameScene, calls the WaveCollapseThread to generate and change the
+   * background. Always calls the WaveCollapseThread, in case not our server is used to generate the
+   * GameState.
+   *
    * @author sistumpf
    * @param stage
    * @param mainClient
@@ -154,73 +138,83 @@ public class HomeSceneController {
    */
   public void switchToPlayGameScene(Stage stage, Client mainClient, boolean isRemote) {
     CheatboardListener.setLastScene(stage.getScene());
-    //delete last grid
+    // delete last grid
     File grid = new File(Constants.toUIPictures + File.separator + "grid.png");
     grid.delete();
-    
-    //update main client if necessary
-    //TODO
-    for(int i=0; i<mainClient.getTeams().length; i++) {
-      if(mainClient.getTeams()[i] == null){
+
+    // update main client if necessary
+    // TODO
+    for (int i = 0; i < mainClient.getTeams().length; i++) {
+      if (mainClient.getTeams()[i] == null) {
         System.out.println("team " + i + " is null??");
-//        while(mainClient.getTeams()[i] == null)
+        //        while(mainClient.getTeams()[i] == null)
         mainClient.pullData();
       }
     }
-    
+
     playGameScreenV2 =
-        new PlayGameScreenV2(this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight, mainClient, isRemote);
+        new PlayGameScreenV2(
+            this,
+            stage.getWidth() - App.offsetWidth,
+            stage.getHeight() - App.offsetHeight,
+            mainClient,
+            isRemote);
     stage.setScene(playGameScreenV2);
-    
+
     if (isRemote) {
       CreateGameController.initColorHashMapForRemote(mainClient);
     } else {
-      CreateGameController.overWriteDefaultWithServerColors(); 
+      CreateGameController.overWriteDefaultWithServerColors();
     }
-    
-    //generate new grid
+
+    // generate new grid
     new WaveCollapseThread(mainClient.getGrid(), this).start();
   }
 
   public void switchToCreateGameScene(Stage stage) {
     CheatboardListener.setLastScene(stage.getScene());
-    createGameScreenV2=  new CreateGameScreenV2(this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight);
+    createGameScreenV2 =
+        new CreateGameScreenV2(
+            this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight);
     stage.setScene(createGameScreenV2);
     new ResizeFixThread(stage).start();
   }
 
   /**
    * Switches to a new instance of {@link JoinScene}.
-   * 
+   *
    * @author aniemesc
    * @param stage - Main stage of the application
    */
   public void switchToJoinScene(Stage stage) {
     CheatboardListener.setLastScene(stage.getScene());
-    stage.setScene(new JoinScene(this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight));
+    stage.setScene(
+        new JoinScene(
+            this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight));
     new ResizeFixThread(stage).start();
   }
 
   public void switchToAnalyzerScene(Stage stage) {
     CheatboardListener.setLastScene(stage.getScene());
-    stage.setScene(new AiAnalyserNew(this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight));
+    stage.setScene(
+        new AiAnalyserNew(
+            this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight));
     new ResizeFixThread(stage).start();
   }
 
   /**
    * Switches to a new instance of {@link EditorScene}.
-   * 
+   *
    * @author aniemesc
    * @param stage - Main stage of the application
    */
   public void switchToMapEditorScene(Stage stage) {
     CheatboardListener.setLastScene(stage.getScene());
-    stage.setScene(new EditorScene(this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight));
+    stage.setScene(
+        new EditorScene(
+            this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight));
     new ResizeFixThread(stage).start();
   }
-
-
-
 
   public MapTemplate getTemplate() {
     return template;
@@ -262,7 +256,6 @@ public class HomeSceneController {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-
     }
     return serverID;
   }
@@ -270,9 +263,11 @@ public class HomeSceneController {
   public void setServerID(String serverID) {
     this.serverID = serverID;
   }
+
   public ServerManager getServerManager() {
     return serverManager;
   }
+
   public String getSessionID() {
     return sessionID;
   }

@@ -41,7 +41,9 @@ public class MapPreview {
     Client[] clients = new Client[mapTemplate.getTeams()];
     ServerManager server =
         new ServerManager(
-            new CommLayer(), new ServerDetails("localhost", Constants.userSelectedLocalServerPort), mapTemplate);
+            new CommLayer(),
+            new ServerDetails("localhost", Constants.userSelectedLocalServerPort),
+            mapTemplate);
     server.createGame();
     // Init all clients
     for (int i = 0; i < clients.length; i++) {
