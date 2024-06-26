@@ -4,17 +4,34 @@ import de.unimannheim.swt.pse.ctf.CtfApplication;
 import org.ctf.shared.client.lib.ServerChecker;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
+/**
+ * Implementation of the ServerInterface
+ *
+ * @author rsyed
+ */
 public class ServerContainer implements ServerInterface {
-  SpringApplication application;
   ConfigurableApplicationContext appContext;
   ServerManager seManager;
 
+  /**
+   * Starts a Server instance and checks if it is functional.
+   *
+   * @param port the port you want to start a server at
+   * @return true if server is active and ready to make sessions, false if something went wrong
+   * @throws PortInUseException if the selected port is already in use
+   */
   @Override
   public boolean startServer(String port) {
-    appContext = SpringApplication.run(CtfApplication.class, "--server.port=" + port);
+
+    try {
+      appContext = SpringApplication.run(CtfApplication.class, "--server.port=" + port);
+    } catch (BeanCreationException ex) {
+      throw new PortInUseException();
+    }
     if (appContext.isRunning()) {
       return new ServerChecker().isServerActive(new ServerDetails("localhost", port));
     }
