@@ -37,15 +37,36 @@ public class CheatboardListener extends NativeKeyAdapter {
     initCheatCodes();
     this.pivotList = new ArrayList<ArrayList<Integer>>();
     this.currentCode = new ArrayList<Integer>();
-
-    try {
-      GlobalScreen.registerNativeHook();
-    } catch (NativeHookException ex) {
-      System.err.println("There was a problem registering the native hook.");
-      ex.printStackTrace();
+  }
+  
+  /**
+   * Registers this Listener as a native hook
+   */
+  public void registerNativeHook() {
+    if(!GlobalScreen.isNativeHookRegistered())  {
+      try {
+        GlobalScreen.registerNativeHook();
+        GlobalScreen.addNativeKeyListener(CheatboardListener.this);
+      } catch (NativeHookException ex) {
+        System.err.println("There was a problem registering the native hook.");
+        ex.printStackTrace();
+      }
     }
-
-    GlobalScreen.addNativeKeyListener(this);
+  }
+  
+  /**
+   * Unregisters this Listener as a native hook
+   */
+  public void unregisterNativeHook() {
+    if(GlobalScreen.isNativeHookRegistered()) {
+      try {
+        GlobalScreen.unregisterNativeHook();
+        GlobalScreen.removeNativeKeyListener(CheatboardListener.this);
+      } catch (NativeHookException ex) {
+        System.err.println("There was a problem unregistering the native hook.");
+        ex.printStackTrace();
+      }
+    }
   }
 
   /**

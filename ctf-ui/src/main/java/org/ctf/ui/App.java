@@ -69,6 +69,15 @@ public class App extends Application {
 
   public void start(Stage stage) {
     mainStage = stage;
+    
+    stage.focusedProperty().addListener((observable, oldValue, newValue) -> {
+      if(newValue) {
+        EntryPoint.cbl.registerNativeHook();
+      } else {
+        EntryPoint.cbl.unregisterNativeHook();
+      }
+    });
+    
 //    Parameters params = getParameters();
 //    String port = params.getNamed().get("port");
     ssc = new HomeSceneController(mainStage);
