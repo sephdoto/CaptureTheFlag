@@ -187,21 +187,34 @@ public class GamePane extends HBox {
       int xNewPos = lastMove.getNewPosition()[0];
       int yNewPos = lastMove.getNewPosition()[1];
       if (!colerforAnlyzer.equals("")) {
-        cells.get(generateKey(xNewPos, yNewPos)).showLastMoveForAnalyzer(colerforAnlyzer);
-
+        cells.get(generateKey(xNewPos, yNewPos)).showLastMoveWithColor(colerforAnlyzer, colerforAnlyzer);
       } else {
-        cells.get(generateKey(xNewPos, yNewPos)).showLastMove();
-
+        setDynamicCellBackground(cells.get(generateKey(xNewPos, yNewPos)));
       }
       if(CreateGameController.getLastFigures() != null) {
         CostumFigurePain old = CreateGameController.getLastFigures().get(lastMove.getPieceId());
-        if (CreateGameController.getLastFigures() != null && !colerforAnlyzer.equals("") && old != null) {
+        if (CreateGameController.getLastFigures() != null && colerforAnlyzer.equals("") && old != null) {
           int xOldPosX = old.getPosX();
           int oldPosY = old.getPosY();
-          cells.get(generateKey(xOldPosX, oldPosY)).showLastMove();
+          setDynamicCellBackground(cells.get(generateKey(xOldPosX, oldPosY)));
         }
       }
     }
+  }
+  
+  /**
+   * Tries to set the cell background to the last teams color,
+   * if it fails, the default color gets chosen.
+   * 
+   * @author sistumpf
+   */
+  private void setDynamicCellBackground(BackgroundCellV2 cell){
+    try {
+      cell.showLastMoveWithColor(state.getTeams()[Integer.parseInt(state.getLastMove().getTeamId())].getColor(), "blue");
+    } catch (Exception e) {
+      e.printStackTrace();
+      cell.showLastMove();
+    };
   }
 
   /**
@@ -212,7 +225,7 @@ public class GamePane extends HBox {
    */
   public void setOldPosinAnalyzer(int[] oldPosinAnalyzer) {
     cells.get(generateKey(oldPosinAnalyzer[0], oldPosinAnalyzer[1]))
-        .showLastMoveForAnalyzer(colerforAnlyzer);
+        .showLastMoveWithColor(colerforAnlyzer, colerforAnlyzer);
   }
 
 

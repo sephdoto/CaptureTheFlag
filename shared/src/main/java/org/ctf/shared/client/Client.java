@@ -527,8 +527,6 @@ public class Client implements GameClientInterface {
     } catch (UnknownError e) {
       throw new UnknownError("Server Error or Setting error");
     }
-//    if(gameState.getCurrentTeam() == this.currentTeamTurn)
-    //      return;
     if (isNewGameState(gameState)) {
       gameState = normalizeGameState(gameState);
       this.currentTeamTurn = gameState.getCurrentTeam();
@@ -685,9 +683,20 @@ public class Client implements GameClientInterface {
   protected boolean isNewGameState(GameState newState) {
     if(newState.getCurrentTeam() == -1 && this.currentTeamTurn == -1)
       return false;
+    if(this.normalizer == null) {
+//      System.out.println("0 new gamestate");
+      return true;
+  }
+      
     
-    if(AIController.moveEquals(newState.getLastMove(), currentState.getLastMove()))
+    if(AIController.moveEquals(newState.getLastMove(), normalizer.unnormalizeMove(currentState.getLastMove()))) {
+      if(newState.getCurrentTeam() != currentState.getCurrentTeam()) {
+//        System.out.println("1 new gamestate");
+      }
       return newState.getCurrentTeam() != currentState.getCurrentTeam();
+    }
+    
+//    System.out.println("2 new gamestate");
     return true;
   }
   

@@ -298,9 +298,8 @@ public class PlayGameScreenV2 extends Scene {
 
         GameState newState = mainClient.getQueuedGameState();
         if (gm != null)
-          while ((newState == null
-              || !isNewGameState(this.gm.getState(), newState)
-                  && mainClient.queuedGameStates() > 0)) newState = mainClient.getQueuedGameState();
+          while ((newState == null && mainClient.queuedGameStates() > 0)) 
+            newState = mainClient.getQueuedGameState();
 
         if (newState != null) currentState = newState;
 
@@ -356,15 +355,6 @@ public class PlayGameScreenV2 extends Scene {
   ///////////////
   //  TEST CODE
   Text oldText;
-
-  public static boolean isNewGameState(GameState newState, GameState gameState) {
-    if (newState.getCurrentTeam() == -1 && gameState.getCurrentTeam() == -1) return false;
-
-    if (AIController.moveEquals(newState.getLastMove(), gameState.getLastMove()))
-      return newState.getCurrentTeam() != gameState.getCurrentTeam();
-    return true;
-  }
-
   // END OF TEST CODE
   ///////////////////// TODO
 
@@ -396,6 +386,7 @@ public class PlayGameScreenV2 extends Scene {
 
     @Override
     protected GamePane call() throws Exception {
+      
       GamePane gp = null;
       if (toDraw != null) {
         if (!mainClient.isGameMoveTimeLimited()) {

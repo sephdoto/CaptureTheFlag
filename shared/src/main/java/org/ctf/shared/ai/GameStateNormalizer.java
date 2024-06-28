@@ -153,6 +153,9 @@ public class GameStateNormalizer {
    * @return the same move but adjusted to the original GameState
    */
   public Move unnormalizeMove(Move move) { Move unmove = new Move();
+  if(move == null)
+    return null;
+  
   unmove.setNewPosition(
       this.rowThanColumn ? 
           move.getNewPosition() :
@@ -163,6 +166,8 @@ public class GameStateNormalizer {
       unmove.setTeamId(unmove.getPieceId().split(":")[1].split("_")[0]);
     } catch(ArrayIndexOutOfBoundsException e) {
       // this might happen when a team did not set the IDs right
+    } catch (NullPointerException npe) {
+      return null;
     }
     return unmove;
   }
@@ -175,6 +180,9 @@ public class GameStateNormalizer {
    * @return the same move but adjusted to the normalized GameState
    */
   public Move normalizedMove(Move move) {
+    if(move == null)
+      return null;
+    
     Move normove = new Move();
     boolean found=false;
     normove.setNewPosition(

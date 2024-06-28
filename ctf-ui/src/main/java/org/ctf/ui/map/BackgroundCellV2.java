@@ -156,7 +156,6 @@ public class BackgroundCellV2 extends Pane {
     base.getChildren().add(basis);
   }
 
-
   /**
    * Changes the background-color of the cell when the piece or base on it is attackable
    * 
@@ -178,13 +177,15 @@ public class BackgroundCellV2 extends Pane {
   }
 
   /**
-   * Changes the color of the cell based on a specific coler-code to show the last-move
+   * Changes the color of the cell based on a specific coler-code to show the last-move.
    * 
    * @author Manuel Krakowski
+   * @author sistumpf
    * @param col Color which the last move representation has
    */
-  public void showLastMoveForAnalyzer(String col) {
-    this.setStyle("-fx-background-color: " + hextoString(col) + "; -fx-border-color: " + col + ";"
+  public void showLastMoveWithColor(String background, String border) {
+    background = background.startsWith("0x") ? background.substring(2) : background;
+    this.setStyle("-fx-background-color: " + hextoString(background) + "; -fx-border-color: " + border + ";"
         + "-fx-border-width: 1.2px");
   }
 
