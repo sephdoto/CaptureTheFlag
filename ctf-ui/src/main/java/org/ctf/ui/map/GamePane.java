@@ -210,7 +210,7 @@ public class GamePane extends HBox {
    */
   private void setDynamicCellBackground(BackgroundCellV2 cell){
     try {
-      cell.showLastMoveWithColor(state.getTeams()[Integer.parseInt(state.getLastMove().getTeamId())].getColor(), "blue");
+      cell.showLastMoveWithColor(CreateGameController.getColors().get(state.getLastMove().getTeamId()).get().toString(), "blue");
     } catch (Exception e) {
       e.printStackTrace();
       cell.showLastMove();
