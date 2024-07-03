@@ -2,6 +2,7 @@ package org.ctf.shared.gameanalyzer;
 
 import java.util.Arrays;
 import org.ctf.shared.ai.AIController;
+import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.ai.MonteCarloTreeNode;
 import org.ctf.shared.ai.MonteCarloTreeSearch;
 import org.ctf.shared.constants.Enums.MoveEvaluation;
@@ -58,7 +59,7 @@ public class AnalyzedGameState {
       Arrays.sort(children);
     } catch (NullPointerException npe) {npe.printStackTrace();}
     for(int child=0; child<children.length; child++) {
-      if(AIController.moveEquals(children[child].getGameState().getLastMove(), userChoice.getGameState().getLastMove())) {
+      if(GameUtilities.moveEquals(children[child].getGameState().getLastMove(), userChoice.getGameState().getLastMove())) {
         this.betterMoves = child;
         break;
       }
@@ -122,9 +123,15 @@ public class AnalyzedGameState {
    */
   private MonteCarloTreeNode findNodeByMove(Move move) {
     for(MonteCarloTreeNode child : this.previousState.getChildren()) {
-      if(AIController.moveEquals(move, child.getGameState().getLastMove()))
+      if(GameUtilities.moveEquals(move, child.getGameState().getLastMove()))
         return child;
     }
+    System.out.println("No child found.");
+    for(MonteCarloTreeNode child : this.previousState.getChildren())
+      System.out.println("\t" + child.getGameState().getLastMove().getPieceId() +
+          " [" + child.getGameState().getLastMove().getNewPosition()[0] + "," + child.getGameState().getLastMove().getNewPosition()[1] + "]" + "    " + 
+          move.getPieceId() + 
+          " [" + move.getNewPosition()[0] + "," + move.getNewPosition()[1] + "]");
     return null;
   }
 

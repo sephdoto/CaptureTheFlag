@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.data.map.Directions;
 import org.ctf.shared.state.data.map.ShapeType;
@@ -31,6 +32,32 @@ public class GameUtilities {
     directionModifiers.put(7, new int[] {1, 1});
   }
 
+  /**
+   * Depending on the contained piece and its new position, two moves are checked for equality.
+   * 
+   * @param move1
+   * @param move2
+   * @return true if move1 and move2 are equal
+   */
+  public static boolean moveEquals(Move move1, Move move2) {
+    if(move1 == null)
+      return move2  == null;
+    else if(move2 == null)
+      return move1 == null;
+    
+    if(move1.getPieceId() == null)
+      return move2.getPieceId() == null;
+    else if(move2.getPieceId() == null)
+      return move1.getPieceId() == null;
+    
+      
+    if(move1.getPieceId().equals(move2.getPieceId()))
+      return move1.getNewPosition()[0] == move2.getNewPosition()[0]
+          && move1.getNewPosition()[1] == move2.getNewPosition()[1];
+    
+    return false;
+  }
+  
   /**
    * Returns the previous teams index in the team array.
    *

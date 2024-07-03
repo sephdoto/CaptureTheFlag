@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.ctf.shared.ai.AIConfig;
+import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.ai.MonteCarloTreeSearch;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
@@ -27,6 +28,7 @@ public class MCTS implements MonteCarloTreeSearch {
   public AtomicInteger simulationCounter;
   public AtomicInteger heuristicCounter;
   private AtomicInteger expansionCounter;
+  private Move influencer;
 
   public MCTS(TreeNode root, AIConfig config) {
     this.config = config;
@@ -59,7 +61,14 @@ public class MCTS implements MonteCarloTreeSearch {
     // Hier werden wichtige Daten zur Auswahl ausgegeben
     //      printResults(bestChild);
 
+    influencer = null;
     return bestChild.getReferenceGameState().getLastMove().toMove();
+  }
+  
+  @Override
+  public Move getMove(Move influencer, int milis) {
+    this.influencer = influencer;
+    return getMove(milis);
   }
 
   /**
@@ -335,6 +344,15 @@ public class MCTS implements MonteCarloTreeSearch {
     double uctCurrent;
     double uctMax = 0;
     TreeNode bestChild = null;
+
+    if(influencer != null) {
+      if(Integer.parseInt(influencer.getTeamId()) == (parent.getReferenceGameState().getCurrentTeam()))
+        if(Math.random() * 100 < chooseMovePercentage) // dont pick influencer EVERY time
+          for(TreeNode node : parent.getChildren()) 
+            if(GameUtilities.moveEquals(influencer, node.getReferenceGameState().getLastMove().toMove())) {
+              return node;
+            }
+    }
 
     for (int i = 0; i < parent.getChildren().length; i++) {
       if (parent.getChildren()[i] == null) continue;

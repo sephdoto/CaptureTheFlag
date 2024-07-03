@@ -45,7 +45,7 @@ public class AIConfig {
    */
   public AIConfig() {
     //use default values
-    this.C = Math.E / 2;
+    this.C = Math.PI;
     this.MAX_STEPS = 100;
     this.numThreads = Runtime.getRuntime().availableProcessors() / 2;
     

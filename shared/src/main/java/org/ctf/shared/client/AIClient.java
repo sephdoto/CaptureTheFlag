@@ -37,7 +37,6 @@ public class AIClient extends Client {
   private AIConfig aiConfig;
   private AIController controller;
   private boolean enableLogging;
-  private volatile GameSaveHandler analyzer;
   private String gameIDString;
   private String constructorSetTeamName;
   private boolean saveToken = true;
@@ -125,7 +124,8 @@ public class AIClient extends Client {
           if(updated)
             firstGameStateToken = false;
           if (enableLogging) {
-            this.analyzer.addMove(getCurrentState().getLastMove());
+            if(!isMoveEmpty(getCurrentState().getLastMove()))
+              this.analyzer.addMove(getCurrentState().getLastMove());
           }
           if (isItMyTurn()) {
             makeMove(controller.getNextMove());
@@ -340,7 +340,8 @@ public class AIClient extends Client {
       }
 
       if (enableLogging) {
-        this.analyzer.addMove(gameState.getLastMove());
+        if(!isMoveEmpty(gameState.getLastMove()))
+          this.analyzer.addMove(gameState.getLastMove());
       }
     }
   }

@@ -13,6 +13,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.ctf.shared.ai.AIConfig;
+import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.ai.MonteCarloTreeNode;
 import org.ctf.shared.ai.MonteCarloTreeSearch;
 import org.ctf.shared.ai.ReferenceMove;
@@ -35,7 +36,8 @@ public class MCTS implements MonteCarloTreeSearch {
   private AtomicInteger simulationCounter;
   private AtomicInteger heuristicCounter;
   private AtomicInteger expansionCounter;
-
+  private Move influencer;
+  
   public MCTS(TreeNode root, AIConfig config) {
     this.config = config;
     this.setRoot(root);
@@ -47,7 +49,6 @@ public class MCTS implements MonteCarloTreeSearch {
     this.maxDistance = (int)Math.round(Math.sqrt(Math.pow(root.getReferenceGameState().getGrid().getGrid().length, 2) + Math.pow(root.getReferenceGameState().getGrid().getGrid()[0].length, 2)));
     this.executorService  = Executors.newFixedThreadPool(config.numThreads);
   }
-
 
 
   @Override
@@ -73,10 +74,16 @@ public class MCTS implements MonteCarloTreeSearch {
         isTerminal(getRoot().getReferenceGameState()) == -2)
       return null;
     
+    influencer = null;
     return bestChild.getReferenceGameState().getLastMove().toMove();
   }
 
-
+  @Override
+  public Move getMove(Move influencer, int milis) {
+    this.influencer = influencer;
+    return getMove(milis);
+  }
+  
   /**
    * Selects a node to simulate on using the UCT formula.
    * expands a children if a node in the chain has unexpanded ones.
@@ -341,6 +348,15 @@ public class MCTS implements MonteCarloTreeSearch {
     double uctMax = 0;
     TreeNode bestChild = null;
 
+    if(influencer != null) {
+      if(Integer.parseInt(influencer.getTeamId()) == (parent.getReferenceGameState().getCurrentTeam()))
+        if(Math.random() * 100 < chooseMovePercentage) // dont pick influencer EVERY time
+          for(TreeNode node : parent.getChildren()) 
+            if(GameUtilities.moveEquals(influencer, node.getReferenceGameState().getLastMove().toMove())) {
+              return node;
+            }
+    } 
+    
     for(int i=0; i<parent.getChildren().length; i++) {
       if(parent.getChildren()[i] == null)
         continue;

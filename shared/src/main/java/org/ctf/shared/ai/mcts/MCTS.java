@@ -28,6 +28,7 @@ public class MCTS implements MonteCarloTreeSearch {
   public AtomicInteger simulationCounter;
   public AtomicInteger heuristicCounter;
   private AtomicInteger expansionCounter;
+  private Move influencer;
 
   public MCTS(TreeNode root, AIConfig config) {
     this.config = config;
@@ -43,6 +44,7 @@ public class MCTS implements MonteCarloTreeSearch {
                 Math.sqrt(
                     Math.pow(root.getGameState().getGrid().length, 2)
                         + Math.pow(root.getGameState().getGrid()[0].length, 2)));
+    influencer = null;
   }
 
   @Override
@@ -60,7 +62,14 @@ public class MCTS implements MonteCarloTreeSearch {
     // Hier werden wichtige Daten zur Auswahl ausgegeben
     //      printResults(bestChild);
 
+    influencer = null;
     return (bestChild.getGameState().getLastMove());
+  }
+  
+  @Override
+  public Move getMove(Move influencer, int milis) {
+    this.influencer = influencer;
+    return getMove(milis);
   }
 
   /**
@@ -327,6 +336,7 @@ public class MCTS implements MonteCarloTreeSearch {
 
   /**
    * checks all the parents children for their UCT value, returns the node with the highest value.
+   * If the influencer Move != null, there is a 1/3 Chance to pick out the influencer move's node (in case it exists)
    *
    * @param parent node
    * @param C value for UCT
@@ -336,6 +346,15 @@ public class MCTS implements MonteCarloTreeSearch {
     double uctCurrent;
     double uctMax = 0;
     TreeNode bestChild = null;
+
+    if(influencer != null) {
+      if(Integer.parseInt(influencer.getTeamId()) == (parent.getGameState().getCurrentTeam()))
+        if(Math.random() * 100 < chooseMovePercentage) // dont pick influencer EVERY time
+          for(TreeNode node : parent.getChildren()) 
+            if(GameUtilities.moveEquals(influencer, node.getGameState().getLastMove())) {
+              return node;
+            }
+    } 
 
     for (int i = 0; i < parent.getChildren().length; i++) {
       if (parent.getChildren()[i] == null) continue;
@@ -347,6 +366,7 @@ public class MCTS implements MonteCarloTreeSearch {
         bestChild = parent.getChildren()[i];
       }
     }
+
     return bestChild;
   }
 

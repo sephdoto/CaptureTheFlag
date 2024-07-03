@@ -11,6 +11,12 @@ import org.ctf.shared.state.Move;
  */
 public interface MonteCarloTreeSearch {
   /**
+   * Used by getMove(Move, int), to determine when bestChild() will pick not the UCT chosen, but the user chose move.
+   * It is given as a percentage, 0-100.
+   */
+  public int chooseMovePercentage = 1;
+  
+  /**
    * Starts a Monte Carlo Tree Search from a given state of the game,
    * if the given time runs out the best calculated move is returned.
    * 
@@ -18,6 +24,17 @@ public interface MonteCarloTreeSearch {
    * @return the algorithms choice for the best move
    */
   public Move getMove(int milis);
+  
+
+  /**
+   * Starts a Monte Carlo Tree Search from a given state of the game,
+   * if the given time runs out the best calculated move is returned.
+   * 
+   * @param influencer a Move that will primarily be analyzed, the UCT heuristic won't be as strong
+   * @param time in milliseconds the algorithm is allowed to take
+   * @return the algorithms choice for the best move
+   */
+  public Move getMove(Move influencer, int milis);
   
   /**
    * Returns the root of the current MCTS instance

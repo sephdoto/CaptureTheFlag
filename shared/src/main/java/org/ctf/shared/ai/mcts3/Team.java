@@ -57,6 +57,7 @@ public class Team {
     public static org.ctf.shared.state.Team[] toOldTeams(Team[] teams) {
       org.ctf.shared.state.Team oldTeams[] = new org.ctf.shared.state.Team[teams.length];
       for(int i=0; i<teams.length; i++) {
+        if(teams[i] == null) continue;
         oldTeams[i] = new org.ctf.shared.state.Team();
         oldTeams[i].setBase(teams[i].getBase());
         oldTeams[i].setColor(teams[i].getColor());

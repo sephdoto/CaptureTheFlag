@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import org.ctf.shared.ai.AIController;
 import org.ctf.shared.ai.GameStateNormalizer;
+import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.client.lib.GameClientInterface;
 import org.ctf.shared.client.lib.ServerChecker;
 import org.ctf.shared.client.lib.ServerDetails;
@@ -541,11 +542,36 @@ public class Client implements GameClientInterface {
       }
 
       if (enableLogging) {
-        this.analyzer.addMove(gameState.getLastMove());
+        if(!isMoveEmpty(gameState.getLastMove()))
+          this.analyzer.addMove(gameState.getLastMove());
       }
     }
   }
 
+  /**
+   * Checks if a Move is a valid Move or just some kind of empty uninitialized move.
+   * Should be used before adding a Move to the analyzer.
+   * 
+   * @author sistumpf
+   * @param move the Move to check
+   * @return true if the Move is an initial Move and should not be treated as a Move
+   */
+  protected boolean isMoveEmpty(Move move){
+    if(move == null)
+      return true;
+    else if(move.getNewPosition() == null)
+      return true;
+    else if(move.getPieceId() == null)
+      return true;
+    else if(move.getTeamId() == null)
+      return true;
+    else if(move.getPieceId().equals(""))
+      return true;
+    else if(move.getTeamId().equals(""))
+      return true;
+    return false;
+  }
+  
   /**
    * Called from the getGameSession method. Requests the server specific/set in the Client object to
    * send the current {@link GameSessionResponse}.
@@ -689,7 +715,7 @@ public class Client implements GameClientInterface {
   }
       
     
-    if(AIController.moveEquals(newState.getLastMove(), normalizer.unnormalizeMove(currentState.getLastMove()))) {
+    if(GameUtilities.moveEquals(newState.getLastMove(), normalizer.unnormalizeMove(currentState.getLastMove()))) {
       if(newState.getCurrentTeam() != currentState.getCurrentTeam()) {
 //        System.out.println("1 new gamestate");
       }
@@ -837,7 +863,8 @@ public class Client implements GameClientInterface {
                 try {
                   pullData();
                   if (enableLogging) {
-                    analyzer.addMove(getCurrentState().getLastMove());
+                    if(!isMoveEmpty(getCurrentState().getLastMove()))
+                      analyzer.addMove(getCurrentState().getLastMove());
                   }
                   if (isGameOver()) {
                     scheduler.shutdown();

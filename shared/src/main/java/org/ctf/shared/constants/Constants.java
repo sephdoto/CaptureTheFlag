@@ -88,12 +88,18 @@ public class Constants {
   
   // to resources folder
   private static final String CFP14 = 
+      Paths.get("").toAbsolutePath().getFileName().toString().equals("cfp14") ? "cfp14" :
+        Paths.get("").toAbsolutePath().getFileName().toString().equals("CaptureTheFlag") ? "cfp14" :
       new File(
           Paths.get("").toAbsolutePath().toString().
           substring(0, 
               Paths.get("").toAbsolutePath().toString().lastIndexOf(File.separator))
           ).getName();
-
+  
+  public static void main(String[] args) {
+    System.out.println(CFP14);
+  }
+  
   public static final String toUIResources =
       ISJAR
           ? JARRESOURCES

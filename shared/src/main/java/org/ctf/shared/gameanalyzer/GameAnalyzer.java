@@ -8,7 +8,9 @@ import org.ctf.shared.ai.GameStateNormalizer;
 import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
+import org.ctf.shared.ai.random.RandomAI;
 import org.ctf.shared.ai.MonteCarloTreeNode;
+import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
@@ -46,6 +48,26 @@ public class GameAnalyzer extends AIController {
     this.analyze = new AnalyzerThread(game, results);
   }
 
+  /**
+   * Calculates the next move with the chose AI.
+   * Takes a Move as parameter, that Move will be given to the AI to influence its calculations.
+   * Instead of relying completely on its heuristic to determine how good a move is and which
+   * Move will be analyzed next, the AI will start out analyzing only the given Move.
+   * 
+   * @param move a user made move to influence the AI
+   * @return the next best move made from the chosen AI
+   * @throws NoMovesLeftException
+   * @throws InvalidShapeException
+   */
+  public Move getNextMove(Move influencer) throws NoMovesLeftException, InvalidShapeException {
+    if (!this.isActive())
+      return null;
+
+    Move move;
+    move = getMcts().getMove(influencer, thinkingTime);
+    return move == null ? null : getNormalizedGameState().unnormalizeMove(move);
+  }
+  
   /**
    * Analyzes the game in the background, allowing multitasking.
    * Gets started on creation, so if the Thread is initialized it only stops when its done analyzing.
@@ -88,7 +110,10 @@ public class GameAnalyzer extends AIController {
     public void analyzeGame() {
       for(; currentlyAnalyzing<game.getMoves().size(); currentlyAnalyzing++) {
         analyzeMove(currentlyAnalyzing +1);
-        Move next = game.getMoves().get("" + (currentlyAnalyzing +1));
+        Move next;
+        do {
+          next= game.getMoves().get("" + (currentlyAnalyzing +1));
+        } while (next.getPieceId().equals(next));
         if(next != null) {
           if(update(next)) {
             getMcts().setExpansionCounter(getMcts().getRoot().getNK());
@@ -106,27 +131,43 @@ public class GameAnalyzer extends AIController {
      * @throws NeedMoreTimeException if more time is needed
      */
     public void analyzeMove(int turn) throws NeedMoreTimeException {
+//      System.out.println(game.getMoves().get("" + (turn)).getTeamId());
+      Move best = null; 
+      Move made = getNormalizedGameState().normalizedMove(game.getMoves().get("" +turn));
+      GameState gameState = null;
+      
       try {
         if(!game.getMoves().get("" + (turn)).getTeamId().equals("" + getMcts().getRoot().getGameState().getCurrentTeam())) {
           System.out.println("Team " + getMcts().getRoot().getGameState().getCurrentTeam() + " gave up, after move " + (currentlyAnalyzing -1));
           HashMap<String, String> unToNorm = getNormalizedGameState().unToNorm;
           HashMap<String, String> normToUn = getNormalizedGameState().normToUn;
-          GameState gameState = getMcts().getRoot().getGameState();
+          gameState = getMcts().getRoot().getGameState();
           GameUtilities.removeTeam(gameState, gameState.getCurrentTeam());
           setNormalizedGameState(new GameStateNormalizer(gameState, true));
           getNormalizedGameState().unToNorm = unToNorm;
           getNormalizedGameState().normToUn = normToUn;
           initMCTS();
         }
-        Move best = getNormalizedGameState().normalizedMove(getNextMove());
-        Move made = getNormalizedGameState().normalizedMove(game.getMoves().get("" +turn));
-        try {
-          results[turn-1] = new AnalyzedGameState(getMcts(), made, best, this.game.getInitialState());
-        } catch (NeedMoreTimeException nmte) {
-          nmte.mentionTime(getThinkingTime());
-          throw nmte;
+        
+        boolean exceptionCatcher = false;
+        while(!exceptionCatcher) {
+          try {
+            best = getNextMove(made);
+            results[turn-1] = new AnalyzedGameState(getMcts(), made, best, this.game.getInitialState());
+            exceptionCatcher = true;
+          } catch (NullPointerException nmte) {
+            GameAnalyzer.this.update(gameState);
+            gameState = getMcts().getRoot().getGameState();
+            nmte.printStackTrace();
+            System.err.println("Analyzer could need more time.");
+//            throw nmte;
+          }
         }
+//        System.out.println(getMcts().printResults(best));
       } catch (NoMovesLeftException | InvalidShapeException e) {
+        e.printStackTrace();
+        Move move = game.getMoves().get("" + (turn));
+        System.out.println(move.getPieceId());
         e.printStackTrace();
       }
     }

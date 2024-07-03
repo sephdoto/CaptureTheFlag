@@ -20,7 +20,7 @@ public class AIController {
   private AIConfig config;
   private AI ai;
   private boolean active;
-  private int thinkingTime;
+  protected int thinkingTime;
   private GameStateNormalizer normalizedGameState;
   private MonteCarloTreeSearch mcts;
   
@@ -36,7 +36,7 @@ public class AIController {
   public AIController(GameState gameState, AI ai, AIConfig config, int thinkingTime) {
     setActive(false);
     setThinkingTime(thinkingTime < 0 ? 5000 : thinkingTime == 0 ? 700 : thinkingTime * 1000);
-//    this.setThinkingTime(2000);
+//    this.setThinkingTime(100);
     this.setAi(config == null ? AI.RANDOM : ai);
     this.normalizedGameState = new GameStateNormalizer(gameState, true);
     this.setConfig(config);
@@ -101,7 +101,9 @@ public class AIController {
    * @param gameState
    */
   public boolean update(GameState gameState) {
-    if(moveEquals(gameState.getLastMove(), this.normalizedGameState.getOriginalGameState().getLastMove()))
+    if(gameState == null) return false;
+    
+    if(GameUtilities.moveEquals(gameState.getLastMove(), this.normalizedGameState.getOriginalGameState().getLastMove()))
       if (gameState.getCurrentTeam() == this.normalizedGameState.getOriginalGameState().getCurrentTeam())
         return false;
     if (gameState.getCurrentTeam() < 0) {
@@ -126,7 +128,7 @@ public class AIController {
   public boolean update(Move move) {
     try {
     if(this.ai == AI.HUMAN || this.ai == AI.RANDOM) return false;
-    if(moveEquals(this.normalizedGameState.getOriginalGameState().getLastMove(), move)) return false;
+    if(GameUtilities.moveEquals(this.normalizedGameState.getOriginalGameState().getLastMove(), move)) return false;
     Move normove = this.normalizedGameState.normalizedMove(move);
 //    this.normalizedGameState.getNormalizedGameState().setLastMove(normove);
     GameUtilities.toNextTeam(this.normalizedGameState.getNormalizedGameState());
@@ -137,7 +139,7 @@ public class AIController {
     for(int i=0; i<children.length; i++) {
       if(children[i] == null) continue;
       Move childMove = children[i].getGameState().getLastMove();
-      if(moveEquals(childMove, normove)) {
+      if(GameUtilities.moveEquals(childMove, normove)) {
         getMcts().setRoot(children[i]);
         getMcts().getRoot().getParent().getChildren()[i] = null;
         getMcts().getRoot().setParent(null);
@@ -178,32 +180,6 @@ public class AIController {
       move = RandomAI.pickMoveComplex(getNormalizedGameState().getNormalizedGameState(), new ReferenceMove(null, new int[] { 0, 0 })).toMove();
     }
     return move == null ? null : getNormalizedGameState().unnormalizeMove(move);
-  }
-  
-  /**
-   * Depending on the contained piece and its new position, two moves are checked for equality.
-   * 
-   * @param move1
-   * @param move2
-   * @return true if move1 and move2 are equal
-   */
-  public static boolean moveEquals(Move move1, Move move2) {
-    if(move1 == null)
-      return move2  == null;
-    else if(move2 == null)
-      return move1 == null;
-    
-    if(move1.getPieceId() == null)
-      return move2.getPieceId() == null;
-    else if(move2.getPieceId() == null)
-      return move1.getPieceId() == null;
-    
-      
-    if(move1.getPieceId().equals(move2.getPieceId()))
-      return move1.getNewPosition()[0] == move2.getNewPosition()[0]
-          && move1.getNewPosition()[1] == move2.getNewPosition()[1];
-    
-    return false;
   }
 
   public boolean isActive() {
