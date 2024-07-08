@@ -70,7 +70,7 @@ public class Constants {
    * Might result in an enormous amount of computation power and RAM dedicated to the AI.
    * Only activate if one MUST win.
    */
-  public static boolean FULL_AI_POWER = true;
+  public static boolean FULL_AI_POWER = false;
 
   /**
    * Static vars needed for Server and AI Config
@@ -102,10 +102,6 @@ public class Constants {
           substring(0, 
               Paths.get("").toAbsolutePath().toString().lastIndexOf(File.separator))
           ).getName();
-  
-  public static void main(String[] args) {
-    System.out.println(CFP14);
-  }
   
   public static final String toUIResources =
       ISJAR
