@@ -107,4 +107,11 @@ public interface MonteCarloTreeSearch {
    * @return a String containing important information about the search tree.
    */
   public String printResults(Move move);
+  
+  /**
+   * Returns the MCTS config to inspect or alter.
+   * 
+   * @return the current config
+   */
+  public AIConfig getConfig();
 }

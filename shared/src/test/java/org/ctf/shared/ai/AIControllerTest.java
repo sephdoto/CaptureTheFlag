@@ -36,7 +36,7 @@ class AIControllerTest {
 
   @Test
   void testInit() {
-    new AIController(TestValues.getTestState(), AI.RANDOM, new AIConfig(), 0);
+    new AIController(TestValues.getTestState(), AI.RANDOM, new AIConfig(), 0, false);
   }
 
   @Test
@@ -44,7 +44,7 @@ class AIControllerTest {
     for(AI ai : AI.values()) {
       if(ai == AI.HUMAN) continue;
       //    AI ai = AI.IMPROVED; {
-      AIController aic = new AIController(JsonTools.readGameState("Default"), ai, new AIConfig(), 0);
+      AIController aic = new AIController(JsonTools.readGameState("Default"), ai, new AIConfig(), 0, false);
       for(int i=0; i<3; i++) {
         try {
           Move move = aic.getNextMove();
@@ -61,7 +61,7 @@ class AIControllerTest {
   @Test
   void testUpdateGameState() throws NoMovesLeftException, InvalidShapeException {
     GameState gsOld = TestValues.getTestState();
-    AIController aic = new AIController(gsOld, AI.RANDOM, new AIConfig(), 1);
+    AIController aic = new AIController(gsOld, AI.RANDOM, new AIConfig(), 1, false);
     Move move = aic.getNextMove();
     MCTS mcts = new MCTS(new TreeNode(null, gsOld, new int[2], new ReferenceMove(null, new int[2])), new AIConfig());
     GameState gs = mcts.getRoot().copyGameState();
@@ -76,7 +76,7 @@ class AIControllerTest {
   @Test
   void testUpdateMove() throws NoMovesLeftException, InvalidShapeException {
     GameState gsOld = new GameStateNormalizer(TestValues.getTestState(), true).getNormalizedGameState();
-    AIController aic = new AIController(gsOld, AI.IMPROVED, new AIConfig(), 0);
+    AIController aic = new AIController(gsOld, AI.IMPROVED, new AIConfig(), 0, false);
 
     Move move = aic.getNextMove();
     assertTrue(gridEquals(aic.getMcts().getRoot().getGameState().getGrid(), gsOld.getGrid()));
@@ -88,7 +88,7 @@ class AIControllerTest {
 
   //  @Test
   void testRamDrop() throws NoMovesLeftException, InvalidShapeException {
-    AIController aic = new AIController(TestValues.getTestState(), AI.IMPROVED, new AIConfig(), 1);
+    AIController aic = new AIController(TestValues.getTestState(), AI.IMPROVED, new AIConfig(), 1, false);
     for(int i=0; i<100; i++) {
       Move move = aic.getNextMove();
       move = RandomAI.pickMoveComplex(aic.getMcts().getRoot().getGameState(), new ReferenceMove(null, new int[2])).toMove();
@@ -197,10 +197,10 @@ class AIControllerTest {
       client2.pullData();
       client3.pullData();
       client4.pullData();
-      AIController aic = new AIController(client1.getCurrentState(), AI.RANDOM, new AIConfig(), 1);
-      AIController aic2 = new AIController(client2.getCurrentState(), AI.RANDOM, new AIConfig(), 1);
-      AIController aic3 = new AIController(client3.getCurrentState(), AI.RANDOM, new AIConfig(), 1);
-      AIController aic4 = new AIController(client4.getCurrentState(), AI.EXPERIMENTAL, new AIConfig(), 1);
+      AIController aic = new AIController(client1.getCurrentState(), AI.RANDOM, new AIConfig(), 1, false);
+      AIController aic2 = new AIController(client2.getCurrentState(), AI.RANDOM, new AIConfig(), 1, false);
+      AIController aic3 = new AIController(client3.getCurrentState(), AI.RANDOM, new AIConfig(), 1, false);
+      AIController aic4 = new AIController(client4.getCurrentState(), AI.EXPERIMENTAL, new AIConfig(), 1, false);
       aic2.getNextMove();
       aic3.getNextMove();
       aic4.getNextMove();

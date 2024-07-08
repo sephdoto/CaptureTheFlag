@@ -710,19 +710,13 @@ public class Client implements GameClientInterface {
     if(newState.getCurrentTeam() == -1 && this.currentTeamTurn == -1)
       return false;
     if(this.normalizer == null) {
-//      System.out.println("0 new gamestate");
       return true;
-  }
-      
+    }
     
     if(GameUtilities.moveEquals(newState.getLastMove(), normalizer.unnormalizeMove(currentState.getLastMove()))) {
-      if(newState.getCurrentTeam() != currentState.getCurrentTeam()) {
-//        System.out.println("1 new gamestate");
-      }
       return newState.getCurrentTeam() != currentState.getCurrentTeam();
     }
     
-//    System.out.println("2 new gamestate");
     return true;
   }
   

@@ -35,7 +35,7 @@ public class GameAnalyzer extends AIController {
    * @param secondsTimeToThink think time in seconds for analyzing one move
    */
   public GameAnalyzer(SavedGame game, AI ai, AIConfig config, int secondsTimeToThink) {
-    super(game.getInitialState(), ai, config, secondsTimeToThink);
+    super(game.getInitialState(), ai, config, secondsTimeToThink, false);
     if(config == null)
       super.setConfig(new AIConfig());
     if(ai == AI.RANDOM || ai == AI.HUMAN) {

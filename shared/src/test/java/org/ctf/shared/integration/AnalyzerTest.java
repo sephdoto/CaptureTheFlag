@@ -120,8 +120,8 @@ public class AnalyzerTest {
         "p2");
     p1.pullData();
     p2.pullData();
-    AIController controller1 = new AIController(p1.getCurrentState(), AI.RANDOM, new AIConfig(), 0);
-    AIController controller2 = new AIController(p2.getCurrentState(), AI.RANDOM, new AIConfig(), 0);
+    AIController controller1 = new AIController(p1.getCurrentState(), AI.RANDOM, new AIConfig(), 0, false);
+    AIController controller2 = new AIController(p2.getCurrentState(), AI.RANDOM, new AIConfig(), 0, false);
     analyzer.addGameState(p1.getCurrentState());
     for (int i = 0; i < 5; i++) {
       try {
@@ -212,8 +212,8 @@ public class AnalyzerTest {
         "p2");
     p1.pullData();
     p2.pullData();
-    AIController controller1 = new AIController(p1.getCurrentState(), AI.RANDOM, new AIConfig(), 0);
-    AIController controller2 = new AIController(p2.getCurrentState(), AI.RANDOM, new AIConfig(), 0);
+    AIController controller1 = new AIController(p1.getCurrentState(), AI.RANDOM, new AIConfig(), 0, false);
+    AIController controller2 = new AIController(p2.getCurrentState(), AI.RANDOM, new AIConfig(), 0, false);
     analyzer.addGameState(p1.getCurrentState());
     for (int i = 0; i < 5; i++) {
       try {

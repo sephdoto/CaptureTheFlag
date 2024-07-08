@@ -33,6 +33,25 @@ public class GameUtilities {
   }
 
   /**
+   * Checks a GameStates Teams to find the one matching teamname.
+   * Assumes the team exists in the GameState.
+   * 
+   * @param gs GameState to check in
+   * @param teamname a teams name
+   * @author sistumpf
+   * @return index in gameState.getTeams() of the team associated with teamname
+   */
+  public static int getTeamIndex(GameState gs, String teamname) {
+    int index = 0;
+    
+    for(; index<gs.getTeams().length; index++)
+      if(gs.getTeams()[index].getId().equals(teamname))
+        break;
+
+    return index;
+  }
+
+  /**
    * Depending on the contained piece and its new position, two moves are checked for equality.
    * 
    * @param move1

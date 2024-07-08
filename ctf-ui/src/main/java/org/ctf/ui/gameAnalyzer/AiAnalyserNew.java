@@ -175,7 +175,7 @@ public class AiAnalyserNew extends Scene {
   private void initalize() {
     try {
       // TODO
-      GameAnalyzer analyzer = new GameAnalyzer(gsh.getSavedGame(), AI.IMPROVED, new AIConfig(), 1);
+      GameAnalyzer analyzer = new GameAnalyzer(gsh.getSavedGame(), AI.IMPROVED, new AIConfig(), 3);
       analysedGames = analyzer.getResults();
       Thread initThread = new Thread() {
         public void run() {

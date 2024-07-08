@@ -77,7 +77,7 @@ public class AIClient extends Client {
               controllerThinkingTime = getRemainingMoveTimeInSeconds() - 1;
             }
             controller =
-                new AIController(getCurrentState(), selectedAI, aiConfig, controllerThinkingTime);
+                new AIController(getCurrentState(), selectedAI, aiConfig, controllerThinkingTime, true);
             controllerToken = false;
           }
           pullData();
@@ -119,7 +119,7 @@ public class AIClient extends Client {
        * @throws InvalidShapeException
        */
       private void tryMakeMove() throws NoMovesLeftException, InvalidShapeException {
-        boolean updated = controller.update(getCurrentState());
+        boolean updated = controller.update(getCurrentState(), getCurrentState().getLastMove());
         if(updated || firstGameStateToken) {
           if(updated)
             firstGameStateToken = false;
@@ -128,7 +128,10 @@ public class AIClient extends Client {
               this.analyzer.addMove(getCurrentState().getLastMove());
           }
           if (isItMyTurn()) {
-            makeMove(controller.getNextMove());
+            Move move = controller.getNextMove();
+            if(controller.getAi() != AI.RANDOM)
+              System.out.println(controller.getAi() + ":\n" + controller.getMcts().printResults(move));
+            makeMove(move);
           }
         } else {
           // delay can be added HERE, does not have to tho. depends on the resource usage, AI or idk ...

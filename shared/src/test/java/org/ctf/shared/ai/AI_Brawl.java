@@ -62,8 +62,8 @@ public class AI_Brawl {
 
 //  @Test
   void mcts3Brawl() throws NoMovesLeftException, InvalidShapeException {
-    AIController aic = new AIController(TestValues.getTestState(), AI.EXPERIMENTAL, new AIConfig(), 1);
-    AIController aic2 = new AIController(TestValues.getTestState(), AI.EXPERIMENTAL, new AIConfig(), 1);
+    AIController aic = new AIController(TestValues.getTestState(), AI.EXPERIMENTAL, new AIConfig(), 1, false);
+    AIController aic2 = new AIController(TestValues.getTestState(), AI.EXPERIMENTAL, new AIConfig(), 1, false);
     aic2.getNextMove();
     for(int i=0; i<9; i++) {
       Move move = aic.getNextMove();

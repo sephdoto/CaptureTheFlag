@@ -160,9 +160,9 @@ public class RestClientTests {
     javaClient.pullData();
     javaClient2.pullData();
     AIController Controller =
-        new AIController(javaClient.getCurrentState(), AI.MCTS, new AIConfig(), 0);
+        new AIController(javaClient.getCurrentState(), AI.MCTS, new AIConfig(), 0, false);
     AIController Controller2 =
-        new AIController(javaClient2.getCurrentState(), AI.MCTS, new AIConfig(), 0);
+        new AIController(javaClient2.getCurrentState(), AI.MCTS, new AIConfig(), 0, false);
     try {
       if (javaClient.isItMyTurn()) {
 

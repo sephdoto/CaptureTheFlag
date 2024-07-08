@@ -586,6 +586,11 @@ public class MCTS implements MonteCarloTreeSearch {
   }
 
   @Override
+  public AIConfig getConfig() {
+    return this.config;
+  }
+  
+  @Override
   public TreeNode getRoot() {
     return root;
   }

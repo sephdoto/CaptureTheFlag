@@ -152,16 +152,17 @@ public class GameStateNormalizer {
    * @param move the move generated with a normalized GameState
    * @return the same move but adjusted to the original GameState
    */
-  public Move unnormalizeMove(Move move) { Move unmove = new Move();
-  if(move == null)
-    return null;
-  
-  unmove.setNewPosition(
-      this.rowThanColumn ? 
-          move.getNewPosition() :
-            new int[] {move.getNewPosition()[1], move.getNewPosition()[0]}
-      );
-  unmove.setPieceId(this.normToUn.get(move.getPieceId()));
+  public Move unnormalizeMove(Move move) { 
+    if(move == null)
+      return null;
+
+    Move unmove = new Move();
+    unmove.setNewPosition(
+        this.rowThanColumn ? 
+            move.getNewPosition() :
+              new int[] {move.getNewPosition()[1], move.getNewPosition()[0]}
+        );
+    unmove.setPieceId(this.normToUn.get(move.getPieceId()));
     try {
       unmove.setTeamId(unmove.getPieceId().split(":")[1].split("_")[0]);
     } catch(ArrayIndexOutOfBoundsException e) {
@@ -171,6 +172,7 @@ public class GameStateNormalizer {
     }
     return unmove;
   }
+  
   /**
    * Aun unnormalized move given, the move gets normalized to represent the normalized GameState.
    * The team and piece Id get changed, if needed the [x,y] or [y,x] coordinates also get changed.

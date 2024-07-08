@@ -64,6 +64,13 @@ public class Constants {
    * Time in ms the UI waits till it refreshes.
    */
   public static int UIupdateTime = 50;
+  /**
+   * True to unleash the AIs full power.
+   * If true, whilst waiting the AI calculates what the enemy might do to use that later.
+   * Might result in an enormous amount of computation power and RAM dedicated to the AI.
+   * Only activate if one MUST win.
+   */
+  public static boolean FULL_AI_POWER = true;
 
   /**
    * Static vars needed for Server and AI Config
