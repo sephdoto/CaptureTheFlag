@@ -121,8 +121,6 @@ public class App extends Application {
     stage.setOnCloseRequest(
         e -> {
           serverContainer.stopServer();
-          this.process.destroy();
-          System.exit(0);
         });
     SettingsSetter.giveMeTheAux(backgroundMusic);
     stage.show();
