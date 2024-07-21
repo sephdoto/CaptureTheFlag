@@ -26,6 +26,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import org.ctf.shared.client.lib.ServerChecker;
 import org.ctf.shared.client.lib.ServerDetails;
@@ -120,7 +122,7 @@ public class App extends Application {
     backgroundMusic = new MusicPlayer();
     stage.setOnCloseRequest(
         e -> {
-          serverContainer.stopServer();
+          serverContainer.stopServer();         
         });
     SettingsSetter.giveMeTheAux(backgroundMusic);
     stage.show();
@@ -224,7 +226,12 @@ public class App extends Application {
     serverPane.getField().setOnKeyPressed(event -> {
       if (event.getCode() == KeyCode.ENTER) {
         String port = serverPane.getField().getText();
-        serverContainer.startServer(port);
+        try {
+          serverContainer.startServer(port);
+        } catch (PortInUseException e) {
+          System.out.println("Port is in use");
+          //TODO Build handling for port in use
+        }
         if(serverContainer.checkStatus()) {
           Constants.userSelectedLocalServerPort = port;
           serverPane.setFinished();
