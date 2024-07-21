@@ -93,8 +93,10 @@ public class ReferenceMove {
   public Move toMove() {
     Move move = new Move();
     move.setNewPosition(this.newPosition);
-    if(this.piece != null)
+    if(this.piece != null) {
       move.setPieceId(this.piece.getId());
+      move.setTeamId(this.getPiece().getTeamId());
+    }
     return move;
   }
 

@@ -114,7 +114,8 @@ public class AIController {
     } catch (Exception e) {e.printStackTrace();}
     
     if(!update) {
-      System.out.println("couldnt update " + ai + " with Move, trying GameState");
+      if(ai != AI.RANDOM)
+        System.out.println("couldnt update " + ai + " with Move, trying GameState");
       update = update(gameState);
     }
     if(!update) {
@@ -213,6 +214,7 @@ public class AIController {
     } else {
       move = RandomAI.pickMoveComplex(getNormalizedGameState().getNormalizedGameState(), new ReferenceMove(null, new int[] { 0, 0 })).toMove();
     }
+    move.setTeamId(move.getPieceId().split(":")[1].split("_")[0]);
     return move == null ? null : getNormalizedGameState().unnormalizeMove(move);
   }
   

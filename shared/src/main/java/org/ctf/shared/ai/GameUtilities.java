@@ -33,6 +33,44 @@ public class GameUtilities {
   }
 
   /**
+   * Compares two GameStates, if there are differences in the amount of Teams, the Teams get added to the returned String.
+   * The returned String contains all Teams who gave up between the two GameStates.
+   * It also contains Teams who did not give up, but were eliminated somehow.
+   * 
+   * @author sistumpf
+   * @param oldGS the old GameState
+   * @param newGS the new GameState
+   * @return a list of Teams who somehow went to null during the two GameStates, separated by ","
+   */
+  public static String teamsGaveUp(GameState oldGS, GameState newGS) {
+    if(oldGS == null || newGS == null)
+      return "";
+    StringBuilder upgivers = new StringBuilder();
+    for(int team=0; team<oldGS.getTeams().length; team++) {
+      if(newGS.getTeams()[team] == null)
+        if(oldGS.getTeams()[team] != null)
+          upgivers.append((upgivers.isEmpty() ? "" : ",") + oldGS.getTeams()[team].getId());
+    }
+    return upgivers.toString();
+  }
+  
+  /**
+   * Calculates how many Teams in the GameState are still alive and returns that.
+   * 
+   * @author sistumpf
+   * @param gs the GameState to analyze
+   * @return how many not null Teams are present in the GameState
+   */
+  public static int howManyTeams(GameState gs) {
+    int teams = 0;
+    for(int i=0; i<gs.getTeams().length; i++)
+      if(gs.getTeams()[i] != null)
+        teams++;
+    
+    return teams;
+  }
+  
+  /**
    * Checks a GameStates Teams to find the one matching teamname.
    * Assumes the team exists in the GameState.
    * 
@@ -44,8 +82,10 @@ public class GameUtilities {
   public static int getTeamIndex(GameState gs, String teamname) {
     int index = 0;
     
-    for(; index<gs.getTeams().length; index++)
-      if(gs.getTeams()[index].getId().equals(teamname))
+    for(; index<gs.getTeams().length; index++) 
+      if(gs.getTeams()[index] == null)
+        continue;
+      else if(gs.getTeams()[index].getId().equals(teamname))
         break;
 
     return index;
@@ -84,16 +124,31 @@ public class GameUtilities {
    * @return previous teams index
    */
   public static int getPreviousTeam(GameState gameState) {
-    for (int i = (gameState.getCurrentTeam() - 1) % gameState.getTeams().length;
-        ;
-        i = (i - 1) % gameState.getTeams().length) {
-      i = i < 0 ? -1 * i : i;
-      if (gameState.getTeams()[i] != null) {
-        return i;
-      }
+    int team = gameState.getCurrentTeam() -1 < 0 ?
+        gameState.getTeams().length - 1 : gameState.getCurrentTeam() -1;
+    while(gameState.getTeams()[team] == null) {
+      team = team -1 < 0 ?
+          gameState.getTeams().length - 1 : team -1;
     }
+    return team;
   }
-
+  
+  /**
+   * Returns the next teams index in the team array.
+   *
+   * @param gameState
+   * @return next teams index
+   */
+  public static int getNextTeam(GameState gameState) {
+    int team = gameState.getCurrentTeam() +1 >= gameState.getTeams().length ?
+        0 : gameState.getCurrentTeam() +1;
+    while(gameState.getTeams()[team] == null) {
+      team = team +1 >= gameState.getTeams().length ?
+          0 : team +1;
+    }
+    return team;
+  }
+  
   /**
    * Switches a GameState current team to the next valid (not null) team.
    *

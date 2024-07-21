@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import org.ctf.shared.ai.AIConfig;
+import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums;
 import org.ctf.shared.constants.Enums.AI;
@@ -96,15 +97,17 @@ public class AiAnalyserNew extends Scene {
   private AnalyzedGameState[] analysedGames;
   GameSaveHandler gsh;
   private boolean showHuman;
-
+  public boolean switched;
 
 
   public AiAnalyserNew(HomeSceneController hsc, double width, double height) {
     super(new StackPane(), width, height);
     if (!createGameSaver()) {
       hsc.switchtoHomeScreen(new ActionEvent());
+      switched = false;
       return;
     }
+    switched = true;
     this.hsc = hsc;
     manageFontSizes();
     rows = new HBox[totalmoves];
@@ -180,7 +183,7 @@ public class AiAnalyserNew extends Scene {
       Thread initThread = new Thread() {
         public void run() {
           int movePointer = 0;
-          while (analyzer.isActive() || (movePointer < analyzer.howManyMoves())) {
+          while ((analyzer.isActive() || movePointer < analyzer.howManyMoves()) && analyzer.noErrors() -1 != movePointer) {
             if (movePointer != analyzer.getCurrentlyAnalyzing()) {
 //              int currentMove = analyzer.getCurrentlyAnalyzing() -1;
               int currentMove = movePointer;
@@ -190,16 +193,25 @@ public class AiAnalyserNew extends Scene {
                 public void run() {
                   GameState state = g.getPreviousGameState();
                   teamLabels[currentMove].setText("Team:" + state.getCurrentTeam());
-                  classificationlabels[currentMove].setText(g.getMoveEvaluation().name());
-                  String col = g.getMoveEvaluation().getColor();
+                  String col;
+                  if(g.getMoveEvaluation() != null) {
+                    classificationlabels[currentMove].setText(g.getMoveEvaluation().name());
+                    col = g.getMoveEvaluation().getColor();
+                    percentagesbyUser[currentMove] = Double.valueOf(g.getUserWinPercentage());
+                    userStates[currentMove] = g.getUserChoice();
+                  } else {
+                    classificationlabels[currentMove].setText("gave up"); // TODO
+                    col = "1b02fa";  
+                    percentagesbyUser[currentMove] = 0.;
+                    userStates[currentMove] = g.getUserGaveUp() == null ? state : g.getUserGaveUp();
+                    teamLabels[currentMove].setText("Team:" + g.getAiChoice().getLastMove().getTeamId());
+                  }
                   classificationlabels[currentMove].setStyle("-fx-text-fill: " + col);
                   moveColors[currentMove] = col;
-                  percentagesbyUser[currentMove] = Double.valueOf(g.getUserWinPercentage());
                   percentagesbyAI[currentMove] = Double.valueOf(g.getAIWinPercentage());
                   simulations[currentMove] = g.getSimulations();
                   heuristics[currentMove] = g.getHeuristic();
                   expansions[currentMove] = g.getExpansions();
-                  userStates[currentMove] = g.getUserChoice();
                   aiStates[currentMove] = g.getAiChoice();
                 }};
                 Platform.runLater(showResults);
@@ -253,7 +265,6 @@ public class AiAnalyserNew extends Scene {
     mainVBox.getChildren().add(createHeader());
     HBox sep = createMiddleHBox(mainVBox);
     sep.getChildren().add(createProgressBar(sep));
-
     sep.getChildren().add(createMapBox(sep));
     sep.getChildren().add(createAllMovesVBox(sep));
     mainVBox.getChildren().add(sep);
@@ -318,6 +329,7 @@ public class AiAnalyserNew extends Scene {
   private void setNewProgress() {
     progressBar.getChildren().clear();
     VBox progress = new VBox();
+    progress.setStyle("-fx-background-color: " + getCurrentTeamsColor() + ";");
     progress.prefHeightProperty()
         .bind(progressBar.heightProperty().multiply(percentagesbyUser[currentMove] / 100));
     progress.prefWidthProperty().bind(progressBar.widthProperty());
@@ -338,7 +350,7 @@ public class AiAnalyserNew extends Scene {
     Tooltip tooltip = new Tooltip("Expandierte Knoten: " + expansions[currentMove] + "\n"
         + "angewendete Heuristiken: " + heuristics[currentMove] + "\n"
         + "Angewendete Simulationen: " + simulations[currentMove]);
-    tooltip.setStyle("-fx-background-color: blue");
+    tooltip.setStyle("-fx-background-color: " + getCurrentTeamsColor() + ";");
     Duration delay = new Duration(1);
     tooltip.setShowDelay(delay);
     Duration displayTime = new Duration(10000);
@@ -356,6 +368,7 @@ public class AiAnalyserNew extends Scene {
   private void setNewProgressAi() {
     progressBar.getChildren().clear();
     VBox progress = new VBox();
+    progress.setStyle("-fx-background-color: " + getCurrentTeamsColor() + ";");
     progress.prefHeightProperty()
         .bind(progressBar.heightProperty().multiply(percentagesbyAI[currentMove] / 100));
     progress.prefWidthProperty().bind(progressBar.widthProperty());
@@ -371,7 +384,32 @@ public class AiAnalyserNew extends Scene {
     progressBar.getChildren().add(progress);
   }
 
-
+  /**
+   * Returns the Color String of the current Team.
+   * The current team is not the one which's move is next, but who just made the move.
+   * 
+   * @author sistumpf
+   * @return the current teams color String
+   */
+  private String getCurrentTeamsColor() {
+    return aiStates[currentMove].getTeams()[currentTeamInt()].getColor();
+  }
+  
+  /**
+   * As an addition to getPreviousTeam and getNextTeam, currentTeamInt returns the current Teams index.
+   * 
+   * @author sistumpf
+   * @return the current Teams index
+   */
+  private int currentTeamInt() {
+    int team = aiStates[currentMove].getCurrentTeam() -1 < 0 ?
+        aiStates[currentMove].getTeams().length - 1 : aiStates[currentMove].getCurrentTeam() -1;
+    while(aiStates[currentMove].getTeams()[team] == null) {
+      team = team -1 < 0 ?
+          aiStates[currentMove].getTeams().length - 1 : team -1;
+    }
+    return team;
+  }
 
   /**
    * Creates a Vbox which is used to devide the Scene into two patrs, one for the header and one for
@@ -449,7 +487,6 @@ public class AiAnalyserNew extends Scene {
       mapBox.setSpacing(newSpacing);
     });
     mapBox.getChildren().add(createShowMapPane("p1", mapBox));
-
     mapBox.getChildren().add(createControlMapBox(mapBox));
     return mapBox;
   }
@@ -532,6 +569,7 @@ public class AiAnalyserNew extends Scene {
    */
   private void perfomBackClick(Button aiButton) {
     if(!isClickable(-1)) return;
+    showHuman = false;
     SoundController.playSound("BackButton", SoundType.MISC);
     if (currentMove >= 1) {
       aiButton.setText("Show AI's Choice");
@@ -555,6 +593,7 @@ public class AiAnalyserNew extends Scene {
    */
   private void perfromNextClick(Button aiButton) {
     if(!isClickable(1)) return;
+    showHuman = false;
     SoundController.playSound("NextButton", SoundType.MISC);
     if (currentMove < totalmoves - 1) {
       aiButton.setText("Show AI's Choice");
@@ -574,7 +613,7 @@ public class AiAnalyserNew extends Scene {
   private boolean isClickable(int modifier) {
     return currentMove + modifier >= 0 
         && currentMove + modifier < this.analysedGames.length 
-        && userStates[currentMove + modifier] != null;
+        && aiStates[currentMove + modifier] != null;
   }
 
 
@@ -606,24 +645,54 @@ public class AiAnalyserNew extends Scene {
   }
 
   /**
-   * Shows a new gameState in the map
-   * TODO
+   * Shows a new gameState in the map.
+   * 
    * @author sistumpf, Manuel Krakowski
    */
   private void setNewGameState() {
     showMapBox.getChildren().clear();
-    GameState statebefore = analysedGames[currentMove].getPreviousGameState();
-    Move m = userStates[currentMove].getLastMove();
-    Piece p = Arrays
-        .stream(statebefore.getTeams()[Integer.parseInt(m.getPieceId().split(":")[1].split("_")[0])]
-            .getPieces())
-        .filter(pe -> pe.getId().equals(m.getPieceId())).findFirst().get();
     gm = new GamePane(userStates[currentMove], true, moveColors[currentMove]);
-    gm.setOldPosinAnalyzer(p.getPosition());
+    if(!teamGaveUpChecker(currentMove+1) && userStates[currentMove].getLastMove() != null) {
+      Move m = userStates[currentMove].getLastMove();
+      Piece p = Arrays
+      .stream(analysedGames[currentMove].getPreviousGameState()
+          .getTeams()[Integer.parseInt(m.getPieceId().split(":")[1].split("_")[0])]
+          .getPieces())
+      .filter(pe -> pe.getId().equals(m.getPieceId())).findFirst().get();
+      if(p != null) {
+        gm.setOldPosinAnalyzer(p.getPosition());
+      }
+    } else {
+      clearAllCells(); 
+    }
+    
     StackPane.setAlignment(gm, Pos.CENTER);
     gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
     gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
     showMapBox.getChildren().add(gm);
+  }
+  
+  /**
+   * Checks if a Team has given up.
+   * 
+   * @author sistumpf
+   * @param turn the turn to check if the Team in the SavedGame and MCTS root are not equal
+   * @return true if a team gave up
+   */
+  private boolean teamGaveUpChecker(int turn) {
+    boolean someoneGaveUp = !gsh.savedGame.getTeams().get("" + turn).equals("") &&
+        GameUtilities.moveEquals(gsh.savedGame.getMoves().get("" + turn), gsh.savedGame.getMoves().get("" + (turn -1)));
+    return someoneGaveUp;
+  }
+  
+  /**
+   * Clears all selections from the cells
+   */
+  private void clearAllCells() {
+    for(int y=0; y<gm.getState().getGrid().length; y++)
+      for(int x=0; x<gm.getState().getGrid()[0].length; x++)
+        gm.getCells().get(gm.generateKey(y, x))
+          .deselect();
   }
 
   /**

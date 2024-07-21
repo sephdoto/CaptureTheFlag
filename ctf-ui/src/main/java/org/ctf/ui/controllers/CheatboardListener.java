@@ -297,12 +297,12 @@ public class CheatboardListener extends NativeKeyAdapter {
       App.chagngeHomescreenBackground();
     } else if (match == cheatCodes.get(8)) {    // switch home screen background
       App.chagngeHomescreenBackground();
-    } else if (match == cheatCodes.get(9)) {    // open analyser
+    } else if (match == cheatCodes.get(9)) {    // open analyzer
       Platform.runLater(
           new Runnable() {
             public void run(){
-              hsc.switchToAnalyzerScene(hsc.getStage());
               setSettings((StackPane) hsc.getStage().getScene().getRoot(), hsc.getStage().getScene());
+              hsc.switchToAnalyzerScene(hsc.getStage());
             }
           }
           );

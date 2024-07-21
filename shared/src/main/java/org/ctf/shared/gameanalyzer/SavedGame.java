@@ -1,7 +1,7 @@
 package org.ctf.shared.gameanalyzer;
 
 import java.util.HashMap;
-
+import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 
@@ -16,6 +16,7 @@ import org.ctf.shared.state.Move;
  */
 public class SavedGame implements java.io.Serializable {
   private GameState initialState;
+  private HashMap<String, String> teamsGaveUpMap;
   private HashMap<String, Move> lastMovesMap;
   private int counter;
 
@@ -25,6 +26,7 @@ public class SavedGame implements java.io.Serializable {
    * @author rsyed
    */
   public SavedGame() {
+    teamsGaveUpMap = new HashMap<>();
     lastMovesMap = new HashMap<>();
     counter = 1;
    }
@@ -37,6 +39,7 @@ public class SavedGame implements java.io.Serializable {
    */
   public void setInitialGameState(GameState initialState) {
     this.initialState = initialState;
+    this.teamsGaveUpMap.put("0", "");
   }
 
   /**
@@ -45,15 +48,16 @@ public class SavedGame implements java.io.Serializable {
    * distraction for the {@link GameSaveHandler} object
    *
    * @param move the move to save
-   * @author rsyed
+   * @param teams a String containing the Teams who gave up after a Move, seperated by ","
+   * @author rsyed, sistumpf
    */
-  public void addMove(Move move) {
+  public void addMove(Move move, String teams) {
     if(move==null) return;
-      if (lastMovesMap.isEmpty()) {
-        lastMovesMap.put(Integer.toString(counter), move);
-        counter++;
-      } else if (move.hashCode() != lastMovesMap.get(Integer.toString(counter - 1)).hashCode()) {
-        this.lastMovesMap.put(Integer.toString(counter), move);
+      if (lastMovesMap.isEmpty() || 
+          move.hashCode() != lastMovesMap.get(Integer.toString(counter - 1)).hashCode() ||
+          (!teams.equals("") && !teams.equals(teamsGaveUpMap.get("" + (counter -1))))) {
+        lastMovesMap.put(Integer.toString(counter), move); 
+        teamsGaveUpMap.put("" + counter, teams);
         counter++;
       }
   }
@@ -77,4 +81,14 @@ public class SavedGame implements java.io.Serializable {
   public HashMap<String, Move> getMoves() {
     return this.lastMovesMap;
   }
+  
+  /**
+   * Getter for the HashMap containing all the teams.
+  *
+  * @return a HashMap containing all the Teams at a certain point in time
+  * @author sistumpf
+  */
+ public HashMap<String, String> getTeams() {
+   return this.teamsGaveUpMap;
+ }
 }

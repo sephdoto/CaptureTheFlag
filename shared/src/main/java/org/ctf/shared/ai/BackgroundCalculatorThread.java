@@ -25,7 +25,8 @@ public class BackgroundCalculatorThread extends Thread{
   @Override
   public void run() {
     if(mcts != null) {
-      mcts.getConfig().C = 100;
+//      mcts.getConfig().C = 1000;
+      
       while(!interrupted) {
         mcts.getMove(10);
         //      System.out.println("BackgroundCalculator" + BackgroundCalculatorThread.this + " " +mcts.getExpansionCounter());

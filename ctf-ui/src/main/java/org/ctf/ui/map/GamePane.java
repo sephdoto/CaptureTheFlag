@@ -292,6 +292,8 @@ public class GamePane extends HBox {
       int baseX = currenTeam.getBase()[0];
       int baseY = currenTeam.getBase()[1];
       String teamColor = currenTeam.getColor();
+      teamColor = teamColor.equals("") ? "#ffffff" : teamColor; //TODO
+      
       BaseRep b = new BaseRep(currenTeam.getFlags(), teamColor, currenTeam.getId(),
           cells.get(generateKey(baseX, baseY)));
       if (!CreateGameController.getColors().isEmpty()) {

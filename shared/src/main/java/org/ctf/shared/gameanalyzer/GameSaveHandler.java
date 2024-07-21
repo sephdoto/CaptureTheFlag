@@ -140,13 +140,15 @@ public class GameSaveHandler {
   }
 
   /**
-   * Method to add a move to the internal {@link SavedGame} object
+   * Method to add a move to the internal {@link SavedGame} object.
    *
-   * @author rsyed
+   * @author rsyed, sistumpf
+   * @param move the Move to save
+   * @param teams a String containing the Teams who gave up after a Move, seperated by ","
    * @return {@link SavedGame}
    */
-  public synchronized void addMove(Move move) {
-    this.savedGame.addMove(move);
+  public synchronized void addMove(Move move, String teams) {
+    this.savedGame.addMove(move, teams);
   }
 
   /**

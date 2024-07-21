@@ -15,14 +15,14 @@ public class SavedGameTest {
     on.setTeamId("2");
     on.setPieceId("2_0");
     on.setNewPosition(new int[] {2, 3});
-    game.addMove(on);
-    game.addMove(on);
-    game.addMove(on);
+    game.addMove(on, "");
+    game.addMove(on, "");
+    game.addMove(on, "");
     Move one = new Move();
     one.setTeamId("2");
     one.setPieceId("2_0");
     one.setNewPosition(new int[] {2, 4});
-    game.addMove(one);
+    game.addMove(one, "");
     assertTrue(game.getMoves().size() == 2);
   }
 }

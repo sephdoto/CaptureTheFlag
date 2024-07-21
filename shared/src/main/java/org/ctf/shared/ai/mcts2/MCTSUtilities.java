@@ -133,14 +133,13 @@ public class MCTSUtilities {
    * @return previous teams index
    */
   public static int getPreviousTeam(ReferenceGameState gameState) {
-    for (int i = (gameState.getCurrentTeam() - 1) % gameState.getTeams().length;
-        ;
-        i = (i - 1) % gameState.getTeams().length) {
-      i = i < 0 ? -1 * i : i;
-      if (gameState.getTeams()[i] != null) {
-        return i;
-      }
+    int team = gameState.getCurrentTeam() -1 < 0 ?
+        gameState.getTeams().length - 1 : gameState.getCurrentTeam() -1;
+    while(gameState.getTeams()[team] == null) {
+      team = team -1 < 0 ?
+          gameState.getTeams().length - 1 : team -1;
     }
+    return team;
   }
 
   /**

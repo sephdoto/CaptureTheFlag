@@ -29,7 +29,7 @@ public class GameStateNormalizer {
    */
   public GameStateNormalizer(GameState original, boolean rowThanColumn, boolean client) {
     this.rowThanColumn = rowThanColumn;
-    this.originalGameState = original;
+    this.overrideOriginalGameState(original);
 
     if(!client) {
       if(original.getLastMove() == null)
@@ -40,7 +40,7 @@ public class GameStateNormalizer {
     
     this.unToNorm = new HashMap<String, String>();
     this.normToUn = new HashMap<String, String>();
-    this.normalizedGameState = deepNormalizeGameState(originalGameState);  
+    this.overrideNormalizedGameState(deepNormalizeGameState(originalGameState));  
     for(int team=0; team<original.getTeams().length; team++) {
       if(original.getTeams()[team] != null)
         for(int piece=0, point=0; point<original.getTeams()[team].getPieces().length; point++) {
@@ -61,7 +61,7 @@ public class GameStateNormalizer {
    */
   public GameStateNormalizer(GameState original, boolean rowThanColumn) {
     this.rowThanColumn = rowThanColumn;
-    this.originalGameState = original;
+    this.overrideOriginalGameState(original);
 
     if(original.getLastMove() == null)
       original.setLastMove(new Move());
@@ -70,7 +70,7 @@ public class GameStateNormalizer {
     
     this.unToNorm = new HashMap<String, String>();
     this.normToUn = new HashMap<String, String>();
-    this.normalizedGameState = deepNormalizeGameState(originalGameState);  
+    this.overrideNormalizedGameState(deepNormalizeGameState(originalGameState));  
     for(int team=0; team<original.getTeams().length; team++) {
       if(original.getTeams()[team] != null)
         for(int piece=0, point=0; point<original.getTeams()[team].getPieces().length; point++) {
@@ -141,7 +141,7 @@ public class GameStateNormalizer {
       newState.setLastMove(move);
     }
 
-    this.normalizedGameState = newState;
+    this.overrideNormalizedGameState(newState);
   }
 
   /**
@@ -284,5 +284,13 @@ public class GameStateNormalizer {
     }
 
     return newState;
+  }
+
+  public void overrideNormalizedGameState(GameState normalizedGameState) {
+    this.normalizedGameState = normalizedGameState;
+  }
+
+  public void overrideOriginalGameState(GameState originalGameState) {
+    this.originalGameState = originalGameState;
   }
 }

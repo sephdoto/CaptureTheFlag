@@ -25,6 +25,7 @@ public class GameAnalyzer extends AIController {
   SavedGame game;
   AnalyzedGameState[] results;
   AnalyzerThread analyze;
+  int errorAt;
 
   /**
    * Initializes the AIController with {@link secondsTimeToThink} seconds calculating time per GameState.
@@ -36,6 +37,7 @@ public class GameAnalyzer extends AIController {
    */
   public GameAnalyzer(SavedGame game, AI ai, AIConfig config, int secondsTimeToThink) {
     super(game.getInitialState(), ai, config, secondsTimeToThink, false);
+    errorAt = -1;
     if(config == null)
       super.setConfig(new AIConfig());
     if(ai == AI.RANDOM || ai == AI.HUMAN) {
@@ -64,7 +66,12 @@ public class GameAnalyzer extends AIController {
       return null;
 
     Move move;
-    move = getMcts().getMove(influencer, thinkingTime);
+    if(influencer != null)
+      move = getMcts().getMove(influencer, thinkingTime);
+    else 
+      move = getMcts().getMove(thinkingTime);
+    if(move != null)
+      move.setTeamId(move.getPieceId().split(":")[1].split("_")[0]);
     return move == null ? null : getNormalizedGameState().unnormalizeMove(move);
   }
   
@@ -108,12 +115,9 @@ public class GameAnalyzer extends AIController {
      * Every freshly analyzed move gets added to {@link results}
      */
     public void analyzeGame() {
-      for(; currentlyAnalyzing<game.getMoves().size(); currentlyAnalyzing++) {
+      for(; currentlyAnalyzing<game.getMoves().size() && isAnalyzing /*TODO*/; currentlyAnalyzing++) {
         analyzeMove(currentlyAnalyzing +1);
-        Move next;
-        do {
-          next= game.getMoves().get("" + (currentlyAnalyzing +1));
-        } while (next.getPieceId().equals(next));
+        Move next = game.getMoves().get("" + (currentlyAnalyzing +1));
         if(next != null) {
           if(update(next)) {
             getMcts().setExpansionCounter(getMcts().getRoot().getNK());
@@ -134,32 +138,38 @@ public class GameAnalyzer extends AIController {
 //      System.out.println(game.getMoves().get("" + (turn)).getTeamId());
       Move best = null; 
       Move made = getNormalizedGameState().normalizedMove(game.getMoves().get("" +turn));
-      GameState gameState = null;
-      
       try {
-        if(!game.getMoves().get("" + (turn)).getTeamId().equals("" + getMcts().getRoot().getGameState().getCurrentTeam())) {
-          System.out.println("Team " + getMcts().getRoot().getGameState().getCurrentTeam() + " gave up, after move " + (currentlyAnalyzing -1));
-          HashMap<String, String> unToNorm = getNormalizedGameState().unToNorm;
-          HashMap<String, String> normToUn = getNormalizedGameState().normToUn;
-          gameState = getMcts().getRoot().getGameState();
-          GameUtilities.removeTeam(gameState, gameState.getCurrentTeam());
-          setNormalizedGameState(new GameStateNormalizer(gameState, true));
-          getNormalizedGameState().unToNorm = unToNorm;
-          getNormalizedGameState().normToUn = normToUn;
-          initMCTS();
+        if(teamGaveUpChecker(turn)) {
+          made = null;
+        } else {
+          if(game.getMoves().get("" +(turn-1)) != null &&
+              made.getTeamId().equals(getNormalizedGameState().normalizedMove(game.getMoves().get("" +(turn-1))).getTeamId())) {
+            GameState updated = getMcts().getRoot().getGameState();
+            updated.setCurrentTeam(Integer.parseInt(made.getTeamId()));
+            System.out.println("a Team didn't move in time, the next Team moved.");
+            reinitMcts(updated);
+          }
+        }
+        if(!enoughTeamsLeft()) {
+          System.err.println("Unforseen Team shortage, <1 Teams are left in GameState but its not over."
+              + "\nThe SavedGame might be corrupted. Stopping the Analysis.");
+          setErrorState(turn);
+          return;
         }
         
         boolean exceptionCatcher = false;
         while(!exceptionCatcher) {
           try {
             best = getNextMove(made);
-            results[turn-1] = new AnalyzedGameState(getMcts(), made, best, this.game.getInitialState());
             exceptionCatcher = true;
           } catch (NullPointerException nmte) {
-            GameAnalyzer.this.update(gameState);
-            gameState = getMcts().getRoot().getGameState();
+//            gameState = getMcts().getRoot().getGameState();
+            //TODO
+            reinitMcts(GameUtilities.toNextTeam(getMcts().getRoot().getGameState()));
             nmte.printStackTrace();
             System.err.println("Analyzer could need more time.");
+//            setErrorState(turn -1);
+//            exceptionCatcher = true;
 //            throw nmte;
           }
         }
@@ -170,6 +180,89 @@ public class GameAnalyzer extends AIController {
         System.out.println(move.getPieceId());
         e.printStackTrace();
       }
+      
+      if(!teamGaveUpRemover(turn, made, best))
+        results[turn-1] = new AnalyzedGameState(getMcts(), made, best, this.game.getInitialState(), null);
+    }
+    
+    /**
+     * Reinitializes the MCTS AI with a new GameState, in case something the AI could not predict happened.
+     * Should be used in case someone gave up or skipped a turn.
+     * 
+     * @param newGameState the new, updated GameState
+     */
+    private void reinitMcts(GameState newGameState) {
+      GameAnalyzer.this.getNormalizedGameState().overrideNormalizedGameState(newGameState);
+      initMCTS();
+    }
+    
+    /**
+     * Checks if a Team has given up.
+     * If thats the case, the Team gets removed.
+     * 
+     * @param turn the turn to check if the Team in the SavedGame and MCTS root are not equal
+     * @return true if a team gave up and was removed
+     */
+    private boolean teamGaveUpRemover(int turn, Move made, Move best) {
+      //TODO
+//      System.out.print("Turn " + turn +". Team in sg: " + game.getMoves().get("" + (turn)).getTeamId() + " , Team in gs: " + getMcts().getRoot().getGameState().getCurrentTeam());
+//      System.out.println(" " + game.getMoves().get("" + (turn)).getPieceId() + " : " + game.getMoves().get("" + (turn)).getNewPosition()[0] + "," + game.getMoves().get("" + (turn)).getNewPosition()[1]);
+//      System.out.println((turn) + " -- " + game.getTeams().get("" + (turn)));
+      if(!teamGaveUpChecker(turn)) {
+        return false;
+      }
+      System.out.println("turn: "+ (turn-1) +". Team "+game.getTeams().get("" + (turn))+" gave up.");
+      String[] goneTeams = game.getTeams().get("" + (turn)).split(",");
+      
+      GameState gameState = new GameState();
+      for(String team : goneTeams) {
+        HashMap<String, String> unToNorm = getNormalizedGameState().unToNorm;
+        HashMap<String, String> normToUn = getNormalizedGameState().normToUn;
+        
+        gameState = getMcts().getRoot().getGameState();
+        GameUtilities.removeTeam(gameState, Integer.parseInt(team));
+        setNormalizedGameState(new GameStateNormalizer(gameState, true));
+        if(gameState.getTeams()[gameState.getCurrentTeam()] == null)
+          GameUtilities.toNextTeam(gameState);
+        
+        getNormalizedGameState().unToNorm = unToNorm;
+        getNormalizedGameState().normToUn = normToUn;
+      }
+
+      gameState.setLastMove(null);
+      made = null;
+      
+      results[turn-1] = new AnalyzedGameState(getMcts(), made, best, this.game.getInitialState(), gameState);
+      
+      initMCTS();
+      return true;
+    }
+    
+    /**
+     * Checks if a Team has given up.
+     * 
+     * @param turn the turn to check if the Team in the SavedGame and MCTS root are not equal
+     * @return true if a team gave up
+     */
+    private boolean teamGaveUpChecker(int turn) {
+      boolean someoneGaveUp = !game.getTeams().get("" + turn).equals("") &&
+          GameUtilities.moveEquals(game.getMoves().get("" + turn), game.getMoves().get("" + (turn -1)));
+      return someoneGaveUp;
+    }
+    
+    /**
+     * Checks if more than 1 Team is left.
+     * 
+     * @return true if enough Teams are left to continue the analysis
+     */
+    private boolean enoughTeamsLeft() {
+      GameState gameState =  getMcts().getRoot().getGameState();
+      int teams=0;
+      for(int i=0; i<gameState.getTeams().length; i++) {
+        if(gameState.getTeams()[i] != null)
+          teams++;
+      }
+      return teams > 1;
     }
     
     /**
@@ -225,5 +318,24 @@ public class GameAnalyzer extends AIController {
    */
   public int howManyMoves() {
     return this.game.getMoves().size();
+  }
+  
+  /**
+   * If an Error occurs, the Analyzer should communicate that, so all processes relying on it can be stopped.
+   * Use this Method to set the Analyzer in an Error State and Stop the analysis.
+   */
+  private void setErrorState(int turn) {
+    errorAt = turn;
+    this.analyze.isAnalyzing = false;
+  }
+  
+  /**
+   * Returns if any Errors have occurred during the analysis.
+   * If true, Error handling can happen and all processes relying on the Analyzer can be stopped.
+   * 
+   * @return true if no Errors have occurred during the Analysis
+   */
+  public int noErrors() {
+    return errorAt;
   }
 }

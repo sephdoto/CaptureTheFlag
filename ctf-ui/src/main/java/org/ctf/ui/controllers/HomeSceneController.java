@@ -196,10 +196,11 @@ public class HomeSceneController {
 
   public void switchToAnalyzerScene(Stage stage) {
     CheatboardListener.setLastScene(stage.getScene());
-    stage.setScene(
-        new AiAnalyserNew(
-            this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight));
-    new ResizeFixThread(stage).start();
+    AiAnalyserNew scene = new AiAnalyserNew(this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight);
+    if(scene.switched) {
+      stage.setScene(scene);
+      new ResizeFixThread(stage).start();
+    }
   }
 
   /**

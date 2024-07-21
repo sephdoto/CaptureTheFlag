@@ -176,7 +176,6 @@ public class MCTS implements MonteCarloTreeSearch {
 
     for (; count > 0 && isTerminal == -1; count--, isTerminal = isTerminal(simulateOn.getGameState(), change)) {
       oneMove(simulateOn, simulateOn, true, change);
-      removeTeamCheck(simulateOn.getGameState());
     }
     if (isTerminal < 0) {
       simulationCounter.decrementAndGet();
@@ -523,6 +522,7 @@ public class MCTS implements MonteCarloTreeSearch {
       gameState.getGrid()[move.getNewPosition()[0]][move.getNewPosition()[1]] = move.getPiece().getId();
       picked.setPosition(move.getNewPosition());
     }
+    removeTeamCheck(gameState);
     gameState.setLastMove(move.toMove());
     GameUtilities.toNextTeam(gameState);
   }

@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.ai.AIController;
+import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.client.Client;
@@ -135,7 +136,7 @@ public class AnalyzerTest {
       }
       p1.pullData();
       p2.pullData();
-      analyzer.addMove(p1.getCurrentState().getLastMove());
+      analyzer.addMove(p1.getCurrentState().getLastMove(), "");
       controller1.update(p1.getCurrentState());
       controller2.update(p2.getCurrentState());
     }
@@ -153,13 +154,11 @@ public class AnalyzerTest {
     boolean b = analyzer.readFile("analyzerTestDataFile");
     assertTrue(b);
     SavedGame gameData = analyzer.getSavedGame();
-    Gson gson = new Gson();
-    System.out.println(analyzer.getSavedGame().getMoves().get("1").getNewPosition()[0]);
 
     Move move1 = new Move();
-    move1.setPieceId("p:1_8");
-    move1.setTeamId("1");
-    move1.setNewPosition(new int[] {0, 8});
+    move1.setPieceId("p:2_8");
+    move1.setTeamId("2");
+    move1.setNewPosition(new int[] {11, 3});
     System.out.println();
     assertTrue(
         move1.getPieceId().toString().equals(gameData.getMoves().get("1").getPieceId().toString()));
@@ -167,9 +166,9 @@ public class AnalyzerTest {
         move1.getTeamId().toString().equals(gameData.getMoves().get("1").getTeamId().toString()));
     assertArrayEquals(move1.getNewPosition(), gameData.getMoves().get("1").getNewPosition());
     Move move2 = new Move();
-    move2.setPieceId("p:2_1");
-    move2.setTeamId("2");
-    move2.setNewPosition(new int[] {6, 5});
+    move2.setPieceId("p:0_11");
+    move2.setTeamId("0");
+    move2.setNewPosition(new int[] {8, 2});
     assertTrue(
         move2.getPieceId().toString().equals(gameData.getMoves().get("2").getPieceId().toString()));
     assertTrue(
@@ -227,7 +226,7 @@ public class AnalyzerTest {
       }
       p1.pullData();
       p2.pullData();
-      analyzer.addMove(p1.getCurrentState().getLastMove());
+      analyzer.addMove(p1.getCurrentState().getLastMove(), "");
       controller1.update(p1.getCurrentState());
       controller2.update(p2.getCurrentState());
     }

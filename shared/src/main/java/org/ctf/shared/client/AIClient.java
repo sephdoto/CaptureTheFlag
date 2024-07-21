@@ -6,6 +6,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.ai.AIController;
+import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.client.service.CommLayerInterface;
@@ -125,7 +126,7 @@ public class AIClient extends Client {
             firstGameStateToken = false;
           if (enableLogging) {
             if(!isMoveEmpty(getCurrentState().getLastMove()))
-              this.analyzer.addMove(getCurrentState().getLastMove());
+              this.analyzer.addMove(getCurrentState().getLastMove(), GameUtilities.teamsGaveUp(lastState, currentState));
           }
           if (isItMyTurn()) {
             Move move = controller.getNextMove();
@@ -332,6 +333,7 @@ public class AIClient extends Client {
     if (isNewGameState(gameState)) {
       gameState = normalizeGameState(gameState);
       this.currentTeamTurn = gameState.getCurrentTeam();
+      this.lastState = currentState;
       this.currentState = gameState;
       this.teams = gameState.getTeams();
       this.lastMove = gameState.getLastMove();
@@ -344,7 +346,7 @@ public class AIClient extends Client {
 
       if (enableLogging) {
         if(!isMoveEmpty(gameState.getLastMove()))
-          this.analyzer.addMove(gameState.getLastMove());
+          this.analyzer.addMove(gameState.getLastMove(), GameUtilities.teamsGaveUp(lastState, currentState));
       }
     }
   }

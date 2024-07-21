@@ -328,8 +328,10 @@ public class PlayGameScreenV2 extends Scene {
                       //  TEST CODE
                       Text text = new Text("queued gs: " + mainClient.queuedGameStates());
                       if (oldText != null) showMapBox.getChildren().remove(oldText);
-                      showMapBox.getChildren().add(text);
-                      oldText = text;
+                      if(mainClient.queuedGameStates() > 0) {
+                        showMapBox.getChildren().add(text);
+                        oldText = text;
+                      }
                       // END OF TEST CODE
                       ///////////////////// TODO
 

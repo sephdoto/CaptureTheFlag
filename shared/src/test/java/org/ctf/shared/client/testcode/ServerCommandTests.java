@@ -95,9 +95,9 @@ public class ServerCommandTests {
     Move move4 = new Move();
     move4.setPieceId("p:3_3");
     move4.setNewPosition(new int[] {4, 2});
-    analyzer.addMove(move1);
-    analyzer.addMove(move2);
-    analyzer.addMove(move3);
+    analyzer.addMove(move1, "");
+    analyzer.addMove(move2, "");
+    analyzer.addMove(move3, "");
     analyzer.writeOut();
 
     SavedGame save = analyzer.readFile();

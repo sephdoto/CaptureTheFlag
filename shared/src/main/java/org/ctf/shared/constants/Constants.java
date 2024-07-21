@@ -22,7 +22,7 @@ public class Constants {
    * TODO remove "app.jar" for exporting as jar.
    */
   public static final String JARNAME =
-      "app.jar"; // executionLocationURL.substring(executionLocationURL.lastIndexOf("/") +1);
+      "app.jar"; //executionLocationURL.substring(executionLocationURL.lastIndexOf("/") +1);
   /**
    * Automatically determines if the code is run via a jar.
    */
@@ -70,7 +70,7 @@ public class Constants {
    * Might result in an enormous amount of computation power and RAM dedicated to the AI.
    * Only activate if one MUST win.
    */
-  public static boolean FULL_AI_POWER = false;
+  public static boolean FULL_AI_POWER = true;
 
   /**
    * Static vars needed for Server and AI Config

@@ -9,6 +9,7 @@ import org.ctf.shared.constants.Enums.MoveEvaluation;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
+import com.sun.prism.paint.Color;
 
 /**
  * Represents the most important information that can be extracted out of a move.
@@ -24,6 +25,7 @@ public class AnalyzedGameState {
   private MoveEvaluation moveEvaluation;
   private int betterMoves;
   private GameState initialGameState;
+  private GameState userGaveUp;
 
   /**
    * Generates all the accessible information when getting initialized.
@@ -34,16 +36,18 @@ public class AnalyzedGameState {
    * @param the initial GameState to get the colors from. Otherwise colors would not be set.
    * @throws NeedMoreTimeException if the game could not be analyzed because too little time was given
    */
-  public AnalyzedGameState(MonteCarloTreeSearch mcts, Move userChoice, Move aiChoice, GameState initialGameState) throws NeedMoreTimeException {
+  public AnalyzedGameState(MonteCarloTreeSearch mcts, Move userChoice, Move aiChoice, GameState initialGameState, GameState userGaveUp) throws NeedMoreTimeException {
     this.previousState = mcts.getRoot().deepCloneWithChildren();
-    this.userChoice = findNodeByMove(userChoice);
     this.aiChoice = findNodeByMove(aiChoice);
     this.expansions = mcts.getExpansionCounter().get();
     this.simulations = mcts.getSimulationCounter().get();
     this.heuristic = mcts.getHeuristicCounter().get();
     this.initialGameState = initialGameState;
-
-    generateInformation();
+    if(userChoice != null) {
+      this.userChoice = findNodeByMove(userChoice);
+      generateInformation();
+    }
+    this.userGaveUp = userGaveUp;
   }
 
   /**
@@ -126,13 +130,15 @@ public class AnalyzedGameState {
       if(GameUtilities.moveEquals(move, child.getGameState().getLastMove()))
         return child;
     }
+    
     System.out.println("No child found.");
+    this.previousState.printGrid();;
     for(MonteCarloTreeNode child : this.previousState.getChildren())
       System.out.println("\t" + child.getGameState().getLastMove().getPieceId() +
           " [" + child.getGameState().getLastMove().getNewPosition()[0] + "," + child.getGameState().getLastMove().getNewPosition()[1] + "]" + "    " + 
           move.getPieceId() + 
           " [" + move.getNewPosition()[0] + "," + move.getNewPosition()[1] + "]");
-    return null;
+    return null; 
   }
 
   /**
@@ -148,14 +154,25 @@ public class AnalyzedGameState {
    * AI generated GameStates don't have colors.
    * The initial GameState got colors, so this method replaces a GameStates colors with another GameStates colors.
    * 
+   * TODO: for testing purposes, the colors have been hardcoded.
+   *
    * @param gameState GameState to replace colors with
    * @return the same GameState but with colors
    */
   private GameState setColors(GameState gameState) {
     if(this.initialGameState != null)
       for(int i=0; i<gameState.getTeams().length; i++)
-        if(gameState.getTeams()[i] != null)
+        if(gameState.getTeams()[i] != null) {
           gameState.getTeams()[i].setColor(this.initialGameState.getTeams()[i].getColor());
+          switch(i) {
+            case 0: gameState.getTeams()[i].setColor("#ff00ff");
+              break;
+            case 1: gameState.getTeams()[i].setColor("#cccc00");
+              break;
+            case 2: gameState.getTeams()[i].setColor("#ff0000");
+              break;
+          }
+        }
     return gameState;
   }
   ///////////////////////////////////////
@@ -186,6 +203,8 @@ public class AnalyzedGameState {
    * @return the GameState representing the users move
    */
   public GameState getUserChoice() {
+    if(userGaveUp != null)
+      return setColors(userGaveUp);
     return setColors(userChoice.getGameState());
   }
   
@@ -234,5 +253,9 @@ public class AnalyzedGameState {
 
   public int getSimulations() {
     return simulations;
+  }
+
+  public GameState getUserGaveUp() {
+    return this.userGaveUp;
   }
 }

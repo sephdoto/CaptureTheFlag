@@ -48,6 +48,7 @@ public class Client implements GameClientInterface {
   // Main DataStore block
   protected GameStateNormalizer normalizer;
   protected volatile GameState currentState;
+  protected volatile GameState lastState;
   protected String[][] grid;
   protected int currentTeamTurn;
   protected Move lastMove;
@@ -406,6 +407,10 @@ public class Client implements GameClientInterface {
     try {
       this.moveTimeLeft = gameSessionResponse.getRemainingMoveTimeInSeconds();
       if (moveTimeLeft > 0) {
+        /*if(this instanceof AIClient) {
+          tdt = new TimeDecreaseThread();
+          tdt.start();
+        }*/
         this.moveTimeLimitedGameTrigger = true;
       }
     } catch (NullPointerException e) {
@@ -413,6 +418,41 @@ public class Client implements GameClientInterface {
     }
   }
 
+//  TimeDecreaseThread tdt;
+
+  /**
+   * Decreases the moveTimeLeft, in case the updated Server time cannot be used.
+   * Should be used by AIClients, they stop updating from Server if they are calculating.
+   * TODO
+   * @author sistumpf
+   */
+  /*private class TimeDecreaseThread extends Thread {
+    private boolean running = true;
+
+    @Override
+    public void run() {  
+      if(tdt != null)
+        tdt.interrupt();
+      if(myTeam == comm.getCurrentGameState(currentServer).getCurrentTeam())
+        tdt = this;
+      while(moveTimeLeft > 0 && running) {
+        try {
+          Thread.sleep(1000);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+        --moveTimeLeft;
+      }
+      tdt = null;
+    }
+
+    @Override
+    public void interrupt() {
+      running = false;
+    }
+  }*/
+
+  
   /**
    * Called from the joinGame function. Recieves the teamName wished for by the team as a param and
    * returns the response from the server as a {@link JoinGameResponse}.
@@ -531,6 +571,7 @@ public class Client implements GameClientInterface {
     if (isNewGameState(gameState)) {
       gameState = normalizeGameState(gameState);
       this.currentTeamTurn = gameState.getCurrentTeam();
+      this.lastState = currentState;
       this.currentState = gameState;
       this.teams = gameState.getTeams();
       this.lastMove = gameState.getLastMove();
@@ -542,8 +583,14 @@ public class Client implements GameClientInterface {
       }
 
       if (enableLogging) {
-        if(!isMoveEmpty(gameState.getLastMove()))
-          this.analyzer.addMove(gameState.getLastMove());
+        if(!isMoveEmpty(gameState.getLastMove())) {
+          /*System.out.println(" " + gameState.getLastMove().getPieceId() 
+              + " : " + gameState.getLastMove().getNewPosition()[0] + "," 
+              + gameState.getLastMove().getNewPosition()[1] + " :: " 
+              + GameUtilities.howManyTeams(gameState));*/
+        
+          this.analyzer.addMove(gameState.getLastMove(), GameUtilities.teamsGaveUp(lastState, currentState));
+        }
       }
     }
   }
@@ -858,7 +905,7 @@ public class Client implements GameClientInterface {
                   pullData();
                   if (enableLogging) {
                     if(!isMoveEmpty(getCurrentState().getLastMove()))
-                      analyzer.addMove(getCurrentState().getLastMove());
+                      analyzer.addMove(getCurrentState().getLastMove(), GameUtilities.teamsGaveUp(lastState, currentState));
                   }
                   if (isGameOver()) {
                     scheduler.shutdown();

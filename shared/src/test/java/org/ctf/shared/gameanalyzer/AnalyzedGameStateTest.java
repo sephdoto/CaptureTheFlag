@@ -24,7 +24,7 @@ class AnalyzedGameStateTest {
     Move user = RandomAI.pickMoveComplex(mcts.getRoot().getGameState(), new ReferenceMove(null, new int[2])).toMove();
     Move ai = mcts.getMove(100);
     
-    AnalyzedGameState ags = new AnalyzedGameState(mcts, user, ai, null);
+    AnalyzedGameState ags = new AnalyzedGameState(mcts, user, ai, null, null);
     ags.getAiChoice();
     System.out.println(ags.getMoveEvaluation());
   }
@@ -35,7 +35,7 @@ class AnalyzedGameStateTest {
     Move user = RandomAI.pickMoveComplex(mcts.getRoot().getGameState(), new ReferenceMove(null, new int[2])).toMove();
     Move ai = mcts.getMove(100);
     
-    AnalyzedGameState ags = new AnalyzedGameState(mcts, user, ai, null);
+    AnalyzedGameState ags = new AnalyzedGameState(mcts, user, ai, null, null);
     ags.getAiChoice();
 //    System.out.println(getPercentageDifference(ags));
   }
