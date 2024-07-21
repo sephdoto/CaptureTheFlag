@@ -104,14 +104,14 @@ public class App extends Application {
     stage.setScene(lockscreen);
     serverContainer = new ServerContainer();
     try {
-      serverContainer.startServer(Constants.localServerPort);
+      serverContainer.startServer(Constants.userSelectedLocalServerPort);
     } catch (PortInUseException e) {
       setTitle("Default Server couldnt start");
     }
     if (serverContainer.checkStatus()) {
       Platform.runLater(
           () -> {
-            setTitle("CFP 14" + " Local Server is active @ " + Constants.localServerPort);
+            setTitle("CFP 14" + " Local Server is active @ " + Constants.userSelectedLocalServerPort);
           });
     } else {
       setTitle("Internal server start error");
