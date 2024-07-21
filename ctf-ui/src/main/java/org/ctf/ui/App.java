@@ -106,7 +106,7 @@ public class App extends Application {
     stage.setScene(lockscreen);
     serverContainer = new ServerContainer();
     try {
-      serverContainer.startServer("53");
+      serverContainer.startServer(Constants.userSelectedLocalServerPort);
     } catch (Exception e) {
       setTitle("Default Server couldnt start");
     }
