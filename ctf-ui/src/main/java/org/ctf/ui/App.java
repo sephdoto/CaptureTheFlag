@@ -41,6 +41,8 @@ import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.creators.ComponentCreator;
 import java.nio.file.Paths;
 import org.ctf.ui.customobjects.*;
+import org.ctf.ui.server.PortInUseException;
+import org.ctf.ui.server.ServerContainer;
 
 /**
  * @author mkrakows
@@ -55,6 +57,7 @@ public class App extends Application {
   static MusicPlayer backgroundMusic;
   HomeSceneController ssc;
   FadeTransition startTransition;
+  ServerContainer serverContainer;
   Process process;
   static StackPane wrapper;
   static StackPane root;
@@ -99,10 +102,25 @@ public class App extends Application {
         });
     stage.setTitle("Capture The Flag Team 14");
     stage.setScene(lockscreen);
-    startServer("8888");
+    serverContainer = new ServerContainer();
+    try {
+      serverContainer.startServer(Constants.localServerPort);
+    } catch (PortInUseException e) {
+      setTitle("Default Server couldnt start");
+    }
+    if (serverContainer.checkStatus()) {
+      Platform.runLater(
+          () -> {
+            setTitle("CFP 14" + " Local Server is active @ " + Constants.localServerPort);
+          });
+    } else {
+      setTitle("Internal server start error");
+    }
+    
     backgroundMusic = new MusicPlayer();
     stage.setOnCloseRequest(
         e -> {
+          serverContainer.stopServer();
           this.process.destroy();
           System.exit(0);
         });
@@ -208,7 +226,8 @@ public class App extends Application {
     serverPane.getField().setOnKeyPressed(event -> {
       if (event.getCode() == KeyCode.ENTER) {
         String port = serverPane.getField().getText();
-        if(this.startServer(port)) {
+        serverContainer.startServer(port);
+        if(serverContainer.checkStatus()) {
           Constants.userSelectedLocalServerPort = port;
           serverPane.setFinished();
         } else {
@@ -320,84 +339,6 @@ public class App extends Application {
 
     layer.getChildren().add(root);
     return layer;
-  }
-
-  /**
-   * Starts a server at the designated port using the jar present in resources. Also sets the title
-   * of the window to give information about the port of the server
-   *
-   * @author rsyed
-   * @param port the port you want to start the server at
-   * @return boolean true if server is active, false if it fails
-   */
-  public boolean startServer(String port) {
-    if(process != null)
-      process.destroy();
-    
-    try {
-      ProcessBuilder processBuilder =
-          new ProcessBuilder(
-              "java", "-jar", Constants.toUIResources + "server.jar", "--server.port=" + port);
-      processBuilder.redirectErrorStream(true);
-      process = processBuilder.start();
-      System.out.println(process.isAlive());
-      new Thread(
-              () -> {
-                try (BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                  String line;
-                  while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
-                  }
-
-                } catch (IOException e) {
-                  e.printStackTrace();
-                }
-              })
-          .start();
-
-    } catch (IOException e) {
-      e.printStackTrace();
-      return false;
-    }
-    Thread checkServerThread =
-        new Thread(
-            () -> {
-              boolean running = true;
-              while (running) {
-                try {
-                  Long sleep = 5000L;
-                  Thread.sleep(sleep);
-                  if (new ServerChecker().isServerActive(new ServerDetails("localhost", port))) {
-                    Constants.localServerPort = port;
-                    serverStartSuccess = true;
-                    if (serverStartSuccess) {
-                      Platform.runLater(
-                          () -> {
-                            setTitle("CFP 14" + " Local Server is active @ " + port);
-                          });
-                    }
-                  }
-                  running = false;
-                } catch (InterruptedException e) {
-                  serverStartSuccess = false;
-                  throw new Error("Server couldnt start");
-                }
-              }
-            });
-    checkServerThread.start();
-    return serverStartSuccess;
-  }
-
-  /**
-   * Kills the process holding the server instance inside of it. Closing the server
-   *
-   * @author rsyed
-   */
-  public void closeServer() {
-    this.process.destroy();
-    setTitle("CFP 14" + " Local Server is inactive");
-    System.exit(0);
   }
 
   /**

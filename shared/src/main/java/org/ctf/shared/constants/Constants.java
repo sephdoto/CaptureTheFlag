@@ -179,5 +179,5 @@ public class Constants {
 
   public static final String START_SERVER_JAR_COMMAND =
       "java -jar \"" + Constants.toUIResources + Constants.SERVERJARNAME + "\" --server.port=8888";
-  public static String localServerPort;
+  public static String localServerPort = "8888";
 }
