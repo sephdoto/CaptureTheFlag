@@ -106,8 +106,8 @@ public class App extends Application {
     stage.setScene(lockscreen);
     serverContainer = new ServerContainer();
     try {
-      serverContainer.startServer(Constants.userSelectedLocalServerPort);
-    } catch (PortInUseException e) {
+      serverContainer.startServer("53");
+    } catch (Exception e) {
       setTitle("Default Server couldnt start");
     }
     if (serverContainer.checkStatus()) {
@@ -118,7 +118,6 @@ public class App extends Application {
     } else {
       setTitle("Internal server start error");
     }
-    
     backgroundMusic = new MusicPlayer();
     stage.setOnCloseRequest(
         e -> {
@@ -344,6 +343,20 @@ public class App extends Application {
 
     layer.getChildren().add(root);
     return layer;
+  }
+
+
+   /**
+   * Starts the server
+   * @author rsyed
+   * @param title The title you want the window to have
+   */
+  public static void startServer(String title) {
+  try {
+    
+  } catch (Exception e) {
+    // TODO: handle exception
+  }
   }
 
   /**
