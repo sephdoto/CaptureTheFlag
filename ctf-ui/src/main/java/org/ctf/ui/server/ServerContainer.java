@@ -62,11 +62,5 @@ public class ServerContainer implements ServerInterface {
     } else {
       return false;
     }
-    /* if (appContext != null && checkStatus()) {
-      int check = SpringApplication.exit(appContext, () -> 0);
-      return (check==0);
-    } else {
-      return false;
-    } */
   }
 }

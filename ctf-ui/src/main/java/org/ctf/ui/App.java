@@ -1,9 +1,7 @@
 package org.ctf.ui;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.nio.file.Paths;
 import javafx.animation.FadeTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -26,11 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.stage.Window;
-import javafx.stage.WindowEvent;
 import javafx.util.Duration;
-import org.ctf.shared.client.lib.ServerChecker;
-import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.SoundType;
@@ -41,7 +35,6 @@ import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.controllers.SettingsSetter;
 import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.creators.ComponentCreator;
-import java.nio.file.Paths;
 import org.ctf.ui.customobjects.*;
 import org.ctf.ui.server.PortInUseException;
 import org.ctf.ui.server.ServerContainer;
@@ -68,29 +61,33 @@ public class App extends Application {
   static boolean serverStartSuccess;
   public static double offsetHeight;
   public static double offsetWidth;
-  
-  //public static ServerPane serverPane;
-  
+
+  // public static ServerPane serverPane;
 
   public void start(Stage stage) {
     mainStage = stage;
-    
-    stage.focusedProperty().addListener((observable, oldValue, newValue) -> {
-      if(newValue) {
-        EntryPoint.cbl.registerNativeHook();
-      } else {
-        EntryPoint.cbl.unregisterNativeHook();
-      }
-    });
-    
-//    Parameters params = getParameters();
-//    String port = params.getNamed().get("port");
+
+    stage
+        .focusedProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              if (newValue) {
+                EntryPoint.cbl.registerNativeHook();
+              } else {
+                EntryPoint.cbl.unregisterNativeHook();
+              }
+            });
+
+    //    Parameters params = getParameters();
+    //    String port = params.getNamed().get("port");
     ssc = new HomeSceneController(mainStage);
     CheatboardListener.setHomeSceneController(ssc);
     SettingsSetter.loadCustomSettings();
     lockscreen = new Scene(createLockScreen(), 1100, 600);
     try {
-      lockscreen.getStylesheets().add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
+      lockscreen
+          .getStylesheets()
+          .add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
     } catch (MalformedURLException e) {
       e.printStackTrace();
     }
@@ -113,7 +110,8 @@ public class App extends Application {
     if (serverContainer.checkStatus()) {
       Platform.runLater(
           () -> {
-            setTitle("CFP 14" + " Local Server is active @ " + Constants.userSelectedLocalServerPort);
+            setTitle(
+                "CFP 14" + " Local Server is active @ " + Constants.userSelectedLocalServerPort);
           });
     } else {
       setTitle("Internal server start error");
@@ -121,9 +119,9 @@ public class App extends Application {
     backgroundMusic = new MusicPlayer();
     stage.setOnCloseRequest(
         e -> {
-          serverContainer.stopServer(); 
+          serverContainer.stopServer();
           Platform.exit();
-          System.exit(0);  
+          System.exit(0);
         });
     SettingsSetter.giveMeTheAux(backgroundMusic);
     stage.show();
@@ -151,8 +149,8 @@ public class App extends Application {
             "CREATE MAP",
             mainStage,
             () -> {
-    		SoundController.playSound("Button", SoundType.MISC);
-             ssc.switchToMapEditorScene(mainStage);
+              SoundController.playSound("Button", SoundType.MISC);
+              ssc.switchToMapEditorScene(mainStage);
             });
     HomeScreenButton i2 =
         new HomeScreenButton(
@@ -160,7 +158,7 @@ public class App extends Application {
             mainStage,
             () -> {
               // CreateGameScreen.initCreateGameScreen(mainStage);
-    		SoundController.playSound("Button", SoundType.MISC);
+              SoundController.playSound("Button", SoundType.MISC);
               ssc.switchToCreateGameScene(mainStage);
             });
     HomeScreenButton i3 =
@@ -168,12 +166,12 @@ public class App extends Application {
             "JOIN GAME",
             mainStage,
             () -> {
-    			SoundController.playSound("Button", SoundType.MISC);
+              SoundController.playSound("Button", SoundType.MISC);
               ssc.switchToJoinScene(mainStage);
             });
-    
+
     CheatboardListener.setSettings(root, startScene);
-    
+
     HomeScreenButton i4 =
         new HomeScreenButton(
             "SETTINGS",
@@ -208,7 +206,7 @@ public class App extends Application {
     addServerPane(root);
     return root;
   }
-  
+
   private void addServerPane(StackPane stack) {
     ServerPane serverPane = new ServerPane();
     StackPane serverPaneWrapper = new StackPane();
@@ -217,30 +215,36 @@ public class App extends Application {
     serverPaneWrapper.maxWidthProperty().bind(stack.widthProperty().multiply(0.22));
     serverPaneWrapper.maxHeightProperty().bind(serverPane.widthProperty().multiply(0.35));
     StackPane.setAlignment(serverPaneWrapper, Pos.BOTTOM_RIGHT);
-   serverPaneWrapper.setPadding(new Insets(10));
-    stack.widthProperty().addListener((obs, old, newV) -> {
-     double neu = newV.doubleValue();
-      serverPaneWrapper.setPadding(new Insets(0,neu*0.03,neu*0.03,0));
-    });
+    serverPaneWrapper.setPadding(new Insets(10));
+    stack
+        .widthProperty()
+        .addListener(
+            (obs, old, newV) -> {
+              double neu = newV.doubleValue();
+              serverPaneWrapper.setPadding(new Insets(0, neu * 0.03, neu * 0.03, 0));
+            });
     serverPaneWrapper.getChildren().add(serverPane);
     stack.getChildren().add(serverPaneWrapper);
-    serverPane.getField().setOnKeyPressed(event -> {
-      if (event.getCode() == KeyCode.ENTER) {
-        String port = serverPane.getField().getText();
-        try {
-          serverContainer.startServer(port);
-        } catch (PortInUseException e) {
-          System.out.println("Port is in use");
-          //TODO Build handling for port in use
-        }
-        if(serverContainer.checkStatus()) {
-          Constants.userSelectedLocalServerPort = port;
-          serverPane.setFinished();
-        } else {
-          serverPane.updatePromtText();
-        }
-      }
-    });
+    serverPane
+        .getField()
+        .setOnKeyPressed(
+            event -> {
+              if (event.getCode() == KeyCode.ENTER) {
+                String port = serverPane.getField().getText();
+                try {
+                  serverContainer.startServer(port);
+                } catch (PortInUseException e) {
+                  System.out.println("Port is in use");
+                  // TODO Build handling for port in use
+                }
+                if (serverContainer.checkStatus()) {
+                  Constants.userSelectedLocalServerPort = port;
+                  serverPane.setFinished();
+                } else {
+                  serverPane.updatePromtText();
+                }
+              }
+            });
   }
 
   public static void adjustHomescreen(double width, double height) {
@@ -264,13 +268,15 @@ public class App extends Application {
   private void changeToHomeScreen() {
     startScene = new Scene(createParent());
     try {
-      startScene.getStylesheets().add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
+      startScene
+          .getStylesheets()
+          .add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
     } catch (MalformedURLException e) {
       e.printStackTrace();
     }
     mainStage.setScene(startScene);
-    App.offsetHeight = mainStage.getHeight()-startScene.getHeight();
-    App.offsetWidth = mainStage.getWidth()-startScene.getWidth();
+    App.offsetHeight = mainStage.getHeight() - startScene.getHeight();
+    App.offsetWidth = mainStage.getWidth() - startScene.getWidth();
     System.out.println("offsetHeight: " + App.offsetHeight + ", offsetWidth: " + App.offsetWidth);
     backgroundMusic.startShuffle();
     startTransition.stop();
@@ -320,7 +326,7 @@ public class App extends Application {
         .heightProperty()
         .addListener(
             (obs, old, newV) -> {
-//              double size = newV.doubleValue() * 0.2;
+              //              double size = newV.doubleValue() * 0.2;
               VBox.setMargin(ctfv, new Insets(0, 0, newV.doubleValue() * 0.6, 0));
             });
     text.setStyle("-fx-fill: white ;");
@@ -347,18 +353,18 @@ public class App extends Application {
     return layer;
   }
 
-
-   /**
+  /**
    * Starts the server
+   *
    * @author rsyed
    * @param title The title you want the window to have
    */
   public static void startServer(String title) {
-  try {
-    
-  } catch (Exception e) {
-    // TODO: handle exception
-  }
+    try {
+
+    } catch (Exception e) {
+      // TODO: handle exception
+    }
   }
 
   /**
