@@ -121,7 +121,9 @@ public class App extends Application {
     backgroundMusic = new MusicPlayer();
     stage.setOnCloseRequest(
         e -> {
-          serverContainer.stopServer();         
+          serverContainer.stopServer(); 
+          Platform.exit();
+          System.exit(0);  
         });
     SettingsSetter.giveMeTheAux(backgroundMusic);
     stage.show();
