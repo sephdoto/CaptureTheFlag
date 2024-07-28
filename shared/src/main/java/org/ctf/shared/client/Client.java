@@ -17,6 +17,7 @@ import org.ctf.shared.client.lib.ServerChecker;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.client.service.CommLayerInterface;
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.gameanalyzer.GameSaveHandler;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
@@ -86,7 +87,7 @@ public class Client implements GameClientInterface {
   // Block for alt game mode data
   protected Date startDate;
   protected Date endDate;
-  protected int moveTimeLeft;
+  protected volatile int moveTimeLeft;
   protected int gameTimeLeft;
   protected int lastTeamTurn;
   protected long refreshTime = 10L;
@@ -101,7 +102,7 @@ public class Client implements GameClientInterface {
   protected boolean isAlive;
 
   // Services
-  ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
+  ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
   Logger logger = Logger.getLogger(getClass().getName());
   // Queue for storing different game states
   ConcurrentLinkedQueue<GameState> fifoQueue = new ConcurrentLinkedQueue<>();
@@ -849,6 +850,26 @@ public class Client implements GameClientInterface {
     gameStartWatcher();
   }
 
+  /**
+   * Starts a scheduled Thread just to update the Move time.
+   * Only does this if the Client is an instance of AIClient,
+   * as the AIClient does not update if it is currently calculating its move.
+   * 
+   * @author sistumpf
+   */
+  protected void startMoveTimeThread() {
+    if(this instanceof AIClient && !isGameOver()) {
+      scheduler.schedule(new Runnable() {
+        @Override
+        public void run() {
+          moveTimeLeft = comm.getCurrentSessionState(currentServer).getRemainingMoveTimeInSeconds();
+          startMoveTimeThread();
+        }
+      }
+      , Constants.UIupdateTime, TimeUnit.MILLISECONDS);
+    }
+  }
+  
   /**
    * A Watcher thread which calls GameSessionResponse periodically and hands over functionality to
    * GameStartedThread when it detects that the same has started. Terminates itself right after to

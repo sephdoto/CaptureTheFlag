@@ -92,11 +92,11 @@ public class AIClient extends Client {
           System.out.println(e instanceof NoMovesLeftException ? "no moves left" :"invalid shape");
           throw new UnknownError("Games most likely over");
         } catch (GameOver e) {
-          analyzer.writeOut();
           this.gameOver = true;
           this.isAlive = false;
           this.aiPlayScheduler.shutdown();
           this.aiClientScheduler.shutdown();
+          this.controller.shutDown();
           if (saveToken && enableLogging) {
             this.analyzer.writeOut();
             saveToken = false;
@@ -289,6 +289,8 @@ public class AIClient extends Client {
                       } catch(Exception e) {e.printStackTrace();};
                       startPlayTask();
                       }).start();
+
+                    startMoveTimeThread();
                   }
                   Thread.sleep(sleep);
                 } catch (InterruptedException e) {

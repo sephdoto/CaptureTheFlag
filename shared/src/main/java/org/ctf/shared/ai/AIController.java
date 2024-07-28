@@ -187,9 +187,11 @@ public class AIController {
   }
 
   public void shutDown() {
-    System.out.println(this.ai +"-AI shut down");
+    System.out.println(this.ai +"-AI shut down. Collecting Garbage ...");
     interruptBct();
-    throw new GameOver();
+    System.gc();
+    //TODO
+//    throw new GameOver();
   }
 
   /**

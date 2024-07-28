@@ -27,6 +27,15 @@ public class Timer extends Label {
 	}
 	
 	/**
+	 * Stops the timer.
+	 * 
+	 * @author sistumpf
+	 */
+	public void stop() {
+	  timeline.stop();
+	}
+	
+	/**
 	 * Resets the time to 0, used to count up for the move time when it is not limited
 	 * @author Manuel Krakowski
 	 */

@@ -25,6 +25,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
@@ -161,7 +162,7 @@ public class PlayGameScreenV2 extends Scene {
     // TODO einen scheduler für zeiten und einen für ui??
     if (mainClient.isGameTimeLimited() || mainClient.isGameMoveTimeLimited()) {
       scheduler2 = Executors.newScheduledThreadPool(1);
-      scheduler2.scheduleAtFixedRate(updateTask2, 0, 1, TimeUnit.SECONDS);
+      scheduler2.scheduleAtFixedRate(updateTask2, 0, Constants.UIupdateTime, TimeUnit.MILLISECONDS);
     }
     scheduler = Executors.newScheduledThreadPool(1);
     scheduler.scheduleAtFixedRate(updateTask, 0, Constants.UIupdateTime, TimeUnit.MILLISECONDS);
@@ -248,9 +249,11 @@ public class PlayGameScreenV2 extends Scene {
     right.getChildren().add(createGiveUpBox());
     right.getChildren().add(createTopCenter());
     right.getChildren().add(createFigureDesBox());
+    HBox clockBox = createClockBox(mainClient.isGameMoveTimeLimited(), mainClient.isGameTimeLimited());
+    clockBox.setUserData("clock");
     right
         .getChildren()
-        .add(createClockBox(mainClient.isGameMoveTimeLimited(), mainClient.isGameTimeLimited()));
+        .add(clockBox);
     right.setStyle("-fx-background-color: black");
     right.prefWidthProperty().bind(this.widthProperty().multiply(0.3));
     top.getChildren().add(right);
@@ -419,7 +422,7 @@ public class PlayGameScreenV2 extends Scene {
         giveUpPanimation = new PointAnimation(giveUpButton, "", "Give up", 7, 175);
         giveUpPanimation.start();
       }
-
+      
       if (mainClient.queuedGameStates() <= 0) {
         giveUpPanimation.interrupt();
         String[] winners = mainClient.getWinners();
@@ -432,6 +435,16 @@ public class PlayGameScreenV2 extends Scene {
                 gameOverPop.createGameOverPopUpforMoreWinners(winners);
               }
             });
+        
+        for(Node node : right.getChildren()) {
+          if(node.getUserData() != null && node.getUserData().equals("clock")) {
+            for(Node box : ((HBox) node).getChildren()) {
+              if(box.getUserData() != null && box.getUserData().equals("timer")) {
+                ((Timer)((VBox) box).getChildren().get(1)).stop();
+              }
+            }
+          }
+        }
         if (scheduler != null) scheduler.shutdown();
         if (scheduler2 != null) scheduler2.shutdown();
       }
@@ -921,6 +934,7 @@ public class PlayGameScreenV2 extends Scene {
       t.fontProperty().bind(timerLabel);
       timerwithDescrip.getChildren().add(t);
     }
+    timerwithDescrip.setUserData("timer");
     return timerwithDescrip;
   }
 
