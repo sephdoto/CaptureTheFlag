@@ -167,7 +167,7 @@ public class BackgroundCellV2 extends Pane {
     int b=0;
     if(getStyle().contains("rgb")) {
       String[] rgb = getStyle().substring(getStyle().indexOf("(") +1,getStyle().indexOf(")")).split(",");
-//      r = Integer.parseInt(rgb[0]);
+      r = Integer.parseInt(rgb[0]);
       g = Integer.parseInt(rgb[1]);
       b = Integer.parseInt(rgb[2]);
     }
