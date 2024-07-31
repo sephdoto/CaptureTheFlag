@@ -27,6 +27,8 @@ import org.ctf.ui.editor.EditorScene;
 import org.ctf.ui.hostGame.CreateGameController;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
 import org.ctf.ui.threads.PointAnimation;
+import data.ClientCreator;
+import data.ClientStorage;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -559,11 +561,12 @@ public class JoinScene extends Scene {
       task.setOnSucceeded(
           event -> {
             if(task.getValue() != null) {
+              ClientStorage.setMainClient(task.getValue());
               root.getChildren().remove(popUp);
               right.getChildren().clear();
               info.setText("Client hast joined!\n Waiting for the Game to start.");
               right.getChildren().add(info);
-              hsc.getStage().setScene(new RemoteWaitingScene(task.getValue(), getWidth(), getHeight(), JoinScene.this.hsc, JoinScene.this.ser));
+              hsc.getStage().setScene(new RemoteWaitingScene(getWidth(), getHeight(), JoinScene.this.hsc, JoinScene.this.ser));
             }
           });
       this.joinChecker = new Thread() {
@@ -609,29 +612,10 @@ public class JoinScene extends Scene {
       pointAnimation = new PointAnimation(header, "checking name", "Enter a UNIQUE name!", 3, 175);
       pointAnimation.start();
       Client client;
-      if(!isAI) {
-      client = 
-          ClientStepBuilder
-          .newBuilder()
-          .enableRestLayer(false)
-          .onRemoteHost(ip)
-          .onPort(port)
-          .enableSaveGame(true)
-          .enableAutoJoin(id, nameField.getText())
-          .build();
+      if(isAI) {
+        client = ClientCreator.createAiClient(true, nameField.getText(), false, ip, port, id, type, config);
       } else {
-        client = 
-            AIClientStepBuilder
-            .newBuilder()
-            .enableRestLayer(false)
-            .onRemoteHost(ip)
-            .onPort(port)
-            .aiPlayerSelector(type, config)
-            .enableSaveGame(true)
-            .gameData(id, nameField.getText())
-            .build();
-        client.enableGameStateQueue(true);
-        CreateGameController.getLocalAIClients().add(client);
+        client = ClientCreator.createHumanClient(true, nameField.getText(), false, ip, port, id);
       }
 
       while(client.couldJoin().equals("unjoined")) {
@@ -643,11 +627,8 @@ public class JoinScene extends Scene {
       }
       
       if(client.couldJoin().equals("declined")) {
-        client.shutdown();
+        removeClient(client);
         client = null;
-      } else {
-        client.enableGameStateQueue(true);
-        CreateGameController.getLocalHumanClients().add(client);
       }
       
       originalState();
@@ -668,7 +649,12 @@ public class JoinScene extends Scene {
       header.setText(headerText);
       cancelButton.setDisable(false);
       joinButton.setDisable(false);
-      
+    }
+    
+    private void removeClient(Client client) {
+      client.shutdown();
+      ClientStorage.setMainClient(null);
+      ClientStorage.clearAllClients();
     }
   }
   

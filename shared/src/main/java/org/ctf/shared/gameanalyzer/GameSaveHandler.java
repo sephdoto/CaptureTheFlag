@@ -50,8 +50,8 @@ public class GameSaveHandler {
   public boolean writeOut() {
     try {
       localDateTime = LocalDateTime.now();
-      DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss");
-      String fileName = localDateTime.format(df) + "_" + this.hashCode();
+      DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy'_'MM'_'dd' 'HH'-'mm'_'ss");
+      String fileName = localDateTime.format(df) /*+ "_" + this.hashCode()*/;
       this.lastFileName = fileName;
       FileOutputStream fileOutStream =
           new FileOutputStream(Constants.saveGameFolder + fileName + ".savedgame");
@@ -62,7 +62,8 @@ public class GameSaveHandler {
       objectOutStream.close();
       fileOutStream.close();
     } catch (IOException e) {
-      System.out.println("IO Exception in Serializer class");
+//      System.out.println("IO Exception in Serializer class");
+      e.printStackTrace();
       return false;
     }
     return true;

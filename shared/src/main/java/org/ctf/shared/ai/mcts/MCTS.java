@@ -29,8 +29,10 @@ public class MCTS implements MonteCarloTreeSearch {
   public AtomicInteger heuristicCounter;
   private AtomicInteger expansionCounter;
   private Move influencer;
+  private boolean allowedToRun;
 
   public MCTS(TreeNode root, AIConfig config) {
+    this.allowedToRun = true;
     this.config = config;
     this.setRoot(root);
 //    this.rand = new Random();
@@ -51,7 +53,7 @@ public class MCTS implements MonteCarloTreeSearch {
   public Move getMove(int milis) {
     long time = System.currentTimeMillis();
 
-    while (System.currentTimeMillis() - time < milis) {
+    while (System.currentTimeMillis() - time < milis && allowedToRun) {
       // Schritte des UCT abarbeiten
       TreeNode selected = selectAndExpand(getRoot(), config.C);
       backpropagate(selected, simulate(selected));
@@ -72,6 +74,11 @@ public class MCTS implements MonteCarloTreeSearch {
     return getMove(milis);
   }
 
+  @Override
+  public void shutdown() {
+    this.allowedToRun = false;
+  }
+  
   /**
    * Selects a node to simulate on using the UCT formula. expands a children if a node in the chain
    * has unexpanded ones.

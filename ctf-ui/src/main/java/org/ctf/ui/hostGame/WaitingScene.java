@@ -49,6 +49,7 @@ import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.creators.PopUpCreator;
 import org.ctf.ui.creators.PopUpCreatorEnterTeamName;
 import org.ctf.ui.customobjects.MyCustomColorPicker;
+import data.ClientStorage;
 
 
 /**
@@ -745,7 +746,9 @@ public class WaitingScene extends Scene {
     exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
     exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.35));
     exit.setOnAction(e -> {
-      CreateGameController.getMainClient().shutdown();
+      ClientStorage.getMainClient().shutdown();
+      ClientStorage.clearAllClients();
+      ClientStorage.setMainClient(null);
       scheduler.shutdown();
       CreateGameController.deleteGame();
       CreateGameController.clearUsedNames();
@@ -764,11 +767,11 @@ public class WaitingScene extends Scene {
    */
   Runnable updateTask = () -> {
     try {
-      if (CreateGameController.getMainClient() != null) {
-        if (CreateGameController.getMainClient().getStartDate() != null) {
+      if (ClientStorage.getMainClient() != null) {
+        if (ClientStorage.getMainClient().getStartDate() != null) {
           scheduler.shutdown();
           Platform.runLater(() -> {
-            hsc.switchToPlayGameScene(App.getStage(), CreateGameController.getMainClient(), false);
+            hsc.switchToPlayGameScene(App.getStage(), false);
           });
         } else {
           if (CreateGameController.getServerManager().getCurrentNumberofTeams() != currentNumber) {

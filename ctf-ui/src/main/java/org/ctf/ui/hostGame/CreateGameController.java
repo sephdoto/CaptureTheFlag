@@ -21,6 +21,7 @@ import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.map.CostumFigurePain;
+import data.ClientStorage;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.paint.Color;
@@ -45,6 +46,7 @@ public class CreateGameController {
   // Servermangaer to create a GameSession and the corresponding session-id
   private static ServerManager serverManager;
   private static String sessionID;
+  static boolean newSession;
 
 
   // Max Number of teams that are allowed in this Game, automatically set when template is set
@@ -56,17 +58,8 @@ public class CreateGameController {
   private static HashMap<String, ObjectProperty<Color>> colors =
       new HashMap<String, ObjectProperty<Color>>();
 
-
-  // Client that is used to pull the newest GameState and redraw the GamePane with it
-  private static Client mainClient;
-
   private static HashSet<String> usedTeamNames = new HashSet<String>();
   private static HashMap<String, CostumFigurePain> lastfigures;
-
-  // List of all Human-Clients on one device
-  private static ArrayList<Client> localHumanClients = new ArrayList<Client>();
-  // List of all AI-Clients on one device
-  private static ArrayList<Client> localAIClients = new ArrayList<Client>();
   
   // To comunicate between diferent scenes
   private static HomeSceneController hsc;
@@ -123,10 +116,10 @@ public class CreateGameController {
         Color colorSetByUser = colors.get(String.valueOf(i)).get();
         if (colorSetByUser.equals(Color.BLACK)) {
           String colorString;
-          if(mainClient.getGameSaveHandler().getSavedGame().getInitialState() != null)
-            colorString = mainClient.getGameSaveHandler().getSavedGame().getInitialState().getTeams()[i].getColor();
+          if(ClientStorage.getMainClient().getGameSaveHandler().getSavedGame().getInitialState() != null)
+            colorString = ClientStorage.getMainClient().getGameSaveHandler().getSavedGame().getInitialState().getTeams()[i].getColor();
           else 
-            colorString = mainClient.getTeams()[i].getColor();
+            colorString = ClientStorage.getMainClient().getTeams()[i].getColor();
           Color newColer = Color.web(colorString);
           colors.get(String.valueOf(i)).set(newColer);
         }
@@ -147,6 +140,7 @@ public class CreateGameController {
     serverManager = new ServerManager(new CommLayer(), new ServerDetails(serverIP, port), template);
     if (serverManager.createGame()) {
       System.out.println("Session erstellt");
+      newSession = true;
       System.out.println(serverManager.gameSessionID);
       return true;
     } else {
@@ -164,61 +158,8 @@ public class CreateGameController {
     serverManager.deleteGame();
   }
 
-  /**
-   * Creates a Human-Client and enables Auto-join
-   * 
-   * @author Manuel Krakowski
-   * @param teamName: TeamName of the Client. Selected by the user until the Game starts.
-   *        Overwritten by Integer when Game is started
-   * @param isMain: true if the client is used as mainClient, false otherwise
-   * @return human client
-   */
-  public static void createHumanClient(String teamName, boolean isMain) {
-    sessionID = serverManager.getGameSessionID();
-    Client c;
-    if (!isMain) {
-      c = ClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(serverIP).onPort(port)
-          .enableSaveGame(false).enableAutoJoin(sessionID, teamName).build();
-    } else {
-      c = ClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(serverIP).onPort(port)
-          .enableSaveGame(true).enableAutoJoin(sessionID, teamName).build();
-      setMainClient(c);
-    }
-    localHumanClients.add(c);
-  }
-
-
-
-  /**
-   * Creates an AI CLient
-   * 
-   * @author Manuel Krakowski
-   * @param teamName
-   * @param aitype: one of 4 different Ai-Types
-   * @param config: If Ai is configurable the AI-COnfig, null otherwise
-   * @param isMain: true if the client is used as mainClient, false otherwise
-   * @return
-   */
-  public static void createAiClient(String teamName, AI aitype, AIConfig config, boolean isMain) {
-    sessionID = serverManager.getGameSessionID();
-    AIClient aiClient;
-    if (!isMain) {
-      aiClient = AIClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(serverIP)
-          .onPort(port).aiPlayerSelector(aitype, config).enableSaveGame(false)
-          .gameData(sessionID, teamName).build();
-    } else {
-      aiClient = AIClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(serverIP)
-          .onPort(port).aiPlayerSelector(aitype, config).enableSaveGame(true)
-          .gameData(sessionID, teamName).build();
-      setMainClient(aiClient);
-    }
-    localAIClients.add(aiClient);
-  }
-
-
-
-  // Getters and Setters
   /////////////////////////////////////////////////////////////////////////////////
+  // Getters and Setters
   //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -252,7 +193,9 @@ public class CreateGameController {
         url = new URL("https://api.ipify.org");
         BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
         String ipAddress = reader.readLine();
-        System.out.println("Öffentliche IP-Adresse: " + ipAddress);
+        if(newSession)
+          System.out.println("Öffentliche IP-Adresse: " + ipAddress);
+        newSession = false;
         reader.close();
         // return ipAddress;
         return InetAddress.getLocalHost().getHostAddress();
@@ -271,15 +214,6 @@ public class CreateGameController {
 
   public static void clearUsedNames() {
     usedTeamNames.clear();
-  }
-
-  public static Client getMainClient() {
-    return mainClient;
-  }
-
-  public static void setMainClient(Client mainClient) {
-    mainClient.enableGameStateQueue(true);
-    CreateGameController.mainClient = mainClient;
   }
 
   public static AI getLastAitype() {
@@ -365,22 +299,6 @@ public class CreateGameController {
     CreateGameController.serverManager = serverManager;
   }
 
-  public static ArrayList<Client> getLocalHumanClients() {
-    return localHumanClients;
-  }
-
-  public static void setLocalHumanClients(ArrayList<Client> localHumanClients) {
-    CreateGameController.localHumanClients = localHumanClients;
-  }
-  
-  public static ArrayList<Client> getLocalAIClients() {
-    return localAIClients;
-  }
-
-  public static void setLocalAIClients(ArrayList<Client> localAIClients) {
-    CreateGameController.localAIClients = localAIClients;
-  }
-
   public static HashMap<String, ObjectProperty<Color>> getColors() {
     return colors;
   }
@@ -403,10 +321,5 @@ public class CreateGameController {
 
   public static boolean isNameUsed(String name) {
     return usedTeamNames.contains(name);
-  }
-
-  public static void clearLocalClients() {
-    localHumanClients.clear();
-    localAIClients.clear();
   }
 }

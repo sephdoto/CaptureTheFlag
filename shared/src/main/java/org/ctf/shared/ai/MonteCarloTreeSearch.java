@@ -114,4 +114,9 @@ public interface MonteCarloTreeSearch {
    * @return the current config
    */
   public AIConfig getConfig();
+  
+  /**
+   * Disrupts the current calculation and shuts it down.
+   */
+  public void shutdown();
 }

@@ -37,8 +37,10 @@ public class MCTS implements MonteCarloTreeSearch {
   private AtomicInteger heuristicCounter;
   private AtomicInteger expansionCounter;
   private Move influencer;
+  private boolean allowedToRun;
   
   public MCTS(TreeNode root, AIConfig config) {
+    this.allowedToRun = true;
     this.config = config;
     this.setRoot(root);
     this.rand = new Random();
@@ -50,12 +52,11 @@ public class MCTS implements MonteCarloTreeSearch {
     this.executorService  = Executors.newFixedThreadPool(config.numThreads);
   }
 
-
   @Override
   public Move getMove(int milis){
     long time = System.currentTimeMillis();
 
-    while(System.currentTimeMillis() - time < milis){
+    while(System.currentTimeMillis() - time < milis && allowedToRun){
       //Schritte des UCT abarbeiten
       if(getRoot().getReferenceGameState().getLastMove() == null)
         getRoot().getReferenceGameState().setLastMove(new ReferenceMove(null, new int[2]));
@@ -82,6 +83,11 @@ public class MCTS implements MonteCarloTreeSearch {
   public Move getMove(Move influencer, int milis) {
     this.influencer = influencer;
     return getMove(milis);
+  }
+  
+  @Override
+  public void shutdown() {
+    this.allowedToRun = false;
   }
   
   /**

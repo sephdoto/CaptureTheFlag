@@ -6,6 +6,7 @@ import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.hostGame.CreateGameController;
+import data.ClientStorage;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
@@ -70,7 +71,7 @@ public class PopupCreatorGameOver {
     moreWinnerheader = new SimpleObjectProperty<Font>(Font.font(scene.getWidth() / 40));
     moreWinnersName = new SimpleObjectProperty<Font>(Font.font(scene.getWidth() / 50));
     manageFontSizes();
-    CreateGameController.clearLocalClients();
+    ClientStorage.clearAllClients();
   }
 
   /**

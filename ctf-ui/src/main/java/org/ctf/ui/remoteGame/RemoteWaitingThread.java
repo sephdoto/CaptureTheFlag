@@ -9,6 +9,7 @@ import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.ui.App;
 import org.ctf.ui.controllers.CheatboardListener;
 import org.ctf.ui.hostGame.PlayGameScreenV2;
+import data.ClientStorage;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.layout.StackPane;
@@ -55,23 +56,23 @@ public class RemoteWaitingThread extends Thread {
       while (isactive) {
         try {
           Thread.sleep(50);
-          String begin = (rws.getClient().isGameStarted()) ? "Initiliazing Game \n"
+          String begin = (ClientStorage.getMainClient().isGameStarted()) ? "Initiliazing Game \n"
               : "Waiting for more Teams to Join ... \n";
           String teams = "There are currently " + rws.getServerManager().getCurrentNumberofTeams()
               + "/" + rws.getServerManager().getMaxNumberofTeams() + " in the lobby!";
           Platform.runLater(() -> {
             rws.getText().setText(begin + teams);
           });
-          if (rws.getClient().isGameStarted() && rws.getClient().getGrid() != null) {
+          if (ClientStorage.getMainClient().isGameStarted() && ClientStorage.getMainClient().getGrid() != null) {
             isactive = false;
             Thread.sleep(100);
             Platform.runLater(() -> {
-              rws.getHsc().switchToPlayGameScene(App.getStage(), rws.getClient(), true);
+              rws.getHsc().switchToPlayGameScene(App.getStage(), true);
             });
           }
         } catch (SessionNotFound e) {
           this.isactive = false;
-          this.rws.getClient().shutdown();
+          ClientStorage.getMainClient().shutdown();
 
           for(int i=0; i<Constants.globalWaitingTime; i++) {
             final int ms = i;

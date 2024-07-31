@@ -92,22 +92,32 @@ public class AIClient extends Client {
           System.out.println(e instanceof NoMovesLeftException ? "no moves left" :"invalid shape");
           throw new UnknownError("Games most likely over");
         } catch (GameOver e) {
-          this.gameOver = true;
-          this.isAlive = false;
-          this.aiPlayScheduler.shutdown();
-          this.aiClientScheduler.shutdown();
-          this.controller.shutDown();
-          if (saveToken && enableLogging) {
-            this.analyzer.writeOut();
-            saveToken = false;
-          } else {
-            throw new GameOver();
-          }
+          this.shutdown();
         } catch (NullPointerException e) {
           e.printStackTrace();
           logger.info("nullpointer exception for " + this.requestedTeamName +" , he is " + (isAlive ? "alive" : "dead"));
         }
       };
+
+      /**
+       * Kills all Client processes, shutting it down.
+       * 
+       * @author sistumpf
+       */
+      @Override
+      public void shutdown() {
+        super.shutdown();
+        this.aiPlayScheduler.shutdown();
+        this.aiClientScheduler.shutdown();
+        this.controller.shutDown();
+        if (saveToken && enableLogging) {
+          this.analyzer.writeOut();
+          saveToken = false;
+        } else {
+          throw new GameOver();
+        }
+
+      }
 
       /**
        * Tries to update the AIController.
@@ -130,9 +140,10 @@ public class AIClient extends Client {
           }
           if (isItMyTurn()) {
             Move move = controller.getNextMove();
-            if(controller.getAi() != AI.RANDOM)
+            if(controller.getAi() != AI.RANDOM && controller.getMcts() != null)
               System.out.println(controller.getAi() + ":\n" + controller.getMcts().printResults(move));
-            makeMove(move);
+            if(!isGameOver())
+              makeMove(move);
           }
         } else {
           // delay can be added HERE, does not have to tho. depends on the resource usage, AI or idk ...

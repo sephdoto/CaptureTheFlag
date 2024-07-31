@@ -34,7 +34,6 @@ import javafx.scene.text.Text;
  */
 public class RemoteWaitingScene extends Scene {
   private StackPane root;
-  private Client client;
   private Text text;
   private HomeSceneController hsc;
   private ServerManager serverManager;
@@ -49,11 +48,10 @@ public class RemoteWaitingScene extends Scene {
    * @param hsc - {@link HomeSceneController}
    * @param serverManager - {@link ServerManager}
    */
-  public RemoteWaitingScene(Client client, double width, double height, HomeSceneController hsc,
+  public RemoteWaitingScene(double width, double height, HomeSceneController hsc,
       ServerManager serverManager) {
     super(new StackPane(), width, height);
     this.hsc = hsc;
-    this.client = client;
     this.serverManager = serverManager;
     root = (StackPane) this.getRoot();
     try {
@@ -117,10 +115,6 @@ public class RemoteWaitingScene extends Scene {
 
   public ServerManager getServerManager() {
     return serverManager;
-  }
-
-  public Client getClient() {
-    return client;
   }
 
   public Text getText() {

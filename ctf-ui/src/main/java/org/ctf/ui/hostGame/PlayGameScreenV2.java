@@ -60,6 +60,7 @@ import org.ctf.ui.map.CostumFigurePain;
 import org.ctf.ui.map.GamePane;
 import org.ctf.ui.map.MoveVisualizer;
 import org.ctf.ui.threads.PointAnimation;
+import data.ClientStorage;
 
 /**
  * Scene which is shown when a game is played
@@ -73,7 +74,6 @@ public class PlayGameScreenV2 extends Scene {
   private ScheduledExecutorService scheduler;
   private ScheduledExecutorService scheduler2;
   private boolean schedulerLock;
-  private Client mainClient;
   private HomeSceneController hsc;
   private boolean isRemote;
   private GameState currentState;
@@ -121,15 +121,14 @@ public class PlayGameScreenV2 extends Scene {
    * @param hsc Controller to switch to different scenes
    * @param width initial width of the screen
    * @param height initial height of the screen
-   * @param mainClient Client which is used to pull the newest Data from the server
    * @param isRemote true if the screen is used from remote-join
    */
   public PlayGameScreenV2(
-      HomeSceneController hsc, double width, double height, Client mainClient, boolean isRemote) {
+      HomeSceneController hsc, double width, double height, boolean isRemote) {
+    //TODO
     super(new StackPane(), width, height);
     schedulerLock = true;
     timeToShowGameState = new ArrayList<Long>();
-    this.mainClient = mainClient;
     this.isRemote = isRemote;
     this.root = (StackPane) this.getRoot();
     this.hsc = hsc;
@@ -159,8 +158,7 @@ public class PlayGameScreenV2 extends Scene {
       e.printStackTrace();
     }
     createLayout();
-    // TODO einen scheduler für zeiten und einen für ui??
-    if (mainClient.isGameTimeLimited() || mainClient.isGameMoveTimeLimited()) {
+    if (ClientStorage.getMainClient().isGameTimeLimited() || ClientStorage.getMainClient().isGameMoveTimeLimited()) {
       scheduler2 = Executors.newScheduledThreadPool(1);
       scheduler2.scheduleAtFixedRate(updateTask2, 0, Constants.UIupdateTime, TimeUnit.MILLISECONDS);
     }
@@ -249,7 +247,7 @@ public class PlayGameScreenV2 extends Scene {
     right.getChildren().add(createGiveUpBox());
     right.getChildren().add(createTopCenter());
     right.getChildren().add(createFigureDesBox());
-    HBox clockBox = createClockBox(mainClient.isGameMoveTimeLimited(), mainClient.isGameTimeLimited());
+    HBox clockBox = createClockBox(ClientStorage.getMainClient().isGameMoveTimeLimited(), ClientStorage.getMainClient().isGameTimeLimited());
     clockBox.setUserData("clock");
     right
         .getChildren()
@@ -295,14 +293,14 @@ public class PlayGameScreenV2 extends Scene {
     // TODO
     //    if(!(mainClient instanceof AIClient))
     //      schedulerLock = true;
-    if (mainClient.queuedGameStates() > 0 || forceRedraw) {
+    if (ClientStorage.getMainClient() != null && (ClientStorage.getMainClient().queuedGameStates() > 0 || forceRedraw)) {
       if (schedulerLock || forceRedraw) {
         schedulerLock = false;
 
-        GameState newState = mainClient.getQueuedGameState();
+        GameState newState = ClientStorage.getMainClient().getQueuedGameState();
         if (gm != null)
-          while ((newState == null && mainClient.queuedGameStates() > 0)) 
-            newState = mainClient.getQueuedGameState();
+          while ((newState == null && ClientStorage.getMainClient().queuedGameStates() > 0)) 
+            newState = ClientStorage.getMainClient().getQueuedGameState();
 
         if (newState != null) currentState = newState;
 
@@ -313,55 +311,48 @@ public class PlayGameScreenV2 extends Scene {
             () -> {
               redrawTask.setOnSucceeded(
                   event -> {
-                    GamePane oldGm = gm;
-                    if (redrawTask.getValue() != null) {
-                      this.gm = redrawTask.getValue();
-                      if (oldGm != null) {
-                        CreateGameController.setFigures(oldGm.getFigures());
-                        showMapBox.getChildren().remove(oldGm);
-                        oldGm.destroyReferences();
+                    if(ClientStorage.getMainClient() != null) {
+                      GamePane oldGm = gm;
+                      if (redrawTask.getValue() != null) {
+                        this.gm = redrawTask.getValue();
+                        if (oldGm != null) {
+                          CreateGameController.setFigures(oldGm.getFigures());
+                          showMapBox.getChildren().remove(oldGm);
+                          oldGm.destroyReferences();
+                        }
+                        StackPane.setAlignment(gm, Pos.CENTER);
+                        gm.maxWidthProperty().bind(showMapBox.widthProperty().multiply(0.8));
+                        gm.maxHeightProperty().bind(showMapBox.heightProperty().multiply(0.8));
+                        gm.enableBaseColors(this);
+                        showMapBox.getChildren().add(gm);
+
+                        Text text = new Text("queued gs: " + ClientStorage.getMainClient().queuedGameStates());
+                        if (oldText != null) showMapBox.getChildren().remove(oldText);
+                        if(ClientStorage.getMainClient().queuedGameStates() > 0) {
+                          showMapBox.getChildren().add(text);
+                          oldText = text;
+                        }
+
                       }
-                      StackPane.setAlignment(gm, Pos.CENTER);
-                      gm.maxWidthProperty().bind(showMapBox.widthProperty().multiply(0.8));
-                      gm.maxHeightProperty().bind(showMapBox.heightProperty().multiply(0.8));
-                      gm.enableBaseColors(this);
-                      showMapBox.getChildren().add(gm);
 
-                      ///////////////
-                      //  TEST CODE
-                      Text text = new Text("queued gs: " + mainClient.queuedGameStates());
-                      if (oldText != null) showMapBox.getChildren().remove(oldText);
-                      if(mainClient.queuedGameStates() > 0) {
-                        showMapBox.getChildren().add(text);
-                        oldText = text;
+                      // update the giveUp button and the clickable pieces
+                      Client active = isALocalClientsTurn();
+                      if (active != null && !(active instanceof AIClient)) {
+                        MoveVisualizer.initializeGame(gm, active);
                       }
-                      // END OF TEST CODE
-                      ///////////////////// TODO
+                      // Update the "it is your turn" label
+                      PlayGameScreenV2.this.setTeamTurn();
 
+                      schedulerLock = true;
+                      timeToShowGameState.add(
+                          System.currentTimeMillis() - redrawTask.getStartTimeMillis());
                     }
-
-                    // update the giveUp button and the clickable pieces
-                    Client active = isALocalClientsTurn();
-                    if (active != null && !(active instanceof AIClient)) {
-                      MoveVisualizer.initializeGame(gm, active);
-                    }
-                    // Update the "it is your turn" label
-                    PlayGameScreenV2.this.setTeamTurn();
-
-                    schedulerLock = true;
-                    timeToShowGameState.add(
-                        System.currentTimeMillis() - redrawTask.getStartTimeMillis());
                   });
             });
       }
     }
   }
-
-  ///////////////
-  //  TEST CODE
   Text oldText;
-  // END OF TEST CODE
-  ///////////////////// TODO
 
   /**
    * A Task to generate the new GamePane for the UI, so it does not happen in javaFX main Thread.
@@ -394,7 +385,7 @@ public class PlayGameScreenV2 extends Scene {
       
       GamePane gp = null;
       if (toDraw != null) {
-        if (!mainClient.isGameMoveTimeLimited()) {
+        if (!ClientStorage.getMainClient().isGameMoveTimeLimited()) {
           noMoveTimeLimit.reset();
         }
         gp = createGamePane(toDraw);
@@ -416,16 +407,16 @@ public class PlayGameScreenV2 extends Scene {
    * @author sistumpf
    */
   private void checkGameOver() {
-    if (mainClient.isGameOver()) {
+    if (ClientStorage.getMainClient().isGameOver()) {
       if (giveUpPanimation == null) {
         giveUpButton.setDisable(true);
         giveUpPanimation = new PointAnimation(giveUpButton, "", "Give up", 7, 175);
         giveUpPanimation.start();
       }
       
-      if (mainClient.queuedGameStates() <= 0) {
+      if (ClientStorage.getMainClient().queuedGameStates() <= 0) {
         giveUpPanimation.interrupt();
-        String[] winners = mainClient.getWinners();
+        String[] winners = ClientStorage.getMainClient().getWinners();
         Platform.runLater(
             () -> {
               PopupCreatorGameOver gameOverPop = new PopupCreatorGameOver(this, root, hsc);
@@ -461,12 +452,12 @@ public class PlayGameScreenV2 extends Scene {
   private Client isALocalClientsTurn() {
     Client isMyTurn = null;
     if (isRemote) {
-      if (mainClient.isItMyTurn()) {
-        isMyTurn = mainClient;
+      if (ClientStorage.getMainClient().isItMyTurn()) {
+        isMyTurn = ClientStorage.getMainClient();
       }
     } else {
       // check for human clients
-      for (Client local : CreateGameController.getLocalHumanClients()) {
+      for (Client local : ClientStorage.getLocalHumanClients()) {
         if (local.isItMyTurn()) {
           isMyTurn = local;
           break;
@@ -474,11 +465,11 @@ public class PlayGameScreenV2 extends Scene {
       }
       // check for AI clients
       if (isMyTurn == null)
-        for (Client local : CreateGameController.getLocalAIClients()) {
+        for (Client local : ClientStorage.getLocalAIClients()) {
           if (local.isItMyTurn()) {
             isMyTurn = local;
             break;
-          } // TODO
+          }
         }
     }
     disableGiveUpButton(isMyTurn == null);
@@ -584,16 +575,16 @@ public class PlayGameScreenV2 extends Scene {
   public void setTeamTurn() {
     boolean onelocal = false;
     captureLoadingLabel.getChildren().clear();
-    if (!mainClient.isGameOver()) {
-      if (isRemote && !mainClient.isGameOver()) {
-        if (mainClient.isItMyTurn() && !(mainClient instanceof AIClient)) {
+    if (!ClientStorage.getMainClient().isGameOver()) {
+      if (isRemote && !ClientStorage.getMainClient().isGameOver()) {
+        if (ClientStorage.getMainClient().isItMyTurn() && !(ClientStorage.getMainClient() instanceof AIClient)) {
           captureLoadingLabel.getChildren().add(showYourTurnBox());
 
         } else {
           captureLoadingLabel.getChildren().add(showWaitingBox());
         }
-      } else if (!mainClient.isGameOver()) {
-        for (Client local : CreateGameController.getLocalHumanClients()) {
+      } else if (!ClientStorage.getMainClient().isGameOver()) {
+        for (Client local : ClientStorage.getLocalHumanClients()) {
           if (local.isItMyTurn()) {
             captureLoadingLabel.getChildren().add(showYourTurnBox());
             onelocal = true;
@@ -657,7 +648,7 @@ public class PlayGameScreenV2 extends Scene {
         Constants.UIupdateTime > median
             ? Constants.UIupdateTime
             : ((median - Constants.UIupdateTime) / 1.5) + Constants.UIupdateTime;
-    float time = (float) (Math.round((mainClient.queuedGameStates() * multiplier) / 100) / 10.);
+    float time = (float) (Math.round((ClientStorage.getMainClient().queuedGameStates() * multiplier) / 100) / 10.);
 
     //    System.out.println("multiplier: " + multiplier + ", median: " + median + ", time: " +
     // time);
@@ -704,9 +695,9 @@ public class PlayGameScreenV2 extends Scene {
     timeline.setCycleCount(Timeline.INDEFINITE);
     timeline.play();
     VBox layout = new VBox();
-    if (mainClient.getCurrentTeamTurn() != -1) {
-      String teamString = mainClient.getAllTeamNames()[mainClient.getCurrentTeamTurn()];
-      teamString += " (" + mainClient.getCurrentTeamTurn() + ")";
+    if (ClientStorage.getMainClient().getCurrentTeamTurn() != -1) {
+      String teamString = ClientStorage.getMainClient().getAllTeamNames()[ClientStorage.getMainClient().getCurrentTeamTurn()];
+      teamString += " (" + ClientStorage.getMainClient().getCurrentTeamTurn() + ")";
       Label teamname = new Label(teamString);
       teamname.prefWidthProperty().bind(this.widthProperty().multiply(0.2));
       teamname.fontProperty().bind(waitigFontSize);
@@ -716,7 +707,7 @@ public class PlayGameScreenV2 extends Scene {
             .textFillProperty()
             .bind(
                 CreateGameController.getColors()
-                    .get(String.valueOf(mainClient.getCurrentTeamTurn())));
+                    .get(String.valueOf(ClientStorage.getMainClient().getCurrentTeamTurn())));
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -726,7 +717,7 @@ public class PlayGameScreenV2 extends Scene {
           .textFillProperty()
           .bind(
               CreateGameController.getColors()
-                  .get(String.valueOf(mainClient.getCurrentTeamTurn())));
+                  .get(String.valueOf(ClientStorage.getMainClient().getCurrentTeamTurn())));
       layout.getChildren().add(teamname);
       layout.getChildren().addAll(status);
     }
@@ -743,8 +734,8 @@ public class PlayGameScreenV2 extends Scene {
     Label status = new Label("It's your turn!");
     status.getStyleClass().add("spinner-des-label");
     VBox layout = new VBox();
-    String teamString = mainClient.getAllTeamNames()[mainClient.getCurrentTeamTurn()];
-    teamString += " (" + mainClient.getCurrentTeamTurn() + ")";
+    String teamString = ClientStorage.getMainClient().getAllTeamNames()[ClientStorage.getMainClient().getCurrentTeamTurn()];
+    teamString += " (" + ClientStorage.getMainClient().getCurrentTeamTurn() + ")";
     Label teamname = new Label(teamString);
     teamname.prefWidthProperty().bind(this.widthProperty().multiply(0.2));
     teamname.fontProperty().bind(waitigFontSize);
@@ -752,7 +743,7 @@ public class PlayGameScreenV2 extends Scene {
     teamname
         .textFillProperty()
         .bind(
-            CreateGameController.getColors().get(String.valueOf(mainClient.getCurrentTeamTurn())));
+            CreateGameController.getColors().get(String.valueOf(ClientStorage.getMainClient().getCurrentTeamTurn())));
     layout.prefWidthProperty().bind(this.widthProperty().multiply(0.17));
     status.fontProperty().bind(waitigFontSize);
     status.setAlignment(Pos.CENTER);
@@ -760,7 +751,7 @@ public class PlayGameScreenV2 extends Scene {
     status
         .textFillProperty()
         .bind(
-            CreateGameController.getColors().get(String.valueOf(mainClient.getCurrentTeamTurn())));
+            CreateGameController.getColors().get(String.valueOf(ClientStorage.getMainClient().getCurrentTeamTurn())));
     layout.getChildren().add(teamname);
     layout.getChildren().addAll(status);
     return layout;
@@ -784,12 +775,12 @@ public class PlayGameScreenV2 extends Scene {
     giveUpButton.setOnAction(
         e -> {
           ArrayList<Client> allClients = new ArrayList<Client>();
-          allClients.addAll(CreateGameController.getLocalHumanClients());
-          allClients.addAll(CreateGameController.getLocalAIClients());
+          allClients.addAll(ClientStorage.getLocalHumanClients());
+          allClients.addAll(ClientStorage.getLocalAIClients());
           for (Client client : allClients) {
             if (client.isItMyTurn()) {
               client.giveUp();
-              updateAllClients();
+              ClientStorage.updateAllClients();
               updateUI(true);
               break;
             }
@@ -799,15 +790,6 @@ public class PlayGameScreenV2 extends Scene {
     return giveUpBox;
   }
 
-  /**
-   * Pulls Data for all local AI and Human clients.
-   *
-   * @author sistumpf
-   */
-  private void updateAllClients() {
-    for (Client client : CreateGameController.getLocalHumanClients()) client.pullData();
-    for (Client client : CreateGameController.getLocalAIClients()) client.pullData();
-  }
 
   // **************************************************
   // End of current team turn visualization methods
@@ -998,17 +980,17 @@ public class PlayGameScreenV2 extends Scene {
         try {
           Platform.runLater(
               () -> {
-                if (mainClient.isGameMoveTimeLimited()) {
-                  moveTimeLimit.setText(formatTime(mainClient.getRemainingMoveTimeInSeconds()));
-                  if (mainClient.getRemainingMoveTimeInSeconds() < 10) {
+                if (ClientStorage.getMainClient().isGameMoveTimeLimited()) {
+                  moveTimeLimit.setText(formatTime(ClientStorage.getMainClient().getRemainingMoveTimeInSeconds()));
+                  if (ClientStorage.getMainClient().getRemainingMoveTimeInSeconds() < 10) {
                     moveTimeLimit.setTextFill(Color.RED);
                   } else {
                     moveTimeLimit.setTextFill(Color.GOLD);
                   }
                 }
-                if (mainClient.isGameTimeLimited()) {
-                  gameTimeLimit.setText(formatTime(mainClient.getRemainingGameTimeInSeconds()));
-                  if (mainClient.getRemainingGameTimeInSeconds() < 60) {
+                if (ClientStorage.getMainClient().isGameTimeLimited()) {
+                  gameTimeLimit.setText(formatTime(ClientStorage.getMainClient().getRemainingGameTimeInSeconds()));
+                  if (ClientStorage.getMainClient().getRemainingGameTimeInSeconds() < 60) {
                     gameTimeLimit.setTextFill(Color.RED);
                   }
                 }

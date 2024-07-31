@@ -7,7 +7,6 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
-import org.ctf.shared.state.data.exceptions.GameOver;
 
 /**
  * This class requests a GameState from the server, uses one of the implemented
@@ -27,6 +26,8 @@ public class AIController {
   private boolean backgroundCalc;
   private boolean bctLock;
   private BackgroundCalculatorThread bct;
+  
+  private boolean alreadyshutdown = false;
   
   
   /**
@@ -101,7 +102,6 @@ public class AIController {
     interruptBct();
     
     if (gameState.getCurrentTeam() < 0) {
-      this.setActive(false);
       shutDown();
       return false;
     } else {
@@ -186,12 +186,25 @@ public class AIController {
     }
   }
 
+  /**
+   * Shuts down this AI Controller.
+   * To start it again, a new one must be created.
+   * Interrupts the background calculator Thread, the MCTS calculation and sets MCTS to null.
+   * Calls the Garbage Collector.
+   */
   public void shutDown() {
-    System.out.println(this.ai +"-AI shut down. Collecting Garbage ...");
-    interruptBct();
-    System.gc();
-    //TODO
-//    throw new GameOver();
+    if(!alreadyshutdown) {
+      alreadyshutdown = true;
+      System.out.println(this.ai +"-AI shut down. Collecting Garbage ...");
+      this.setActive(false);
+      interruptBct();
+      if(this.mcts != null) {
+        this.mcts.shutdown();
+        this.mcts = null;
+      }
+      //TODO
+      System.gc();
+    }
   }
 
   /**
@@ -259,7 +272,7 @@ public class AIController {
   private void interruptBct() {
     if(bct != null) {
       bct.interrupt();
-      while(bct.getMcts() != null)
+      while(bct != null && bct.getMcts() != null)
         sleep(1);
       bct = null;
     }

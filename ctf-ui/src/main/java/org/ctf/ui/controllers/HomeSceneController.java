@@ -29,6 +29,7 @@ import org.ctf.ui.hostGame.WaitingScene;
 import org.ctf.ui.remoteGame.JoinScene;
 import org.ctf.ui.remoteGame.WaveCollapseThread;
 import org.ctf.ui.threads.ResizeFixThread;
+import data.ClientStorage;
 
 /**
  * Main controller of the application. This Class controls what happens when clicking the buttons on
@@ -53,7 +54,6 @@ public class HomeSceneController {
   CreateGameScreenV2 createGameScreenV2;
   PlayGameScreenV2 playGameScreenV2;
   WaitingScene waitingScene;
-  Client mainClient;
   String teamName;
   String teamTurn;
   public ObjectProperty<Color> lastcolor;
@@ -133,10 +133,9 @@ public class HomeSceneController {
    *
    * @author sistumpf
    * @param stage
-   * @param mainClient
    * @param isRemote
    */
-  public void switchToPlayGameScene(Stage stage, Client mainClient, boolean isRemote) {
+  public void switchToPlayGameScene(Stage stage, boolean isRemote) {
     CheatboardListener.setLastScene(stage.getScene());
     // delete last grid
     File grid = new File(Constants.toUIPictures + File.separator + "grid.png");
@@ -144,11 +143,11 @@ public class HomeSceneController {
 
     // update main client if necessary
     // TODO
-    for (int i = 0; i < mainClient.getTeams().length; i++) {
-      if (mainClient.getTeams()[i] == null) {
+    for (int i = 0; i < ClientStorage.getMainClient().getTeams().length; i++) {
+      if (ClientStorage.getMainClient().getTeams()[i] == null) {
         System.out.println("team " + i + " is null??");
         //        while(mainClient.getTeams()[i] == null)
-        mainClient.pullData();
+        ClientStorage.getMainClient().pullData();
       }
     }
 
@@ -157,18 +156,17 @@ public class HomeSceneController {
             this,
             stage.getWidth() - App.offsetWidth,
             stage.getHeight() - App.offsetHeight,
-            mainClient,
             isRemote);
     stage.setScene(playGameScreenV2);
 
     if (isRemote) {
-      CreateGameController.initColorHashMapForRemote(mainClient);
+      CreateGameController.initColorHashMapForRemote(ClientStorage.getMainClient());
     } else {
       CreateGameController.overWriteDefaultWithServerColors();
     }
 
     // generate new grid
-    new WaveCollapseThread(mainClient.getGrid(), this).start();
+    new WaveCollapseThread(ClientStorage.getMainClient().getGrid(), this).start();
   }
 
   public void switchToCreateGameScene(Stage stage) {
@@ -279,13 +277,5 @@ public class HomeSceneController {
 
   public void setServerManager(ServerManager serverManager) {
     this.serverManager = serverManager;
-  }
-
-  public void setMainClient(Client mainClient) {
-    this.mainClient = mainClient;
-  }
-
-  public Client getMainClient() {
-    return mainClient;
   }
 }

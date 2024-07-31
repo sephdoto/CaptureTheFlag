@@ -862,8 +862,13 @@ public class Client implements GameClientInterface {
       scheduler.schedule(new Runnable() {
         @Override
         public void run() {
-          moveTimeLeft = comm.getCurrentSessionState(currentServer).getRemainingMoveTimeInSeconds();
-          startMoveTimeThread();
+          GameSessionResponse session = comm.getCurrentSessionState(currentServer);
+          moveTimeLeft = session.getRemainingMoveTimeInSeconds();
+          if(session.isGameOver()) {
+            ((AIClient) Client.this).shutdown();
+          } else {
+            startMoveTimeThread();
+          }
         }
       }
       , Constants.UIupdateTime, TimeUnit.MILLISECONDS);
@@ -936,8 +941,8 @@ public class Client implements GameClientInterface {
                   throw new Error("Something went wrong in the Client Thread");
                 }
               }
-
-              analyzer.writeOut();
+              if(enableLogging)
+                analyzer.writeOut();
             });
     gameThread.start();
   }

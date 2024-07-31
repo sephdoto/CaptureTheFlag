@@ -9,6 +9,7 @@ import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.hostGame.CreateGameController;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
+import data.ClientCreator;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -156,25 +157,29 @@ public class PopUpCreatorEnterTeamName {
         CreateGameController.setLastTeamName(teamName);
 
         if (isMain && !isAi) {
-          CreateGameController.createHumanClient(teamName, true);
+          ClientCreator.createHumanClient(
+              isMain, teamName, false, CreateGameController.getServerIP(), CreateGameController.getPort(), CreateGameController.getServerManager().getGameSessionID());
           hsc.switchToWaitGameScene(App.getStage());
           CreateGameController.setLasttype("HUMAN");
         }
         if (!isMain && !isAi) {
-          CreateGameController.createHumanClient(teamName, true);
+          ClientCreator.createHumanClient(
+              isMain, teamName, false, CreateGameController.getServerIP(), CreateGameController.getPort(), CreateGameController.getServerManager().getGameSessionID());
           root.getChildren().remove(enterNamePopUp);
           CreateGameController.setLasttype("HUMAN");
 
         }
         if (isMain && isAi) {
-          CreateGameController.createAiClient(teamName, aitype, config, isMain);
+          ClientCreator.createAiClient(
+              isMain, teamName, false, CreateGameController.getServerIP(), CreateGameController.getPort(), CreateGameController.getServerManager().getGameSessionID(), aitype, config);
           hsc.switchToWaitGameScene(App.getStage());
           CreateGameController.setLasttype("AI");
           CreateGameController.setLastAitype(aitype);
 
         }
         if (!isMain && isAi) {
-          CreateGameController.createAiClient(teamName, aitype, config, isMain);
+          ClientCreator.createAiClient(
+              isMain, teamName, false, CreateGameController.getServerIP(), CreateGameController.getPort(), CreateGameController.getServerManager().getGameSessionID(), aitype, config);
           root.getChildren().remove(enterNamePopUp);
           CreateGameController.setLasttype("AI");
           CreateGameController.setLastAitype(aitype);
