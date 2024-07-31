@@ -134,11 +134,25 @@ public class CostumFigurePain extends Pane {
    * @author Manuel Krakowski
    */
   public void performSelectClick() {
-    SoundController.playSound(piece.getDescription().getType(), SoundType.SELECT);
-    showPieceInformationWhenClicked();
-    MoveVisualizer.setCurrent(CostumFigurePain.this);
-    MoveVisualizer.showPossibleMoves();
-    parent.showSelected();
+    if(MoveVisualizer.getCurrent() != null &&
+        MoveVisualizer.getCurrent() == this) {
+      performDeselectClick();
+    } else {
+      SoundController.playSound(piece.getDescription().getType(), SoundType.SELECT);
+      showPieceInformationWhenClicked();
+      MoveVisualizer.setCurrent(CostumFigurePain.this);
+      MoveVisualizer.showPossibleMoves();
+      parent.showSelected();
+    }
+  }
+  
+  /**
+   * Deselects a Piece, the sound gets played in MoveVisualizer
+   * 
+   * @author sistumpf
+   */
+  public void performDeselectClick() {
+    MoveVisualizer.deselectFigure();
   }
 
   /**

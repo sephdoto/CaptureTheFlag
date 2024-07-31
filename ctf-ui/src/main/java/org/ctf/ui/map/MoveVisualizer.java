@@ -4,12 +4,14 @@ import configs.Dialogs;
 import java.util.ArrayList;
 import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.client.Client;
+import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.exceptions.ForbiddenMove;
 import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
+import org.ctf.ui.controllers.SoundController;
 
 /**
  * Visualizes and handles the possible moves of the currently selected piece
@@ -132,6 +134,7 @@ public class MoveVisualizer {
     for (BaseRep b : cb.getBases().values()) {
       b.setUnattacble();
     }
+    cb.showLastMove();
     for (BackgroundCellV2 c : cb.getCells().values()) {
       for (int[] pos : possibleMoves) {
         if (c.getX() == pos[0] && c.getY() == pos[1]) {
@@ -158,6 +161,10 @@ public class MoveVisualizer {
   public static void deselectFigure() {
     if (cb != null) {
       for (BackgroundCellV2 c : cb.getCells().values()) {
+        if(c.getStyle().equals("-fx-background-color: transparent;" + "-fx-border-color: black; "
+        + "-fx-border-width: 1.2px ")) {
+          SoundController.playSound(c.getChild().getPiece().getDescription().getType(), SoundType.DESELECT);
+        }
         c.deselect();
       }
       for (CostumFigurePain cf : cb.getFigures().values()) {
@@ -165,6 +172,7 @@ public class MoveVisualizer {
       }
       currentPlayer = null;
     }
+    cb.showLastMove();
   }
 
   public static CostumFigurePain getCurrent() {

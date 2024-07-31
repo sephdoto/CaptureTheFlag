@@ -162,7 +162,16 @@ public class BackgroundCellV2 extends Pane {
    * @author Manuel Krakowski
    */
   public void showAttackable() {
-    this.setStyle("-fx-background-color: rgb(255, 0, 0, 0.2);" + "-fx-border-color: red; "
+    int r=255;
+    int g=0;
+    int b=0;
+    if(getStyle().contains("rgb")) {
+      String[] rgb = getStyle().substring(getStyle().indexOf("(") +1,getStyle().indexOf(")")).split(",");
+//      r = Integer.parseInt(rgb[0]);
+      g = Integer.parseInt(rgb[1]);
+      b = Integer.parseInt(rgb[2]);
+    }
+    this.setStyle("-fx-background-color: rgb(" + r + "," + g + "," + b + ",0.2);" + "-fx-border-color: red; "
         + "-fx-border-width: 1.2px");
   }
 
