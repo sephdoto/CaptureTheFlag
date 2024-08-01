@@ -9,6 +9,7 @@ import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.controllers.SettingsSetter;
 import org.ctf.ui.customobjects.MovementVisual;
 import org.ctf.ui.customobjects.PopUpPane;
+import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.editor.EditorScene;
 import org.ctf.ui.editor.TemplateEngine;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
@@ -405,7 +406,7 @@ public class ComponentCreator {
    * @return {@link PopUpPane} providing the option to load AI configurations.
    */
   public static PopUpPane createAIWindow(PopUpCreator popUpCreator) {
-    PopUpPane popUp = new PopUpPane(App.getStage().getScene(), 0.6, 0.4, 0.95);
+    PopUpPane popUp = new PopUpPane(SceneHandler.getMainStage().getScene(), 0.6, 0.4, 0.95);
     VBox vbox = new VBox();
     vbox.setAlignment(Pos.TOP_CENTER);
     vbox.setPadding(new Insets(10));

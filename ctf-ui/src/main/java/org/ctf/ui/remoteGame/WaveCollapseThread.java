@@ -4,6 +4,7 @@ import java.io.File;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.wave.WaveFunctionCollapse;
 import org.ctf.ui.controllers.HomeSceneController;
+import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.hostGame.PlayGameScreenV2;
 import javafx.application.Platform;
 
@@ -14,15 +15,16 @@ import javafx.application.Platform;
  * consuming which massively delay the initialization of the {@link PlayGameScreenV2}. When finished
  * it updates the {@link PlayGameScreenV2}.
  * 
+ * @author sistumpf
  * @author aniemesc
  */
 public class WaveCollapseThread extends Thread {
   private String[][] grid;
-  private HomeSceneController hsc;
+  PlayGameScreenV2 changeBG;
 
-  public WaveCollapseThread(String[][] grid, HomeSceneController hsc) {
+  public WaveCollapseThread(PlayGameScreenV2 changeBG, String[][] grid) {
     this.grid = grid;
-    this.hsc = hsc;
+    this.changeBG = changeBG;
   }
 
   /**
@@ -41,7 +43,11 @@ public class WaveCollapseThread extends Thread {
         e.printStackTrace();
       }
     Platform.runLater(() -> {
-      hsc.getPlayGameScreenV2().UpdateLeftSide();
+      try {
+        changeBG.UpdateLeftSide();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     });
   }
 }

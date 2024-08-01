@@ -5,11 +5,10 @@ import org.ctf.shared.constants.Enums;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.App;
 import org.ctf.ui.creators.ComponentCreator;
+import org.ctf.ui.data.SceneHandler;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import org.jnativehook.keyboard.NativeKeyAdapter;
 import org.jnativehook.NativeHookException;
@@ -26,9 +25,6 @@ public class CheatboardListener extends NativeKeyAdapter {
   ArrayList<ArrayList<Integer>> cheatCodes;
   int pivot;
   ArrayList<ArrayList<Integer>> pivotList;
-  static Runnable settings;
-  static HomeSceneController hsc;
-  static Scene lastScene;
 
   /**
    * Initializes the cheat codes, registers the key logger.
@@ -274,11 +270,13 @@ public class CheatboardListener extends NativeKeyAdapter {
     } else if (match == cheatCodes.get(2)) {
       System.out.println("reimport resources");
     } else if (match == cheatCodes.get(3)) {    // open settings
-      if(settings != null)
-        Platform.runLater(() -> {
-          SoundController.playSound("Button", SoundType.MISC);
-          settings.run();
-        });
+      Platform.runLater(() -> {
+        SoundController.playSound("Button", SoundType.MISC);
+        //          settings.run();
+
+        ((StackPane)SceneHandler.getCurrentScene().getRoot()).getChildren().add(new ComponentCreator(SceneHandler.getCurrentScene()).createSettingsWindow(((StackPane)SceneHandler.getCurrentScene().getRoot())));
+
+      });
     } else if (match == cheatCodes.get(4)) {    // mute music and sounds
       MusicPlayer.mp.setVolume(0);
       Constants.musicVolume = 0;
@@ -301,8 +299,7 @@ public class CheatboardListener extends NativeKeyAdapter {
       Platform.runLater(
           new Runnable() {
             public void run(){
-              setSettings((StackPane) hsc.getStage().getScene().getRoot(), hsc.getStage().getScene());
-              hsc.switchToAnalyzerScene(hsc.getStage());
+              SceneHandler.switchToAnalyzerScene();
             }
           }
           );
@@ -310,8 +307,7 @@ public class CheatboardListener extends NativeKeyAdapter {
       Platform.runLater(
           new Runnable() {
             public void run(){
-              hsc.switchtoHomeScreen(new ActionEvent());
-              setSettings((StackPane) hsc.getStage().getScene().getRoot(), hsc.getStage().getScene());
+              SceneHandler.switchToHomeScreen();
             }
           }
           );
@@ -319,8 +315,7 @@ public class CheatboardListener extends NativeKeyAdapter {
       Platform.runLater(
           new Runnable() {
             public void run(){
-              hsc.switchToMapEditorScene(hsc.getStage());
-              setSettings((StackPane) hsc.getStage().getScene().getRoot(), hsc.getStage().getScene());
+              SceneHandler.switchToMapEditorScene();
             }
           }
           );
@@ -328,8 +323,7 @@ public class CheatboardListener extends NativeKeyAdapter {
       Platform.runLater(
           new Runnable() {
             public void run(){
-              hsc.switchToCreateGameScene(hsc.getStage());
-              setSettings((StackPane) hsc.getStage().getScene().getRoot(), hsc.getStage().getScene());
+              SceneHandler.switchToCreateGameScene();
             }
           }
           );
@@ -337,8 +331,7 @@ public class CheatboardListener extends NativeKeyAdapter {
       Platform.runLater(
           new Runnable() {
             public void run(){
-              hsc.switchToJoinScene(hsc.getStage());
-              setSettings((StackPane) hsc.getStage().getScene().getRoot(), hsc.getStage().getScene());
+              SceneHandler.switchToJoinScene();
             }
           }
           );
@@ -346,46 +339,12 @@ public class CheatboardListener extends NativeKeyAdapter {
       Platform.runLater(
           new Runnable() {
             public void run(){
-              if(lastScene != null) {
-                Scene scene = lastScene;
-                lastScene = hsc.getStage().getScene();
-                hsc.getStage().setScene(scene);
-                setSettings((StackPane) hsc.getStage().getScene().getRoot(), hsc.getStage().getScene());
+              if(SceneHandler.getLastScene() != null) {
+                SceneHandler.switchCurrentScene(SceneHandler.getLastScene());
               }
             }
           }
           );
     }
-  }
-
-  /**
-   * Set settings so Settings Screen can be opened via typing settings
-   * 
-   * @param root StackPane
-   * @param startScene Scene
-   */
-  public static void setSettings(StackPane root, Scene scene) {
-    CheatboardListener.settings = () -> {
-      SoundController.playSound("Button", SoundType.MISC);
-      root.getChildren().add(new ComponentCreator(scene).createSettingsWindow(root));
-    };
-  }
-
-  /**
-   * Sets the HomeSceneController to operate on
-   * 
-   * @param hsc the HomeSceneController
-   */
-  public static void setHomeSceneController(HomeSceneController hsc) {
-    CheatboardListener.hsc = hsc;
-  }
-  
-  /**
-   * Sets the last Scene to switch back to
-   * 
-   * @param scene the last Scene
-   */
-  public static void setLastScene(Scene scene) {
-    CheatboardListener.lastScene = scene;
   }
 }

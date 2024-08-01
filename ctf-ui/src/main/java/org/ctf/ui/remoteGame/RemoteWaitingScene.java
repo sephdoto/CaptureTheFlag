@@ -9,6 +9,7 @@ import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.ui.App;
 import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
+import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.hostGame.PlayGameScreenV2;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
@@ -35,7 +36,6 @@ import javafx.scene.text.Text;
 public class RemoteWaitingScene extends Scene {
   private StackPane root;
   private Text text;
-  private HomeSceneController hsc;
   private ServerManager serverManager;
 
   /**
@@ -48,10 +48,8 @@ public class RemoteWaitingScene extends Scene {
    * @param hsc - {@link HomeSceneController}
    * @param serverManager - {@link ServerManager}
    */
-  public RemoteWaitingScene(double width, double height, HomeSceneController hsc,
-      ServerManager serverManager) {
+  public RemoteWaitingScene(double width, double height, ServerManager serverManager) {
     super(new StackPane(), width, height);
-    this.hsc = hsc;
     this.serverManager = serverManager;
     root = (StackPane) this.getRoot();
     try {
@@ -92,8 +90,8 @@ public class RemoteWaitingScene extends Scene {
     text.getStyleClass().add("custom-info-label");
     text.fontProperty()
         .bind(Bindings.createObjectBinding(
-            () -> Font.font("Century Gothic", App.getStage().getWidth() / 50),
-            App.getStage().widthProperty()));
+            () -> Font.font("Century Gothic", SceneHandler.getMainStage().getWidth() / 50),
+            SceneHandler.getMainStage().widthProperty()));
 
     StackPane wrapper = new StackPane();
     wrapper.getStyleClass().add("loading-pane");
@@ -107,10 +105,6 @@ public class RemoteWaitingScene extends Scene {
     // root.getChildren().add(text);
     root.getChildren().add(wrapper);
     root.getChildren().add(mainBox);
-  }
-
-  public HomeSceneController getHsc() {
-    return hsc;
   }
 
   public ServerManager getServerManager() {

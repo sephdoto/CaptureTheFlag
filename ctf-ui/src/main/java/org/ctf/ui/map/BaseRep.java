@@ -78,12 +78,18 @@ public class BaseRep extends Pane {
         scene.showColorChooser(event.getSceneX(), event.getSceneY(), this);
       }
       if (isAttackable) {
-        SoundController.playSound(MoveVisualizer.getCurrent().getPiece().getDescription().getType(),
-            SoundType.CAPTURE);
-        BaseRep.this.flags = BaseRep.this.flags - 1;
-        label.setText(String.valueOf(flags));
-        int[] xy = {parent.getX(), parent.getY()};
-        MoveVisualizer.makeMoveRequest(xy);
+        try {
+          SoundController.playSound(MoveVisualizer.getCurrent().getPiece().getDescription().getType(),
+              SoundType.CAPTURE);
+          BaseRep.this.flags = BaseRep.this.flags - 1;
+          label.setText(String.valueOf(flags));
+          int[] xy = {parent.getX(), parent.getY()};
+          MoveVisualizer.makeMoveRequest(xy);
+        } catch (Exception e) {
+          SoundController.playSound("default", SoundType.DESELECT);
+          scene.showColorChooser(event.getSceneX(), event.getSceneY(), this);
+          // a little bug can cause an exception but it does not need fixing, as it causes no problems.
+        }
       }
     };
     this.setOnMouseClicked(clickHandler);

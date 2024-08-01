@@ -8,8 +8,9 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.ui.App;
 import org.ctf.ui.controllers.CheatboardListener;
+import org.ctf.ui.data.ClientStorage;
+import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.hostGame.PlayGameScreenV2;
-import data.ClientStorage;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.layout.StackPane;
@@ -67,7 +68,7 @@ public class RemoteWaitingThread extends Thread {
             isactive = false;
             Thread.sleep(100);
             Platform.runLater(() -> {
-              rws.getHsc().switchToPlayGameScene(App.getStage(), true);
+              SceneHandler.switchToPlayGameScene(true);
             });
           }
         } catch (SessionNotFound e) {
@@ -86,8 +87,7 @@ public class RemoteWaitingThread extends Thread {
           Platform.runLater(
               new Runnable() {
                 public void run(){
-                  rws.getHsc().switchtoHomeScreen(new ActionEvent());
-                  CheatboardListener.setSettings((StackPane) rws.getHsc().getStage().getScene().getRoot(), rws.getHsc().getStage().getScene());
+                  SceneHandler.switchToHomeScreen();
                 }
               }
               );

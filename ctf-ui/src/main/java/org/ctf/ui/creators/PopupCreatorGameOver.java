@@ -5,8 +5,9 @@ import org.ctf.ui.App;
 import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.customobjects.PopUpPane;
+import org.ctf.ui.data.ClientStorage;
+import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.hostGame.CreateGameController;
-import data.ClientStorage;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
@@ -46,7 +47,6 @@ public class PopupCreatorGameOver {
   private Scene scene;
   private StackPane root;
   private PopUpPane gameOverPopUp;
-  private HomeSceneController hsc;
 
   // Attributes to manage the font-sizes
   private ObjectProperty<Font> popUpLabel;
@@ -62,10 +62,9 @@ public class PopupCreatorGameOver {
  * @param root
  * @param hsc
  */
-  public PopupCreatorGameOver(Scene scene, StackPane root, HomeSceneController hsc) {
+  public PopupCreatorGameOver(Scene scene, StackPane root) {
     this.scene = scene;
     this.root = root;
-    this.hsc = hsc;
     popUpLabel = new SimpleObjectProperty<Font>(Font.font(scene.getWidth() / 30));
     leaveButtonText = new SimpleObjectProperty<Font>(Font.font(scene.getWidth() / 80));
     moreWinnerheader = new SimpleObjectProperty<Font>(Font.font(scene.getWidth() / 40));
@@ -302,7 +301,7 @@ public class PopupCreatorGameOver {
    */
   private void perfromPlayAgain(Button b) {
     b.setOnAction(e -> {
-      hsc.switchtoHomeScreen(e);
+      SceneHandler.switchToHomeScreen();
       CreateGameController.clearUsedNames();
       CreateGameController.clearColors();
     });
@@ -311,7 +310,7 @@ public class PopupCreatorGameOver {
 
   private void perfromAnalyseGame(Button b) {
     b.setOnAction(e -> {
-      hsc.switchToAnalyzerScene(App.getStage());
+      SceneHandler.switchToAnalyzerScene();
       CreateGameController.clearUsedNames();
       CreateGameController.clearColors();
 

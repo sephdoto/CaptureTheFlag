@@ -20,6 +20,8 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.ui.App;
+import org.ctf.ui.data.ClientStorage;
+import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.editor.EditorScene;
 import org.ctf.ui.gameAnalyzer.AiAnalyserNew;
 import org.ctf.ui.hostGame.CreateGameController;
@@ -29,7 +31,6 @@ import org.ctf.ui.hostGame.WaitingScene;
 import org.ctf.ui.remoteGame.JoinScene;
 import org.ctf.ui.remoteGame.WaveCollapseThread;
 import org.ctf.ui.threads.ResizeFixThread;
-import data.ClientStorage;
 
 /**
  * Main controller of the application. This Class controls what happens when clicking the buttons on
@@ -40,37 +41,16 @@ import data.ClientStorage;
  * @author aniemesc
  */
 public class HomeSceneController {
-  public PlayGameScreenV2 getPlayGameScreenV2() {
-    return playGameScreenV2;
-  }
-
-  private Stage stage;
   String port;
   String serverID;
   String sessionID;
   ServerManager serverManager;
   // TestThread t;
   MapTemplate template;
-  CreateGameScreenV2 createGameScreenV2;
-  PlayGameScreenV2 playGameScreenV2;
-  WaitingScene waitingScene;
   String teamName;
   String teamTurn;
   public ObjectProperty<Color> lastcolor;
   boolean mainClientIsHuman;
-
-  public void switchtoHomeScreen(ActionEvent e) {
-    CheatboardListener.setLastScene(stage.getScene());
-    Scene scene = App.getScene();
-    stage = App.getStage();
-    App.adjustHomescreen(stage.getScene().getWidth(), stage.getScene().getHeight());
-    stage.setScene(scene);
-    CheatboardListener.setSettings((StackPane) scene.getRoot(), scene);
-  }
-
-  public HomeSceneController(Stage stage) {
-    this.stage = stage;
-  }
 
   public void createGameSession() {
     System.out.println(serverID);
@@ -116,105 +96,6 @@ public class HomeSceneController {
     // playGameScreenV2.setTeamTurn(s);
   }
 
-  public void switchToWaitGameScene(Stage stage) {
-    CheatboardListener.setLastScene(stage.getScene());
-    CreateGameController.initColorHashMap();
-    waitingScene =
-        new WaitingScene(
-            this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight);
-    stage.setScene(waitingScene);
-    new ResizeFixThread(stage).start();
-  }
-
-  /**
-   * Switches to the PlayGameScene, calls the WaveCollapseThread to generate and change the
-   * background. Always calls the WaveCollapseThread, in case not our server is used to generate the
-   * GameState.
-   *
-   * @author sistumpf
-   * @param stage
-   * @param isRemote
-   */
-  public void switchToPlayGameScene(Stage stage, boolean isRemote) {
-    CheatboardListener.setLastScene(stage.getScene());
-    // delete last grid
-    File grid = new File(Constants.toUIPictures + File.separator + "grid.png");
-    grid.delete();
-
-    // update main client if necessary
-    // TODO
-    for (int i = 0; i < ClientStorage.getMainClient().getTeams().length; i++) {
-      if (ClientStorage.getMainClient().getTeams()[i] == null) {
-        System.out.println("team " + i + " is null??");
-        //        while(mainClient.getTeams()[i] == null)
-        ClientStorage.getMainClient().pullData();
-      }
-    }
-
-    playGameScreenV2 =
-        new PlayGameScreenV2(
-            this,
-            stage.getWidth() - App.offsetWidth,
-            stage.getHeight() - App.offsetHeight,
-            isRemote);
-    stage.setScene(playGameScreenV2);
-
-    if (isRemote) {
-      CreateGameController.initColorHashMapForRemote(ClientStorage.getMainClient());
-    } else {
-      CreateGameController.overWriteDefaultWithServerColors();
-    }
-
-    // generate new grid
-    new WaveCollapseThread(ClientStorage.getMainClient().getGrid(), this).start();
-  }
-
-  public void switchToCreateGameScene(Stage stage) {
-    CheatboardListener.setLastScene(stage.getScene());
-    createGameScreenV2 =
-        new CreateGameScreenV2(
-            this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight);
-    stage.setScene(createGameScreenV2);
-    new ResizeFixThread(stage).start();
-  }
-
-  /**
-   * Switches to a new instance of {@link JoinScene}.
-   *
-   * @author aniemesc
-   * @param stage - Main stage of the application
-   */
-  public void switchToJoinScene(Stage stage) {
-    CheatboardListener.setLastScene(stage.getScene());
-    stage.setScene(
-        new JoinScene(
-            this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight));
-    new ResizeFixThread(stage).start();
-  }
-
-  public void switchToAnalyzerScene(Stage stage) {
-    CheatboardListener.setLastScene(stage.getScene());
-    AiAnalyserNew scene = new AiAnalyserNew(this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight);
-    if(scene.switched) {
-      stage.setScene(scene);
-      new ResizeFixThread(stage).start();
-    }
-  }
-
-  /**
-   * Switches to a new instance of {@link EditorScene}.
-   *
-   * @author aniemesc
-   * @param stage - Main stage of the application
-   */
-  public void switchToMapEditorScene(Stage stage) {
-    CheatboardListener.setLastScene(stage.getScene());
-    stage.setScene(
-        new EditorScene(
-            this, stage.getWidth() - App.offsetWidth, stage.getHeight() - App.offsetHeight));
-    new ResizeFixThread(stage).start();
-  }
-
   public MapTemplate getTemplate() {
     return template;
   }
@@ -225,10 +106,6 @@ public class HomeSceneController {
 
   public int getMaxNumberofTemas() {
     return template.getTeams();
-  }
-
-  public Stage getStage() {
-    return stage;
   }
 
   public String getPort() {

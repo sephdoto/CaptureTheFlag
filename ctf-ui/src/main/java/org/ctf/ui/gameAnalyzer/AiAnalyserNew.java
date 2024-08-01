@@ -18,17 +18,16 @@ import org.ctf.shared.gameanalyzer.NeedMoreTimeException;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
-import org.ctf.ui.App;
 import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.SoundController;
+import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.map.GamePane;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -55,10 +54,6 @@ import javafx.util.Duration;
  * @author Manuel Krakowski
  */
 public class AiAnalyserNew extends Scene {
-
-  // Controller which is used to switch to the play-game-scene
-  private HomeSceneController hsc;
-
   // Containers and Labels which need to be accessed from different methods
   private StackPane root;
   private VBox leftBox;
@@ -66,7 +61,6 @@ public class AiAnalyserNew extends Scene {
   private GamePane gm;
   private ScrollPane scroller;
   private VBox content;
-  private double[] savedscrollvalues;
 
   private ObjectProperty<Font> popUpLabel;
   private ObjectProperty<Font> leaveButtonText;
@@ -92,7 +86,6 @@ public class AiAnalyserNew extends Scene {
   private int[] simulations;
   private VBox progressBar;
   private int totalmoves;
-  private int scrollBackIndicator;
   int currentMove;
   private AnalyzedGameState[] analysedGames;
   GameSaveHandler gsh;
@@ -100,15 +93,14 @@ public class AiAnalyserNew extends Scene {
   public boolean switched;
 
 
-  public AiAnalyserNew(HomeSceneController hsc, double width, double height) {
+  public AiAnalyserNew(double width, double height) {
     super(new StackPane(), width, height);
     if (!createGameSaver()) {
-      hsc.switchtoHomeScreen(new ActionEvent());
+      SceneHandler.switchToHomeScreen();
       switched = false;
       return;
     }
     switched = true;
-    this.hsc = hsc;
     manageFontSizes();
     rows = new HBox[totalmoves];
     teamLabels = new Label[totalmoves];
@@ -123,10 +115,8 @@ public class AiAnalyserNew extends Scene {
     moveColors = new String[totalmoves];
     showHuman = false;
 
-    scrollBackIndicator = 0;
     this.root = (StackPane) this.getRoot();
     currentMove = -1;
-    savedscrollvalues = new double[totalmoves];
     try {
       this.getStylesheets()
           .add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
@@ -667,8 +657,8 @@ public class AiAnalyserNew extends Scene {
     }
     
     StackPane.setAlignment(gm, Pos.CENTER);
-    gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
-    gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
+    gm.maxWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.4));
+    gm.maxHeightProperty().bind(SceneHandler.getMainStage().heightProperty().multiply(0.6));
     showMapBox.getChildren().add(gm);
   }
   
@@ -711,8 +701,8 @@ public class AiAnalyserNew extends Scene {
     gm = new GamePane(aiStates[currentMove], true, Enums.MoveEvaluation.BEST.getColor());
     gm.setOldPosinAnalyzer(p.getPosition());
     StackPane.setAlignment(gm, Pos.CENTER);
-    gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
-    gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
+    gm.maxWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.4));
+    gm.maxHeightProperty().bind(SceneHandler.getMainStage().heightProperty().multiply(0.6));
     showMapBox.getChildren().add(gm);
   }
 

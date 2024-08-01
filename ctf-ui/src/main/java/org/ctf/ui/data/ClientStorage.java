@@ -1,4 +1,4 @@
-package data;
+package org.ctf.ui.data;
 
 import java.util.ArrayList;
 import org.ctf.shared.client.Client;

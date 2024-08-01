@@ -13,6 +13,7 @@ import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.customobjects.ButtonPane;
 import org.ctf.ui.customobjects.PopUpPane;
+import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
 import org.ctf.ui.remoteGame.JoinScene;
 import javafx.beans.binding.Bindings;
@@ -50,7 +51,6 @@ public class PopUpCreator {
 	private AIConfig defaultConfig;
 	private AI aitype;
 	PopUpPane saveConfig;
-	private HomeSceneController hsc;
 	private String defaultAiName;
 	TextField enterConfigNamefield;
 	private boolean remote = false;
@@ -67,8 +67,7 @@ private ObjectProperty<Font> popUpLabel;
 	private ObjectProperty<Font> spinnerLabel;
 	private ObjectProperty<Font> enterNameButtonText; 
 	private ObjectProperty<Font> saveConfigLavel; 
-	public PopUpCreator(Scene scene, StackPane root, HomeSceneController hsc) {
-		this.hsc = hsc;
+	public PopUpCreator(Scene scene, StackPane root) {
 		this.scene = scene;
 		this.root = root;
 		manageFontSizes();
@@ -196,7 +195,7 @@ private ObjectProperty<Font> popUpLabel;
       vw.fitHeightProperty().bind(stack.heightProperty().multiply(0.5));
       vw.setPreserveRatio(true);
       stack.getChildren().add(vw);
-      InfoPaneCreator.addInfoPane(vw, App.getStage(), Descriptions.describe(AIConfigs.RANDOM), InfoPaneCreator.TOP);
+      InfoPaneCreator.addInfoPane(vw, SceneHandler.getMainStage(), Descriptions.describe(AIConfigs.RANDOM), InfoPaneCreator.TOP);
       stack.prefWidthProperty().bind(root.widthProperty().multiply(0.22));
       stack.prefHeightProperty().bind(stack.widthProperty().multiply(0.45));
       stack.maxWidthProperty().bind(root.widthProperty().multiply(0.22));
@@ -211,13 +210,13 @@ private ObjectProperty<Font> popUpLabel;
         }
         if (aiorHumanpopup == null) {
           PopUpCreatorEnterTeamName teamNamePopup =
-              new PopUpCreatorEnterTeamName(scene, root, aiLevelPopUpPane, hsc, false, true);
+              new PopUpCreatorEnterTeamName(scene, root, aiLevelPopUpPane, false, true);
           teamNamePopup.setAitype(aitype);
           teamNamePopup.setConfig(defaultConfig);
           teamNamePopup.createEnterNamePopUp();
         } else {
           PopUpCreatorEnterTeamName teamNamePopup =
-              new PopUpCreatorEnterTeamName(scene, root, aiLevelPopUpPane, hsc, true, true);
+              new PopUpCreatorEnterTeamName(scene, root, aiLevelPopUpPane, true, true);
           teamNamePopup.setAitype(aitype);
           teamNamePopup.setConfig(defaultConfig);
           teamNamePopup.createEnterNamePopUp();
@@ -266,7 +265,7 @@ private ObjectProperty<Font> popUpLabel;
      * @return {@link ButtonPane}
      */
     private StackPane createAIPowerButton(AIConfigs aiName, int InfoPanePosition) {
-      ButtonPane pane = new ButtonPane(aiName, hsc.getStage(), InfoPanePosition, buttonPanes);
+      ButtonPane pane = new ButtonPane(aiName, SceneHandler.getMainStage(), InfoPanePosition, buttonPanes);
       buttonPanes.add(pane);
       pane.prefWidthProperty().bind(root.widthProperty().multiply(0.22));
       pane.prefHeightProperty().bind(pane.widthProperty().multiply(0.45));
@@ -586,7 +585,7 @@ private ObjectProperty<Font> popUpLabel;
 		vw.fitHeightProperty().bind(upperpart.heightProperty().multiply(0.7));
 		vw.fitWidthProperty().bind(upperpart.widthProperty().multiply(0.2));
 		vw.setPreserveRatio(true);
-		InfoPaneCreator.addInfoPane(vw, App.getStage(), Descriptions.describe(text), InfoPaneCreator.BOTTOM);
+		InfoPaneCreator.addInfoPane(vw, SceneHandler.getMainStage(), Descriptions.describe(text), InfoPaneCreator.BOTTOM);
 		HBox upperRight = new HBox();
 		upperRight.prefWidthProperty().bind(upperpart.widthProperty().multiply(0.1));
 		upperRight.setAlignment(Pos.CENTER_RIGHT);
@@ -808,14 +807,14 @@ private ObjectProperty<Font> popUpLabel;
 			}
 		  
 		  if(aiorHumanpopup == null) {
-				PopUpCreatorEnterTeamName teamNamePopup = new PopUpCreatorEnterTeamName(scene, root, aiconfigPopUp, hsc, false, true);
+				PopUpCreatorEnterTeamName teamNamePopup = new PopUpCreatorEnterTeamName(scene, root, aiconfigPopUp, false, true);
 				teamNamePopup.setAitype(aitype);
 				teamNamePopup.setConfig(defaultConfig);
 				teamNamePopup.createEnterNamePopUp();
 				
 
 			}else {
-				PopUpCreatorEnterTeamName teamNamePopup = new PopUpCreatorEnterTeamName(scene, root, aiconfigPopUp, hsc, true, true);
+				PopUpCreatorEnterTeamName teamNamePopup = new PopUpCreatorEnterTeamName(scene, root, aiconfigPopUp, true, true);
 				teamNamePopup.setAitype(aitype);
 				teamNamePopup.setConfig(defaultConfig);
 				teamNamePopup.createEnterNamePopUp();
@@ -911,13 +910,13 @@ private ObjectProperty<Font> popUpLabel;
 		b.setOnAction(e -> {
 			defaultConfig.saveConfigAs(enterConfigNamefield.getText());
 			if(aiorHumanpopup == null) {
-				PopUpCreatorEnterTeamName teamNamePopup = new PopUpCreatorEnterTeamName(scene, root, saveConfig, hsc, false, true);
+				PopUpCreatorEnterTeamName teamNamePopup = new PopUpCreatorEnterTeamName(scene, root, saveConfig, false, true);
 				teamNamePopup.setConfig(defaultConfig);
 				teamNamePopup.setAitype(aitype);
 				teamNamePopup.createEnterNamePopUp();
 
 			}else {
-				PopUpCreatorEnterTeamName teamNamePopup = new PopUpCreatorEnterTeamName(scene, root, saveConfig, hsc, true, true);
+				PopUpCreatorEnterTeamName teamNamePopup = new PopUpCreatorEnterTeamName(scene, root, saveConfig, true, true);
 				teamNamePopup.setConfig(defaultConfig);
 				teamNamePopup.setAitype(aitype);
 				teamNamePopup.createEnterNamePopUp();

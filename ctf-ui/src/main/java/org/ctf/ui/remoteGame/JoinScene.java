@@ -23,12 +23,13 @@ import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.creators.ComponentCreator;
 import org.ctf.ui.creators.PopUpCreator;
 import org.ctf.ui.customobjects.PopUpPane;
+import org.ctf.ui.data.ClientCreator;
+import org.ctf.ui.data.ClientStorage;
+import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.editor.EditorScene;
 import org.ctf.ui.hostGame.CreateGameController;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
 import org.ctf.ui.threads.PointAnimation;
-import data.ClientCreator;
-import data.ClientStorage;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -59,7 +60,6 @@ import javafx.stage.Stage;
  * @author sistumpf
  */
 public class JoinScene extends Scene {
-  HomeSceneController hsc;
   StackPane root;
   StackPane left;
   StackPane right;
@@ -82,9 +82,8 @@ public class JoinScene extends Scene {
    * @param width - double value for init width
    * @param height - double value for init height
    */
-  public JoinScene(HomeSceneController hsc, double width, double height) {
+  public JoinScene(double width, double height) {
     super(new StackPane(), width, height);
-    this.hsc = hsc;
     try {
       this.getStylesheets().add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
       this.getStylesheets().add(Paths.get(Constants.toUIStyles + "ComboBox.css").toUri().toURL().toString());
@@ -93,7 +92,6 @@ public class JoinScene extends Scene {
     }
     this.root = (StackPane) this.getRoot();
     createLayout();
-    CheatboardListener.setSettings(root, this);
   }
 
   /**
@@ -183,7 +181,7 @@ public class JoinScene extends Scene {
     exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
     exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
     exit.setOnAction(e -> {
-      hsc.switchtoHomeScreen(e);
+      SceneHandler.switchToHomeScreen();
     });
     String test =
         "MCTS ist ein unglaublich starker KI spiler der alles zerstört falls er nicht aufgehalten wird ";
@@ -469,7 +467,7 @@ public class JoinScene extends Scene {
     buttonBox.add(playerButton, 0, 0);
     Button aiButton = createJoinButton("Join as AI-Client");
     aiButton.setOnAction(e -> {
-       PopUpCreator popUpCreator = new PopUpCreator(this, root, hsc);
+       PopUpCreator popUpCreator = new PopUpCreator(this, root);
        popUpCreator.setRemote(true);
        popUpCreator.createAiLevelPopUp(new PopUpPane(null, 0, 0, 0.95), portText, serverIPText);
     
@@ -566,7 +564,7 @@ public class JoinScene extends Scene {
               right.getChildren().clear();
               info.setText("Client hast joined!\n Waiting for the Game to start.");
               right.getChildren().add(info);
-              hsc.getStage().setScene(new RemoteWaitingScene(getWidth(), getHeight(), JoinScene.this.hsc, JoinScene.this.ser));
+              SceneHandler.switchCurrentScene(new RemoteWaitingScene(getWidth(), getHeight(), JoinScene.this.ser));
             }
           });
       this.joinChecker = new Thread() {

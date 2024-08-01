@@ -1,4 +1,4 @@
-package data;
+package org.ctf.ui.data;
 
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.client.AIClient;

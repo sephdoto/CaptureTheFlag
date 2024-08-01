@@ -22,6 +22,7 @@ import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.creators.PopUpCreator;
 import org.ctf.ui.creators.PopUpCreatorEnterTeamName;
 import org.ctf.ui.customobjects.PopUpPane;
+import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.map.GamePane;
 import org.ctf.ui.threads.PointAnimation;
 import javafx.animation.TranslateTransition;
@@ -61,7 +62,6 @@ import javafx.util.Duration;
 public class CreateGameScreenV2 extends Scene {
 
   // Data in the scene
-  private HomeSceneController hsc;
   private String selected;
   private static GameState state;
   private MapTemplate template;
@@ -99,13 +99,11 @@ public class CreateGameScreenV2 extends Scene {
    * Initializes the Create game Screen and adds style-sheets to it
    * 
    * @author Manuel Krakowski
-   * @param hsc HomesceneController to switch between scenes
    * @param width
    * @param height
    */
-  public CreateGameScreenV2(HomeSceneController hsc, double width, double height) {
+  public CreateGameScreenV2(double width, double height) {
     super(new StackPane(), width, height);
-    this.hsc = hsc;
     try {
       this.getStylesheets()
           .add(Paths.get(Constants.toUIStyles + "ComboBox.css").toUri().toURL().toString());
@@ -117,9 +115,8 @@ public class CreateGameScreenV2 extends Scene {
       e.printStackTrace();
     }
     this.root = (StackPane) this.getRoot();
-    popUpCreator = new PopUpCreator(this, root, hsc);
+    popUpCreator = new PopUpCreator(this, root);
     createLayout();
-    CheatboardListener.setSettings(root, this);
   }
 
 
@@ -553,8 +550,8 @@ public class CreateGameScreenV2 extends Scene {
     showMapBox.getStyleClass().add("option-pane");
     showMapBox.prefWidthProperty().bind(this.widthProperty().multiply(0.4));
     showMapBox.prefHeightProperty().bind(showMapBox.widthProperty());
-    showMapBox.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.45));
-    showMapBox.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.65));
+    showMapBox.maxWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.45));
+    showMapBox.maxHeightProperty().bind(SceneHandler.getMainStage().heightProperty().multiply(0.65));
     showMapBox.getStyleClass().add("show-GamePane");
     showMapBox.paddingProperty().bind(padding);
     // state = StroeMaps.getMap(name);
@@ -567,8 +564,8 @@ public class CreateGameScreenV2 extends Scene {
 
     gm = new GamePane(state, true, "");
     StackPane.setAlignment(gm, Pos.CENTER);
-    gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
-    gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
+    gm.maxWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.4));
+    gm.maxHeightProperty().bind(SceneHandler.getMainStage().heightProperty().multiply(0.6));
 
     //Text to show progress is made
     Text text = new Text();
@@ -599,11 +596,11 @@ public class CreateGameScreenV2 extends Scene {
           showMapBox.getChildren().remove(gm);
           gm = new GamePane(state, false, "");
           StackPane.setAlignment(gm, Pos.CENTER);
-          gm.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
-          gm.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
+          gm.maxWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.4));
+          gm.maxHeightProperty().bind(SceneHandler.getMainStage().heightProperty().multiply(0.6));
           ImageView iv = task.getValue();
-          iv.fitWidthProperty().bind(App.getStage().widthProperty().multiply(0.4));
-          iv.fitHeightProperty().bind(App.getStage().heightProperty().multiply(0.6));
+          iv.fitWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.4));
+          iv.fitHeightProperty().bind(SceneHandler.getMainStage().heightProperty().multiply(0.6));
           iv.setPreserveRatio(true);
           showMapBox.getChildren().add(iv);
           showMapBox.getChildren().add(gm);
@@ -678,7 +675,7 @@ public class CreateGameScreenV2 extends Scene {
       if(generateBackgroundThread != null) {
         generateBackgroundThread.interrupt();
       }
-      hsc.switchtoHomeScreen(e);
+      SceneHandler.switchToHomeScreen();
     });
     return exit;
   }
@@ -705,7 +702,7 @@ public class CreateGameScreenV2 extends Scene {
     button.setMaxWidth(Double.MAX_VALUE);
     button.setOnAction(e -> {
       PopUpCreatorEnterTeamName popi =
-          new PopUpCreatorEnterTeamName(this, root, aiOrHumanPop, hsc, true, false);
+          new PopUpCreatorEnterTeamName(this, root, aiOrHumanPop, true, false);
       popi.createEnterNamePopUp();
     });
     return button;

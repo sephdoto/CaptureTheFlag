@@ -55,12 +55,13 @@ import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.creators.PopupCreatorGameOver;
 import org.ctf.ui.customobjects.MyCustomColorPicker;
 import org.ctf.ui.customobjects.Timer;
+import org.ctf.ui.data.ClientStorage;
+import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.map.BaseRep;
 import org.ctf.ui.map.CostumFigurePain;
 import org.ctf.ui.map.GamePane;
 import org.ctf.ui.map.MoveVisualizer;
 import org.ctf.ui.threads.PointAnimation;
-import data.ClientStorage;
 
 /**
  * Scene which is shown when a game is played
@@ -74,7 +75,6 @@ public class PlayGameScreenV2 extends Scene {
   private ScheduledExecutorService scheduler;
   private ScheduledExecutorService scheduler2;
   private boolean schedulerLock;
-  private HomeSceneController hsc;
   private boolean isRemote;
   private GameState currentState;
   private boolean showBlocks;
@@ -124,18 +124,16 @@ public class PlayGameScreenV2 extends Scene {
    * @param isRemote true if the screen is used from remote-join
    */
   public PlayGameScreenV2(
-      HomeSceneController hsc, double width, double height, boolean isRemote) {
+      double width, double height, boolean isRemote) {
     //TODO
     super(new StackPane(), width, height);
     schedulerLock = true;
     timeToShowGameState = new ArrayList<Long>();
     this.isRemote = isRemote;
     this.root = (StackPane) this.getRoot();
-    this.hsc = hsc;
     this.showBlocks = true;
     initalizePlayGameScreen();
-    CheatboardListener.setSettings(root, this);
-  }
+   }
 
   // **************************************************
   // Start of scene initialization methods
@@ -215,8 +213,8 @@ public class PlayGameScreenV2 extends Scene {
     showMapBox.paddingProperty().bind(padding);
     showMapBox.prefWidthProperty().bind(this.widthProperty().multiply(0.7));
     showMapBox.prefHeightProperty().bind(this.heightProperty().multiply(0.9));
-    showMapBox.maxWidthProperty().bind(App.getStage().widthProperty().multiply(0.7));
-    showMapBox.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.9));
+    showMapBox.maxWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.7));
+    showMapBox.maxHeightProperty().bind(SceneHandler.getMainStage().heightProperty().multiply(0.9));
     showMapBox.getStyleClass().add("option-pane");
     File grid = new File(Constants.toUIPictures + File.separator + "grid.png");
     String gridPicName = grid.exists() ? "grid.png" : "tuning1.png";
@@ -419,7 +417,7 @@ public class PlayGameScreenV2 extends Scene {
         String[] winners = ClientStorage.getMainClient().getWinners();
         Platform.runLater(
             () -> {
-              PopupCreatorGameOver gameOverPop = new PopupCreatorGameOver(this, root, hsc);
+              PopupCreatorGameOver gameOverPop = new PopupCreatorGameOver(this, root);
               if (winners.length <= 1) {
                 gameOverPop.createGameOverPopUpforOneWinner(winners[0]);
               } else {
@@ -810,7 +808,7 @@ public class PlayGameScreenV2 extends Scene {
    */
   public void showColorChooser(double d, double e, BaseRep r) {
     MyCustomColorPicker myCustomColorPicker = new MyCustomColorPicker();
-    myCustomColorPicker.setCurrentColor(sceneColorProperty.get());
+    myCustomColorPicker.setCurrentColor(CreateGameController.getColors().get(r.getTeamID()).get());
     CustomMenuItem itemColor = new CustomMenuItem(myCustomColorPicker);
     itemColor.getStyleClass().add("custom-menu-item");
     itemColor.setHideOnClick(false);

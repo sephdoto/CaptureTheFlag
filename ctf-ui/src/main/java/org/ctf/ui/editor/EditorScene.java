@@ -65,6 +65,7 @@ import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.creators.ComponentCreator;
 import org.ctf.ui.customobjects.DragAndDropPane;
 import org.ctf.ui.customobjects.MovementVisual;
+import org.ctf.ui.data.SceneHandler;
 import io.swagger.v3.oas.models.security.SecurityScheme.In;
 
 /**
@@ -75,7 +76,6 @@ import io.swagger.v3.oas.models.security.SecurityScheme.In;
  * @author aniemesc
  */
 public class EditorScene extends Scene {
-  HomeSceneController hsc;
   StackPane root;
   Parent[] options;
   StackPane leftPane;
@@ -106,13 +106,11 @@ public class EditorScene extends Scene {
    * to a CSS file.
    * 
    * @author aniemesc
-   * @param hsc - HomeSceneController that connects scene to rest of the application
    * @param width - double value for width init
    * @param height - double value for height init
    */
-  public EditorScene(HomeSceneController hsc, double width, double height) {
+  public EditorScene(double width, double height) {
     super(new StackPane(), width, height);
-    this.hsc = hsc;
     try {
       this.getStylesheets()
           .add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
@@ -133,7 +131,6 @@ public class EditorScene extends Scene {
         "Drag and Drop a \n sound file in the .wav format!", DragAndDropPane.SOUNDS);
     this.dragAndDropPaneImages =
         new DragAndDropPane(this, "Drag and Drop an \n image file!", DragAndDropPane.IMAGES);
-    CheatboardListener.setSettings(root, this);
   }
 
   /**
@@ -701,7 +698,7 @@ public class EditorScene extends Scene {
   private Button createExit() {
     Button exit = createControlButton("Leave", 0.1, 0.25);
     exit.setOnAction(e -> {
-      hsc.switchtoHomeScreen(e);
+      SceneHandler.switchToHomeScreen();
     });
     return exit;
   }
@@ -1141,10 +1138,6 @@ public class EditorScene extends Scene {
   public void updateVisualRoot() {
     MapPreviewThread mt = new MapPreviewThread(this);
     mt.start();
-  }
-
-  public HomeSceneController getHsc() {
-    return hsc;
   }
 
   /**

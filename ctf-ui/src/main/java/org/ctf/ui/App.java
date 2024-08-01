@@ -36,6 +36,7 @@ import org.ctf.ui.controllers.SettingsSetter;
 import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.creators.ComponentCreator;
 import org.ctf.ui.customobjects.*;
+import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.server.PortInUseException;
 import org.ctf.ui.server.ServerContainer;
 
@@ -46,14 +47,10 @@ import org.ctf.ui.server.ServerContainer;
  * @author sistumpf adding background music and sounds
  */
 public class App extends Application {
-  static Stage mainStage;
-  static Scene startScene;
-  static Scene lockscreen;
   static MusicPlayer backgroundMusic;
   HomeSceneController ssc;
   FadeTransition startTransition;
   ServerContainer serverContainer;
-  Process process;
   static StackPane wrapper;
   static StackPane root;
   public static Image backgroundImage;
@@ -65,7 +62,7 @@ public class App extends Application {
   // public static ServerPane serverPane;
 
   public void start(Stage stage) {
-    mainStage = stage;
+    SceneHandler.setMainStage(stage);
 
     stage
         .focusedProperty()
@@ -80,10 +77,9 @@ public class App extends Application {
 
     //    Parameters params = getParameters();
     //    String port = params.getNamed().get("port");
-    ssc = new HomeSceneController(mainStage);
-    CheatboardListener.setHomeSceneController(ssc);
+    ssc = new HomeSceneController();
     SettingsSetter.loadCustomSettings();
-    lockscreen = new Scene(createLockScreen(), 1100, 600);
+    Scene lockscreen = new Scene(createLockScreen(), 1100, 600);
     try {
       lockscreen
           .getStylesheets()
@@ -93,11 +89,11 @@ public class App extends Application {
     }
     lockscreen.setOnKeyPressed(
         e -> {
-          this.changeToHomeScreen();
+          this.changeToHomeScreen(lockscreen);
         });
     lockscreen.setOnMousePressed(
         e -> {
-          this.changeToHomeScreen();
+          this.changeToHomeScreen(lockscreen);
         });
     stage.setTitle("Capture The Flag Team 14");
     stage.setScene(lockscreen);
@@ -136,49 +132,47 @@ public class App extends Application {
    * @author aniemesc
    * @return Parent
    */
-  private Parent createParent() {
+  private Parent createParent(Scene lockscreen) {
     root = new StackPane();
     root.setPrefSize(lockscreen.getWidth(), lockscreen.getHeight());
     Image ctf = ImageController.loadThemedImage(ImageType.MISC, "CaptureTheFlag");
     ImageView ctfv = new ImageView(ctf);
-    ctfv.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.8));
+    ctfv.fitWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.8));
     ctfv.setPreserveRatio(true);
     StackPane.setAlignment(ctfv, Pos.TOP_CENTER);
     HomeScreenButton i1 =
         new HomeScreenButton(
             "CREATE MAP",
-            mainStage,
+            SceneHandler.getMainStage(),
             () -> {
               SoundController.playSound("Button", SoundType.MISC);
-              ssc.switchToMapEditorScene(mainStage);
+              SceneHandler.switchToMapEditorScene();
             });
     HomeScreenButton i2 =
         new HomeScreenButton(
             "CREATE GAME",
-            mainStage,
+            SceneHandler.getMainStage(),
             () -> {
               // CreateGameScreen.initCreateGameScreen(mainStage);
               SoundController.playSound("Button", SoundType.MISC);
-              ssc.switchToCreateGameScene(mainStage);
+              SceneHandler.switchToCreateGameScene();
             });
     HomeScreenButton i3 =
         new HomeScreenButton(
             "JOIN GAME",
-            mainStage,
+            SceneHandler.getMainStage(),
             () -> {
               SoundController.playSound("Button", SoundType.MISC);
-              ssc.switchToJoinScene(mainStage);
+              SceneHandler.switchToJoinScene();
             });
-
-    CheatboardListener.setSettings(root, startScene);
 
     HomeScreenButton i4 =
         new HomeScreenButton(
             "SETTINGS",
-            mainStage,
+            SceneHandler.getMainStage(),
             () -> {
               SoundController.playSound("Button", SoundType.MISC);
-              root.getChildren().add(new ComponentCreator(startScene).createSettingsWindow(root));
+              root.getChildren().add(new ComponentCreator(SceneHandler.getHomeScene()).createSettingsWindow(root));
             });
     VBox vbox = new VBox(ctfv, i1, i2, i3, i4);
     vbox.spacingProperty().bind(root.heightProperty().multiply(0.02));
@@ -265,18 +259,18 @@ public class App extends Application {
     App.wrapper.setBackground(new Background(background));
   }
 
-  private void changeToHomeScreen() {
-    startScene = new Scene(createParent());
+  private void changeToHomeScreen(Scene lockscreen) {
+    SceneHandler.setHomeScene(new Scene(createParent(lockscreen)));
     try {
-      startScene
+      SceneHandler.getHomeScene()
           .getStylesheets()
           .add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
     } catch (MalformedURLException e) {
       e.printStackTrace();
     }
-    mainStage.setScene(startScene);
-    App.offsetHeight = mainStage.getHeight() - startScene.getHeight();
-    App.offsetWidth = mainStage.getWidth() - startScene.getWidth();
+    SceneHandler.switchCurrentScene(SceneHandler.getHomeScene());
+    App.offsetHeight = SceneHandler.getMainStage().getHeight() - SceneHandler.getHomeScene().getHeight();
+    App.offsetWidth = SceneHandler.getMainStage().getWidth() - SceneHandler.getHomeScene().getWidth();
     System.out.println("offsetHeight: " + App.offsetHeight + ", offsetWidth: " + App.offsetWidth);
     backgroundMusic.startShuffle();
     startTransition.stop();
@@ -313,7 +307,7 @@ public class App extends Application {
 
     Image ctf = ImageController.loadThemedImage(ImageType.MISC, "CaptureTheFlag");
     ImageView ctfv = new ImageView(ctf);
-    ctfv.fitWidthProperty().bind(mainStage.widthProperty().multiply(0.8));
+    ctfv.fitWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.8));
     ctfv.setPreserveRatio(true);
     FadeTransition ft = new FadeTransition(Duration.millis(5000), ctfv);
     ft.setFromValue(0.0);
@@ -346,25 +340,11 @@ public class App extends Application {
     text.fontProperty()
         .bind(
             Bindings.createObjectBinding(
-                () -> Font.font("Century Gothic", mainStage.getWidth() / 40),
-                mainStage.widthProperty()));
+                () -> Font.font("Century Gothic", SceneHandler.getMainStage().getWidth() / 40),
+                SceneHandler.getMainStage().widthProperty()));
 
     layer.getChildren().add(root);
     return layer;
-  }
-
-  /**
-   * Starts the server
-   *
-   * @author rsyed
-   * @param title The title you want the window to have
-   */
-  public static void startServer(String title) {
-    try {
-
-    } catch (Exception e) {
-      // TODO: handle exception
-    }
   }
 
   /**
@@ -374,7 +354,7 @@ public class App extends Application {
    * @param title The title you want the window to have
    */
   public static void setTitle(String title) {
-    mainStage.setTitle(title);
+    SceneHandler.getMainStage().setTitle(title);
   }
 
   /**
@@ -384,18 +364,10 @@ public class App extends Application {
    * @return String which is the current title of the UI Window
    */
   public static String getTitle() {
-    return mainStage.getTitle();
+    return SceneHandler.getMainStage().getTitle();
   }
 
   public static void main(String[] args) {
     launch(args);
-  }
-
-  public static Stage getStage() {
-    return mainStage;
-  }
-
-  public static Scene getScene() {
-    return startScene;
   }
 }

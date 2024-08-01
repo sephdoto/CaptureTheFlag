@@ -7,9 +7,10 @@ import org.ctf.ui.App;
 import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.customobjects.PopUpPane;
+import org.ctf.ui.data.ClientCreator;
+import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.hostGame.CreateGameController;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
-import data.ClientCreator;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -42,7 +43,6 @@ public class PopUpCreatorEnterTeamName {
   private String teamName;
   private AIConfig config;
   private AI aitype;
-  private HomeSceneController hsc;
   private ObjectProperty<Font> popUpLabel;
   private ObjectProperty<Font> leaveButtonText;
 
@@ -57,12 +57,10 @@ public class PopUpCreatorEnterTeamName {
    * @param isMain if the team-name is the team-name of the main-creator
    * @param isAi if the teamname is for an Ai
    */
-  public PopUpCreatorEnterTeamName(Scene scene, StackPane root, PopUpPane before,
-      HomeSceneController hsc, boolean isMain, boolean isAi) {
+  public PopUpCreatorEnterTeamName(Scene scene, StackPane root, PopUpPane before, boolean isMain, boolean isAi) {
     this.scene = scene;
     this.root = root;
     this.before = before;
-    this.hsc = hsc;
     this.isMain = isMain;
     this.isAi = isAi;
     popUpLabel = new SimpleObjectProperty<Font>(Font.font(scene.getWidth() / 50));
@@ -159,7 +157,7 @@ public class PopUpCreatorEnterTeamName {
         if (isMain && !isAi) {
           ClientCreator.createHumanClient(
               isMain, teamName, false, CreateGameController.getServerIP(), CreateGameController.getPort(), CreateGameController.getServerManager().getGameSessionID());
-          hsc.switchToWaitGameScene(App.getStage());
+          SceneHandler.switchToWaitGameScene();
           CreateGameController.setLasttype("HUMAN");
         }
         if (!isMain && !isAi) {
@@ -172,7 +170,7 @@ public class PopUpCreatorEnterTeamName {
         if (isMain && isAi) {
           ClientCreator.createAiClient(
               isMain, teamName, false, CreateGameController.getServerIP(), CreateGameController.getPort(), CreateGameController.getServerManager().getGameSessionID(), aitype, config);
-          hsc.switchToWaitGameScene(App.getStage());
+          SceneHandler.switchToWaitGameScene();
           CreateGameController.setLasttype("AI");
           CreateGameController.setLastAitype(aitype);
 

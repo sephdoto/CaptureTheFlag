@@ -49,7 +49,8 @@ import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.creators.PopUpCreator;
 import org.ctf.ui.creators.PopUpCreatorEnterTeamName;
 import org.ctf.ui.customobjects.MyCustomColorPicker;
-import data.ClientStorage;
+import org.ctf.ui.data.ClientStorage;
+import org.ctf.ui.data.SceneHandler;
 
 
 /**
@@ -69,9 +70,6 @@ public class WaitingScene extends Scene {
   private HashMap<Integer, Label> teamNames = new HashMap<Integer, Label>();
   private HashMap<Integer, Label> teamTypes = new HashMap<Integer, Label>();
   private HashMap<Integer, HBox> colors = new HashMap<Integer, HBox>();
-
-  // Controller which is used to switch to the play-game-scene
-  private HomeSceneController hsc;
 
   // Containers and Labels which need to be accessed from different methods
   private StackPane root;
@@ -96,9 +94,8 @@ public class WaitingScene extends Scene {
    * 
    * @author Manuel Krakowski
    */
-  public WaitingScene(HomeSceneController hsc, double width, double height) {
+  public WaitingScene(double width, double height) {
     super(new StackPane(), width, height);
-    this.hsc = hsc;
     manageFontSizes();
     this.root = (StackPane) this.getRoot();
     try {
@@ -115,7 +112,6 @@ public class WaitingScene extends Scene {
     currentNumber = 0;
     scheduler = Executors.newScheduledThreadPool(1);
     scheduler.scheduleAtFixedRate(updateTask, 0, 1, TimeUnit.SECONDS);
-    CheatboardListener.setSettings(root, this);
   }
 
 
@@ -675,7 +671,7 @@ public class WaitingScene extends Scene {
     vw.setPreserveRatio(true);
     button.setOnAction(e -> {
       PopUpCreatorEnterTeamName popi =
-          new PopUpCreatorEnterTeamName(this, root, null, hsc, false, false);
+          new PopUpCreatorEnterTeamName(this, root, null, false, false);
       popi.createEnterNamePopUp();
     });
     button.setMaxWidth(Double.MAX_VALUE);
@@ -700,7 +696,7 @@ public class WaitingScene extends Scene {
     vw.fitWidthProperty().bind(button.widthProperty().divide(8));
     vw.setPreserveRatio(true);
     button.setOnAction(e -> {
-      PopUpCreator aiPopCreator = new PopUpCreator(this, root, hsc);
+      PopUpCreator aiPopCreator = new PopUpCreator(this, root);
       aiPopCreator.createAiLevelPopUp(null, null, null);
     });
     button.setMaxWidth(Double.MAX_VALUE);
@@ -753,7 +749,7 @@ public class WaitingScene extends Scene {
       CreateGameController.deleteGame();
       CreateGameController.clearUsedNames();
       CreateGameController.clearColors();
-      hsc.switchtoHomeScreen(e);
+      SceneHandler.switchToHomeScreen();
     });
     return exit;
   }
@@ -771,7 +767,7 @@ public class WaitingScene extends Scene {
         if (ClientStorage.getMainClient().getStartDate() != null) {
           scheduler.shutdown();
           Platform.runLater(() -> {
-            hsc.switchToPlayGameScene(App.getStage(), false);
+            SceneHandler.switchToPlayGameScene(false);
           });
         } else {
           if (CreateGameController.getServerManager().getCurrentNumberofTeams() != currentNumber) {
