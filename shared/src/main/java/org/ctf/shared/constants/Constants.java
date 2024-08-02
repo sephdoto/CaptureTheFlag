@@ -73,13 +73,22 @@ public class Constants {
   public static boolean FULL_AI_POWER = true;
 
   /**
-   * Static vars needed for Server and AI Config
-   *
-   * @author rsyed
+   * Size of the lastScenes stack that can be accessed by typing "back"
    */
+  public static int lastScenesSize = 3;
+  /**
+   * How many seconds is waited between two "back" commands, before a new lastScene Stack is finalized.
+   */
+  public static int backSeconds = 5;
+  
   ///////////////////////////////////////////////////////
   //             Server Setting                        //
   ///////////////////////////////////////////////////////
+  /**
+   * Static vars needed for Server
+   *
+   * @author rsyed
+   */
   public static String userSelectedLocalServerPort = "8888";
 
   ///////////////////////////////////////////////////////

@@ -31,14 +31,23 @@ public class SceneHandler {
    */
   private static Scene currentScene;
   /**
-   * Saves the last Scene, to switch back to.
+   * Saves the last Scenes to switch back to.
+   * The maximum amount of scenes to save can be specified in static.
    */
-  private static Scene lastScene;
+  private static FixedStack<Scene> lastScenes;
   /**
    * The home menu Scene.
    * It gets saved as an attribute to put listeners on.
    */
   private static Scene homeScene;
+  
+  ///***************************************///
+  /*/               static                  /*/ 
+  ///***************************************///
+  
+  static {
+    lastScenes = new FixedStack<Scene>(Constants.lastScenesSize);
+  }
   
   ///***************************************///
   /*/          switching Scenes             /*/ 
@@ -132,13 +141,20 @@ public class SceneHandler {
    * @param scene the new Scene to switch to
    */
   public static void switchCurrentScene(Scene scene) {
+    if(resizeFixThread != null) {
+      resizeFixThread.interrupt();
+      resizeFixThread = null;
+    }
     if(currentScene != null)
-      lastScene = currentScene;
+      lastScenes.push(currentScene);
     currentScene = scene;
     mainStage.setScene(scene);
 
-    new ResizeFixThread(mainStage).start();
+    resizeFixThread = new ResizeFixThread(mainStage);
+    resizeFixThread.start();
   }
+  
+  private static ResizeFixThread resizeFixThread;
 
   
   ///***************************************///
@@ -154,11 +170,11 @@ public class SceneHandler {
   public static Scene getCurrentScene() {
     return currentScene;
   }
-  public static Scene getLastScene() {
-    return lastScene;
+  public static FixedStack<Scene> getLastScenes() {
+    return lastScenes;
   }
-  public static void setLastScene(Scene lastScene) {
-    SceneHandler.lastScene= lastScene;
+  public static void setLastScenes(FixedStack<Scene> lastScenes) {
+    SceneHandler.lastScenes = lastScenes;
   }
   public static Scene getHomeScene() {
     return homeScene;

@@ -5,10 +5,12 @@ import org.ctf.shared.constants.Enums;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.App;
 import org.ctf.ui.creators.ComponentCreator;
+import org.ctf.ui.data.FixedStack;
 import org.ctf.ui.data.SceneHandler;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import javafx.application.Platform;
+import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import org.jnativehook.keyboard.NativeKeyAdapter;
 import org.jnativehook.NativeHookException;
@@ -335,16 +337,32 @@ public class CheatboardListener extends NativeKeyAdapter {
             }
           }
           );
-    } else if(match == cheatCodes.get(14)) {    // switch to the last scene
+    } else if(match == cheatCodes.get(14)) {    // switch to the last scene(s)
       Platform.runLater(
           new Runnable() {
             public void run(){
-              if(SceneHandler.getLastScene() != null) {
-                SceneHandler.switchCurrentScene(SceneHandler.getLastScene());
+              if((backtracking == -1 || 
+                  System.currentTimeMillis() - backtracking >= (Constants.backSeconds * 1000)) &&
+                  SceneHandler.getLastScenes().size() != 0) {
+                //make a copy of lastScenes and reset it in SceneHandler
+                lastScenesCopy = SceneHandler.getLastScenes();
+                SceneHandler.setLastScenes(new FixedStack<Scene>(Constants.lastScenesSize));
+                SceneHandler.switchCurrentScene(lastScenesCopy.pop());
+                backtracking = System.currentTimeMillis();
+              } else {
+                if(lastScenesCopy.size() > 0) {
+                  SceneHandler.switchCurrentScene(lastScenesCopy.pop());
+                  backtracking = System.currentTimeMillis();  
+                } else {
+                  backtracking = -1;
+                }
               }
             }
           }
           );
     }
   }
+  
+  private FixedStack<Scene> lastScenesCopy;
+  private long backtracking = -1;
 }
