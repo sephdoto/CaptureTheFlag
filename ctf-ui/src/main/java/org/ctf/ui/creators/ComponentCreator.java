@@ -35,31 +35,10 @@ import javafx.scene.text.Text;
  * the application.
  * 
  * @author aniemesc
+ * @author sistumpf
  */
 public class ComponentCreator {
-  EditorScene editorscene;
-  Scene scene;
   public static DecimalFormat df = new DecimalFormat("0.00");
-
-  /**
-   * Sets the {@link EditorScene} of the ComponentCreator.
-   * 
-   * @author aniemesc
-   * @param editorScene - EditorScene object
-   */
-  public ComponentCreator(EditorScene editorScene) {
-    this.editorscene = editorScene;
-  }
-
-  /**
-   * Sets the {@link Scene} of the ComponentCreator when not used for an {@link EditorScene}.
-   * 
-   * @author aniemesc
-   * @param editorScene - EditorScene object
-   */
-  public ComponentCreator(Scene scene) {
-    this.scene = scene;
-  }
 
   /**
    * Generates a Window for submitting a map template in an {@link EditorScene}.
@@ -68,7 +47,7 @@ public class ComponentCreator {
    * @return StackPane for Submitting templates
    */
   public StackPane createSubmitWindow() {
-    PopUpPane popUp = new PopUpPane(editorscene, 0.4, 0.4, 0.95);
+    PopUpPane popUp = new PopUpPane(SceneHandler.getCurrentScene(), 0.4, 0.4, 0.95);
     VBox vbox = new VBox();
     vbox.setAlignment(Pos.TOP_CENTER);
     vbox.setPadding(new Insets(10));
@@ -131,7 +110,7 @@ public class ComponentCreator {
    * @param vBox - main container of the submitting window
    * @return Text that can be added to the main container
    */
-  private Text createinfo(VBox vbox) {
+  protected Text createinfo(VBox vbox) {
     Text info = new Text("");
     info.getStyleClass().add("custom-info-label");
     vbox.widthProperty().addListener((obs, oldVal, newVal) -> {
@@ -151,7 +130,7 @@ public class ComponentCreator {
    * @param nameField - TextField of the submitting window
    * @return Button used for saving templates
    */
-  private Button createSubmit(VBox vBox, PopUpPane popUp, Text info, TextField nameField) {
+  protected Button createSubmit(VBox vBox, PopUpPane popUp, Text info, TextField nameField) {
     Button submit = new Button("Submit");
     submit.getStyleClass().add("save-button");
     submit.setOnAction(e -> {
@@ -163,10 +142,10 @@ public class ComponentCreator {
       if (TemplateEngine.getTemplateNames().contains(nameField.getText())) {
         info.setText(nameField.getText() + " already exits!");
       } else {
-        editorscene.getEngine().saveTemplate(nameField.getText());
-        editorscene.addMapItem(nameField.getText());
-        editorscene.getRootPane().getChildren().remove(popUp);
-        editorscene.inform(nameField.getText() + " was saved!");
+        ((EditorScene)SceneHandler.getCurrentScene()).getEngine().saveTemplate(nameField.getText());
+        ((EditorScene)SceneHandler.getCurrentScene()).addMapItem(nameField.getText());
+        ((EditorScene)SceneHandler.getCurrentScene()).getRootPane().getChildren().remove(popUp);
+        ((EditorScene)SceneHandler.getCurrentScene()).inform(nameField.getText() + " was saved!");
       }
     });
     submit.prefWidthProperty().bind(vBox.widthProperty().multiply(0.25));
@@ -186,11 +165,11 @@ public class ComponentCreator {
    * @param popUp - submitting window
    * @return Button used for closing the submitting window
    */
-  private Button createLeaveSubmit(VBox vBox, PopUpPane popUp) {
+  protected Button createLeaveSubmit(VBox vBox, PopUpPane popUp) {
     Button exit = new Button("Abort");
     exit.getStyleClass().add("leave-button");
     exit.setOnAction(e -> {
-      editorscene.getRootPane().getChildren().remove(popUp);
+      ((EditorScene)SceneHandler.getCurrentScene()).getRootPane().getChildren().remove(popUp);
     });
     exit.prefWidthProperty().bind(vBox.widthProperty().multiply(0.25));
     exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
@@ -234,94 +213,6 @@ public class ComponentCreator {
   }
 
   /**
-   * Creates a {@link PopUpPane} that contains an User Interface for changing the settings of the
-   * application. This includes the sound volume, the music volume and the theme. This window can be
-   * used all across the application.
-   * 
-   * @author aniemesc
-   * @param root - current root container of the stage
-   * @return {@link PopUpPane} for settings
-   */
-  public StackPane createSettingsWindow(StackPane root) {
-    PopUpPane popUp = new PopUpPane(scene, 0.5, 0.6, 0.7);
-    VBox vbox = new VBox();
-    vbox.setAlignment(Pos.TOP_CENTER);
-    vbox.setPadding(new Insets(10));
-    vbox.getChildren().add(createHeaderText(vbox, "Settings", 12));
-
-    ComboBox<String> box = new ComboBox<String>();
-    HBox.setMargin(box, new Insets(20));
-    box.getStyleClass().add("custom-combo-box-2");
-    box.prefWidthProperty().bind(vbox.widthProperty().multiply(0.45));
-    box.prefHeightProperty().bind(box.widthProperty().multiply(0.18));
-    box.prefHeightProperty().addListener((obs, oldv, newV) -> {
-      double size = newV.doubleValue() * 0.35;
-      box.setStyle("-fx-font-size: " + size + "px;");
-    });
-
-    Themes[] themes = Themes.values();
-    for (Themes st : themes) {
-      box.getItems().add(st.toString());
-    }
-    box.setValue(Constants.theme.toString());
-    vbox.widthProperty().addListener((obs, oldVal, newVal) -> {
-      double size = newVal.doubleValue() * 0.035;
-      vbox.setSpacing(size);
-    });
-
-    GridPane grid = new GridPane();
-    grid.setVgap(15);
-    grid.setHgap(15);
-    grid.add(box, 1, 0);
-    grid.add(createHeaderText(vbox, "Music Volume", 18), 0, 1);
-    grid.add(createHeaderText(vbox, "Sound Volume", 18), 0, 2);
-    grid.add(createHeaderText(vbox, "Theme", 18), 0, 0);
-
-    HBox musicBox = new HBox();
-    musicBox.setSpacing(10);
-    musicBox.setAlignment(Pos.CENTER);
-
-    HBox soundBox = new HBox();
-    soundBox.setSpacing(10);
-    soundBox.setAlignment(Pos.CENTER);
-
-    Text musicValue = createHeaderText(vbox, df.format(Constants.musicVolume), 28);
-    Text soundValue = createHeaderText(vbox, df.format(Constants.soundVolume), 28);
-
-    Slider musicSlider = createSlider(Constants.musicVolume, vbox);
-    musicSlider.valueProperty().addListener((obs, old, newV) -> {
-      MusicPlayer.setMusicVolume(musicSlider.getValue());
-      musicValue.setText(df.format(musicSlider.getValue()));
-    });
-    Slider soundSlider = createSlider(Constants.soundVolume, vbox);
-    soundSlider.valueProperty().addListener((obs, old, newV) -> {
-      soundValue.setText(df.format(soundSlider.getValue()));
-    });
-    musicBox.getChildren().addAll(musicSlider, musicValue);
-    grid.add(musicBox, 1, 1);
-    soundBox.getChildren().addAll(soundSlider, soundValue);
-    grid.add(soundBox, 1, 2);
-    vbox.getChildren().add(grid);
-
-    VBox.setMargin(grid, new Insets(0, 50, 15, 50));
-    Button save = createControlButton(vbox, "Save");
-    addSaveListener(save, musicSlider, soundSlider, popUp, root, box);
-    Button cancel = createControlButton(vbox, "Cancel");
-    cancel.setOnAction(e -> {
-      root.getChildren().remove(popUp);
-      SettingsSetter.loadCustomSettings();
-      MusicPlayer.setMusicVolume(Constants.musicVolume);
-    });
-    HBox buttonBox = new HBox();
-    buttonBox.spacingProperty().bind(vbox.widthProperty().multiply(0.05));
-    buttonBox.setAlignment(Pos.CENTER);
-    buttonBox.getChildren().addAll(save, cancel);
-    vbox.getChildren().add(buttonBox);
-    popUp.setContent(vbox);
-    return popUp;
-  }
-
-  /**
    * Generates the leave button for a settings window.
    * 
    * @author aniemesc
@@ -339,29 +230,6 @@ public class ComponentCreator {
       button.setFont(Font.font("Century Gothic", size));
     });
     return button;
-  }
-
-  /**
-   * Sets the listener for the savings button in a settings window.
-   * 
-   * @author aniemesc
-   * @param exit - exit button
-   * @param musicSlider - slider for music settings
-   * @param soundSlider - slider for sound settings
-   * @param popUp - settings window
-   * @param root - current root container of the stage
-   * @param box combobox for themes
-   */
-  private void addSaveListener(Button exit, Slider musicSlider, Slider soundSlider, PopUpPane popUp,
-      StackPane root, ComboBox<String> box) {
-    exit.setOnAction(e -> {
-      MusicPlayer.setMusicVolume(musicSlider.getValue());
-      Constants.soundVolume = soundSlider.getValue();
-      Constants.theme = Themes.valueOf(box.getValue());
-      SettingsSetter.saveCustomSettings();
-      App.chagngeHomescreenBackground();
-      root.getChildren().remove(popUp);
-    });
   }
 
   /**
@@ -388,7 +256,7 @@ public class ComponentCreator {
    * @param vBox - container used for resizing 
    * @return {@link Slider}
    */
-  private Slider createSlider(double value, VBox vBox) {
+  public static Slider createSlider(double value, VBox vBox) {
     Slider slider = new Slider();
     slider.prefWidthProperty().bind(vBox.widthProperty().multiply(0.3));
     slider.getStyleClass().add("mySlider");

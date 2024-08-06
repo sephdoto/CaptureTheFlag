@@ -718,7 +718,7 @@ public class EditorScene extends Scene {
         this.inform("You can not save invalid templates!");
         return;
       }
-      root.getChildren().add(new ComponentCreator(this).createSubmitWindow());
+      root.getChildren().add(new ComponentCreator().createSubmitWindow());
     });
     return submit;
   }

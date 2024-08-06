@@ -2,7 +2,11 @@ package org.ctf.ui.data;
 
 import java.io.File;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.App;
+import org.ctf.ui.controllers.SoundController;
+import org.ctf.ui.creators.ComponentCreator;
+import org.ctf.ui.creators.settings.SettingsWindow;
 import org.ctf.ui.editor.EditorScene;
 import org.ctf.ui.gameAnalyzer.AiAnalyserNew;
 import org.ctf.ui.hostGame.CreateGameController;
@@ -13,6 +17,7 @@ import org.ctf.ui.remoteGame.JoinScene;
 import org.ctf.ui.remoteGame.WaveCollapseThread;
 import org.ctf.ui.threads.ResizeFixThread;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 /**
@@ -40,6 +45,11 @@ public class SceneHandler {
    * It gets saved as an attribute to put listeners on.
    */
   private static Scene homeScene;
+  /**
+   * Keeps track of the settings window so it cannot be opened multiple times.
+   * false allows the settings to be opened.
+   */
+  private static boolean settingsOpen;
   
   ///***************************************///
   /*/               static                  /*/ 
@@ -47,7 +57,21 @@ public class SceneHandler {
   
   static {
     lastScenes = new FixedStack<Scene>(Constants.lastScenesSize);
+    settingsOpen = false;
   }
+  
+  ///***************************************///
+  /*/             open Popups               /*/ 
+  ///***************************************///
+  
+  public static void openSettingsWindow() {
+    if(!settingsOpen) {
+      SoundController.playSound("Button", SoundType.MISC);
+      ((StackPane)SceneHandler.getCurrentScene().getRoot()).getChildren().add(new SettingsWindow().fillWithContent());
+      settingsOpen = true;
+    }
+  }
+  
   
   ///***************************************///
   /*/          switching Scenes             /*/ 
@@ -181,5 +205,11 @@ public class SceneHandler {
   }
   public static void setHomeScene(Scene homeScene) {
     SceneHandler.homeScene = homeScene;
+  }
+  public static boolean areSettingsOpen() {
+    return settingsOpen;
+  }
+  public static void setSettingsOpen(boolean settingsOpen) {
+    SceneHandler.settingsOpen = settingsOpen;
   }
 }

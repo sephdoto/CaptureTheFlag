@@ -70,7 +70,7 @@ public class Constants {
    * Might result in an enormous amount of computation power and RAM dedicated to the AI.
    * Only activate if one MUST win.
    */
-  public static boolean FULL_AI_POWER = true;
+  public static boolean FULL_AI_POWER = false;
 
   /**
    * Size of the lastScenes stack that can be accessed by typing "back"
@@ -80,6 +80,10 @@ public class Constants {
    * How many seconds is waited between two "back" commands, before a new lastScene Stack is finalized.
    */
   public static int backSeconds = 5;
+  /**
+   * Opacity of the map background, can be lowered to increase piece visibility
+   */
+  public static double backgroundImageOpacity = 0.7;
   
   ///////////////////////////////////////////////////////
   //             Server Setting                        //

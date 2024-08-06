@@ -273,11 +273,7 @@ public class CheatboardListener extends NativeKeyAdapter {
       System.out.println("reimport resources");
     } else if (match == cheatCodes.get(3)) {    // open settings
       Platform.runLater(() -> {
-        SoundController.playSound("Button", SoundType.MISC);
-        //          settings.run();
-
-        ((StackPane)SceneHandler.getCurrentScene().getRoot()).getChildren().add(new ComponentCreator(SceneHandler.getCurrentScene()).createSettingsWindow(((StackPane)SceneHandler.getCurrentScene().getRoot())));
-
+        SceneHandler.openSettingsWindow();
       });
     } else if (match == cheatCodes.get(4)) {    // mute music and sounds
       MusicPlayer.mp.setVolume(0);

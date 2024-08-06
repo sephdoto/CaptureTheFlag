@@ -34,7 +34,6 @@ import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.controllers.SettingsSetter;
 import org.ctf.ui.controllers.SoundController;
-import org.ctf.ui.creators.ComponentCreator;
 import org.ctf.ui.customobjects.*;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.server.PortInUseException;
@@ -171,8 +170,7 @@ public class App extends Application {
             "SETTINGS",
             SceneHandler.getMainStage(),
             () -> {
-              SoundController.playSound("Button", SoundType.MISC);
-              root.getChildren().add(new ComponentCreator(SceneHandler.getHomeScene()).createSettingsWindow(root));
+              SceneHandler.openSettingsWindow();
             });
     VBox vbox = new VBox(ctfv, i1, i2, i3, i4);
     vbox.spacingProperty().bind(root.heightProperty().multiply(0.02));

@@ -538,6 +538,8 @@ public class PlayGameScreenV2 extends Scene {
       e.printStackTrace();
     }
     mpv = new ImageView(mp);
+    //TODO
+    mpv.setOpacity(Constants.backgroundImageOpacity);
     StackPane.setAlignment(mpv, Pos.CENTER);
 
     if (gm != null) {
