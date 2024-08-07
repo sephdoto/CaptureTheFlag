@@ -54,7 +54,8 @@ public class Enums {
   public enum UserChangeable {
     SOUNDVOLUME("soundVolume"),
     MUSICVOLUME("musicVolume"),
-    THEME("theme");
+    THEME("theme"),
+    FULL_AI_POWER("fullAiPower");
 
     private final String name;
 

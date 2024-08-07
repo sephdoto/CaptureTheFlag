@@ -64,6 +64,7 @@ public class SettingsWindow extends ComponentCreator {
     addNewComponent(Settings.THEME);
     addNewComponent(Settings.MUSIC);
     addNewComponent(Settings.SOUND);
+    addNewComponent(Settings.FULLAIPOWER);
     
     addSaveAndCancel();
     return popUp;
@@ -91,11 +92,43 @@ public class SettingsWindow extends ComponentCreator {
       case SOUND:
         node = new ChooseSoundSlider(settingsBox);
         break;
+      case FULLAIPOWER:
+          node = new ChooseFullAiPowerButton(settingsBox);
+          break;
       default:
         node = new Text("something went wrong");
     }
     
     gridPane.add(node, ++column, row); 
+  }
+  
+  /**
+   * On exit activation, sets the values from all settings and saves them in Constants.
+   * 
+   * @author sistumpf
+   */
+  protected void addSaveOnExit(Button exit) {
+    exit.setOnAction(e -> {
+      for (Node node : gridPane.getChildren()) {
+        if(node.getUserData() == null) continue;
+        try {
+          switch((String) node.getUserData()) {
+            case "theme": Constants.theme = Themes.valueOf((String) ((ChooseThemeBox) node).getValue()); break;
+            case "music": Constants.musicVolume = (double) ((ChooseMusicSlider) node).getValue(); break;
+            case "sound": Constants.soundVolume = (double) ((ChooseSoundSlider) node).getValue(); break;
+            case "fullAiPower": Constants.FULL_AI_POWER = (boolean) ((ChooseBooleanButton) node).getValue(); break;
+          }
+        } catch (IllegalArgumentException | SecurityException e1) {
+          e1.printStackTrace();
+        }
+      }
+
+      SettingsSetter.saveCustomSettings();
+      App.chagngeHomescreenBackground();
+      ((StackPane)SceneHandler.getCurrentScene().getRoot()).getChildren().remove(popUp);
+      SceneHandler.setSettingsOpen(false);
+      exit.setOnAction(null);
+    });
   }
   
   /**
@@ -120,34 +153,5 @@ public class SettingsWindow extends ComponentCreator {
     buttonBox.setAlignment(Pos.CENTER);
     buttonBox.getChildren().addAll(save, cancel);
     settingsBox.getChildren().add(buttonBox);
-  }
-  
-
-  /**
-   * On exit activation, sets the values from all settings and saves them in Constants.
-   * 
-   * @author sistumpf
-   */
-  protected void addSaveOnExit(Button exit) {
-    exit.setOnAction(e -> {
-      for (Node node : gridPane.getChildren()) {
-        if(node.getUserData() == null) continue;
-        try {
-          switch((String) node.getUserData()) {
-            case "theme": Constants.theme = Themes.valueOf((String) ((ChooseThemeBox) node).getValue()); break;
-            case "music": Constants.musicVolume = (double) ((ChooseMusicSlider) node).getValue(); break;
-            case "sound": Constants.soundVolume = (double) ((ChooseSoundSlider) node).getValue(); break;
-          }
-        } catch (IllegalArgumentException | SecurityException e1) {
-          e1.printStackTrace();
-        }
-      }
-
-      SettingsSetter.saveCustomSettings();
-      App.chagngeHomescreenBackground();
-      ((StackPane)SceneHandler.getCurrentScene().getRoot()).getChildren().remove(popUp);
-      SceneHandler.setSettingsOpen(false);
-      exit.setOnAction(null);
-    });
   }
 }

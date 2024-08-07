@@ -259,7 +259,7 @@ public class AIController {
    * Only starts if the current AI is not dead, is allowed to calculate in the background,
    * Constants.FULL_AI_POWER allows it, and it has not been locked by getNextMove().
    */
-  private void startBct() {
+  public void startBct() {
     if(bct == null && this.isActive() && backgroundCalc && Constants.FULL_AI_POWER && !bctLock) {
       bct = new BackgroundCalculatorThread(mcts);
       bct.start();
@@ -269,7 +269,7 @@ public class AIController {
   /**
    * Interrupts the BackgroundCalculatorThread, then stops this Thread till the other one has been interrupted.
    */
-  private void interruptBct() {
+  public void interruptBct() {
     if(bct != null) {
       bct.interrupt();
       while(bct != null && bct.getMcts() != null)

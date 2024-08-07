@@ -1,5 +1,7 @@
 package org.ctf.shared.ai;
 
+import org.ctf.shared.constants.Constants;
+
 /**
  * A Thread for continuously enlarging an MCTS Tree, until it gets interrupted.
  * 
@@ -27,7 +29,7 @@ public class BackgroundCalculatorThread extends Thread{
     if(mcts != null) {
 //      mcts.getConfig().C = 1000;
       
-      while(!interrupted) {
+      while(!interrupted && Constants.FULL_AI_POWER) {
         mcts.getMove(10);
         //      System.out.println("BackgroundCalculator" + BackgroundCalculatorThread.this + " " +mcts.getExpansionCounter());
       }

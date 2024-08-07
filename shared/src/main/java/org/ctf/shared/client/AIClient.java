@@ -109,7 +109,7 @@ public class AIClient extends Client {
         super.shutdown();
         this.aiPlayScheduler.shutdown();
         this.aiClientScheduler.shutdown();
-        this.controller.shutDown();
+        this.getController().shutDown();
         if (saveToken && enableLogging) {
           this.analyzer.writeOut();
           saveToken = false;
@@ -130,7 +130,7 @@ public class AIClient extends Client {
        * @throws InvalidShapeException
        */
       private void tryMakeMove() throws NoMovesLeftException, InvalidShapeException {
-        boolean updated = controller.update(getCurrentState(), getCurrentState().getLastMove());
+        boolean updated = getController().update(getCurrentState(), getCurrentState().getLastMove());
         if(updated || firstGameStateToken) {
           if(updated)
             firstGameStateToken = false;
@@ -139,9 +139,9 @@ public class AIClient extends Client {
               this.analyzer.addMove(getCurrentState().getLastMove(), GameUtilities.teamsGaveUp(lastState, currentState));
           }
           if (isItMyTurn()) {
-            Move move = controller.getNextMove();
-            if(controller.getAi() != AI.RANDOM && controller.getMcts() != null)
-              System.out.println(controller.getAi() + ":\n" + controller.getMcts().printResults(move));
+            Move move = getController().getNextMove();
+            if(getController().getAi() != AI.RANDOM && getController().getMcts() != null)
+              System.out.println(getController().getAi() + ":\n" + getController().getMcts().printResults(move));
             if(!isGameOver())
               makeMove(move);
           }
@@ -362,5 +362,9 @@ public class AIClient extends Client {
           this.analyzer.addMove(gameState.getLastMove(), GameUtilities.teamsGaveUp(lastState, currentState));
       }
     }
+  }
+
+  public AIController getController() {
+    return controller;
   }
 }
