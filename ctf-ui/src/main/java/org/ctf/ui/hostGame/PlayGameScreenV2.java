@@ -156,12 +156,37 @@ public class PlayGameScreenV2 extends Scene {
       e.printStackTrace();
     }
     createLayout();
+
+    reinitUiUpdateScheduler();
     if (ClientStorage.getMainClient().isGameTimeLimited() || ClientStorage.getMainClient().isGameMoveTimeLimited()) {
-      scheduler2 = Executors.newScheduledThreadPool(1);
-      scheduler2.scheduleAtFixedRate(updateTask2, 0, Constants.UIupdateTime, TimeUnit.MILLISECONDS);
+      reinitTimeScheduler();
     }
+  }
+  
+  /**
+   * Initiates the UI update scheduler with its task.
+   * If a scheduler is already initiated, it gets killed and reinitiated.
+   * 
+   * @author sistumpf
+   */
+  public void reinitUiUpdateScheduler() {
+    if(scheduler != null)
+      scheduler.shutdown();
     scheduler = Executors.newScheduledThreadPool(1);
     scheduler.scheduleAtFixedRate(updateTask, 0, Constants.UIupdateTime, TimeUnit.MILLISECONDS);
+  }
+
+  /**
+   * Initiates the UI timer scheduler with its task.
+   * If a scheduler is already initiated, it gets killed and reinitiated.
+   * 
+   * @author sistumpf
+   */
+  public void reinitTimeScheduler() {
+    if(scheduler2 != null)
+      scheduler2.shutdown();
+    scheduler2 = Executors.newScheduledThreadPool(1);
+    scheduler2.scheduleAtFixedRate(updateTask2, 0, Constants.UIupdateTime, TimeUnit.MILLISECONDS);
   }
 
   /**
@@ -280,7 +305,7 @@ public class PlayGameScreenV2 extends Scene {
           e.printStackTrace();
         }
       };
-
+      
   /**
    * Calls a Task to update and redraw the UI.
    *
@@ -351,7 +376,7 @@ public class PlayGameScreenV2 extends Scene {
     }
   }
   Text oldText;
-
+  
   /**
    * A Task to generate the new GamePane for the UI, so it does not happen in javaFX main Thread.
    * Also saves the time it started to generate the GamePane for later analysis. If an Exception or
@@ -512,10 +537,10 @@ public class PlayGameScreenV2 extends Scene {
    * @author sistumpf
    * @author aniemesc
    */
-  public void UpdateLeftSide() {
+  public void updateLeftSide() {
     showMapBox.getChildren().clear();
     this.showBlocks = false;
-
+    
     Image mp = ImageController.loadFallbackImage(ImageType.MISC);
     String path = Constants.toUIResources + "pictures" + File.separator + "grid.png";
     while (!new File(Constants.toUIResources + "pictures" + File.separator + "grid.png").exists())
@@ -538,7 +563,6 @@ public class PlayGameScreenV2 extends Scene {
       e.printStackTrace();
     }
     mpv = new ImageView(mp);
-    //TODO
     mpv.setOpacity(Constants.backgroundImageOpacity);
     StackPane.setAlignment(mpv, Pos.CENTER);
 

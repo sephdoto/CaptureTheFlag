@@ -1,5 +1,6 @@
 package org.ctf.ui.threads;
 
+import org.ctf.ui.data.SceneHandler;
 import javafx.stage.Stage;
 
 /**
@@ -42,11 +43,14 @@ public class ResizeFixThread extends Thread {
     this.finished = true;
     switch(resizeFS) {
       case 0: /* do nothing */ break;
-      case 1: stage.setHeight(stage.getHeight() +1); break;
+      case 1: stage.setHeight(stage.getHeight() +1); 
+      SceneHandler.getCurrentScene().getRoot().layout();
+      SceneHandler.getCurrentScene().getRoot().requestLayout();
+      break;
       case 2: /* do nothing */ break;
     }
   }
-  
+
   /**
    * @return true if the thread has already finished
    */

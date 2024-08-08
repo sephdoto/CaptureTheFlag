@@ -44,7 +44,7 @@ public class WaveCollapseThread extends Thread {
       }
     Platform.runLater(() -> {
       try {
-        changeBG.UpdateLeftSide();
+        changeBG.updateLeftSide();
       } catch (Exception e) {
         e.printStackTrace();
       }

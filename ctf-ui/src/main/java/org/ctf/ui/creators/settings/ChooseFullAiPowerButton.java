@@ -38,7 +38,8 @@ public class ChooseFullAiPowerButton extends ChooseBooleanButton{
     super.switchOff();
     Constants.FULL_AI_POWER = false;
     for(Client client : ClientStorage.getLocalAIClients())
-      ((AIClient) client).getController().interruptBct();
+      if(((AIClient) client).getController() != null)
+        ((AIClient) client).getController().interruptBct();
   }
   
   @Override

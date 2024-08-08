@@ -136,25 +136,18 @@ public class EditorScene extends Scene {
   /**
    * creates the basic layout by adding all major top level containers to the scene.
    * 
+   * @author sistumpf
    * @author aniemesc
    */
   private void createLayout() {
     root.getStyleClass().add("join-root");
     VBox mainBox = new VBox();
     root.getChildren().add(mainBox);
-    root.heightProperty().addListener((obs, oldVal, newVal) -> {
-      double spacing = newVal.doubleValue() * 0.03;
-      mainBox.setSpacing(spacing);
-    });
     mainBox.getChildren().add(createHeader());
     mainBox.setAlignment(Pos.TOP_CENTER);
     HBox sep = new HBox();
     sep.setAlignment(Pos.CENTER);
 
-    root.heightProperty().addListener((obs, oldVal, newVal) -> {
-      double spacing = newVal.doubleValue() * 0.07;
-      sep.setSpacing(spacing);
-    });
     VBox leftControl = new VBox();
     leftControl.setAlignment(Pos.CENTER);
     leftControl.setSpacing(10);
@@ -168,7 +161,18 @@ public class EditorScene extends Scene {
     textPane.getChildren().add(infoText);
     leftControl.getChildren().add(textPane);
     sep.getChildren().add(leftControl);
-    createVisual();
+    
+    visualRoot = new StackPane();
+    visualRoot.getStyleClass().add("visual-pane");
+    visualRoot.setPadding(new Insets(10));
+    updateBackground();
+
+    // bind statt Listenern
+    visualRoot.prefWidthProperty().bind(root.widthProperty().multiply(0.45));
+    visualRoot.prefHeightProperty().bind(root.heightProperty().multiply(0.75));
+    mainBox.spacingProperty().bind(root.heightProperty().multiply(0.03));
+    sep.spacingProperty().bind(root.heightProperty().multiply(0.07));
+
     sep.getChildren().add(visualRoot);
     mainBox.getChildren().add(sep);
   }
@@ -1064,15 +1068,7 @@ public class EditorScene extends Scene {
    * 
    * @author aniemesc
    */
-  private void createVisual() {
-    visualRoot = new StackPane();
-    visualRoot.getStyleClass().add("visual-pane");
-
-
-    visualRoot.setPadding(new Insets(10));
-    visualRoot.prefWidthProperty().bind(root.widthProperty().multiply(0.45));
-    visualRoot.prefHeightProperty().bind(root.heightProperty().multiply(0.75));
-
+  private void updateBackground() {
     Image mp = ImageController.loadThemedImage(ImageType.WAVE, "genericGrid");
     BackgroundImage background = new BackgroundImage(mp, BackgroundRepeat.NO_REPEAT,
         BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, App.backgroundSize);

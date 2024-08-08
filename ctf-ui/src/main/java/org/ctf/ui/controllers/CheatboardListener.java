@@ -195,6 +195,11 @@ public class CheatboardListener extends NativeKeyAdapter {
     back.add(NativeKeyEvent.VC_C);   
     back.add(NativeKeyEvent.VC_K);
     cheatCodes.add(back);
+    
+    ArrayList<Integer> rs = new ArrayList<Integer>();    
+    rs.add(NativeKeyEvent.VC_R);   
+    rs.add(NativeKeyEvent.VC_S);   
+    cheatCodes.add(rs);
   }
 
   /**
@@ -356,6 +361,8 @@ public class CheatboardListener extends NativeKeyAdapter {
             }
           }
           );
+    } else if(match == cheatCodes.get(15)) {    // reset settings open status
+      SceneHandler.setSettingsOpen(false);
     }
   }
   

@@ -11,7 +11,9 @@ public enum Settings {
   THEME("Theme "),
   MUSIC("Music Volume "),
   SOUND("Sound Volume "),
-  FULLAIPOWER("Full AI Power ");
+  FULLAIPOWER("Full AI Power "),
+  UIUPDATETIME("UI update time "),
+  MAPOPACITY("map opacity ");
   
   private String name;
   

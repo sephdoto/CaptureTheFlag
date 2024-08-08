@@ -602,6 +602,7 @@ public class CreateGameScreenV2 extends Scene {
           iv.fitWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.4));
           iv.fitHeightProperty().bind(SceneHandler.getMainStage().heightProperty().multiply(0.6));
           iv.setPreserveRatio(true);
+          iv.setOpacity(Constants.backgroundImageOpacity);
           showMapBox.getChildren().add(iv);
           showMapBox.getChildren().add(gm);
           generateBackgroundThread = null;

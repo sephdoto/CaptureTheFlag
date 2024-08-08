@@ -171,8 +171,8 @@ public class MoveVisualizer {
         cf.setUnattacble();
       }
       currentPlayer = null;
+      cb.showLastMove();
     }
-    cb.showLastMove();
   }
 
   public static CostumFigurePain getCurrent() {

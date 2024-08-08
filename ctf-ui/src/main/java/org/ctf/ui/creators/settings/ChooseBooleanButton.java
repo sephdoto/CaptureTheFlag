@@ -47,7 +47,7 @@ public abstract class ChooseBooleanButton extends StackPane implements ValueExtr
     setOnMouseClicked(click);
     button.setOnMouseClicked(click);
 
-    setUserData("boolean");
+    setUserData("booleanButton");
   }
 
   protected void createBooleanButton(VBox settingsBox) {

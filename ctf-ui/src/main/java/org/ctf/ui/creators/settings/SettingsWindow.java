@@ -6,8 +6,11 @@ import org.ctf.ui.App;
 import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.controllers.SettingsSetter;
 import org.ctf.ui.creators.ComponentCreator;
+import org.ctf.ui.creators.settings.DoubleBoxFactory.ChooseMapOpacityBox;
+import org.ctf.ui.creators.settings.IntegerBoxFactory.ChooseUiUpdateTimeIntegerBox;
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.data.SceneHandler;
+import org.ctf.ui.hostGame.PlayGameScreenV2;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -65,6 +68,8 @@ public class SettingsWindow extends ComponentCreator {
     addNewComponent(Settings.MUSIC);
     addNewComponent(Settings.SOUND);
     addNewComponent(Settings.FULLAIPOWER);
+    addNewComponent(Settings.UIUPDATETIME);
+    addNewComponent(Settings.MAPOPACITY);
     
     addSaveAndCancel();
     return popUp;
@@ -95,6 +100,12 @@ public class SettingsWindow extends ComponentCreator {
       case FULLAIPOWER:
           node = new ChooseFullAiPowerButton(settingsBox);
           break;
+      case UIUPDATETIME:
+        node = IntegerBoxFactory.getUiUpdateBox(settingsBox);
+        break;
+      case MAPOPACITY:
+        node = DoubleBoxFactory.getMapOpacityBox(settingsBox);
+        break;
       default:
         node = new Text("something went wrong");
     }
@@ -117,6 +128,21 @@ public class SettingsWindow extends ComponentCreator {
             case "music": Constants.musicVolume = (double) ((ChooseMusicSlider) node).getValue(); break;
             case "sound": Constants.soundVolume = (double) ((ChooseSoundSlider) node).getValue(); break;
             case "fullAiPower": Constants.FULL_AI_POWER = (boolean) ((ChooseBooleanButton) node).getValue(); break;
+            case "opacity": 
+              Constants.backgroundImageOpacity = (double) ((ChooseMapOpacityBox) node).getValue(); 
+              if(SceneHandler.getCurrentScene() instanceof PlayGameScreenV2)
+                ((PlayGameScreenV2)SceneHandler.getCurrentScene()).updateLeftSide();
+              break;
+            case "updateTime": 
+              Constants.UIupdateTime = (int) ((ChooseUiUpdateTimeIntegerBox) node).getValue();
+              if(SceneHandler.getCurrentScene() instanceof PlayGameScreenV2)
+                ((PlayGameScreenV2)SceneHandler.getCurrentScene()).reinitUiUpdateScheduler();
+
+            break;
+            
+            case "booleanButton": System.out.println((boolean) ((ChooseBooleanButton) node).getValue()); break;
+            case "doubleBox": System.out.println((double) ((ChooseDoubleBox) node).getValue()); break;
+            case "integerBox": System.out.println((int) ((ChooseIntegerBox) node).getValue()); break;
           }
         } catch (IllegalArgumentException | SecurityException e1) {
           e1.printStackTrace();

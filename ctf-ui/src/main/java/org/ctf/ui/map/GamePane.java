@@ -1,6 +1,7 @@
 package org.ctf.ui.map;
 
 import java.util.HashMap;
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
@@ -73,6 +74,7 @@ public class GamePane extends HBox {
    * @param col only used for the Analyzer
    */
   public GamePane(GameState state, boolean blocksVisible, String col) {
+    if(Constants.backgroundImageOpacity < 0.5) blocksVisible = true;
     initSizes();
     this.state = state;
     this.map = state.getGrid();
