@@ -3,8 +3,6 @@ package org.ctf.ui.remoteGame;
 import java.io.File;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.wave.WaveFunctionCollapse;
-import org.ctf.ui.controllers.HomeSceneController;
-import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.hostGame.PlayGameScreenV2;
 import javafx.application.Platform;
 

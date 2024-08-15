@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 public class Directions implements java.io.Serializable {
 
+    private static final long serialVersionUID = 8404037767542917604L;
     @Schema(
             description = "move N squares left"
     )

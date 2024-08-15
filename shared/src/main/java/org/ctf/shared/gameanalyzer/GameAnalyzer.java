@@ -1,6 +1,5 @@
 package org.ctf.shared.gameanalyzer;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.ai.AIController;
@@ -8,9 +7,6 @@ import org.ctf.shared.ai.GameStateNormalizer;
 import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
-import org.ctf.shared.ai.random.RandomAI;
-import org.ctf.shared.ai.MonteCarloTreeNode;
-import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;

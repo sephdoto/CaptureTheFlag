@@ -1,7 +1,6 @@
 package org.ctf.shared.state;
 
 import org.ctf.shared.state.data.map.PieceDescription;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
@@ -9,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Marcus Kessel
  */
 public class Piece implements java.io.Serializable{
+    private static final long serialVersionUID = -7203243527880816441L;
     @Schema(
             description = "unique piece identifier"
     )

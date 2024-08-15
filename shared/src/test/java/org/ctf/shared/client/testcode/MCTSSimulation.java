@@ -1,21 +1,15 @@
 package org.ctf.shared.client.testcode;
 
-import com.google.gson.Gson;
-import org.ctf.shared.ai.AIController;
-import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
-import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
-import org.ctf.shared.client.Client;
-import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
-import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.gameanalyzer.GameSaveHandler;
-import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.map.MapTemplate;
+import com.google.gson.Gson;
 
 // Makes upto 500 moves
 public class MCTSSimulation {
+  @SuppressWarnings("unused")
   public static void main(String[] args) {
     String jsonPayload =
         """

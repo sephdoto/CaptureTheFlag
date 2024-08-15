@@ -1,7 +1,6 @@
 package org.ctf.shared.integration;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.ctf.shared.gameanalyzer.SavedGame;
 import org.ctf.shared.state.Move;
 import org.junit.jupiter.api.Test;

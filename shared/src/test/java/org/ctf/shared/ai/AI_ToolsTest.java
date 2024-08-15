@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-
 import java.util.ArrayList;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.random.RandomAI;

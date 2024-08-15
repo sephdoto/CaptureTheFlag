@@ -6,7 +6,6 @@
     <artifactId>cfp14</artifactId>
     <version>0.1.0</version>
   </parent>
-  <groupId>org.ctf</groupId>
   <artifactId>shared</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>shared-module</name>
@@ -16,14 +15,12 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
-      <version>2.10.1</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.json/json -->
     <dependency>

@@ -6,6 +6,14 @@ import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums.ImageType;
+import org.ctf.ui.controllers.ImageController;
+import org.ctf.ui.creators.PopUpCreator;
+import org.ctf.ui.creators.PopUpCreatorEnterTeamName;
+import org.ctf.ui.customobjects.MyCustomColorPicker;
+import org.ctf.ui.data.ClientStorage;
+import org.ctf.ui.data.SceneHandler;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -26,8 +34,8 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tooltip;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
@@ -40,17 +48,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
-import org.ctf.shared.constants.Constants;
-import org.ctf.shared.constants.Enums.ImageType;
-import org.ctf.ui.App;
-import org.ctf.ui.controllers.CheatboardListener;
-import org.ctf.ui.controllers.HomeSceneController;
-import org.ctf.ui.controllers.ImageController;
-import org.ctf.ui.creators.PopUpCreator;
-import org.ctf.ui.creators.PopUpCreatorEnterTeamName;
-import org.ctf.ui.customobjects.MyCustomColorPicker;
-import org.ctf.ui.data.ClientStorage;
-import org.ctf.ui.data.SceneHandler;
 
 
 /**
@@ -303,6 +300,7 @@ public class WaitingScene extends Scene {
    * @author Manuel Krakowski
    * @return Vbox
    */
+  @SuppressWarnings({"unchecked", "rawtypes"})
   private VBox waitingBox() {
     final Label status = new Label("Waiting for Players");
     status.getStyleClass().add("spinner-des-label");

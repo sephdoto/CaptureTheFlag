@@ -38,7 +38,6 @@ public class GamePane extends HBox {
   private Team[] teams;
   private int rows;
   private int cols;
-  private int currentTeam;
   private String colerforAnlyzer;
   private VBox vBox;
   private boolean blocksvisible;
@@ -54,11 +53,17 @@ public class GamePane extends HBox {
   public ChangeListener<Number> heightListener;
   public ChangeListener<Number> widthListener;
   private GridPane gridPane;
+  
+  //TODO unused adressieren
+  @SuppressWarnings("unused")
   private SimpleObjectProperty<Double> prefWidth;
+  @SuppressWarnings("unused")
   private SimpleObjectProperty<Double> prefHeight;
   private SimpleObjectProperty<Double> minWidth;
   private SimpleObjectProperty<Double> minHeight;
+  @SuppressWarnings("unused")
   private SimpleObjectProperty<Double> minSize;
+  @SuppressWarnings("unused")
   private SimpleObjectProperty<Double> min;
   private NumberBinding binding;
 
@@ -80,7 +85,6 @@ public class GamePane extends HBox {
     this.map = state.getGrid();
     this.blocksvisible = blocksVisible;
     this.colerforAnlyzer = col;
-    this.currentTeam = state.getCurrentTeam();
     rows = map.length;
     cols = map[0].length;
     vBox = new VBox();

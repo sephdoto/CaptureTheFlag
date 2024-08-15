@@ -1,13 +1,9 @@
 package org.ctf.ui.remoteGame;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import org.ctf.shared.ai.AIConfig;
-import org.ctf.shared.client.AIClient;
-import org.ctf.shared.client.AIClientStepBuilder;
 import org.ctf.shared.client.Client;
-import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
@@ -15,9 +11,6 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.SoundType;
-import org.ctf.shared.state.data.exceptions.NoMoreTeamSlots;
-import org.ctf.ui.controllers.CheatboardListener;
-import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.creators.ComponentCreator;
@@ -27,7 +20,6 @@ import org.ctf.ui.data.ClientCreator;
 import org.ctf.ui.data.ClientStorage;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.editor.EditorScene;
-import org.ctf.ui.hostGame.CreateGameController;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
 import org.ctf.ui.threads.PointAnimation;
 import javafx.application.Platform;
@@ -50,7 +42,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
 
 /**
  * This class represents a JavaFX scene for Joining remote games. It contains all necessary UI
@@ -183,9 +174,6 @@ public class JoinScene extends Scene {
     exit.setOnAction(e -> {
       SceneHandler.switchToHomeScreen();
     });
-    String test =
-        "MCTS ist ein unglaublich starker KI spiler der alles zerstört falls er nicht aufgehalten wird ";
-    // InfoPaneCreator.addInfoPane(exit, hsc.getStage(), test, InfoPaneCreator.TOP);
     return exit;
   }
 
@@ -483,6 +471,7 @@ public class JoinScene extends Scene {
 
   }
 
+  @SuppressWarnings("unused")
   @Deprecated
   /**
    * This method creates the UI components for choosing an AI client

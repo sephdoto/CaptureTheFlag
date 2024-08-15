@@ -1,6 +1,5 @@
 package org.ctf.shared.wave;
 
-import static org.junit.jupiter.api.Assertions.*;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;

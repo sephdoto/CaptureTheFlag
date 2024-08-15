@@ -12,6 +12,22 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import org.ctf.shared.client.AIClient;
+import org.ctf.shared.client.Client;
+import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums.ImageType;
+import org.ctf.shared.state.GameState;
+import org.ctf.ui.controllers.ImageController;
+import org.ctf.ui.creators.PopupCreatorGameOver;
+import org.ctf.ui.customobjects.MyCustomColorPicker;
+import org.ctf.ui.customobjects.Timer;
+import org.ctf.ui.data.ClientStorage;
+import org.ctf.ui.data.SceneHandler;
+import org.ctf.ui.map.BaseRep;
+import org.ctf.ui.map.CostumFigurePain;
+import org.ctf.ui.map.GamePane;
+import org.ctf.ui.map.MoveVisualizer;
+import org.ctf.ui.threads.PointAnimation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -42,26 +58,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import org.ctf.shared.ai.AIController;
-import org.ctf.shared.client.AIClient;
-import org.ctf.shared.client.Client;
-import org.ctf.shared.constants.Constants;
-import org.ctf.shared.constants.Enums.ImageType;
-import org.ctf.shared.state.GameState;
-import org.ctf.ui.App;
-import org.ctf.ui.controllers.CheatboardListener;
-import org.ctf.ui.controllers.HomeSceneController;
-import org.ctf.ui.controllers.ImageController;
-import org.ctf.ui.creators.PopupCreatorGameOver;
-import org.ctf.ui.customobjects.MyCustomColorPicker;
-import org.ctf.ui.customobjects.Timer;
-import org.ctf.ui.data.ClientStorage;
-import org.ctf.ui.data.SceneHandler;
-import org.ctf.ui.map.BaseRep;
-import org.ctf.ui.map.CostumFigurePain;
-import org.ctf.ui.map.GamePane;
-import org.ctf.ui.map.MoveVisualizer;
-import org.ctf.ui.threads.PointAnimation;
 
 /**
  * Scene which is shown when a game is played
@@ -698,6 +694,7 @@ public class PlayGameScreenV2 extends Scene {
    * @author Manuel Krakowski
    * @return box with waiting animation and team-name
    */
+  @SuppressWarnings({"rawtypes", "unchecked"})
   private VBox showWaitingBox() {
     final Label status = new Label("is making its move");
     status.getStyleClass().add("spinner-des-label");

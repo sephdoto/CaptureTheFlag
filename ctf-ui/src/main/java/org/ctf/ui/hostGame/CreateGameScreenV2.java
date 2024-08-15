@@ -13,11 +13,7 @@ import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.tools.JsonTools;
 import org.ctf.shared.wave.WaveFunctionCollapse;
-import org.ctf.ui.App;
-
 import org.ctf.ui.StroeMaps;
-import org.ctf.ui.controllers.CheatboardListener;
-import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.creators.PopUpCreator;
 import org.ctf.ui.creators.PopUpCreatorEnterTeamName;

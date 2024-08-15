@@ -1,5 +1,12 @@
 package org.ctf.shared.tools;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.Directions;
@@ -9,18 +16,10 @@ import org.ctf.shared.state.data.map.PieceDescription;
 import org.ctf.shared.state.data.map.PlacementType;
 import org.ctf.shared.state.data.map.Shape;
 import org.ctf.shared.state.data.map.ShapeType;
-
+import org.json.JSONArray;
+import org.json.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.json.JSONObject;
-import org.json.JSONArray;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.io.File;
 
 /**
  * Using the  external json and gson library, MapTemplates can be saved as and created from a JSON String.
@@ -235,6 +234,8 @@ public class JsonTools {
    * Gets thrown if a MapTemplate that doesn't exist in mapTemplateFolder is accessed.
    */
   public static class MapNotFoundException extends Exception {
+    private static final long serialVersionUID = -6475981227866234664L;
+
     MapNotFoundException(String mapName){
       super("There is no MapTemplate named " + mapName + " in " + Constants.mapTemplateFolder);
     }
@@ -244,6 +245,8 @@ public class JsonTools {
    * Gets thrown if a MapTemplate doesn't contain all information needed to build a GameState.
    */
   public static class IncompleteMapTemplateException extends org.json.JSONException {
+    private static final long serialVersionUID = -6398646324585262889L;
+
     IncompleteMapTemplateException(String mapName){
       super("The MapTemplate " + mapName + " is incomplete and got deleted.");
     }

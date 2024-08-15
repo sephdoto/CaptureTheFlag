@@ -5,7 +5,6 @@ import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
-import org.junit.jupiter.api.Test;
 
 /**
  * This class is for AI battles. One AI against another AI, may the best one win!

@@ -1,10 +1,14 @@
 package org.ctf.shared.ai.mcts;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Arrays;
-import org.ctf.shared.ai.TestValues;
 import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.ai.ReferenceMove;
+import org.ctf.shared.ai.TestValues;
 import org.ctf.shared.state.GameState;
 import org.junit.jupiter.api.Test;
 

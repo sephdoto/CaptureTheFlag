@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 public class Movement implements java.io.Serializable{
 
+    private static final long serialVersionUID = -6872336510868653036L;
     @Schema(
             description = "directions a piece can move. if set, shape must NOT be set"
     )

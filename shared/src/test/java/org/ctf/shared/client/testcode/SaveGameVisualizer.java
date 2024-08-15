@@ -1,10 +1,9 @@
 package org.ctf.shared.client.testcode;
 
-import com.google.gson.Gson;
 import java.util.HashMap;
-
 import org.ctf.shared.gameanalyzer.GameSaveHandler;
 import org.ctf.shared.state.Move;
+import com.google.gson.Gson;
 
 public class SaveGameVisualizer {
 

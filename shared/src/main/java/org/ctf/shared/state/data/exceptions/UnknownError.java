@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "Unknown error occurred")
 public class UnknownError extends RuntimeException {
+  private static final long serialVersionUID = 6196916902816295550L;
+
   /**
    * Extension to the Exception to carry a message forward for the UI
    *

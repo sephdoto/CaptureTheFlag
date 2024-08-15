@@ -8,7 +8,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.concurrent.ThreadLocalRandom;
 import javax.swing.JFileChooser;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.GameState;

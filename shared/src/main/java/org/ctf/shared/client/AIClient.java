@@ -17,7 +17,6 @@ import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.exceptions.ForbiddenMove;
 import org.ctf.shared.state.data.exceptions.GameOver;
-import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.exceptions.NoMoreTeamSlots;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.shared.state.data.exceptions.URLError;
@@ -30,8 +29,6 @@ import org.ctf.shared.state.data.exceptions.UnknownError;
  * @author rsyed
  */
 public class AIClient extends Client {
-  // These two vars controls the client behaviour
-  private int aiClientRefreshTime = Constants.aiClientDefaultRefreshTime;
   private int controllerThinkingTime = Constants.aiDefaultThinkingTimeInSeconds;
 
   private AI selectedAI;

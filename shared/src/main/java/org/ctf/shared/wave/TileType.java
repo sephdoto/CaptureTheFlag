@@ -115,6 +115,7 @@ import org.ctf.shared.constants.Enums.Themes;;
    * that represents which pieces can fit together.  This version works for the "circuit" tiles.
    * The Strings are always to be read from left to right\top to bottom
    */
+  @SuppressWarnings("unused")
   @Deprecated
   private void hardLOTRules() {
     switch(this.type) {
@@ -734,6 +735,7 @@ import org.ctf.shared.constants.Enums.Themes;;
    * that represents which pieces can fit together. This version works for the "Rooms" tiles.
    * The Strings are always read from left to right\top to bottom
    */
+  @SuppressWarnings("unused")
   @Deprecated
   private void hardRoomRules() {
     switch (this.type) {

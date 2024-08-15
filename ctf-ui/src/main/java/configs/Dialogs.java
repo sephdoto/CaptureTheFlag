@@ -1,10 +1,8 @@
 package configs;
 
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.DialogPane;
 
 public class Dialogs {
 	public static void showExceptionDialog(String title, String message) {
@@ -21,7 +19,7 @@ public class Dialogs {
 		        + " -fx-border-style: solid;"
 		        + " -fx-text-fill: white");
 
-	    Button okButton = (Button) dialogPane.lookupButton(ButtonType.OK);
+//	    Button okButton = (Button) dialogPane.lookupButton(ButtonType.OK);
 	    //CreateGameScreen.applyButtonStyle(okButton,"white");
 	    alert.showAndWait();
 	  }

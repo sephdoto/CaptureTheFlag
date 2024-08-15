@@ -2,7 +2,6 @@ package org.ctf.ui.remoteGame;
 
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
-import org.ctf.shared.client.Client;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;

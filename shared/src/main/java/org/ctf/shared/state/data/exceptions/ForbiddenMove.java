@@ -11,4 +11,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = HttpStatus.FORBIDDEN, reason="Move is forbidden for current team")
 public class ForbiddenMove extends RuntimeException {
 
+  private static final long serialVersionUID = -6141188241386935234L;
+
 }

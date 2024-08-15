@@ -1,7 +1,6 @@
 package org.ctf.shared.gameanalyzer;
 
 import java.util.HashMap;
-import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 
@@ -15,6 +14,7 @@ import org.ctf.shared.state.Move;
  * @author rsyed
  */
 public class SavedGame implements java.io.Serializable {
+  private static final long serialVersionUID = -645723293296500965L;
   private GameState initialState;
   private HashMap<String, String> teamsGaveUpMap;
   private HashMap<String, Move> lastMovesMap;

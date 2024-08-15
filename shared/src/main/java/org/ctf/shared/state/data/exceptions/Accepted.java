@@ -6,6 +6,8 @@ package org.ctf.shared.state.data.exceptions;
  * @author rsyed
  */
 public class Accepted extends RuntimeException {
+  private static final long serialVersionUID = 5027270045199320945L;
+
   /**
    * Extension to the Exception to carry a message forward for the UI
    *

@@ -1,6 +1,9 @@
 package org.ctf.shared.tools;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,13 +15,12 @@ import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.tools.JsonTools.IncompleteMapTemplateException;
 import org.ctf.shared.tools.JsonTools.MapNotFoundException;
-
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.Gson;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * @author sistumpf

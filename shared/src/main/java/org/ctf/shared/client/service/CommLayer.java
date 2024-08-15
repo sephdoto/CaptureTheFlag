@@ -1,8 +1,5 @@
 package org.ctf.shared.client.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -29,6 +26,9 @@ import org.ctf.shared.state.dto.GiveupRequest;
 import org.ctf.shared.state.dto.JoinGameRequest;
 import org.ctf.shared.state.dto.JoinGameResponse;
 import org.ctf.shared.state.dto.MoveRequest;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 
 /**
  * A lightweight Java based Communication Layer which can be used to make calls to and get data from
@@ -365,6 +365,7 @@ public class CommLayer implements CommLayerInterface {
    * @return HttpResponse<String>
    * @throws URLError
    */
+  @SuppressWarnings("unused")
   @Deprecated
   private GameSessionResponse createGameSessionRequester(String URL, String jsonPayload) {
     HttpResponse<String> response;
@@ -400,6 +401,7 @@ public class CommLayer implements CommLayerInterface {
    * @return HttpResponse<String>
    * @throws URLError
    */
+  @SuppressWarnings("unused")
   @Deprecated
   private HttpResponse<String> GETRequest(String URL)
       throws URISyntaxException, IOException, InterruptedException {
@@ -424,6 +426,7 @@ public class CommLayer implements CommLayerInterface {
    * @return HttpResponse<String>
    * @throws URLError
    */
+  @SuppressWarnings("unused")
   @Deprecated
   private HttpResponse<String> DELETERequest(String URL)
       throws URISyntaxException, IOException, InterruptedException {

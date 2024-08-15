@@ -1,23 +1,12 @@
 package org.ctf.shared.ai;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.contains;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
-import org.ctf.shared.state.GameState;
-import org.ctf.shared.state.Piece;
-import org.ctf.shared.state.Team;
-import org.junit.jupiter.api.Test;
-import org.openjdk.jol.info.ClassLayout;
-import org.openjdk.jol.info.GraphLayout;
-import org.openjdk.jol.vm.VM;
-
-import org.ctf.shared.ai.AIController;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.ai.mcts3.ReferenceGameState;
 import org.ctf.shared.ai.random.RandomAI;
+import org.ctf.shared.state.GameState;
+import org.junit.jupiter.api.Test;
+import org.openjdk.jol.info.GraphLayout;
 
 /**
  * This class is mainly used to test the memory usage of implemented Objects
@@ -68,6 +57,7 @@ class ObjectMemoryAnalyzer {
     Thread.sleep(2000);
   }
   
+  @SuppressWarnings("unused")
   @Test
   void testGridMemoryUsage() {
     GameState gameState = TestValues.getTestState();

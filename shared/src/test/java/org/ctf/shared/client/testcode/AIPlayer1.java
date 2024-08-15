@@ -1,14 +1,6 @@
 package org.ctf.shared.client.testcode;
 
 import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import org.ctf.shared.ai.AIConfig;
-import org.ctf.shared.client.AIClient;
-import org.ctf.shared.client.AIClientStepBuilder;
-import org.ctf.shared.constants.Enums.AI;
 
 public class AIPlayer1 {
   public static void main(String[] args) {

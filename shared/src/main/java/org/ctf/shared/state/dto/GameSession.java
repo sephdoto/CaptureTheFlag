@@ -1,7 +1,6 @@
 package org.ctf.shared.state.dto;
 
 import java.util.Date;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 /*
  * DTO Object for Game Session

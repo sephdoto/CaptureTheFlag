@@ -1,9 +1,6 @@
 package org.ctf.shared.integration;
 
 import static org.junit.jupiter.api.Assertions.fail;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.unimannheim.swt.pse.ctf.CtfApplication;
 import java.io.IOException;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.client.AIClient;
@@ -16,6 +13,8 @@ import org.ctf.shared.constants.Enums.Port;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.unimannheim.swt.pse.ctf.CtfApplication;
 
 public class AIClientTest {
 
@@ -29,6 +28,7 @@ public class AIClientTest {
     CtfApplication.main(args);
   }
 
+  @SuppressWarnings("unused")
   @Test
   void AIClientInit() {
     AIClient aiClient1 =

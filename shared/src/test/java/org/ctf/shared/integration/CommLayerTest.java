@@ -2,10 +2,6 @@ package org.ctf.shared.integration;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.unimannheim.swt.pse.ctf.CtfApplication;
-import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
 import java.io.IOException;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.state.GameState;
@@ -17,6 +13,9 @@ import org.ctf.shared.state.dto.JoinGameResponse;
 import org.ctf.shared.state.dto.MoveRequest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.unimannheim.swt.pse.ctf.CtfApplication;
+import de.unimannheim.swt.pse.ctf.game.exceptions.InvalidMove;
 
 /**
  * Tests to test the communication capabilities and Exception catching of the CommLayer service
@@ -43,6 +42,7 @@ public class CommLayerTest {
     assertNotNull(gameSessionResponse.getId());
   }
 
+  @SuppressWarnings("unused")
   @Test
   void testGetCurrentGameState() {
     MapTemplate template = createGameTemplate();
@@ -81,6 +81,7 @@ public class CommLayerTest {
     assertNotNull(jsResponse.getTeamSecret());
   }
 
+  @SuppressWarnings("unused")
   @Test
   void testMakeMove() {
     MapTemplate template = createGameTemplate();

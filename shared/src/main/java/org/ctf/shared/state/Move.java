@@ -1,7 +1,7 @@
 package org.ctf.shared.state;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Arrays;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * This class represents a move.
@@ -9,6 +9,8 @@ import java.util.Arrays;
  * @author Marcus Kessel
  */
 public class Move implements java.io.Serializable {
+  private static final long serialVersionUID = -524264497877365560L;
+
   @Schema(description = "the piece (by its ID) to move")
   private String pieceId;
 

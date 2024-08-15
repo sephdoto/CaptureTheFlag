@@ -112,6 +112,7 @@ class ImageLoader {
    * @return
    * @throws IOException
    */
+  @SuppressWarnings("unused")
   @Deprecated
   private BufferedImage[] loadLOTRImagesOld() throws IOException {
     BufferedImage[] images = new BufferedImage[imagesAmount+1];
@@ -169,6 +170,7 @@ class ImageLoader {
 
   }
   
+  @SuppressWarnings("unused")
   @Deprecated
   private BufferedImage[] loadRoomImages() throws IOException {
     //Image amount = 28

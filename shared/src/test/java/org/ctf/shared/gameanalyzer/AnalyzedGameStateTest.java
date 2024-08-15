@@ -1,6 +1,5 @@
 package org.ctf.shared.gameanalyzer;
 
-import static org.junit.jupiter.api.Assertions.*;
 import java.lang.reflect.Method;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
@@ -11,9 +10,7 @@ import org.ctf.shared.ai.mcts3.MCTS;
 import org.ctf.shared.ai.mcts3.ReferenceGameState;
 import org.ctf.shared.ai.mcts3.TreeNode;
 import org.ctf.shared.ai.random.RandomAI;
-import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
-import org.ctf.shared.state.Team;
 import org.junit.jupiter.api.Test;
 
 class AnalyzedGameStateTest {

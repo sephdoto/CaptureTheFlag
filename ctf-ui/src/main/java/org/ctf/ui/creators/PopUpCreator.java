@@ -7,8 +7,6 @@ import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.AIConfigs;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.SoundType;
-import org.ctf.ui.App;
-import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.customobjects.ButtonPane;
@@ -51,7 +49,6 @@ public class PopUpCreator {
 	private AIConfig defaultConfig;
 	private AI aitype;
 	PopUpPane saveConfig;
-	private String defaultAiName;
 	TextField enterConfigNamefield;
 	private boolean remote = false;
 	private ArrayList<ButtonPane> buttonPanes = new ArrayList<ButtonPane>();

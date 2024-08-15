@@ -1,15 +1,12 @@
 package org.ctf.shared.client;
 
-import com.google.gson.Gson;
 import java.time.Clock;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-import org.ctf.shared.ai.AIController;
 import org.ctf.shared.ai.GameStateNormalizer;
 import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.client.lib.GameClientInterface;
@@ -21,7 +18,6 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.gameanalyzer.GameSaveHandler;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
-import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.Team;
 import org.ctf.shared.state.data.exceptions.ForbiddenMove;
 import org.ctf.shared.state.data.exceptions.GameOver;
@@ -36,6 +32,7 @@ import org.ctf.shared.state.dto.GameSessionRequest;
 import org.ctf.shared.state.dto.GameSessionResponse;
 import org.ctf.shared.state.dto.JoinGameResponse;
 import org.ctf.shared.state.dto.MoveRequest;
+import com.google.gson.Gson;
 
 /**
  * Base Client file which is going to use the Translation Layer to talk to the game server Has
@@ -533,7 +530,6 @@ public class Client implements GameClientInterface {
       } catch (InvalidMove e) {
         System.out.println(move.getPieceId() + ", team: " + move.getTeamId() + " [" +
             move.getNewPosition()[0] + "-" + move.getNewPosition()[1] + "], I am " + this.requestedTeamName);
-        final String pieceId = move.getPieceId();
         System.out.println("InvalidMove");
         throw new InvalidMove();
       } catch (GameOver e) {

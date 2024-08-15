@@ -10,6 +10,7 @@ import java.util.Stack;
  * @param <T> Object to be stored in the Stack
  */
 public class FixedStack<T> extends Stack<T> {
+  private static final long serialVersionUID = -1493719939850970802L;
   private int maxSize;
   
   public FixedStack(int maxSize) {

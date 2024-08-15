@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.Themes;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 /**
  * MusicPlayer uses a MediaPlayer to play music in the background. 

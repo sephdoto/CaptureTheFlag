@@ -1,5 +1,6 @@
 package org.ctf.shared.state.data.map;
 
+import org.ctf.shared.state.Piece;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 
@@ -9,6 +10,7 @@ import jakarta.validation.constraints.Min;
  */
 public class PieceDescription implements java.io.Serializable{
 
+    private static final long serialVersionUID = -7201460407032600328L;
     @Schema(
             description = "unique piece type (e.g., 'Pawn' or 'Rook')"
     )

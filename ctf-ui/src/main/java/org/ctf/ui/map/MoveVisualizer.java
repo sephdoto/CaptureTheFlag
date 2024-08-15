@@ -1,6 +1,5 @@
 package org.ctf.ui.map;
 
-import configs.Dialogs;
 import java.util.ArrayList;
 import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.client.Client;
@@ -12,6 +11,7 @@ import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.ui.controllers.SoundController;
+import configs.Dialogs;
 
 /**
  * Visualizes and handles the possible moves of the currently selected piece

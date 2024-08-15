@@ -1,19 +1,11 @@
 package org.ctf.ui.remoteGame;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
-import org.ctf.ui.App;
-import org.ctf.ui.controllers.CheatboardListener;
 import org.ctf.ui.data.ClientStorage;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.hostGame.PlayGameScreenV2;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.scene.layout.StackPane;
 
 /**
  * Updates a {@link RemoteWaitingScene} and initializes a Scene switch to the

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus(value = HttpStatus.TOO_MANY_REQUESTS, reason = "No team slots free")
 public class NoMoreTeamSlots extends RuntimeException {
+  private static final long serialVersionUID = 2447501347825063631L;
+
   /**
    * Extension to the Exception to carry a message forward for the UI
    *

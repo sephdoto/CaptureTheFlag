@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Game session not found")
 public class SessionNotFound extends RuntimeException {
+  private static final long serialVersionUID = 915909089290168756L;
+
   /**
    * Extension to the Exception to carry a message forward for the UI
    *

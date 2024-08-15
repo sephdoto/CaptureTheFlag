@@ -1,6 +1,5 @@
 package org.ctf.shared.gameanalyzer;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.constants.Enums.AI;

@@ -1,10 +1,11 @@
 package org.ctf.shared.client;
 
-import com.google.gson.Gson;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.constants.Enums.AI;
+import com.google.gson.Gson;
 
 public class AIPlayer1 {
+  @SuppressWarnings("unused")
   public static void main(String[] args) {
     String AICONFIG =
         """

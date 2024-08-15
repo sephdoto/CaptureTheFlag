@@ -1,8 +1,7 @@
 package org.ctf.shared.state.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-
 import java.util.Date;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * This class is used to represent the state of a game session.

@@ -1,15 +1,12 @@
 package org.ctf.shared.gameanalyzer;
 
 import java.util.Arrays;
-import org.ctf.shared.ai.AIController;
 import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.ai.MonteCarloTreeNode;
 import org.ctf.shared.ai.MonteCarloTreeSearch;
 import org.ctf.shared.constants.Enums.MoveEvaluation;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
-import org.ctf.shared.state.Team;
-import com.sun.prism.paint.Color;
 
 /**
  * Represents the most important information that can be extracted out of a move.

@@ -2,6 +2,7 @@ package org.ctf.shared.constants;
 
 import java.io.File;
 import java.nio.file.Paths;
+import org.ctf.shared.constants.Enums.Themes;
 
 /**
  * Constants class to hold control variables
@@ -169,7 +170,6 @@ public class Constants {
    * @author rsyed
    */
   public static final String remoteIP = "localhost";
-
   public static final String remotePort = "8888";
   public static final String remoteBinder = "/api/";
 
@@ -179,7 +179,6 @@ public class Constants {
    * @author rsyed
    */
   public static final int BUFFER_SIZE = 8 * 1024;
-
   public static final String JAR_PREFIX = "jar:file:";
 
   /**

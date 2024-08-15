@@ -4,9 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.unimannheim.swt.pse.ctf.CtfApplication;
 import java.io.IOException;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.ai.AIController;
@@ -24,6 +21,8 @@ import org.ctf.shared.state.data.map.MapTemplate;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.unimannheim.swt.pse.ctf.CtfApplication;
 
 /**
  * Tests to test the communication capabilities and Exception catching of the CommLayer service

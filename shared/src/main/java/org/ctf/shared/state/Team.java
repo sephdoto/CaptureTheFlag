@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Marcus Kessel
  */
 public class Team implements java.io.Serializable{
+    private static final long serialVersionUID = 4437585510887496914L;
     @Schema(
             description = "unique team identifier"
     )

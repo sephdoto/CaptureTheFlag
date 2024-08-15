@@ -5,15 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import de.unimannheim.swt.pse.ctf.CtfApplication;
-import java.io.File;
 import java.io.IOException;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.ai.AIController;
-import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.client.Client;
@@ -21,7 +15,6 @@ import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.RestClientLayer;
-import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.gameanalyzer.GameSaveHandler;
 import org.ctf.shared.gameanalyzer.SavedGame;
@@ -29,6 +22,9 @@ import org.ctf.shared.state.Move;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import de.unimannheim.swt.pse.ctf.CtfApplication;
 
 public class AnalyzerTest {
 

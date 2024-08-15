@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums;
-import org.ctf.shared.constants.Enums.Themes;
 import org.ctf.shared.tools.JsonTools;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -100,19 +99,15 @@ public class SettingsSetter {
    */
   private static void setCustomSettings(JSONObject settingObject) throws JSONException {
     try { Constants.musicVolume = settingObject.getDouble(Enums.UserChangeable.MUSICVOLUME.getString()); } catch (Exception e) {
-      Constants.musicVolume = 1;
       System.err.println("No value for " + Enums.UserChangeable.MUSICVOLUME.getString() + " saved.");
     };
     try { Constants.soundVolume = settingObject.getDouble(Enums.UserChangeable.SOUNDVOLUME.getString()); } catch (Exception e) {
-      Constants.soundVolume = 1;
       System.err.println("No value for " + Enums.UserChangeable.SOUNDVOLUME.getString() + " saved.");
     };
     try { Constants.theme = Enums.Themes.valueOf(settingObject.getString(Enums.UserChangeable.THEME.getString())); } catch (Exception e) {
-      Constants.theme = Themes.STARWARS;
       System.err.println("No value for " + Enums.UserChangeable.THEME.getString() + " saved.");
     };
     try { Constants.FULL_AI_POWER = settingObject.getBoolean(Enums.UserChangeable.FULL_AI_POWER.getString()); } catch (Exception e) {
-      Constants.FULL_AI_POWER = false;
       System.err.println("No value for " + Enums.UserChangeable.FULL_AI_POWER.getString() + " saved.");
     };
   }

@@ -1,14 +1,13 @@
 package org.ctf.shared.ai.mcts3;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
-import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
+import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.data.map.Directions;
 import org.ctf.shared.state.data.map.ShapeType;

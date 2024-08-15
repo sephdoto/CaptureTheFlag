@@ -1,12 +1,10 @@
 package org.ctf.shared.client.testcode;
 
-import com.google.gson.Gson;
-
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
-import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.state.data.map.MapTemplate;
+import com.google.gson.Gson;
 
 public class AIPlayerSimulator {
 

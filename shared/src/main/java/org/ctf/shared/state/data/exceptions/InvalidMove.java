@@ -9,4 +9,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @author Marcus Kessel
  */
 @ResponseStatus(value = HttpStatus.CONFLICT, reason="Move is invalid")
-public class InvalidMove extends RuntimeException {}
+public class InvalidMove extends RuntimeException {
+
+  private static final long serialVersionUID = -75324629303478793L;}

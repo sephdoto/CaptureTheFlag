@@ -110,7 +110,9 @@ import org.ctf.shared.constants.Enums.Themes;
     } else {
       int[] weights = new int[options.size()];
       int i = 0;
-      for(int x : options) {
+      
+      //TODO code anpassen?
+      for(@SuppressWarnings("unused") int x : options) {
         weights[i++] = 1;
       }
       return weights;

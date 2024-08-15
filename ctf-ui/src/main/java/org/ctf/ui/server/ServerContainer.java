@@ -1,12 +1,15 @@
 package org.ctf.ui.server;
 
-import de.unimannheim.swt.pse.ctf.CtfApplication;
 import org.ctf.shared.client.lib.ServerChecker;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
+import org.ctf.shared.constants.Constants;
+import org.ctf.ui.data.SceneHandler;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.SpringApplication;
+import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ConfigurableApplicationContext;
+import de.unimannheim.swt.pse.ctf.CtfApplication;
 
 /**
  * Implementation of the ServerInterface
@@ -30,11 +33,17 @@ public class ServerContainer implements ServerInterface {
     this.port = port;
     try {
       appContext = SpringApplication.run(CtfApplication.class, "--server.port=" + port);
-    } catch (BeanCreationException ex) {
-      throw new PortInUseException();
+      SceneHandler.setTitle("CFP 14" + " Local Server is active @ " + port);
+    } catch (BeanCreationException | ApplicationContextException ex) {
+      SceneHandler.setTitle("CFP 14" + " Local Server is already active @ " + port);
+      throw new PortInUseException(port);
     }
     if (appContext.isRunning()) {
-      return checkStatus();
+      if(checkStatus()) {
+        Constants.userSelectedLocalServerPort = port;
+      } else {
+        return false;
+      }
     }
     return false;
   }

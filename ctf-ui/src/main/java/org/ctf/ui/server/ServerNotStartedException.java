@@ -4,4 +4,7 @@ package org.ctf.ui.server;
  *
  * @author rsyed
  */
-public class ServerNotStartedException extends RuntimeException {}
+public class ServerNotStartedException extends RuntimeException {
+  private static final long serialVersionUID = 799124578297283534L;
+  
+}

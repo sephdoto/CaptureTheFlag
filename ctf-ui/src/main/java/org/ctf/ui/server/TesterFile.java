@@ -1,9 +1,5 @@
 package org.ctf.ui.server;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 public class TesterFile {
     public static void main(String[] args) {
         ServerContainer sc = new ServerContainer();

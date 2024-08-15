@@ -1,11 +1,11 @@
 package org.ctf.ui.map;
 
-import org.ctf.ui.controllers.ImageController;
-import org.ctf.ui.controllers.SoundController;
-import org.ctf.ui.hostGame.PlayGameScreenV2;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.shared.state.Piece;
+import org.ctf.ui.controllers.ImageController;
+import org.ctf.ui.controllers.SoundController;
+import org.ctf.ui.hostGame.PlayGameScreenV2;
 import javafx.beans.property.ObjectProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -106,7 +106,6 @@ public class CostumFigurePain extends Pane {
    * 
    * @author Manuel Krakowski
    */
-  @Deprecated
   public void unbind() {
     if (borderGlow.colorProperty() != null) {
       borderGlow.colorProperty().unbind();

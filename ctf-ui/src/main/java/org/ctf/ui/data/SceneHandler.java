@@ -5,7 +5,6 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.App;
 import org.ctf.ui.controllers.SoundController;
-import org.ctf.ui.creators.ComponentCreator;
 import org.ctf.ui.creators.settings.SettingsWindow;
 import org.ctf.ui.editor.EditorScene;
 import org.ctf.ui.gameAnalyzer.AiAnalyserNew;
@@ -16,6 +15,7 @@ import org.ctf.ui.hostGame.WaitingScene;
 import org.ctf.ui.remoteGame.JoinScene;
 import org.ctf.ui.remoteGame.WaveCollapseThread;
 import org.ctf.ui.threads.ResizeFixThread;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -184,6 +184,19 @@ public class SceneHandler {
   ///***************************************///
   /*/        getters and setters            /*/
   ///***************************************///
+  
+  /**
+   * Sets the main Stages title as a given String
+   * 
+   * @author sistumpf
+   * @param string Text to set the Title as
+   */
+  public static void setTitle(String string) {
+    Platform.runLater(
+        () -> {
+          getMainStage().setTitle(string);
+        });
+  }
   
   public static Stage getMainStage() {
     return mainStage;

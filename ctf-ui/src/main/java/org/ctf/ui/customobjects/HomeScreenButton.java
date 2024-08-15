@@ -3,11 +3,9 @@ package org.ctf.ui.customobjects;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javafx.animation.FillTransition;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;

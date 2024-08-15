@@ -1,7 +1,6 @@
 package org.ctf.shared.state.dto;
 
 import org.ctf.shared.state.data.map.MapTemplate;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**

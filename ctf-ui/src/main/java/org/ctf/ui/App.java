@@ -2,6 +2,19 @@ package org.ctf.ui;
 
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
+import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums.ImageType;
+import org.ctf.shared.constants.Enums.SoundType;
+import org.ctf.ui.controllers.HomeSceneController;
+import org.ctf.ui.controllers.ImageController;
+import org.ctf.ui.controllers.MusicPlayer;
+import org.ctf.ui.controllers.SettingsSetter;
+import org.ctf.ui.controllers.SoundController;
+import org.ctf.ui.customobjects.HomeScreenButton;
+import org.ctf.ui.customobjects.ServerPane;
+import org.ctf.ui.data.SceneHandler;
+import org.ctf.ui.server.PortInUseException;
+import org.ctf.ui.server.ServerContainer;
 import javafx.animation.FadeTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -25,19 +38,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.ctf.shared.constants.Constants;
-import org.ctf.shared.constants.Enums.ImageType;
-import org.ctf.shared.constants.Enums.SoundType;
-import org.ctf.ui.controllers.CheatboardListener;
-import org.ctf.ui.controllers.HomeSceneController;
-import org.ctf.ui.controllers.ImageController;
-import org.ctf.ui.controllers.MusicPlayer;
-import org.ctf.ui.controllers.SettingsSetter;
-import org.ctf.ui.controllers.SoundController;
-import org.ctf.ui.customobjects.*;
-import org.ctf.ui.data.SceneHandler;
-import org.ctf.ui.server.PortInUseException;
-import org.ctf.ui.server.ServerContainer;
 
 /**
  * @author mkrakows
@@ -100,16 +100,7 @@ public class App extends Application {
     try {
       serverContainer.startServer(Constants.userSelectedLocalServerPort);
     } catch (Exception e) {
-      setTitle("Default Server couldnt start");
-    }
-    if (serverContainer.checkStatus()) {
-      Platform.runLater(
-          () -> {
-            setTitle(
-                "CFP 14" + " Local Server is active @ " + Constants.userSelectedLocalServerPort);
-          });
-    } else {
-      setTitle("Internal server start error");
+      System.err.println(e.getLocalizedMessage());
     }
     backgroundMusic = new MusicPlayer();
     stage.setOnCloseRequest(

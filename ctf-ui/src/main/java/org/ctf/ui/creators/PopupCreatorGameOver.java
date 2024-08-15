@@ -1,8 +1,6 @@
 package org.ctf.ui.creators;
 
 import org.ctf.shared.constants.Enums.ImageType;
-import org.ctf.ui.App;
-import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.data.ClientStorage;
@@ -23,7 +21,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

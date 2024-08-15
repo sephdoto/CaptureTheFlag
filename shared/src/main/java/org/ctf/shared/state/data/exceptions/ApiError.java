@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 @Deprecated
 public class ApiError extends RuntimeException {
 
+  private static final long serialVersionUID = -3558730812414252748L;
   private HttpStatus currentStatus; // required
   private LocalDateTime timeStamp;
   private String message; // optional
@@ -52,6 +53,7 @@ public class ApiError extends RuntimeException {
    */
   public static class ApiErrorBuilder extends Throwable {
 
+    private static final long serialVersionUID = -7575971413881915287L;
     // required parameters
     private HttpStatus currentStatus;
     private LocalDateTime timeStamp;

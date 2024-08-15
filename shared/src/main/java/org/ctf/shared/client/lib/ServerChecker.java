@@ -1,12 +1,12 @@
 package org.ctf.shared.client.lib;
 
-import com.google.gson.Gson;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.shared.state.data.exceptions.URLError;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.state.dto.GameSessionRequest;
 import org.ctf.shared.state.dto.GameSessionResponse;
+import com.google.gson.Gson;
 
 public class ServerChecker {
 

@@ -1,36 +1,17 @@
 package org.ctf.ui.controllers;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.URL;
-import javafx.beans.property.ObjectProperty;
-import javafx.event.ActionEvent;
-import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
-import org.ctf.shared.client.Client;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
-import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
-import org.ctf.ui.App;
-import org.ctf.ui.data.ClientStorage;
-import org.ctf.ui.data.SceneHandler;
-import org.ctf.ui.editor.EditorScene;
-import org.ctf.ui.gameAnalyzer.AiAnalyserNew;
-import org.ctf.ui.hostGame.CreateGameController;
-import org.ctf.ui.hostGame.CreateGameScreenV2;
-import org.ctf.ui.hostGame.PlayGameScreenV2;
-import org.ctf.ui.hostGame.WaitingScene;
-import org.ctf.ui.remoteGame.JoinScene;
-import org.ctf.ui.remoteGame.WaveCollapseThread;
-import org.ctf.ui.threads.ResizeFixThread;
+import javafx.beans.property.ObjectProperty;
+import javafx.scene.paint.Color;
 
 /**
  * Main controller of the application. This Class controls what happens when clicking the buttons on

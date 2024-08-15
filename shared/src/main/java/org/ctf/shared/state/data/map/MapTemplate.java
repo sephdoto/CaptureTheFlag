@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 public class MapTemplate implements java.io.Serializable {
 
+    private static final long serialVersionUID = 7328129404263897261L;
     @Schema(
             description = "grid size. format [rows, columns]",
             example = "[10, 10]"

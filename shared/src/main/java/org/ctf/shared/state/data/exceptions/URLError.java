@@ -6,6 +6,8 @@ package org.ctf.shared.state.data.exceptions;
  */
 
 public class URLError extends RuntimeException {
+    private static final long serialVersionUID = -6615649417005142789L;
+
     public URLError(String message){
         super(message);
     }

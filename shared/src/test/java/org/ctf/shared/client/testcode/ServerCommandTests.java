@@ -1,7 +1,5 @@
 package org.ctf.shared.client.testcode;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Clock;
@@ -11,21 +9,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-import org.ctf.shared.ai.AIController;
-import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
-import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
-import org.ctf.shared.client.Client;
-import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
-import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.gameanalyzer.GameSaveHandler;
 import org.ctf.shared.gameanalyzer.SavedGame;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
-import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.map.MapTemplate;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /** Tests for the layer and the responses it gives out. */
 public class ServerCommandTests {
@@ -282,6 +275,7 @@ public class ServerCommandTests {
     System.out.println(counter); */
   }
 
+  @SuppressWarnings("unused")
   public static void joinTest() {
 
     String jsonPayload =
@@ -464,6 +458,7 @@ public class ServerCommandTests {
     System.out.println( (int) (Math.random() * 2) );
   } */
 
+  @SuppressWarnings("unused")
   public static void getStateTests() {
     String jsonPayload =
         """
@@ -651,6 +646,7 @@ public class ServerCommandTests {
     } */
   }
 
+  @SuppressWarnings("unused")
   public static void AIVSHUMAN() {
 
     String jsonPayload =

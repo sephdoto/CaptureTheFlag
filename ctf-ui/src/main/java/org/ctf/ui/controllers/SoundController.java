@@ -8,8 +8,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
-import javafx.application.Platform;
-import javafx.scene.media.AudioClip;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.shared.constants.Enums.Themes;
@@ -18,6 +16,7 @@ import org.jaudiotagger.audio.AudioFileIO;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.springframework.util.StringUtils;
+import javafx.scene.media.AudioClip;
 
 /**
  * This classes purpose is playing sounds that are linked to pieces and their actions.
@@ -208,6 +207,7 @@ public class SoundController {
    * @throws JSONException
    * @throws IOException
    */
+  @SuppressWarnings("unused")
   private static JSONArray readSoundJSON() throws JSONException, IOException {
     try {
       return new JSONArray(Files.readString(Paths.get(linkedSoundsFile), StandardCharsets.UTF_8));

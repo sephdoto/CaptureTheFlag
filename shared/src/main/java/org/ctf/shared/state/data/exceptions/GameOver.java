@@ -10,5 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus(value = HttpStatus.GONE, reason="Game is over")
 public class GameOver extends RuntimeException {
+
+  private static final long serialVersionUID = 3743679284247002915L;
     
 }

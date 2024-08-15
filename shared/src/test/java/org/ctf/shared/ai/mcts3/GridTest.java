@@ -1,6 +1,8 @@
 package org.ctf.shared.ai.mcts3;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.ctf.shared.ai.ReferenceMove;
 import org.ctf.shared.ai.TestValues;
 import org.ctf.shared.state.GameState;

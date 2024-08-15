@@ -3,9 +3,7 @@ package org.ctf.ui.customobjects;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 /**
  * This class represents a timer which just counts the time up

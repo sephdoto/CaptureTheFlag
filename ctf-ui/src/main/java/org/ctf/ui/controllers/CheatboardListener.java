@@ -4,16 +4,14 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.App;
-import org.ctf.ui.creators.ComponentCreator;
 import org.ctf.ui.data.FixedStack;
 import org.ctf.ui.data.SceneHandler;
 import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import org.jnativehook.keyboard.NativeKeyAdapter;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
-import org.jnativehook.keyboard.NativeKeyAdapter;
-import org.jnativehook.NativeHookException;
 
 /**
  * A KeyLogger to trigger easter eggs.

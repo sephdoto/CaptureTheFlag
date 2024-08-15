@@ -5,15 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-
-import org.ctf.shared.ai.AIConfig;
-import org.ctf.shared.client.AIClient;
-import org.ctf.shared.client.AIClientStepBuilder;
 import org.ctf.shared.client.Client;
-import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
@@ -52,6 +46,7 @@ public class CreateGameController {
   // Max Number of teams that are allowed in this Game, automatically set when template is set
   private static int maxNumberofTeams;
   // Current Number of Teams in the Session
+  @SuppressWarnings("unused")
   private static int currentNumberofTeams;
 
   // Currently selected team-colors by the user

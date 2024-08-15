@@ -1,11 +1,11 @@
 package org.ctf.shared.client.testcode;
 
-import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.client.AIClient;
 import org.ctf.shared.client.AIClientStepBuilder;
 import org.ctf.shared.constants.Enums.AI;
 
 public class AIPlayer2 {
+  @SuppressWarnings("unused")
   public static void main(String[] args) {
 
     AIClient javaClient2 =

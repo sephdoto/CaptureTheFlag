@@ -8,11 +8,11 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import javafx.scene.image.Image;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.Themes;
 import org.springframework.util.StringUtils;
+import javafx.scene.image.Image;
 
 /**
  * Tools for loading and saving images from/to their corresponding place in ui.resources.

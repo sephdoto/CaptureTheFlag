@@ -1,16 +1,9 @@
 package org.ctf.shared.wave;
 
 import java.awt.Graphics;
-
 import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
-import org.ctf.shared.constants.Constants;
-import org.ctf.shared.constants.Enums;
-import org.ctf.shared.constants.Enums.Themes;
-import javafx.scene.image.Image;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
@@ -18,6 +11,10 @@ import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
+import javax.imageio.ImageIO;
+import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums;
+import org.ctf.shared.constants.Enums.Themes;
 
 /**
  * Instantiate this class when creating a background with the wave function collapse algorithm. Idea
@@ -377,6 +374,7 @@ public class WaveFunctionCollapse {
    * @param grid the initial grid
    * @return the finished grid
    */
+  @SuppressWarnings("unused")
   @Deprecated
   private int[][] generateBackgroundRecursive(WaveGrid waveGrid) {
     WaveGrid wGrid = new WaveGrid(waveGrid.grid, imagesAmount, this.theme);
@@ -534,7 +532,6 @@ public class WaveFunctionCollapse {
   public void saveToResources() {
     if (this.collapsed) {
       String path = Constants.toUIResources + "pictures" + File.separator + "grid.png";
-      File saveTo = new File(path);
       try (RandomAccessFile file = new RandomAccessFile(path, "rw")){
         FileChannel channel = file.getChannel();
         FileLock lock = channel.lock();

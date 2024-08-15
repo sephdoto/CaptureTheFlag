@@ -1,10 +1,9 @@
 package test;
 
+import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.data.map.Directions;
 import org.ctf.shared.state.data.map.Movement;
-
 import org.ctf.shared.state.data.map.PieceDescription;
-import org.ctf.shared.state.Piece;
 
 public class TestPieceCreator {
 	public static Piece createTestPice(String teamID, int[] position, String idString) {

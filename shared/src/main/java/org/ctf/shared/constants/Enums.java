@@ -1,7 +1,6 @@
 package org.ctf.shared.constants;
 
 import java.io.File;
-import javafx.scene.paint.Color;
 
 public class Enums {
 

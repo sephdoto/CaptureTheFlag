@@ -1,6 +1,5 @@
 package org.ctf.shared.client.testcode;
 
-import com.google.gson.Gson;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -15,10 +14,12 @@ import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.state.data.map.MapTemplate;
+import com.google.gson.Gson;
 
 public class ScheduledTasks {
   static String GameID;
 
+  @SuppressWarnings("unused")
   public static void main(String[] args) {
     ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
     Gson gson = new Gson();

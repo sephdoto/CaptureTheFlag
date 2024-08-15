@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 public class Shape implements java.io.Serializable{
 
+    private static final long serialVersionUID = 1843125044621248476L;
     @Schema(
             description = "the type of movement"
     )

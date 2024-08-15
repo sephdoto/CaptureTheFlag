@@ -1,17 +1,16 @@
 package org.ctf.shared.ai;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
 import org.ctf.shared.ai.mcts.MCTS;
 import org.ctf.shared.ai.mcts.TreeNode;
 import org.ctf.shared.ai.random.RandomAI;
-import org.ctf.shared.client.AIClient;
-import org.ctf.shared.client.AIClientStepBuilder;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.client.ClientStepBuilder;
 import org.ctf.shared.constants.Constants;
@@ -39,6 +38,7 @@ class AIControllerTest {
     new AIController(TestValues.getTestState(), AI.RANDOM, new AIConfig(), 0, false);
   }
 
+  @SuppressWarnings("unused")
   @Test
   void testGetMove() throws MapNotFoundException {
     for(AI ai : AI.values()) {
