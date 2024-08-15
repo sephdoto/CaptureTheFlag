@@ -161,7 +161,7 @@ public class App extends Application {
             "SETTINGS",
             SceneHandler.getMainStage(),
             () -> {
-              SceneHandler.openSettingsWindow();
+              SceneHandler.openSettingsWindow("default");
             });
     VBox vbox = new VBox(ctfv, i1, i2, i3, i4);
     vbox.spacingProperty().bind(root.heightProperty().multiply(0.02));

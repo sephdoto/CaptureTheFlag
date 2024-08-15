@@ -5,6 +5,7 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.App;
 import org.ctf.ui.controllers.SoundController;
+import org.ctf.ui.creators.settings.SettingsOpener;
 import org.ctf.ui.creators.settings.SettingsWindow;
 import org.ctf.ui.editor.EditorScene;
 import org.ctf.ui.gameAnalyzer.AiAnalyserNew;
@@ -64,10 +65,16 @@ public class SceneHandler {
   /*/             open Popups               /*/ 
   ///***************************************///
   
-  public static void openSettingsWindow() {
+  public static void openSettingsWindow(String settings) {
     if(!settingsOpen) {
       SoundController.playSound("Button", SoundType.MISC);
-      ((StackPane)SceneHandler.getCurrentScene().getRoot()).getChildren().add(new SettingsWindow().fillWithContent());
+      switch (settings) {
+        case "advanced" : 
+          ((StackPane)SceneHandler.getCurrentScene().getRoot()).getChildren().add(SettingsOpener.getAdvancedSettings().getContent());
+          break;
+        default: 
+          ((StackPane)SceneHandler.getCurrentScene().getRoot()).getChildren().add(SettingsOpener.getDefaultSettings().getContent());
+      }
       settingsOpen = true;
     }
   }

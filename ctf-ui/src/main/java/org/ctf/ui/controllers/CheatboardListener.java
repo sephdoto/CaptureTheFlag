@@ -197,7 +197,18 @@ public class CheatboardListener extends NativeKeyAdapter {
     ArrayList<Integer> rs = new ArrayList<Integer>();    
     rs.add(NativeKeyEvent.VC_R);   
     rs.add(NativeKeyEvent.VC_S);   
-    cheatCodes.add(rs);
+    cheatCodes.add(rs);    
+    
+    ArrayList<Integer> advanced = new ArrayList<Integer>();    
+    advanced.add(NativeKeyEvent.VC_A);   
+    advanced.add(NativeKeyEvent.VC_D);   
+    advanced.add(NativeKeyEvent.VC_V);   
+    advanced.add(NativeKeyEvent.VC_A);   
+    advanced.add(NativeKeyEvent.VC_N);   
+    advanced.add(NativeKeyEvent.VC_C);   
+    advanced.add(NativeKeyEvent.VC_E);   
+    advanced.add(NativeKeyEvent.VC_D);   
+    cheatCodes.add(advanced);
   }
 
   /**
@@ -276,7 +287,7 @@ public class CheatboardListener extends NativeKeyAdapter {
       System.out.println("reimport resources");
     } else if (match == cheatCodes.get(3)) {    // open settings
       Platform.runLater(() -> {
-        SceneHandler.openSettingsWindow();
+        SceneHandler.openSettingsWindow("default");
       });
     } else if (match == cheatCodes.get(4)) {    // mute music and sounds
       MusicPlayer.mp.setVolume(0);
@@ -349,7 +360,7 @@ public class CheatboardListener extends NativeKeyAdapter {
                 SceneHandler.switchCurrentScene(lastScenesCopy.pop());
                 backtracking = System.currentTimeMillis();
               } else {
-                if(lastScenesCopy.size() > 0) {
+                if(lastScenesCopy != null && lastScenesCopy.size() > 0) {
                   SceneHandler.switchCurrentScene(lastScenesCopy.pop());
                   backtracking = System.currentTimeMillis();  
                 } else {
@@ -361,6 +372,10 @@ public class CheatboardListener extends NativeKeyAdapter {
           );
     } else if(match == cheatCodes.get(15)) {    // reset settings open status
       SceneHandler.setSettingsOpen(false);
+    } else if(match == cheatCodes.get(16)) {    // open advanced settings
+      Platform.runLater(() -> {
+        SceneHandler.openSettingsWindow("advanced");
+      });
     }
   }
   

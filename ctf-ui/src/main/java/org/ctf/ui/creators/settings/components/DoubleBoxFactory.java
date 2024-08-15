@@ -1,4 +1,4 @@
-package org.ctf.ui.creators.settings;
+package org.ctf.ui.creators.settings.components;
 
 import org.ctf.shared.constants.Constants;
 import javafx.scene.layout.VBox;
@@ -14,7 +14,7 @@ public class DoubleBoxFactory {
     return new ChooseMapOpacityBox(settingsBox);
   }
   
-  static class ChooseMapOpacityBox extends ChooseDoubleBox {
+  public static class ChooseMapOpacityBox extends ChooseDoubleBox {
     
     public ChooseMapOpacityBox(VBox settingsBox) {
       super(settingsBox);

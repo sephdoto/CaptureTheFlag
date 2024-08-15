@@ -1,4 +1,4 @@
-package org.ctf.ui.creators.settings;
+package org.ctf.ui.creators.settings.components;
 
 /**
  * Marks a class as value holding, enabling the extraction of a certain value.

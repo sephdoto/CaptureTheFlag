@@ -71,8 +71,7 @@ public class AiAnalyserNew extends Scene {
       new SimpleObjectProperty<>(new Insets(this.getWidth() * 0.01));
 
   private HBox[] rows;
-
-
+  
   private Label[] teamLabels;
   private Label[] classificationlabels;
   private Double[] percentagesbyUser;
@@ -91,6 +90,7 @@ public class AiAnalyserNew extends Scene {
   private boolean showHuman;
   public boolean switched;
 
+  private GameAnalyzer analyzer;
 
   public AiAnalyserNew(double width, double height) {
     super(new StackPane(), width, height);
@@ -166,17 +166,20 @@ public class AiAnalyserNew extends Scene {
    */
   private void initalize() {
     try {
+      //adjust SavedGame initial team and move team (weird bug, only fix I see right now @sistumpf) TODO
+      gsh.getSavedGame().getInitialState().setCurrentTeam(Integer.parseInt(gsh.getSavedGame().getMoves().get("1").getTeamId()));
+      
       // TODO
-      GameAnalyzer analyzer = new GameAnalyzer(gsh.getSavedGame(), AI.IMPROVED, new AIConfig(), 3);
-      analysedGames = analyzer.getResults();
+      analyzer = new GameAnalyzer(gsh.getSavedGame(), new AIConfig());
+      analysedGames = getAnalyzer().getResults();
       Thread initThread = new Thread() {
         public void run() {
           int movePointer = 0;
-          while ((analyzer.isActive() || movePointer < analyzer.howManyMoves()) && analyzer.noErrors() -1 != movePointer) {
-            if (movePointer != analyzer.getCurrentlyAnalyzing()) {
+          while ((getAnalyzer().isActive() || movePointer < getAnalyzer().howManyMoves()) && getAnalyzer().noErrors() -1 != movePointer) {
+            if (movePointer != getAnalyzer().getCurrentlyAnalyzing()) {
 //              int currentMove = analyzer.getCurrentlyAnalyzing() -1;
               int currentMove = movePointer;
-              AnalyzedGameState g = analyzer.getResults()[currentMove];
+              AnalyzedGameState g = getAnalyzer().getResults()[currentMove];
               Runnable showResults = new Runnable() {
                 @Override
                 public void run() {
@@ -886,6 +889,10 @@ public class AiAnalyserNew extends Scene {
     l.prefWidthProperty().bind(h.widthProperty().multiply(0.5));
     l.fontProperty().bind(moveTableContent);
     return l;
+  }
+
+  public GameAnalyzer getAnalyzer() {
+    return analyzer;
   }
 }
 

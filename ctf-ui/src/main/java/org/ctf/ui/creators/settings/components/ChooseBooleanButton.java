@@ -1,4 +1,4 @@
-package org.ctf.ui.creators.settings;
+package org.ctf.ui.creators.settings.components;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;

@@ -1,4 +1,4 @@
-package org.ctf.ui.creators.settings;
+package org.ctf.ui.creators.settings.components;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;

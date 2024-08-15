@@ -2,6 +2,7 @@ package org.ctf.shared.constants;
 
 import java.io.File;
 import java.nio.file.Paths;
+import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.Themes;
 
 /**
@@ -102,6 +103,8 @@ public class Constants {
 
   public static int aiDefaultThinkingTimeInSeconds = 10;
   public static int aiClientDefaultRefreshTime = 1;
+  public static Enums.AI analyzeAI = AI.IMPROVED;
+  public static int analyzeTimeInSeconds = 3;
 
   ///////////////////////////////////////////////////////
   //                      Strings                      //

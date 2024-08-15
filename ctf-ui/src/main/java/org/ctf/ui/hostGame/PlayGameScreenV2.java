@@ -359,6 +359,7 @@ public class PlayGameScreenV2 extends Scene {
                       if (active != null && !(active instanceof AIClient)) {
                         MoveVisualizer.initializeGame(gm, active);
                       }
+                      
                       // Update the "it is your turn" label
                       PlayGameScreenV2.this.setTeamTurn();
 

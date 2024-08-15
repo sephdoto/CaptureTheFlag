@@ -7,6 +7,7 @@ import org.ctf.shared.ai.GameStateNormalizer;
 import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
@@ -31,12 +32,14 @@ public class GameAnalyzer extends AIController {
    * @param config if this is null, the default config gets applied
    * @param secondsTimeToThink think time in seconds for analyzing one move
    */
-  public GameAnalyzer(SavedGame game, AI ai, AIConfig config, int secondsTimeToThink) {
-    super(game.getInitialState(), ai, config, secondsTimeToThink, false);
+  public GameAnalyzer(SavedGame game, AIConfig config) {
+    super(game.getInitialState(), Constants.analyzeAI, config, Constants.analyzeTimeInSeconds, false);
+    System.out.println(game.getInitialState().getCurrentTeam());
+    System.out.println(game.getMoves().get("1").getTeamId());
     errorAt = -1;
     if(config == null)
       super.setConfig(new AIConfig());
-    if(ai == AI.RANDOM || ai == AI.HUMAN) {
+    if(Constants.analyzeAI == AI.RANDOM || Constants.analyzeAI == AI.HUMAN) {
       super.setAi(AI.MCTS);
       super.initMCTS();
     }

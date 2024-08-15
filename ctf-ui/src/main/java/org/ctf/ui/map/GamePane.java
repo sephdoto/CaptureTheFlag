@@ -6,8 +6,10 @@ import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.Team;
+import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.hostGame.CreateGameController;
 import org.ctf.ui.hostGame.PlayGameScreenV2;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.SimpleObjectProperty;
@@ -41,6 +43,7 @@ public class GamePane extends HBox {
   private String colerforAnlyzer;
   private VBox vBox;
   private boolean blocksvisible;
+  private boolean newGP;
 
 
   // Stored Objects on the map
@@ -80,6 +83,7 @@ public class GamePane extends HBox {
    */
   public GamePane(GameState state, boolean blocksVisible, String col) {
     if(Constants.backgroundImageOpacity < 0.5) blocksVisible = true;
+    newGP = true;
     initSizes();
     this.state = state;
     this.map = state.getGrid();
@@ -204,6 +208,11 @@ public class GamePane extends HBox {
           int oldPosY = old.getPosY();
           setDynamicCellBackground(cells.get(generateKey(xOldPosX, oldPosY)));
         }
+      }
+      if(newGP) {
+        newGP = false;
+        if(SceneHandler.getCurrentScene() instanceof PlayGameScreenV2)
+          Platform.runLater(() -> CreateGameController.getLastFigures().get(lastMove.getPieceId()).showPieceInformationWhenClicked());
       }
     }
   }

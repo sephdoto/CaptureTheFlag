@@ -1,4 +1,4 @@
-package org.ctf.ui.creators.settings;
+package org.ctf.ui.creators.settings.components;
 
 import org.ctf.shared.client.AIClient;
 import org.ctf.shared.client.Client;

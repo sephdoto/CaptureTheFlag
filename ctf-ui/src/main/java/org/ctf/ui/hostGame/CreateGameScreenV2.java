@@ -290,9 +290,11 @@ public class CreateGameScreenV2 extends Scene {
       enterSeverInfoBox.setSpacing(spacing);
     });
     serverIPText = createTextfield("Enter the Server IP", 0.2);
+    serverIPText.setText("localhost");
     serverIPText.prefWidthProperty().bind(enterSeverInfoBox.widthProperty().multiply(0.4));
     enterSeverInfoBox.getChildren().add(serverIPText);
     portText = createTextfield("Enter the Port", 0.2);
+    portText.setText(Constants.userSelectedLocalServerPort);
     portText.prefWidthProperty().bind(enterSeverInfoBox.widthProperty().multiply(0.4));
     enterSeverInfoBox.getChildren().add(portText);
     serverInfoBox.getChildren().add(enterSeverInfoBox);

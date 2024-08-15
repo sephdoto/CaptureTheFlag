@@ -6,10 +6,20 @@ import org.ctf.ui.App;
 import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.controllers.SettingsSetter;
 import org.ctf.ui.creators.ComponentCreator;
-import org.ctf.ui.creators.settings.DoubleBoxFactory.ChooseMapOpacityBox;
-import org.ctf.ui.creators.settings.IntegerBoxFactory.ChooseUiUpdateTimeIntegerBox;
+import org.ctf.ui.creators.settings.components.ChooseBooleanButton;
+import org.ctf.ui.creators.settings.components.ChooseDoubleBox;
+import org.ctf.ui.creators.settings.components.ChooseFullAiPowerButton;
+import org.ctf.ui.creators.settings.components.ChooseIntegerBox;
+import org.ctf.ui.creators.settings.components.ChooseMusicSlider;
+import org.ctf.ui.creators.settings.components.ChooseSoundSlider;
+import org.ctf.ui.creators.settings.components.ChooseThemeBox;
+import org.ctf.ui.creators.settings.components.DoubleBoxFactory;
+import org.ctf.ui.creators.settings.components.IntegerBoxFactory;
+import org.ctf.ui.creators.settings.components.DoubleBoxFactory.ChooseMapOpacityBox;
+import org.ctf.ui.creators.settings.components.IntegerBoxFactory.ChooseUiUpdateTimeIntegerBox;
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.data.SceneHandler;
+import org.ctf.ui.gameAnalyzer.AiAnalyserNew;
 import org.ctf.ui.hostGame.PlayGameScreenV2;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -26,7 +36,7 @@ import javafx.scene.text.Text;
  * 
  * @author sistumpf
  */
-public class SettingsWindow extends ComponentCreator {
+public abstract class SettingsWindow extends ComponentCreator {
   private PopUpPane popUp;
   private VBox settingsBox;
   private GridPane gridPane;
@@ -39,11 +49,11 @@ public class SettingsWindow extends ComponentCreator {
    * 
    * @author sistumpf
    */
-  public SettingsWindow() {
+  public SettingsWindow(String title) {
     settingsBox = new VBox();
     settingsBox.setAlignment(Pos.TOP_CENTER);
     settingsBox.setPadding(new Insets(10));
-    settingsBox.getChildren().add(createHeaderText(settingsBox, "Settings", 12));
+    settingsBox.getChildren().add(createHeaderText(settingsBox, title, 12));
     
     popUp = new PopUpPane(SceneHandler.getCurrentScene(), 0.5, 0.6, 0.7);
     popUp.setContent(settingsBox);
@@ -55,25 +65,15 @@ public class SettingsWindow extends ComponentCreator {
     
     row = 0;
     column = 0;
+    
+    fillWithContent();
+    addSaveAndCancel();
   }
   
   /**
    * Fills the PopUpPane with components, the order they are added will stay.
-   * 
-   * @author sistumpf
-   * @return {@link PopUpPane} the popUpPane containing all settings
    */
-  public StackPane fillWithContent() {
-    addNewComponent(Settings.THEME);
-    addNewComponent(Settings.MUSIC);
-    addNewComponent(Settings.SOUND);
-    addNewComponent(Settings.FULLAIPOWER);
-    addNewComponent(Settings.UIUPDATETIME);
-    addNewComponent(Settings.MAPOPACITY);
-    
-    addSaveAndCancel();
-    return popUp;
-  }
+  public abstract void fillWithContent(); 
   
   /**
    * Adds a component to the gridPane.
@@ -82,7 +82,7 @@ public class SettingsWindow extends ComponentCreator {
    * @author sistumpf
    * @param setting depending on it, a different node can be chosen to be added.
    */
-  private void addNewComponent(Settings setting) {
+  protected void addNewComponent(Settings setting) {
     column = 0;
     gridPane.add(createHeaderText(settingsBox, setting.getName(), 18), column, ++row);
     Node node;
@@ -97,14 +97,17 @@ public class SettingsWindow extends ComponentCreator {
       case SOUND:
         node = new ChooseSoundSlider(settingsBox);
         break;
-      case FULLAIPOWER:
+      case FULL_AI_POWER:
           node = new ChooseFullAiPowerButton(settingsBox);
           break;
-      case UIUPDATETIME:
+      case UI_UPDATE_TIME:
         node = IntegerBoxFactory.getUiUpdateBox(settingsBox);
         break;
-      case MAPOPACITY:
+      case MAP_OPACITY:
         node = DoubleBoxFactory.getMapOpacityBox(settingsBox);
+        break;
+      case ANALYZER_THINKING_TIME:
+        node = IntegerBoxFactory.getAiThinkBox(settingsBox);
         break;
       default:
         node = new Text("something went wrong");
@@ -129,16 +132,22 @@ public class SettingsWindow extends ComponentCreator {
             case "sound": Constants.soundVolume = (double) ((ChooseSoundSlider) node).getValue(); break;
             case "fullAiPower": Constants.FULL_AI_POWER = (boolean) ((ChooseBooleanButton) node).getValue(); break;
             case "opacity": 
-              Constants.backgroundImageOpacity = (double) ((ChooseMapOpacityBox) node).getValue(); 
+              Constants.backgroundImageOpacity = (double) ((ChooseDoubleBox) node).getValue(); 
               if(SceneHandler.getCurrentScene() instanceof PlayGameScreenV2)
                 ((PlayGameScreenV2)SceneHandler.getCurrentScene()).updateLeftSide();
               break;
             case "updateTime": 
-              Constants.UIupdateTime = (int) ((ChooseUiUpdateTimeIntegerBox) node).getValue();
+              Constants.UIupdateTime = (int) ((ChooseIntegerBox) node).getValue();
               if(SceneHandler.getCurrentScene() instanceof PlayGameScreenV2)
                 ((PlayGameScreenV2)SceneHandler.getCurrentScene()).reinitUiUpdateScheduler();
-
-            break;
+              break;
+            case "aiThinkTime":
+              Constants.analyzeTimeInSeconds = (int) ((ChooseIntegerBox) node).getValue();
+              if(SceneHandler.getCurrentScene() instanceof AiAnalyserNew)
+                ((AiAnalyserNew)SceneHandler.getCurrentScene()).getAnalyzer().setThinkingTime(
+                    Constants.analyzeTimeInSeconds * 1111
+                    );
+              break;
             
             case "booleanButton": System.out.println((boolean) ((ChooseBooleanButton) node).getValue()); break;
             case "doubleBox": System.out.println((double) ((ChooseDoubleBox) node).getValue()); break;
@@ -179,5 +188,13 @@ public class SettingsWindow extends ComponentCreator {
     buttonBox.setAlignment(Pos.CENTER);
     buttonBox.getChildren().addAll(save, cancel);
     settingsBox.getChildren().add(buttonBox);
+  }
+  
+  /**
+   * @author sistumpf
+   * @return content of the Settings Window, its PopUpPane.
+   */
+  public PopUpPane getContent() {
+    return popUp;
   }
 }
