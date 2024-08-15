@@ -34,8 +34,6 @@ public class GameAnalyzer extends AIController {
    */
   public GameAnalyzer(SavedGame game, AIConfig config) {
     super(game.getInitialState(), Constants.analyzeAI, config, Constants.analyzeTimeInSeconds, false);
-    System.out.println(game.getInitialState().getCurrentTeam());
-    System.out.println(game.getMoves().get("1").getTeamId());
     errorAt = -1;
     if(config == null)
       super.setConfig(new AIConfig());

@@ -211,7 +211,9 @@ public class GamePane extends HBox {
       }
       if(newGP) {
         newGP = false;
-        if(SceneHandler.getCurrentScene() instanceof PlayGameScreenV2)
+        if(SceneHandler.getCurrentScene() instanceof PlayGameScreenV2 
+            && CreateGameController.getLastFigures() != null 
+            && CreateGameController.getLastFigures().get(lastMove.getPieceId()) != null)
           Platform.runLater(() -> CreateGameController.getLastFigures().get(lastMove.getPieceId()).showPieceInformationWhenClicked());
       }
     }

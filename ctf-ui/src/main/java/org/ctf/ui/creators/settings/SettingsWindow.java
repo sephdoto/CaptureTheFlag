@@ -15,8 +15,6 @@ import org.ctf.ui.creators.settings.components.ChooseSoundSlider;
 import org.ctf.ui.creators.settings.components.ChooseThemeBox;
 import org.ctf.ui.creators.settings.components.DoubleBoxFactory;
 import org.ctf.ui.creators.settings.components.IntegerBoxFactory;
-import org.ctf.ui.creators.settings.components.DoubleBoxFactory.ChooseMapOpacityBox;
-import org.ctf.ui.creators.settings.components.IntegerBoxFactory.ChooseUiUpdateTimeIntegerBox;
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.gameAnalyzer.AiAnalyserNew;

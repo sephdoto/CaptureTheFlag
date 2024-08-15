@@ -85,7 +85,8 @@ public class PlayGameScreenV2 extends Scene {
   private VBox right;
   private HBox top;
   private ImageView mpv;
-  private static Circle c;
+  private static Circle figureImage;
+  private static Circle figureImageBackground;
   private Button giveUpButton;
   private StackPane showMapBox;
   private StackPane root;
@@ -397,6 +398,7 @@ public class PlayGameScreenV2 extends Scene {
           (e) -> {
             schedulerLock = true;
             System.out.println("Redraw Task Failed");
+            PlayGameScreenV2.this.reinitUiUpdateScheduler();
           });
     }
 
@@ -1069,16 +1071,16 @@ public class PlayGameScreenV2 extends Scene {
     StackPane p = new StackPane();
     p.prefWidthProperty().bind(pict.widthProperty().multiply(0.3));
     Image mp = ImageController.loadThemedImage(ImageType.MISC, "question-mark");
-    c = new Circle();
-    c.radiusProperty().bind(Bindings.divide(widthProperty(), 23));
-    c.setFill(new ImagePattern(mp));
-    Circle c2 = new Circle();
-    c2.setFill(Color.WHITE);
-    c2.setStroke(Color.BLACK);
-    c2.setStrokeWidth(2);
-    c2.radiusProperty().bind(Bindings.divide(widthProperty(), 21));
+    figureImage = new Circle();
+    figureImage.radiusProperty().bind(Bindings.divide(widthProperty(), 23));
+    figureImage.setFill(new ImagePattern(mp));
+    figureImageBackground = new Circle();
+    figureImageBackground.setFill(Color.WHITE);
+    figureImageBackground.setStroke(Color.BLACK);
+    figureImageBackground.setStrokeWidth(2);
+    figureImageBackground.radiusProperty().bind(Bindings.divide(widthProperty(), 21));
     pict.getChildren().addAll(typeLabel, p);
-    p.getChildren().addAll(c2, c);
+    p.getChildren().addAll(figureImageBackground, figureImage);
     x.getChildren().add(pict);
     x.getChildren().add(createDeslabelBox());
     h1.getChildren().add(x);
@@ -1134,8 +1136,12 @@ public class PlayGameScreenV2 extends Scene {
   // Start of Getters and Setters
   // **************************************************
 
+  public static void setFigureBackground(Color color) {
+    figureImageBackground.setFill(color);
+  }
+  
   public static void setFigureImage(Image img) {
-    c.setFill(new ImagePattern(img));
+    figureImage.setFill(new ImagePattern(img));
   }
 
   public static void setIdLabelText(String text) {

@@ -5,6 +5,7 @@ import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.shared.state.Piece;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.SoundController;
+import org.ctf.ui.hostGame.CreateGameController;
 import org.ctf.ui.hostGame.PlayGameScreenV2;
 import javafx.beans.property.ObjectProperty;
 import javafx.event.EventHandler;
@@ -166,6 +167,7 @@ public class CostumFigurePain extends Pane {
         .setAttackPowLabelText("attack power: " + piece.getDescription().getAttackPower());
     PlayGameScreenV2.setCountLabelText("count: " + piece.getDescription().getCount());
     PlayGameScreenV2.setTeamLabelText("team: " + piece.getTeamId());
+    PlayGameScreenV2.setFigureBackground(CreateGameController.getColors().get(piece.getTeamId()).get());
     PlayGameScreenV2.setFigureImage(bImage);
   }
 

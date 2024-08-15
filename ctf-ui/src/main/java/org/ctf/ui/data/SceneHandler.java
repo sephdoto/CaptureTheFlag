@@ -6,7 +6,6 @@ import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.App;
 import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.creators.settings.SettingsOpener;
-import org.ctf.ui.creators.settings.SettingsWindow;
 import org.ctf.ui.editor.EditorScene;
 import org.ctf.ui.gameAnalyzer.AiAnalyserNew;
 import org.ctf.ui.hostGame.CreateGameController;

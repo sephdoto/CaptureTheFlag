@@ -8,7 +8,6 @@ import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums;
-import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.shared.gameanalyzer.AnalyzedGameState;
