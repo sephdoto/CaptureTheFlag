@@ -19,12 +19,14 @@ import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.gameAnalyzer.AiAnalyserNew;
 import org.ctf.ui.hostGame.PlayGameScreenV2;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -82,7 +84,7 @@ public abstract class SettingsWindow extends ComponentCreator {
    */
   protected void addNewComponent(Settings setting) {
     column = 0;
-    gridPane.add(createHeaderText(settingsBox, setting.getName(), 18), column, ++row);
+    Text header = createHeaderText(settingsBox, setting.getName(), 18);
     Node node;
     
     switch(setting) {
@@ -110,8 +112,12 @@ public abstract class SettingsWindow extends ComponentCreator {
       default:
         node = new Text("something went wrong");
     }
-    
-    gridPane.add(node, ++column, row); 
+    gridPane.add(header, column, ++row);
+    GridPane.setHalignment(header, HPos.LEFT);
+    GridPane.setHgrow(header, Priority.ALWAYS);
+    gridPane.add(node, ++column, row);
+    GridPane.setHalignment(node, HPos.RIGHT);
+    GridPane.setHgrow(node, Priority.ALWAYS);
   }
   
   /**
@@ -183,8 +189,11 @@ public abstract class SettingsWindow extends ComponentCreator {
     });
     HBox buttonBox = new HBox();
     buttonBox.spacingProperty().bind(settingsBox.widthProperty().multiply(0.05));
-    buttonBox.setAlignment(Pos.CENTER);
+    buttonBox.setAlignment(Pos.BOTTOM_CENTER);
     buttonBox.getChildren().addAll(save, cancel);
+    
+    VBox.setVgrow(buttonBox, Priority.ALWAYS);
+    VBox.setMargin(buttonBox, new Insets(10, 0, 10, 0));
     settingsBox.getChildren().add(buttonBox);
   }
   
