@@ -217,8 +217,10 @@ public class CheatboardListener extends NativeKeyAdapter {
    */
   @Override
   public void nativeKeyPressed(NativeKeyEvent e) {
-    currentCode.add(e.getKeyCode());
-    checkTheCode();
+    if(NativeKeyEvent.getKeyText(e.getKeyCode()).length() == 1) {
+      currentCode.add(e.getKeyCode());
+      checkTheCode(e);
+    }
 
     //    if (e.getKeyCode() == NativeKeyEvent.VC_RIGHT) {
     //      try {
@@ -233,7 +235,7 @@ public class CheatboardListener extends NativeKeyAdapter {
    * Checks if the currently types cheat code matches any saved cheat codes.
    * If one codes start key matches, only that code will be checked till it is completed or canceled.
    */
-  private void checkTheCode() {
+  private void checkTheCode(NativeKeyEvent e) {
     boolean oneListMatched = false;
 
     if(pivotList.size() == 0) {
@@ -265,9 +267,13 @@ public class CheatboardListener extends NativeKeyAdapter {
       ++pivot;
     }
     if(!oneListMatched) {
+      boolean firstTime = pivot > 0;
+
       pivot = 0;
       pivotList.clear();
-      this.currentCode.clear();
+      currentCode.clear();
+      if(firstTime)
+        nativeKeyPressed(e);
     }
   }
 
