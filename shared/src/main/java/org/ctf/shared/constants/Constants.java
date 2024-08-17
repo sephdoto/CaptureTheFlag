@@ -2,6 +2,9 @@ package org.ctf.shared.constants;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.Themes;
 
@@ -110,16 +113,22 @@ public class Constants {
   //                      Strings                      //
   ///////////////////////////////////////////////////////
   
-  // to resources folder
+  // application name (should be cfp14 or CaptureTheFlag)
   private static final String CFP14 = 
-      Paths.get("").toAbsolutePath().getFileName().toString().equals("cfp14") ? "cfp14" :
-        Paths.get("").toAbsolutePath().getFileName().toString().equals("CaptureTheFlag") ? "cfp14" :
-      new File(
-          Paths.get("").toAbsolutePath().toString().
-          substring(0, 
-              Paths.get("").toAbsolutePath().toString().lastIndexOf(File.separator))
-          ).getName();
-  
+      Paths.get("").toAbsolutePath().getName(
+          (int) (
+              Paths.get("")
+              .toAbsolutePath()
+              .toString()
+              .chars()
+              .filter(c -> c == File.separatorChar)
+              .count() 
+              -2
+           )
+          )
+      .toString();
+
+  // to resources folder
   public static final String toUIResources =
       ISJAR
           ? JARRESOURCES
