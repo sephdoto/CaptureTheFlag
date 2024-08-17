@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.ctf</groupId>
         <artifactId>cfp14</artifactId>
-        <version>0.1.0</version>
+        <version>1.0.0</version>
     </parent>
     <artifactId>ctf-ui</artifactId>
     <name>ctf-ui</name>
@@ -48,13 +48,13 @@
         <dependency>
             <groupId>org.ctf</groupId>
             <artifactId>shared</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>de.uni-mannheim.swt.pse</groupId>
             <artifactId>ctf</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.6</version>
         </dependency>      
     	<dependency>
     		<groupId>com.1stleg</groupId>
