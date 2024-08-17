@@ -111,7 +111,7 @@ public class Constants {
   ///////////////////////////////////////////////////////
   
   // application name (should be cfp14 or CaptureTheFlag)
-  private static final String CFP14 = Paths.get("").toAbsolutePath().getParent().getFileName().toString();
+  private static final String CFP14 = Paths.get("").toAbsolutePath().getParent().getFileName().toString().equals("cfp14") ? "cfp14" : "CaptureTheFlag";
   
   // to resources folder
   public static final String toUIResources =
