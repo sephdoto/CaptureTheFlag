@@ -11,12 +11,6 @@
   <name>shared-module</name>
   <description>shared library containing common files</description>
   <packaging>jar</packaging>
-  <repositories>
-    <repository>
-      <id>github</id>
-      <url>https://maven.pkg.github.com/sephdoto/CaptureTheFlagServer</url>
-    </repository>
-  </repositories>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -47,7 +41,7 @@
     <dependency>
       <groupId>de.uni-mannheim.swt.pse</groupId>
       <artifactId>ctf</artifactId>
-      <version>1.0.6</version>
+      <version>1.1.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
