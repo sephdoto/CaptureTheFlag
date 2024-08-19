@@ -122,7 +122,6 @@ public class PlayGameScreenV2 extends Scene {
    */
   public PlayGameScreenV2(
       double width, double height, boolean isRemote) {
-    //TODO
     super(new StackPane(), width, height);
     schedulerLock = true;
     timeToShowGameState = new ArrayList<Long>();
@@ -183,7 +182,7 @@ public class PlayGameScreenV2 extends Scene {
     if(scheduler2 != null)
       scheduler2.shutdown();
     scheduler2 = Executors.newScheduledThreadPool(1);
-    scheduler2.scheduleAtFixedRate(updateTask2, 0, Constants.UIupdateTime, TimeUnit.MILLISECONDS);
+    scheduler2.scheduleAtFixedRate(timeUpdateTask, 0, Constants.UIupdateTime, TimeUnit.MILLISECONDS);
   }
 
   /**
@@ -310,9 +309,6 @@ public class PlayGameScreenV2 extends Scene {
    * @param forceRedraw forces a UI redraw, even if there are no queued GameStates
    */
   private void updateUI(boolean forceRedraw) {
-    // TODO
-    //    if(!(mainClient instanceof AIClient))
-    //      schedulerLock = true;
     if (ClientStorage.getMainClient() != null && (ClientStorage.getMainClient().queuedGameStates() > 0 || forceRedraw)) {
       if (schedulerLock || forceRedraw) {
         schedulerLock = false;
@@ -447,19 +443,31 @@ public class PlayGameScreenV2 extends Scene {
               } else {
                 gameOverPop.createGameOverPopUpforMoreWinners(winners);
               }
+              SceneHandler.closeSettings();
             });
         
-        for(Node node : right.getChildren()) {
-          if(node.getUserData() != null && node.getUserData().equals("clock")) {
-            for(Node box : ((HBox) node).getChildren()) {
-              if(box.getUserData() != null && box.getUserData().equals("timer")) {
-                ((Timer)((VBox) box).getChildren().get(1)).stop();
-              }
-            }
+        stopTimers();
+        
+        if (scheduler != null) scheduler.shutdown();
+      }
+    }
+  }
+  
+  /**
+   * Stops the move and game time Timers and shuts down the scheduler responsible for updating them.
+   * 
+   * @author sistumpf
+   */
+  public void stopTimers() {
+    if (scheduler2 != null) scheduler2.shutdown();
+    
+    for(Node node : right.getChildren()) {
+      if(node.getUserData() != null && node.getUserData().equals("clock")) {
+        for(Node box : ((HBox) node).getChildren()) {
+          if(box.getUserData() != null && box.getUserData().equals("timer")) {
+            ((Timer)((VBox) box).getChildren().get(1)).stop(); 
           }
         }
-        if (scheduler != null) scheduler.shutdown();
-        if (scheduler2 != null) scheduler2.shutdown();
       }
     }
   }
@@ -590,8 +598,7 @@ public class PlayGameScreenV2 extends Scene {
 
   /**
    * Shows the team-name of the current team turn using two different methods in case it it's a
-   * local clients turn or not TODO eigentlich sollten die remote clients auch in einer
-   * CreateGameController liste sein, da bräuchte man eine if verzweigung gar nicht
+   * local clients turn or not 
    *
    * @author Manuel Krakowski
    */
@@ -998,13 +1005,14 @@ public class PlayGameScreenV2 extends Scene {
    * updtaes the time with data from the client if move time or game time limits are set
    *
    * @author Manuel Krakowski
+   * @author sistumpf
    */
-  Runnable updateTask2 =
+  Runnable timeUpdateTask =
       () -> {
         try {
           Platform.runLater(
               () -> {
-                if (ClientStorage.getMainClient().isGameMoveTimeLimited()) {
+                if (ClientStorage.getMainClient().isGameMoveTimeLimited() && !ClientStorage.getMainClient().isGameOver()) {
                   moveTimeLimit.setText(formatTime(ClientStorage.getMainClient().getRemainingMoveTimeInSeconds()));
                   if (ClientStorage.getMainClient().getRemainingMoveTimeInSeconds() < 10) {
                     moveTimeLimit.setTextFill(Color.RED);
@@ -1012,7 +1020,7 @@ public class PlayGameScreenV2 extends Scene {
                     moveTimeLimit.setTextFill(Color.GOLD);
                   }
                 }
-                if (ClientStorage.getMainClient().isGameTimeLimited()) {
+                if (ClientStorage.getMainClient().isGameTimeLimited() && !ClientStorage.getMainClient().isGameOver()) {
                   gameTimeLimit.setText(formatTime(ClientStorage.getMainClient().getRemainingGameTimeInSeconds()));
                   if (ClientStorage.getMainClient().getRemainingGameTimeInSeconds() < 60) {
                     gameTimeLimit.setTextFill(Color.RED);

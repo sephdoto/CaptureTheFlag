@@ -165,7 +165,7 @@ public abstract class SettingsWindow extends ComponentCreator {
       SettingsSetter.saveCustomSettings();
       App.chagngeHomescreenBackground();
       ((StackPane)SceneHandler.getCurrentScene().getRoot()).getChildren().remove(popUp);
-      SceneHandler.setSettingsOpen(false);
+      SceneHandler.closeSettings();
       exit.setOnAction(null);
     });
   }
@@ -185,7 +185,7 @@ public abstract class SettingsWindow extends ComponentCreator {
       ((StackPane)SceneHandler.getCurrentScene().getRoot()).getChildren().remove(popUp);
       SettingsSetter.loadCustomSettings();
       MusicPlayer.setMusicVolume(Constants.musicVolume);
-      SceneHandler.setSettingsOpen(false);
+      SceneHandler.closeSettings();
     });
     HBox buttonBox = new HBox();
     buttonBox.spacingProperty().bind(settingsBox.widthProperty().multiply(0.05));

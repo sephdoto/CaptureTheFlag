@@ -6,6 +6,7 @@ import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.App;
 import org.ctf.ui.data.FixedStack;
 import org.ctf.ui.data.SceneHandler;
+import org.ctf.ui.hostGame.PlayGameScreenV2;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyAdapter;
@@ -84,25 +85,13 @@ public class CheatboardListener extends NativeKeyAdapter {
     skip.add(NativeKeyEvent.VC_P);
     cheatCodes.add(skip);
 
-    ArrayList<Integer> reimportResources = new ArrayList<Integer>();
-    reimportResources.add(NativeKeyEvent.VC_R);
-    reimportResources.add(NativeKeyEvent.VC_E);
-    reimportResources.add(NativeKeyEvent.VC_I);
-    reimportResources.add(NativeKeyEvent.VC_M);
-    reimportResources.add(NativeKeyEvent.VC_P);
-    reimportResources.add(NativeKeyEvent.VC_O);
-    reimportResources.add(NativeKeyEvent.VC_R);
-    reimportResources.add(NativeKeyEvent.VC_T);
-    reimportResources.add(NativeKeyEvent.VC_R);
-    reimportResources.add(NativeKeyEvent.VC_E);
-    reimportResources.add(NativeKeyEvent.VC_S);
-    reimportResources.add(NativeKeyEvent.VC_O);
-    reimportResources.add(NativeKeyEvent.VC_U);
-    reimportResources.add(NativeKeyEvent.VC_R);
-    reimportResources.add(NativeKeyEvent.VC_C);
-    reimportResources.add(NativeKeyEvent.VC_E);
-    reimportResources.add(NativeKeyEvent.VC_S);
-    cheatCodes.add(reimportResources);
+    ArrayList<Integer> debug = new ArrayList<Integer>();
+    debug.add(NativeKeyEvent.VC_D);
+    debug.add(NativeKeyEvent.VC_E);
+    debug.add(NativeKeyEvent.VC_B);
+    debug.add(NativeKeyEvent.VC_U);
+    debug.add(NativeKeyEvent.VC_G);
+    cheatCodes.add(debug);
 
     ArrayList<Integer> settings = new ArrayList<Integer>();
     settings.add(NativeKeyEvent.VC_S);
@@ -194,10 +183,10 @@ public class CheatboardListener extends NativeKeyAdapter {
     back.add(NativeKeyEvent.VC_K);
     cheatCodes.add(back);
     
-    ArrayList<Integer> rs = new ArrayList<Integer>();    
-    rs.add(NativeKeyEvent.VC_R);   
-    rs.add(NativeKeyEvent.VC_S);   
-    cheatCodes.add(rs);    
+    ArrayList<Integer> cs = new ArrayList<Integer>();    
+    cs.add(NativeKeyEvent.VC_C);   
+    cs.add(NativeKeyEvent.VC_S);   
+    cheatCodes.add(cs);    
     
     ArrayList<Integer> advanced = new ArrayList<Integer>();    
     advanced.add(NativeKeyEvent.VC_A);   
@@ -284,13 +273,14 @@ public class CheatboardListener extends NativeKeyAdapter {
    * @param match the ArrayList containing the cheatcode to check for references.
    */
   private void letTheFunBegin(ArrayList<Integer> match) {
-    if(match == cheatCodes.get(0)) {    //first list is, of course, rickroll
+    if(match == cheatCodes.get(0)) {            // first list is, of course, rickroll
       MusicPlayer.shortFade((int)SoundController.getMs("rick", SoundType.MISC), 10, 0.1);
       SoundController.playSound("rick", SoundType.MISC);
     } else if (match == cheatCodes.get(1)) {    // skip current song
       SettingsSetter.getCurrentPlayer().startShuffle();
-    } else if (match == cheatCodes.get(2)) {
-      System.out.println("reimport resources");
+    } else if (match == cheatCodes.get(2)) {    // whatever needs to be debugged
+      ((PlayGameScreenV2)SceneHandler.getCurrentScene()).stopTimers();
+//      ((Timer)((VBox) box).getChildren().get(1)).stop(); 
     } else if (match == cheatCodes.get(3)) {    // open settings
       Platform.runLater(() -> {
         SceneHandler.openSettingsWindow("default");
@@ -329,7 +319,7 @@ public class CheatboardListener extends NativeKeyAdapter {
             }
           }
           );
-    } else if(match == cheatCodes.get(11)) {    // switch to map
+    } else if(match == cheatCodes.get(11)) {    // switch to map editor
       Platform.runLater(
           new Runnable() {
             public void run(){
@@ -376,8 +366,8 @@ public class CheatboardListener extends NativeKeyAdapter {
             }
           }
           );
-    } else if(match == cheatCodes.get(15)) {    // reset settings open status
-      SceneHandler.setSettingsOpen(false);
+    } else if(match == cheatCodes.get(15)) {    // closes the currently opened settings (close settings)
+      SceneHandler.closeSettings();
     } else if(match == cheatCodes.get(16)) {    // open advanced settings
       Platform.runLater(() -> {
         SceneHandler.openSettingsWindow("advanced");

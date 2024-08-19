@@ -6,6 +6,7 @@ import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.App;
 import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.creators.settings.SettingsOpener;
+import org.ctf.ui.creators.settings.SettingsWindow;
 import org.ctf.ui.editor.EditorScene;
 import org.ctf.ui.gameAnalyzer.AiAnalyserNew;
 import org.ctf.ui.hostGame.CreateGameController;
@@ -47,9 +48,9 @@ public class SceneHandler {
   private static Scene homeScene;
   /**
    * Keeps track of the settings window so it cannot be opened multiple times.
-   * false allows the settings to be opened.
+   * Normal state is null
    */
-  private static boolean settingsOpen;
+  private static SettingsWindow settingsWindow;
   
   ///***************************************///
   /*/               static                  /*/ 
@@ -57,7 +58,6 @@ public class SceneHandler {
   
   static {
     lastScenes = new FixedStack<Scene>(Constants.lastScenesSize);
-    settingsOpen = false;
   }
   
   ///***************************************///
@@ -65,17 +65,19 @@ public class SceneHandler {
   ///***************************************///
   
   public static void openSettingsWindow(String settings) {
-    if(!settingsOpen) {
+    if(settingsWindow != null) {
+      closeSettings();
+    }
+    
       SoundController.playSound("Button", SoundType.MISC);
       switch (settings) {
         case "advanced" : 
-          ((StackPane)SceneHandler.getCurrentScene().getRoot()).getChildren().add(SettingsOpener.getAdvancedSettings().getContent());
+          settingsWindow = SettingsOpener.getAdvancedSettings();
           break;
         default: 
-          ((StackPane)SceneHandler.getCurrentScene().getRoot()).getChildren().add(SettingsOpener.getDefaultSettings().getContent());
+          settingsWindow = SettingsOpener.getDefaultSettings();
       }
-      settingsOpen = true;
-    }
+      ((StackPane)SceneHandler.getCurrentScene().getRoot()).getChildren().add(settingsWindow.getContent());
   }
   
   
@@ -190,6 +192,22 @@ public class SceneHandler {
   ///***************************************///
   /*/        getters and setters            /*/
   ///***************************************///
+  /**
+   * Closes the currently open settingsWindow without saving it to the JSON.
+   * Does not load the old saved values, all changes to Constants stay.
+   * 
+   * @author sistumpf
+   */
+  public static void closeSettings() {
+    if(settingsWindow != null) {
+      SettingsWindow toClose = settingsWindow;
+      settingsWindow = null;
+      
+      Platform.runLater(() -> {
+        ((StackPane)SceneHandler.getCurrentScene().getRoot()).getChildren().remove(toClose.getContent());
+      });
+    }
+  }
   
   /**
    * Sets the main Stages title as a given String
@@ -224,11 +242,5 @@ public class SceneHandler {
   }
   public static void setHomeScene(Scene homeScene) {
     SceneHandler.homeScene = homeScene;
-  }
-  public static boolean areSettingsOpen() {
-    return settingsOpen;
-  }
-  public static void setSettingsOpen(boolean settingsOpen) {
-    SceneHandler.settingsOpen = settingsOpen;
   }
 }
