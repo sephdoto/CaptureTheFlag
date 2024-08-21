@@ -67,6 +67,11 @@ public class PopupCreatorGameOver {
     moreWinnerheader = new SimpleObjectProperty<Font>(Font.font(scene.getWidth() / 40));
     moreWinnersName = new SimpleObjectProperty<Font>(Font.font(scene.getWidth() / 50));
     manageFontSizes();
+    try {
+      ClientStorage.getMainClient().deleteSession();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     ClientStorage.clearAllClients();
   }
 
