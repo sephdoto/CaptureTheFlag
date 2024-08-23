@@ -73,18 +73,6 @@
 	 
 }
 
-.pop-up-pane{
-	-fx-border-color: rgba(53, 89, 119,0.4);
-	 -fx-border-width: 5px;
-	 -fx-background-color: rgb(0,0,0);
-	 -fx-background-radius: 13px; 
-	 -fx-border-radius: 10px;
-	 -fx-alignment: top-center;
-	  -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.6) , 10, 0.5, 0, 0);
-}
-.blur-pane{	
-	 -fx-background-color: rgb(255,255,255,0.25);	 
-}
 .loading-pane{
 	-fx-border-color: rgba(255,255,255,1);
 	 -fx-border-width: 2px;
@@ -93,15 +81,6 @@
 	 -fx-border-radius: 20px;
 }
 
-.leave-button {
-	 -fx-background-color: rgb(15,15,15); 
-    -fx-text-fill: white;     
-	 -fx-background-radius: 5px; 
-    -fx-border-radius: 5px; 
-    -fx-border-color: white; 
-    -fx-border-width: 2px; 
-    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
-}
 .leave-button:hover{
 	 -fx-background-color: rgb(40,40,40); 
 }
@@ -122,12 +101,6 @@
     -fx-border-radius: 5px;
     -fx-background-radius: 5px; 
      -fx-font-family: "Century Gothic", sans-serif;
-}
-.custom-header {
-	 -fx-font-family: "Century Gothic", sans-serif;
-	  -fx-font-size: 20px; 
-	  -fx-fill: white;
-	  
 }
 .bayern-label{
 	-fx-fill: black;
@@ -183,21 +156,6 @@
 	 -fx-fill: rgb(53,89,119);
 }
 
-.mySlider .track {
-    -fx-background-color: #ddd; 
-}
-
-.mySlider .thumb {
-    -fx-background-color: #007bff; 
-}
-
-.mySlider .thumb:hover {
-    -fx-background-color: #0056b3;
-}
-
-.mySlider .thumb:pressed {
-    -fx-background-color: #003e80; 
-}
 .info-pane {
 	-fx-background-color:rgba(53, 89, 119,0.8);
 	-fx-border-color: white;
@@ -212,22 +170,4 @@
     -fx-border-color: white; 
     -fx-border-width: 2px; 
     -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
-}
-.server-pane{
-	-fx-background-color: rgba(0,0,0,0.5); 
-	 -fx-background-radius: 5px; 
-    -fx-border-radius: 5px; 
-    -fx-border-color: white; 
-    -fx-border-width: 2px; 
-    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
-}
-.server-pane:hover{
-	-fx-background-color: rgba(20,20,20,0.5);
-}
-.transparent-textfield{
-	 -fx-background-color: transparent;
-	 -fx-border-color: transparent;
-	 -fx-text-fill: white;
-    -fx-alignment: center-left;
-     -fx-prompt-text-fill: white; 
 }

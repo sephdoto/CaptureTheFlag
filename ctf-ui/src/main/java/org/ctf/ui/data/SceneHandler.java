@@ -1,6 +1,8 @@
 package org.ctf.ui.data;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.nio.file.Paths;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
@@ -33,6 +35,7 @@ import javafx.stage.Stage;
 /**
  * A centralized Scene and Stage handling class.
  * It contains the one and only main Stage, and all other important Scenes.
+ * Scene Backgrounds and css Stylesheets get applied here.
  * 
  * @author sistumpf
  */
@@ -102,6 +105,10 @@ public class SceneHandler {
   public static void switchToHomeScreen() {
     App.adjustHomescreen(mainStage.getScene().getWidth(), mainStage.getScene().getHeight());
     switchCurrentScene(homeScene);
+    
+//    addStyleSheet("MapEditor");
+//    addStyleSheet("ComboBox");
+    addStyleSheet("home");
   }
   
   public static void switchToWaitGameScene() {
@@ -115,6 +122,9 @@ public class SceneHandler {
     switchCurrentScene(
         new RemoteWaitingScene(SceneHandler.getMainStage().getWidth() - App.offsetWidth, SceneHandler.getMainStage().getHeight() - App.offsetHeight, serverManager)
     );
+    
+    addStyleSheet("MapEditor");
+    addStyleSheet("ComboBox");
   }
   
   public static void switchToCreateGameScene() {
@@ -142,7 +152,9 @@ public class SceneHandler {
     switchCurrentScene(
         new EditorScene(
             SceneHandler.getMainStage().getWidth() - App.offsetWidth, SceneHandler.getMainStage().getHeight() - App.offsetHeight)
-        );
+        );    
+    
+    addStyleSheet("MapEditor");
   }
   
   /**
@@ -179,7 +191,11 @@ public class SceneHandler {
     }
 
     // generate new grid
-    new WaveCollapseThread(playOn, ClientStorage.getMainClient().getGrid()).start();
+    new WaveCollapseThread(playOn, ClientStorage.getMainClient().getGrid()).start();    
+    
+    addStyleSheet("MapEditor");
+    addStyleSheet("color");
+    addStyleSheet("ComboBox");
   }
     
   ///***************************************///
@@ -197,12 +213,29 @@ public class SceneHandler {
     currentScene = scene;
     updateBackgroundVisibility();
     updateBackground();
+    
+    addStyleSheet("settings");
+    
     mainStage.setScene(scene);
   }
   
   /**
+   * Applies a Stylesheet to the current Scene.
+   * 
+   * @param name the Stylesheets filename without ".css"
+   */
+  private static void addStyleSheet(String name) {
+    try {
+      currentScene.getStylesheets()
+          .add(Paths.get(Constants.toUIStyles + name + ".css").toUri().toURL().toString());
+    } catch (MalformedURLException e) {
+      System.err.println("Error applying Stylesheet " + name);
+    }
+  }
+  
+  /**
    * Changes the background image to a completely new one.
-   * Effects and other corrections can be applied here.
+   * Effects and other corrections could be applied here.
    * 
    * @author sistumpf
    */
@@ -251,9 +284,11 @@ public class SceneHandler {
       ((StackPane) currentScene.getRoot()).getChildren().add(Constants.colorOverlay);
     Constants.colorOverlay.toBack();
   }
+  
   ///***************************************///
   /*/        getters and setters            /*/
   ///***************************************///
+  
   /**
    * Updates the current Scenes Background to represent the Background Object from Constants.
    * Backgrounds for certain scenes can be hardcoded here.

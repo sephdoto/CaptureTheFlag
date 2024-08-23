@@ -1,0 +1,90 @@
+.blur-pane{	
+	 -fx-background-color: rgb(255,255,255,0.25);	 
+}
+
+.settings-combo-box
+{
+   -fx-background-color: rgba(53,89,119,0.4); 
+   -fx-text-fill: white; 
+   -fx-border-color: white; 
+   -fx-border-width: 2.0px;
+   -fx-background-radius: 20px; 
+	 -fx-border-radius: 20px;
+    -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
+}
+
+.settings-combo-box .list-cell {
+    -fx-text-fill: white; /* Ändert die Textfarbe */
+   -fx-font-size: 15px;
+}
+
+.settings-combo-box .list-view 
+{
+    -fx-background-radius: 5; /* Radius für abgerundete Ecken */
+    -fx-border-color: lightgray; /* Randfarbe */
+    -fx-border-width: 0.5; /* Randbreite */
+    -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
+}    
+.settings-combo-box .list-view .list-cell 
+{
+    /* No alternate highlighting */
+    -fx-background-color: black;
+    -fx-border-color: lightgray; /* Farbe der Trennlinien */
+    -fx-border-width: 0 0 1 0; /* Dicke der Trennlinien (nur am unteren Rand) */
+}
+.settings-combo-box .list-view .list-cell:filled:selected{
+     -fx-text-fill: red;
+     -fx-border-width: 0 0 1 0;
+     -fx-border-color: lightgray; 
+}
+.settings-combo-box .list-view .list-cell:last-child {
+    -fx-border-width: 0; /* Entfernt die Trennlinie am unteren Rand der letzten Zelle */
+}
+.settings-combo-box .list-view .list-cell:filled:hover 
+{
+    -fx-background-color: rgba(53,89,119,0.4) ;
+    -fx-text-fill: white;
+}
+
+.custom-header {
+	 -fx-font-family: "Century Gothic", sans-serif;
+	  -fx-font-size: 20px; 
+	  -fx-fill: white;
+	  
+}
+
+.leave-button {
+	 -fx-background-color: rgb(15,15,15); 
+    -fx-text-fill: white;     
+	 -fx-background-radius: 5px; 
+    -fx-border-radius: 5px; 
+    -fx-border-color: white; 
+    -fx-border-width: 2px; 
+    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
+}
+
+.pop-up-pane{
+	-fx-border-color: rgba(53, 89, 119,0.4);
+	 -fx-border-width: 5px;
+	 -fx-background-color: rgb(0,0,0);
+	 -fx-background-radius: 13px; 
+	 -fx-border-radius: 10px;
+	 -fx-alignment: top-center;
+	  -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.6) , 10, 0.5, 0, 0);
+}
+
+.mySlider .track {
+    -fx-background-color: #ddd; 
+}
+
+.mySlider .thumb {
+    -fx-background-color: #007bff; 
+}
+
+.mySlider .thumb:hover {
+    -fx-background-color: #0056b3;
+}
+
+.mySlider .thumb:pressed {
+    -fx-background-color: #003e80; 
+}

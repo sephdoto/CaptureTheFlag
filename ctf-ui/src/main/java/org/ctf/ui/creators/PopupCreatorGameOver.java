@@ -53,7 +53,9 @@ public class PopupCreatorGameOver {
 
 
 /**
+ * Creates a "game is over" Popup.
  * Clears local clients on creation, as they are not needed after the game has ended.
+ * Waits 10 seconds after the game has ended to send a delete Session request.
  * 
  * @param scene
  * @param root
@@ -68,7 +70,18 @@ public class PopupCreatorGameOver {
     moreWinnersName = new SimpleObjectProperty<Font>(Font.font(scene.getWidth() / 50));
     manageFontSizes();
     try {
-      ClientStorage.getMainClient().deleteSession();
+      new Thread() {
+        @Override
+        public void run() {
+          try {
+            sleep(10000);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+          ClientStorage.getMainClient().deleteSession();
+        }
+      }.start();
+      
     } catch (Exception e) {
       e.printStackTrace();
     }

@@ -227,15 +227,7 @@ public class App extends Application {
 
   private void changeToHomeScreen(Scene lockscreen) {
     SceneHandler.setHomeScene(new Scene(createParent(lockscreen)));
-    try {
-      SceneHandler.getHomeScene()
-          .getStylesheets()
-          .add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
-    } catch (MalformedURLException e) {
-      e.printStackTrace();
-    }
     SceneHandler.switchToHomeScreen();
-//    SceneHandler.switchCurrentScene(SceneHandler.getHomeScene());
     App.offsetHeight = SceneHandler.getMainStage().getHeight() - SceneHandler.getHomeScene().getHeight();
     App.offsetWidth = SceneHandler.getMainStage().getWidth() - SceneHandler.getHomeScene().getWidth();
     System.out.println("offsetHeight: " + App.offsetHeight + ", offsetWidth: " + App.offsetWidth);

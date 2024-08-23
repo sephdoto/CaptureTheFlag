@@ -1,11 +1,8 @@
 package org.ctf.ui.editor;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.shared.constants.Enums.Themes;
@@ -96,12 +93,6 @@ public class EditorScene extends Scene {
    */
   public EditorScene(double width, double height) {
     super(new StackPane(), width, height);
-    try {
-      this.getStylesheets()
-          .add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
-    } catch (MalformedURLException e) {
-      e.printStackTrace();
-    }
     this.root = (StackPane) this.getRoot();
     engine = new TemplateEngine(this);
     options = new Parent[5];

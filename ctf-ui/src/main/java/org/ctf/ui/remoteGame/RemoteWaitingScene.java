@@ -1,9 +1,6 @@
 package org.ctf.ui.remoteGame;
 
-import java.net.MalformedURLException;
-import java.nio.file.Paths;
 import org.ctf.shared.client.lib.ServerManager;
-import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.ui.App;
 import org.ctf.ui.controllers.HomeSceneController;
@@ -51,12 +48,6 @@ public class RemoteWaitingScene extends Scene {
     super(new StackPane(), width, height);
     this.serverManager = serverManager;
     root = (StackPane) this.getRoot();
-    try {
-      this.getStylesheets()
-          .add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
-    } catch (MalformedURLException e) {
-      e.printStackTrace();
-    }
     createLayout();
     RemoteWaitingThread rwt = new RemoteWaitingThread(this);
     rwt.start();

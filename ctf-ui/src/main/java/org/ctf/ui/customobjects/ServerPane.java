@@ -35,9 +35,13 @@ public class ServerPane extends StackPane {
     text.setFill(Color.WHITE);
     this.getChildren().add(text);
     createPortField();
-    this.setOnMouseClicked(e -> {
-      this.getChildren().clear();
+    this.setOnMouseEntered(e -> {
+      this.getChildren().remove(text);
       this.getChildren().add(field);
+    });
+    this.setOnMouseExited(e -> {
+      this.getChildren().remove(field);
+      this.getChildren().add(text);
     });
   }
 

@@ -1,0 +1,18 @@
+.server-pane{
+	-fx-background-color: rgba(0,0,0,0.5); 
+	 -fx-background-radius: 5px; 
+    -fx-border-radius: 5px; 
+    -fx-border-color: white; 
+    -fx-border-width: 2px; 
+    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
+}
+.server-pane:hover{
+	-fx-background-color: rgba(20,20,20,0.3);
+}
+.transparent-textfield{
+	 -fx-background-color: transparent;
+	 -fx-border-color: transparent;
+	 -fx-text-fill: white;
+    -fx-alignment: center-left;
+     -fx-prompt-text-fill: white; 
+}

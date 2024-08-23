@@ -3,10 +3,8 @@ package org.ctf.ui.hostGame;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.net.MalformedURLException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.concurrent.Executors;
@@ -145,14 +143,6 @@ public class PlayGameScreenV2 extends Scene {
    */
   public void initalizePlayGameScreen() {
     manageFontSizes();
-    try {
-      this.getStylesheets()
-          .add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
-      this.getStylesheets()
-          .add(Paths.get(Constants.toUIStyles + "color.css").toUri().toURL().toString());
-    } catch (MalformedURLException e) {
-      e.printStackTrace();
-    }
     createLayout();
 
     reinitUiUpdateScheduler();
@@ -748,6 +738,10 @@ public class PlayGameScreenV2 extends Scene {
           .bind(
               CreateGameController.getColors()
                   .get(String.valueOf(ClientStorage.getMainClient().getCurrentTeamTurn())));
+
+      teamname.setEffect(makeShadowEffect());
+      layout.setEffect(makeShadowEffect());
+      
       layout.getChildren().add(teamname);
       layout.getChildren().addAll(status);
     }
@@ -785,6 +779,16 @@ public class PlayGameScreenV2 extends Scene {
         .bind(
             CreateGameController.getColors().get(String.valueOf(ClientStorage.getMainClient().getCurrentTeamTurn())));
     
+    teamname.setEffect(makeShadowEffect());
+    layout.setEffect(makeShadowEffect());
+    
+    teamname.setStyle(teamString);
+    layout.getChildren().add(teamname);
+    layout.getChildren().addAll(status);
+    return layout;
+  }
+
+  private DropShadow makeShadowEffect() {
     DropShadow edge = new DropShadow();
     edge.setOffsetY(0f);
     edge.setOffsetX(0f);
@@ -811,16 +815,10 @@ public class PlayGameScreenV2 extends Scene {
     backgroundBlur.setHeight(6);
     backgroundBlur.setSpread(1);
     backgroundBlur.setRadius(2);
-
-    teamname.setEffect(backgroundBlur);
-    layout.setEffect(backgroundBlur);
     
-    teamname.setStyle(teamString);
-    layout.getChildren().add(teamname);
-    layout.getChildren().addAll(status);
-    return layout;
+    return backgroundBlur;
   }
-
+  
   /**
    * Returns a color-inverse
    * 

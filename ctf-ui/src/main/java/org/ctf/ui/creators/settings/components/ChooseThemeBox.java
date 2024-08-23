@@ -21,7 +21,7 @@ public class ChooseThemeBox extends ComboBox<String> implements ValueExtractable
   
   private ComboBox<String> createThemeBox(VBox settingsBox){
     HBox.setMargin(this, new Insets(20));
-    getStyleClass().add("custom-combo-this-2");
+    getStyleClass().add("settings-combo-box");
     prefWidthProperty().bind(settingsBox.widthProperty().multiply(0.45));
     prefHeightProperty().bind(widthProperty().multiply(0.18));
     prefHeightProperty().addListener((obs, oldv, newV) -> {
