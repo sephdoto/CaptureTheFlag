@@ -4,6 +4,12 @@ import java.io.File;
 import java.nio.file.Paths;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.Themes;
+import javafx.geometry.Insets;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 
 /**
  * Constants class to hold control variables
@@ -86,9 +92,13 @@ public class Constants {
    * Opacity of the map background, can be lowered to increase piece visibility
    */
   public static double backgroundImageOpacity = 0.7;
+  /**
+   * True if homescreen images should be shown in other scenes backgrounds
+   */
+  public static double showBackgrounds = 0.5;
   
   ///////////////////////////////////////////////////////
-  //             Server Setting                        //
+  //                    other                          //
   ///////////////////////////////////////////////////////
   /**
    * Static vars needed for Server
@@ -96,7 +106,22 @@ public class Constants {
    * @author rsyed
    */
   public static String userSelectedLocalServerPort = "8888";
-
+  
+  /**
+   * Solid color overlay, CSS gets defined in data.SceneHandler
+   */
+  public static Region colorOverlay = new Region();
+  
+  public static Color defaultBGcolor = Color.web("#202F3B");
+  /**
+   * Background Object used to set the Scene Backgrounds
+   */
+  public static Background background = new Background(new BackgroundFill(
+      defaultBGcolor,
+      CornerRadii.EMPTY,
+      Insets.EMPTY
+      ));      
+  
   ///////////////////////////////////////////////////////
   //             AI Player Settings                    //
   ///////////////////////////////////////////////////////

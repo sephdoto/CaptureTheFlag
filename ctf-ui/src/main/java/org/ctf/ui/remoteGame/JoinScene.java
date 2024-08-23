@@ -553,7 +553,7 @@ public class JoinScene extends Scene {
               right.getChildren().clear();
               info.setText("Client hast joined!\n Waiting for the Game to start.");
               right.getChildren().add(info);
-              SceneHandler.switchCurrentScene(new RemoteWaitingScene(getWidth(), getHeight(), JoinScene.this.ser));
+              SceneHandler.switchToRemoteWaitGameScene(ser);
             }
           });
       this.joinChecker = new Thread() {

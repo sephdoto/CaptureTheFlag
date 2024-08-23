@@ -2,9 +2,7 @@ package org.ctf.ui.creators.settings;
 
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.Themes;
-import org.ctf.ui.App;
 import org.ctf.ui.controllers.MusicPlayer;
-import org.ctf.ui.controllers.SettingsSetter;
 import org.ctf.ui.creators.ComponentCreator;
 import org.ctf.ui.creators.settings.components.ChooseBooleanButton;
 import org.ctf.ui.creators.settings.components.ChooseDoubleBox;
@@ -109,6 +107,9 @@ public abstract class SettingsWindow extends ComponentCreator {
       case ANALYZER_THINKING_TIME:
         node = IntegerBoxFactory.getAiThinkBox(settingsBox);
         break;
+      case BACKGROUND_OPACITY:
+        node = DoubleBoxFactory.getBgOpacityBox(settingsBox);
+        break;
       default:
         node = new Text("something went wrong");
     }
@@ -131,7 +132,14 @@ public abstract class SettingsWindow extends ComponentCreator {
         if(node.getUserData() == null) continue;
         try {
           switch((String) node.getUserData()) {
-            case "theme": Constants.theme = Themes.valueOf((String) ((ChooseThemeBox) node).getValue()); break;
+            case "theme": 
+              Themes newTheme = Themes.valueOf((String) ((ChooseThemeBox) node).getValue());
+              if(!Constants.theme.equals(newTheme)) {
+                Constants.theme = newTheme; 
+                SceneHandler.changeBackgroundImage();
+                SceneHandler.updateBackground();
+              }
+              break;
             case "music": Constants.musicVolume = (double) ((ChooseMusicSlider) node).getValue(); break;
             case "sound": Constants.soundVolume = (double) ((ChooseSoundSlider) node).getValue(); break;
             case "fullAiPower": Constants.FULL_AI_POWER = (boolean) ((ChooseBooleanButton) node).getValue(); break;
@@ -152,6 +160,10 @@ public abstract class SettingsWindow extends ComponentCreator {
                     Constants.analyzeTimeInSeconds * 1111
                     );
               break;
+            case "bgOpacity":
+              Constants.showBackgrounds = (double) ((ChooseDoubleBox) node).getValue(); 
+              SceneHandler.updateBackgroundVisibility();
+              break;
             
             case "booleanButton": System.out.println((boolean) ((ChooseBooleanButton) node).getValue()); break;
             case "doubleBox": System.out.println((double) ((ChooseDoubleBox) node).getValue()); break;
@@ -163,7 +175,6 @@ public abstract class SettingsWindow extends ComponentCreator {
       }
 
       SettingsSetter.saveCustomSettings();
-      App.chagngeHomescreenBackground();
       ((StackPane)SceneHandler.getCurrentScene().getRoot()).getChildren().remove(popUp);
       SceneHandler.closeSettings();
       exit.setOnAction(null);

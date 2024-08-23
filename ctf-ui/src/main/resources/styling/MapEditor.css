@@ -56,9 +56,9 @@
 .custom-combo-box-2 .list-view .list-cell {
     -fx-text-fill: black; 
 }
-.join-root {
-	 -fx-background-color: #202F3B;
-}
+//.join-root {
+//	 -fx-background-color: #202F3B;
+//}
 .option-pane {
 	-fx-border-color: rgba(255,255,255,1);
 	 -fx-border-width: 2px;

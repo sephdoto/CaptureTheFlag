@@ -21,7 +21,7 @@ import javafx.scene.media.MediaPlayer;
  */
 public class MusicPlayer {
   public static MediaPlayer mp;
-  Themes theme;
+  public Themes theme;
   static Set<FadeIntoExistence> fadingIn;
 
   public MusicPlayer() {

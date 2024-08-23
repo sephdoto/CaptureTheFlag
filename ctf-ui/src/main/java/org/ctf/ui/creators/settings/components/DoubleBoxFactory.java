@@ -9,7 +9,10 @@ import javafx.scene.layout.VBox;
  * @author sistumpf
  */
 public class DoubleBoxFactory {
-
+  public static ChooseBackgroundOpacityBox getBgOpacityBox(VBox settingsBox) {
+    return new ChooseBackgroundOpacityBox(settingsBox);
+  }
+  
   public static ChooseMapOpacityBox getMapOpacityBox(VBox settingsBox) {
     return new ChooseMapOpacityBox(settingsBox);
   }
@@ -25,6 +28,20 @@ public class DoubleBoxFactory {
     @Override
     protected double getInitialValue() {
       return Constants.backgroundImageOpacity;
+    }
+  }
+  
+  public static class ChooseBackgroundOpacityBox extends ChooseDoubleBox {
+
+    public ChooseBackgroundOpacityBox(VBox settingsBox) {
+      super(settingsBox);
+      super.setPostfix("0-1");
+      super.setUserData("bgOpacity");
+    }
+
+    @Override
+    protected double getInitialValue() {
+      return Constants.showBackgrounds;
     }
   }
 

@@ -47,6 +47,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -220,8 +222,6 @@ public class PlayGameScreenV2 extends Scene {
    * @author Manuel Krakowski
    */
   public void createLayout() {
-    root.setStyle("-fx-background-color: black");
-    root.paddingProperty().bind(padding);
     root.prefHeightProperty().bind(this.heightProperty());
     root.prefWidthProperty().bind(this.widthProperty());
     top = new HBox();
@@ -271,7 +271,6 @@ public class PlayGameScreenV2 extends Scene {
     right
         .getChildren()
         .add(clockBox);
-    right.setStyle("-fx-background-color: black");
     right.prefWidthProperty().bind(this.widthProperty().multiply(0.3));
     top.getChildren().add(right);
     root.getChildren().add(top);
@@ -756,9 +755,11 @@ public class PlayGameScreenV2 extends Scene {
   }
 
   /**
-   * Shows the team-name without animation in case it's one local client's turn
+   * Shows the team-name without animation in case it's one local client's turn.
+   * Adjusts the color and a DropShadow for the team name.
    *
    * @author Manuel Krakowski
+   * @author sistumpf
    * @return box with 'your turn' String and team-name
    */
   private VBox showYourTurnBox() {
@@ -783,11 +784,58 @@ public class PlayGameScreenV2 extends Scene {
         .textFillProperty()
         .bind(
             CreateGameController.getColors().get(String.valueOf(ClientStorage.getMainClient().getCurrentTeamTurn())));
+    
+    DropShadow edge = new DropShadow();
+    edge.setOffsetY(0f);
+    edge.setOffsetX(0f);
+    edge.setColor(
+        getComplementaryColor(
+            CreateGameController.getColors()
+            .get(
+                String.valueOf(ClientStorage.getMainClient().getCurrentTeamTurn())
+                ).get()
+            ));
+    edge.setWidth(8);
+    edge.setHeight(8);
+    edge.setSpread(5);
+    edge.setRadius(6);
+    edge.setBlurType(BlurType.ONE_PASS_BOX);
+    
+    DropShadow backgroundBlur = new DropShadow();
+    backgroundBlur.setInput(edge);
+    backgroundBlur.setColor(CreateGameController.getColors()
+        .get(
+            String.valueOf(ClientStorage.getMainClient().getCurrentTeamTurn())
+            ).get());
+    backgroundBlur.setWidth(6);
+    backgroundBlur.setHeight(6);
+    backgroundBlur.setSpread(1);
+    backgroundBlur.setRadius(2);
+
+    teamname.setEffect(backgroundBlur);
+    layout.setEffect(backgroundBlur);
+    
+    teamname.setStyle(teamString);
     layout.getChildren().add(teamname);
     layout.getChildren().addAll(status);
     return layout;
   }
 
+  /**
+   * Returns a color-inverse
+   * 
+   * @author sistumpf
+   * @param color to calculate the inverse of
+   * @return the inverse of color
+   */
+  public static Color getComplementaryColor(Color color) {
+    double red = 1.0 - color.getRed();
+    double green = 1.0 - color.getGreen();
+    double blue = 1.0 - color.getBlue();
+
+    return new Color(red, green, blue, 0.5);
+}
+  
   /**
    * Creates the button which is used to give up
    *

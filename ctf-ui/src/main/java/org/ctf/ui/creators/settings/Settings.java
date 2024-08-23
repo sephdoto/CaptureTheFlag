@@ -15,7 +15,8 @@ public enum Settings {
   UI_UPDATE_TIME("UI update time "),
   MAP_OPACITY("map opacity "),
   ANALYZER_AI("Analyzer AI "),
-  ANALYZER_THINKING_TIME("Analyzer time");
+  ANALYZER_THINKING_TIME("Analyzer time "),
+  BACKGROUND_OPACITY("Background opacity ");
   
   private String name;
   

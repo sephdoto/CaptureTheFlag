@@ -121,7 +121,6 @@ public class WaitingScene extends Scene {
     root.getStyleClass().add("join-root");
     root.prefHeightProperty().bind(this.heightProperty());
     root.prefWidthProperty().bind(this.widthProperty());
-    root.getChildren().add(createBackgroundImage(root));
     VBox mainBox = createMainBox(root);
     root.getChildren().add(mainBox);
     mainBox.getChildren().add(createHeader());
@@ -131,24 +130,6 @@ public class WaitingScene extends Scene {
     middle.getChildren().addAll(leftTop, rightTop);
     mainBox.getChildren().add(middle);
   }
-
-  /**
-   * Creates A background image which is placed behind the scene
-   * 
-   * @author Manuel Krakowski
-   * @param configRoot Stackpane on which the image is placed
-   * @return
-   */
-  private ImageView createBackgroundImage(StackPane configRoot) {
-    Image mp = ImageController.loadThemedImage(ImageType.MISC, "waitingRoom2");
-    ImageView mpv = new ImageView(mp);
-    mpv.fitHeightProperty().bind(configRoot.heightProperty().divide(1));
-    mpv.fitWidthProperty().bind(configRoot.widthProperty().divide(1));
-    // mpv.setPreserveRatio(true);
-    mpv.setOpacity(0.5);
-    return mpv;
-  }
-
 
   /**
    * fits the size of all the text on the scene to the screen-size

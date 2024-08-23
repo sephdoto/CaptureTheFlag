@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums;
 import org.ctf.shared.constants.Enums.SoundType;
-import org.ctf.ui.App;
+import org.ctf.ui.creators.settings.SettingsSetter;
 import org.ctf.ui.data.FixedStack;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.hostGame.PlayGameScreenV2;
@@ -299,10 +299,12 @@ public class CheatboardListener extends NativeKeyAdapter {
       Constants.soundVolume = 1;
     } else if (match == cheatCodes.get(7)) {    // switch the current theme
       Constants.theme = Enums.Themes.values()[(Constants.theme.ordinal() +1) % Enums.Themes.values().length];
+      SceneHandler.changeBackgroundImage();
+      SceneHandler.updateBackground();
       SettingsSetter.saveCustomSettings();
-      App.chagngeHomescreenBackground();
     } else if (match == cheatCodes.get(8)) {    // switch home screen background
-      App.chagngeHomescreenBackground();
+      SceneHandler.changeBackgroundImage();
+      SceneHandler.updateBackground();
     } else if (match == cheatCodes.get(9)) {    // open analyzer
       Platform.runLater(
           new Runnable() {

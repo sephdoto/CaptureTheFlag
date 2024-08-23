@@ -54,7 +54,8 @@ public class Enums {
     SOUNDVOLUME("soundVolume"),
     MUSICVOLUME("musicVolume"),
     THEME("theme"),
-    FULL_AI_POWER("fullAiPower");
+    FULL_AI_POWER("fullAiPower"),
+    BACKGROUND_OPACITY("backgroundOpacity");
 
     private final String name;
 

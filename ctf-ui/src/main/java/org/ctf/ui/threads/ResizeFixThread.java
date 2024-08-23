@@ -4,8 +4,9 @@ import org.ctf.ui.data.SceneHandler;
 import javafx.stage.Stage;
 
 /**
- * Resizes the UI a tiny bit to force everything to be on its right place
+ * Resizes the UI a tiny bit to force everything to be on its right place.
  * 
+ * @deprecated the bug this Thread should fix shall not be a problem anymore.
  * @author sistumpf
  */
 public class ResizeFixThread extends Thread {

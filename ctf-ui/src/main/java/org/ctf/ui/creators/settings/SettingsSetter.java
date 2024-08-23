@@ -1,4 +1,4 @@
-package org.ctf.ui.controllers;
+package org.ctf.ui.creators.settings;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums;
 import org.ctf.shared.tools.JsonTools;
+import org.ctf.ui.controllers.MusicPlayer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -85,6 +86,7 @@ public class SettingsSetter {
     settingObject.put(Enums.UserChangeable.SOUNDVOLUME.getString(), Constants.soundVolume);
     settingObject.put(Enums.UserChangeable.THEME.getString(), Constants.theme);
     settingObject.put(Enums.UserChangeable.FULL_AI_POWER.getString(), Constants.FULL_AI_POWER);
+    settingObject.put(Enums.UserChangeable.BACKGROUND_OPACITY.getString(), Constants.showBackgrounds);
 
     return settingObject;
   }
@@ -109,6 +111,9 @@ public class SettingsSetter {
     };
     try { Constants.FULL_AI_POWER = settingObject.getBoolean(Enums.UserChangeable.FULL_AI_POWER.getString()); } catch (Exception e) {
       System.err.println("No value for " + Enums.UserChangeable.FULL_AI_POWER.getString() + " saved.");
+    };
+    try { Constants.showBackgrounds = settingObject.getDouble(Enums.UserChangeable.BACKGROUND_OPACITY.getString()); } catch (Exception e) {
+      System.err.println("No value for " + Enums.UserChangeable.BACKGROUND_OPACITY.getString() + " saved.");
     };
   }
 

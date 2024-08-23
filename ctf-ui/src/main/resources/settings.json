@@ -1,6 +1,7 @@
 {
   "soundVolume": 0,
   "fullAiPower": false,
+  "backgroundOpacity": 0.6,
   "theme": "STARWARS",
   "musicVolume": 0
 }

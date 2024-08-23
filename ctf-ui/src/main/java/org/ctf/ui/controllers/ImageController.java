@@ -13,6 +13,11 @@ import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.Themes;
 import org.springframework.util.StringUtils;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 
 /**
  * Tools for loading and saving images from/to their corresponding place in ui.resources.
@@ -145,12 +150,31 @@ public class ImageController {
   }
 
   /**
+   * Uses loadThemedImage to load an image as a background
+   * 
+   * @param type Type of the image
+   * @param imageName Name of the image, without name ending (.png, .jpg, ...)
+   * @return the image as an instance of Background
+   */
+  public static Background loadThemesBackgroundImage(ImageType type, String imageName) {
+    return new Background(
+        new BackgroundImage(
+            loadThemedImage(type, imageName),
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundPosition.CENTER,
+            new BackgroundSize(1, 1, true, true, true, true)
+            )
+        );
+  }
+  
+  /**
    * Loads a certain image from a certain folder. Uses the current theme. Tries to load .png or
    * .jpg, if they don't exists it loads a fallback image
    *
    * @param type Type of the image
    * @param imageName Name of the image, without name ending (.png, .jpg, ...)
-   * @return
+   * @return the requested image
    */
   public static Image loadThemedImage(ImageType type, String imageName) {
     return loadImage(type, Constants.theme, imageName);

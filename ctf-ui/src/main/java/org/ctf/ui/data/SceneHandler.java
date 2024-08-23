@@ -1,9 +1,12 @@
 package org.ctf.ui.data;
 
 import java.io.File;
+import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.App;
+import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.creators.settings.SettingsOpener;
 import org.ctf.ui.creators.settings.SettingsWindow;
@@ -14,10 +17,16 @@ import org.ctf.ui.hostGame.CreateGameScreenV2;
 import org.ctf.ui.hostGame.PlayGameScreenV2;
 import org.ctf.ui.hostGame.WaitingScene;
 import org.ctf.ui.remoteGame.JoinScene;
+import org.ctf.ui.remoteGame.RemoteWaitingScene;
 import org.ctf.ui.remoteGame.WaveCollapseThread;
-import org.ctf.ui.threads.ResizeFixThread;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -64,27 +73,31 @@ public class SceneHandler {
   /*/             open Popups               /*/ 
   ///***************************************///
   
+  /**
+   * Opens a settings window, depending on its name.
+   *
+   * @param settings "default" or "advanced" to open different windows
+   */
   public static void openSettingsWindow(String settings) {
     if(settingsWindow != null) {
       closeSettings();
     }
-    
-      SoundController.playSound("Button", SoundType.MISC);
-      switch (settings) {
-        case "advanced" : 
-          settingsWindow = SettingsOpener.getAdvancedSettings();
-          break;
-        default: 
-          settingsWindow = SettingsOpener.getDefaultSettings();
-      }
-      ((StackPane)SceneHandler.getCurrentScene().getRoot()).getChildren().add(settingsWindow.getContent());
+
+    SoundController.playSound("Button", SoundType.MISC);
+    switch (settings) {
+      case "advanced" : 
+        settingsWindow = SettingsOpener.getAdvancedSettings();
+        break;
+      default: 
+        settingsWindow = SettingsOpener.getDefaultSettings();
+    }
+    ((StackPane)SceneHandler.getCurrentScene().getRoot()).getChildren().add(settingsWindow.getContent());
   }
-  
+
   
   ///***************************************///
   /*/          switching Scenes             /*/ 
   ///***************************************///
-
   
   public static void switchToHomeScreen() {
     App.adjustHomescreen(mainStage.getScene().getWidth(), mainStage.getScene().getHeight());
@@ -96,6 +109,12 @@ public class SceneHandler {
     switchCurrentScene(
         new WaitingScene(SceneHandler.getMainStage().getWidth() - App.offsetWidth, SceneHandler.getMainStage().getHeight() - App.offsetHeight)
         );
+  }
+  
+  public static void switchToRemoteWaitGameScene(ServerManager serverManager) {
+    switchCurrentScene(
+        new RemoteWaitingScene(SceneHandler.getMainStage().getWidth() - App.offsetWidth, SceneHandler.getMainStage().getHeight() - App.offsetHeight, serverManager)
+    );
   }
   
   public static void switchToCreateGameScene() {
@@ -173,25 +192,83 @@ public class SceneHandler {
    * @param scene the new Scene to switch to
    */
   public static void switchCurrentScene(Scene scene) {
-    if(resizeFixThread != null) {
-      resizeFixThread.interrupt();
-      resizeFixThread = null;
-    }
     if(currentScene != null)
       lastScenes.push(currentScene);
     currentScene = scene;
+    updateBackgroundVisibility();
+    updateBackground();
     mainStage.setScene(scene);
-
-    resizeFixThread = new ResizeFixThread(mainStage);
-    resizeFixThread.start();
   }
   
-  private static ResizeFixThread resizeFixThread;
-
+  /**
+   * Changes the background image to a completely new one.
+   * Effects and other corrections can be applied here.
+   * 
+   * @author sistumpf
+   */
+  public static void changeBackgroundImage() {
+      Image bImage = ImageController.loadRandomThemedImage(ImageType.HOME);
+      /*int x=10;
+      int y=10;
+      ImageView ima = new ImageView(bImage);
+      ima.setFitWidth(bImage.getWidth());
+    ima.setFitHeight(bImage.getHeight());
+    var blur = new ColorAdjust();
+    blur.setBrightness(-0.7);
+    ima.setEffect(blur);
+    var light = new Lighting();
+    light.setLight(new Light.Spot(45, 45, 45, 1, Color.WHITE));
+    ima.setEffect(light);
+      WritableImage writableImage = new WritableImage((int)bImage.getWidth(), (int)bImage.getHeight());
+      SnapshotParameters params = new SnapshotParameters();
+      ima.snapshot(params, writableImage);
+*/
+      BackgroundSize backgroundSize = new BackgroundSize(1, 1, true, true, true, true);
+      BackgroundImage background =
+          new BackgroundImage(
+              /*writableImage*/ bImage,
+              BackgroundRepeat.NO_REPEAT,
+              BackgroundRepeat.NO_REPEAT,
+              BackgroundPosition.CENTER,
+              backgroundSize);
+      Constants.background = new Background(background);
+  }
   
+  /**
+   * Updates the solid color layer above the background
+   * 
+   * @author sistumpf
+   */
+  public static void updateBackgroundVisibility() {
+    Constants.colorOverlay.setStyle("-fx-background-color: rgba(" 
+        + (int) Math.round(255 * Constants.defaultBGcolor.getRed()) +", " 
+        + (int) Math.round(255 * Constants.defaultBGcolor.getGreen()) + ", "
+        + (int) Math.round(255 * Constants.defaultBGcolor.getBlue()) +", "
+        + Constants.showBackgrounds
+        +");");
+    ((StackPane) currentScene.getRoot()).getChildren().remove(Constants.colorOverlay);
+    if(currentScene != homeScene)
+      ((StackPane) currentScene.getRoot()).getChildren().add(Constants.colorOverlay);
+    Constants.colorOverlay.toBack();
+  }
   ///***************************************///
   /*/        getters and setters            /*/
   ///***************************************///
+  /**
+   * Updates the current Scenes Background to represent the Background Object from Constants.
+   * Backgrounds for certain scenes can be hardcoded here.
+   * 
+   * @author sistumpf
+   */
+  public static void updateBackground() {
+    if(currentScene instanceof WaitingScene)
+      ((StackPane)currentScene.getRoot()).setBackground(ImageController.loadThemesBackgroundImage(ImageType.MISC, "waitingRoom2"));
+    else {
+      ((StackPane)currentScene.getRoot()).setBackground(Constants.background);
+      ((StackPane)homeScene.getRoot()).setBackground(Constants.background);
+    }
+  }
+  
   /**
    * Closes the currently open settingsWindow without saving it to the JSON.
    * Does not load the old saved values, all changes to Constants stay.

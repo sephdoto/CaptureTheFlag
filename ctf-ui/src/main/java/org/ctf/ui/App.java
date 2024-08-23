@@ -8,8 +8,8 @@ import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.MusicPlayer;
-import org.ctf.ui.controllers.SettingsSetter;
 import org.ctf.ui.controllers.SoundController;
+import org.ctf.ui.creators.settings.SettingsSetter;
 import org.ctf.ui.customobjects.HomeScreenButton;
 import org.ctf.ui.customobjects.ServerPane;
 import org.ctf.ui.data.SceneHandler;
@@ -50,7 +50,6 @@ public class App extends Application {
   HomeSceneController ssc;
   FadeTransition startTransition;
   ServerContainer serverContainer;
-  static StackPane wrapper;
   static StackPane root;
   public static Image backgroundImage;
   public static BackgroundSize backgroundSize = new BackgroundSize(1, 1, true, true, true, true);
@@ -62,7 +61,7 @@ public class App extends Application {
 
   public void start(Stage stage) {
     SceneHandler.setMainStage(stage);
-
+    
     stage
         .focusedProperty()
         .addListener(
@@ -176,16 +175,7 @@ public class App extends Application {
     StackPane.setAlignment(vbox, Pos.TOP_CENTER);
     vbox.setAlignment(Pos.TOP_CENTER);
     vbox.setMaxWidth(50);
-    App.wrapper = new StackPane();
-    root.getChildren().addAll(wrapper, vbox);
-    BackgroundImage background =
-        new BackgroundImage(
-            App.backgroundImage,
-            BackgroundRepeat.NO_REPEAT,
-            BackgroundRepeat.NO_REPEAT,
-            BackgroundPosition.CENTER,
-            App.backgroundSize);
-    App.wrapper.setBackground(new Background(background));
+    root.getChildren().addAll(vbox);
     addServerPane(root);
     return root;
   }
@@ -235,19 +225,6 @@ public class App extends Application {
     App.root.setPrefHeight(height);
   }
 
-  public static void chagngeHomescreenBackground() {
-    Image bImage = ImageController.loadRandomThemedImage(ImageType.HOME);
-    BackgroundSize backgroundSize = new BackgroundSize(1, 1, true, true, true, true);
-    BackgroundImage background =
-        new BackgroundImage(
-            bImage,
-            BackgroundRepeat.NO_REPEAT,
-            BackgroundRepeat.NO_REPEAT,
-            BackgroundPosition.CENTER,
-            backgroundSize);
-    App.wrapper.setBackground(new Background(background));
-  }
-
   private void changeToHomeScreen(Scene lockscreen) {
     SceneHandler.setHomeScene(new Scene(createParent(lockscreen)));
     try {
@@ -257,7 +234,8 @@ public class App extends Application {
     } catch (MalformedURLException e) {
       e.printStackTrace();
     }
-    SceneHandler.switchCurrentScene(SceneHandler.getHomeScene());
+    SceneHandler.switchToHomeScreen();
+//    SceneHandler.switchCurrentScene(SceneHandler.getHomeScene());
     App.offsetHeight = SceneHandler.getMainStage().getHeight() - SceneHandler.getHomeScene().getHeight();
     App.offsetWidth = SceneHandler.getMainStage().getWidth() - SceneHandler.getHomeScene().getWidth();
     System.out.println("offsetHeight: " + App.offsetHeight + ", offsetWidth: " + App.offsetWidth);
@@ -282,7 +260,8 @@ public class App extends Application {
             BackgroundRepeat.NO_REPEAT,
             BackgroundPosition.CENTER,
             backgroundSize);
-    layer.setBackground(new Background(background));
+    Constants.background = new Background(background);
+    layer.setBackground(Constants.background);
     layer
         .widthProperty()
         .addListener(
