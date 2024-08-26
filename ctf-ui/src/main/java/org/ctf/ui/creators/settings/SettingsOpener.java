@@ -22,6 +22,7 @@ public class SettingsOpener {
         addNewComponent(Settings.UI_UPDATE_TIME);
         addNewComponent(Settings.BACKGROUND_OPACITY);
         addNewComponent(Settings.MAP_OPACITY);
+        addNewComponent(Settings.GLOW_SPREAD);
         addNewComponent(Settings.ANALYZER_THINKING_TIME);
       }
     };

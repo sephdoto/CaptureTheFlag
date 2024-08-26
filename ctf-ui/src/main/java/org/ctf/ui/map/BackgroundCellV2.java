@@ -54,16 +54,12 @@ public class BackgroundCellV2 extends Pane {
    * @author Manuel Krakowski
    */
   public void createCircle() {
-    NumberBinding binding = Bindings.divide(widthProperty(), 6);
-    NumberBinding roundSize = Bindings.createIntegerBinding(() -> binding.intValue(), binding);
-    NumberBinding binding2 = Bindings.divide(widthProperty(), 2);
-    NumberBinding roundSize2 = Bindings.createIntegerBinding(() -> binding2.intValue(), binding2);
     rc = new Circle();
-    rc.radiusProperty().bind(roundSize);
-    rc.centerXProperty().bind(roundSize2);
-    rc.centerYProperty().bind(roundSize2);
+    rc.radiusProperty().bind(getBase().widthProperty().divide(4.5));
+    rc.centerXProperty().bind(getBase().widthProperty().divide(2));
+    rc.centerYProperty().bind(getBase().heightProperty().divide(2));
     rc.setFill(null);
-    base.getChildren().add(rc);
+    getBase().getChildren().add(rc);
   }
 
   /**
@@ -72,18 +68,14 @@ public class BackgroundCellV2 extends Pane {
    * @author Manuel Krakowski
    */
   public void createCircle2() {
-    NumberBinding binding = Bindings.divide(widthProperty(), 2.8);
-    NumberBinding roundSize = Bindings.createIntegerBinding(() -> binding.intValue(), binding);
-    NumberBinding binding2 = Bindings.divide(widthProperty(), 2);
-    NumberBinding roundSize2 = Bindings.createIntegerBinding(() -> binding2.intValue(), binding2);
     rc2 = new Circle();
-    rc2.radiusProperty().bind(roundSize);
-    rc2.centerXProperty().bind(roundSize2);
-    rc2.centerYProperty().bind(roundSize2);
+    rc2.radiusProperty().bind(getBase().widthProperty().divide(2.5));
+    rc2.centerXProperty().bind(getBase().widthProperty().divide(2));
+    rc2.centerYProperty().bind(getBase().heightProperty().divide(2));
     rc2.setFill(null);
     rc2.setStroke(Color.rgb(173, 216, 230, 0.5));
     rc2.setStrokeWidth(3);
-    base.getChildren().add(rc2);
+    getBase().getChildren().add(rc2);
   }
 
   /**
@@ -93,14 +85,12 @@ public class BackgroundCellV2 extends Pane {
    * @param figure {@link CostumFigurePain}
    */
   public void addFigure(CostumFigurePain figure) {
-    NumberBinding binding = Bindings.multiply(widthProperty(), 0.5);
-    NumberBinding roundSize = Bindings.createIntegerBinding(() -> binding.intValue(), binding);
-    base.getChildren().remove(rc);
+    getBase().getChildren().remove(rc);
     occupied = true;
     child = figure;
-    child.maxWidthProperty().bind(roundSize);
-    child.maxHeightProperty().bind(roundSize);
-    base.getChildren().add(child);
+    child.maxWidthProperty().bind(getBase().widthProperty().multiply(0.75));
+    child.maxHeightProperty().bind(getBase().heightProperty().multiply(0.75));
+    getBase().getChildren().add(child);
     figure.setParente(this);
   }
 
@@ -112,7 +102,7 @@ public class BackgroundCellV2 extends Pane {
   @Deprecated
   public void removeFigure() {
     occupied = false;
-    base.getChildren().remove(child);
+    getBase().getChildren().remove(child);
     this.child = null;
   }
 
@@ -124,18 +114,15 @@ public class BackgroundCellV2 extends Pane {
    * 
    */
   public void addBlock(boolean isVisible) {
-    NumberBinding binding = Bindings.multiply(widthProperty(), 0.5);
-    NumberBinding roundSize = Bindings.createIntegerBinding(() -> binding.intValue(), binding);
     occupied = true;
     BlockRepV3 blocki = new BlockRepV3();
     if (!isVisible) {
       blocki.setOpacitytoZero();
     }
-    blocki.maxWidthProperty().bind(roundSize);
-    blocki.maxHeightProperty().bind(roundSize);
-    base.getChildren().clear();
-    base.getChildren().add(blocki);
-
+    blocki.maxWidthProperty().bind(getBase().widthProperty().multiply(0.65));
+    blocki.maxHeightProperty().bind(getBase().heightProperty().multiply(0.65));
+    getBase().getChildren().clear();
+    getBase().getChildren().add(blocki);
   }
 
   /**
@@ -145,15 +132,13 @@ public class BackgroundCellV2 extends Pane {
    * @param r of a team
    */
   public void addBasis(BaseRep r) {
-    NumberBinding binding = Bindings.multiply(widthProperty(), 0.6);
-    NumberBinding roundSize = Bindings.createIntegerBinding(() -> binding.intValue(), binding);
     occupied = true;
     teamBase = r;
     BaseRep basis = r;
-    basis.maxWidthProperty().bind(roundSize);
-    basis.maxHeightProperty().bind(roundSize);
-    base.getChildren().clear();
-    base.getChildren().add(basis);
+    basis.maxWidthProperty().bind(getBase().widthProperty().multiply(0.7));
+    basis.maxHeightProperty().bind(getBase().widthProperty().multiply(0.7));
+    getBase().getChildren().clear();
+    getBase().getChildren().add(basis);
   }
 
   /**
@@ -253,7 +238,7 @@ public class BackgroundCellV2 extends Pane {
     this.active = false;
     rc.setFill(null);
     if (rc2 != null) {
-      base.getChildren().remove(rc2);
+      getBase().getChildren().remove(rc2);
     }
   }
 
@@ -262,8 +247,6 @@ public class BackgroundCellV2 extends Pane {
     rc.setFill(Color.WHITE);
   }
 
-
-
   /**
    * Creates the base of the Cell Where all objects on it are placed
    * 
@@ -271,18 +254,19 @@ public class BackgroundCellV2 extends Pane {
    */
   public void createBase() {
     StackPane base = new StackPane();
-    NumberBinding binding = Bindings.multiply(widthProperty(), 0.8);
-    NumberBinding roundSize = Bindings.createIntegerBinding(() -> binding.intValue(), binding);
     NumberBinding pos =
         Bindings.subtract(widthProperty().divide(2), base.widthProperty().divide(2));
     NumberBinding roundPos1 = Bindings.createIntegerBinding(() -> pos.intValue(), pos);
     NumberBinding pos2 =
         Bindings.subtract(widthProperty().divide(2), base.heightProperty().divide(2));
     NumberBinding roundPos2 = Bindings.createIntegerBinding(() -> pos2.intValue(), pos2);
+    
     base.setStyle("-fx-background-color: transparent");
     base.setAlignment(Pos.CENTER);
-    base.prefWidthProperty().bind(roundSize);
-    base.prefHeightProperty().bind(roundSize);
+    base.prefWidthProperty().bind(widthProperty().multiply(0.8));
+    base.prefHeightProperty().bind(widthProperty().multiply(0.8));
+    base.maxWidthProperty().bind(widthProperty().multiply(0.8));
+    base.maxHeightProperty().bind(widthProperty().multiply(0.8));
     base.layoutXProperty().bind(roundPos1);
     base.layoutYProperty().bind(roundPos2);
     base.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -299,7 +283,7 @@ public class BackgroundCellV2 extends Pane {
     this.base = base;
     this.getChildren().add(base);
   }
-
+  
   /**
    * When the cell is clicked a move-request is sent
    * 
@@ -362,5 +346,9 @@ public class BackgroundCellV2 extends Pane {
 
   public void setUActive() {
     this.active = false;
+  }
+
+  public StackPane getBase() {
+    return base;
   }
 }

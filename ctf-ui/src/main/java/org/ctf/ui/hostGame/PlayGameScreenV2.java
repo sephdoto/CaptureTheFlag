@@ -29,7 +29,7 @@ import org.ctf.ui.threads.PointAnimation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
+import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -188,6 +188,7 @@ public class PlayGameScreenV2 extends Scene {
     pictureMainDiscription = new SimpleObjectProperty<Font>(Font.font(this.getWidth() / 40));
     figureDiscription = new SimpleObjectProperty<Font>(Font.font(this.getWidth() / 45));
     waitigFontSize = new SimpleObjectProperty<Font>(Font.font(this.getWidth() / 55));
+
     widthProperty()
         .addListener(
             new ChangeListener<Number>() {
@@ -198,11 +199,16 @@ public class PlayGameScreenV2 extends Scene {
                 timerLabel.set(Font.font(newWidth.doubleValue() / 42));
                 timerDescription.set(Font.font(newWidth.doubleValue() / 60));
                 pictureMainDiscription.set(Font.font(newWidth.doubleValue() / 40));
-                figureDiscription.set(Font.font(newWidth.doubleValue() / 45));
+                if((newWidth.doubleValue() / 45) *6 < heightProperty().multiply(0.7).doubleValue() || newWidth.doubleValue() < oldWidth.doubleValue())
+                  figureDiscription.set(Font.font(newWidth.doubleValue() / 45));
                 padding.set(new Insets(newWidth.doubleValue() * 0.01));
                 waitigFontSize.set(Font.font(newWidth.doubleValue() / 55));
+//                }
               }
             });
+//    SceneHandler.getMainStage().maximizedProperty().addListener((change, oldValue, newValue) -> {
+//      setFontSizes();
+//    });
   }
 
   /**
@@ -212,20 +218,26 @@ public class PlayGameScreenV2 extends Scene {
    * @author Manuel Krakowski
    */
   public void createLayout() {
-    root.prefHeightProperty().bind(this.heightProperty());
-    root.prefWidthProperty().bind(this.widthProperty());
+//    root.prefHeightProperty().bind(this.heightProperty());
+//    root.prefWidthProperty().bind(this.widthProperty());
     top = new HBox();
     top.setAlignment(Pos.CENTER);
     right = new VBox();
-    right.setAlignment(Pos.BOTTOM_CENTER);
+    right.setAlignment(Pos.CENTER);
     top.prefHeightProperty().bind(this.heightProperty());
+    top.prefWidthProperty().bind(this.widthProperty());
+    top.minHeightProperty().bind(this.heightProperty());
+    top.minWidthProperty().bind(this.widthProperty());
+    top.maxHeightProperty().bind(this.heightProperty());
+    top.maxWidthProperty().bind(this.widthProperty());
     showMapBox = new StackPane();
     showMapBox.paddingProperty().bind(padding);
-    showMapBox.paddingProperty().bind(padding);
-    showMapBox.prefWidthProperty().bind(this.widthProperty().multiply(0.7));
-    showMapBox.prefHeightProperty().bind(this.heightProperty().multiply(0.9));
-    showMapBox.maxWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.7));
-    showMapBox.maxHeightProperty().bind(SceneHandler.getMainStage().heightProperty().multiply(0.9));
+    NumberBinding width = top.widthProperty().multiply(0.6);
+    NumberBinding height = top.heightProperty().multiply(0.9);
+    showMapBox.prefWidthProperty().bind(width);
+    showMapBox.prefHeightProperty().bind(height);
+    showMapBox.maxWidthProperty().bind(width);
+    showMapBox.maxHeightProperty().bind(height);
     showMapBox.getStyleClass().add("option-pane");
     File grid = new File(Constants.toUIPictures + File.separator + "grid.png");
     String gridPicName = grid.exists() ? "grid.png" : "tuning1.png";
@@ -235,7 +247,7 @@ public class PlayGameScreenV2 extends Scene {
                 .toURI()
                 .toString());
     mpv = new ImageView(mp);
-    StackPane.setAlignment(mpv, Pos.CENTER);
+//    StackPane.setAlignment(mpv, Pos.CENTER);
     if (gm != null) {
       mpv.fitWidthProperty().bind(gm.maxWidthProperty());
       mpv.fitHeightProperty().bind(gm.maxHeightProperty());
@@ -243,16 +255,8 @@ public class PlayGameScreenV2 extends Scene {
       mpv.fitWidthProperty().bind(showMapBox.widthProperty().multiply(0.8));
       mpv.fitHeightProperty().bind(showMapBox.heightProperty().multiply(0.8));
     }
-    /*
-    this.widthProperty().addListener((obs, old, newV) -> {
-      mpv.setFitWidth(newV.doubleValue() * 0.8);
-    });
-    this.heightProperty().addListener((obs, old, newV) -> {
-      mpv.setFitHeight(newV.doubleValue() * 0.8);
-    });*/
     mpv.setPreserveRatio(true);
     showMapBox.getChildren().add(mpv);
-    top.getChildren().add(showMapBox);
     right.getChildren().add(createGiveUpBox());
     right.getChildren().add(createTopCenter());
     right.getChildren().add(createFigureDesBox());
@@ -262,6 +266,10 @@ public class PlayGameScreenV2 extends Scene {
         .getChildren()
         .add(clockBox);
     right.prefWidthProperty().bind(this.widthProperty().multiply(0.3));
+    right.maxWidthProperty().bind(this.widthProperty().multiply(0.3));
+    right.prefHeightProperty().bind(this.heightProperty().multiply(0.9));
+    right.maxHeightProperty().bind(this.heightProperty());
+    top.getChildren().add(showMapBox);
     top.getChildren().add(right);
     root.getChildren().add(top);
   }
@@ -308,7 +316,7 @@ public class PlayGameScreenV2 extends Scene {
             newState = ClientStorage.getMainClient().getQueuedGameState();
 
         if (newState != null) currentState = newState;
-
+        
         RedrawTask redrawTask = new RedrawTask(newState);
         new Thread(redrawTask).start();
 
@@ -323,11 +331,8 @@ public class PlayGameScreenV2 extends Scene {
                         if (oldGm != null) {
                           CreateGameController.setFigures(oldGm.getFigures());
                           showMapBox.getChildren().remove(oldGm);
-                          oldGm.destroyReferences();
                         }
                         StackPane.setAlignment(gm, Pos.CENTER);
-                        gm.maxWidthProperty().bind(showMapBox.widthProperty().multiply(0.8));
-                        gm.maxHeightProperty().bind(showMapBox.heightProperty().multiply(0.8));
                         gm.enableBaseColors(this);
                         showMapBox.getChildren().add(gm);
 
@@ -515,12 +520,8 @@ public class PlayGameScreenV2 extends Scene {
    * @param state GameState which is shown on the map
    */
   private GamePane createGamePane(GameState state) {
-    GamePane gm = new GamePane(state, showBlocks, "");
+    GamePane gm = new GamePane(state, showBlocks, "", showMapBox.widthProperty(), showMapBox.heightProperty(), 0.8);
     StackPane.setAlignment(gm, Pos.CENTER);
-    gm.maxWidthProperty().bind(mpv.fitWidthProperty());
-    gm.maxHeightProperty().bind(mpv.fitHeightProperty());
-    gm.prefWidthProperty().bind(mpv.fitWidthProperty());
-    gm.prefHeightProperty().bind(mpv.fitHeightProperty());
     gm.enableBaseColors(this);
     return gm;
   }
@@ -561,7 +562,6 @@ public class PlayGameScreenV2 extends Scene {
     mpv = new ImageView(mp);
     mpv.setOpacity(Constants.backgroundImageOpacity);
     StackPane.setAlignment(mpv, Pos.CENTER);
-
     if (gm != null) {
       mpv.fitWidthProperty().bind(gm.maxWidthProperty());
       mpv.fitHeightProperty().bind(gm.maxHeightProperty());
@@ -569,11 +569,8 @@ public class PlayGameScreenV2 extends Scene {
       mpv.fitWidthProperty().bind(showMapBox.widthProperty().multiply(0.8));
       mpv.fitHeightProperty().bind(showMapBox.heightProperty().multiply(0.8));
     }
-
     mpv.setPreserveRatio(true);
-
     showMapBox.getChildren().add(mpv);
-
     if (gm != null) updateUI(true);
   }
 
@@ -788,19 +785,24 @@ public class PlayGameScreenV2 extends Scene {
     return layout;
   }
 
+  /**
+   * Creates two DropShadows for outlining colored text
+   * 
+   * @author sistumpf
+   * @return DropShadow effect
+   */
   private DropShadow makeShadowEffect() {
     DropShadow edge = new DropShadow();
     edge.setOffsetY(0f);
     edge.setOffsetX(0f);
     edge.setColor(
-        getComplementaryColor(
             CreateGameController.getColors()
             .get(
                 String.valueOf(ClientStorage.getMainClient().getCurrentTeamTurn())
                 ).get()
-            ));
-    edge.setWidth(8);
-    edge.setHeight(8);
+            .darker().darker());
+    edge.setWidth(7);
+    edge.setHeight(7);
     edge.setSpread(5);
     edge.setRadius(6);
     edge.setBlurType(BlurType.ONE_PASS_BOX);
@@ -810,9 +812,10 @@ public class PlayGameScreenV2 extends Scene {
     backgroundBlur.setColor(CreateGameController.getColors()
         .get(
             String.valueOf(ClientStorage.getMainClient().getCurrentTeamTurn())
-            ).get());
-    backgroundBlur.setWidth(6);
-    backgroundBlur.setHeight(6);
+            ).get()
+        .brighter().brighter());
+    backgroundBlur.setWidth(4);
+    backgroundBlur.setHeight(4);
     backgroundBlur.setSpread(1);
     backgroundBlur.setRadius(2);
     
@@ -831,6 +834,8 @@ public class PlayGameScreenV2 extends Scene {
     double green = 1.0 - color.getGreen();
     double blue = 1.0 - color.getBlue();
 
+    red = blue = green = 0;
+    
     return new Color(red, green, blue, 0.5);
 }
   
@@ -843,11 +848,11 @@ public class PlayGameScreenV2 extends Scene {
    */
   private HBox createGiveUpBox() {
     HBox giveUpBox = new HBox();
-    giveUpBox.prefWidthProperty().bind(right.widthProperty());
     giveUpBox.prefHeightProperty().bind(right.heightProperty().multiply(0.05));
-    giveUpBox.setAlignment(Pos.TOP_RIGHT);
+    giveUpBox.setAlignment(Pos.BOTTOM_RIGHT);
     giveUpButton = new Button("Give up");
     giveUpButton.prefWidthProperty().bind(giveUpBox.widthProperty().multiply(0.25));
+    giveUpButton.setMinWidth(61);
     giveUpButton.getStyleClass().add("leave-button");
     giveUpButton.setOnAction(
         e -> {
@@ -1093,57 +1098,57 @@ public class PlayGameScreenV2 extends Scene {
    * @return piece-description-Hbox
    */
   private HBox createFigureDesBox() {
-    HBox h1 = new HBox();
-    h1.prefHeightProperty().bind(this.heightProperty().multiply(0.65));
-    h1.prefWidthProperty().bind(h1.heightProperty().multiply(0.3));
-    h1.minWidthProperty().bind(h1.heightProperty().multiply(0.3));
-    h1.widthProperty()
+    HBox hBox = new HBox();
+    hBox.prefHeightProperty().bind(this.heightProperty().multiply(0.65));
+    hBox.prefWidthProperty().bind(right.widthProperty().multiply(0.8));
+    hBox.widthProperty()
         .addListener(
             (observable, oldValue, newValue) -> {
               double padding = newValue.doubleValue() * 0.08;
-              h1.setPadding(new Insets(padding, padding, padding, padding));
+              hBox.setPadding(new Insets(padding, padding, padding, padding));
             });
 
-    h1.setAlignment(Pos.CENTER);
-    VBox x = new VBox();
-
-    x.widthProperty()
+    hBox.setAlignment(Pos.CENTER);
+    
+    VBox vBox = new VBox();
+    vBox.widthProperty()
         .addListener(
             (observable, oldValue, newValue) -> {
               double padding = newValue.doubleValue() * 0.05;
-              x.setPadding(new Insets(padding, padding, padding, padding));
+              vBox.setPadding(new Insets(padding, padding, padding, padding));
             });
-    x.getStyleClass().add("option-pane");
+    vBox.getStyleClass().add("option-pane");
     HBox pict = new HBox();
-    pict.prefHeightProperty().bind(x.heightProperty().multiply(0.1));
+    pict.prefHeightProperty().bind(vBox.heightProperty().multiply(0.1));
+    pict.prefWidthProperty().bind(right.widthProperty().multiply(0.75));
     typeLabel = new Label("-");
     typeLabel.fontProperty().bind(pictureMainDiscription);
     typeLabel.setAlignment(Pos.CENTER_LEFT);
-    typeLabel.prefHeightProperty().bind(pict.heightProperty());
+    typeLabel.prefHeightProperty().bind(pict.heightProperty().multiply(0.8));
     typeLabel.prefWidthProperty().bind(pict.widthProperty().multiply(0.7));
     typeLabel.getStyleClass().add("figure-label");
     StackPane p = new StackPane();
     p.prefWidthProperty().bind(pict.widthProperty().multiply(0.3));
     Image mp = ImageController.loadThemedImage(ImageType.MISC, "question-mark");
     figureImage = new Circle();
-    figureImage.radiusProperty().bind(Bindings.divide(widthProperty(), 23));
+    figureImage.radiusProperty().bind(pict.widthProperty().divide(6));
     figureImage.setFill(new ImagePattern(mp));
     figureImageBackground = new Circle();
     figureImageBackground.setFill(Color.WHITE);
     figureImageBackground.setStroke(Color.BLACK);
     figureImageBackground.setStrokeWidth(2);
-    figureImageBackground.radiusProperty().bind(Bindings.divide(widthProperty(), 21));
+    figureImageBackground.radiusProperty().bind(pict.widthProperty().divide(6));
     pict.getChildren().addAll(typeLabel, p);
     p.getChildren().addAll(figureImageBackground, figureImage);
-    x.getChildren().add(pict);
-    x.getChildren().add(createDeslabelBox());
-    h1.getChildren().add(x);
-    return h1;
+    vBox.getChildren().add(pict);
+    vBox.getChildren().add(createDeslabelBox());
+    hBox.getChildren().add(vBox);
+    return hBox;
   }
 
   /**
    * Creates A Label which is used to display piece-information
-   *
+   * 
    * @author Manuel Krakowski
    * @return description label
    */

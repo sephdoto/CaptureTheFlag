@@ -96,7 +96,11 @@ public class Constants {
    * True if homescreen images should be shown in other scenes backgrounds
    */
   public static double showBackgrounds = 0.5;
-  
+  /**
+   * Strength of the border glow around figures
+   */
+  public static double borderGlowSpread = 0.5;
+ 
   ///////////////////////////////////////////////////////
   //                    other                          //
   ///////////////////////////////////////////////////////

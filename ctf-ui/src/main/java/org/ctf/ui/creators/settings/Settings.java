@@ -16,7 +16,8 @@ public enum Settings {
   MAP_OPACITY("map opacity "),
   ANALYZER_AI("Analyzer AI "),
   ANALYZER_THINKING_TIME("Analyzer time "),
-  BACKGROUND_OPACITY("Background opacity ");
+  BACKGROUND_OPACITY("Background opacity "),
+  GLOW_SPREAD("Glow intensity");
   
   private String name;
   

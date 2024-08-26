@@ -560,7 +560,7 @@ public class CreateGameScreenV2 extends Scene {
       state = entry.getValue();
     }
 
-    gm = new GamePane(state, true, "");
+    gm = new GamePane(state, true, "", null, null, 0);
     StackPane.setAlignment(gm, Pos.CENTER);
     gm.maxWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.4));
     gm.maxHeightProperty().bind(SceneHandler.getMainStage().heightProperty().multiply(0.6));
@@ -592,7 +592,7 @@ public class CreateGameScreenV2 extends Scene {
           showMapBox.getChildren().remove(text);
           showMapBox.getChildren().remove(background);
           showMapBox.getChildren().remove(gm);
-          gm = new GamePane(state, false, "");
+          gm = new GamePane(state, false, "", null, null, 0);
           StackPane.setAlignment(gm, Pos.CENTER);
           gm.maxWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.4));
           gm.maxHeightProperty().bind(SceneHandler.getMainStage().heightProperty().multiply(0.6));

@@ -9,14 +9,6 @@ import javafx.scene.layout.VBox;
  * @author sistumpf
  */
 public class DoubleBoxFactory {
-  public static ChooseBackgroundOpacityBox getBgOpacityBox(VBox settingsBox) {
-    return new ChooseBackgroundOpacityBox(settingsBox);
-  }
-  
-  public static ChooseMapOpacityBox getMapOpacityBox(VBox settingsBox) {
-    return new ChooseMapOpacityBox(settingsBox);
-  }
-  
   public static class ChooseMapOpacityBox extends ChooseDoubleBox {
     
     public ChooseMapOpacityBox(VBox settingsBox) {
@@ -42,6 +34,20 @@ public class DoubleBoxFactory {
     @Override
     protected double getInitialValue() {
       return Constants.showBackgrounds;
+    }
+  }
+  
+  public static class ChooseGlowSpreadBox extends ChooseDoubleBox {
+
+    public ChooseGlowSpreadBox(VBox settingsBox) {
+      super(settingsBox);
+      super.setPostfix("0-1");
+      super.setUserData("glowSpread");
+    }
+
+    @Override
+    protected double getInitialValue() {
+      return Constants.borderGlowSpread;
     }
   }
 

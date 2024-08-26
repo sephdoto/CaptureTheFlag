@@ -641,7 +641,7 @@ public class AiAnalyserNew extends Scene {
    */
   private void setNewGameState() {
     showMapBox.getChildren().clear();
-    gm = new GamePane(userStates[currentMove], true, moveColors[currentMove]);
+    gm = new GamePane(userStates[currentMove], true, moveColors[currentMove], null, null, 0);
     if(!teamGaveUpChecker(currentMove+1) && userStates[currentMove].getLastMove() != null) {
       Move m = userStates[currentMove].getLastMove();
       Piece p = Arrays
@@ -698,7 +698,7 @@ public class AiAnalyserNew extends Scene {
         .stream(statebefore.getTeams()[Integer.parseInt(m.getPieceId().split(":")[1].split("_")[0])]
             .getPieces())
         .filter(pe -> pe.getId().equals(m.getPieceId())).findFirst().get();
-    gm = new GamePane(aiStates[currentMove], true, Enums.MoveEvaluation.BEST.getColor());
+    gm = new GamePane(aiStates[currentMove], true, Enums.MoveEvaluation.BEST.getColor(), null, null, 0);
     gm.setOldPosinAnalyzer(p.getPosition());
     StackPane.setAlignment(gm, Pos.CENTER);
     gm.maxWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.4));

@@ -63,14 +63,8 @@
     -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
 }
 
-.pop-up-pane{
-	-fx-border-color: rgba(53, 89, 119,0.4);
-	 -fx-border-width: 5px;
-	 -fx-background-color: rgb(0,0,0);
-	 -fx-background-radius: 13px; 
-	 -fx-border-radius: 10px;
-	 -fx-alignment: top-center;
-	  -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.6) , 10, 0.5, 0, 0);
+.leave-button:hover{
+    -fx-background-color: rgb(40,40,40); 
 }
 
 .mySlider .track {
@@ -87,4 +81,14 @@
 
 .mySlider .thumb:pressed {
     -fx-background-color: #003e80; 
+}
+
+.pop-up-pane{
+	-fx-border-color: rgba(53, 89, 119,0.4);
+	 -fx-border-width: 5px;
+	 -fx-background-color: rgb(0,0,0);
+	 -fx-background-radius: 13px; 
+	 -fx-border-radius: 10px;
+	 -fx-alignment: top-center;
+	  -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.6) , 10, 0.5, 0, 0);
 }

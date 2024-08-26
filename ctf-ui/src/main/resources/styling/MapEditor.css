@@ -45,10 +45,9 @@
    -fx-border-color: white; 
    -fx-border-width: 2.0px;
    -fx-background-radius: 5px; 
-	 -fx-border-radius: 5px;
+    -fx-border-radius: 5px;
    -fx-font-size: 90%;
-    
-    }
+}
     .custom-combo-box-2 .list-cell {
     -fx-text-fill: white; 
     -fx-font-family: "Century Gothic", sans-serif;
@@ -56,9 +55,6 @@
 .custom-combo-box-2 .list-view .list-cell {
     -fx-text-fill: black; 
 }
-//.join-root {
-//	 -fx-background-color: #202F3B;
-//}
 .option-pane {
 	-fx-border-color: rgba(255,255,255,1);
 	 -fx-border-width: 2px;
@@ -81,9 +77,6 @@
 	 -fx-border-radius: 20px;
 }
 
-.leave-button:hover{
-	 -fx-background-color: rgb(40,40,40); 
-}
 .save-button {
 	 -fx-background-color: rgb(30,90,30); 
     -fx-text-fill: white; 

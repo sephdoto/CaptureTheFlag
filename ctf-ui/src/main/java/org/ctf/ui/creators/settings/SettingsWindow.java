@@ -102,13 +102,16 @@ public abstract class SettingsWindow extends ComponentCreator {
         node = IntegerBoxFactory.getUiUpdateBox(settingsBox);
         break;
       case MAP_OPACITY:
-        node = DoubleBoxFactory.getMapOpacityBox(settingsBox);
+        node = new DoubleBoxFactory.ChooseMapOpacityBox(settingsBox);
         break;
       case ANALYZER_THINKING_TIME:
         node = IntegerBoxFactory.getAiThinkBox(settingsBox);
         break;
       case BACKGROUND_OPACITY:
-        node = DoubleBoxFactory.getBgOpacityBox(settingsBox);
+        node = new DoubleBoxFactory.ChooseBackgroundOpacityBox(settingsBox);
+        break;
+      case GLOW_SPREAD:
+        node = new DoubleBoxFactory.ChooseGlowSpreadBox(settingsBox);
         break;
       default:
         node = new Text("something went wrong");
@@ -164,7 +167,10 @@ public abstract class SettingsWindow extends ComponentCreator {
               Constants.showBackgrounds = (double) ((ChooseDoubleBox) node).getValue(); 
               SceneHandler.updateBackgroundVisibility();
               break;
-            
+            case "glowSpread":
+              Constants.borderGlowSpread = (double) ((ChooseDoubleBox) node).getValue();
+              break;
+              
             case "booleanButton": System.out.println((boolean) ((ChooseBooleanButton) node).getValue()); break;
             case "doubleBox": System.out.println((double) ((ChooseDoubleBox) node).getValue()); break;
             case "integerBox": System.out.println((int) ((ChooseIntegerBox) node).getValue()); break;

@@ -12,9 +12,7 @@ import org.ctf.ui.hostGame.PlayGameScreenV2;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.Control;
 import javafx.scene.layout.ColumnConstraints;
@@ -53,38 +51,27 @@ public class GamePane extends HBox {
 
 
   // Attributes for resizing
-  public ChangeListener<Number> heightListener;
-  public ChangeListener<Number> widthListener;
   private GridPane gridPane;
   
-  //TODO unused adressieren
-  @SuppressWarnings("unused")
-  private SimpleObjectProperty<Double> prefWidth;
-  @SuppressWarnings("unused")
-  private SimpleObjectProperty<Double> prefHeight;
-  private SimpleObjectProperty<Double> minWidth;
-  private SimpleObjectProperty<Double> minHeight;
-  @SuppressWarnings("unused")
-  private SimpleObjectProperty<Double> minSize;
-  @SuppressWarnings("unused")
-  private SimpleObjectProperty<Double> min;
-  private NumberBinding binding;
-
 
 
   /**
-   * Initializes the structure of the map and sets all values that are necessary for resizing it
+   * Initializes the structure of the map and sets all values that are necessary for resizing it.
+   * width, height and fitSize are not required.
+   * If they are null, no size management is done inside GamePane.
    * 
    * @author Manuel Krakowski
    * @param state GameState which is represented on the map
    * @param blocksVisible true if blocks are as black rectangles, false if blocks are included in
    *        background image
    * @param col only used for the Analyzer
+   * @param width the parents width property, null to handle resizing on your own
+   * @param height the parents height property, null to handle resizing on your own
+   * @param fitSize 0 to 1, the percentage how big the GamePane should be in parent. If width and height are null, fitSize is unused
    */
-  public GamePane(GameState state, boolean blocksVisible, String col) {
+  public GamePane(GameState state, boolean blocksVisible, String col, ReadOnlyDoubleProperty width, ReadOnlyDoubleProperty height, double fitSize) {
     if(Constants.backgroundImageOpacity < 0.5) blocksVisible = true;
     newGP = true;
-    initSizes();
     this.state = state;
     this.map = state.getGrid();
     this.blocksvisible = blocksVisible;
@@ -95,97 +82,57 @@ public class GamePane extends HBox {
     vBox.alignmentProperty().set(Pos.CENTER);
     alignmentProperty().set(Pos.CENTER);
     gridPane = new GridPane();
-    
-    binding = Bindings.min(widthProperty().divide(cols), heightProperty().divide(rows));
-    NumberBinding roundSize = Bindings.createDoubleBinding(() -> binding.doubleValue(), binding);
-    vBox.prefWidthProperty().bind(roundSize.multiply(cols));
-    vBox.prefHeightProperty().bind(roundSize.multiply(rows));
-    vBox.setMaxSize(Control.USE_PREF_SIZE, Control.USE_PREF_SIZE);
     vBox.setFillWidth(true);
     
     gridPane.setSnapToPixel(true);
     VBox.setVgrow(gridPane, Priority.ALWAYS);
-    for (int i = 0; i < cols; i++) {
+    for (int i = 0; i < getCols(); i++) {
       ColumnConstraints columnConstraints =
-          new ColumnConstraints(Control.USE_PREF_SIZE, Control.USE_COMPUTED_SIZE, Double.MAX_VALUE);
+          new ColumnConstraints(-1, Control.USE_COMPUTED_SIZE, -1);
       columnConstraints.setHgrow(Priority.SOMETIMES);
       gridPane.getColumnConstraints().add(columnConstraints);
     }
-    for (int j = 0; j < rows; j++) {
+    for (int j = 0; j < getRows(); j++) {
       RowConstraints rowConstraints =
-          new RowConstraints(Control.USE_PREF_SIZE, Control.USE_COMPUTED_SIZE, Double.MAX_VALUE);
+          new RowConstraints(-1, Control.USE_COMPUTED_SIZE, -1);
       rowConstraints.setVgrow(Priority.SOMETIMES);
       gridPane.getRowConstraints().add(rowConstraints);
     }
+//    gridPane.setGridLinesVisible(true);
     vBox.getChildren().add(gridPane);
     getChildren().add(vBox);
     HBox.setHgrow(this, Priority.ALWAYS);
-    this.fillGrid();
+    fillGrid();
     showLastMove();
-    addListeners();
-    System.gc();
+    addBindings(width, height, fitSize);
   }
-
-
-
+  
   /**
-   * Removes the width and height listeners, preparing the object for garbage collection.
+   * Adds Bindings to the GamePanes sizes, to restrict and correctly fit it into its parent
    * 
    * @author sistumpf
+   * @param width the parents width property, null to handle resizing on your own
+   * @param height the parents height property, null to handle resizing on your own
+   * @param fitSize 0 to 1, the percentage how big the GamePane should be in parent. If width and height are null, fitSize is unused
    */
-  public void destroyReferences() {
-    vBox.heightProperty().removeListener(widthListener);
-    widthListener = null;
-    vBox.heightProperty().removeListener(heightListener);
-    heightListener = null;
-
+  private void addBindings(ReadOnlyDoubleProperty width, ReadOnlyDoubleProperty height, double fitSize) {
+    if(width != null) {
+      this.maxWidthProperty().bind(width.multiply(fitSize));
+      this.prefWidthProperty().bind(width.multiply(fitSize));
+    }
+    if(height != null) {
+      this.maxHeightProperty().bind(height.multiply(fitSize));
+      this.prefHeightProperty().bind(height.multiply(fitSize));
+    }
+    vBox.setMaxSize(Control.USE_PREF_SIZE, Control.USE_PREF_SIZE);
+    
+    NumberBinding binding =
+        Bindings.min(widthProperty().divide(getCols()), heightProperty().divide(getRows()));
+    NumberBinding roundSize = Bindings.createDoubleBinding(() -> binding.doubleValue(), binding);
+    vBox.prefWidthProperty().bind(roundSize.multiply(getCols()));
+    vBox.prefHeightProperty().bind(roundSize.multiply(getRows()));
   }
-
-
-
-  /**
-   * Adds width and height listeners to the object. Should be called in constructor.
-   * 
-   * @author Manuel Krakowski, sistumpf
-   */
-  private void addListeners() {
-    this.heightListener = new ChangeListener<Number>() {
-      public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth,
-          Number newWidth) {
-        if (MoveVisualizer.getCurrent() != null) {
-          MoveVisualizer.getCurrent().performSelectClick();
-        }
-      }
-    };
-    vBox.heightProperty().addListener(this.heightListener);
-    this.widthListener = new ChangeListener<Number>() {
-      public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth,
-          Number newWidth) {
-        if (MoveVisualizer.getCurrent() != null) {
-          // Game.getCurrent().performSelectClick();
-        }
-
-      }
-    };
-    this.widthProperty().addListener(this.widthListener);
-  }
-
-  /**
-   * Inits the differend min and preferred sizes.
-   * 
-   * @author Manuel Krakowski, sistumpf
-   */
-  private void initSizes() {
-    prefWidth = new SimpleObjectProperty<Double>();
-    prefHeight = new SimpleObjectProperty<Double>();
-    minWidth = new SimpleObjectProperty<>(getWidth() / cols);
-    minHeight = new SimpleObjectProperty<>(getHeight() / rows);
-    minSize = new SimpleObjectProperty<>(
-        minWidth.get() < minHeight.get() ? minWidth.get() : minHeight.get());
-    min = new SimpleObjectProperty<Double>();
-  }
-
-
+  
   /**
    * highlights the last move on the map
    * 
@@ -280,8 +227,8 @@ public class GamePane extends HBox {
    * @author Manuel Krakowski
    */
   public void fillGrid() {
-    for (int i = 0; i < rows; i++) {
-      for (int j = 0; j < cols; j++) {
+    for (int i = 0; i < getRows(); i++) {
+      for (int j = 0; j < getCols(); j++) {
         BackgroundCellV2 child = new BackgroundCellV2(i, j);
         cells.put(generateKey(i, j), child);
         String objectOnMap = map[i][j];
@@ -291,11 +238,11 @@ public class GamePane extends HBox {
           } else {
             child.addBlock(false);
           }
-        } else if (objectOnMap.startsWith("b:")) {
+        } /*else if (objectOnMap.startsWith("b:")) {
           // currently not used
         } else if (objectOnMap.startsWith("b:2")) {
           /// Currently not used
-        }
+        }*/
         GridPane.setRowIndex(child, i);
         GridPane.setColumnIndex(child, j);
         gridPane.getChildren().add(child);
@@ -339,8 +286,8 @@ public class GamePane extends HBox {
 
   }
 
-  // Getters and Setters
-  /////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////
+  //                            Getters and Setters                               //
   //////////////////////////////////////////////////////////////////////////////////
 
   public HashMap<String, CostumFigurePain> getFigures() {
@@ -377,6 +324,14 @@ public class GamePane extends HBox {
 
   public GameState getState() {
     return state;
+  }
+
+  public int getRows() {
+    return rows;
+  }
+
+  public int getCols() {
+    return cols;
   }
 
 }

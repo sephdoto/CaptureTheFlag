@@ -1,5 +1,6 @@
 package org.ctf.ui.map;
 
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.shared.state.Piece;
@@ -83,6 +84,8 @@ public class CostumFigurePain extends Pane {
     Color col = Color.valueOf(colorString);
     borderGlow = new DropShadow();
     borderGlow.setColor(col);
+//    borderGlow.setRadius(3);
+    borderGlow.setSpread(Constants.borderGlowSpread);
     borderGlow.setOffsetX(0f);
     borderGlow.setOffsetY(0f);
     vw.setEffect(borderGlow);
@@ -97,7 +100,9 @@ public class CostumFigurePain extends Pane {
   public void showTeamColorWhenSelecting(ObjectProperty<Color> sceneColorProperty) {
     borderGlow = new DropShadow();
     borderGlow.colorProperty().bind(sceneColorProperty);
-    borderGlow.setOffsetX(0f);
+//    borderGlow.setRadius(3);
+    borderGlow.setSpread(Constants.borderGlowSpread);
+      borderGlow.setOffsetX(0f);
     borderGlow.setOffsetY(0f);
     vw.setEffect(borderGlow);
   }
