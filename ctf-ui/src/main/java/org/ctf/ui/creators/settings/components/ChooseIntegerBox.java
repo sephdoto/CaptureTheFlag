@@ -1,8 +1,8 @@
 package org.ctf.ui.creators.settings.components;
 
+import org.ctf.ui.data.Formatter;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -22,15 +22,8 @@ public abstract class ChooseIntegerBox extends GridPane implements ValueExtracta
     content = new TextField();
     postfix = new Text();
 
-    content.setTextFormatter( new TextFormatter<> (c ->
-    {
-      if (c.getControlNewText().matches("-?\\d*")) {
-        return c;
-      } else {
-        return null;
-      }
-    }));
-
+    Formatter.applyIntegerFormatter(content, 0, null);
+    
     adjustBoxStyle(settingsBox);
     content.setText("" + getInitialValue());
 

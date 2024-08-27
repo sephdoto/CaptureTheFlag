@@ -1,10 +1,10 @@
 package org.ctf.ui.customobjects;
 
+import org.ctf.ui.data.Formatter;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -38,6 +38,7 @@ public class ServerPane extends StackPane {
     this.setOnMouseEntered(e -> {
       this.getChildren().remove(text);
       this.getChildren().add(field);
+      field.requestFocus();
     });
     this.setOnMouseExited(e -> {
       this.getChildren().remove(field);
@@ -46,7 +47,7 @@ public class ServerPane extends StackPane {
     });
   }
 
-  /**
+  /**   
    * Creates and styles the port {@link TextField} for the ServerPane.
    * 
    * @author aniemesc
@@ -59,16 +60,7 @@ public class ServerPane extends StackPane {
     field.getStyleClass().add("transparent-textfield");
     field.positionCaret(0);
     field.fontProperty().bind(Bindings.createObjectBinding(() -> Font.font("Century Gothic", this.getWidth() / 12), this.widthProperty()));
-    field.setTextFormatter( new TextFormatter<> (c ->
-    {
-      if (c.getControlNewText().equals("")) {
-        return c;
-      } else if (c.getControlNewText().matches("-?\\d*")) {
-        if(Integer.parseInt(c.getControlNewText()) <= 65535)
-          return c;
-      }
-      return null;
-    }));
+    Formatter.applyIntegerFormatter(field, 1, 65535);
     StackPane.setAlignment(field, Pos.CENTER);
   }
 
@@ -80,6 +72,7 @@ public class ServerPane extends StackPane {
   public void setFinished() {
     this.getChildren().clear();
     this.text.setText("Change Port");
+    this.field.clear();
     this.getChildren().add(text);
     this.setOnMouseClicked(e -> {
       this.getChildren().clear();

@@ -18,6 +18,7 @@ import org.ctf.ui.creators.PopUpCreator;
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.data.ClientCreator;
 import org.ctf.ui.data.ClientStorage;
+import org.ctf.ui.data.Formatter;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.editor.EditorScene;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
@@ -200,6 +201,7 @@ public class JoinScene extends Scene {
     serverIPText = createTextfield("Enter the Server IP", null, 0.4);
     leftBox.getChildren().add(serverIPText);
     portText = createTextfield("Enter the Port", null, 0.4);
+    Formatter.applyIntegerFormatter(portText, 1, 65535);
     leftBox.getChildren().add(portText);
     sessionText = createTextfield("Enter the Session ID", null, 0.4);
     leftBox.getChildren().add(sessionText);

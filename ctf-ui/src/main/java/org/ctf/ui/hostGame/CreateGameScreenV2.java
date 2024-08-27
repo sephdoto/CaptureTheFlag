@@ -18,6 +18,7 @@ import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.creators.PopUpCreator;
 import org.ctf.ui.creators.PopUpCreatorEnterTeamName;
 import org.ctf.ui.customobjects.PopUpPane;
+import org.ctf.ui.data.Formatter;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.map.GamePane;
 import org.ctf.ui.threads.PointAnimation;
@@ -291,6 +292,7 @@ public class CreateGameScreenV2 extends Scene {
     serverIPText = createTextfield("Enter the Server IP", "localhost", 0.2);
     serverIPText.prefWidthProperty().bind(enterSeverInfoBox.widthProperty().multiply(0.4));
     portText = createTextfield("Enter the Port", Constants.userSelectedLocalServerPort, 0.2);
+    Formatter.applyIntegerFormatter(portText, 1, 65535);
     portText.prefWidthProperty().bind(enterSeverInfoBox.widthProperty().multiply(0.4));
     enterSeverInfoBox.getChildren().addAll(serverIPText, portText);
     serverInfoBox.getChildren().add(enterSeverInfoBox);
