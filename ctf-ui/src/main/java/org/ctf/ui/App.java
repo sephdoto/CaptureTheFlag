@@ -202,7 +202,9 @@ public class App extends Application {
         .getField()
         .setOnKeyPressed(
             event -> {
-              if (event.getCode() == KeyCode.ENTER) {
+              if (event.getCode() == KeyCode.ENTER 
+                  && !serverPane.getField().getText().equals("")
+                  && !serverPane.getField().getText().equals(Constants.userSelectedLocalServerPort)) {
                 String port = serverPane.getField().getText();
                 try {
                   serverContainer.startServer(port);

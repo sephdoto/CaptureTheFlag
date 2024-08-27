@@ -103,7 +103,7 @@ public class PopUpCreatorEnterTeamName {
     top.getChildren().add(l);
     HBox enterNameBox = new HBox();
     enterNameBox.setAlignment(Pos.CENTER);
-    enterNamefield = CreateGameScreenV2.createTextfield("Your Team Name", 0.5);
+    enterNamefield = CreateGameScreenV2.createTextfield("Your Team Name", null, 0.5);
     enterNamefield.prefWidthProperty().bind(enterNameBox.widthProperty().multiply(0.8));
     enterNameBox.getChildren().add(enterNamefield);
     top.getChildren().add(enterNameBox);

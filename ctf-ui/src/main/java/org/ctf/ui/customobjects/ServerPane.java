@@ -4,6 +4,7 @@ import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -30,8 +31,7 @@ public class ServerPane extends StackPane {
       this.setPadding(new Insets(newV.doubleValue() * 0.1));
     });
     text = new Text("START LOCAL SERVER");
-    text.fontProperty().bind(Bindings.createObjectBinding(
-        () -> Font.font("Century Gothic", this.getHeight() * 0.16), this.heightProperty()));
+    text.fontProperty().bind(Bindings.createObjectBinding(() -> Font.font("Century Gothic", this.getWidth() / 15), this.widthProperty()));
     text.setFill(Color.WHITE);
     this.getChildren().add(text);
     createPortField();
@@ -41,6 +41,7 @@ public class ServerPane extends StackPane {
     });
     this.setOnMouseExited(e -> {
       this.getChildren().remove(field);
+      this.getChildren().remove(text);
       this.getChildren().add(text);
     });
   }
@@ -57,12 +58,18 @@ public class ServerPane extends StackPane {
     field.setPromptText("ENTER PORT");
     field.getStyleClass().add("transparent-textfield");
     field.positionCaret(0);
-    field.heightProperty().addListener((obs, oldVal, newVal) -> {
-      double newFontSize = newVal.doubleValue() * 0.4;
-      field.setFont(new Font(newFontSize));
-    });
-    StackPane.setAlignment(field, Pos.CENTER_RIGHT);
-
+    field.fontProperty().bind(Bindings.createObjectBinding(() -> Font.font("Century Gothic", this.getWidth() / 12), this.widthProperty()));
+    field.setTextFormatter( new TextFormatter<> (c ->
+    {
+      if (c.getControlNewText().equals("")) {
+        return c;
+      } else if (c.getControlNewText().matches("-?\\d*")) {
+        if(Integer.parseInt(c.getControlNewText()) <= 65535)
+          return c;
+      }
+      return null;
+    }));
+    StackPane.setAlignment(field, Pos.CENTER);
   }
 
   /**

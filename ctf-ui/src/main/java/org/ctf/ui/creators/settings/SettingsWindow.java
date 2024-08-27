@@ -177,6 +177,14 @@ public abstract class SettingsWindow extends ComponentCreator {
           }
         } catch (IllegalArgumentException | SecurityException e1) {
           e1.printStackTrace();
+        } catch (Exception ex) {
+          System.err.println(
+              node.getUserData() 
+              + " could not be saved, due to " 
+                  + ex.getClass().getCanonicalName() 
+                  + " at (SettingsWindow.java:" 
+                  + Integer.parseInt(ex.getStackTrace()[0].toString().split("SettingsWindow.java:")[1].replace(")", ""))
+                  +")");
         }
       }
 

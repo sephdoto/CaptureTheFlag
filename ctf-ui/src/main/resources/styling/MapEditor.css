@@ -3,7 +3,6 @@
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-font-family: "Century Gothic", sans-serif;
-    
 }
 .custom-menu-button {
     -fx-background-color: rgb(25,25,25); 
@@ -90,7 +89,8 @@
 	 -fx-prompt-text-fill: white; 
     -fx-text-fill: white;
     -fx-background-color: rgba(53,89,119,0.4);
-    -fx-border-color: white; -fx-border-width: 1px;
+    -fx-border-color: white; 
+    -fx-border-width: 1px;
     -fx-border-radius: 5px;
     -fx-background-radius: 5px; 
      -fx-font-family: "Century Gothic", sans-serif;

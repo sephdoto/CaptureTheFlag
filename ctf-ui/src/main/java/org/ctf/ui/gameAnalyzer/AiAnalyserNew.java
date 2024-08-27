@@ -42,6 +42,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
@@ -59,6 +60,10 @@ public class AiAnalyserNew extends Scene {
   private GamePane gm;
   private ScrollPane scroller;
   private VBox content;
+  /**
+   * The first thing a user sees, when no Move has been analyzed yet.
+   */
+  Label firstMessage;
 
   private ObjectProperty<Font> popUpLabel;
   private ObjectProperty<Font> leaveButtonText;
@@ -219,6 +224,11 @@ public class AiAnalyserNew extends Scene {
     } catch (NeedMoreTimeException nmte) {
       System.err.println(
           "Error in " + getClass().getCanonicalName() + ":\n\t" + nmte.getLocalizedMessage());
+    } catch (NullPointerException e) {
+      firstMessage.setText("This SaveGame does not"
+          + "\ncontain any Moves.");
+      firstMessage.setTextAlignment(TextAlignment.CENTER);
+      firstMessage.setAlignment(Pos.CENTER);
     }
   }
 
@@ -601,9 +611,13 @@ public class AiAnalyserNew extends Scene {
   }
   
   private boolean isClickable(int modifier) {
-    return currentMove + modifier >= 0 
-        && currentMove + modifier < this.analysedGames.length 
-        && aiStates[currentMove + modifier] != null;
+    try {
+      return currentMove + modifier >= 0 
+          && currentMove + modifier < this.analysedGames.length 
+          && aiStates[currentMove + modifier] != null;
+    } catch (NullPointerException e) {
+      return false;
+    }
   }
 
 
@@ -625,12 +639,12 @@ public class AiAnalyserNew extends Scene {
     // showMapBox.maxHeightProperty().bind(App.getStage().heightProperty().multiply(0.65));
     // showMapBox.getStyleClass().add("show-GamePane");
     showMapBox.paddingProperty().bind(padding);
-    Label l = new Label("Click the Next-Button" + "\n" + "to start the Analysis");
-    l.fontProperty().bind(informUser);
-    l.setAlignment(Pos.CENTER);
-    l.prefWidthProperty().bind(showMapBox.widthProperty());
-    l.prefHeightProperty().bind(showMapBox.heightProperty());
-    showMapBox.getChildren().add(l);
+    firstMessage = new Label("Click the Next-Button" + "\n" + "to start the Analysis");
+    firstMessage.fontProperty().bind(informUser);
+    firstMessage.setAlignment(Pos.CENTER);
+    firstMessage.prefWidthProperty().bind(showMapBox.widthProperty());
+    firstMessage.prefHeightProperty().bind(showMapBox.heightProperty());
+    showMapBox.getChildren().add(firstMessage);
     return showMapBox;
   }
 

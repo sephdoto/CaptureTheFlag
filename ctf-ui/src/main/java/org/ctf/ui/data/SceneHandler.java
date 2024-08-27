@@ -214,6 +214,11 @@ public class SceneHandler {
     updateBackgroundVisibility();
     updateBackground();
     
+    scene.setOnMousePressed(
+        event -> {
+          scene.getRoot().requestFocus();
+        });
+    
     addStyleSheet("settings");
     
     mainStage.setScene(scene);

@@ -24,6 +24,8 @@ import org.ctf.ui.hostGame.CreateGameScreenV2;
 import org.ctf.ui.threads.PointAnimation;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -169,6 +171,7 @@ public class JoinScene extends Scene {
   private Button createLeave() {
     Button exit = new Button("Leave");
     exit.getStyleClass().add("leave-button");
+    exit.fontProperty().bind(Bindings.createObjectBinding(() -> Font.font(this.getWidth() / 80), this.widthProperty()));
     exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
     exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
     exit.setOnAction(e -> {
@@ -194,11 +197,11 @@ public class JoinScene extends Scene {
     });
     leftBox.getChildren().add(createLeftHeader(leftBox));
 
-    serverIPText = createTextfield("Enter the Server IP");
+    serverIPText = createTextfield("Enter the Server IP", null, 0.4);
     leftBox.getChildren().add(serverIPText);
-    portText = createTextfield("Enter the Port");
+    portText = createTextfield("Enter the Port", null, 0.4);
     leftBox.getChildren().add(portText);
-    sessionText = createTextfield("Enter the Session ID");
+    sessionText = createTextfield("Enter the Session ID", null, 0.4);
     leftBox.getChildren().add(sessionText);
 
     leftBox.getChildren().add(createSearch());
@@ -235,21 +238,27 @@ public class JoinScene extends Scene {
   }
 
   /**
-   * This method creates TextFields that can be added to the scene
+   * Creates a simple Textfield
    * 
-   * @author aniemesc
-   * @param prompt - String value for the user prompt
-   * @return Textfield that can be added to the scene
+   * @author Manuel Krakowski
+   * @author sistumpf
+   * @param prompt prompt text of the textfield
+   * @param firstValue a default value to fill the text box, null if prompt should be shown without pre-filled values
+   * @param x height of the textfield in relation to its width
+   * @return
    */
-  private TextField createTextfield(String prompt) {
+  public static TextField createTextfield(String prompt, String firstValue, double x) {
     TextField searchField = new TextField();
-    searchField.getStyleClass().add("custom-search-field");
+    searchField.getStyleClass().add("custom-search-field2");
     searchField.setPromptText(prompt);
-    searchField.prefHeightProperty().bind(searchField.widthProperty().multiply(0.1));
+    if(firstValue != null)
+      searchField.setText(firstValue);
+    searchField.prefHeightProperty().bind(searchField.widthProperty().multiply(x));
+    ObjectProperty<Font> fontTracking = new SimpleObjectProperty<Font>(Font.getDefault());
     searchField.heightProperty().addListener((obs, oldVal, newVal) -> {
-      double newFontSize = newVal.doubleValue() * 0.4;
-      searchField.setFont(new Font(newFontSize));
+      fontTracking.set(Font.font(newVal.doubleValue() * 0.3));
     });
+    searchField.fontProperty().bind(fontTracking);
     return searchField;
   }
 
@@ -278,35 +287,35 @@ public class JoinScene extends Scene {
     Button search = new Button("Search");
     search.getStyleClass().add("leave-button");
     search.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
-    search.prefHeightProperty().bind(search.widthProperty().multiply(0.25));
+    search.prefHeightProperty().bind(search.widthProperty().multiply(0.3));
     search.fontProperty().bind(Bindings.createObjectBinding(
-        () -> Font.font("Century Gothic", search.getHeight() * 0.4), search.heightProperty()));
-    
+        () -> Font.font("Century Gothic", this.getWidth() * 0.015), this.widthProperty()));
+
     search.setOnAction(e -> {
       search.setDisable(true);
       SoundController.playSound("Button", SoundType.MISC);
       ServerCheckTask task = new ServerCheckTask(search);
       task.setOnSucceeded(event -> {
-          if (!task.getValue()) {
-            info.setText(
-                "The Server \n cannot be found!\n Please check the Server IP\n and select the right Port!");
-          } else if (!ser.isSessionActive()) {
-            info.setText("The Session is not active!\n" + "Please check your Session ID!");
-          } else {
-            right.getChildren().clear();
-            right.getChildren().add(createRightContent(sessionText.getText(),
-                ser.getCurrentNumberofTeams(), serverIPText.getText(), portText.getText()));
-            JoinScene.this.ip =  serverIPText.getText();
-            JoinScene.this.port = portText.getText();
-            JoinScene.this.id =sessionText.getText();
-          }
+        if (!task.getValue()) {
+          info.setText(
+              "The Server \n cannot be found!\n Please check the Server IP\n and select the right Port!");
+        } else if (!ser.isSessionActive()) {
+          info.setText("The Session is not active!\n" + "Please check your Session ID!");
+        } else {
+          right.getChildren().clear();
+          right.getChildren().add(createRightContent(sessionText.getText(),
+              ser.getCurrentNumberofTeams(), serverIPText.getText(), portText.getText()));
+          JoinScene.this.ip =  serverIPText.getText();
+          JoinScene.this.port = portText.getText();
+          JoinScene.this.id =sessionText.getText();
+        }
       });
       new Thread(task).start();
     });
-    
+
     return search;
   }
-  
+
   /**
    * Task to check if the server is active to prevent UI freezing while waiting for a boolean.
    * 
@@ -315,7 +324,7 @@ public class JoinScene extends Scene {
   private class ServerCheckTask extends Task<Boolean> {
     Button button;
     Thread buttonTextThread;
-    
+
     /**
      * A buttons text will be changed to display internal updates.
      * Contains a Thread to dynamically change the button text to show something is calculated.
@@ -327,7 +336,7 @@ public class JoinScene extends Scene {
       this.buttonTextThread = new PointAnimation(button, "checking", "action interrupted", 3, 175);
       buttonTextThread.start();
     }
-    
+
     @Override
     /**
      * Calls the server and sets the searchButton text accordingly.
@@ -361,7 +370,7 @@ public class JoinScene extends Scene {
     }
   }
 
-  
+
   /**
    * Method that creates styled text that can be used within the scene.
    * 
@@ -455,16 +464,9 @@ public class JoinScene extends Scene {
     buttonBox.add(playerButton, 0, 0);
     Button aiButton = createJoinButton("Join as AI-Client");
     aiButton.setOnAction(e -> {
-       PopUpCreator popUpCreator = new PopUpCreator(this, root);
-       popUpCreator.setRemote(true);
-       popUpCreator.createAiLevelPopUp(new PopUpPane(null, 0, 0, 0.95), portText, serverIPText);
-    
-//      AIClient aiClient = AIClientStepBuilder.newBuilder().enableRestLayer(false).onRemoteHost(ip)
-//          .onPort(port).aiPlayerSelector(popUpCreator.getAitype(), popUpCreator.getDefaultConfig()).enableSaveGame(false)
-//          .gameData(id, "AI-Player").build();
-//      right.getChildren().clear();
-//      info.setText("Client hast joined!\n Waiting for the Game to start.");
-//      right.getChildren().add(info);
+      PopUpCreator popUpCreator = new PopUpCreator(this, root);
+      popUpCreator.setRemote(true);
+      popUpCreator.createAiLevelPopUp(new PopUpPane(null, 0, 0, 0.95), portText, serverIPText);
     });
     buttonBox.add(aiButton, 1, 0);
     return buttonBox;
@@ -526,14 +528,14 @@ public class JoinScene extends Scene {
       VBox.setMargin(buttonBox, new Insets(size));
     });
     VBox.setMargin(buttonBox, new Insets(25));
-    
+
     Button cancelButton = createControlButton(vbox, "Cancel", "leave-button");
     cancelButton.setOnAction(e -> {
       if(joinChecker != null)
         joinChecker.interrupt();
       root.getChildren().remove(popUp);
     });
-    
+
     Button joinButton = createControlButton(vbox, "Join", "save-button");
     joinButton.setOnAction(e -> {
       joinButton.setDisable(true);
@@ -542,7 +544,7 @@ public class JoinScene extends Scene {
             "custom-search-field");
         return;
       }
-      
+
       cancelButton.setDisable(true);
       JoinCheckTask task = new JoinCheckTask(header, joinButton, cancelButton, isAI, type, config);
       task.setOnSucceeded(
@@ -564,14 +566,14 @@ public class JoinScene extends Scene {
       };
       joinChecker.start();
     });
-    
+
     buttonBox.getChildren().addAll(joinButton, cancelButton);
     StackPane.setAlignment(buttonBox, Pos.BOTTOM_CENTER);
     vbox.getChildren().add(buttonBox);
     popUp.setContent(vbox);
     this.root.getChildren().add(popUp);
   }
-  
+
   private class JoinCheckTask extends Task<Client> {
     private boolean allowedToRun;
     private boolean isAI;
@@ -582,7 +584,7 @@ public class JoinScene extends Scene {
     private Text header;
     private String headerText;
     PointAnimation pointAnimation;
-    
+
     public JoinCheckTask(Text header, Button joinButton, Button cancelButton, boolean isAI, AI type, AIConfig config) {
       allowedToRun = true;
       this.isAI = isAI;
@@ -593,7 +595,7 @@ public class JoinScene extends Scene {
       this.header = header;
       this.headerText = header.getText();
     }
-    
+
     @Override
     protected Client call() throws Exception {
       pointAnimation = new PointAnimation(header, "checking name", "Enter a UNIQUE name!", 3, 175);
@@ -612,39 +614,39 @@ public class JoinScene extends Scene {
           e1.printStackTrace();
         }
       }
-      
+
       if(client.couldJoin().equals("declined")) {
         removeClient(client);
         client = null;
       }
-      
+
       originalState();
-      
+
       if(allowedToRun)
         return client;
       else
         return null;
     }
-    
+
     public void interrupt() {
       this.allowedToRun = false;
       originalState();
     }
-    
+
     private void originalState() {
       pointAnimation.interrupt();
       header.setText(headerText);
       cancelButton.setDisable(false);
       joinButton.setDisable(false);
     }
-    
+
     private void removeClient(Client client) {
       client.shutdown();
       ClientStorage.setMainClient(null);
       ClientStorage.clearAllClients();
     }
   }
-  
+
 
   private Button createControlButton(VBox vBox, String label, String style) {
     Button joinButton = new Button(label);

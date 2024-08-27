@@ -997,7 +997,8 @@ public class Client implements GameClientInterface {
   }
 
   public String[] getWinners() {
-    getSessionFromServer();
+    if(winners.length == 0)
+      getSessionFromServer();
     return winners;
   }
 

@@ -11,7 +11,6 @@
 
 .combo-box .list-cell {
     -fx-text-fill: white; /* Ändert die Textfarbe */
-   -fx-font-size: 15px;
 }
 
 .combo-box-popup .list-view 
@@ -48,10 +47,11 @@
 	 -fx-prompt-text-fill: white; 
     -fx-text-fill: white;
     -fx-background-color: rgba(53,89,119,0.4);
-    -fx-border-color: white; -fx-border-width: 1px;
+    -fx-border-color: white; 
+    -fx-border-width: 1px;
     -fx-border-radius: 5px;
     -fx-background-radius: 5px; 
-     -fx-font-family: "Century Gothic", sans-serif;
+    -fx-font-family: "Century Gothic", sans-serif;
 }
 
 
@@ -59,7 +59,8 @@
 	 -fx-prompt-text-fill: red; 
     -fx-text-fill: white;
     -fx-background-color: rgba(53,89,119,0.4);
-    -fx-border-color: white; -fx-border-width: 2px;
+    -fx-border-color: white; 
+    -fx-border-width: 2px;
     -fx-border-radius: 5px;
     -fx-background-radius: 5px; 
      -fx-font-family: "Century Gothic", sans-serif;

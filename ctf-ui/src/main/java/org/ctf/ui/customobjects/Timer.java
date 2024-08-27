@@ -18,7 +18,7 @@ public class Timer extends Label {
 		this.setFont(Font.font(30));
 		this.hour = hour;
 		this.minute = minute;
-		this.second = second;
+		this.second = second -1;
 		this.setText(this.getCurrentTime());
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.play();

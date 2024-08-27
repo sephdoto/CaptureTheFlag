@@ -75,10 +75,12 @@ public class PopupCreatorGameOver {
         public void run() {
           try {
             sleep(10000);
-          } catch (InterruptedException e) {
-            e.printStackTrace();
+            ClientStorage.getMainClient().deleteSession();
+          } catch (Exception e) {
+            System.err.println("Error at " + e.getStackTrace()[0] 
+                + "\n\tSession might have been deleted earlier, no worries."
+                + "\n\tCaught in " + this.getStackTrace()[this.getStackTrace().length-2]);
           }
-          ClientStorage.getMainClient().deleteSession();
         }
       }.start();
       

@@ -108,8 +108,19 @@ public class PlayGameScreenV2 extends Scene {
   private ObjectProperty<Font> waitigFontSize;
 
   // extra
+  /**
+   * An animation Thread for the "Game is Over..." text
+   */
   private PointAnimation giveUpPanimation;
+  /**
+   * Keeps track of the time needed to initialize and show a new GamePane in the UI.
+   * Is used to estimate the time it takes till all GameStates are shown.
+   */
   private ArrayList<Long> timeToShowGameState;
+  /**
+   * Allows keeping track if the UI has realized the game is over
+   */
+  private PopupCreatorGameOver gameOverPop;
 
   /**
    * Sets all important attributes and initializes the scene
@@ -419,7 +430,7 @@ public class PlayGameScreenV2 extends Scene {
    * @author sistumpf
    */
   private void checkGameOver() {
-    if (ClientStorage.getMainClient().isGameOver()) {
+    if (ClientStorage.getMainClient().isGameOver() && gameOverPop == null) {
       if (giveUpPanimation == null) {
         giveUpButton.setDisable(true);
         giveUpPanimation = new PointAnimation(giveUpButton, "", "Give up", 7, 175);
@@ -431,7 +442,7 @@ public class PlayGameScreenV2 extends Scene {
         String[] winners = ClientStorage.getMainClient().getWinners();
         Platform.runLater(
             () -> {
-              PopupCreatorGameOver gameOverPop = new PopupCreatorGameOver(this, root);
+              gameOverPop = new PopupCreatorGameOver(this, root);
               if (winners.length <= 1) {
                 gameOverPop.createGameOverPopUpforOneWinner(winners[0]);
               } else {

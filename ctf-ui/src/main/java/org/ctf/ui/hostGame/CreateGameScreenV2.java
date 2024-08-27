@@ -123,14 +123,13 @@ public class CreateGameScreenV2 extends Scene {
    */
   private void manageFontSizes() {
 
-    addAiCOmboTextFontSIze = new SimpleObjectProperty<Font>(Font.font(this.getWidth() / 60));
     addHumanButtonTextFontSIze = new SimpleObjectProperty<Font>(Font.font(this.getWidth() / 70));
+    addAiCOmboTextFontSIze = new SimpleObjectProperty<Font>(Font.font(this.getWidth() / 80));
     popUpLabel = new SimpleObjectProperty<Font>(Font.font(this.getWidth() / 50));
     leaveButtonText = new SimpleObjectProperty<Font>(Font.font(this.getWidth() / 80));
-    addAiCOmboTextFontSIze = new SimpleObjectProperty<Font>(Font.font(this.getWidth() / 80));
     aiPowerText = new SimpleObjectProperty<Font>(Font.font(this.getWidth() / 50));
-
-
+    padding.set(new Insets(this.getWidth() * 0.01));
+    
     widthProperty().addListener(new ChangeListener<Number>() {
       public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth,
           Number newWidth) {
@@ -150,7 +149,6 @@ public class CreateGameScreenV2 extends Scene {
    * @author Manuel Krakowski
    */
   private void createLayout() {
-    manageFontSizes();
     StroeMaps.initDefaultMaps();
     root.getStyleClass().add("join-root");
     VBox mainBox = createMainBox();
@@ -163,6 +161,7 @@ public class CreateGameScreenV2 extends Scene {
     sep.getChildren().add(left);
     sep.getChildren().add(right);
     mainBox.getChildren().add(sep);
+    manageFontSizes();
     mainBox.getChildren().add(createLeave());
     root.getChildren().add(mainBox);
   }
@@ -289,14 +288,11 @@ public class CreateGameScreenV2 extends Scene {
       double spacing = newVal.doubleValue() * 0.06;
       enterSeverInfoBox.setSpacing(spacing);
     });
-    serverIPText = createTextfield("Enter the Server IP", 0.2);
-    serverIPText.setText("localhost");
+    serverIPText = createTextfield("Enter the Server IP", "localhost", 0.2);
     serverIPText.prefWidthProperty().bind(enterSeverInfoBox.widthProperty().multiply(0.4));
-    enterSeverInfoBox.getChildren().add(serverIPText);
-    portText = createTextfield("Enter the Port", 0.2);
-    portText.setText(Constants.userSelectedLocalServerPort);
+    portText = createTextfield("Enter the Port", Constants.userSelectedLocalServerPort, 0.2);
     portText.prefWidthProperty().bind(enterSeverInfoBox.widthProperty().multiply(0.4));
-    enterSeverInfoBox.getChildren().add(portText);
+    enterSeverInfoBox.getChildren().addAll(serverIPText, portText);
     serverInfoBox.getChildren().add(enterSeverInfoBox);
     return serverInfoBox;
   }
@@ -345,19 +341,24 @@ public class CreateGameScreenV2 extends Scene {
    * Creates a simple Textfield
    * 
    * @author Manuel Krakowski
-   * @param prompt: Prompt text of the textfield
-   * @param x: Height of the textfield in relation to its width
+   * @author sistumpf
+   * @param prompt prompt text of the textfield
+   * @param firstValue a default value to fill the text box, null if prompt should be shown without pre-filled values
+   * @param x height of the textfield in relation to its width
    * @return
    */
-  public static TextField createTextfield(String prompt, double x) {
+  public static TextField createTextfield(String prompt, String firstValue, double x) {
     TextField searchField = new TextField();
     searchField.getStyleClass().add("custom-search-field2");
     searchField.setPromptText(prompt);
+    if(firstValue != null)
+      searchField.setText(firstValue);
     searchField.prefHeightProperty().bind(searchField.widthProperty().multiply(x));
+    ObjectProperty<Font> fontTracking = new SimpleObjectProperty<Font>(Font.getDefault());
     searchField.heightProperty().addListener((obs, oldVal, newVal) -> {
-      double newFontSize = newVal.doubleValue() * 0.4;
-      searchField.setFont(new Font(newFontSize));
+      fontTracking.set(Font.font(newVal.doubleValue() * 0.4));
     });
+    searchField.fontProperty().bind(fontTracking);
     return searchField;
   }
 
@@ -365,7 +366,8 @@ public class CreateGameScreenV2 extends Scene {
    * Creates the ComboBox in which the user can select a map
    * 
    * @author Manuel Krakowski
-   * @param parent: used for relative resizing
+   * @author sistumpf
+   * @param parent used for relative resizing
    * @return
    */
   private ComboBox<String> createChoiceBox(VBox parent) {
@@ -384,6 +386,9 @@ public class CreateGameScreenV2 extends Scene {
         } else {
           setText(item);
           setAlignment(javafx.geometry.Pos.CENTER);
+
+          fontProperty().bind(Bindings.createObjectBinding(
+              () -> Font.font(c.getWidth() * 0.035), c.widthProperty()));
         }
       }
     });
@@ -396,6 +401,10 @@ public class CreateGameScreenV2 extends Scene {
         } else {
           setText(item);
           setAlignment(javafx.geometry.Pos.CENTER);
+
+          fontProperty().bind(Bindings.createObjectBinding(
+              () -> Font.font(c.getWidth() * 0.05), c.widthProperty()));   
+          prefWidthProperty().bind(c.widthProperty());
         }
       }
     });
@@ -460,9 +469,10 @@ public class CreateGameScreenV2 extends Scene {
     Button search = new Button("Create");
     search.getStyleClass().add("leave-button");
     search.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
-    search.prefHeightProperty().bind(search.widthProperty().multiply(0.25));
+    search.prefHeightProperty().bind(search.widthProperty().multiply(0.3));
     search.fontProperty().bind(Bindings.createObjectBinding(
-        () -> Font.font("Century Gothic", search.getHeight() * 0.4), search.heightProperty()));
+        () -> Font.font("Century Gothic", this.getWidth() * 0.015), this.widthProperty()));
+    
     search.setOnAction(e -> {
       if (portText.getText().isEmpty()) {
         informationmustBeEntered(portText, "custom-search-field2-mustEnter",
@@ -511,7 +521,6 @@ public class CreateGameScreenV2 extends Scene {
    * @author Manuel Krakowski
    */
   private void perfromCreateButtonClick() {
-    //TODO
     if(generateBackgroundThread != null) {
       generateBackgroundThread.interrupt();
     }
@@ -668,6 +677,7 @@ public class CreateGameScreenV2 extends Scene {
   private Button createLeave() {
     Button exit = new Button("Leave");
     exit.getStyleClass().add("leave-button");
+    exit.fontProperty().bind(leaveButtonText);
     exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
     exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
     exit.setOnAction(e -> {
