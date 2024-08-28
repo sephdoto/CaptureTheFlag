@@ -5,14 +5,14 @@ import org.ctf.shared.constants.Enums.Themes;
 import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.creators.ComponentCreator;
 import org.ctf.ui.creators.settings.components.ChooseBooleanButton;
-import org.ctf.ui.creators.settings.components.ChooseDoubleBox;
 import org.ctf.ui.creators.settings.components.ChooseFullAiPowerButton;
-import org.ctf.ui.creators.settings.components.ChooseIntegerBox;
 import org.ctf.ui.creators.settings.components.ChooseMusicSlider;
 import org.ctf.ui.creators.settings.components.ChooseSoundSlider;
 import org.ctf.ui.creators.settings.components.ChooseThemeBox;
 import org.ctf.ui.creators.settings.components.DoubleBoxFactory;
 import org.ctf.ui.creators.settings.components.IntegerBoxFactory;
+import org.ctf.ui.creators.settings.components.DoubleBoxFactory.ChooseDoubleBox;
+import org.ctf.ui.creators.settings.components.IntegerBoxFactory.ChooseIntegerBox;
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.gameAnalyzer.AiAnalyserNew;
@@ -99,13 +99,13 @@ public abstract class SettingsWindow extends ComponentCreator {
           node = new ChooseFullAiPowerButton(settingsBox);
           break;
       case UI_UPDATE_TIME:
-        node = IntegerBoxFactory.getUiUpdateBox(settingsBox);
+        node = new IntegerBoxFactory.ChooseUiUpdateTimeIntegerBox(settingsBox);
         break;
       case MAP_OPACITY:
         node = new DoubleBoxFactory.ChooseMapOpacityBox(settingsBox);
         break;
       case ANALYZER_THINKING_TIME:
-        node = IntegerBoxFactory.getAiThinkBox(settingsBox);
+        node = new IntegerBoxFactory.ChooseAiThinkingTimeBox(settingsBox);
         break;
       case BACKGROUND_OPACITY:
         node = new DoubleBoxFactory.ChooseBackgroundOpacityBox(settingsBox);
@@ -147,17 +147,17 @@ public abstract class SettingsWindow extends ComponentCreator {
             case "sound": Constants.soundVolume = (double) ((ChooseSoundSlider) node).getValue(); break;
             case "fullAiPower": Constants.FULL_AI_POWER = (boolean) ((ChooseBooleanButton) node).getValue(); break;
             case "opacity": 
-              Constants.backgroundImageOpacity = (double) ((ChooseDoubleBox) node).getValue(); 
+              Constants.backgroundImageOpacity = ((ChooseDoubleBox) node).getValue(); 
               if(SceneHandler.getCurrentScene() instanceof PlayGameScreenV2)
                 ((PlayGameScreenV2)SceneHandler.getCurrentScene()).updateLeftSide();
               break;
             case "updateTime": 
-              Constants.UIupdateTime = (int) ((ChooseIntegerBox) node).getValue();
+              Constants.UIupdateTime = ((ChooseIntegerBox) node).getValue();
               if(SceneHandler.getCurrentScene() instanceof PlayGameScreenV2)
                 ((PlayGameScreenV2)SceneHandler.getCurrentScene()).reinitUiUpdateScheduler();
               break;
             case "aiThinkTime":
-              Constants.analyzeTimeInSeconds = (int) ((ChooseIntegerBox) node).getValue();
+              Constants.analyzeTimeInSeconds = ((ChooseIntegerBox) node).getValue();
               if(SceneHandler.getCurrentScene() instanceof AiAnalyserNew)
                 ((AiAnalyserNew)SceneHandler.getCurrentScene()).getAnalyzer().setThinkingTime(
                     Constants.analyzeTimeInSeconds * 1111
@@ -172,18 +172,14 @@ public abstract class SettingsWindow extends ComponentCreator {
               break;
               
             case "booleanButton": System.out.println((boolean) ((ChooseBooleanButton) node).getValue()); break;
-            case "doubleBox": System.out.println((double) ((ChooseDoubleBox) node).getValue()); break;
-            case "integerBox": System.out.println((int) ((ChooseIntegerBox) node).getValue()); break;
           }
-        } catch (IllegalArgumentException | SecurityException e1) {
-          e1.printStackTrace();
         } catch (Exception ex) {
           System.err.println(
               node.getUserData() 
               + " could not be saved, due to " 
                   + ex.getClass().getCanonicalName() 
                   + " at (SettingsWindow.java:" 
-                  + Integer.parseInt(ex.getStackTrace()[0].toString().split("SettingsWindow.java:")[1].replace(")", ""))
+                  + getExceptionLineNumber(ex)
                   +")");
         }
       }
@@ -228,5 +224,19 @@ public abstract class SettingsWindow extends ComponentCreator {
    */
   public PopUpPane getContent() {
     return popUp;
+  }
+  
+  /**
+   * Finds this class in an Exceptions StackTrace and returns the line number, the Exception got thrown at
+   * 
+   * @author sistumpf
+   * @param e Exception to search the StackTrace
+   * @return line number which caused the Exception, 1 if something unforseen happened
+   */
+  private int getExceptionLineNumber(Exception e) {
+    for(StackTraceElement s : e.getStackTrace())
+      if(s.toString().contains("SettingsWindow.java"))
+        return Integer.parseInt(s.toString().split("SettingsWindow.java:")[1].replace(")", ""));
+    return 1;
   }
 }

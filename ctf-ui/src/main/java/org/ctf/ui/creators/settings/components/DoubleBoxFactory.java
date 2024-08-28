@@ -1,52 +1,78 @@
 package org.ctf.ui.creators.settings.components;
 
 import org.ctf.shared.constants.Constants;
+import org.ctf.ui.data.Formatter;
 import javafx.scene.layout.VBox;
 
 /**
- * Contains all implementations for the abstract {@link ChooseDoubleBox} class, to save space as the classes are pretty small.
+ * Contains the abstract {@link ChooseDoubleBox} class and all of its implementations.
  * 
  * @author sistumpf
  */
 public class DoubleBoxFactory {
-  public static class ChooseMapOpacityBox extends ChooseDoubleBox {
-    
-    public ChooseMapOpacityBox(VBox settingsBox) {
+  /**
+   * Abstract {@link ChooseNumberBox} implementation for Double.
+   * Applies a default Formatter for Doubles between 0 and 1,
+   * implements {@link getValue()} for Double.
+   * 
+   * @author sistumpf
+   */
+  abstract public static class ChooseDoubleBox extends ChooseNumberBox<Double> {
+    public ChooseDoubleBox(VBox settingsBox, String postfix, String userData) {
       super(settingsBox);
-      super.setPostfix("0-1");
-      super.setUserData("opacity");
+      super.setPostfix(postfix);
+      super.setUserData(userData);
     }
 
     @Override
-    protected double getInitialValue() {
+    protected void applyFormatter() {
+      Formatter.applyDoubleFormatter(content, 0., 1.);
+    }
+
+    @Override
+    public Double getValue() {
+      return Double.valueOf(content.getText());
+    } 
+  }
+  
+  /**
+   * Implementation of {@link ChooseDoubleBox} for background map image opacity
+   */
+  public static class ChooseMapOpacityBox extends ChooseDoubleBox {
+    public ChooseMapOpacityBox(VBox settingsBox) {
+      super(settingsBox, "0-1", "opacity");
+    }
+
+    @Override
+    protected Double getInitialValue() {
       return Constants.backgroundImageOpacity;
     }
   }
-  
-  public static class ChooseBackgroundOpacityBox extends ChooseDoubleBox {
 
+  /**
+   * Implementation of {@link ChooseDoubleBox} for global background opacity
+   */
+  public static class ChooseBackgroundOpacityBox extends ChooseDoubleBox {
     public ChooseBackgroundOpacityBox(VBox settingsBox) {
-      super(settingsBox);
-      super.setPostfix("0-1");
-      super.setUserData("bgOpacity");
+      super(settingsBox, "0-1", "bgOpacity");
     }
 
     @Override
-    protected double getInitialValue() {
+    protected Double getInitialValue() {
       return Constants.showBackgrounds;
     }
   }
-  
-  public static class ChooseGlowSpreadBox extends ChooseDoubleBox {
 
+  /**
+   * Implementation of {@link ChooseDoubleBox} for figure glow
+   */
+  public static class ChooseGlowSpreadBox extends ChooseDoubleBox {
     public ChooseGlowSpreadBox(VBox settingsBox) {
-      super(settingsBox);
-      super.setPostfix("0-1");
-      super.setUserData("glowSpread");
+      super(settingsBox, "0-1", "glowSpread");
     }
 
     @Override
-    protected double getInitialValue() {
+    protected Double getInitialValue() {
       return Constants.borderGlowSpread;
     }
   }
