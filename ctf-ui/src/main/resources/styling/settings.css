@@ -2,54 +2,75 @@
 	 -fx-background-color: rgb(255,255,255,0.25);	 
 }
 
-.settings-combo-box
-{
-   -fx-background-color: rgba(53,89,119,0.4); 
-   -fx-text-fill: white; 
-   -fx-border-color: white; 
-   -fx-border-width: 2.0px;
-   -fx-background-radius: 20px; 
-	 -fx-border-radius: 20px;
+.choose-number-box-postfix { 
+    -fx-fill: white;
+}
+.choose-number-box {
+    -fx-text-fill: white; 
+    -fx-border-color: rgba(151, 172, 189, 0.4); 
+    -fx-border-width: 1.0px;
+    -fx-background-radius: 20px; 
+    -fx-border-radius: 20px;
     -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
+    -fx-background-color: rgba(53,89,119,0.4);
+}
+.choose-number-box:hover{
+    -fx-border-color: rgba(191, 213, 231, 0.7); 
+    -fx-border-width: 2.0px;
+    -fx-background-radius: 20px; 
+    -fx-border-radius: 20px;
+    -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
+    -fx-background-color: rgba(53,89,119,0.4);
+}
+.choose-number-box:focus-within{
+    -fx-border-color: white; 
+    -fx-border-width: 3.0px;
+    -fx-background-radius: 20px; 
+    -fx-border-radius: 20px;
+    -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
+    -fx-background-color: rgba(53,89,119,0.4);
 }
 
+.settings-combo-box {
+    -fx-background-color: rgba(53,89,119,0.4); 
+    -fx-text-fill: white; 
+    -fx-border-color: white;
+    -fx-border-width: 1.0px;
+    -fx-background-radius: 20px; 
+    -fx-border-radius: 20px;
+    -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
+}
+.settings-combo-box:hover{
+    -fx-background-color: rgba(101, 143, 179, 0.7); 
+}
 .settings-combo-box .list-cell {
+    -fx-alignment: center;
     -fx-text-fill: white; /* Ändert die Textfarbe */
-   -fx-font-size: 15px;
+    -fx-font-size: 15px;
+    -fx-border-width: 1.0px;
+    -fx-background-radius: 20px; 
+    -fx-border-radius: 20px;
+    -fx-background-color: rgba(53,89,119,0.4); 
 }
-
-.settings-combo-box .list-view 
-{
-    -fx-background-radius: 5; /* Radius für abgerundete Ecken */
+.settings-combo-box .list-view {
+    -fx-background-color: rgba(53,89,119,0.9);
+    -fx-border-radius: 15;
+    -fx-background-radius: 15; /* Radius für abgerundete Ecken */
+    -fx-border-width: 2; /* Randbreite */
     -fx-border-color: lightgray; /* Randfarbe */
-    -fx-border-width: 0.5; /* Randbreite */
     -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
-}    
-.settings-combo-box .list-view .list-cell 
-{
-    /* No alternate highlighting */
-    -fx-background-color: black;
-    -fx-border-color: lightgray; /* Farbe der Trennlinien */
-    -fx-border-width: 0 0 1 0; /* Dicke der Trennlinien (nur am unteren Rand) */
+} 
+.settings-combo-box .list-view .list-cell:filled:selected {
+    -fx-text-fill: rgb(255, 33, 33);
 }
-.settings-combo-box .list-view .list-cell:filled:selected{
-     -fx-text-fill: red;
-     -fx-border-width: 0 0 1 0;
-     -fx-border-color: lightgray; 
-}
-.settings-combo-box .list-view .list-cell:last-child {
-    -fx-border-width: 0; /* Entfernt die Trennlinie am unteren Rand der letzten Zelle */
-}
-.settings-combo-box .list-view .list-cell:filled:hover 
-{
-    -fx-background-color: rgba(53,89,119,0.4) ;
-    -fx-text-fill: white;
+.settings-combo-box .list-view .list-cell:filled:hover  {
+    -fx-background-color: rgba(25, 42, 56, 0.9) ;
 }
 
 .custom-header {
-	 -fx-font-family: "Century Gothic", sans-serif;
-	  -fx-font-size: 20px; 
-	  -fx-fill: white;
+	-fx-font-family: "Century Gothic", sans-serif;
+	-fx-font-size: 20px; 
+    -fx-fill: white;
 	  
 }
 
@@ -63,7 +84,6 @@
     -fx-border-width: 2px;
     -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
 }
-
 .leave-button:hover{
     -fx-background-color: rgb(40,40,40); 
 }
@@ -71,15 +91,17 @@
 .mySlider .track {
     -fx-background-color: #ddd; 
 }
-
+.mySlider .track:hover{
+    -fx-background-color: #8b8b8b; 
+}
 .mySlider .thumb {
     -fx-background-color: #007bff; 
 }
-
 .mySlider .thumb:hover {
+    -fx-pref-height:18;
+    -fx-pref-width:18;
     -fx-background-color: #0056b3;
 }
-
 .mySlider .thumb:pressed {
     -fx-background-color: #003e80; 
 }

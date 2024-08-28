@@ -17,7 +17,9 @@ import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.creators.ComponentCreator;
 import org.ctf.ui.customobjects.DragAndDropPane;
 import org.ctf.ui.customobjects.MovementVisual;
+import org.ctf.ui.data.Formatter;
 import org.ctf.ui.data.SceneHandler;
+import org.ctf.ui.hostGame.CreateGameScreenV2;
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -101,6 +103,7 @@ public class EditorScene extends Scene {
     options[2] = createFigureCustomizer();
     options[3] = createSoundCustomizer();
     options[4] = createPictureCustomizer();
+    
     createLayout();
     createInvalidText();
     this.dragAndDropPaneSound = new DragAndDropPane(this,
@@ -116,7 +119,6 @@ public class EditorScene extends Scene {
    * @author aniemesc
    */
   private void createLayout() {
-    root.getStyleClass().add("join-root");
     VBox mainBox = new VBox();
     root.getChildren().add(mainBox);
     mainBox.getChildren().add(createHeader());
@@ -142,8 +144,7 @@ public class EditorScene extends Scene {
     visualRoot.getStyleClass().add("visual-pane");
     visualRoot.setPadding(new Insets(10));
     updateBackground();
-
-    // bind statt Listenern
+    
     visualRoot.prefWidthProperty().bind(root.widthProperty().multiply(0.45));
     visualRoot.prefHeightProperty().bind(root.heightProperty().multiply(0.75));
     mainBox.spacingProperty().bind(root.heightProperty().multiply(0.03));
@@ -685,7 +686,6 @@ public class EditorScene extends Scene {
     Button submit = createControlButton("Submit", 0.1, 0.25);
     submit.setOnAction(e -> {
       engine.printTemplate();
-      System.out.println(this.validtemplate);
       if (!this.validtemplate) {
         this.inform("You can not save invalid templates!");
         return;
@@ -704,7 +704,6 @@ public class EditorScene extends Scene {
    */
   private MenuButton createMenuButton() {
     mb = new MenuButton("Edit Map");
-    mb.getStyleClass().add("custom-menu-button");
     mb.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
     mb.prefHeightProperty().bind(mb.widthProperty().multiply(0.2));
     MenuItem mapMenuItem = new MenuItem("Edit Map");
@@ -757,13 +756,11 @@ public class EditorScene extends Scene {
    */
   private void createMapMenuButton() {
     mapMenuButton = new MenuButton("Load Map");
-    mapMenuButton.getStyleClass().add("custom-menu-button");
     mapMenuButton.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
     mapMenuButton.prefHeightProperty().bind(mapMenuButton.widthProperty().multiply(0.2));
     for (String mapName : TemplateEngine.getTemplateNames()) {
       addMapItem(mapName);
     }
-
   }
 
   /**
@@ -828,20 +825,22 @@ public class EditorScene extends Scene {
    * Creates and styles a custom spinner object.
    * 
    * @author aniemesc
-   * @param min - minimum int value of spinner
-   * @param max - maximum int value of spinner
-   * @param cur - current int value of spinner
+   * @author sistumpf
+   * @param min minimum int value of spinner
+   * @param max maximum int value of spinner
+   * @param cur current int value of spinner
    * @return custom spinner object
    */
   private Spinner<Integer> createMapSpinner(int min, int max, int cur) {
     this.valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(min, max, cur);
     Spinner<Integer> spinner = new Spinner<>(valueFactory);
-    spinner.getStyleClass().add("spinner");
     spinner.setEditable(true);
     spinner.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
     spinner.prefHeightProperty().bind(spinner.widthProperty().multiply(0.25));
+    Formatter.applyIntegerFormatter(spinner.getEditor(), min, max);
     ContextMenu empty = new ContextMenu();
     spinner.getEditor().setContextMenu(empty);
+    spinner.getStyleClass().add("spinner");
     return spinner;
   }
 
@@ -872,7 +871,7 @@ public class EditorScene extends Scene {
       engine.setPlacement(placementBox.getValue());
       updateVisualRoot();
     });
-    placementBox.getStyleClass().add("custom-combo-box-2");
+    placementBox.getStyleClass().add("bottom-box-combo-box");
     placementBox.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
     placementBox.prefHeightProperty().bind(placementBox.widthProperty().multiply(0.25));
     placementBox.prefHeightProperty().addListener((obs, oldv, newV) -> {
@@ -891,7 +890,7 @@ public class EditorScene extends Scene {
    */
   private void createFigureBox(ComboBox<String> box, double widthratio, double heightratio,
       double fontratio) {
-    box.getStyleClass().add("custom-combo-box-2");
+    box.getStyleClass().add("bottom-box-combo-box");
     box.prefWidthProperty().bind(this.widthProperty().multiply(widthratio));
     box.prefHeightProperty().bind(box.widthProperty().multiply(heightratio));
     box.prefHeightProperty().addListener((obs, oldv, newV) -> {
@@ -912,7 +911,7 @@ public class EditorScene extends Scene {
     ObservableList<String> options = FXCollections.observableArrayList("None", "L-Shape");
     ComboBox<String> shapeBox = new ComboBox<>(options);
     shapeBox.setValue(options.get(0));
-    shapeBox.getStyleClass().add("custom-combo-box-2");
+    shapeBox.getStyleClass().add("bottom-box-combo-box");
     shapeBox.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
     shapeBox.prefHeightProperty().bind(shapeBox.widthProperty().multiply(0.25));
     shapeBox.prefHeightProperty().addListener((obs, oldv, newV) -> {
@@ -938,7 +937,7 @@ public class EditorScene extends Scene {
       engine.handleDirection(directionBox.getValue(), vaSpinner);
     });
     directionBox.setValue(options.get(0));
-    directionBox.getStyleClass().add("custom-combo-box-2");
+    directionBox.getStyleClass().add("bottom-box-combo-box");
     directionBox.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
     directionBox.prefHeightProperty().bind(directionBox.widthProperty().multiply(0.25));
     directionBox.prefHeightProperty().addListener((obs, oldv, newV) -> {
@@ -969,7 +968,6 @@ public class EditorScene extends Scene {
     box.setValue("Choose Custom Piece");
     box.setOnAction(e -> {
       if (box.getValue().equals("Choose Custom Piece")) {
-        System.out.println();
         return;
       }
       boxchange = true;
@@ -1018,14 +1016,19 @@ public class EditorScene extends Scene {
    */
   private Button createAddButton(VBox vbox, TextField name, Spinner<Integer> strength) {
     Button addButton = new Button("Add");
-    addButton.getStyleClass().add("join-button");
+    addButton.getStyleClass().add("add-piece-button");
     addButton.prefWidthProperty().bind(vbox.widthProperty().multiply(0.25));
     addButton.prefHeightProperty().bind(addButton.widthProperty().multiply(0.25));
     // addButton.fontProperty().bind(Bindings.createObjectBinding(
     // () -> Font.font("Century Gothic", addButton.getHeight() * 0.35),
     // addButton.heightProperty()));
     addButton.setOnAction(e -> {
-      engine.addpiece(name, strength);
+      if(!name.getText().isEmpty())
+        engine.addpiece(name, strength);
+      else {
+        inform("please enter a piece name");
+        CreateGameScreenV2.informationmustBeEntered(name, "", "");
+      }
     });
     return addButton;
   }
@@ -1065,13 +1068,11 @@ public class EditorScene extends Scene {
    */
   private void createChangeListener(Spinner<Integer> spinner, String event, boolean custom) {
     spinner.getValueFactory().valueProperty().addListener((obs, old, newValue) -> {
-      System.out.println("Change!!");
       if (spinnerchange) {
         spinnerchange = false;
         return;
       }
       if (custom && boxchange) {
-        System.out.println("boxchange!");
         boxchange = false;
         return;
       }

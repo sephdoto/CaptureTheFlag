@@ -32,7 +32,6 @@ public class ChooseSoundSlider extends HBox implements ValueExtractable {
       Constants.soundVolume = slider.getValue();
       soundValue.setText(ComponentCreator.df.format(slider.getValue()));
     });
-
     getChildren().addAll(slider, soundValue);
   }
   

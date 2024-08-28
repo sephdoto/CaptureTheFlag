@@ -4,56 +4,65 @@
     -fx-font-weight: bold;
     -fx-font-family: "Century Gothic", sans-serif;
 }
-.custom-menu-button {
-    -fx-background-color: rgb(25,25,25); 
-    -fx-text-fill: red; 
-    -fx-font-weight: bold; 
-    -fx-border-color: white; 
-     -fx-background-radius: 5px; 
-    -fx-border-radius: 5px; 
-     -fx-border-width: 2px;   
-}
-
-.custom-menu-button:hover {
-    -fx-background-color: rgb(40,40,40); 
-}
-.custom-menu-button .label {
-    -fx-text-fill: white; 
-   
-}
-.custom-menu-button .menu-item .label {
-    -fx-text-fill: black; 
-}
 .custom-combo-box {
    -fx-background-color: black; 
    -fx-text-fill: white; 
    -fx-border-color: white; 
    -fx-border-width: 1.0px;
     
-    }
-    .custom-combo-box .list-cell {
+}
+.custom-combo-box .list-cell {
     -fx-text-fill: white; 
     -fx-font-family: "Century Gothic", sans-serif;
 }
 .custom-combo-box .list-view .list-cell {
     -fx-text-fill: black; 
 }
-.custom-combo-box-2 {
-   -fx-background-color: rgb(25,25,25); 
-   -fx-text-fill: white; 
-   -fx-border-color: white; 
-   -fx-border-width: 2.0px;
-   -fx-background-radius: 5px; 
-    -fx-border-radius: 5px;
-   -fx-font-size: 90%;
-}
-    .custom-combo-box-2 .list-cell {
+
+.bottom-box-combo-box {
+    -fx-background-color: rgba(10,40,50,1); 
     -fx-text-fill: white; 
+    -fx-border-color: rgba(13, 61, 100, 0.74);
+    -fx-border-width: 1.0px;
+    -fx-background-radius: 20px; 
+    -fx-border-radius: 20px;
+    -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
+}
+
+.bottom-box-combo-box .arrow {
+    -fx-background-color: #ccc;
+}
+.bottom-box-combo-box:hover{
+    -fx-background-color: rgba(73, 110, 143, 0.7); 
+}
+.bottom-box-combo-box .list-cell {
+    -fx-alignment: center;
+    -fx-text-fill: white;
     -fx-font-family: "Century Gothic", sans-serif;
+    -fx-border-width: 1.0px;
+    -fx-background-radius: 20px; 
+    -fx-border-radius: 20px;
+    -fx-background-color: rgba(53,89,119,0.4); 
 }
-.custom-combo-box-2 .list-view .list-cell {
-    -fx-text-fill: black; 
+.bottom-box-combo-box .list-cell:selected:filled {
+    -fx-border-width: 1px;
+    -fx-border-color: rgba(151, 172, 189, 0.4); 
 }
+.bottom-box-combo-box .list-view {
+    -fx-background-color: rgba(53,89,119,0.9);
+    -fx-border-radius: 15;
+    -fx-background-radius: 15; /* Radius für abgerundete Ecken */
+    -fx-border-width: 2; /* Randbreite */
+    -fx-border-color: lightgray; /* Randfarbe */
+    -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
+} 
+.bottom-box-combo-box .list-view .list-cell:filled:selected {
+    -fx-text-fill: rgb(48, 126, 189);
+}
+.bottom-box-combo-box .list-view .list-cell:filled:hover  {
+    -fx-background-color: rgba(15, 38, 58, 0.4); 
+}
+
 .option-pane {
 	-fx-border-color: rgba(255,255,255,1);
 	 -fx-border-width: 2px;
@@ -122,29 +131,56 @@
 	  -fx-font-family: "Century Gothic", sans-serif;
 	  -fx-text-alignment: center;
 }
+
 .spinner {
-   -fx-control-inner-background: rgba(10,40,50,1); 
+    -fx-control-inner-background: rgba(10,40,50,1); 
     -fx-border-color: black; 
     -fx-border-width: 1px; 
-    -fx-border-radius: 5px; 
-    -fx-background-radius: 5px; 
+    -fx-border-radius: 20px; 
+    -fx-background-radius: 20px; 
 }
-
+.spinner:hover { 
+    -fx-background-color: rgba(27, 67, 102, 0.74); 
+}
+.spinner:focus-within {
+    -fx-background-color: rgba(22, 66, 104, 0.795);
+    -fx-border-color: rgb(40, 96, 143);
+}
 .spinner .text-field {
-	-fx-text-fill: white;
+    -fx-alignment: center;
+    -fx-text-fill: white; 
+    -fx-border-color: rgba(151, 172, 189, 0.4); 
+    -fx-border-width: 1.0px;
+    -fx-background-radius: 20px; 
+    -fx-border-radius: 20px;
+    -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
+    -fx-background-color: rgba(53,89,119,0.4); 
 }
-
+.spinner .text-field:focus-within {
+    -fx-text-fill: white; 
+    -fx-border-color: rgba(151, 172, 189, 0.4); 
+}
+.spinner .text-field:hover {
+    -fx-border-color: rgba(191, 213, 231, 0.7); 
+}
+.spinner .increment-arrow-button .increment-arrow {
+    -fx-background-color: #ccc;
+}
+.spinner .decrement-arrow-button .decrement-arrow {
+    -fx-background-color: #ccc;
+}
 .spinner .increment-arrow-button, .spinner .decrement-arrow-button {
-    -fx-background-color: #ccc; 
+    -fx-text-fill: #ccc;
+    -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
+    -fx-background-color: transparent; 
 }
-
 .spinner .increment-arrow-button:hover, .spinner .decrement-arrow-button:hover {
     -fx-background-color: #aaa; 
 }
-
 .spinner .increment-arrow, .spinner .decrement-arrow {
     -fx-background-color: #333; 
 }
+
 .move-circle{
 	 -fx-fill: rgb(53,89,119);
 }
@@ -163,4 +199,59 @@
     -fx-border-color: white; 
     -fx-border-width: 2px; 
     -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
+}
+
+
+/* Der add button beim piece customizer */
+.add-piece-button { 
+    -fx-background-color: rgba(10,40,50,1);  
+    -fx-text-fill: white; 
+    -fx-font-size: 14px; 
+    -fx-font-family: "Century Gothic", sans-serif; 
+    -fx-background-radius: 5px; 
+    -fx-border-radius: 5px; 
+    -fx-border-color: white; 
+    -fx-border-width: 2px; 
+    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
+}
+.add-piece-button:hover {
+    -fx-background-color: rgba(42, 95, 141, 0.74); 
+    -fx-effect: dropshadow(three-pass-box, rgba(29, 82, 128, 0.74), 10, 0, 0, 0); 
+}
+
+/* die beiden buttons oben, schwarz, zum auswählen der map und links neben dran */
+.menu-button {
+    -fx-background-color: rgb(25,25,25); 
+    -fx-text-fill: white; 
+    -fx-font-weight: bold; 
+    -fx-border-color: white; 
+     -fx-background-radius: 5px; 
+    -fx-border-radius: 5px; 
+     -fx-border-width: 2px;   
+}
+.menu-button:hover {
+    -fx-background-color: rgb(40,40,40); 
+}
+.menu-button .label {
+    -fx-text-fill: white; 
+}
+.menu-button .menu-item .label {
+    -fx-text-fill: white; 
+}
+.menu-item{   
+    -fx-background-radius: 5px; 
+    -fx-border-radius: 5px;
+}
+.menu-item:focused {
+    -fx-background-color: rgb(40,40,40); 
+}
+.context-menu {
+    -fx-background-color: rgb(25,25,25);
+    -fx-text-fill: white; 
+    -fx-border-color: white; 
+    -fx-border-width: 2.0px;
+    -fx-background-radius: 5px; 
+    -fx-border-radius: 5px;
+    -fx-background-insets: 0, 1, 2;
+    -fx-padding: 0.333333em 0.083333em 0.666667em 0.083333em; /* 4 1 8 1 */
 }
