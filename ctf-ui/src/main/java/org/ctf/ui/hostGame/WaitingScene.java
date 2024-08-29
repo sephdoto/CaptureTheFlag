@@ -1,12 +1,9 @@
 package org.ctf.ui.hostGame;
 
-import java.net.MalformedURLException;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.creators.PopUpCreator;
@@ -95,16 +92,6 @@ public class WaitingScene extends Scene {
     super(new StackPane(), width, height);
     manageFontSizes();
     this.root = (StackPane) this.getRoot();
-    try {
-      this.getStylesheets()
-          .add(Paths.get(Constants.toUIStyles + "ComboBox.css").toUri().toURL().toString());
-      this.getStylesheets()
-          .add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
-      this.getStylesheets()
-          .add(Paths.get(Constants.toUIStyles + "color.css").toUri().toURL().toString());
-    } catch (MalformedURLException e) {
-      e.printStackTrace();
-    }
     createLayout();
     currentNumber = 0;
     scheduler = Executors.newScheduledThreadPool(1);
@@ -721,7 +708,9 @@ public class WaitingScene extends Scene {
     exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
     exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.35));
     exit.setOnAction(e -> {
+      try  { 
       ClientStorage.getMainClient().shutdown();
+      } catch (NullPointerException npe) {};
       ClientStorage.clearAllClients();
       ClientStorage.setMainClient(null);
       scheduler.shutdown();

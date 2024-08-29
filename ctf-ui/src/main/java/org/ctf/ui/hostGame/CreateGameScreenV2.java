@@ -1,12 +1,11 @@
 package org.ctf.ui.hostGame;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import org.ctf.shared.client.Client;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.state.GameState;
@@ -18,6 +17,7 @@ import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.creators.PopUpCreator;
 import org.ctf.ui.creators.PopUpCreatorEnterTeamName;
 import org.ctf.ui.customobjects.PopUpPane;
+import org.ctf.ui.data.ClientStorage;
 import org.ctf.ui.data.Formatter;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.map.GamePane;
@@ -101,16 +101,6 @@ public class CreateGameScreenV2 extends Scene {
    */
   public CreateGameScreenV2(double width, double height) {
     super(new StackPane(), width, height);
-    try {
-      this.getStylesheets()
-          .add(Paths.get(Constants.toUIStyles + "ComboBox.css").toUri().toURL().toString());
-      this.getStylesheets()
-          .add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
-      this.getStylesheets()
-          .add(Paths.get(Constants.toUIStyles + "color.css").toUri().toURL().toString());
-    } catch (MalformedURLException e) {
-      e.printStackTrace();
-    }
     this.root = (StackPane) this.getRoot();
     popUpCreator = new PopUpCreator(this, root);
     createLayout();
@@ -151,7 +141,6 @@ public class CreateGameScreenV2 extends Scene {
    */
   private void createLayout() {
     StroeMaps.initDefaultMaps();
-    root.getStyleClass().add("join-root");
     VBox mainBox = createMainBox();
     mainBox.setAlignment(Pos.TOP_CENTER);
     sep = createMiddleSperator();
@@ -561,7 +550,6 @@ public class CreateGameScreenV2 extends Scene {
     showMapBox.prefHeightProperty().bind(showMapBox.widthProperty());
     showMapBox.maxWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.45));
     showMapBox.maxHeightProperty().bind(SceneHandler.getMainStage().heightProperty().multiply(0.65));
-    showMapBox.getStyleClass().add("show-GamePane");
     showMapBox.paddingProperty().bind(padding);
     // state = StroeMaps.getMap(name);
     maps = JsonTools.getTemplateAndGameState(c.getValue());
@@ -686,6 +674,12 @@ public class CreateGameScreenV2 extends Scene {
       if(generateBackgroundThread != null) {
         generateBackgroundThread.interrupt();
       }
+      for(Client client : ClientStorage.getLocalHumanClients())
+        client.shutdown();
+      for(Client client : ClientStorage.getLocalAIClients())
+        client.shutdown();
+      ClientStorage.setMainClient(null);
+      ClientStorage.clearAllClients();
       SceneHandler.switchToHomeScreen();
     });
     return exit;
@@ -695,8 +689,8 @@ public class CreateGameScreenV2 extends Scene {
    * Creates the play as human button which is shown in the chooserPopup and fits its size to it
    * 
    * @author Manuel Krakowski
-   * @param text: text displayed on the button
-   * @param src: button-image-name
+   * @param text text displayed on the button
+   * @param src button-image-name
    * @return play-as-human-button
    */
   private Button createAddHumanButton(String text, String src) {

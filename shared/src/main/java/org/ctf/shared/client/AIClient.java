@@ -277,35 +277,42 @@ public class AIClient extends Client {
   @Override
   protected void gameStartWatcher() {
     Thread watcherThread =
-        new Thread(
-            () -> {
-              boolean running = true;
-              while (running) {
-                try {
-                  Long sleep = 1000L;
-                  Thread.sleep(sleep);
-                  getSessionFromServer(); // Gets Session from server
-                  if (getStartDate() != null) {
-                    getStateFromServer();
-                    if (enableLogging) {
-                      analyzer.addGameState(currentState);
-                    }
-                    running = false;
-                    new Thread(() -> {
-                      try {
-                        Thread.sleep(100);
-                      } catch(Exception e) {e.printStackTrace();};
-                      startPlayTask();
-                      }).start();
+        new Thread() {
+      boolean active = true;
 
-                    startMoveTimeThread();
-                  }
-                  Thread.sleep(sleep);
-                } catch (InterruptedException e) {
-                  throw new Error("Something went wrong in the Client Thread");
-                }
+      @Override
+      public void interrupt() {
+        this.active = false;
+      }
+
+      @Override
+      public void run() {
+        while (active) {
+          try {
+            Long sleep = 1000L;
+            getSessionFromServer(); // Gets Session from server
+            if (getStartDate() != null) {
+              getStateFromServer();
+              if (enableLogging) {
+                analyzer.addGameState(currentState);
               }
-            });
+              active = false;
+              new Thread(() -> {
+                try {
+                  Thread.sleep(100);
+                } catch(Exception e) {e.printStackTrace();};
+                startPlayTask();
+              }).start();
+
+              startMoveTimeThread();
+            }
+            Thread.sleep(sleep);
+          } catch (InterruptedException e) {
+            throw new Error("Something went wrong in the Client Thread");
+          }
+        }
+      }
+    };
     watcherThread.start();
   }
 

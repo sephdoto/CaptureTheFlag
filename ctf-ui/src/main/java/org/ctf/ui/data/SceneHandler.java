@@ -116,6 +116,8 @@ public class SceneHandler {
     switchCurrentScene(
         new WaitingScene(SceneHandler.getMainStage().getWidth() - App.offsetWidth, SceneHandler.getMainStage().getHeight() - App.offsetHeight)
         );
+    addStyleSheet("waitingRoom");    
+    addStyleSheet("color");
   }
   
   public static void switchToRemoteWaitGameScene(ServerManager serverManager) {
@@ -132,12 +134,14 @@ public class SceneHandler {
         new CreateGameScreenV2(
             SceneHandler.getMainStage().getWidth() - App.offsetWidth, SceneHandler.getMainStage().getHeight() - App.offsetHeight)
         );
+    addStyleSheet("createGame");
   }
 
   public static void switchToJoinScene() {
     switchCurrentScene(new JoinScene(
             SceneHandler.getMainStage().getWidth() - App.offsetWidth, SceneHandler.getMainStage().getHeight() - App.offsetHeight)
         );
+    addStyleSheet("joinGame");
   }
 
   public static void switchToAnalyzerScene() {
@@ -220,6 +224,7 @@ public class SceneHandler {
         });
     
     addStyleSheet("settings");
+    addStyleSheet("popUps");
     
     mainStage.setScene(scene);
   }

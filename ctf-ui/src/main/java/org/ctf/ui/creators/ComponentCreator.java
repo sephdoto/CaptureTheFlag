@@ -9,8 +9,11 @@ import org.ctf.ui.editor.EditorScene;
 import org.ctf.ui.editor.TemplateEngine;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
@@ -41,17 +44,16 @@ public class ComponentCreator {
    * @return StackPane for Submitting templates
    */
   public StackPane createSubmitWindow() {
-    PopUpPane popUp = new PopUpPane(SceneHandler.getCurrentScene(), 0.4, 0.4, 0.95);
+    PopUpPane popUp = new PopUpPane(SceneHandler.getCurrentScene(), 0.5, 0.3, 0.95);
     VBox vbox = new VBox();
     vbox.setAlignment(Pos.TOP_CENTER);
-    vbox.setPadding(new Insets(10));
-    vbox.setSpacing(15);
+    vbox.setPadding(new Insets(15));
+    vbox.setSpacing(25);
     Text header = EditorScene.createHeaderText(vbox, "Save your Template", 15);
     vbox.getChildren().add(header);
-    TextField nameField = createNameField(vbox);
-    Text info = createinfo(vbox);
+    TextField nameField = createTextfield("Enter a unique Template name", "", 0.03);
+    nameField.prefWidthProperty().bind(vbox.widthProperty().multiply(0.5));
     vbox.getChildren().add(nameField);
-    vbox.getChildren().add(info);
     HBox buttonBox = new HBox();
     buttonBox.setAlignment(Pos.CENTER);
     vbox.widthProperty().addListener((obs, oldv, newV) -> {
@@ -63,78 +65,61 @@ public class ComponentCreator {
       VBox.setMargin(buttonBox, new Insets(size));
     });
     VBox.setMargin(buttonBox, new Insets(25));
-    buttonBox.getChildren().add(createSubmit(vbox, popUp, info, nameField));
+    buttonBox.getChildren().add(createSubmit(vbox, popUp, nameField));
     buttonBox.getChildren().add(createLeaveSubmit(vbox, popUp));
     StackPane.setAlignment(buttonBox, Pos.BOTTOM_CENTER);
     vbox.getChildren().add(buttonBox);
     popUp.setContent(vbox);
+    nameField.prefWidthProperty().bind(vbox.widthProperty().multiply(0.75));
     return popUp;
   }
 
   /**
-   * Generates resized TextField in the style for the submitting window.
+   * Creates a simple Textfield
    * 
-   * @author aniemesc
-   * @param vBox - container used for resizing
-   * @return TextField that can be added to the main container
+   * @author Manuel Krakowski
+   * @author sistumpf
+   * @param prompt prompt text of the textfield
+   * @param firstValue a default value to fill the text box, null if prompt should be shown without pre-filled values
+   * @param x height of the textfield in relation to its width
+   * @return
    */
-  public static TextField createNameField(VBox vBox) {
-    TextField nameField = new TextField();
-    nameField.getStyleClass().add("custom-search-field");
-    // nameField.setPromptText("Enter a unique Name");
-    nameField.setAlignment(Pos.CENTER);
-    nameField.maxWidthProperty().bind(vBox.widthProperty().multiply(0.75));
-    nameField.prefHeightProperty().bind(nameField.widthProperty().multiply(0.15));
-    nameField.heightProperty().addListener((obs, oldVal, newVal) -> {
-      double size = newVal.doubleValue() * 0.45;
-      nameField.setFont(Font.font("Century Gothic", size));
+  public static TextField createTextfield(String prompt, String firstValue, double x) {
+    TextField searchField = new TextField();
+    searchField.getStyleClass().add("custom-search-field2");
+    searchField.setPromptText(prompt);
+    if(firstValue != null)
+      searchField.setText(firstValue);
+    searchField.prefHeightProperty().bind(searchField.widthProperty().multiply(x));
+    ObjectProperty<Font> fontTracking = new SimpleObjectProperty<Font>(Font.getDefault());
+    searchField.widthProperty().addListener((obs, oldVal, newVal) -> {
+      fontTracking.set(Font.font(newVal.doubleValue() * 0.045));
     });
-    nameField.textProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue.length() > 20) {
-        nameField.setText(oldValue);
-      }
-    });
-    return nameField;
-  }
-
-  /**
-   * Generates the Text required for the submitting window.
-   * 
-   * @author aniemesc
-   * @param vBox - main container of the submitting window
-   * @return Text that can be added to the main container
-   */
-  protected Text createinfo(VBox vbox) {
-    Text info = new Text("");
-    info.getStyleClass().add("custom-info-label");
-    vbox.widthProperty().addListener((obs, oldVal, newVal) -> {
-      double size = newVal.doubleValue() * 0.035;
-      info.setFont(Font.font("Century Gothic", size));
-    });
-    return info;
+    searchField.fontProperty().bind(fontTracking);
+    return searchField;
   }
 
   /**
    * Generates the Button which saves a template in an editor scene.
    * 
    * @author aniemesc
-   * @param vBox - main container of the submitting window
-   * @param popUp - submitting window
-   * @param info - Text that provides saving information
-   * @param nameField - TextField of the submitting window
+   * @param vBox main container of the submitting window
+   * @param popUp submitting window
+   * @param nameField TextField of the submitting window
    * @return Button used for saving templates
    */
-  protected Button createSubmit(VBox vBox, PopUpPane popUp, Text info, TextField nameField) {
+  protected Button createSubmit(VBox vBox, PopUpPane popUp, TextField nameField) {
     Button submit = new Button("Submit");
     submit.getStyleClass().add("save-button");
     submit.setOnAction(e -> {
       if (nameField.getText().equals("")) {
-        CreateGameScreenV2.informationmustBeEntered(nameField, "custom-search-field",
-            "custom-search-field");
+        CreateGameScreenV2.informationmustBeEntered(nameField, "custom-search-field2",
+            "custom-search-field2");
         return;
       }
       if (TemplateEngine.getTemplateNames().contains(nameField.getText())) {
-        info.setText(nameField.getText() + " already exits!");
+        nameField.setPromptText(nameField.getText() + " already exists!");
+        nameField.clear();
       } else {
         ((EditorScene)SceneHandler.getCurrentScene()).getEngine().saveTemplate(nameField.getText());
         ((EditorScene)SceneHandler.getCurrentScene()).addMapItem(nameField.getText());
@@ -309,8 +294,10 @@ public class ComponentCreator {
     });
     select.prefWidthProperty().bind(vbox.widthProperty().multiply(0.25));
     select.prefHeightProperty().bind(select.widthProperty().multiply(0.25));
+    select.setFont(Font.font("Century Gothic", select.getHeight() * 0.5));
     select.prefHeightProperty().addListener((obs, oldv, newV) -> {
       double size = newV.doubleValue() * 0.5;
+      System.out.println(size);
       select.setFont(Font.font("Century Gothic", size));
     });
 
@@ -321,6 +308,7 @@ public class ComponentCreator {
     });
     leave.prefWidthProperty().bind(vbox.widthProperty().multiply(0.25));
     leave.prefHeightProperty().bind(leave.widthProperty().multiply(0.25));
+    leave.setFont(Font.font("Century Gothic", leave.getHeight() * 0.5));
     leave.prefHeightProperty().addListener((obs, oldv, newV) -> {
       double size = newV.doubleValue() * 0.5;
       leave.setFont(Font.font("Century Gothic", size));

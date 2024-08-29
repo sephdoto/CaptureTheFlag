@@ -1,0 +1,32 @@
+/* IP, Port, SessionID und Team name Felder */
+.custom-search-field2 {
+    -fx-prompt-text-fill: white; 
+   -fx-text-fill: white;
+   -fx-background-color: rgba(53,89,119,0.4);
+   -fx-border-color: white; 
+   -fx-border-width: 1px;
+   -fx-border-radius: 5px;
+   -fx-background-radius: 5px; 
+   -fx-font-family: "Century Gothic", sans-serif;
+}
+.custom-search-field2-mustEnter {
+    -fx-prompt-text-fill: red; 
+    -fx-text-fill: white;
+    -fx-background-color: rgba(53,89,119,0.4);
+    -fx-border-color: white; 
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px; 
+    -fx-font-family: "Century Gothic", sans-serif;
+}
+.custom-search-field2:hover {
+    -fx-border-color: rgb(203, 203, 255);
+    -fx-background-color: rgba(73, 110, 143, 0.7); 
+ }
+.custom-search-field2:focus-within {
+    -fx-border-color: white; 
+    -fx-border-width: 2px;
+    -fx-background-color: rgba(53,89,119,0.4);
+    -fx-border-color: blue;
+    -fx-prompt-text-fill: rgb(151, 151, 151); 
+}

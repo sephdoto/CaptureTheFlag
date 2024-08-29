@@ -11,6 +11,7 @@ import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.customobjects.ButtonPane;
 import org.ctf.ui.customobjects.PopUpPane;
+import org.ctf.ui.data.Formatter;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
 import org.ctf.ui.remoteGame.JoinScene;
@@ -603,7 +604,8 @@ private ObjectProperty<Font> popUpLabel;
 	private Spinner<Integer> createConfigSpinner(int min, int max, int cur, HBox parent) {
 		this.values = new SpinnerValueFactory.IntegerSpinnerValueFactory(min, max, cur);
 		Spinner<Integer> spinner = new Spinner<>(values);
-		spinner.getStyleClass().add("spinner");
+		spinner.getStyleClass().add("popup-spinner");
+		Formatter.applyIntegerFormatter(spinner.getEditor(), min, max);
 		TextField spinnerText = spinner.getEditor();
 		spinnerText.fontProperty().bind(spinnerLabel);
 		spinner.setEditable(true);
@@ -624,10 +626,12 @@ private ObjectProperty<Font> popUpLabel;
 	private Spinner<Double> createConfigSpinnerDouble(double min, double max, double cur, HBox parent) {
 		this.values2 = new SpinnerValueFactory.DoubleSpinnerValueFactory(min, max, cur, 0.1);
 		Spinner<Double> spinner = new Spinner<>(values2);
-		spinner.getStyleClass().add("spinner");
+        Formatter.applyDoubleFormatter(spinner.getEditor(), min, max);
+		spinner.getStyleClass().add("popup-spinner");
 
 		TextField spinnerText = spinner.getEditor();
 		spinnerText.fontProperty().bind(spinnerLabel);
+		spinnerText.setStyle("-fx-text-color: white");
 		spinner.setEditable(true);
 		spinner.prefWidthProperty().bind(parent.widthProperty().multiply(0.8));
 		spinner.prefHeightProperty().bind(parent.heightProperty().multiply(1));

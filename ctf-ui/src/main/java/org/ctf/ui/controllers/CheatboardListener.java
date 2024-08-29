@@ -279,8 +279,10 @@ public class CheatboardListener extends NativeKeyAdapter {
     } else if (match == cheatCodes.get(1)) {    // skip current song
       SettingsSetter.getCurrentPlayer().startShuffle();
     } else if (match == cheatCodes.get(2)) {    // whatever needs to be debugged
-      ((PlayGameScreenV2)SceneHandler.getCurrentScene()).stopTimers();
-//      ((Timer)((VBox) box).getChildren().get(1)).stop(); 
+      //      ((PlayGameScreenV2)SceneHandler.getCurrentScene()).stopTimers();
+      Platform.runLater(() -> {
+        System.out.println("void");
+      });
     } else if (match == cheatCodes.get(3)) {    // open settings
       Platform.runLater(() -> {
         SceneHandler.openSettingsWindow("default");

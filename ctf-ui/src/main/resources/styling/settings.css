@@ -2,6 +2,7 @@
 	 -fx-background-color: rgb(255,255,255,0.25);	 
 }
 
+/* Integer und Double Boxen in advanced */
 .choose-number-box-postfix { 
     -fx-fill: white;
 }
@@ -76,12 +77,11 @@
 
 .leave-button {
 	-fx-background-color: rgb(15,15,15); 
-    -fx-alignment: center;     /* Zentriert den Text innerhalb des Buttons */
+    -fx-alignment: center;
     -fx-text-fill: white;     
     -fx-background-radius: 5px; 
     -fx-border-radius: 5px; 
     -fx-border-color: white; 
-    -fx-border-width: 2px;
     -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
 }
 .leave-button:hover{

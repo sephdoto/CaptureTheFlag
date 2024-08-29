@@ -1,0 +1,54 @@
+/* IP, Port und SessionID Felder */
+.custom-search-field2 {
+    -fx-prompt-text-fill: rgb(151, 151, 151); 
+    -fx-text-fill: white;
+    -fx-background-color: rgba(53,89,119,0.4);
+    -fx-border-color: white; 
+    -fx-border-width: 1px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px; 
+    -fx-font-family: "Century Gothic", sans-serif;
+}
+.custom-search-field2-mustEnter {
+    -fx-prompt-text-fill: red; 
+    -fx-text-fill: white;
+    -fx-background-color: rgba(53,89,119,0.4);
+    -fx-border-color: white; 
+    -fx-border-width: 2px;
+    -fx-font-family: "Century Gothic", sans-serif;
+}
+.custom-search-field2:hover {
+    -fx-border-color: rgb(203, 203, 255);
+    -fx-background-color: rgba(73, 110, 143, 0.7); 
+ }
+.custom-search-field2:focus-within {
+    -fx-border-color: white; 
+    -fx-border-width: 2px;
+    -fx-background-color: rgba(53,89,119,0.4);
+    -fx-border-color: blue;
+}
+
+/* Box um den Text mit SessionID und Spielern in der Lobby */
+.session-info {
+	-fx-border-color: rgba(255,255,255,1);
+	 -fx-border-width: 1px;
+	 -fx-background-color: rgba(53,89,119,0.4);
+	 -fx-background-radius: 20px; 
+	 -fx-border-radius: 20px;
+	 -fx-alignment: top-center;
+}
+
+/* Der Join button wenn man seinen Namen eingegeben hat */
+.save-button { 
+    -fx-background-color: rgba(53,89,119,0.4); 
+    -fx-text-fill: white; 
+    -fx-background-radius: 5px; 
+    -fx-border-radius: 5px; 
+    -fx-border-color: white; 
+    -fx-border-width: 2px; 
+    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
+}
+.save-button:hover {
+    -fx-background-color: rgba(59, 101, 138, 0.74); 
+    -fx-effect: dropshadow(three-pass-box, rgba(29, 82, 128, 0.74), 10, 0, 0, 0); 
+}

@@ -127,21 +127,6 @@
     -border-bottom-right-radius: 0; /* Keine Abrundung unten rechts */ 
 }
 
-
-.aiConfig-label{
-	font-family: 'Eras Bold ITC', sans-serif;
-    font-size: 24px;
-    -fx-text-fill: white
-}
-.spinner-des-label {
-   -fx-font-family: "Eras Medium Light";
-    -fx-font-size: 18px;
-    -fx-text-fill: white;
-    -fx-background-color: transparent;
-    
-}
-
-
 .des-label2 {
     -fx-text-fill: rgba(128, 128, 128, 0.9);
     -fx-font-family: 'Eras Medium Light'; 
@@ -200,16 +185,6 @@
     -fx-text-fill: #FFD700; 
     -fx-padding: 5px 10px;
     
-}
-.button25{
-	-fx-background-color: rgb(25,25,25); 
-    -fx-text-fill: white; 
-    -fx-font-size: 16px;
-    -fx-font-weight: bold; 
-    -fx-border-color: white; 
-     -fx-background-radius: 20px; 
-    -fx-border-radius: 20px; 
-     -fx-border-width: 2px;   
 }
 
 .info-vbox {

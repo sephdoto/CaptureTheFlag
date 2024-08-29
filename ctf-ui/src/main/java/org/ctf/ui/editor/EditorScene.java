@@ -690,7 +690,8 @@ public class EditorScene extends Scene {
         this.inform("You can not save invalid templates!");
         return;
       }
-      root.getChildren().add(new ComponentCreator().createSubmitWindow());
+      StackPane submitWindow = new ComponentCreator().createSubmitWindow();
+      root.getChildren().add(submitWindow);
     });
     return submit;
   }
@@ -800,7 +801,7 @@ public class EditorScene extends Scene {
     Text leftheader = new Text(label);
     leftheader.getStyleClass().add("custom-header");
     leftheader.fontProperty().bind(Bindings.createObjectBinding(
-        () -> Font.font("Century Gothic", vBox.getWidth() / divider), vBox.widthProperty()));
+        () -> Font.font(vBox.getWidth() / divider), vBox.widthProperty()));
     return leftheader;
   }
 

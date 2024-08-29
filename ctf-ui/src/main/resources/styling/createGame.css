@@ -1,0 +1,75 @@
+/* IP und Port Felder */
+.custom-search-field2 {
+    -fx-prompt-text-fill: rgb(151, 151, 151); 
+    -fx-text-fill: white;
+    -fx-background-color: rgba(53,89,119,0.4);
+    -fx-border-color: white; 
+    -fx-border-width: 1px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px; 
+    -fx-font-family: "Century Gothic", sans-serif;
+    -fx-text-align: center;
+    -fx-prompt-align: center;
+}
+.custom-search-field2-mustEnter {
+    -fx-prompt-text-fill: red; 
+    -fx-text-fill: white;
+    -fx-background-color: rgba(53,89,119,0.4);
+    -fx-border-color: white; 
+    -fx-border-width: 2px;
+}
+.custom-search-field2:hover {
+    -fx-border-color: rgb(203, 203, 255);
+    -fx-background-color: rgba(73, 110, 143, 0.7); 
+ }
+.custom-search-field2:focus-within {
+    -fx-border-color: white; 
+    -fx-border-width: 2px;
+    -fx-background-color: rgba(53,89,119,0.4);
+    -fx-border-color: blue;
+    -fx-prompt-text-fill: rgb(151, 151, 151); 
+}
+
+/* Aufklappbare ComboBox für Maps */
+.combo-box {
+    -fx-background-color: rgba(53,89,119,0.4);
+    -fx-text-fill: white; 
+    -fx-border-color: white;
+    -fx-border-width: 1.0px;
+    -fx-background-radius: 20px; 
+    -fx-border-radius: 20px;
+    -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
+}
+.combo-box .arrow {
+    -fx-background-color: #ccc;
+}
+.combo-box:hover{
+    -fx-background-color: rgba(73, 110, 143, 0.7); 
+}
+.combo-box .list-cell {
+    -fx-alignment: center;
+    -fx-text-fill: white;
+    -fx-font-family: "Century Gothic", sans-serif;
+    -fx-border-width: 1.0px;
+    -fx-background-radius: 20px; 
+    -fx-border-radius: 20px;
+    -fx-background-color: rgba(53,89,119,0.4); 
+}
+.combo-box .list-cell:selected:filled {
+    -fx-border-width: 1px;
+    -fx-border-color: rgba(151, 172, 189, 0.4); 
+}
+.combo-box .list-view {
+    -fx-background-color: rgba(47, 76, 99, 0.85);
+    -fx-border-radius: 15;
+    -fx-background-radius: 15; /* Radius für abgerundete Ecken */
+    -fx-border-width: 2; /* Randbreite */
+    -fx-border-color: lightgray; /* Randfarbe */
+    -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
+} 
+.combo-box .list-view .list-cell:filled:selected {
+    -fx-text-fill: rgb(65, 170, 255);
+}
+.combo-box .list-view .list-cell:filled:hover  {
+    -fx-background-color: rgba(15, 38, 58, 0.4); 
+}

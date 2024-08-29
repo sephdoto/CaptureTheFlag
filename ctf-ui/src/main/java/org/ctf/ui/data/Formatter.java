@@ -52,12 +52,15 @@ public class Formatter {
    * 
    * @author sistumpf
    * @param field TextField to apply the Formatter to
-   * @param minInt the smallest allowed Double, null if there is none
-   * @param maxInt the biggest allowed Double, null if there is none
+   * @param minValue the smallest allowed Double, null if there is none
+   * @param minValue the biggest allowed Double, null if there is none
    */
-  public static void applyDoubleFormatter(TextField field, Double minDouble, Double maxDouble) {
+  public static void applyDoubleFormatter(TextField field, Double minValue, Double maxValue) {
     String positiveDoubleFormat = "\\d*(\\.\\d*)?";
     String doubleFormat = "-?" + positiveDoubleFormat;
+    
+    Double maxDouble = maxValue == null ? null : maxValue > Integer.MAX_VALUE ? Integer.MAX_VALUE : maxValue;
+    Double minDouble = minValue == null ? null : minValue < Integer.MIN_VALUE ? Integer.MIN_VALUE : minValue;
   
     field.setTextFormatter( new TextFormatter<> (c -> {
       if (c.getControlNewText().equals("")) {

@@ -1,13 +1,10 @@
 package org.ctf.ui.remoteGame;
 
-import java.net.MalformedURLException;
-import java.nio.file.Paths;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.client.lib.ServerDetails;
 import org.ctf.shared.client.lib.ServerManager;
 import org.ctf.shared.client.service.CommLayer;
-import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.constants.Enums.SoundType;
@@ -25,8 +22,6 @@ import org.ctf.ui.hostGame.CreateGameScreenV2;
 import org.ctf.ui.threads.PointAnimation;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -78,12 +73,6 @@ public class JoinScene extends Scene {
    */
   public JoinScene(double width, double height) {
     super(new StackPane(), width, height);
-    try {
-      this.getStylesheets().add(Paths.get(Constants.toUIStyles + "MapEditor.css").toUri().toURL().toString());
-      this.getStylesheets().add(Paths.get(Constants.toUIStyles + "ComboBox.css").toUri().toURL().toString());
-    } catch (MalformedURLException e) {
-      e.printStackTrace();
-    }
     this.root = (StackPane) this.getRoot();
     createLayout();
   }
@@ -198,12 +187,12 @@ public class JoinScene extends Scene {
     });
     leftBox.getChildren().add(createLeftHeader(leftBox));
 
-    serverIPText = createTextfield("Enter the Server IP", null, 0.4);
+    serverIPText = ComponentCreator.createTextfield("Enter the Server IP", null, 0.4);
     leftBox.getChildren().add(serverIPText);
-    portText = createTextfield("Enter the Port", null, 0.4);
+    portText = ComponentCreator.createTextfield("Enter the Port", null, 0.4);
     Formatter.applyIntegerFormatter(portText, 1, 65535);
     leftBox.getChildren().add(portText);
-    sessionText = createTextfield("Enter the Session ID", null, 0.4);
+    sessionText = ComponentCreator.createTextfield("Enter the Session ID", null, 0.4);
     leftBox.getChildren().add(sessionText);
 
     leftBox.getChildren().add(createSearch());
@@ -237,31 +226,6 @@ public class JoinScene extends Scene {
 
 
     return rightBox;
-  }
-
-  /**
-   * Creates a simple Textfield
-   * 
-   * @author Manuel Krakowski
-   * @author sistumpf
-   * @param prompt prompt text of the textfield
-   * @param firstValue a default value to fill the text box, null if prompt should be shown without pre-filled values
-   * @param x height of the textfield in relation to its width
-   * @return
-   */
-  public static TextField createTextfield(String prompt, String firstValue, double x) {
-    TextField searchField = new TextField();
-    searchField.getStyleClass().add("custom-search-field2");
-    searchField.setPromptText(prompt);
-    if(firstValue != null)
-      searchField.setText(firstValue);
-    searchField.prefHeightProperty().bind(searchField.widthProperty().multiply(x));
-    ObjectProperty<Font> fontTracking = new SimpleObjectProperty<Font>(Font.getDefault());
-    searchField.heightProperty().addListener((obs, oldVal, newVal) -> {
-      fontTracking.set(Font.font(newVal.doubleValue() * 0.3));
-    });
-    searchField.fontProperty().bind(fontTracking);
-    return searchField;
   }
 
   /**
@@ -427,7 +391,7 @@ public class JoinScene extends Scene {
    * This Method creates the join buttons for the right StackPane.
    * 
    * @author aniemesc
-   * @param label - String value for button
+   * @param label String value for button
    * @return Button that gets added to the right StackPane
    */
   private Button createJoinButton(String label) {
@@ -510,14 +474,16 @@ public class JoinScene extends Scene {
    * @return StackPane for Submitting templates
    */
   public void createJoinWindow(String id, String ip, String port, boolean isAI, AI type, AIConfig config) {
-    PopUpPane popUp = new PopUpPane(this, 0.4, 0.4, 0.95);
+    PopUpPane popUp = new PopUpPane(this, 0.5, 0.3, 0.95);
     VBox vbox = new VBox();
     vbox.setAlignment(Pos.TOP_CENTER);
-    vbox.setPadding(new Insets(10));
-    vbox.setSpacing(15);
-    Text header = EditorScene.createHeaderText(vbox, "Enter a Team name!", 15);
+    vbox.setPadding(new Insets(15));
+    vbox.setSpacing(25);
+    Text header = EditorScene.createHeaderText(vbox, "Select Team Name", 15);
     vbox.getChildren().add(header);
-    nameField = ComponentCreator.createNameField(vbox);
+    nameField = ComponentCreator.createTextfield("Your Team Name", "", 0.03);
+//    nameField.setPadding(new Insets(30, 30, 30, 0));
+    nameField.prefWidthProperty().bind(vbox.widthProperty().multiply(0.5));
     vbox.getChildren().add(nameField);
     HBox buttonBox = new HBox();
     buttonBox.setAlignment(Pos.CENTER);
@@ -540,10 +506,9 @@ public class JoinScene extends Scene {
 
     Button joinButton = createControlButton(vbox, "Join", "save-button");
     joinButton.setOnAction(e -> {
-      joinButton.setDisable(true);
       if (nameField.getText().equals("")) {
-        CreateGameScreenV2.informationmustBeEntered(nameField, "custom-search-field",
-            "custom-search-field");
+        CreateGameScreenV2.informationmustBeEntered(nameField, "custom-search-field2",
+            "custom-search-field2");
         return;
       }
 
@@ -558,6 +523,11 @@ public class JoinScene extends Scene {
               info.setText("Client hast joined!\n Waiting for the Game to start.");
               right.getChildren().add(info);
               SceneHandler.switchToRemoteWaitGameScene(ser);
+            } else {
+              nameField.clear();
+              nameField.requestFocus();
+              CreateGameScreenV2.informationmustBeEntered(nameField, "custom-search-field2",
+                  "custom-search-field2");
             }
           });
       this.joinChecker = new Thread() {
@@ -576,6 +546,12 @@ public class JoinScene extends Scene {
     this.root.getChildren().add(popUp);
   }
 
+  /**
+   * A task checking if a Server could be joined.
+   * A Server might not let one join if the team name is not unique.
+   * 
+   * @author sistumpf
+   */
   private class JoinCheckTask extends Task<Client> {
     private boolean allowedToRun;
     private boolean isAI;

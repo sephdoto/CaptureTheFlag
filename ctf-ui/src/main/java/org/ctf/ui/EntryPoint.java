@@ -1,6 +1,7 @@
 package org.ctf.ui;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.ctf.shared.constants.Constants;
@@ -42,6 +43,8 @@ public class EntryPoint {
     if(easterEggs)
       cbl = new CheatboardListener();
 
+    Locale.setDefault(Locale.US);
+    
     App.main(args2);
   }
 }

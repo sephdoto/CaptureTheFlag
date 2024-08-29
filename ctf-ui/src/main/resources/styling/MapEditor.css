@@ -1,9 +1,3 @@
-.custom-label {
-    -fx-font-size: 16px;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-font-family: "Century Gothic", sans-serif;
-}
 .custom-combo-box {
    -fx-background-color: black; 
    -fx-text-fill: white; 
@@ -19,58 +13,6 @@
     -fx-text-fill: black; 
 }
 
-.bottom-box-combo-box {
-    -fx-background-color: rgba(10,40,50,1); 
-    -fx-text-fill: white; 
-    -fx-border-color: rgba(13, 61, 100, 0.74);
-    -fx-border-width: 1.0px;
-    -fx-background-radius: 20px; 
-    -fx-border-radius: 20px;
-    -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
-}
-
-.bottom-box-combo-box .arrow {
-    -fx-background-color: #ccc;
-}
-.bottom-box-combo-box:hover{
-    -fx-background-color: rgba(73, 110, 143, 0.7); 
-}
-.bottom-box-combo-box .list-cell {
-    -fx-alignment: center;
-    -fx-text-fill: white;
-    -fx-font-family: "Century Gothic", sans-serif;
-    -fx-border-width: 1.0px;
-    -fx-background-radius: 20px; 
-    -fx-border-radius: 20px;
-    -fx-background-color: rgba(53,89,119,0.4); 
-}
-.bottom-box-combo-box .list-cell:selected:filled {
-    -fx-border-width: 1px;
-    -fx-border-color: rgba(151, 172, 189, 0.4); 
-}
-.bottom-box-combo-box .list-view {
-    -fx-background-color: rgba(53,89,119,0.9);
-    -fx-border-radius: 15;
-    -fx-background-radius: 15; /* Radius für abgerundete Ecken */
-    -fx-border-width: 2; /* Randbreite */
-    -fx-border-color: lightgray; /* Randfarbe */
-    -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
-} 
-.bottom-box-combo-box .list-view .list-cell:filled:selected {
-    -fx-text-fill: rgb(48, 126, 189);
-}
-.bottom-box-combo-box .list-view .list-cell:filled:hover  {
-    -fx-background-color: rgba(15, 38, 58, 0.4); 
-}
-
-.option-pane {
-	-fx-border-color: rgba(255,255,255,1);
-	 -fx-border-width: 2px;
-	 -fx-background-color: #475865;
-	 -fx-background-radius: 20px; 
-	 -fx-border-radius: 20px;
-	 -fx-alignment: top-center;
-}
 .visual-pane{
 	-fx-border-color: rgba(255,255,255,1);
 	-fx-border-width: 3px;
@@ -85,46 +27,21 @@
 	 -fx-border-radius: 20px;
 }
 
-.save-button {
-	 -fx-background-color: rgb(30,90,30); 
-    -fx-text-fill: white; 
-	 -fx-background-radius: 5px; 
-    -fx-border-radius: 5px; 
-    -fx-border-color: white; 
-    -fx-border-width: 2px; 
-    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
-}
 .custom-search-field {
-	 -fx-prompt-text-fill: white; 
+	-fx-prompt-text-fill: white; 
     -fx-text-fill: white;
     -fx-background-color: rgba(53,89,119,0.4);
     -fx-border-color: white; 
     -fx-border-width: 1px;
     -fx-border-radius: 5px;
     -fx-background-radius: 5px; 
-     -fx-font-family: "Century Gothic", sans-serif;
+    -fx-font-family: "Century Gothic", sans-serif;
+}
+.custom-search-field:hover {
+    -fx-background-color: rgba(75, 123, 161, 0.4);
 }
 .bayern-label{
 	-fx-fill: black;
-}
-.session-info {
-	-fx-border-color: rgba(255,255,255,1);
-	 -fx-border-width: 1px;
-	 -fx-background-color: rgba(53,89,119,0.4);
-	 -fx-background-radius: 20px; 
-	 -fx-border-radius: 20px;
-	 -fx-alignment: top-center;
-}
-.join-button {
-	 -fx-background-color: rgb(30,90,30); 
-    -fx-text-fill: white; 
-    -fx-font-size: 14px; 
-    -fx-font-family: "Century Gothic", sans-serif; 
-	 -fx-background-radius: 5px; 
-    -fx-border-radius: 5px; 
-    -fx-border-color: white; 
-    -fx-border-width: 2px; 
-    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
 }
 .custom-info-label {
 	 -fx-fill: white;
@@ -132,19 +49,68 @@
 	  -fx-text-alignment: center;
 }
 
+/* Aufklappbare ComboBox mit z.B. Piece Directions */
+.bottom-box-combo-box {
+    -fx-border-color: black;
+    -fx-background-color: transparent; 
+    -fx-text-fill: white; 
+    -fx-border-width: 1.0px;
+    -fx-background-radius: 20px; 
+    -fx-border-radius: 20px;
+    -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
+}
+.bottom-box-combo-box .arrow {
+    -fx-background-color: #ccc;
+}
+.bottom-box-combo-box:hover{
+    -fx-background-color: rgba(73, 110, 143, 0.7); 
+}
+.bottom-box-combo-box:focus-within{
+    -fx-border-color: white;
+}
+.bottom-box-combo-box .list-cell {
+    -fx-alignment: center;
+    -fx-text-fill: white;
+    -fx-font-family: "Century Gothic", sans-serif;
+    -fx-border-width: 1.0px;
+    -fx-background-radius: 20px; 
+    -fx-border-radius: 20px;
+    -fx-background-color: rgba(53,89,119,0.4); 
+}
+.bottom-box-combo-box .list-cell:selected:filled {
+    -fx-border-width: 1px;
+    -fx-border-color: rgba(151, 172, 189, 0.4); 
+    -fx-background-color: rgba(53,89,119,0.4); 
+}
+.bottom-box-combo-box .list-view {
+    -fx-background-color: rgba(53,89,119,0.9);
+    -fx-border-radius: 15;
+    -fx-background-radius: 15; 
+    -fx-border-width: 2; 
+    -fx-border-color: lightgray; 
+    -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
+} 
+.bottom-box-combo-box .list-view .list-cell:filled:selected {
+    -fx-text-fill: rgb(65, 170, 255);
+}
+.bottom-box-combo-box .list-view .list-cell:filled:hover  {
+    -fx-background-color: rgba(15, 38, 58, 0.4); 
+}
+
+/* Spinner für Einstellungen wie Piece Anzahl */
 .spinner {
-    -fx-control-inner-background: rgba(10,40,50,1); 
+    -fx-background-color: transparent;
     -fx-border-color: black; 
     -fx-border-width: 1px; 
     -fx-border-radius: 20px; 
     -fx-background-radius: 20px; 
 }
 .spinner:hover { 
-    -fx-background-color: rgba(27, 67, 102, 0.74); 
+    -fx-background-color: rgba(29, 70, 105, 0.4); 
 }
 .spinner:focus-within {
-    -fx-background-color: rgba(22, 66, 104, 0.795);
-    -fx-border-color: rgb(40, 96, 143);
+    -fx-background-color: rgba(63, 119, 168, 0.4);
+    -fx-border-color: white;
 }
 .spinner .text-field {
     -fx-alignment: center;
@@ -156,12 +122,12 @@
     -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
     -fx-background-color: rgba(53,89,119,0.4); 
 }
-.spinner .text-field:focus-within {
-    -fx-text-fill: white; 
-    -fx-border-color: rgba(151, 172, 189, 0.4); 
-}
 .spinner .text-field:hover {
     -fx-border-color: rgba(191, 213, 231, 0.7); 
+}
+.spinner .text-field:focus-within {
+    -fx-text-fill: white; 
+    -fx-border-color: white;
 }
 .spinner .increment-arrow-button .increment-arrow {
     -fx-background-color: #ccc;
@@ -181,30 +147,14 @@
     -fx-background-color: #333; 
 }
 
+/* Kreis der zeigt wohin eine Figur kann */
 .move-circle{
 	 -fx-fill: rgb(53,89,119);
 }
 
-.info-pane {
-	-fx-background-color:rgba(53, 89, 119,0.8);
-	-fx-border-color: white;
-	-fx-background-radius: 5px;
-	-fx-border-radius: 5px;
-	-fx-border-width: 2px; 
-}
-.ai-pane{
-	-fx-background-color: rgba(53,89,119,0.4); 
-	 -fx-background-radius: 5px; 
-    -fx-border-radius: 5px; 
-    -fx-border-color: white; 
-    -fx-border-width: 2px; 
-    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
-}
-
-
 /* Der add button beim piece customizer */
 .add-piece-button { 
-    -fx-background-color: rgba(10,40,50,1);  
+    -fx-background-color: rgba(53,89,119,0.4); 
     -fx-text-fill: white; 
     -fx-font-size: 14px; 
     -fx-font-family: "Century Gothic", sans-serif; 
@@ -215,7 +165,7 @@
     -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
 }
 .add-piece-button:hover {
-    -fx-background-color: rgba(42, 95, 141, 0.74); 
+    -fx-background-color: rgba(59, 101, 138, 0.74); 
     -fx-effect: dropshadow(three-pass-box, rgba(29, 82, 128, 0.74), 10, 0, 0, 0); 
 }
 
@@ -254,4 +204,51 @@
     -fx-border-radius: 5px;
     -fx-background-insets: 0, 1, 2;
     -fx-padding: 0.333333em 0.083333em 0.666667em 0.083333em; /* 4 1 8 1 */
+}
+
+/* "Save your Template" input Feld */
+.custom-search-field2 {
+    -fx-prompt-text-fill: rgb(151, 151, 151); 
+    -fx-text-fill: white;
+    -fx-background-color: rgba(53,89,119,0.4);
+    -fx-border-color: white; 
+    -fx-border-width: 1px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px; 
+    -fx-font-family: "Century Gothic", sans-serif;
+    -fx-text-align: center;
+    -fx-prompt-align: center;
+}
+.custom-search-field2-mustEnter {
+    -fx-prompt-text-fill: red; 
+    -fx-text-fill: white;
+    -fx-background-color: rgba(53,89,119,0.4);
+    -fx-border-color: white; 
+    -fx-border-width: 2px;
+}
+.custom-search-field2:hover {
+    -fx-border-color: rgb(203, 203, 255);
+    -fx-background-color: rgba(73, 110, 143, 0.7); 
+ }
+.custom-search-field2:focus-within {
+    -fx-border-color: white; 
+    -fx-border-width: 2px;
+    -fx-background-color: rgba(53,89,119,0.4);
+    -fx-border-color: blue;
+    -fx-prompt-text-fill: rgb(151, 151, 151); 
+}
+
+/* Submit button für "Save your Template" */
+.save-button { 
+    -fx-background-color: rgba(53,89,119,0.4); 
+    -fx-text-fill: white; 
+    -fx-background-radius: 5px; 
+    -fx-border-radius: 5px; 
+    -fx-border-color: white; 
+    -fx-border-width: 2px; 
+    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
+}
+.save-button:hover {
+    -fx-background-color: rgba(59, 101, 138, 0.74); 
+    -fx-effect: dropshadow(three-pass-box, rgba(29, 82, 128, 0.74), 10, 0, 0, 0); 
 }

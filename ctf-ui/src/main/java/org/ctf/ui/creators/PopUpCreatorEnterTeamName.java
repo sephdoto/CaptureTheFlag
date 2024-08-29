@@ -142,10 +142,7 @@ public class PopUpCreatorEnterTeamName {
         CreateGameScreenV2.informationmustBeEntered(enterNamefield,
             "custom-search-field2-mustEnter", "custom-search-field2");
         enterNamefield.clear();
-        enterNamefield.setFont(new Font(enterNamefield.getHeight() * 0.4));
         enterNamefield.setPromptText("Enter a unique Teamname");
-        enterNamefield.setFont(new Font(enterNamefield.getHeight() * 0.4));
-        enterNamefield.setStyle("-fx-font-size: 20px");
       } else {
         teamName = enterNamefield.getText();
         CreateGameController.setName(teamName);

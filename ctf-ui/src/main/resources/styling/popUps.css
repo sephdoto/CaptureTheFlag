@@ -1,0 +1,165 @@
+.color-palette .hyperlink, .color-palette .separator {
+    visibility: hidden;
+}
+.color-palette {
+    -fx-padding: 15 15 -30 15;
+}
+
+/* Das Feld im Hintergrund, in dem alle Spinner und Einstellungen enthalten sind */
+.option-pane {
+	-fx-border-color: rgba(255,255,255,1);
+    -fx-border-width: 2px;
+    -fx-background-color: #475865;
+    -fx-background-radius: 20px; 
+    -fx-border-radius: 20px;
+    -fx-alignment: top-center;
+}
+
+/* Button zum Auswählen der KI (MCTS, IMPROVED, RANDOM) */
+.ai-button-easy {
+	-fx-background-color: rgba(53,89,119,0.4); 
+	-fx-alignment: baseline-left;
+    -fx-text-fill: white; 
+    -fx-font-size: 14px; 
+    -fx-font-family: "Century Gothic", sans-serif; 
+	 -fx-background-radius: 5px; 
+    -fx-border-radius: 5px; 
+    -fx-border-color: white; 
+    -fx-border-width: 2px; 
+    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
+}
+.ai-button-easy:hover{
+    -fx-border-color: rgb(203, 203, 255);
+    -fx-background-color: rgba(73, 110, 143, 0.7); 
+}
+
+
+/* "Play as Human" und "Play as AI" button */
+.button25{
+	-fx-background-color: rgb(12, 12, 12); 
+    -fx-text-fill: white; 
+    -fx-font-size: 16px;
+    -fx-font-weight: bold; 
+    -fx-border-color: white; 
+     -fx-background-radius: 20px; 
+    -fx-border-radius: 20px; 
+     -fx-border-width: 2px;   
+}
+.button25:hover {
+	-fx-background-color: rgb(25,25,25); 
+}
+
+/* Text im PopUp über .button25 */
+.custom-label {
+    -fx-font-size: 16px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-family: "Century Gothic", sans-serif;
+}
+
+.aiConfig-label{
+	font-family: 'Eras Bold ITC', sans-serif;
+    font-size: 24px;
+    -fx-text-fill: white
+}
+
+/* Load / Enter Button zum Auswählen einer AI Config*/
+.config-button{
+    -fx-background-color: rgba(53,89,119,0.4); 
+    -fx-text-fill: white; 
+    -fx-font-family: "Century Gothic", sans-serif; 
+	-fx-background-radius: 5px; 
+    -fx-border-radius: 5px; 
+    -fx-border-color: white; 
+    -fx-border-width: 2px; 
+    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
+}
+.config-button:hover {
+    -fx-border-color: rgb(203, 203, 255);
+    -fx-background-color: rgba(73, 110, 143, 0.7); 
+
+}
+
+/* Select Button bei AI Config */
+.join-button { 
+    -fx-background-color: rgba(10,40,50,1);  
+    -fx-text-fill: white;  
+    -fx-background-radius: 5px; 
+    -fx-border-radius: 5px; 
+    -fx-border-color: white; 
+    -fx-border-width: 2px; 
+    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 0); 
+}
+.join-button:hover {
+    -fx-background-color: rgba(42, 95, 141, 0.74); 
+    -fx-effect: dropshadow(three-pass-box, rgba(29, 82, 128, 0.74), 10, 0, 0, 0); 
+}
+
+
+/* Informationen zu den KIs stehen in diesem Feld */
+.info-pane {
+	-fx-background-color:rgba(53, 89, 119,0.9);
+	-fx-border-color: white;
+	-fx-background-radius: 5px;
+	-fx-border-radius: 5px;
+	-fx-border-width: 2px; 
+}
+
+/* Spinner für AI Config Werte*/
+.popup-spinner {
+    -fx-background-color: rgb(35, 48, 53); ;
+    -fx-control-inner-background: rgb(35, 48, 53); 
+    -fx-border-color: black; 
+    -fx-border-width: 1px; 
+    -fx-border-radius: 20px; 
+    -fx-background-radius: 20px; 
+}
+.popup-spinner:hover { 
+    -fx-background-color: rgb(83, 97, 109); 
+}
+.popup-spinner:focus-within {
+    -fx-border-color: rgb(255, 255, 255);
+    -fx-background-color: rgb(58, 67, 75); 
+}
+.popup-spinner .text-field {
+    -fx-alignment: center;
+    -fx-text-fill: white; 
+    -fx-border-color: rgb(151, 172, 189); 
+    -fx-border-width: 1.0px;
+    -fx-background-radius: 20px; 
+    -fx-border-radius: 20px;
+    -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
+    -fx-background-color: rgb(12, 12, 12); 
+}
+.popup-spinner .text-field:hover {
+    -fx-background-color: rgb(30, 30, 30); 
+}
+.popup-spinner .text-field:focus-within {
+    -fx-border-color: rgb(255, 255, 255);
+    -fx-background-color: rgb(25, 25, 25); 
+}
+.popup-spinner .increment-arrow-button .increment-arrow {
+    -fx-background-color: #ccc;
+}
+.popup-spinner .decrement-arrow-button .decrement-arrow {
+    -fx-background-color: #ccc;
+}
+.popup-spinner .increment-arrow-button, .popup-spinner .decrement-arrow-button {
+    -fx-text-fill: #ccc;
+    -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
+    -fx-background-color: transparent; 
+}
+.popup-spinner .increment-arrow-button:hover, .popup-spinner .decrement-arrow-button:hover {
+    -fx-background-color: #aaa; 
+}
+.popup-spinner .increment-arrow, .popup-spinner .decrement-arrow {
+    -fx-background-color: #333; 
+}
+
+/* Label über Spinnern (z.B. UCT-C oder Pieces) */
+.spinner-des-label {
+    -fx-font-family: "Eras Medium Light";
+     -fx-font-size: 18px;
+     -fx-text-fill: white;
+     -fx-background-color: transparent;   
+}
