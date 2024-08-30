@@ -20,6 +20,7 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -56,22 +57,22 @@ public class App extends Application {
   static boolean serverStartSuccess;
   public static double offsetHeight;
   public static double offsetWidth;
+  public static ChangeListener<Boolean> focusListener;
 
   // public static ServerPane serverPane;
 
   public void start(Stage stage) {
     SceneHandler.setMainStage(stage);
     
-    stage
-        .focusedProperty()
-        .addListener(
-            (observable, oldValue, newValue) -> {
-              if (newValue) {
-                EntryPoint.cbl.registerNativeHook();
-              } else {
-                EntryPoint.cbl.unregisterNativeHook();
-              }
-            });
+    focusListener = (observable, oldValue, newValue) -> {
+      if (newValue) {
+        EntryPoint.cbl.registerNativeHook();
+      } else {
+        EntryPoint.cbl.unregisterNativeHook();
+      }
+    };
+      
+    stage.focusedProperty().addListener(focusListener);
 
     //    Parameters params = getParameters();
     //    String port = params.getNamed().get("port");

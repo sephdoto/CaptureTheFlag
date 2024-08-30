@@ -6,11 +6,11 @@ import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.creators.settings.SettingsSetter;
 import org.ctf.ui.data.FixedStack;
 import org.ctf.ui.data.SceneHandler;
-import org.ctf.ui.hostGame.PlayGameScreenV2;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyAdapter;
 import org.jnativehook.keyboard.NativeKeyEvent;
+import dialogs.Dialogs;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 
@@ -280,9 +280,10 @@ public class CheatboardListener extends NativeKeyAdapter {
       SettingsSetter.getCurrentPlayer().startShuffle();
     } else if (match == cheatCodes.get(2)) {    // whatever needs to be debugged
       //      ((PlayGameScreenV2)SceneHandler.getCurrentScene()).stopTimers();
-      Platform.runLater(() -> {
-        System.out.println("void");
-      });
+      Dialogs.openDialog(
+          "Lorem ipsum dolor sit amet", 
+          "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Never gonna give you up, never gonna let you down. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+          );
     } else if (match == cheatCodes.get(3)) {    // open settings
       Platform.runLater(() -> {
         SceneHandler.openSettingsWindow("default");

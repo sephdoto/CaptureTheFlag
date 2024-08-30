@@ -224,7 +224,7 @@ public class SceneHandler {
         });
     
     addStyleSheet("settings");
-    addStyleSheet("popUps");
+    addStyleSheet("popUps"); 
     
     mainStage.setScene(scene);
   }

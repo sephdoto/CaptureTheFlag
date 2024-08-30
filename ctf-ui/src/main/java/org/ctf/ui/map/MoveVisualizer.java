@@ -11,7 +11,7 @@ import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.ui.controllers.SoundController;
-import configs.Dialogs;
+import dialogs.Dialogs;
 
 /**
  * Visualizes and handles the possible moves of the currently selected piece
@@ -81,15 +81,15 @@ public class MoveVisualizer {
       cliento.makeMove(move);
       resetStateAfterMoveRequest();
     } catch (SessionNotFound e) {
-      Dialogs.showExceptionDialog("Session not found", e.getMessage());
+      Dialogs.openDialog("Session not found", e.getMessage());
     } catch (ForbiddenMove e) {
-      Dialogs.showExceptionDialog("Forbidden Move", e.getMessage());
+      Dialogs.openDialog("Forbidden Move", e.getMessage());
     } catch (InvalidMove e) {
-      Dialogs.showExceptionDialog("Invalid Move", e.getMessage());
+      Dialogs.openDialog("Invalid Move", e.getMessage());
     } catch (GameOver e) {
-      Dialogs.showExceptionDialog("Game Over", e.getMessage());
+      Dialogs.openDialog("Game Over", e.getMessage());
     } catch (UnknownError e) {
-      Dialogs.showExceptionDialog("Unknown Error", e.getMessage());
+      Dialogs.openDialog("Unknown Error", e.getMessage());
     }
   }
 
