@@ -308,7 +308,11 @@ public class AIClient extends Client {
             }
             Thread.sleep(sleep);
           } catch (InterruptedException e) {
-            throw new Error("Something went wrong in the Client Thread");
+            System.err.println("Something went wrong in the Client Thread");
+          } catch (Exception ex) {
+            //TODO just a reminder that nothing happens.
+            //Errors will get caught when the client is ready but the game has not been started yet.
+            //We dont need sleep time, we need the extra 20 ms for AI :)
           }
         }
       }
