@@ -1,10 +1,16 @@
-.dialog-pane{		
-    -fx-border-color: rgba(53,89,119,0.4); 
+.dialog-pane {		
+    -fx-border-color: rgba(53,89,119,0.5); 
     -fx-border-width: 5px;
-    -fx-background-color: black; 
+    -fx-background-color: rgba(0,0,0,0.1); 
     -fx-background-radius: 28px; 
     -fx-border-radius: 25px;
     -fx-alignment: top-center;
+    -fx-text-fill: rgba(255, 255, 255, 0.1);
+}
+.dialog-pane:hover {
+  -fx-background-color: black; 
+  -fx-border-color: rgba(53,89,119,0.4);
+  
 }
   
   /* Lokalisierung der buttons*/
@@ -16,6 +22,7 @@
      -fx-padding: 0.5em 0.5em 0.5em 0.5em;
      -fx-background-color: transparent;
      -fx-text-fill:white;
+     -fx-wrap-text: true;
      -fx-font-size:15.0px;
   }
   
@@ -26,7 +33,7 @@
   
   .dialog-pane:header .header-panel .label{
     -fx-alignment: center;
-    -fx-background-color: rgba(73, 110, 143, 0.7); 
+    -fx-background-color: rgba(73, 110, 143, 0.85); 
     -fx-background-radius:10px;
     -fx-text-fill:white;
     -fx-font-size:15.0px;
@@ -35,16 +42,16 @@
   
   /* Buttons */
   .dialog-pane .button {
-     -fx-background-color: rgb(3, 15, 27);
-     -fx-background-radius: 15px; 
-     -fx-border-radius: 15px;
-     -fx-text-fill:white;
+    -fx-background-color: rgba(0,0,0,0.2); 
+     -fx-background-radius: 35px; 
+     -fx-border-radius: 35px;
+     -fx-text-fill: rgba(255, 255, 255, 0.4);
      -fx-wrap-text: true;
      -fx-effect: dropshadow( three-pass-box, rgba(73, 110, 143, 0.7), 10.0, 0.0, 0.0, 0.0);
      -fx-cursor:hand;
    }
-  
-  .dialog-pane .button:hover{     
+
+  .dialog-pane .button:hover{
     -fx-background-color: rgb(12, 27, 41);
     -fx-text-fill: rgb(185, 221, 255);
     -fx-font-weight:bold; 

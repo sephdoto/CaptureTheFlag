@@ -55,6 +55,8 @@ public class Dialogs {
     NativeMouseInputAdapter clickListener;
     /** Listener to determine how to move the Dialog Window with the moving Mouse **/
     NativeMouseMotionAdapter moveListener;
+    /** How many Dialogs are open right now **/
+    static int openInstances = 0;
 
     /**
      * Creates an Alert with transparent background, displaying title and message.
@@ -65,6 +67,7 @@ public class Dialogs {
      */
     public Dialog(String title, String message) {
       super(AlertType.NONE);
+      openInstances++;
       initModality(Modality.NONE);
       initStyle(StageStyle.TRANSPARENT);        
       ((Stage) getDialogPane().getScene().getWindow()).setAlwaysOnTop(true);
@@ -90,6 +93,7 @@ public class Dialogs {
       Optional<ButtonType> result = showAndWait();
       if (result.get() == button){
         cleanUp();
+        openInstances--;
         close();
       } 
     }
@@ -108,12 +112,15 @@ public class Dialogs {
     }
     
     /**
-     * Removes JNativeHook Listeners and restores the focus Listener on main Stage
+     * Removes JNativeHook Listeners and restores the focus Listener on main Stage,
+     * if there is only 1 Dialog Window left.
      */
     private void cleanUp() {
-      SceneHandler.getMainStage().focusedProperty().addListener(App.focusListener);
-      GlobalScreen.removeNativeMouseListener(clickListener);
-      GlobalScreen.removeNativeMouseMotionListener(moveListener);
+      if(openInstances <= 1) {
+        SceneHandler.getMainStage().focusedProperty().addListener(App.focusListener);
+        GlobalScreen.removeNativeMouseListener(clickListener);
+        GlobalScreen.removeNativeMouseMotionListener(moveListener);
+      }
     }
     
     /**
@@ -122,8 +129,10 @@ public class Dialogs {
      * then adds JNativeHook Mouse listeners.
      */
     private void addListeners() {
-      SceneHandler.getMainStage().focusedProperty().removeListener(App.focusListener);
-      EntryPoint.cbl.registerNativeHook();
+      if(openInstances <= 1) {
+        SceneHandler.getMainStage().focusedProperty().removeListener(App.focusListener);
+        EntryPoint.cbl.registerNativeHook();
+      }
       GlobalScreen.addNativeMouseListener(clickListener);
       GlobalScreen.addNativeMouseMotionListener(moveListener);
     }
@@ -147,7 +156,6 @@ public class Dialogs {
           move = false;
         }
       };
-
       moveListener = new NativeMouseMotionAdapter() {
         @Override
         public void nativeMouseDragged(NativeMouseEvent nativeEvent) {
