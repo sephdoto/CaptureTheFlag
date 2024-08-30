@@ -1,11 +1,11 @@
 .dialog-pane {		
     -fx-border-color: rgba(53,89,119,0.5); 
     -fx-border-width: 5px;
-    -fx-background-color: rgba(0,0,0,0.1); 
+    -fx-background-color: rgba(0,0,0,0.3); 
     -fx-background-radius: 28px; 
     -fx-border-radius: 25px;
     -fx-alignment: top-center;
-    -fx-text-fill: rgba(255, 255, 255, 0.1);
+    -fx-text-fill: rgba(255, 255, 255, 0.3);
 }
 .dialog-pane:hover {
   -fx-background-color: black; 
