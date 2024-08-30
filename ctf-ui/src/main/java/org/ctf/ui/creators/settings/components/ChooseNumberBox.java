@@ -30,13 +30,11 @@ public abstract class ChooseNumberBox<T> extends GridPane implements ValueExtrac
     adjustBoxStyle(settingsBox);
     content.setText("" + getInitialValue());
     
-    content.widthProperty().addListener((change, oldValue, newValue) -> textSize.set(Font.font(newValue.doubleValue() / 6)));
     content.prefHeightProperty().bind(settingsBox.heightProperty().divide(15));
     content.minWidthProperty().bind(content.textProperty().length().multiply(12));
+    content.widthProperty().addListener((change, oldValue, newValue) -> textSize.set(Font.font(newValue.doubleValue() / 6)));
     content.fontProperty().bind(textSize);
     postfix.fontProperty().bind(textSize);
-
-    setUserData("doubleBox");
   }
 
   protected void adjustBoxStyle(VBox settingsBox) {

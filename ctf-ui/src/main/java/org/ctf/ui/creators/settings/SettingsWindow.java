@@ -118,10 +118,10 @@ public abstract class SettingsWindow extends ComponentCreator {
     }
     gridPane.add(header, column, ++row);
     GridPane.setHalignment(header, HPos.LEFT);
-    GridPane.setHgrow(header, Priority.ALWAYS);
+    GridPane.setHgrow(header, Priority.NEVER);
     gridPane.add(node, ++column, row);
     GridPane.setHalignment(node, HPos.RIGHT);
-    GridPane.setHgrow(node, Priority.ALWAYS);
+    GridPane.setHgrow(node, Priority.NEVER);
   }
   
   /**

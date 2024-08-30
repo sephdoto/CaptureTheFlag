@@ -15,6 +15,7 @@ import org.ctf.ui.customobjects.ServerPane;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.server.PortInUseException;
 import org.ctf.ui.server.ServerContainer;
+import dialogs.Dialogs;
 import javafx.animation.FadeTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -207,17 +208,20 @@ public class App extends Application {
                   && !serverPane.getField().getText().equals("")
                   && !serverPane.getField().getText().equals(Constants.userSelectedLocalServerPort)) {
                 String port = serverPane.getField().getText();
+                serverPane.setFinished();
                 try {
                   serverContainer.startServer(port);
                 } catch (PortInUseException e) {
                   System.out.println("Port is in use");
                   // TODO Build handling for port in use
+                  Dialogs.openDialog("Port already in use", "Port " + port + " is already in use.\nPlease select another port.");
                 }
                 if (serverContainer.checkStatus()) {
                   Constants.userSelectedLocalServerPort = port;
-                  serverPane.setFinished();
+                  Dialogs.openDialog("Server has sucessfully started.", "Server is running on port " + port);
                 } else {
                   serverPane.updatePromtText();
+                  Dialogs.openDialog("Server start error", "Server on port " + port + " could not be started.");
                 }
               }
             });

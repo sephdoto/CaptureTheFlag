@@ -67,6 +67,8 @@ public class Dialogs {
      */
     public Dialog(String title, String message) {
       super(AlertType.NONE);
+      setX(SceneHandler.getMainStage().getX());
+      setY(SceneHandler.getMainStage().getY() + 20 * openInstances);
       openInstances++;
       initModality(Modality.NONE);
       initStyle(StageStyle.TRANSPARENT);        
