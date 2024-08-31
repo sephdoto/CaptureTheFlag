@@ -252,16 +252,17 @@ public class Dialogs {
             Platform.runLater(() -> close.setText("OK (" + seconds + ")"));
           }
           //find button and set Style
-          Region buttonContainer = (Region) getDialogPane().lookup(".button-bar");
+          Region buttonContainer = (Region) getDialogPane().lookup(".header-panel .label");
           if (buttonContainer != null) {
             buttonContainer.setStyle(
                 "-fx-background-color: linear-gradient(to right, "
                     + "rgba(53,89,119, " + transparencyLeft + "), "
                     + "rgba(53,89,119, " + transparencyMiddle + "), "
-                    + "rgba(53,89,119, " + transparencyRight + "));" +
-                    "-fx-border-radius: 20px;" +
-                    "-fx-background-radius: 20px;" +
-                    "-fx-padding: 0.5em 0.5em 0.5em 0.5em;"
+                    + "rgba(53,89,119, " + transparencyRight + ")); "
+                    + "-fx-alignment: center; "
+                    + "-fx-background-radius:10px; "
+                    + "-fx-text-fill:white; "
+                    + "-fx-font-size:15.0px; "
                 );
           }
           try {
