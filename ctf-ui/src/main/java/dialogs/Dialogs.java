@@ -2,7 +2,6 @@ package dialogs;
 
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
-import java.util.Optional;
 import org.ctf.shared.constants.Constants;
 import org.ctf.ui.App;
 import org.ctf.ui.EntryPoint;
@@ -13,9 +12,12 @@ import org.jnativehook.mouse.NativeMouseInputAdapter;
 import org.jnativehook.mouse.NativeMouseMotionAdapter;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -73,18 +75,18 @@ public class Dialogs {
      * @param ms milliseconds till the Dialog automatically closes, <0 to disable auto close
      */
     public Dialog(String title, String message, int ms) {
-      super(AlertType.NONE);
+      super(AlertType.NONE, "", ButtonType.OK);
       setX(SceneHandler.getMainStage().getX() + App.offsetWidth);
       setY(SceneHandler.getMainStage().getY() + 20 * openInstances + App.offsetHeight);
       openInstances++;
       initModality(Modality.NONE);
       initStyle(StageStyle.TRANSPARENT);        
       ((Stage) getDialogPane().getScene().getWindow()).setAlwaysOnTop(true);
-
       getDialogPane().getScene().setFill(Color.TRANSPARENT);
+
       try {
         getDialogPane().getStylesheets()
-        .add(Paths.get(Constants.toUIStyles + "dialogs.css").toUri().toURL().toString());
+          .add(Paths.get(Constants.toUIStyles + "dialogs.css").toUri().toURL().toString());
       } catch (MalformedURLException e) {
         e.printStackTrace();
       }
@@ -94,20 +96,20 @@ public class Dialogs {
       addListeners();
 
       setHeaderText(title);
-      setContentText(message);
+//      setContentText(message);
+      Text text = new Text(message);
+      text.getStyleClass().add("content-text");
+      text.setWrappingWidth(400);
+      StackPane wrapper = new StackPane(text);
+      wrapper.getStyleClass().add("content-wrapper");
+      getDialogPane().setContent(wrapper);
 
-      ButtonType close = new ButtonType("OK"); 
-      getButtonTypes().setAll(close);
-
+      Button close = (Button) getDialogPane().lookupButton(ButtonType.OK);
+      close.setOnAction(e -> {cleanClose(); e.consume();});
+      
       startTimer(ms);
-
-      try {
-      Optional<ButtonType> result = showAndWait();
-      if (isOpen && result.isPresent()){
-        if(result.get() == close)
-          cleanClose();
-      } 
-      } catch (NullPointerException npe) {System.err.println("yk");};
+      
+      show();
     }
 
     /**
@@ -244,6 +246,10 @@ public class Dialogs {
             if(transparencyMiddle <= 0)
               transparencyLeft = 3 - 3 * (cycle / ((double)ms / Constants.UIupdateTime));
             cycle++;
+
+            Button close = (Button) getDialogPane().lookupButton(ButtonType.OK);
+            final int seconds = (((int)Math.round((double)ms / Constants.UIupdateTime) - cycle)  * Constants.UIupdateTime) / 1000;
+            Platform.runLater(() -> close.setText("OK (" + seconds + ")"));
           }
           //find button and set Style
           Region buttonContainer = (Region) getDialogPane().lookup(".button-bar");

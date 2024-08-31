@@ -5,16 +5,15 @@
     -fx-background-radius: 28px; 
     -fx-border-radius: 25px;
     -fx-alignment: top-center;
-    /*-fx-text-fill: rgba(255, 255, 255, 0.3);*/
 }
 .dialog-pane:hover {
   -fx-background-color: black; 
   -fx-border-color: rgba(53,89,119,0.4);
   
 }
-  
-  /* Lokalisierung der buttons*/
-  .dialog-pane > .button-bar > .container {
+
+/* Lokalisierung der buttons*/
+.dialog-pane .button-bar .container {
     /* In Codegesetzt -> button bar */
     -fx-border-radius: 20px;
     -fx-background-radius: 40px;
@@ -22,11 +21,11 @@
   }
 
   .dialog-pane > .content.label {
-     -fx-padding: 0.5em 0.5em 0.5em 0.5em;
-     -fx-background-color: transparent;
-     -fx-text-fill:white;
-     -fx-wrap-text: true;
-     -fx-font-size:15.0px;
+    -fx-padding: 0.5em 0.5em 0.5em 0.5em;
+    -fx-background-color: transparent;
+    -fx-text-fill:white;
+    -fx-wrap-text: true;
+    -fx-font-size:15.0px;
   }
   
   /* Pane header */
@@ -46,12 +45,12 @@
   /* Buttons */
   .dialog-pane .button {
     -fx-background-color: rgba(0,0,0,0.2); 
-     -fx-background-radius: 35px; 
-     -fx-border-radius: 35px;
-     -fx-text-fill: rgba(255, 255, 255, 1);
-     -fx-wrap-text: true;
-     -fx-effect: dropshadow( three-pass-box, rgb(185, 221, 255), 10.0, 0.0, 0.0, 0.0);
-     -fx-cursor:hand;
+    -fx-background-radius: 35px; 
+    -fx-border-radius: 35px;
+    -fx-text-fill: rgba(255, 255, 255, 1);
+    -fx-wrap-text: true;
+    -fx-effect: dropshadow( three-pass-box, rgb(185, 221, 255), 10.0, 0.0, 0.0, 0.0);
+    -fx-cursor:hand;
    }
 
   .dialog-pane .button:hover{
@@ -59,3 +58,18 @@
     -fx-text-fill: rgb(185, 221, 255);
     -fx-font-weight:bold; 
    }
+
+   
+/* Text in Content */
+.content-text {
+  -fx-background-color: transparent;
+  -fx-fill:white;
+  -fx-wrap-text: true;
+  -fx-font-size: 16px;
+}
+
+/* Text im Dialog */
+.content-wrapper {
+  -fx-padding: 1em 1em 1em 1em;
+  -fx-background-color: transparent;
+}

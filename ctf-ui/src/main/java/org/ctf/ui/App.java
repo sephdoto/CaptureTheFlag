@@ -213,15 +213,18 @@ public class App extends Application {
                   if (serverContainer.checkStatus()) {
                     serverPane.setDisable(false);
                     Constants.userSelectedLocalServerPort = port;
-                    Dialogs.openDialog("Server has sucessfully started.", "Server is running on port " + port, 6000);
+                    Dialogs.openDialog("Server has sucessfully started", "Server is running on port " + port, 6000);
                   } else {
                     serverPane.setDisable(false);
                     serverPane.updatePromtText();
                     Dialogs.openDialog("Server start error", "Server on port " + port + " could not be started.", 6000);
                   }
                 } catch (PortInUseException e) {
-                  System.out.println("Port is in use");
-                  Dialogs.openDialog("Port already in use", "Port " + port + " is already in use.\nPlease select another port.", 6000);
+                  if(serverContainer.checkStatus()) {
+                    Dialogs.openDialog("Server is active", "Port " + port + " was already in use and has been set active.", 6000);
+                  } else {
+                    Dialogs.openDialog("Port already in use", "Port " + port + " is already in use.\nPlease select another port.", 6000);
+                  }
                   serverPane.setDisable(false);
                 }
                 serverPane.setFinished();
