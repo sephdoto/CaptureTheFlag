@@ -282,8 +282,8 @@ public class CheatboardListener extends NativeKeyAdapter {
       //      ((PlayGameScreenV2)SceneHandler.getCurrentScene()).stopTimers();
       Dialogs.openDialog(
           "Lorem ipsum dolor sit amet", 
-          "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Never gonna give you up, never gonna let you down. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
-          );
+          "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Never gonna give you up, never gonna let you down. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+          -1);
     } else if (match == cheatCodes.get(3)) {    // open settings
       Platform.runLater(() -> {
         SceneHandler.openSettingsWindow("default");

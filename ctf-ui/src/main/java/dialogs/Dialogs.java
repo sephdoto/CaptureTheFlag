@@ -14,6 +14,7 @@ import org.jnativehook.mouse.NativeMouseMotionAdapter;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -32,9 +33,10 @@ public class Dialogs {
    * @author sistumpf
    * @param title the Dialogs title
    * @param message the Dialogs message
+     * @param ms milliseconds till the Dialog automatically closes, <0 to disable auto close
    */
-  public static void openDialog(String title, String message) {
-    Platform.runLater(() -> new Dialog(title, message));
+  public static void openDialog(String title, String message, int ms) {
+    Platform.runLater(() -> new Dialog(title, message, ms));
   }
 
   /**
@@ -57,6 +59,10 @@ public class Dialogs {
     NativeMouseMotionAdapter moveListener;
     /** How many Dialogs are open right now **/
     static int openInstances = 0;
+    /** Thread that auto-closes the Dialog **/
+    private TimeThread timeThread;
+    /** Keeping track of the Dialog being open to suppress race conditions **/
+    private boolean isOpen = true;
 
     /**
      * Creates an Alert with transparent background, displaying title and message.
@@ -64,11 +70,12 @@ public class Dialogs {
      * 
      * @param title to show above the message
      * @param message the message displayed in the Alerts body
+     * @param ms milliseconds till the Dialog automatically closes, <0 to disable auto close
      */
-    public Dialog(String title, String message) {
+    public Dialog(String title, String message, int ms) {
       super(AlertType.NONE);
-      setX(SceneHandler.getMainStage().getX() + 12);
-      setY(SceneHandler.getMainStage().getY() + 20 * openInstances + 12);
+      setX(SceneHandler.getMainStage().getX() + App.offsetWidth);
+      setY(SceneHandler.getMainStage().getY() + 20 * openInstances + App.offsetHeight);
       openInstances++;
       initModality(Modality.NONE);
       initStyle(StageStyle.TRANSPARENT);        
@@ -82,22 +89,51 @@ public class Dialogs {
         e.printStackTrace();
       }
       getDialogPane().getStyleClass().add("dialog-pane");
-      
+
       initListeners();
       addListeners();
-      
+
       setHeaderText(title);
       setContentText(message);
-      
-      ButtonType button = new ButtonType("OK"); 
-      getButtonTypes().setAll(button);
 
+      ButtonType close = new ButtonType("OK"); 
+      getButtonTypes().setAll(close);
+
+      startTimer(ms);
+
+      try {
       Optional<ButtonType> result = showAndWait();
-      if (result.get() == button){
+      if (isOpen && result.isPresent()){
+        if(result.get() == close)
+          cleanClose();
+      } 
+      } catch (NullPointerException npe) {System.err.println("yk");};
+    }
+
+    /**
+     * Closes the Dialog cleanly, with restoring Listeners and shit
+     */
+    synchronized public void cleanClose() {
+      if(isOpen) {
+        isOpen = false;
+        if(timeThread != null)
+          timeThread.interrupt();
         cleanUp();
         openInstances--;
         close();
-      } 
+      }
+    }
+
+    /**
+     * Starts a {@link TimeThread} that automatically closes the Dialog after a while.
+     * 
+     * @param ms milliseconds till the Dialog auto-closes
+     */
+    private void startTimer(int ms) {
+      if(ms >= 0) {
+        timeThread = new TimeThread(ms);
+        timeThread.start();
+      }
     }
 
     /**
@@ -112,7 +148,7 @@ public class Dialogs {
           x >= getX() && x <= getX() + getWidth() &&
           y >= getY() && y <= getY() + getHeight();
     }
-    
+
     /**
      * Removes JNativeHook Listeners and restores the focus Listener on main Stage,
      * if there is only 1 Dialog Window left.
@@ -124,7 +160,7 @@ public class Dialogs {
         GlobalScreen.removeNativeMouseMotionListener(moveListener);
       }
     }
-    
+
     /**
      * Disables the focus Listener on main Stage to have a global JNativeHook listener,
      * registers the nativeHook in case it was not in focus,
@@ -138,9 +174,10 @@ public class Dialogs {
       GlobalScreen.addNativeMouseListener(clickListener);
       GlobalScreen.addNativeMouseMotionListener(moveListener);
     }
-    
+
     /**
-     * Creates clickListener and moveListener to change the Dialogs position on Screen
+     * Creates clickListener and moveListener to change the Dialogs position on Screen,
+     * and to halt the TimeThread in case the Dialog is in focus.
      */
     private void initListeners() {
       clickListener = new NativeMouseInputAdapter() {
@@ -152,7 +189,7 @@ public class Dialogs {
             move = true;
           }
         }
-        
+
         @Override
         public void nativeMouseReleased(NativeMouseEvent nativeEvent) {
           move = false;
@@ -166,7 +203,81 @@ public class Dialogs {
             setY(nativeEvent.getY() - yOffset);
           }
         }
+        @Override
+        public void nativeMouseMoved(NativeMouseEvent nativeEvent) {
+          if(timeThread != null)
+            timeThread.halt(inDialogBounds(nativeEvent.getX(), nativeEvent.getY()));
+        }
       };
+    }
+
+    /**
+     * A Thread for closing a Dialog after a certain Time in ms.
+     * Also displays the time till the Dialog gets closed as a progress bar.
+     */
+    class TimeThread extends Thread{
+      boolean running;
+      boolean halt;
+      int ms;
+
+      /**
+       * @param ms time in milliseconds till the Thread closes the Dialog
+       */
+      public TimeThread(int ms) {
+        this.ms = ms;
+        running = true;
+        halt = false;
+      }
+
+      @Override
+      public void run() {
+        double transparencyLeft = 1;
+        double transparencyMiddle = 1;
+        double transparencyRight = 1;
+        int cycle = 0;
+        while((int)Math.round((double)ms / Constants.UIupdateTime) >= cycle && running) {
+          //adjust transparency, if time is not stopped
+          if(!halt) {
+            transparencyRight = 1 - 3 * (cycle / ((double)ms / Constants.UIupdateTime));
+            if(transparencyRight <= 0)
+              transparencyMiddle = 2 - 3 * (cycle / ((double)ms / Constants.UIupdateTime));
+            if(transparencyMiddle <= 0)
+              transparencyLeft = 3 - 3 * (cycle / ((double)ms / Constants.UIupdateTime));
+            cycle++;
+          }
+          //find button and set Style
+          Region buttonContainer = (Region) getDialogPane().lookup(".button-bar");
+          if (buttonContainer != null) {
+            buttonContainer.setStyle(
+                "-fx-background-color: linear-gradient(to right, "
+                    + "rgba(53,89,119, " + transparencyLeft + "), "
+                    + "rgba(53,89,119, " + transparencyMiddle + "), "
+                    + "rgba(53,89,119, " + transparencyRight + "));" +
+                    "-fx-border-radius: 20px;" +
+                    "-fx-background-radius: 20px;" +
+                    "-fx-padding: 0.5em 0.5em 0.5em 0.5em;"
+                );
+          }
+          try {
+            Thread.sleep(Constants.UIupdateTime);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+        }
+        Platform.runLater(() -> cleanClose());
+      }
+      @Override
+      public void interrupt() {
+        running = false;
+      }
+      /**
+       * Can halt the time till the Dialog gets automatically closed.
+       * 
+       * @param halt true to halt the Thread
+       */
+      public void halt(boolean halt) {
+        this.halt = halt;
+      }
     }
   }
 }

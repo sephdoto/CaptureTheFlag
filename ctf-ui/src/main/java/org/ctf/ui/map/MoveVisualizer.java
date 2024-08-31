@@ -81,15 +81,15 @@ public class MoveVisualizer {
       cliento.makeMove(move);
       resetStateAfterMoveRequest();
     } catch (SessionNotFound e) {
-      Dialogs.openDialog("Session not found", e.getMessage());
+      Dialogs.openDialog("Session not found", e.getMessage(), -1);
     } catch (ForbiddenMove e) {
-      Dialogs.openDialog("Forbidden Move", e.getMessage());
+      Dialogs.openDialog("Forbidden Move", e.getMessage(), -1);
     } catch (InvalidMove e) {
-      Dialogs.openDialog("Invalid Move", e.getMessage());
+      Dialogs.openDialog("Invalid Move", e.getMessage(), -1);
     } catch (GameOver e) {
-      Dialogs.openDialog("Game Over", e.getMessage());
+      Dialogs.openDialog("Game Over", e.getMessage(), -1);
     } catch (UnknownError e) {
-      Dialogs.openDialog("Unknown Error", e.getMessage());
+      Dialogs.openDialog("Unknown Error", e.getMessage(), -1);
     }
   }
 

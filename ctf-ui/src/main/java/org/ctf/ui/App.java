@@ -205,24 +205,26 @@ public class App extends Application {
         .setOnKeyPressed(
             event -> {
               if (event.getCode() == KeyCode.ENTER 
-                  && !serverPane.getField().getText().equals("")
-                  && !serverPane.getField().getText().equals(Constants.userSelectedLocalServerPort)) {
+                  && !serverPane.getField().getText().equals("")) {
+                serverPane.setDisable(true);
                 String port = serverPane.getField().getText();
-                serverPane.setFinished();
                 try {
                   serverContainer.startServer(port);
+                  if (serverContainer.checkStatus()) {
+                    serverPane.setDisable(false);
+                    Constants.userSelectedLocalServerPort = port;
+                    Dialogs.openDialog("Server has sucessfully started.", "Server is running on port " + port, 6000);
+                  } else {
+                    serverPane.setDisable(false);
+                    serverPane.updatePromtText();
+                    Dialogs.openDialog("Server start error", "Server on port " + port + " could not be started.", 6000);
+                  }
                 } catch (PortInUseException e) {
                   System.out.println("Port is in use");
-                  // TODO Build handling for port in use
-                  Dialogs.openDialog("Port already in use", "Port " + port + " is already in use.\nPlease select another port.");
+                  Dialogs.openDialog("Port already in use", "Port " + port + " is already in use.\nPlease select another port.", 6000);
+                  serverPane.setDisable(false);
                 }
-                if (serverContainer.checkStatus()) {
-                  Constants.userSelectedLocalServerPort = port;
-                  Dialogs.openDialog("Server has sucessfully started.", "Server is running on port " + port);
-                } else {
-                  serverPane.updatePromtText();
-                  Dialogs.openDialog("Server start error", "Server on port " + port + " could not be started.");
-                }
+                serverPane.setFinished();
               }
             });
   }
