@@ -1,5 +1,5 @@
 .dialog-pane {		
-    -fx-border-color: rgba(53,89,119,0.5); 
+    -fx-border-color: rgba(53,89,119,0.6); 
     -fx-border-width: 5px;
     -fx-background-color: rgba(0,0,0,0.6); 
     -fx-background-radius: 28px; 
@@ -8,7 +8,7 @@
 }
 .dialog-pane:hover {
   -fx-background-color: black; 
-  -fx-border-color: rgba(53,89,119,0.4);
+  -fx-border-color: rgba(53,89,119,0.6);
   
 }
 
