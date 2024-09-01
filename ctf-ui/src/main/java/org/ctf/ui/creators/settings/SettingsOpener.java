@@ -29,4 +29,16 @@ public class SettingsOpener {
     
     return settings;
   }
+  
+  public static SettingsWindow getBdvancedSettings() {
+    SettingsWindow settings = new SettingsWindow("Bdvanced") {
+      @Override
+      public void fillWithContent() {
+        addNewComponent(Settings.RANDOM_SLEEP_TIME);
+      }
+    };
+    
+    return settings;
+  }
+
 }

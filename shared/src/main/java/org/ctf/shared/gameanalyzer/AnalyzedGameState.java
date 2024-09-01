@@ -74,7 +74,7 @@ public class AnalyzedGameState {
     }
     if(errors > 0)
       System.err.println(
-          " userChoice was " + errors + " times null: " 
+          " userChoice was " + errors + " times null. A prior Move might not have been recorded. : " 
               + ex.getClass().getCanonicalName() 
               + " at (AnalyzedGameState.java:" 
               + getExceptionLineNumber(ex)

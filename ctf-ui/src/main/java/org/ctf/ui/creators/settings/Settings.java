@@ -17,7 +17,8 @@ public enum Settings {
   ANALYZER_AI("Analyzer AI "),
   ANALYZER_THINKING_TIME("Analyzer time "),
   BACKGROUND_OPACITY("Background opacity "),
-  GLOW_SPREAD("Glow intensity");
+  GLOW_SPREAD("Glow intensity "),
+  RANDOM_SLEEP_TIME("RandomAI wait time ");
   
   private String name;
   

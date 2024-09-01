@@ -228,6 +228,9 @@ public class AIController {
 //      getMcts().getRoot().printGrid();
     } else {
       move = RandomAI.pickMoveComplex(getNormalizedGameState().getNormalizedGameState(), new ReferenceMove(null, new int[] { 0, 0 })).toMove();
+      try {
+        Thread.sleep(Constants.randomAiSleepTimeMS);      
+      } catch (InterruptedException e) {}
     }
     move.setTeamId(move.getPieceId().split(":")[1].split("_")[0]);
     return move == null ? null : getNormalizedGameState().unnormalizeMove(move);

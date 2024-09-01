@@ -35,10 +35,11 @@ public class Dialogs {
    * @author sistumpf
    * @param title the Dialogs title
    * @param message the Dialogs message
-     * @param ms milliseconds till the Dialog automatically closes, <0 to disable auto close
+   * @param ms milliseconds till the Dialog automatically closes, <0 to disable auto close
+   * @param run several Runnables which will be executed when a user clicks "OK"
    */
-  public static void openDialog(String title, String message, int ms) {
-    Platform.runLater(() -> new Dialog(title, message, ms));
+  public static void openDialog(String title, String message, int ms, Runnable ... run) {
+    Platform.runLater(() -> new Dialog(title, message, ms, run));
   }
 
   /**
@@ -73,8 +74,9 @@ public class Dialogs {
      * @param title to show above the message
      * @param message the message displayed in the Alerts body
      * @param ms milliseconds till the Dialog automatically closes, <0 to disable auto close
+     * @param run several Runnables which will be executed when a user clicks "OK"
      */
-    public Dialog(String title, String message, int ms) {
+    public Dialog(String title, String message, int ms, Runnable ... run) {
       super(AlertType.NONE, "", ButtonType.OK);
       setX(SceneHandler.getMainStage().getX() + App.offsetWidth);
       setY(SceneHandler.getMainStage().getY() + 20 * openInstances + App.offsetHeight);
@@ -105,7 +107,12 @@ public class Dialogs {
       getDialogPane().setContent(wrapper);
 
       Button close = (Button) getDialogPane().lookupButton(ButtonType.OK);
-      close.setOnAction(e -> {cleanClose(); e.consume();});
+      close.setOnAction(e -> {
+        cleanClose(); 
+        e.consume();
+        for(Runnable r : run)
+          r.run();
+        });
       
       startTimer(ms);
       
@@ -254,6 +261,7 @@ public class Dialogs {
           //find button and set Style
           Region buttonContainer = (Region) getDialogPane().lookup(".header-panel .label");
           if (buttonContainer != null) {
+            try {
             buttonContainer.setStyle(
                 "-fx-background-color: linear-gradient(to right, "
                     + "rgba(53,89,119, " + transparencyLeft + "), "
@@ -264,6 +272,9 @@ public class Dialogs {
                     + "-fx-text-fill:white; "
                     + "-fx-font-size:15.0px; "
                 );
+            } catch (Exception e) {
+              System.err.println("Error css in Dialogs");
+            }
           }
           try {
             Thread.sleep(Constants.UIupdateTime);

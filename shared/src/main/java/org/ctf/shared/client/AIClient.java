@@ -300,8 +300,8 @@ public class AIClient extends Client {
                   Thread.sleep(100);
                 } catch(Exception e) {e.printStackTrace();};
                 startPlayTask();
-                startMoveTimeThread();
               }).start();
+              startMoveTimeThread();
             }
             Thread.sleep(sleep);
           } catch (InterruptedException e) {

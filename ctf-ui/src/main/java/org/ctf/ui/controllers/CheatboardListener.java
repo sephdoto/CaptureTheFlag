@@ -198,6 +198,17 @@ public class CheatboardListener extends NativeKeyAdapter {
     advanced.add(NativeKeyEvent.VC_E);   
     advanced.add(NativeKeyEvent.VC_D);   
     cheatCodes.add(advanced);
+    
+    ArrayList<Integer> bdvanced = new ArrayList<Integer>();    
+    bdvanced.add(NativeKeyEvent.VC_B);   
+    bdvanced.add(NativeKeyEvent.VC_D);   
+    bdvanced.add(NativeKeyEvent.VC_V);   
+    bdvanced.add(NativeKeyEvent.VC_A);   
+    bdvanced.add(NativeKeyEvent.VC_N);   
+    bdvanced.add(NativeKeyEvent.VC_C);   
+    bdvanced.add(NativeKeyEvent.VC_E);   
+    bdvanced.add(NativeKeyEvent.VC_D);   
+    cheatCodes.add(bdvanced);
   }
 
   /**
@@ -376,6 +387,10 @@ public class CheatboardListener extends NativeKeyAdapter {
     } else if(match == cheatCodes.get(16)) {    // open advanced settings
       Platform.runLater(() -> {
         SceneHandler.openSettingsWindow("advanced");
+      });
+    } else if(match == cheatCodes.get(17)) {    // open bdvanced (advances 2) settings
+      Platform.runLater(() -> {
+        SceneHandler.openSettingsWindow("bdvanced");
       });
     }
   }

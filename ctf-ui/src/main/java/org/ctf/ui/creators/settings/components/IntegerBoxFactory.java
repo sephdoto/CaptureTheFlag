@@ -62,4 +62,18 @@ public class IntegerBoxFactory {
       return Constants.UIupdateTime;
     }
   }
+  
+  /**
+   * Implementation of {@link ChooseIntegerBox} for the time RandomAI sleeps when making a move
+   */
+  public static class ChooseRandomAISleepTimeBox extends ChooseIntegerBox {
+    public ChooseRandomAISleepTimeBox(VBox settingsBox) {
+      super(settingsBox, "ms", "randomSleepTime");
+    }
+    
+    @Override
+    protected Integer getInitialValue() {
+      return Constants.randomAiSleepTimeMS;
+    }
+  }
 }

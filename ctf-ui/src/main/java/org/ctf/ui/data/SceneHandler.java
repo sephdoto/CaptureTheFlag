@@ -21,6 +21,7 @@ import org.ctf.ui.hostGame.WaitingScene;
 import org.ctf.ui.remoteGame.JoinScene;
 import org.ctf.ui.remoteGame.RemoteWaitingScene;
 import org.ctf.ui.remoteGame.WaveCollapseThread;
+import dialogs.Dialogs;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -90,6 +91,9 @@ public class SceneHandler {
     switch (settings) {
       case "advanced" : 
         settingsWindow = SettingsOpener.getAdvancedSettings();
+        break;
+      case "bdvanced" : 
+        settingsWindow = SettingsOpener.getBdvancedSettings();
         break;
       default: 
         settingsWindow = SettingsOpener.getDefaultSettings();
@@ -177,10 +181,23 @@ public class SceneHandler {
     grid.delete();
 
     // update main client if necessary
-    for (int i = 0; i < ClientStorage.getMainClient().getTeams().length; i++) {
-      if (ClientStorage.getMainClient().getTeams()[i] == null) {
-        ClientStorage.getMainClient().pullData();
+    try {
+      for (int i = 0; i < ClientStorage.getMainClient().getTeams().length; i++) {
+        if (ClientStorage.getMainClient().getTeams()[i] == null) {
+          ClientStorage.getMainClient().pullData();
+        }
       }
+    } catch (Exception e) {
+//      e.printStackTrace();
+      Dialogs.openDialog("Server error", 
+          "Client could not join the Server, it is most likely a Server Error.\n"
+          + "Try selecting another Port in HomeScreen to start a new Server, as the old Port is most likely used by an unsupported Server or Application.",
+          30000,
+          () -> switchToHomeScreen(),
+          () -> Dialogs.openDialog("How to start a new Server", 
+              "Hover over \"START LOCAL SERVER\" in the bottom right till it highlights, then click it once and type a number you like, for example 8080",
+              -1));
+      return;
     }
 
     PlayGameScreenV2 playOn =

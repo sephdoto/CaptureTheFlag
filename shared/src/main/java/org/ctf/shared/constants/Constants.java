@@ -129,7 +129,7 @@ public class Constants {
   ///////////////////////////////////////////////////////
   //             AI Player Settings                    //
   ///////////////////////////////////////////////////////
-
+  public static int randomAiSleepTimeMS = 10;
   public static int aiDefaultThinkingTimeInSeconds = 10;
   public static int aiClientDefaultRefreshTime = 1;
   public static Enums.AI analyzeAI = AI.IMPROVED;

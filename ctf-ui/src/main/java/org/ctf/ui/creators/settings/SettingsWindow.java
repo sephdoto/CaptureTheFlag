@@ -113,6 +113,9 @@ public abstract class SettingsWindow extends ComponentCreator {
       case GLOW_SPREAD:
         node = new DoubleBoxFactory.ChooseGlowSpreadBox(settingsBox);
         break;
+      case RANDOM_SLEEP_TIME:
+        node = new IntegerBoxFactory.ChooseRandomAISleepTimeBox(settingsBox);
+        break;
       default:
         node = new Text("something went wrong");
     }
@@ -170,17 +173,21 @@ public abstract class SettingsWindow extends ComponentCreator {
             case "glowSpread":
               Constants.borderGlowSpread = (double) ((ChooseDoubleBox) node).getValue();
               break;
+            case "randomSleepTime":
+              Constants.randomAiSleepTimeMS = (int) ((ChooseIntegerBox) node).getValue();
+              break;
               
-            case "booleanButton": System.out.println((boolean) ((ChooseBooleanButton) node).getValue()); break;
+            case "booleanButton": System.out.println((boolean) ((ChooseBooleanButton) node).getValue()); 
+              break;
           }
         } catch (Exception ex) {
           System.err.println(
               node.getUserData() 
               + " could not be saved, due to " 
-                  + ex.getClass().getCanonicalName() 
-                  + " at (SettingsWindow.java:" 
-                  + getExceptionLineNumber(ex)
-                  +")");
+              + ex.getClass().getCanonicalName() 
+              + " at (SettingsWindow.java:" 
+              + getExceptionLineNumber(ex)
+              +")");
         }
       }
 
