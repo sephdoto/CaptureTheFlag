@@ -2,6 +2,7 @@ package org.ctf.ui.data;
 
 import java.util.ArrayList;
 import org.ctf.shared.client.Client;
+import org.ctf.shared.client.AIClient;
 
 /**
  * All local clients and the main clients are hold here, to centralize the clients.
@@ -24,7 +25,7 @@ public class ClientStorage {
   /**
    * List of all AI-Clients on one device
    */
-  private static ArrayList<Client> localAIClients = new ArrayList<Client>();
+  private static ArrayList<AIClient> localAIClients = new ArrayList<AIClient>();
   
   
   //////////////////////////////////////////
@@ -63,7 +64,7 @@ public class ClientStorage {
    * @author sistumpf
    * @param client the AI client
    */
-  public static void addLocalAIClient(Client client) {
+  public static void addLocalAIClient(AIClient client) {
     localAIClients.add(client);
   }
   
@@ -74,7 +75,7 @@ public class ClientStorage {
    */
   public static void updateAllClients() {
     for (Client client : ClientStorage.getLocalHumanClients()) client.pullData();
-    for (Client client : ClientStorage.getLocalAIClients()) client.pullData();
+    for (AIClient client : ClientStorage.getLocalAIClients()) client.pullData();
   }
   //////////////////////////////////////////
   //       End of Functional Methods      //
@@ -101,11 +102,11 @@ public class ClientStorage {
     ClientStorage.localHumanClients = localHumanClients;
   }
   
-  public static ArrayList<Client> getLocalAIClients() {
+  public static ArrayList<AIClient> getLocalAIClients() {
     return localAIClients;
   }
 
-  public static void setLocalAIClients(ArrayList<Client> localAIClients) {
+  public static void setLocalAIClients(ArrayList<AIClient> localAIClients) {
     ClientStorage.localAIClients = localAIClients;
   }
 }

@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import org.ctf.shared.client.AIClient;
+import org.ctf.shared.client.Client;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.creators.PopUpCreator;
@@ -708,15 +710,24 @@ public class WaitingScene extends Scene {
     exit.prefWidthProperty().bind(root.widthProperty().multiply(0.1));
     exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.35));
     exit.setOnAction(e -> {
-      try  { 
-      ClientStorage.getMainClient().shutdown();
-      } catch (NullPointerException npe) {};
+      for(AIClient c : ClientStorage.getLocalAIClients()) {
+        try {
+          c.shutdown();
+        } catch (Exception ex) { ex.printStackTrace(); }
+      }
+      for(Client c : ClientStorage.getLocalHumanClients()) {
+        try {
+          c.shutdown();
+        } catch (Exception ex) { ex.printStackTrace(); }
+      }
       ClientStorage.clearAllClients();
       ClientStorage.setMainClient(null);
+
       scheduler.shutdown();
       CreateGameController.deleteGame();
       CreateGameController.clearUsedNames();
       CreateGameController.clearColors();
+      
       SceneHandler.switchToHomeScreen();
     });
     return exit;

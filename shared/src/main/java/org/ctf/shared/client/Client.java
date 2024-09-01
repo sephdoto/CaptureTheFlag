@@ -795,13 +795,13 @@ public class Client implements GameClientInterface {
    * @author sistumpf
    */
   public void shutdown() {
+    this.gameOver = true;
     try {
       this.watcherThread.interrupt();
     } catch(Exception e) {
 //      e.printStackTrace();
     }
     this.scheduler.shutdown();
-    this.gameOver = true;
     this.isAlive = false;
   }
 

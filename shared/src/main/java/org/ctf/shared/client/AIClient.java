@@ -106,14 +106,12 @@ public class AIClient extends Client {
         super.shutdown();
         this.aiPlayScheduler.shutdown();
         this.aiClientScheduler.shutdown();
-        this.getController().shutDown();
+        if(getController() != null)
+          this.getController().shutDown();
         if (saveToken && enableLogging) {
           this.analyzer.writeOut();
           saveToken = false;
-        } else {
-          throw new GameOver();
         }
-
       }
 
       /**
@@ -276,7 +274,7 @@ public class AIClient extends Client {
    */
   @Override
   protected void gameStartWatcher() {
-    Thread watcherThread =
+    watcherThread =
         new Thread() {
       boolean active = true;
 
@@ -302,9 +300,8 @@ public class AIClient extends Client {
                   Thread.sleep(100);
                 } catch(Exception e) {e.printStackTrace();};
                 startPlayTask();
+                startMoveTimeThread();
               }).start();
-
-              startMoveTimeThread();
             }
             Thread.sleep(sleep);
           } catch (InterruptedException e) {

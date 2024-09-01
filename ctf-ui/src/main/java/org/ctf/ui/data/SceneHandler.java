@@ -13,7 +13,7 @@ import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.creators.settings.SettingsOpener;
 import org.ctf.ui.creators.settings.SettingsWindow;
 import org.ctf.ui.editor.EditorScene;
-import org.ctf.ui.gameAnalyzer.AiAnalyserNew;
+import org.ctf.ui.gameAnalyzer.AiAnalyzerScene;
 import org.ctf.ui.hostGame.CreateGameController;
 import org.ctf.ui.hostGame.CreateGameScreenV2;
 import org.ctf.ui.hostGame.PlayGameScreenV2;
@@ -145,10 +145,12 @@ public class SceneHandler {
   }
 
   public static void switchToAnalyzerScene() {
-    AiAnalyserNew scene = 
-        new AiAnalyserNew(SceneHandler.getMainStage().getWidth() - App.offsetWidth, SceneHandler.getMainStage().getHeight() - App.offsetHeight);
+    AiAnalyzerScene scene = 
+        new AiAnalyzerScene(SceneHandler.getMainStage().getWidth() - App.offsetWidth, SceneHandler.getMainStage().getHeight() - App.offsetHeight);
     if(scene.switched) {
       switchCurrentScene(scene);
+      addStyleSheet("color");
+      addStyleSheet("MapEditor");
     }
   }
   

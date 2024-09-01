@@ -15,7 +15,7 @@ import org.ctf.ui.creators.settings.components.DoubleBoxFactory.ChooseDoubleBox;
 import org.ctf.ui.creators.settings.components.IntegerBoxFactory.ChooseIntegerBox;
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.data.SceneHandler;
-import org.ctf.ui.gameAnalyzer.AiAnalyserNew;
+import org.ctf.ui.gameAnalyzer.AiAnalyzerScene;
 import org.ctf.ui.hostGame.PlayGameScreenV2;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -158,8 +158,8 @@ public abstract class SettingsWindow extends ComponentCreator {
               break;
             case "aiThinkTime":
               Constants.analyzeTimeInSeconds = ((ChooseIntegerBox) node).getValue();
-              if(SceneHandler.getCurrentScene() instanceof AiAnalyserNew)
-                ((AiAnalyserNew)SceneHandler.getCurrentScene()).getAnalyzer().setThinkingTime(
+              if(SceneHandler.getCurrentScene() instanceof AiAnalyzerScene)
+                ((AiAnalyzerScene)SceneHandler.getCurrentScene()).getAnalyzer().setThinkingTime(
                     Constants.analyzeTimeInSeconds * 1111
                     );
               break;

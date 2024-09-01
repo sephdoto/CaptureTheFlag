@@ -197,7 +197,10 @@ public class GameStateNormalizer {
       for(int j=0; j<originalGameState.getTeams()[i].getPieces().length; j++)
         if(originalGameState.getTeams()[i].getPieces()[j].getId().equals(move.getPieceId())) {
           normove.setTeamId("" + i);
-          normove.setPieceId(normalizedGameState.getTeams()[i].getPieces()[j].getId());
+          if(j < normalizedGameState.getTeams()[i].getPieces().length)
+            normove.setPieceId(normalizedGameState.getTeams()[i].getPieces()[j].getId());
+          else
+            normove.setPieceId("p:" + i + "_" + j);
           found = true;
           break;
         }

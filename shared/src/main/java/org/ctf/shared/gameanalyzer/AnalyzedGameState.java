@@ -56,15 +56,29 @@ public class AnalyzedGameState {
 
     MonteCarloTreeNode[] children = previousState.getChildren();
 
+    int errors = 0;
+    Exception ex = null;
     try {
       Arrays.sort(children);
     } catch (NullPointerException npe) {npe.printStackTrace();}
     for(int child=0; child<children.length; child++) {
-      if(GameUtilities.moveEquals(children[child].getGameState().getLastMove(), userChoice.getGameState().getLastMove())) {
-        this.betterMoves = child;
-        break;
-      }
+      try {
+        if(GameUtilities.moveEquals(children[child].getGameState().getLastMove(), userChoice.getGameState().getLastMove())) {
+          this.betterMoves = child;
+          break;
+        }
+      } catch (Exception e) {
+        ex = e;
+        errors++;
+      };
     }
+    if(errors > 0)
+      System.err.println(
+          " userChoice was " + errors + " times null: " 
+              + ex.getClass().getCanonicalName() 
+              + " at (AnalyzedGameState.java:" 
+              + getExceptionLineNumber(ex)
+              +")");
   }
 
   /**
@@ -88,28 +102,30 @@ public class AnalyzedGameState {
     int goodMoves = 0;
     int badMoves = 0;
     MoveEvaluation moveEvaluation;
+    try {
+      int difference = getPercentageDifference();
+      if(difference <= 1)
+        moveEvaluation = MoveEvaluation.BEST;
+      else if (difference <= 3)
+        moveEvaluation = MoveEvaluation.EXCELLENT;
+      else if (difference <= 7)
+        moveEvaluation = MoveEvaluation.GOOD;
+      else if (difference <= 10)
+        moveEvaluation = MoveEvaluation.OK;
+      else if (difference <= 15)
+        moveEvaluation = MoveEvaluation.INACCURACY;
+      else if (difference <= 20)
+        moveEvaluation = MoveEvaluation.MISTAKE;
+      else
+        moveEvaluation = MoveEvaluation.BLUNDER;    
 
-    int difference = getPercentageDifference();
-    if(difference <= 1)
-      moveEvaluation = MoveEvaluation.BEST;
-    else if (difference <= 3)
-      moveEvaluation = MoveEvaluation.EXCELLENT;
-    else if (difference <= 7)
-      moveEvaluation = MoveEvaluation.GOOD;
-    else if (difference <= 10)
-      moveEvaluation = MoveEvaluation.OK;
-    else if (difference <= 15)
-      moveEvaluation = MoveEvaluation.INACCURACY;
-    else if (difference <= 20)
-      moveEvaluation = MoveEvaluation.MISTAKE;
-    else
-      moveEvaluation = MoveEvaluation.BLUNDER;    
-
-    for(int i=0; i<previousState.getChildren().length; i++)
-
-      moveEvaluation = (badMoves == 1 && moveEvaluation == MoveEvaluation.BLUNDER) ? MoveEvaluation.SUPERBLUNDER :
-        (goodMoves == 1 && moveEvaluation == MoveEvaluation.BEST) ? MoveEvaluation.GREAT :
-          moveEvaluation;
+      for(int i=0; i<previousState.getChildren().length; i++)
+        moveEvaluation = (badMoves == 1 && moveEvaluation == MoveEvaluation.BLUNDER) ? MoveEvaluation.SUPERBLUNDER :
+          (goodMoves == 1 && moveEvaluation == MoveEvaluation.BEST) ? MoveEvaluation.GREAT :
+            moveEvaluation;
+    } catch (Exception e) {
+      moveEvaluation = MoveEvaluation.ERROR;
+    }
     return moveEvaluation;
   }
 
@@ -127,14 +143,14 @@ public class AnalyzedGameState {
       if(GameUtilities.moveEquals(move, child.getGameState().getLastMove()))
         return child;
     }
-    
-    System.out.println("No child found.");
-    this.previousState.printGrid();;
-    for(MonteCarloTreeNode child : this.previousState.getChildren())
-      System.out.println("\t" + child.getGameState().getLastMove().getPieceId() +
-          " [" + child.getGameState().getLastMove().getNewPosition()[0] + "," + child.getGameState().getLastMove().getNewPosition()[1] + "]" + "    " + 
-          move.getPieceId() + 
-          " [" + move.getNewPosition()[0] + "," + move.getNewPosition()[1] + "]");
+
+//    System.err.println("No child found.");
+//    this.previousState.printGrid();
+//    for(MonteCarloTreeNode child : this.previousState.getChildren())
+//      System.out.println("\t" + child.getGameState().getLastMove().getPieceId() +
+//          " [" + child.getGameState().getLastMove().getNewPosition()[0] + "," + child.getGameState().getLastMove().getNewPosition()[1] + "]" + "    " + 
+//          move.getPieceId() + 
+//          " [" + move.getNewPosition()[0] + "," + move.getNewPosition()[1] + "]");
     return null; 
   }
 
@@ -160,16 +176,25 @@ public class AnalyzedGameState {
     if(this.initialGameState != null)
       for(int i=0; i<gameState.getTeams().length; i++)
         if(gameState.getTeams()[i] != null) {
-          gameState.getTeams()[i].setColor(this.initialGameState.getTeams()[i].getColor());
+          String defaultColor = this.initialGameState.getTeams()[i].getColor();
+          gameState.getTeams()[i].setColor(defaultColor);
           switch(i) {
             case 0: gameState.getTeams()[i].setColor("#ff00ff");
-              break;
+            break;
             case 1: gameState.getTeams()[i].setColor("#cccc00");
-              break;
+            break;
             case 2: gameState.getTeams()[i].setColor("#ff0000");
-              break;
+            break;
+            case 3: gameState.getTeams()[i].setColor("#069420");
+            break;
+            case 4: gameState.getTeams()[i].setColor("#0092FF");
+            break;
+            case 5: gameState.getTeams()[i].setColor("#ff8200");
+            break;
+            default: if(defaultColor.startsWith("0x")) gameState.getTeams()[i].setColor("#" + defaultColor.substring(2, 8));
           }
         }
+
     return gameState;
   }
   ///////////////////////////////////////
@@ -184,7 +209,7 @@ public class AnalyzedGameState {
   public MoveEvaluation getMoveEvaluation() {
     return this.moveEvaluation;
   }
-  
+
   /**
    * Returns the GameState from which the user made his move
    * 
@@ -193,7 +218,7 @@ public class AnalyzedGameState {
   public GameState getPreviousGameState() {
     return setColors(previousState.getGameState());
   }
-  
+
   /**
    * Returns the GameState representing the users move
    * 
@@ -202,9 +227,11 @@ public class AnalyzedGameState {
   public GameState getUserChoice() {
     if(userGaveUp != null)
       return setColors(userGaveUp);
-    return setColors(userChoice.getGameState());
+    if(userChoice != null)
+      return setColors(userChoice.getGameState());
+    else return null;
   }
-  
+
   /**
    * Returns the GameState representing the AIs best choice
    * 
@@ -213,16 +240,20 @@ public class AnalyzedGameState {
   public GameState getAiChoice() {
     return setColors(aiChoice.getGameState());
   }
-  
+
   /**
    * Returns the AIs calculated win percentage for the users move
    * 
    * @return the AIs calculated win percentage for the users move
    */
   public int getUserWinPercentage() {
-    return ((int)(Math.round((this.userChoice.getV() * 100) * 100))) /100 ;
+    try {
+      return ((int)(Math.round((this.userChoice.getV() * 100) * 100))) /100 ;
+    } catch (Exception e) {
+      return 0;
+    }
   }
-  
+
   /**
    * Returns the AIs calculated win percentage for its best choice
    * 
@@ -231,7 +262,7 @@ public class AnalyzedGameState {
   public int getAIWinPercentage() {
     return ((int)(Math.round((this.aiChoice.getV() * 100) * 100))) /100 ;
   }
-  
+
   /**
    * Returns how many moves the AI thinks are better than the users choice
    * 
@@ -254,5 +285,19 @@ public class AnalyzedGameState {
 
   public GameState getUserGaveUp() {
     return this.userGaveUp;
+  }
+  
+  /**
+   * Finds this class in an Exceptions StackTrace and returns the line number, the Exception got thrown at
+   * 
+   * @author sistumpf
+   * @param e Exception to search the StackTrace
+   * @return line number which caused the Exception, 1 if something unforseen happened
+   */
+  private int getExceptionLineNumber(Exception e) {
+    for(StackTraceElement s : e.getStackTrace())
+      if(s.toString().contains("AnalyzedGameState.java"))
+        return Integer.parseInt(s.toString().split("AnalyzedGameState.java:")[1].replace(")", ""));
+    return 1;
   }
 }

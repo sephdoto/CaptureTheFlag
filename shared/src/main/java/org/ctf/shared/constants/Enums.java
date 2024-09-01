@@ -31,7 +31,8 @@ public class Enums {
     MISTAKE("#ff942a"),
     MISS("#ff887f"),
     BLUNDER("#f44336"),
-    SUPERBLUNDER("#b51a0f");
+    SUPERBLUNDER("#b51a0f"),
+    ERROR("#e46cff");
     
     private final String color;
     
