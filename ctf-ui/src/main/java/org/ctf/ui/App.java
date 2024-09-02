@@ -61,7 +61,7 @@ public class App extends Application {
   public static ChangeListener<Boolean> focusListener;
 
   // public static ServerPane serverPane;
-
+  
   public void start(Stage stage) {
     SceneHandler.setMainStage(stage);
     
@@ -183,12 +183,9 @@ public class App extends Application {
   }
 
   private void addServerPane(StackPane stack) {
-    ServerPane serverPane = new ServerPane();
     StackPane serverPaneWrapper = new StackPane();
     serverPaneWrapper.prefWidthProperty().bind(stack.widthProperty().multiply(0.22));
-    serverPaneWrapper.prefHeightProperty().bind(serverPane.widthProperty().multiply(0.35));
     serverPaneWrapper.maxWidthProperty().bind(stack.widthProperty().multiply(0.22));
-    serverPaneWrapper.maxHeightProperty().bind(serverPane.widthProperty().multiply(0.35));
     StackPane.setAlignment(serverPaneWrapper, Pos.BOTTOM_RIGHT);
     serverPaneWrapper.setPadding(new Insets(10));
     stack
@@ -198,6 +195,9 @@ public class App extends Application {
               double neu = newV.doubleValue();
               serverPaneWrapper.setPadding(new Insets(0, neu * 0.03, neu * 0.03, 0));
             });
+    ServerPane serverPane = new ServerPane();
+    serverPaneWrapper.prefHeightProperty().bind(serverPane.widthProperty().multiply(0.35));
+    serverPaneWrapper.maxHeightProperty().bind(serverPane.widthProperty().multiply(0.35));
     serverPaneWrapper.getChildren().add(serverPane);
     stack.getChildren().add(serverPaneWrapper);
     serverPane

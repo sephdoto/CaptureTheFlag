@@ -22,15 +22,17 @@ import javafx.scene.Scene;
  * @author sistumpf
  */
 public class CheatboardListener extends NativeKeyAdapter {
+  int pivot;
   ArrayList<Integer> currentCode;
   ArrayList<ArrayList<Integer>> cheatCodes;
-  int pivot;
   ArrayList<ArrayList<Integer>> pivotList;
-
+  ArrayList<String> infos;
+  
   /**
    * Initializes the cheat codes, registers the key logger.
    */
   public CheatboardListener() {  
+    this.infos = new ArrayList<String>();
     initCheatCodes();
     this.pivotList = new ArrayList<ArrayList<Integer>>();
     this.currentCode = new ArrayList<Integer>();
@@ -77,13 +79,7 @@ public class CheatboardListener extends NativeKeyAdapter {
     rick.add(NativeKeyEvent.VC_W);
     rick.add(NativeKeyEvent.VC_4);
     cheatCodes.add(rick);
-
-    ArrayList<Integer> skip = new ArrayList<Integer>();
-    skip.add(NativeKeyEvent.VC_S);
-    skip.add(NativeKeyEvent.VC_K);
-    skip.add(NativeKeyEvent.VC_I);
-    skip.add(NativeKeyEvent.VC_P);
-    cheatCodes.add(skip);
+    infos.add("never gonna give you hints");
 
     ArrayList<Integer> debug = new ArrayList<Integer>();
     debug.add(NativeKeyEvent.VC_D);
@@ -92,6 +88,111 @@ public class CheatboardListener extends NativeKeyAdapter {
     debug.add(NativeKeyEvent.VC_U);
     debug.add(NativeKeyEvent.VC_G);
     cheatCodes.add(debug);
+    infos.add("changes depending on what I'm testing");
+    
+    ArrayList<Integer> skip = new ArrayList<Integer>();
+    skip.add(NativeKeyEvent.VC_S);
+    skip.add(NativeKeyEvent.VC_K);
+    skip.add(NativeKeyEvent.VC_I);
+    skip.add(NativeKeyEvent.VC_P);
+    cheatCodes.add(skip);
+    infos.add("skips to the next song");
+
+    ArrayList<Integer> mute = new ArrayList<Integer>();
+    mute.add(NativeKeyEvent.VC_M);
+    mute.add(NativeKeyEvent.VC_U);
+    mute.add(NativeKeyEvent.VC_T);
+    mute.add(NativeKeyEvent.VC_E);
+    cheatCodes.add(mute);    
+    infos.add("sets sound and music to 0% without saving");
+
+    ArrayList<Integer> half = new ArrayList<Integer>();
+    half.add(NativeKeyEvent.VC_H);
+    half.add(NativeKeyEvent.VC_A);
+    half.add(NativeKeyEvent.VC_L);
+    half.add(NativeKeyEvent.VC_F);
+    cheatCodes.add(half);
+    infos.add("sets sound and music to 50% without saving");
+
+    ArrayList<Integer> full = new ArrayList<Integer>();
+    full.add(NativeKeyEvent.VC_F);
+    full.add(NativeKeyEvent.VC_U);
+    full.add(NativeKeyEvent.VC_L);
+    full.add(NativeKeyEvent.VC_L);
+    cheatCodes.add(full);
+    infos.add("sets sound and music to 100% without saving");
+
+    ArrayList<Integer> theme = new ArrayList<Integer>();
+    theme.add(NativeKeyEvent.VC_T);
+    theme.add(NativeKeyEvent.VC_H);
+    theme.add(NativeKeyEvent.VC_E);
+    theme.add(NativeKeyEvent.VC_M);
+    theme.add(NativeKeyEvent.VC_E);
+    cheatCodes.add(theme);
+    infos.add("cycles to the next theme");
+
+    ArrayList<Integer> bgc = new ArrayList<Integer>();    
+    bgc.add(NativeKeyEvent.VC_B);
+    bgc.add(NativeKeyEvent.VC_G);
+    bgc.add(NativeKeyEvent.VC_C);
+    cheatCodes.add(bgc);
+    infos.add("changes the background image");
+
+    ArrayList<Integer> analyze = new ArrayList<Integer>();    
+    analyze.add(NativeKeyEvent.VC_A);
+    analyze.add(NativeKeyEvent.VC_N);
+    analyze.add(NativeKeyEvent.VC_A);
+    analyze.add(NativeKeyEvent.VC_L);
+    analyze.add(NativeKeyEvent.VC_Y);
+    cheatCodes.add(analyze);
+    infos.add("opens the analyzer");
+
+    ArrayList<Integer> home = new ArrayList<Integer>();    
+    home.add(NativeKeyEvent.VC_H);
+    home.add(NativeKeyEvent.VC_O);
+    home.add(NativeKeyEvent.VC_M);
+    home.add(NativeKeyEvent.VC_E);
+    cheatCodes.add(home);
+    infos.add("switches to home screen");
+
+    ArrayList<Integer> map = new ArrayList<Integer>();    
+    map.add(NativeKeyEvent.VC_M);
+    map.add(NativeKeyEvent.VC_A);
+    map.add(NativeKeyEvent.VC_P);
+    cheatCodes.add(map);
+    infos.add("switches to map editor");
+
+    ArrayList<Integer> create = new ArrayList<Integer>();    
+    create.add(NativeKeyEvent.VC_C);
+    create.add(NativeKeyEvent.VC_R);
+    create.add(NativeKeyEvent.VC_E);
+    create.add(NativeKeyEvent.VC_A);
+    create.add(NativeKeyEvent.VC_T);
+    create.add(NativeKeyEvent.VC_E);
+    cheatCodes.add(create);
+    infos.add("switches to create game");
+    
+    ArrayList<Integer> join = new ArrayList<Integer>();    
+    join.add(NativeKeyEvent.VC_J);   
+    join.add(NativeKeyEvent.VC_O);   
+    join.add(NativeKeyEvent.VC_I);   
+    join.add(NativeKeyEvent.VC_N);
+    cheatCodes.add(join);
+    infos.add("switches to join game");
+    
+    ArrayList<Integer> back = new ArrayList<Integer>();    
+    back.add(NativeKeyEvent.VC_B);   
+    back.add(NativeKeyEvent.VC_A);   
+    back.add(NativeKeyEvent.VC_C);   
+    back.add(NativeKeyEvent.VC_K);
+    cheatCodes.add(back);
+    infos.add("siwtchtes between the last (" + Constants.lastScenesSize + ") scenes");
+    
+    ArrayList<Integer> cs = new ArrayList<Integer>();    
+    cs.add(NativeKeyEvent.VC_C);   
+    cs.add(NativeKeyEvent.VC_S);   
+    cheatCodes.add(cs);    
+    infos.add("closes settings without saving to json");
 
     ArrayList<Integer> settings = new ArrayList<Integer>();
     settings.add(NativeKeyEvent.VC_S);
@@ -103,90 +204,7 @@ public class CheatboardListener extends NativeKeyAdapter {
     settings.add(NativeKeyEvent.VC_G);
     settings.add(NativeKeyEvent.VC_S);
     cheatCodes.add(settings);
-
-    ArrayList<Integer> mute = new ArrayList<Integer>();
-    mute.add(NativeKeyEvent.VC_M);
-    mute.add(NativeKeyEvent.VC_U);
-    mute.add(NativeKeyEvent.VC_T);
-    mute.add(NativeKeyEvent.VC_E);
-    cheatCodes.add(mute);
-
-    ArrayList<Integer> half = new ArrayList<Integer>();
-    half.add(NativeKeyEvent.VC_H);
-    half.add(NativeKeyEvent.VC_A);
-    half.add(NativeKeyEvent.VC_L);
-    half.add(NativeKeyEvent.VC_F);
-    cheatCodes.add(half);
-
-    ArrayList<Integer> full = new ArrayList<Integer>();
-    full.add(NativeKeyEvent.VC_F);
-    full.add(NativeKeyEvent.VC_U);
-    full.add(NativeKeyEvent.VC_L);
-    full.add(NativeKeyEvent.VC_L);
-    cheatCodes.add(full);
-
-    ArrayList<Integer> theme = new ArrayList<Integer>();
-    theme.add(NativeKeyEvent.VC_T);
-    theme.add(NativeKeyEvent.VC_H);
-    theme.add(NativeKeyEvent.VC_E);
-    theme.add(NativeKeyEvent.VC_M);
-    theme.add(NativeKeyEvent.VC_E);
-    cheatCodes.add(theme);
-
-    ArrayList<Integer> bgc = new ArrayList<Integer>();    
-    bgc.add(NativeKeyEvent.VC_B);
-    bgc.add(NativeKeyEvent.VC_G);
-    bgc.add(NativeKeyEvent.VC_C);
-    cheatCodes.add(bgc);
-
-    ArrayList<Integer> analyze = new ArrayList<Integer>();    
-    analyze.add(NativeKeyEvent.VC_A);
-    analyze.add(NativeKeyEvent.VC_N);
-    analyze.add(NativeKeyEvent.VC_A);
-    analyze.add(NativeKeyEvent.VC_L);
-    analyze.add(NativeKeyEvent.VC_Y);
-    cheatCodes.add(analyze);
-    
-    ArrayList<Integer> home = new ArrayList<Integer>();    
-    home.add(NativeKeyEvent.VC_H);
-    home.add(NativeKeyEvent.VC_O);
-    home.add(NativeKeyEvent.VC_M);
-    home.add(NativeKeyEvent.VC_E);
-    cheatCodes.add(home);
-    
-    ArrayList<Integer> map = new ArrayList<Integer>();    
-    map.add(NativeKeyEvent.VC_M);
-    map.add(NativeKeyEvent.VC_A);
-    map.add(NativeKeyEvent.VC_P);
-    cheatCodes.add(map);
-    
-    ArrayList<Integer> create = new ArrayList<Integer>();    
-    create.add(NativeKeyEvent.VC_C);
-    create.add(NativeKeyEvent.VC_R);
-    create.add(NativeKeyEvent.VC_E);
-    create.add(NativeKeyEvent.VC_A);
-    create.add(NativeKeyEvent.VC_T);
-    create.add(NativeKeyEvent.VC_E);
-    cheatCodes.add(create);
-   
-    ArrayList<Integer> join = new ArrayList<Integer>();    
-    join.add(NativeKeyEvent.VC_J);   
-    join.add(NativeKeyEvent.VC_O);   
-    join.add(NativeKeyEvent.VC_I);   
-    join.add(NativeKeyEvent.VC_N);
-    cheatCodes.add(join);
-    
-    ArrayList<Integer> back = new ArrayList<Integer>();    
-    back.add(NativeKeyEvent.VC_B);   
-    back.add(NativeKeyEvent.VC_A);   
-    back.add(NativeKeyEvent.VC_C);   
-    back.add(NativeKeyEvent.VC_K);
-    cheatCodes.add(back);
-    
-    ArrayList<Integer> cs = new ArrayList<Integer>();    
-    cs.add(NativeKeyEvent.VC_C);   
-    cs.add(NativeKeyEvent.VC_S);   
-    cheatCodes.add(cs);    
+    infos.add("opens normal settings");
     
     ArrayList<Integer> advanced = new ArrayList<Integer>();    
     advanced.add(NativeKeyEvent.VC_A);   
@@ -198,6 +216,7 @@ public class CheatboardListener extends NativeKeyAdapter {
     advanced.add(NativeKeyEvent.VC_E);   
     advanced.add(NativeKeyEvent.VC_D);   
     cheatCodes.add(advanced);
+    infos.add("opens advanced settings");
     
     ArrayList<Integer> bdvanced = new ArrayList<Integer>();    
     bdvanced.add(NativeKeyEvent.VC_B);   
@@ -209,6 +228,15 @@ public class CheatboardListener extends NativeKeyAdapter {
     bdvanced.add(NativeKeyEvent.VC_E);   
     bdvanced.add(NativeKeyEvent.VC_D);   
     cheatCodes.add(bdvanced);
+    infos.add("opens second advanced settings");
+    
+    ArrayList<Integer> info = new ArrayList<Integer>();
+    info.add(NativeKeyEvent.VC_I);
+    info.add(NativeKeyEvent.VC_N);
+    info.add(NativeKeyEvent.VC_F);
+    info.add(NativeKeyEvent.VC_O);
+    cheatCodes.add(info);
+    infos.add("shows all available codes");
   }
 
   /**
@@ -287,39 +315,35 @@ public class CheatboardListener extends NativeKeyAdapter {
     if(match == cheatCodes.get(0)) {            // first list is, of course, rickroll
       MusicPlayer.shortFade((int)SoundController.getMs("rick", SoundType.MISC), 10, 0.1);
       SoundController.playSound("rick", SoundType.MISC);
-    } else if (match == cheatCodes.get(1)) {    // skip current song
-      SettingsSetter.getCurrentPlayer().startShuffle();
-    } else if (match == cheatCodes.get(2)) {    // whatever needs to be debugged
+    } else if (match == cheatCodes.get(1)) {    // whatever needs to be debugged
       //      ((PlayGameScreenV2)SceneHandler.getCurrentScene()).stopTimers();
       Dialogs.openDialog(
           "Lorem ipsum dolor sit amet", 
           "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Never gonna give you up, never gonna let you down. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
           -1);
-    } else if (match == cheatCodes.get(3)) {    // open settings
-      Platform.runLater(() -> {
-        SceneHandler.openSettingsWindow("default");
-      });
-    } else if (match == cheatCodes.get(4)) {    // mute music and sounds
+    } else if (match == cheatCodes.get(2)) {    // skip current song
+      SettingsSetter.getCurrentPlayer().startShuffle();
+    } else if (match == cheatCodes.get(3)) {    // mute music and sounds
       MusicPlayer.mp.setVolume(0);
       Constants.musicVolume = 0;
       Constants.soundVolume = 0;
-    } else if (match == cheatCodes.get(5)) {    // set music and sounds to 50%
+    } else if (match == cheatCodes.get(4)) {    // set music and sounds to 50%
       MusicPlayer.mp.setVolume(0.5);
       Constants.musicVolume = 0.5;
       Constants.soundVolume = 0.5;
-    } else if (match == cheatCodes.get(6)) {    // set music and sounds to 100%
+    } else if (match == cheatCodes.get(5)) {    // set music and sounds to 100%
       MusicPlayer.mp.setVolume(1);
       Constants.musicVolume = 1;
       Constants.soundVolume = 1;
-    } else if (match == cheatCodes.get(7)) {    // switch the current theme
+    } else if (match == cheatCodes.get(6)) {    // switch the current theme
       Constants.theme = Enums.Themes.values()[(Constants.theme.ordinal() +1) % Enums.Themes.values().length];
       SceneHandler.changeBackgroundImage();
       SceneHandler.updateBackground();
       SettingsSetter.saveCustomSettings();
-    } else if (match == cheatCodes.get(8)) {    // switch home screen background
+    } else if (match == cheatCodes.get(7)) {    // switch home screen background
       SceneHandler.changeBackgroundImage();
       SceneHandler.updateBackground();
-    } else if (match == cheatCodes.get(9)) {    // open analyzer
+    } else if (match == cheatCodes.get(8)) {    // open analyzer
       Platform.runLater(
           new Runnable() {
             public void run(){
@@ -327,7 +351,7 @@ public class CheatboardListener extends NativeKeyAdapter {
             }
           }
           );
-    } else if(match == cheatCodes.get(10)) {    // switch to home screen
+    } else if(match == cheatCodes.get(9)) {    // switch to home screen
       Platform.runLater(
           new Runnable() {
             public void run(){
@@ -335,7 +359,7 @@ public class CheatboardListener extends NativeKeyAdapter {
             }
           }
           );
-    } else if(match == cheatCodes.get(11)) {    // switch to map editor
+    } else if(match == cheatCodes.get(10)) {    // switch to map editor
       Platform.runLater(
           new Runnable() {
             public void run(){
@@ -343,7 +367,7 @@ public class CheatboardListener extends NativeKeyAdapter {
             }
           }
           );
-    } else if(match == cheatCodes.get(12)) {    // switch to create game scene
+    } else if(match == cheatCodes.get(11)) {    // switch to create game scene
       Platform.runLater(
           new Runnable() {
             public void run(){
@@ -351,7 +375,7 @@ public class CheatboardListener extends NativeKeyAdapter {
             }
           }
           );
-    } else if(match == cheatCodes.get(13)) {    // switch to join game scene
+    } else if(match == cheatCodes.get(12)) {    // switch to join game scene
       Platform.runLater(
           new Runnable() {
             public void run(){
@@ -359,7 +383,7 @@ public class CheatboardListener extends NativeKeyAdapter {
             }
           }
           );
-    } else if(match == cheatCodes.get(14)) {    // switch to the last scene(s)
+    } else if(match == cheatCodes.get(13)) {    // switch to the last scene(s)
       Platform.runLater(
           new Runnable() {
             public void run(){
@@ -382,8 +406,12 @@ public class CheatboardListener extends NativeKeyAdapter {
             }
           }
           );
-    } else if(match == cheatCodes.get(15)) {    // closes the currently opened settings (close settings)
+    } else if(match == cheatCodes.get(14)) {    // closes the currently opened settings (close settings)
       SceneHandler.closeSettings();
+    } else if (match == cheatCodes.get(15)) {    // open settings
+      Platform.runLater(() -> {
+        SceneHandler.openSettingsWindow("default");
+      });
     } else if(match == cheatCodes.get(16)) {    // open advanced settings
       Platform.runLater(() -> {
         SceneHandler.openSettingsWindow("advanced");
@@ -392,6 +420,24 @@ public class CheatboardListener extends NativeKeyAdapter {
       Platform.runLater(() -> {
         SceneHandler.openSettingsWindow("bdvanced");
       });
+    } else if(match == cheatCodes.get(18)) {    // opens a dialog showing all available codes
+      String[] codes = new String[cheatCodes.size()];
+      String allCodes = "";
+      for(int i=0; i<cheatCodes.size(); i++) {
+        StringBuilder code = new StringBuilder();
+          for(Integer c : cheatCodes.get(i))
+          code.append(NativeKeyEvent.getKeyText(c));
+        codes[i] = code.toString();
+      }
+      for(int code=0; code<cheatCodes.size(); code++) {
+        StringBuilder insets = new StringBuilder().append(" ");
+        for(int i= (cheatCodes.size() - code)/10; i>0; i--)
+          insets.append(" ");
+        allCodes += "(" + code + ")" + insets.toString() + codes[code] + " : " + infos.get(code) + "\n";
+      }
+      Dialogs.openDialog("All available \"CheatCodes\"", 
+          allCodes,
+          -1);
     }
   }
   

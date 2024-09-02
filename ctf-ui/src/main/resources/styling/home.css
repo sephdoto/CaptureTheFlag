@@ -15,12 +15,10 @@
 	-fx-prompt-fill: white;
 	-fx-text-fill: white;
     -fx-alignment: center;
+    -fx-text-alignment: center;
     -fx-prompt-text-fill: white;
     -fx-display-caret: false;
 }
 .transparent-textfield:hover{
     -fx-background-color: rgba(112, 140, 233, 0.3);
-}
-.styled-text-area:caret {
-    -fx-stroke: red;
 }

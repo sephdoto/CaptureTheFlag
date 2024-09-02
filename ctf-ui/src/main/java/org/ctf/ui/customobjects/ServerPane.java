@@ -27,23 +27,28 @@ public class ServerPane extends StackPane {
    */
   public ServerPane() {
     this.getStyleClass().add("server-pane");
+    this.setWidth(1);
     this.widthProperty().addListener((obs, old, newV) -> {
       this.setPadding(new Insets(newV.doubleValue() * 0.1));
     });
     text = new Text("START LOCAL SERVER");
-    text.fontProperty().bind(Bindings.createObjectBinding(() -> Font.font("Century Gothic", this.getWidth() / 15), this.widthProperty()));
+    text.fontProperty().bind(Bindings.createObjectBinding(() -> Font.font("Century Gothic", this.getWidth() / 13), this.widthProperty()));
     text.setFill(Color.WHITE);
-    this.getChildren().add(text);
     createPortField();
+    field.setDisable(true);
+    field.setVisible(false);
+    this.getChildren().add(field);
+    this.getChildren().add(text);
     this.setOnMouseEntered(e -> {
-      this.getChildren().remove(text);
-      this.getChildren().add(field);
+      text.setVisible(false);
+      field.setDisable(false);
+      field.setVisible(true);
       field.requestFocus();
     });
     this.setOnMouseExited(e -> {
-      this.getChildren().remove(field);
-      this.getChildren().remove(text);
-      this.getChildren().add(text);
+      field.setDisable(true);
+      field.setVisible(false);
+      text.setVisible(true);
     });
   }
 
@@ -54,8 +59,7 @@ public class ServerPane extends StackPane {
    */
   private void createPortField() {
     field = new TextField();
-    field.maxWidthProperty().bind(this.widthProperty().multiply(0.6));
-    field.prefHeightProperty().bind(this.heightProperty().multiply(0.4));
+    field.maxWidthProperty().bind(widthProperty().multiply(0.6));
     field.setPromptText("ENTER PORT");
     field.getStyleClass().add("transparent-textfield");
     field.positionCaret(0);
@@ -70,14 +74,10 @@ public class ServerPane extends StackPane {
    * @author aniemesc
    */
   public void setFinished() {
-    this.getChildren().clear();
     this.text.setText("Change Port");
-    this.field.clear();
-    this.getChildren().add(text);
-    this.setOnMouseClicked(e -> {
-      this.getChildren().clear();
-      this.getChildren().add(field);
-    });
+    field.setDisable(true);
+    field.setVisible(false);
+    text.setVisible(true);
   }
 
   /**
