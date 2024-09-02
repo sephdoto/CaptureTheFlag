@@ -39,9 +39,111 @@ public class Dialogs {
    * @param run several Runnables which will be executed when a user clicks "OK"
    */
   public static void openDialog(String title, String message, int ms, Runnable ... run) {
-    Platform.runLater(() -> new Dialog(title, message, ms, run));
+    Platform.runLater(() -> new Dialog(title, message, ms, run).show());
   }
 
+  /**
+   * Opens a new {@link Dialog} with title and message
+   * 
+   * @author sistumpf
+   * @param title the Dialogs title
+   * @param message the Dialogs message
+   * @param ms milliseconds till the Dialog automatically closes, <0 to disable auto close
+   * @param okButtonText name of the button that closes the Dialog
+   * @param nextButtonText the functional buttons name
+   * @param run several Runnables which will be executed when a user clicks button the nextButtonText describes
+   */
+
+  public static void openDialogTwoButtons(String title, String message, int ms, String okButtonText, String nextButtonText, Runnable ... run) {
+      Platform.runLater(() -> getDialogTwoButtons(title, message, ms, okButtonText, nextButtonText, run).show());
+    }
+  /**
+   * Creates a new {@link Dialog} with title and message and three buttons.
+   * The left button runs leftRunnable, the middleButton runs all middleRunnables and the right button just closes the window.
+   * 
+   * @author sistumpf
+   * @param title the Dialogs title
+   * @param message the Dialogs message
+   * @param ms milliseconds till the Dialog automatically closes, <0 to disable auto close
+   * @param leftButtonText name of the left button
+   * @param leftRunnable  whatever the left button executes
+   * @param middleButtonText name of the middle button
+   * @param rightButtonText name of the right button, which just closes the window
+   * @param run several Runnables which will be executed when a user clicks the middle button
+   */
+  public static void openDialogThreeButtons(String title, String message, int ms, String leftButtonText, Runnable leftRunnable, String middleButtonText, String rightButtonText, Runnable ... middleRunnables) {
+    Platform.runLater(() -> getDialogThreeButtons(title, message, ms, leftButtonText, leftRunnable, middleButtonText, rightButtonText, middleRunnables).show());
+  }
+  
+  /**
+   * Creates a new {@link Dialog} with title and message and three buttons.
+   * The left button runs leftRunnable, the middleButton runs all middleRunnables and the right button just closes the window.
+   * Does not open the Dialog.
+   * 
+   * @author sistumpf
+   * @param title the Dialogs title
+   * @param message the Dialogs message
+   * @param ms milliseconds till the Dialog automatically closes, <0 to disable auto close
+   * @param leftButtonText name of the left button
+   * @param leftRunnable  whatever the left button executes
+   * @param middleButtonText name of the middle button
+   * @param rightButtonText name of the right button, which just closes the window
+   * @param run several Runnables which will be executed when a user clicks the middle button
+   */
+  public static Dialog getDialogThreeButtons(String title, String message, int ms, String leftButtonText, Runnable leftRunnable, String middleButtonText, String rightButtonText, Runnable ... middleRunnables) {
+    Dialog threeButtons = getDialogTwoButtons(title, message, ms, rightButtonText, middleButtonText, middleRunnables); 
+
+    //add next button, then modify it
+    ButtonType left = ButtonType.YES;
+    threeButtons.getButtonTypes().add(left);
+    Button leftB = (Button) threeButtons.getDialogPane().lookupButton(ButtonType.YES);
+    leftB.setText(leftButtonText);
+    leftB.setOnAction(e -> {
+      threeButtons.cleanClose();
+      leftRunnable.run();
+      e.consume();
+    });
+    return threeButtons;
+  }
+  
+  /**
+   * Creates a new {@link Dialog} with title and message and two buttons, from which nextButton(the left one) gets all the run Runnables applied.
+   * Does not open the Dialog.
+   * 
+   * @author sistumpf
+   * @param title the Dialogs title
+   * @param message the Dialogs message
+   * @param ms milliseconds till the Dialog automatically closes, <0 to disable auto close
+   * @param okButtonText name of the button that closes the Dialog
+   * @param nextButtonText the functional buttons name
+   * @param run several Runnables which will be executed when a user clicks the button nextButtonText describes
+   */
+  public static Dialog getDialogTwoButtons(String title, String message, int ms, String okButtonText, String nextButtonText, Runnable ... run) {
+    Dialog twoButtons = new Dialog(title, message, ms, run); 
+
+    //remove close Button from executing Runnables
+    Button close = (Button) twoButtons.getDialogPane().lookupButton(ButtonType.OK);
+    close.setText(okButtonText);
+    close.setOnAction(e -> {
+      twoButtons.cleanClose(); 
+      e.consume();
+    });
+
+    //add next button, then modify it
+    ButtonType next = ButtonType.NO;
+    twoButtons.getButtonTypes().add(next);
+    Button nextB = (Button) twoButtons.getDialogPane().lookupButton(ButtonType.NO);
+    nextB.setText(nextButtonText);
+    if(twoButtons.getTimeThread() != null) twoButtons.getTimeThread().setOriginalButtonText(okButtonText);
+    nextB.setOnAction(e -> {
+      twoButtons.cleanClose();
+      for(Runnable r : run)
+        r.run();
+      e.consume();
+    });
+    return twoButtons;
+  }
+  
   /**
    * CSS Styled Alert implementation that always stays in focus,
    * is movable by clicking and dragging,
@@ -115,20 +217,21 @@ public class Dialogs {
         });
       
       startTimer(ms);
-      
-      show();
     }
 
     /**
-     * Closes the Dialog cleanly, with restoring Listeners and shit
+     * Closes the Dialog cleanly, with restoring Listeners and shit.
+     * For some reason there can only be 1 button or close() does not work. LOL
      */
     synchronized public void cleanClose() {
       if(isOpen) {
         isOpen = false;
-        if(timeThread != null)
-          timeThread.interrupt();
+        if(getTimeThread() != null)
+          getTimeThread().interrupt();
         cleanUp();
         openInstances--;
+        for(int i=getDialogPane().getButtonTypes().size(); i>1; i--)
+          getDialogPane().getButtonTypes().remove(1);
         close();
       }
     }
@@ -141,7 +244,7 @@ public class Dialogs {
     private void startTimer(int ms) {
       if(ms >= 0) {
         timeThread = new TimeThread(ms);
-        timeThread.start();
+        getTimeThread().start();
       }
     }
 
@@ -214,10 +317,14 @@ public class Dialogs {
         }
         @Override
         public void nativeMouseMoved(NativeMouseEvent nativeEvent) {
-          if(timeThread != null)
-            timeThread.halt(inDialogBounds(nativeEvent.getX(), nativeEvent.getY()));
+          if(getTimeThread() != null)
+            getTimeThread().halt(inDialogBounds(nativeEvent.getX(), nativeEvent.getY()));
         }
       };
+    }
+
+    public TimeThread getTimeThread() {
+      return timeThread;
     }
 
     /**
@@ -228,6 +335,7 @@ public class Dialogs {
       boolean running;
       boolean halt;
       int ms;
+      String originalText;
 
       /**
        * @param ms time in milliseconds till the Thread closes the Dialog
@@ -236,8 +344,13 @@ public class Dialogs {
         this.ms = ms;
         running = true;
         halt = false;
+        originalText = ((Button) getDialogPane().lookupButton(ButtonType.OK)).getText();
       }
 
+      public void setOriginalButtonText(String text) {
+        originalText = text;
+      }
+      
       @Override
       public void run() {
         double transparencyLeft = 1;
@@ -256,7 +369,7 @@ public class Dialogs {
 
             Button close = (Button) getDialogPane().lookupButton(ButtonType.OK);
             final int seconds = (((int)Math.round((double)ms / Constants.UIupdateTime) - cycle)  * Constants.UIupdateTime) / 1000;
-            Platform.runLater(() -> close.setText("OK (" + seconds + ")"));
+            Platform.runLater(() -> close.setText(originalText + "(" + seconds + ")"));
           }
           //find button and set Style
           Region buttonContainer = (Region) getDialogPane().lookup(".header-panel .label");

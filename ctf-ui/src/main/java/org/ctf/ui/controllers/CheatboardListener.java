@@ -11,6 +11,7 @@ import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyAdapter;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import dialogs.Dialogs;
+import dialogs.Tips;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 
@@ -23,19 +24,21 @@ import javafx.scene.Scene;
  */
 public class CheatboardListener extends NativeKeyAdapter {
   int pivot;
-  ArrayList<Integer> currentCode;
-  ArrayList<ArrayList<Integer>> cheatCodes;
-  ArrayList<ArrayList<Integer>> pivotList;
-  ArrayList<String> infos;
+  static ArrayList<Integer> currentCode;
+  static ArrayList<ArrayList<Integer>> cheatCodes;
+  static ArrayList<ArrayList<Integer>> pivotList;
+  static ArrayList<String> infos;
   
-  /**
-   * Initializes the cheat codes, registers the key logger.
-   */
-  public CheatboardListener() {  
-    this.infos = new ArrayList<String>();
+  private static FixedStack<Scene> lastScenesCopy;
+  private static long backtracking = -1;
+  
+  
+  
+  static {
+    infos = new ArrayList<String>();
     initCheatCodes();
-    this.pivotList = new ArrayList<ArrayList<Integer>>();
-    this.currentCode = new ArrayList<Integer>();
+    pivotList = new ArrayList<ArrayList<Integer>>();
+    currentCode = new ArrayList<Integer>();
   }
   
   /**
@@ -71,8 +74,8 @@ public class CheatboardListener extends NativeKeyAdapter {
   /**
    * creates the cheat codes and puts them into the list.
    */
-  private void initCheatCodes() {    
-    this.cheatCodes = new ArrayList<ArrayList<Integer>>();
+  private static void initCheatCodes() {    
+    cheatCodes = new ArrayList<ArrayList<Integer>>();
     ArrayList<Integer> rick = new ArrayList<Integer>();
     rick.add(NativeKeyEvent.VC_D);
     rick.add(NativeKeyEvent.VC_Q);
@@ -237,6 +240,13 @@ public class CheatboardListener extends NativeKeyAdapter {
     info.add(NativeKeyEvent.VC_O);
     cheatCodes.add(info);
     infos.add("shows all available codes");
+
+    ArrayList<Integer> tip = new ArrayList<Integer>();
+    tip.add(NativeKeyEvent.VC_T);
+    tip.add(NativeKeyEvent.VC_I);
+    tip.add(NativeKeyEvent.VC_P);
+    cheatCodes.add(tip);
+    infos.add("opens a random tip/fact/I was bored");
   }
 
   /**
@@ -306,12 +316,39 @@ public class CheatboardListener extends NativeKeyAdapter {
   }
 
   /**
+   * @return number of currently available codes
+   */
+  public static int howManyCodes() {
+    return cheatCodes.size();
+  }
+  
+  /**
+   * Compares all cheatCodes to list, if one matches, its event gets triggered
+   * 
+   * @param list ArrayList containing NativeKeyEvent keyCodes
+   */
+  public static void findAndOpenMatch(ArrayList<Integer> list) {
+    for(ArrayList<Integer> cheatCodeList : cheatCodes) {
+      boolean matches = true;
+      for(int i=0; i<list.size() && i<cheatCodeList.size(); i++)
+        if(list.get(i) != cheatCodeList.get(i)) {
+          matches = false;
+          break;
+        }
+      if(matches) {
+        letTheFunBegin(cheatCodeList);
+        return;
+      }
+    }
+  }
+  
+  /**
    * Depending on the cheat code, different things can happen.
    * Whatever happens is decided here.
    * 
    * @param match the ArrayList containing the cheatcode to check for references.
    */
-  private void letTheFunBegin(ArrayList<Integer> match) {
+  public static void letTheFunBegin(ArrayList<Integer> match) {
     if(match == cheatCodes.get(0)) {            // first list is, of course, rickroll
       MusicPlayer.shortFade((int)SoundController.getMs("rick", SoundType.MISC), 10, 0.1);
       SoundController.playSound("rick", SoundType.MISC);
@@ -320,7 +357,9 @@ public class CheatboardListener extends NativeKeyAdapter {
       Dialogs.openDialog(
           "Lorem ipsum dolor sit amet", 
           "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Never gonna give you up, never gonna let you down. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-          -1);
+          -1,
+          () -> Tips.openTipDialog());
+      
     } else if (match == cheatCodes.get(2)) {    // skip current song
       SettingsSetter.getCurrentPlayer().startShuffle();
     } else if (match == cheatCodes.get(3)) {    // mute music and sounds
@@ -431,16 +470,15 @@ public class CheatboardListener extends NativeKeyAdapter {
       }
       for(int code=0; code<cheatCodes.size(); code++) {
         StringBuilder insets = new StringBuilder().append(" ");
-        for(int i= (cheatCodes.size() - code)/10; i>0; i--)
-          insets.append(" ");
+        for(int i= (cheatCodes.size()-1 - code)/10; i>0; i--)
+          insets.append("  ");
         allCodes += "(" + code + ")" + insets.toString() + codes[code] + " : " + infos.get(code) + "\n";
       }
       Dialogs.openDialog("All available \"CheatCodes\"", 
           allCodes,
           -1);
+    } else if (match == cheatCodes.get(19)){    // opens a random tip
+      Tips.openTipDialog();
     }
   }
-  
-  private FixedStack<Scene> lastScenesCopy;
-  private long backtracking = -1;
 }
