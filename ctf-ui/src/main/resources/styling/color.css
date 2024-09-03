@@ -28,30 +28,7 @@
     -fx-background-color: gold;
     -fx-padding: 5;
 }
-			
-.triangle-button {
-    -fx-shape: "M 0 0 L 100 50 L 0 100 Z";
-    -fx-border-color: rgba(255,255,255,1);
-	 -fx-border-width: 2px;
-	 -fx-background-color: #475865;
-}
-
-.triangle-button-left {
-    -fx-shape: "M 100 0 L 0 50 L 100 100 Z";
-    -fx-border-color: rgba(255,255,255,1);
-	 -fx-border-width: 2px;
-	 -fx-background-color: #475865;
-   
-}
-
-.rectangle-button {
-    -fx-text-fill:white;
-    -fx-border-color: rgba(255,255,255,1);
-	 -fx-border-width: 2px;
-	 -fx-background-color: #475865;
-    
-    
-}			
+				
 			
 .custom-menu-item{
 	 -fx-background-color: #ffffff;
@@ -71,17 +48,6 @@
     -fx-background-color: white;
 }
 
-
-.lobby-normal-label {
-    -fx-text-fill: white;
-    -fx-font-family: 'Eras Medium Light';
-    -fx-background-color: #475865;
-}
-.lobby-normal-label-2 {
-    -fx-text-fill: white;
-    -fx-font-family: 'Eras Medium Light';
-    -fx-background-color: grey;
-}
 .vertical-progress-bar {
     -fx-rotate: 90;
     -fx-pref-height: 200px;
@@ -92,14 +58,6 @@
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-alignment: center;
-}
-
-
-.blue-glow-hbox {
-    -fx-border-color: blue;
-    -fx-border-width: 2px;
-    -fx-background-radius: 0;
-    -fx-effect: dropshadow(gaussian, blue, 10, 0.5, 0, 0);
 }
 
 .lobby-table-header {
@@ -162,19 +120,7 @@
     -fx-alignment: center;
 }
 
-.progress-pane {
-	 -fx-background-color: blue;
-	 -fx-background-radius: 20px; 
-	 -fx-border-radius: 20px;
-	 -fx-alignment: center;
-}
-.vertical-label {
-    -fx-rotate: 270;
-    -fx-text-fill: white;
-     -fx-translate-y: 50%;
-     -fx-alignment: center;
-    
-}
+
 
 .play-pane {
 	 -fx-background-color: #475865;

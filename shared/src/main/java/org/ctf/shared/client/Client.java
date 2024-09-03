@@ -56,7 +56,7 @@ public class Client implements GameClientInterface {
   protected Gson gson; // Gson object for conversions incase needed
   // Two CommLayers Available CommLayer and RestClientLayer
   protected CommLayerInterface comm; // Layer instance which is used for communication
-  protected GameSaveHandler analyzer;
+  protected GameSaveHandler gameSaveHandler;
 
   // Block for Server Info
   protected String currentServer; // Creates URL with Session ID for use later
@@ -123,7 +123,7 @@ public class Client implements GameClientInterface {
     this.comm = comm;
     this.enableLogging = enableLogging;
     if (enableLogging) {
-      analyzer = new GameSaveHandler();
+      gameSaveHandler = new GameSaveHandler();
     }
     setServer(IP, port);
     allTeamNames = null;
@@ -586,7 +586,7 @@ public class Client implements GameClientInterface {
               + gameState.getLastMove().getNewPosition()[1] + " :: " 
               + GameUtilities.howManyTeams(gameState));*/
         
-          this.analyzer.addMove(gameState.getLastMove(), GameUtilities.teamsGaveUp(lastState, currentState));
+          this.gameSaveHandler.addMove(gameState.getLastMove(), GameUtilities.teamsGaveUp(lastState, currentState));
         }
       }
     }
@@ -594,7 +594,7 @@ public class Client implements GameClientInterface {
 
   /**
    * Checks if a Move is a valid Move or just some kind of empty uninitialized move.
-   * Should be used before adding a Move to the analyzer.
+   * Should be used before adding a Move to the gameSaveHandler.
    * 
    * @author sistumpf
    * @param move the Move to check
@@ -894,7 +894,7 @@ public class Client implements GameClientInterface {
             if (getStartDate() != null) {
               if (enableLogging) {
                 getStateFromServer();
-                analyzer.addGameState(getCurrentState());
+                gameSaveHandler.addGameState(getCurrentState());
               }
               gameStartedThread();
               active = false;
@@ -927,7 +927,7 @@ public class Client implements GameClientInterface {
                   pullData();
                   if (enableLogging) {
                     if(!isMoveEmpty(getCurrentState().getLastMove()))
-                      analyzer.addMove(getCurrentState().getLastMove(), GameUtilities.teamsGaveUp(lastState, currentState));
+                      gameSaveHandler.addMove(getCurrentState().getLastMove(), GameUtilities.teamsGaveUp(lastState, currentState));
                   }
                   if (isGameOver()) {
                     scheduler.shutdown();
@@ -938,7 +938,7 @@ public class Client implements GameClientInterface {
                 }
               }
               if(enableLogging)
-                analyzer.writeOut();
+                gameSaveHandler.writeOut();
             });
     gameThread.start();
   }
@@ -1097,7 +1097,7 @@ public class Client implements GameClientInterface {
   }
 
   public GameSaveHandler getGameSaveHandler() {
-    return this.analyzer;
+    return this.gameSaveHandler;
   }
   // **************************************************
   // End of Getter Block

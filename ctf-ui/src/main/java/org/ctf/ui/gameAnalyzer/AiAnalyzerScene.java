@@ -17,6 +17,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
@@ -43,8 +44,12 @@ public class AiAnalyzerScene extends Scene {
   /**
    * The first thing a user sees, when no Move has been analyzed yet.
    */
-  Label firstMessage;
+  protected Label firstMessage;
 
+  protected Button humanOrAiButton;
+  protected Button back;
+  protected Button next;
+  
   protected ObjectProperty<Font> popUpLabel;
   protected ObjectProperty<Font> leaveButtonText;
   protected ObjectProperty<Font> informUser;
@@ -111,6 +116,12 @@ public class AiAnalyzerScene extends Scene {
     createLayout();
     initalize();
     utils.makeClickable();
+    utils.addKeyListeners();
+    
+
+    humanOrAiButton.setFocusTraversable(false);
+    back.setFocusTraversable(false);
+    next.setFocusTraversable(false);
   }
 
   /**
@@ -122,7 +133,8 @@ public class AiAnalyzerScene extends Scene {
   private void initalize() {
     try {
       //adjust SavedGame initial team and move team (weird bug, only fix I see right now @sistumpf) TODO
-      gsh.getSavedGame().getInitialState().setCurrentTeam(Integer.parseInt(gsh.getSavedGame().getMoves().get("1").getTeamId()));
+      System.out.println("first Team: " + gsh.getSavedGame().getInitialState().getCurrentTeam() + ", first Move Team: " + gsh.getSavedGame().getMoves().get("1").getTeamId());
+//      gsh.getSavedGame().getInitialState().setCurrentTeam(Integer.parseInt(gsh.getSavedGame().getMoves().get("1").getTeamId()));
 
       // TODO
       analyzer = new GameAnalyzer(gsh.getSavedGame(), new AIConfig());
@@ -195,7 +207,6 @@ public class AiAnalyzerScene extends Scene {
    * @author Manuel Krakowski
    */
   private void createLayout() {
-    root.getStyleClass().add("join-root");
     root.prefHeightProperty().bind(this.heightProperty());
     root.prefWidthProperty().bind(this.widthProperty());
     VBox mainVBox = utils.createMainBox(root);

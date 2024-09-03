@@ -12,6 +12,7 @@ import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -29,6 +30,34 @@ public class AnalyzerUtils extends AnalyzerExtra {
     super(scene);
   }
   
+  @SuppressWarnings("incomplete-switch")
+  protected void addKeyListeners() {
+    scene.addEventFilter(KeyEvent.KEY_PRESSED, (e) -> {
+      switch(e.getCode()) {
+        case W, UP, KP_UP: 
+          focusUs(scene.humanOrAiButton);
+          if(!scene.showHuman) performAiButtonClick(scene.humanOrAiButton);
+          break;
+        case S, DOWN, KP_DOWN: 
+          focusUs(scene.humanOrAiButton);
+          if(scene.showHuman) performAiButtonClick(scene.humanOrAiButton);
+          break;
+        case A, LEFT, KP_LEFT: 
+          focusUs(scene.back);
+          performBackClick(scene.humanOrAiButton);
+          break;
+        case D, RIGHT, KP_RIGHT:
+          focusUs(scene.next);
+          performNextClick(scene.humanOrAiButton);
+          break;
+      }
+    });
+  }
+  
+  void focusUs(Button button) {
+    button.requestFocus();
+  }
+  
   /**
    * Scrolls to the new Move in case the user is looking at his newest user move.
    * If thats not the case the user is analyzing older moves or the best AI choice, making scrolling a distraction.
@@ -38,7 +67,7 @@ public class AnalyzerUtils extends AnalyzerExtra {
    */
   protected void tryScrolling(int newMove) {
     if(newMove == scene.currentMove + 1 && !scene.showHuman) {
-      perfromNextClick(new Button(""));
+      performNextClick(new Button(""));
     }
   }
 
@@ -50,9 +79,12 @@ public class AnalyzerUtils extends AnalyzerExtra {
   protected void makeClickable() {
     for(Node move : scene.content.getChildren()) {
       ((HBox) move).setOnMouseClicked(e -> {
-        if(scene.currentMove >= 0)  scene.rows[scene.currentMove].getStyleClass().clear();
-        scene.currentMove = Integer.parseInt(((Label)((HBox) move).getChildren().get(0)).getText()) -1;
-        perfromNextClick(new Button(""));
+        int clickedOn = Integer.parseInt(((Label)((HBox) move).getChildren().get(0)).getText());
+        if(isClickable(clickedOn - scene.currentMove)) {
+          if(scene.currentMove >= 0)  scene.rows[scene.currentMove].getStyleClass().clear();
+          scene.currentMove = clickedOn -1;
+          performNextClick(new Button(""));
+        }
       });
     }
   }
@@ -200,32 +232,32 @@ public class AnalyzerUtils extends AnalyzerExtra {
       double newSpacing = newValue.doubleValue() * 0.04;
       h.setSpacing(newSpacing);
     });
-    Button b = new Button();
-    b.prefHeightProperty().bind(h.heightProperty().multiply(1));
-    b.prefWidthProperty().bind(h.widthProperty().divide(10));
+    scene.next = new Button();
+    scene.next.prefHeightProperty().bind(h.heightProperty().multiply(1));
+    scene.next.prefWidthProperty().bind(h.widthProperty().divide(10));
 
-    b.getStyleClass().add("triangle-button");
-    b.fontProperty().bind(scene.leaveButtonText);
-    Button rec = new Button("Show AI's Choice");
-    rec.prefHeightProperty().bind(h.heightProperty().multiply(1));
-    rec.setOnAction(e -> {
-      performAiButtonClick(rec);
+    scene.next.getStyleClass().add("triangle-button");
+    scene.next.fontProperty().bind(scene.leaveButtonText);
+    scene.humanOrAiButton = new Button("Show AI's Choice");
+    scene.humanOrAiButton.prefHeightProperty().bind(h.heightProperty().multiply(1));
+    scene.humanOrAiButton.setOnAction(e -> {
+      performAiButtonClick(scene.humanOrAiButton);
     });
-    b.setOnAction(e -> {
-      perfromNextClick(rec);
+    scene.next.setOnAction(e -> {
+      performNextClick(scene.humanOrAiButton);
     });
-    rec.prefWidthProperty().bind(h.widthProperty().divide(4));
-    rec.getStyleClass().add("rectangle-button");
-    rec.fontProperty().bind(scene.leaveButtonText);
-    Button leftRec = new Button("");
-    leftRec.setOnAction(e -> {
-      perfomBackClick(rec);
+    scene.humanOrAiButton.prefWidthProperty().bind(h.widthProperty().divide(4));
+    scene.humanOrAiButton.getStyleClass().add("rectangle-button");
+    scene.humanOrAiButton.fontProperty().bind(scene.leaveButtonText);
+    scene.back = new Button("");
+    scene.back.setOnAction(e -> {
+      performBackClick(scene.humanOrAiButton);
     });
-    leftRec.prefHeightProperty().bind(h.heightProperty().multiply(1));
-    leftRec.prefWidthProperty().bind(h.widthProperty().divide(10));
-    leftRec.getStyleClass().add("triangle-button-left");
-    leftRec.fontProperty().bind(scene.leaveButtonText);
-    h.getChildren().addAll(leftRec, rec, b);
+    scene.back.prefHeightProperty().bind(h.heightProperty().multiply(1));
+    scene.back.prefWidthProperty().bind(h.widthProperty().divide(10));
+    scene.back.getStyleClass().add("triangle-button-left");
+    scene.back.fontProperty().bind(scene.leaveButtonText);
+    h.getChildren().addAll(scene.back, scene.humanOrAiButton, scene.next);
     return h;
   }
 

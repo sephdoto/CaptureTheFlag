@@ -1,0 +1,90 @@
+/* Ausgewähltes Move Element/HBox in Move Tabelle */
+.blue-glow-hbox {
+    -fx-border-color: blue;
+    -fx-border-width: 2px;
+    -fx-background-radius: 0;
+    -fx-effect: dropshadow(gaussian, blue, 10, 0.5, 0, 0);
+}
+/*.blue-glow-hbox :hover{
+    -fx-border-color: rgb(123, 123, 255);
+    -fx-border-width: 1px;
+    -fx-background-radius: 0;
+    -fx-effect: dropshadow(gaussian, blue, 10, 0.5, 0, 0);
+}*/
+
+/* KI % progress bar links */
+.progress-pane {
+    -fx-background-color: blue;
+    -fx-background-radius: 20px; 
+    -fx-border-radius: 20px;
+    -fx-alignment: center;
+}
+/* KI % Label in progress bar */
+.vertical-label {
+    -fx-rotate: 270;
+    -fx-text-fill: white;
+     -fx-translate-y: 50%;
+     -fx-alignment: center;
+    
+}
+
+/* Back and Next Buttons */
+.triangle-button {
+    -fx-shape: "M 0 0 L 100 50 L 0 100 Z";
+    -fx-border-color: rgba(255,255,255,1);
+	 -fx-border-width: 2px;
+	 -fx-background-color: #475865;
+}
+.triangle-button:focused {
+    -fx-border-width: 3px;
+    -fx-border-color: rgb(158, 230, 252);
+    -fx-background-color: #567288;
+}
+.triangle-button:hover {
+    -fx-border-color: rgb(132, 165, 255);
+}
+.triangle-button-left {
+    -fx-shape: "M 100 0 L 0 50 L 100 100 Z";
+    -fx-border-color: rgba(255,255,255,1);
+	-fx-border-width: 2px;
+	-fx-background-color: #475865;  
+}
+.triangle-button-left:focused {
+    -fx-border-width: 3px;
+    -fx-border-color: rgb(158, 230, 252);
+    -fx-background-color: #567288;
+}
+.triangle-button-left:hover {
+    -fx-border-color: rgb(132, 165, 255);
+}
+/* Show human/ai Button */
+.rectangle-button {
+    -fx-text-fill:white;
+    -fx-border-color: rgba(255,255,255,1);
+	-fx-border-width: 2px;
+	-fx-background-color: #475865;
+}	
+.rectangle-button:focused {
+    -fx-font-weight: bold; 
+    -fx-border-width: 3px;
+    -fx-text-fill:rgb(168, 206, 255);
+    -fx-border-color: #abd2ff;
+    -fx-background-color: #567288;
+}	
+.rectangle-button:hover {
+    -fx-border-color: rgb(132, 165, 255);
+}	
+
+
+/* Verschiedenfarbige Hintergründe bei der Move Anzeige 1 */
+.lobby-normal-label {
+    -fx-text-fill: white;
+    -fx-font-family: 'Eras Medium Light';
+    -fx-background-color: #475865;
+}
+/* Verschiedenfarbige Hintergründe bei der Move Anzeige 1 */
+.lobby-normal-label-2 {
+    -fx-text-fill: white;
+    -fx-font-family: 'Eras Medium Light';
+    -fx-background-color: grey;
+}

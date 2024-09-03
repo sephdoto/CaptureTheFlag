@@ -109,14 +109,14 @@ public class AIClient extends Client {
         if(getController() != null)
           this.getController().shutDown();
         if (saveToken && enableLogging) {
-          this.analyzer.writeOut();
+          this.gameSaveHandler.writeOut();
           saveToken = false;
         }
       }
 
       /**
        * Tries to update the AIController.
-       * If it succeeds, the currentGameState is a new one, so its last Move is added to the analyzer.
+       * If it succeeds, the currentGameState is a new one, so its last Move is added to the gameSaveHandler.
        * If it is this clients turn, it makes a move.
        * In case the update returns false, a short delay can be added to postpone the next playTask.
        * 
@@ -131,7 +131,7 @@ public class AIClient extends Client {
             firstGameStateToken = false;
           if (enableLogging) {
             if(!isMoveEmpty(getCurrentState().getLastMove()))
-              this.analyzer.addMove(getCurrentState().getLastMove(), GameUtilities.teamsGaveUp(lastState, currentState));
+              this.gameSaveHandler.addMove(getCurrentState().getLastMove(), GameUtilities.teamsGaveUp(lastState, currentState));
           }
           if (isItMyTurn()) {
             Move move = getController().getNextMove();
@@ -169,7 +169,7 @@ public class AIClient extends Client {
     this.aiConfig = aiConfig;
     this.enableLogging = enableLogging;
     if (enableLogging) {
-      this.analyzer = new GameSaveHandler();
+      gameSaveHandler = new GameSaveHandler();
     }
   }
 
@@ -292,7 +292,7 @@ public class AIClient extends Client {
             if (getStartDate() != null) {
               getStateFromServer();
               if (enableLogging) {
-                analyzer.addGameState(currentState);
+                gameSaveHandler.addGameState(currentState);
               }
               active = false;
               new Thread(() -> {
@@ -321,7 +321,7 @@ public class AIClient extends Client {
    * Called from the getGameState method. Requests the server specific/set in the Client object to
    * send the current {@link GameState}. Also parses the response and saves data to local variables
    * for easier consumption by the UI. Overriden in the AI Client as it needs to update last game
-   * more often for analyzer.
+   * more often for gameSaveHandler.
    *
    * @param teamID Team Name for the request. Read from the Client
    * @param teamSecret Team Secret for the Request. Read from the Client
@@ -364,7 +364,7 @@ public class AIClient extends Client {
 
       if (enableLogging) {
         if(!isMoveEmpty(gameState.getLastMove()))
-          this.analyzer.addMove(gameState.getLastMove(), GameUtilities.teamsGaveUp(lastState, currentState));
+          this.gameSaveHandler.addMove(gameState.getLastMove(), GameUtilities.teamsGaveUp(lastState, currentState));
       }
     }
   }

@@ -109,9 +109,6 @@ public class SceneHandler {
   public static void switchToHomeScreen() {
     App.adjustHomescreen(mainStage.getScene().getWidth(), mainStage.getScene().getHeight());
     switchCurrentScene(homeScene);
-    
-//    addStyleSheet("MapEditor");
-//    addStyleSheet("ComboBox");
     addStyleSheet("home");
   }
   
@@ -153,8 +150,7 @@ public class SceneHandler {
         new AiAnalyzerScene(SceneHandler.getMainStage().getWidth() - App.offsetWidth, SceneHandler.getMainStage().getHeight() - App.offsetHeight);
     if(scene.switched) {
       switchCurrentScene(scene);
-      addStyleSheet("color");
-      addStyleSheet("MapEditor");
+      addStyleSheet("analyzer");
     }
   }
   
@@ -246,6 +242,7 @@ public class SceneHandler {
     addStyleSheet("popUps"); 
     
     mainStage.setScene(scene);
+    scene.getRoot().requestFocus();
   }
   
   /**

@@ -65,7 +65,7 @@ public class AnalyzerExtra {
    * @author Manuel Krakowski
    * @param aiButton
    */
-  protected void perfomBackClick(Button aiButton) {
+  protected void performBackClick(Button aiButton) {
     if(!isClickable(-1)) return;
     scene.showHuman = false;
     SoundController.playSound("BackButton", SoundType.MISC);
@@ -89,7 +89,7 @@ public class AnalyzerExtra {
    * @author Manuel Krakowski
    * @param aiButton
    */
-  protected void perfromNextClick(Button aiButton) {
+  protected void performNextClick(Button aiButton) {
     if(!isClickable(1)) return;
     scene.showHuman = false;
     SoundController.playSound("NextButton", SoundType.MISC);
@@ -121,6 +121,7 @@ public class AnalyzerExtra {
           && scene.currentMove + modifier < scene.analysedGames.length 
           && scene.aiStates[scene.currentMove + modifier] != null;
     } catch (NullPointerException e) {
+      e.printStackTrace();
       return false;
     }
   }
