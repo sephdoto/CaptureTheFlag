@@ -1,6 +1,7 @@
 package org.ctf.ui.customobjects;
 
 import org.ctf.ui.data.Formatter;
+import org.ctf.ui.data.SceneHandler;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -28,9 +29,7 @@ public class ServerPane extends StackPane {
   public ServerPane() {
     this.getStyleClass().add("server-pane");
     this.setWidth(1);
-    this.widthProperty().addListener((obs, old, newV) -> {
-      this.setPadding(new Insets(newV.doubleValue() * 0.1));
-    });
+    this.paddingProperty().bind(Bindings.createObjectBinding(() -> new Insets(SceneHandler.getMainStage().widthProperty().divide(55).get()), this.widthProperty()));
     text = new Text("START LOCAL SERVER");
     text.fontProperty().bind(Bindings.createObjectBinding(() -> Font.font("Century Gothic", this.getWidth() / 13), this.widthProperty()));
     text.setFill(Color.WHITE);

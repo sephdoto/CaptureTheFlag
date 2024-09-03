@@ -81,7 +81,7 @@ public class Tips {
               () -> 
               {
                 Alert alert = new Alert(AlertType.ERROR); 
-                alert.setTitle("I am a boring Alet"); 
+                alert.setTitle("I am a boring Alert"); 
                 alert.setContentText("My color is boring and my Buttons suck"); 
                 alert.show();
               }

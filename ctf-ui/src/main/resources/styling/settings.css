@@ -32,6 +32,7 @@
     -fx-background-color: rgba(53,89,119,0.4);
 }
 
+/* ComboBox with Themes */
 .settings-combo-box {
     -fx-background-color: rgba(53,89,119,0.4) important;
     -fx-text-fill: white important; 
@@ -46,8 +47,7 @@
 }
 .settings-combo-box .list-cell {
     -fx-alignment: center;
-    -fx-text-fill: white important; 
-    -fx-font-size: 15px;
+    -fx-text-fill: white important;
     -fx-border-width: 1.0px;
     -fx-background-radius: 20px; 
     -fx-border-radius: 20px;

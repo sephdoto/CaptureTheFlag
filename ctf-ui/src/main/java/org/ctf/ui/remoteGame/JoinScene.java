@@ -124,15 +124,6 @@ public class JoinScene extends Scene {
     ImageView mpv = new ImageView(mp);
     mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.8));
     mpv.setPreserveRatio(true);
-    root.widthProperty().addListener(e -> {
-      if (root.getWidth() > 1000) {
-        mpv.fitWidthProperty().unbind();
-        mpv.setFitWidth(800);
-      } else if (root.getWidth() <= 1000) {
-        mpv.fitWidthProperty().unbind();
-        mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.8));
-      }
-    });
     return mpv;
   }
 

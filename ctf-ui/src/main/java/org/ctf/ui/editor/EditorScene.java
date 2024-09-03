@@ -163,7 +163,6 @@ public class EditorScene extends Scene {
   private ImageView createHeader() {
     Image mp = ImageController.loadThemedImage(ImageType.MISC, "EditorImage");
     ImageView mpv = new ImageView(mp);
-    mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.8));
     mpv.setPreserveRatio(true);
     mpv.fitWidthProperty().bind(root.widthProperty().multiply(0.8));
     return mpv;
@@ -344,10 +343,12 @@ public class EditorScene extends Scene {
     customRoot.widthProperty().addListener((obs, oldVal, newVal) -> {
       double spacing = newVal.doubleValue() * 0.05;
       controlgrid.setHgap(spacing);
+      controlgrid.requestFocus();
     });
     customRoot.heightProperty().addListener((obs, oldVal, newVal) -> {
       double spacing = newVal.doubleValue() * 0.1;
       controlgrid.setVgap(spacing);
+      
     });
     customRoot.getChildren().add(createHeaderText(customRoot, "Configure your own Piece", 15));
     controlgrid.add(createText(customRoot, "Name", 30), 0, 0);
@@ -522,7 +523,7 @@ public class EditorScene extends Scene {
     customRoot.widthProperty().addListener((obs, oldVal, newVal) -> {
       controlgrid.setHgap(newVal.doubleValue() * 0.05);
       controlgrid.setVgap(newVal.doubleValue() * 0.03);
-
+      controlgrid.requestFocus();
     });
     controlgrid.add(createText(customRoot, "Theme", 20), 0, 0);
     controlgrid.add(createText(customRoot, "Piece", 20), 0, 1);
@@ -628,9 +629,16 @@ public class EditorScene extends Scene {
     HBox menuButtonBox = new HBox();
     menuButtonBox.setAlignment(Pos.CENTER);
     menuButtonBox.setSpacing(10);
-    createMapMenuButton();
     menuButtonBox.getChildren().add(createMenuButton());
-    menuButtonBox.getChildren().add(mapMenuButton);
+    menuButtonBox.getChildren().add(createMapMenuButton());
+/*    mb.setFont(Font.font(getWidth() / 80));
+    mapMenuButton.setFont(Font.font(getWidth() / 80));
+    this.widthProperty().addListener((obs, oldV, newV) ->{
+//      mb.fontProperty().bind(Bindings.createObjectBinding(() -> Font.font("Century Gothic", this.getWidth() / 60), this.widthProperty()));
+//      mapMenuButton.fontProperty().bind(Bindings.createObjectBinding(() -> Font.font("Century Gothic", this.getWidth() / 60), this.widthProperty()));
+        mb.setFont(Font.font(getWidth() / 80));
+        mapMenuButton.setFont(Font.font(getWidth() / 80));
+    });*/
     return menuButtonBox;
   }
 
@@ -655,6 +663,7 @@ public class EditorScene extends Scene {
     but.getStyleClass().add("leave-button");
     but.prefWidthProperty().bind(root.widthProperty().multiply(widthratio));
     but.prefHeightProperty().bind(but.widthProperty().multiply(heightRatio));
+    but.setFont(Font.font("Century Gothic", but.getHeight() * 0.5));
     but.prefHeightProperty().addListener((obs, oldv, newV) -> {
       double size = newV.doubleValue() * 0.5;
       but.setFont(Font.font("Century Gothic", size));
@@ -755,13 +764,16 @@ public class EditorScene extends Scene {
    * @author aniemesc
    * @return MenuButton for loading map templates
    */
-  private void createMapMenuButton() {
+  private MenuButton createMapMenuButton() {
     mapMenuButton = new MenuButton("Load Map");
-    mapMenuButton.prefWidthProperty().bind(root.widthProperty().multiply(0.15));
+    mapMenuButton.prefWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.15));
     mapMenuButton.prefHeightProperty().bind(mapMenuButton.widthProperty().multiply(0.2));
+//    mapMenuButton.fontProperty().bind(Bindings.createObjectBinding(() -> Font.font("Century Gothic", this.getWidth() / 70), this.widthProperty()));
+
     for (String mapName : TemplateEngine.getTemplateNames()) {
       addMapItem(mapName);
     }
+    return mapMenuButton;
   }
 
   /**
@@ -838,6 +850,7 @@ public class EditorScene extends Scene {
     spinner.setEditable(true);
     spinner.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
     spinner.prefHeightProperty().bind(spinner.widthProperty().multiply(0.25));
+    spinner.getEditor().fontProperty().bind(Bindings.createObjectBinding(() -> Font.font(this.getWidth() / 90), this.widthProperty()));
     Formatter.applyIntegerFormatter(spinner.getEditor(), min, max);
     ContextMenu empty = new ContextMenu();
     spinner.getEditor().setContextMenu(empty);
@@ -875,10 +888,12 @@ public class EditorScene extends Scene {
     placementBox.getStyleClass().add("bottom-box-combo-box");
     placementBox.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
     placementBox.prefHeightProperty().bind(placementBox.widthProperty().multiply(0.25));
+    placementBox.setStyle("-fx-font-size: " + placementBox.getHeight() * 0.4 + "px;");
     placementBox.prefHeightProperty().addListener((obs, oldv, newV) -> {
       double size = newV.doubleValue() * 0.4;
       placementBox.setStyle("-fx-font-size: " + size + "px;");
     });
+//    placementBox.getEditor().fontProperty().bind(Bindings.createObjectBinding(() -> Font.font(this.getHeight() * 0.4), this.heightProperty()));
     return placementBox;
   }
 
@@ -892,13 +907,13 @@ public class EditorScene extends Scene {
   private void createFigureBox(ComboBox<String> box, double widthratio, double heightratio,
       double fontratio) {
     box.getStyleClass().add("bottom-box-combo-box");
+//    box.setPrefWidth(this.widthProperty().multiply(widthratio).get());
     box.prefWidthProperty().bind(this.widthProperty().multiply(widthratio));
     box.prefHeightProperty().bind(box.widthProperty().multiply(heightratio));
     box.prefHeightProperty().addListener((obs, oldv, newV) -> {
       double size = newV.doubleValue() * fontratio;
       box.setStyle("-fx-font-size: " + size + "px;");
     });
-
   }
 
   /**
@@ -913,6 +928,7 @@ public class EditorScene extends Scene {
     ComboBox<String> shapeBox = new ComboBox<>(options);
     shapeBox.setValue(options.get(0));
     shapeBox.getStyleClass().add("bottom-box-combo-box");
+    shapeBox.setPrefWidth(this.widthProperty().multiply(0.1).get());
     shapeBox.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
     shapeBox.prefHeightProperty().bind(shapeBox.widthProperty().multiply(0.25));
     shapeBox.prefHeightProperty().addListener((obs, oldv, newV) -> {
@@ -939,6 +955,7 @@ public class EditorScene extends Scene {
     });
     directionBox.setValue(options.get(0));
     directionBox.getStyleClass().add("bottom-box-combo-box");
+    directionBox.setPrefWidth(this.widthProperty().multiply(0.1).get());
     directionBox.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
     directionBox.prefHeightProperty().bind(directionBox.widthProperty().multiply(0.25));
     directionBox.prefHeightProperty().addListener((obs, oldv, newV) -> {
@@ -962,7 +979,7 @@ public class EditorScene extends Scene {
       double spacing = newVal.doubleValue() * 0.06;
       chooseBar.setSpacing(spacing);
     });
-    createFigureBox(box, 0.15, 0.18, 0.25);
+    createFigureBox(box, 0.15, 0.18, 0.35);
     chooseBar.getChildren().add(box);
     Spinner<Integer> customSpinner = createMapSpinner(0, 100, 0);
     chooseBar.getChildren().add(customSpinner);
@@ -993,16 +1010,13 @@ public class EditorScene extends Scene {
     TextField textField = new TextField();
     textField.getStyleClass().add("custom-search-field");
     textField.prefWidthProperty().bind(vbox.widthProperty().multiply(0.25));
-    textField.prefHeightProperty().bind(textField.widthProperty().multiply(0.1));
-    textField.heightProperty().addListener((obs, oldVal, newVal) -> {
-      double newFontSize = newVal.doubleValue() * 0.4;
-      textField.setFont(new Font(newFontSize));
-    });
-    textField.textProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue.length() > 15) {
-        textField.setText(oldValue);
-      }
-    });
+    textField.prefHeightProperty().bind(vbox.heightProperty().multiply(0.1));
+    textField.fontProperty().bind(Bindings.createObjectBinding(() -> Font.font(getHeight() / 50), heightProperty()));
+//    textField.textProperty().addListener((observable, oldValue, newValue) -> {
+//      if (newValue.length() > 15) {
+//        textField.setText(oldValue);
+//      }
+//    });
     return textField;
   }
 
@@ -1020,10 +1034,10 @@ public class EditorScene extends Scene {
     addButton.getStyleClass().add("add-piece-button");
     addButton.prefWidthProperty().bind(vbox.widthProperty().multiply(0.25));
     addButton.prefHeightProperty().bind(addButton.widthProperty().multiply(0.25));
-    // addButton.fontProperty().bind(Bindings.createObjectBinding(
-    // () -> Font.font("Century Gothic", addButton.getHeight() * 0.35),
-    // addButton.heightProperty()));
-    addButton.setOnAction(e -> {
+    
+
+    addButton.fontProperty().bind(Bindings.createObjectBinding(() -> Font.font("Century Gothic", this.getWidth() / 80), this.widthProperty()));
+    addButton.setOnAction(e -> { 
       if(!name.getText().isEmpty())
         engine.addpiece(name, strength);
       else {

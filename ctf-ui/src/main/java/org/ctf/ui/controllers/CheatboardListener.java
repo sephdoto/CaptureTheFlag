@@ -189,7 +189,7 @@ public class CheatboardListener extends NativeKeyAdapter {
     back.add(NativeKeyEvent.VC_C);   
     back.add(NativeKeyEvent.VC_K);
     cheatCodes.add(back);
-    infos.add("siwtchtes between the last (" + Constants.lastScenesSize + ") scenes");
+    infos.add("switchtes between the last (" + Constants.lastScenesSize + ") scenes");
     
     ArrayList<Integer> cs = new ArrayList<Integer>();    
     cs.add(NativeKeyEvent.VC_C);   
