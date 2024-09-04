@@ -358,9 +358,10 @@ public class PlayGameScreenV2 extends Scene {
 
                       // update the giveUp button and the clickable pieces
                       Client active = isALocalClientsTurn();
-                      if (active != null && !(active instanceof AIClient)) {
+                      if(active != null && !(active instanceof AIClient))
                         MoveVisualizer.initializeGame(gm, active);
-                      }
+                      else
+                        MoveVisualizer.initializeGame(gm);  
                       
                       // Update the "it is your turn" label
                       PlayGameScreenV2.this.setTeamTurn();
@@ -1173,15 +1174,15 @@ public class PlayGameScreenV2 extends Scene {
               deBox.setSpacing(spacing);
             });
     deBox.setAlignment(Pos.BASELINE_LEFT);
-    idLabel = new Label("id: -");
-    handleLabel(idLabel, deBox);
-    teamLabel = new Label("team: -");
-    handleLabel(teamLabel, deBox);
+//    idLabel = new Label("id: -");
+//    handleLabel(idLabel, deBox);
+//    teamLabel = new Label("team: -");
+//    handleLabel(teamLabel, deBox);
     attackPowLabel = new Label("attackpower: -");
     handleLabel(attackPowLabel, deBox);
     countLabel = new Label("count: - ");
     handleLabel(countLabel, deBox);
-    deBox.getChildren().addAll(idLabel, teamLabel, attackPowLabel, countLabel);
+    deBox.getChildren().addAll(attackPowLabel, countLabel);
     return deBox;
   }
 

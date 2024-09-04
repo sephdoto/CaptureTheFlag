@@ -12,8 +12,6 @@ import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.ui.controllers.SoundController;
-import org.ctf.ui.data.SceneHandler;
-import org.ctf.ui.hostGame.PlayGameScreenV2;
 import dialogs.Dialogs;
 
 /**
@@ -59,6 +57,19 @@ public class MoveVisualizer {
     currentPlayer = null;
     currentTeam = cb.getState().getCurrentTeam();
     setCurrentTeamActive();
+  }
+  
+  /**
+   * Initializes this MoveVisualizer but doesn't initialize making Moves
+   * 
+   * @author sistumpf
+   * @param pane GamePane with figures
+   */
+  public static void initializeGame(GamePane pane) {
+    setState(pane.getState());
+    setCb(pane);
+    currentPlayer = null;
+    currentTeam = cb.getState().getCurrentTeam();
   }
 
   /**
