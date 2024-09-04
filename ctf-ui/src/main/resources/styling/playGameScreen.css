@@ -1,0 +1,18 @@
+/* Kreis der zeigt wohin eine Figur kann (im gridpane über den Timern rechts) */
+.move-circle{
+    -fx-fill: rgb(53,89,119);
+}
+/* Zeigt an wie viele Felder eine Figur noch in eine Richtung kann (bei move-circle)*/
+.move-label{
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-fill: white;
+    -fx-text-fill: white;
+}
+.move-pane{
+    -fx-border-color: rgba(0,0,0,1);
+    -fx-border-width: 2px;
+    -fx-background-radius: 3px;
+    -fx-border-radius: 3px;
+    -fx-background-color: rgba(255,255,255, 0.2);
+}

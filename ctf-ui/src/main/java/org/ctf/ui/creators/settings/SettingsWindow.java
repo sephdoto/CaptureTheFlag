@@ -4,6 +4,7 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.Themes;
 import org.ctf.ui.controllers.MusicPlayer;
 import org.ctf.ui.creators.ComponentCreator;
+import org.ctf.ui.creators.settings.components.ChooseBackgroundFitFixButton;
 import org.ctf.ui.creators.settings.components.ChooseBooleanButton;
 import org.ctf.ui.creators.settings.components.ChooseFullAiPowerButton;
 import org.ctf.ui.creators.settings.components.ChooseMusicSlider;
@@ -116,6 +117,9 @@ public abstract class SettingsWindow extends ComponentCreator {
       case RANDOM_SLEEP_TIME:
         node = new IntegerBoxFactory.ChooseRandomAISleepTimeBox(settingsBox);
         break;
+      case BACKGROUND_FIT_FIX:
+        node = new ChooseBackgroundFitFixButton(settingsBox);
+        break;
       default:
         node = new Text("something went wrong");
     }
@@ -171,11 +175,11 @@ public abstract class SettingsWindow extends ComponentCreator {
               SceneHandler.updateBackgroundVisibility();
               break;
             case "glowSpread":
-              Constants.borderGlowSpread = (double) ((ChooseDoubleBox) node).getValue();
-              break;
+              Constants.borderGlowSpread = (double) ((ChooseDoubleBox) node).getValue(); break;
             case "randomSleepTime":
-              Constants.randomAiSleepTimeMS = (int) ((ChooseIntegerBox) node).getValue();
-              break;
+              Constants.randomAiSleepTimeMS = (int) ((ChooseIntegerBox) node).getValue(); break;
+            case "backgroundFitFix":
+              Constants.useBackgroundResizeFix = (boolean) ((ChooseBooleanButton) node).getValue(); break;
               
             case "booleanButton": System.out.println((boolean) ((ChooseBooleanButton) node).getValue()); 
               break;

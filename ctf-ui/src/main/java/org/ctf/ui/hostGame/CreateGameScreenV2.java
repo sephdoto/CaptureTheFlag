@@ -41,6 +41,10 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -590,11 +594,26 @@ public class CreateGameScreenV2 extends Scene {
           gm.maxWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.4));
           gm.maxHeightProperty().bind(SceneHandler.getMainStage().heightProperty().multiply(0.6));
           ImageView iv = task.getValue();
-          iv.fitWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.4));
-          iv.fitHeightProperty().bind(SceneHandler.getMainStage().heightProperty().multiply(0.6));
-          iv.setPreserveRatio(true);
-          iv.setOpacity(Constants.backgroundImageOpacity);
-          showMapBox.getChildren().add(iv);
+          if(Constants.useBackgroundResizeFix) {
+            BackgroundSize backgroundSize = new BackgroundSize(100, 100, true, true, true, false);
+            javafx.scene.layout.BackgroundImage image = new javafx.scene.layout.BackgroundImage(iv.getImage(),
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
+                backgroundSize
+                );
+            gm.setBackground(new Background(image));
+          } else {
+            if(!showMapBox.getChildren().contains(iv)) {  
+              iv.fitWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.4));
+              iv.fitHeightProperty().bind(SceneHandler.getMainStage().heightProperty().multiply(0.6));
+              iv.setPreserveRatio(true);
+              iv.setOpacity(Constants.backgroundImageOpacity);
+              showMapBox.getChildren().add(iv);
+            }
+          }
+          
+          
           showMapBox.getChildren().add(gm);
           generateBackgroundThread = null;
         });

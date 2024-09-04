@@ -15,9 +15,11 @@ import org.ctf.shared.client.Client;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.shared.state.GameState;
+import org.ctf.shared.state.Piece;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.creators.PopupCreatorGameOver;
 import org.ctf.ui.customobjects.MyCustomColorPicker;
+import org.ctf.ui.customobjects.PieceWalkPane;
 import org.ctf.ui.customobjects.Timer;
 import org.ctf.ui.data.ClientStorage;
 import org.ctf.ui.data.SceneHandler;
@@ -49,6 +51,10 @@ import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -98,6 +104,7 @@ public class PlayGameScreenV2 extends Scene {
   private static Label attackPowLabel;
   private static Label teamLabel;
   private static Label countLabel;
+  private static PieceWalkPane pieceWalkPane;
 
   private ObjectProperty<Color> sceneColorProperty = new SimpleObjectProperty<>(Color.BLUE);
   private SimpleObjectProperty<Insets> padding = new SimpleObjectProperty<>(new Insets(10));
@@ -345,6 +352,21 @@ public class PlayGameScreenV2 extends Scene {
                         }
                         StackPane.setAlignment(gm, Pos.CENTER);
                         gm.enableBaseColors(this);
+
+                        if(Constants.useBackgroundResizeFix) {
+                          BackgroundSize backgroundSize = new BackgroundSize(100, 100, true, true, true, false);
+                          javafx.scene.layout.BackgroundImage image = new javafx.scene.layout.BackgroundImage(mpv.getImage(),
+                              BackgroundRepeat.NO_REPEAT,
+                              BackgroundRepeat.NO_REPEAT,
+                              BackgroundPosition.CENTER,
+                              backgroundSize
+                              );
+                          gm.setBackground(new Background(image));
+                        } else {
+                          if(!showMapBox.getChildren().contains(mpv))
+                            showMapBox.getChildren().add(mpv);
+                        }
+                        
                         showMapBox.getChildren().add(gm);
 
                         Text text = new Text("queued gs: " + ClientStorage.getMainClient().queuedGameStates());
@@ -1111,50 +1133,56 @@ public class PlayGameScreenV2 extends Scene {
    */
   private HBox createFigureDesBox() {
     HBox hBox = new HBox();
-    hBox.prefHeightProperty().bind(this.heightProperty().multiply(0.65));
+    hBox.setAlignment(Pos.CENTER);
+    VBox vBox = new VBox();
+    vBox.getStyleClass().add("option-pane");
+    HBox pict = new HBox();
+    typeLabel = new Label("-");
+    typeLabel.fontProperty().bind(pictureMainDiscription);
+    typeLabel.setAlignment(Pos.CENTER_LEFT);
+    typeLabel.getStyleClass().add("figure-label");
+    StackPane p = new StackPane();
+    Image mp = ImageController.loadThemedImage(ImageType.MISC, "question-mark");
+    figureImage = new Circle();
+    figureImage.setFill(new ImagePattern(mp));
+    figureImageBackground = new Circle();
+    figureImageBackground.setFill(Color.WHITE);
+    figureImageBackground.setStroke(Color.BLACK);
+    figureImageBackground.setStrokeWidth(2);
+    pict.getChildren().addAll(typeLabel, p);
+    p.getChildren().addAll(figureImageBackground, figureImage);
+    vBox.getChildren().add(pict);
+    vBox.getChildren().add(createDeslabelBox());
+    hBox.getChildren().add(vBox);
+    
+    
+
+    /*hBox.prefHeightProperty().bind(this.heightProperty().multiply(0.65));
     hBox.prefWidthProperty().bind(right.widthProperty().multiply(0.8));
+    double pad1 = hBox.widthProperty().doubleValue() * 0.08;
+    hBox.setPadding(new Insets(pad1, pad1, pad1, pad1));
     hBox.widthProperty()
         .addListener(
             (observable, oldValue, newValue) -> {
               double padding = newValue.doubleValue() * 0.08;
               hBox.setPadding(new Insets(padding, padding, padding, padding));
-            });
-
-    hBox.setAlignment(Pos.CENTER);
-    
-    VBox vBox = new VBox();
+            });*/
+    double pad = vBox.widthProperty().doubleValue() * 0.05;
+    vBox.setPadding(new Insets(pad, pad, pad, pad));
     vBox.widthProperty()
         .addListener(
             (observable, oldValue, newValue) -> {
               double padding = newValue.doubleValue() * 0.05;
               vBox.setPadding(new Insets(padding, padding, padding, padding));
             });
-    vBox.getStyleClass().add("option-pane");
-    HBox pict = new HBox();
+
     pict.prefHeightProperty().bind(vBox.heightProperty().multiply(0.1));
     pict.prefWidthProperty().bind(right.widthProperty().multiply(0.75));
-    typeLabel = new Label("-");
-    typeLabel.fontProperty().bind(pictureMainDiscription);
-    typeLabel.setAlignment(Pos.CENTER_LEFT);
+    p.prefWidthProperty().bind(pict.widthProperty().multiply(0.3));
     typeLabel.prefHeightProperty().bind(pict.heightProperty().multiply(0.8));
     typeLabel.prefWidthProperty().bind(pict.widthProperty().multiply(0.7));
-    typeLabel.getStyleClass().add("figure-label");
-    StackPane p = new StackPane();
-    p.prefWidthProperty().bind(pict.widthProperty().multiply(0.3));
-    Image mp = ImageController.loadThemedImage(ImageType.MISC, "question-mark");
-    figureImage = new Circle();
     figureImage.radiusProperty().bind(pict.widthProperty().divide(6));
-    figureImage.setFill(new ImagePattern(mp));
-    figureImageBackground = new Circle();
-    figureImageBackground.setFill(Color.WHITE);
-    figureImageBackground.setStroke(Color.BLACK);
-    figureImageBackground.setStrokeWidth(2);
     figureImageBackground.radiusProperty().bind(pict.widthProperty().divide(6));
-    pict.getChildren().addAll(typeLabel, p);
-    p.getChildren().addAll(figureImageBackground, figureImage);
-    vBox.getChildren().add(pict);
-    vBox.getChildren().add(createDeslabelBox());
-    hBox.getChildren().add(vBox);
     return hBox;
   }
 
@@ -1165,24 +1193,35 @@ public class PlayGameScreenV2 extends Scene {
    * @return description label
    */
   private VBox createDeslabelBox() {
-    VBox deBox = new VBox(10);
-    deBox
-        .heightProperty()
-        .addListener(
-            (observable, oldValue, newValue) -> {
-              double spacing = newValue.doubleValue() * 0.08;
-              deBox.setSpacing(spacing);
-            });
-    deBox.setAlignment(Pos.BASELINE_LEFT);
+    VBox deBox = new VBox();
+
+    deBox.setPrefWidth(1);
+    deBox.setPrefHeight(1);
+
+//    deBox
+//        .heightProperty()
+//        .addListener(
+//            (observable, oldValue, newValue) -> {
+//              double spacing = newValue.doubleValue() * 0.08;
+//              deBox.setSpacing(spacing);
+//            });
+    deBox.setAlignment(Pos.CENTER_LEFT);
 //    idLabel = new Label("id: -");
 //    handleLabel(idLabel, deBox);
 //    teamLabel = new Label("team: -");
 //    handleLabel(teamLabel, deBox);
     attackPowLabel = new Label("attackpower: -");
-    handleLabel(attackPowLabel, deBox);
+    handleLabel(attackPowLabel);
     countLabel = new Label("count: - ");
-    handleLabel(countLabel, deBox);
-    deBox.getChildren().addAll(attackPowLabel, countLabel);
+    handleLabel(countLabel);
+    pieceWalkPane = new PieceWalkPane(deBox);
+    deBox.getChildren().addAll(attackPowLabel, countLabel, pieceWalkPane);
+
+    attackPowLabel.prefWidthProperty().bind(deBox.widthProperty());
+    countLabel.prefWidthProperty().bind(deBox.widthProperty());
+    pieceWalkPane.prefWidthProperty().bind(deBox.widthProperty().divide(4));
+    pieceWalkPane.prefHeightProperty().bind(deBox.widthProperty());
+    
     return deBox;
   }
 
@@ -1193,9 +1232,8 @@ public class PlayGameScreenV2 extends Scene {
    * @param l label
    * @param parent used for relative resizing
    */
-  private void handleLabel(Label l, VBox parent) {
+  private void handleLabel(Label l) {
     l.fontProperty().bind(figureDiscription);
-    l.prefWidthProperty().bind(parent.widthProperty());
     l.getStyleClass().add("figure-label");
   }
 
@@ -1215,6 +1253,10 @@ public class PlayGameScreenV2 extends Scene {
     figureImage.setFill(new ImagePattern(img));
   }
 
+  public static void setPieceWalkPane(Piece piece) {
+    pieceWalkPane.update(piece);
+  }
+  
   public static void setIdLabelText(String text) {
     idLabel.setText(text);
   }

@@ -22,8 +22,8 @@ public class SettingsOpener {
         addNewComponent(Settings.UI_UPDATE_TIME);
         addNewComponent(Settings.BACKGROUND_OPACITY);
         addNewComponent(Settings.MAP_OPACITY);
+        addNewComponent(Settings.BACKGROUND_FIT_FIX);
         addNewComponent(Settings.GLOW_SPREAD);
-        addNewComponent(Settings.ANALYZER_THINKING_TIME);
       }
     };
     
@@ -35,6 +35,7 @@ public class SettingsOpener {
       @Override
       public void fillWithContent() {
         addNewComponent(Settings.RANDOM_SLEEP_TIME);
+        addNewComponent(Settings.ANALYZER_THINKING_TIME);
       }
     };
     

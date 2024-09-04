@@ -2,7 +2,6 @@ package org.ctf.ui.creators;
 
 import java.text.DecimalFormat;
 import org.ctf.shared.ai.AIConfig;
-import org.ctf.ui.customobjects.MovementVisual;
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.editor.EditorScene;

@@ -185,6 +185,7 @@ public class CostumFigurePain extends Pane {
     PlayGameScreenV2.setFigureBackground(CreateGameController.getColors().get(piece.getTeamId()).get());
     PlayGameScreenV2.setFigureImage(bImage);
     
+    PlayGameScreenV2.setPieceWalkPane(piece);
     //TODO add PieceWalkPane
   }
 

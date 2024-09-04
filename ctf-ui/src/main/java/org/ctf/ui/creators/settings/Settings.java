@@ -18,7 +18,8 @@ public enum Settings {
   ANALYZER_THINKING_TIME("Analyzer time "),
   BACKGROUND_OPACITY("Background opacity "),
   GLOW_SPREAD("Glow intensity "),
-  RANDOM_SLEEP_TIME("RandomAI wait time ");
+  RANDOM_SLEEP_TIME("RandomAI wait time "),
+  BACKGROUND_FIT_FIX("Background-fit Fix ");
   
   private String name;
   

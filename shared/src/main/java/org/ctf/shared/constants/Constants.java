@@ -100,6 +100,8 @@ public class Constants {
    * Strength of the border glow around figures
    */
   public static double borderGlowSpread = 0.5;
+  
+  public static boolean useBackgroundResizeFix = false;
  
   ///////////////////////////////////////////////////////
   //                    other                          //

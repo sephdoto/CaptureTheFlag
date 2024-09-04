@@ -214,7 +214,7 @@ public class SceneHandler {
     
     addStyleSheet("MapEditor");
     addStyleSheet("color");
-    addStyleSheet("ComboBox");
+    addStyleSheet("playGameScreen");
   }
     
   ///***************************************///
