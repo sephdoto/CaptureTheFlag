@@ -6,11 +6,14 @@ import org.ctf.shared.client.Client;
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
+import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.data.exceptions.ForbiddenMove;
 import org.ctf.shared.state.data.exceptions.GameOver;
 import org.ctf.shared.state.data.exceptions.InvalidMove;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.ui.controllers.SoundController;
+import org.ctf.ui.data.SceneHandler;
+import org.ctf.ui.hostGame.PlayGameScreenV2;
 import dialogs.Dialogs;
 
 /**
@@ -31,8 +34,16 @@ public class MoveVisualizer {
   // client whose moves are shown and list of moves
   private static Client cliento;
   private static ArrayList<int[]> possibleMoves;
+  
+  private static boolean currentlyHovering;
+  private static boolean currentlySelected;
 
-
+  static {
+    possibleMoves = new ArrayList<int[]>();
+    currentlyHovering = false;
+    currentlySelected = false;
+  }
+  
   /**
    * Initializes a MoveHandler with the corresponding gamepane on which the figures should be
    * controlled
@@ -42,10 +53,9 @@ public class MoveVisualizer {
    * @param client Client whose turn it is
    */
   public static void initializeGame(GamePane pane, Client client) {
-    possibleMoves = new ArrayList<int[]>();
     cliento = client;
-    state = pane.getState();
-    cb = pane;
+    setState(pane.getState());
+    setCb(pane);
     currentPlayer = null;
     currentTeam = cb.getState().getCurrentTeam();
     setCurrentTeamActive();
@@ -121,17 +131,21 @@ public class MoveVisualizer {
    * @author Manuel Krakowski
    */
   public static void showPossibleMoves() {
+    currentlySelected = true;
     String pieceName = currentPlayer.getPiece().getId();
     possibleMoves = GameUtilities.getPossibleMoves(state, pieceName, possibleMoves);
     for (BackgroundCellV2 c : cb.getCells().values()) {
       if (c != currentPlayer.getParentCell()) {
+        c.removePossibleMoveOnHover();
         c.deselect();
       }
     }
     for (CostumFigurePain c : cb.getFigures().values()) {
+      c.removeHoverAttackable();
       c.setUnattacble();
     }
     for (BaseRep b : cb.getBases().values()) {
+      b.removeHoverAttackable();
       b.setUnattacble();
     }
     cb.showLastMove();
@@ -152,18 +166,74 @@ public class MoveVisualizer {
       }
     }
   }
+  
+  /**
+   * Shows the possible moves of the currently selected figure,
+   * but slightly different than {@link showPossibleMoves()}. 
+   * 
+   * @author sistumpf
+   */
+  public static void hoverPossibleMoves(CostumFigurePain currentPlayer, Piece piece) {
+    int currentTeam = state.getCurrentTeam();
+    state.setCurrentTeam(Integer.parseInt(piece.getTeamId()));
+    possibleMoves = GameUtilities.getPossibleMoves(state, piece.getId(), possibleMoves);
+    state.setCurrentTeam(currentTeam);
+   
+    removeHoverPossibleMoves(currentPlayer);
+    currentlyHovering = true;
+    
+    //cb.showLastMove();
+    for (BackgroundCellV2 c : cb.getCells().values()) {
+      for (int[] pos : possibleMoves) {
+        if (c.getX() == pos[0] && c.getY() == pos[1]) {
+//          System.out.println(" " + pos[0] + ", " + pos[1]);
+          if (!c.isOccupied()) {
+            c.showPossibleMoveOnHover();
+          } else {
+            if (c.getChild() != null) {
+              if(!c.getChild().getPiece().getTeamId().equals(piece.getTeamId()))
+                c.getChild().hoverAttackable();
+            } else {
+              c.getTeamBase().hoverAttackable();
+            }
+          }
+        }
+      }
+    }
+  }
 
+  /**
+   * Removes the selection of hover-possible moves and hover-attackable pieces
+   */
+  public static void removeHoverPossibleMoves(CostumFigurePain currentPlayer) {
+    currentlyHovering = false;
+    for (BackgroundCellV2 c : cb.getCells().values()) {
+      if (currentPlayer == null || c != currentPlayer.getParentCell()) {
+        c.removePossibleMoveOnHover();
+      }
+    }
+    for (CostumFigurePain c : cb.getFigures().values()) {
+      c.removeHoverAttackable();
+    }
+    for (BaseRep b : cb.getBases().values()) {
+      b.removeHoverAttackable();
+    }
+    cb.showLastMove();
+  }
+  
   /**
    * Deselects the currently selected figure by clicking on an empty cell
    * 
    * @author Manuel Krakowski
    */
   public static void deselectFigure() {
+    currentlySelected = false;
     if (cb != null) {
       for (BackgroundCellV2 c : cb.getCells().values()) {
         if(c.getStyle().equals("-fx-background-color: transparent;" + "-fx-border-color: black; "
         + "-fx-border-width: 1.2px ")) {
-          SoundController.playSound(c.getChild().getPiece().getDescription().getType(), SoundType.DESELECT);
+          if(c.getChild() != null)
+            SoundController.playSound(c.getChild().getPiece().getDescription().getType(), SoundType.DESELECT);
         }
         c.deselect();
       }
@@ -181,5 +251,21 @@ public class MoveVisualizer {
 
   public static void setCurrent(CostumFigurePain current) {
     currentPlayer = current;
+  }
+
+  public static void setState(GameState state) {
+    MoveVisualizer.state = state;
+  }
+
+  public static void setCb(GamePane cb) {
+    MoveVisualizer.cb = cb;
+  }
+
+  public static boolean isCurrentlyHovering() {
+    return currentlyHovering;
+  }
+
+  public static boolean isCurrentlySelected() {
+    return currentlySelected;
   }
 }

@@ -8,6 +8,7 @@ import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.hostGame.CreateGameController;
 import org.ctf.ui.hostGame.PlayGameScreenV2;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -46,6 +47,9 @@ public class CostumFigurePain extends Pane {
   private Image bImage;
   private ImageView vw;
   private DropShadow borderGlow;
+  
+  //
+  private boolean initialized = false;
 
 
   /**
@@ -62,6 +66,7 @@ public class CostumFigurePain extends Pane {
     this.setImage();
     this.active = false;
     showPieceInformationWhenHovering();
+    initialized = true;
     this.setOnMouseClicked(new EventHandler<MouseEvent>() {
       public void handle(MouseEvent e) {
         if (active && !attacable) {
@@ -70,6 +75,11 @@ public class CostumFigurePain extends Pane {
         if (attacable) {
           performAttackClick();
         }
+      }
+    });
+    this.setOnMouseExited(new EventHandler<MouseEvent>() {
+      public void handle(MouseEvent e) {
+        MoveVisualizer.removeHoverPossibleMoves(CostumFigurePain.this);
       }
     });
   }
@@ -166,14 +176,16 @@ public class CostumFigurePain extends Pane {
    * @author Manuel Krakowski
    */
   public void showPieceInformationWhenClicked() {
-    PlayGameScreenV2.setIdLabelText("id: " + piece.getId());
+//    PlayGameScreenV2.setIdLabelText("id: " + piece.getId());
     PlayGameScreenV2.setTypeLabelText(piece.getDescription().getType());
     PlayGameScreenV2
         .setAttackPowLabelText("attack power: " + piece.getDescription().getAttackPower());
     PlayGameScreenV2.setCountLabelText("count: " + piece.getDescription().getCount());
-    PlayGameScreenV2.setTeamLabelText("team: " + piece.getTeamId());
+//    PlayGameScreenV2.setTeamLabelText("team: " + piece.getTeamId());
     PlayGameScreenV2.setFigureBackground(CreateGameController.getColors().get(piece.getTeamId()).get());
     PlayGameScreenV2.setFigureImage(bImage);
+    
+    //TODO add PieceWalkPane
   }
 
   /**
@@ -183,20 +195,36 @@ public class CostumFigurePain extends Pane {
    */
   public void showPieceInformationWhenHovering() {
     String pieceInfos = 
-        "type: " + piece.getDescription().getType() + "\n" + 
-            "attack power: " + piece.getDescription().getAttackPower() + "\n" + 
-            "teamID : " + piece.getTeamId() + "\n" + 
-            "ID : " + piece.getId();
+        piece.getDescription().getType() + "\n" + 
+            "teamID : " + piece.getTeamId() + "\n" +
+            "attack power: " + piece.getDescription().getAttackPower()
+            /*"ID : " + piece.getId()*/;
     Tooltip tooltip = new Tooltip(pieceInfos);
-    Duration delay = new Duration(1);
+    Duration delay = new Duration(100);
     tooltip.setShowDelay(delay);
     Duration displayTime = new Duration(10000);
     tooltip.setShowDuration(displayTime);
     tooltip.setFont(new Font(15));
+    tooltip.setOnShown((e) -> {
+      new ShowMoveThread(tooltip).start();
+      });
     this.setPickOnBounds(true);
     Tooltip.install(this, tooltip);
   }
 
+  /**
+   * shows where a piece can walk by hovering over it
+   * 
+   * @author sistumpf
+   */
+  public void showHoverWalkableTiles() {
+    if(initialized)
+      if(MoveVisualizer.getCurrent() != null && MoveVisualizer.getCurrent() == this) {
+        MoveVisualizer.removeHoverPossibleMoves(CostumFigurePain.this);
+      } else {
+        MoveVisualizer.hoverPossibleMoves(CostumFigurePain.this, piece);
+      }
+  }
 
   /**
    * Sets an Image for the piece based on its type
@@ -224,10 +252,45 @@ public class CostumFigurePain extends Pane {
     this.posY = parent.getY();
   }
 
+  ////////////////////////////////////////////////////////////////////////
+  //                            THREAD                                  //
+  ////////////////////////////////////////////////////////////////////////
 
 
-  // Getters and Setters
+  private class ShowMoveThread extends Thread {
+    Tooltip tooltip;
+    public ShowMoveThread(Tooltip tooltip) {
+      this.tooltip = tooltip;
+    }
+    public void run() {
+      long showTime = System.currentTimeMillis();
+      boolean showTip = false;
+      while(tooltip.isShowing() && System.currentTimeMillis() - showTime < 200) {
+        try { Thread.sleep(Constants.UIupdateTime);
+        } catch (InterruptedException e1) { e1.printStackTrace(); }
+        showTip = System.currentTimeMillis() - showTime >= 200;
+      }
+      if(showTip) {
+        Platform.runLater(() -> {
+          showHoverWalkableTiles();    
+        });
+      }
+      showTime = System.currentTimeMillis();
+      while(tooltip.isShowing() && System.currentTimeMillis() - showTime < 1500) {
+        try { Thread.sleep(Constants.UIupdateTime);
+        } catch (InterruptedException e1) { e1.printStackTrace(); }
+        showTip = System.currentTimeMillis() - showTime >= 500;
+      }
+      if(showTip) {
+        Platform.runLater(() -> {
+          tooltip.hide();
+        });
+      }
+    }
+  }
+
   /////////////////////////////////////////////////////////////////////////////////
+  //Getters and Setters
   //////////////////////////////////////////////////////////////////////////////////
 
   public void setActive() {
@@ -258,6 +321,14 @@ public class CostumFigurePain extends Pane {
     return attacable;
   }
 
+  public void hoverAttackable() {
+    parent.hoverAttackable();
+  }
+
+  public void removeHoverAttackable() {
+    parent.removeHoverAttackable();
+  }
+  
   public void setAttacable() {
     this.attacable = true;
     parent.showAttackable();

@@ -25,6 +25,7 @@ public class BackgroundCellV2 extends Pane {
   private boolean occupied; // indicates whether there currently is an object on the cell
   private Circle rc; // Circle to show possible move on empty cell
   private Circle rc2; // circle to show that figure is selected
+  private Circle rc3; // Circle to show possible move on empty cell, shown when hovered
   private boolean active; // When cell is active user can click it to make move-request
   private StackPane base; // StackPane as base of the cell where objects are placed on
   private CostumFigurePain child; // if there is a piece on the cell, null otherwise
@@ -46,6 +47,7 @@ public class BackgroundCellV2 extends Pane {
     this.occupied = false;
     this.createBase();
     createCircle();
+    createCircle3();
   }
 
   /**
@@ -69,13 +71,29 @@ public class BackgroundCellV2 extends Pane {
    */
   public void createCircle2() {
     rc2 = new Circle();
-    rc2.radiusProperty().bind(getBase().widthProperty().divide(2.5));
+    rc2.radiusProperty().bind(getBase().widthProperty().divide(2.25));
     rc2.centerXProperty().bind(getBase().widthProperty().divide(2));
     rc2.centerYProperty().bind(getBase().heightProperty().divide(2));
     rc2.setFill(null);
     rc2.setStroke(Color.rgb(173, 216, 230, 0.5));
     rc2.setStrokeWidth(3);
     getBase().getChildren().add(rc2);
+  }
+  
+  /**
+   * Creates the circle which is drawn around a figure to indicate that it is currently selected
+   * 
+   * @author Manuel Krakowski
+   */
+  public void createCircle3() {
+    rc3 = new Circle();
+    rc3.radiusProperty().bind(getBase().widthProperty().divide(7.5));
+    rc3.centerXProperty().bind(getBase().widthProperty().divide(2));
+    rc3.centerYProperty().bind(getBase().heightProperty().divide(2));
+    rc3.setFill(null);
+//    rc3.setStroke(Color.rgb(230, 230, 250, 0.2));
+//    rc3.setStrokeWidth(3);
+    getBase().getChildren().add(rc3);
   }
 
   /**
@@ -88,8 +106,8 @@ public class BackgroundCellV2 extends Pane {
     getBase().getChildren().remove(rc);
     occupied = true;
     child = figure;
-    child.maxWidthProperty().bind(getBase().widthProperty().multiply(0.75));
-    child.maxHeightProperty().bind(getBase().heightProperty().multiply(0.75));
+    child.maxWidthProperty().bind(getBase().widthProperty().multiply(0.85));
+    child.maxHeightProperty().bind(getBase().heightProperty().multiply(0.85));
     getBase().getChildren().add(child);
     figure.setParente(this);
   }
@@ -140,7 +158,7 @@ public class BackgroundCellV2 extends Pane {
     getBase().getChildren().clear();
     getBase().getChildren().add(basis);
   }
-
+  
   /**
    * Changes the background-color of the cell when the piece or base on it is attackable
    * 
@@ -218,6 +236,49 @@ public class BackgroundCellV2 extends Pane {
   }
 
   /**
+   * Like {@link showPossibleMove()} but with another circle to show this seperately
+   * 
+   * @author sistumpf
+   */
+  public void showPossibleMoveOnHover() {
+    rc3.setFill(Color.rgb(230, 230, 250, 0.5));
+  }
+  
+  /**
+   * Removes the hover circle for indicating a move is possible
+   * 
+   * @author sistumpf
+   */
+  public void removePossibleMoveOnHover() {
+    rc3.setFill(null);
+  }
+  
+  /**
+   * Shows a piece is attackable, on hovering
+   * 
+   * @author sistumpf
+   */
+  public void hoverAttackable() {
+    int r=255;
+    int g=94;
+    int b=94;
+    if(getStyle().contains("rgb")) {
+      String[] rgb = getStyle().substring(getStyle().indexOf("(") +1,getStyle().indexOf(")")).split(",");
+      r = Integer.parseInt(rgb[0]);
+      g = Integer.parseInt(rgb[1]);
+      b = Integer.parseInt(rgb[2]);
+    }
+    this.setStyle("-fx-background-color: rgb(" + r + "," + g + "," + b + ",0.1);" + "-fx-border-color: rgb(255,0,255,0.4); "
+        + "-fx-border-width: 1.2px");
+  }
+
+  public void removeHoverAttackable() {
+    if(getStyle().contains("-fx-border-color: rgb(" + 255 + "," + 0 + "," + 255 + ",0.4);"))
+      setStyle("-fx-background-color: transparent;" + "-fx-border-color: black; "
+        + "-fx-border-width: 1.2px ");
+  }
+  
+  /**
    * Draws a bigger circle around the figure which is currently selected
    * 
    * @author Manuel Krakowski
@@ -234,8 +295,9 @@ public class BackgroundCellV2 extends Pane {
    * @author Manuel Krakowski
    */
   public void deselect() {
-    this.setStyle(" -fx-border-color: black; " + "-fx-border-width: 1.2px ");
-    this.active = false;
+    if(getStyle().contains("-fx-border-color: red;"))
+      setStyle(" -fx-border-color: black; " + "-fx-border-width: 1.2px ");
+    active = false;
     rc.setFill(null);
     if (rc2 != null) {
       getBase().getChildren().remove(rc2);
@@ -275,7 +337,9 @@ public class BackgroundCellV2 extends Pane {
       public void handle(MouseEvent e) {
         if (active) {
           performClickOnCell();
-        } else if (!occupied) {
+        } else if (!occupied && MoveVisualizer.isCurrentlyHovering() ) {
+            MoveVisualizer.removeHoverPossibleMoves(child);
+        } else if (!occupied && MoveVisualizer.isCurrentlySelected()) {
           MoveVisualizer.deselectFigure();
         }
       }

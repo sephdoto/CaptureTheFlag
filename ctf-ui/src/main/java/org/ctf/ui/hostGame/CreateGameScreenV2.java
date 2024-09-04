@@ -21,6 +21,7 @@ import org.ctf.ui.data.ClientStorage;
 import org.ctf.ui.data.Formatter;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.map.GamePane;
+import org.ctf.ui.map.MoveVisualizer;
 import org.ctf.ui.threads.PointAnimation;
 import javafx.animation.TranslateTransition;
 import javafx.beans.binding.Bindings;
@@ -548,9 +549,11 @@ public class CreateGameScreenV2 extends Scene {
       Map.Entry<MapTemplate, GameState> entry = maps.entrySet().iterator().next();
       template = entry.getKey();
       state = entry.getValue();
+      MoveVisualizer.setState(state);
     }
 
     gm = new GamePane(state, true, "", null, null, 0);
+    MoveVisualizer.setCb(gm);
     StackPane.setAlignment(gm, Pos.CENTER);
     gm.maxWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.4));
     gm.maxHeightProperty().bind(SceneHandler.getMainStage().heightProperty().multiply(0.6));

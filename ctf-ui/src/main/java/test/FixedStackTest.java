@@ -1,6 +1,7 @@
-package org.ctf.ui.data;
+package test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.ctf.ui.data.FixedStack;
 import org.junit.jupiter.api.Test;
 
 /**

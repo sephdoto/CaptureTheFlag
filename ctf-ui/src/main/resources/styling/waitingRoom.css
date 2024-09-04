@@ -30,3 +30,16 @@
     -fx-border-color: blue;
     -fx-prompt-text-fill: rgb(151, 151, 151); 
 }
+
+/* Verschiedenfarbige Hintergründe bei der Spieler Anzeige 1 */
+.lobby-normal-label {
+    -fx-text-fill: white;
+    -fx-font-family: 'Eras Medium Light';
+    -fx-background-color: #475865;
+}
+/* Verschiedenfarbige Hintergründe bei der Spieler Anzeige 1 */
+.lobby-normal-label-2 {
+    -fx-text-fill: white;
+    -fx-font-family: 'Eras Medium Light';
+    -fx-background-color: grey;
+}

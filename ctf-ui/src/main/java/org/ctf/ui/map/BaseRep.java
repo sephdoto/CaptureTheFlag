@@ -146,6 +146,14 @@ public class BaseRep extends Pane {
     this.scene = scene;
   }
 
+  public void hoverAttackable() {
+    parent.hoverAttackable();
+  }
+  
+  public void removeHoverAttackable() {
+    parent.removeHoverAttackable();
+  }
+  
   public void setAttackable() {
     isAttackable = true;
     parent.showAttackable();

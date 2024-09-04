@@ -531,7 +531,7 @@ public class PlayGameScreenV2 extends Scene {
    * @param state GameState which is shown on the map
    */
   private GamePane createGamePane(GameState state) {
-    GamePane gm = new GamePane(state, showBlocks, "", showMapBox.widthProperty(), showMapBox.heightProperty(), 0.8);
+    GamePane gm = new GamePane(state, showBlocks, "", showMapBox.widthProperty(), showMapBox.heightProperty(), 0.9);
     StackPane.setAlignment(gm, Pos.CENTER);
     gm.enableBaseColors(this);
     return gm;
@@ -577,8 +577,8 @@ public class PlayGameScreenV2 extends Scene {
       mpv.fitWidthProperty().bind(gm.maxWidthProperty());
       mpv.fitHeightProperty().bind(gm.maxHeightProperty());
     } else {
-      mpv.fitWidthProperty().bind(showMapBox.widthProperty().multiply(0.8));
-      mpv.fitHeightProperty().bind(showMapBox.heightProperty().multiply(0.8));
+      mpv.fitWidthProperty().bind(showMapBox.widthProperty().multiply(0.9));
+      mpv.fitHeightProperty().bind(showMapBox.heightProperty().multiply(0.9));
     }
     mpv.setPreserveRatio(true);
     showMapBox.getChildren().add(mpv);
