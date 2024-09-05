@@ -16,6 +16,7 @@ import org.ctf.shared.client.service.CommLayer;
 import org.ctf.shared.client.service.CommLayerInterface;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.gameanalyzer.GameSaveHandler;
+import org.ctf.shared.gameanalyzer.SavedGame;
 import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.Move;
 import org.ctf.shared.state.Team;
@@ -52,6 +53,8 @@ public class Client implements GameClientInterface {
   protected Move lastMove;
   protected Team[] teams;
   protected Clock currentTime;
+  /** last UNIX timestamp a time got saved to {@link gameSaveHandler} */
+  protected long lastTimestamp;
   
   protected Gson gson; // Gson object for conversions incase needed
   // Two CommLayers Available CommLayer and RestClientLayer
@@ -87,7 +90,6 @@ public class Client implements GameClientInterface {
   protected volatile int moveTimeLeft;
   protected int gameTimeLeft;
   protected int lastTeamTurn;
-  protected long refreshTime = 10L;
 
   // Block for booleans
   protected boolean gameOver;
@@ -585,7 +587,6 @@ public class Client implements GameClientInterface {
               + " : " + gameState.getLastMove().getNewPosition()[0] + "," 
               + gameState.getLastMove().getNewPosition()[1] + " :: " 
               + GameUtilities.howManyTeams(gameState));*/
-        
           this.gameSaveHandler.addMove(gameState.getLastMove(), GameUtilities.teamsGaveUp(lastState, currentState));
         }
       }
@@ -688,6 +689,24 @@ public class Client implements GameClientInterface {
       String name = gameState.getTeams()[teamID].getId();
       allTeamNames[teamID] = name;
     }
+    initSaveGameV2(gameState);
+    }
+  
+  /**
+   * Initializes important values in the SavedGame.
+   * 
+   * @param gameState unnormalized {@link GameState} to get values like player names from
+   * @author sistumpf
+   */
+  private void initSaveGameV2(GameState gameState) {
+    if(enableLogging) {
+      SavedGame save = gameSaveHandler.getSavedGame();
+      save.setFirstPlayer(gameState.getTeams()[gameState.getCurrentTeam()].getId());
+      save.setNames(allTeamNames);
+      long currentTime = System.currentTimeMillis();
+      save.setStartingTime(currentTime);
+      lastTimestamp = currentTime;
+    }
   }
   
   /**
@@ -758,9 +777,17 @@ public class Client implements GameClientInterface {
     }
     
     if(GameUtilities.moveEquals(newState.getLastMove(), normalizer.unnormalizeMove(currentState.getLastMove()))) {
-      return newState.getCurrentTeam() != currentState.getCurrentTeam();
+      //made like this instead of return *things in if* because of saving the newest timestamp. 
+      //this method is the same for AIClient and Client so its only one thing to take care of
+      if(!(newState.getCurrentTeam() != currentState.getCurrentTeam()))
+      return false;
     }
     
+    if(enableLogging) {
+      long currentTime = System.currentTimeMillis();
+      this.gameSaveHandler.getSavedGame().addMoveDuration((int)(currentTime - lastTimestamp));
+      this.lastTimestamp = currentTime;
+    }
     return true;
   }
   
@@ -847,6 +874,18 @@ public class Client implements GameClientInterface {
   }
 
   /**
+   * Puts the client to sleep for an in Constants specified time.
+   * 0 should be good.
+   */
+  protected void sleep() {
+    try {
+      Thread.sleep(Constants.clientSleepTime);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+  
+  /**
    * Starts a scheduled Thread just to update the Move time.
    * Only does this if the Client is an instance of AIClient,
    * as the AIClient does not update if it is currently calculating its move.
@@ -901,10 +940,16 @@ public class Client implements GameClientInterface {
             }
             Thread.sleep(sleep);
           } catch (InterruptedException e) {
-            throw new Error("Something went wrong in the Client Thread");
+            throw new Error("Something went wrong in the Client Thread (InterruptedException in watcher)");
           } catch(SessionNotFound e) {
             active = false;
             Client.this.shutdown();
+          } catch (Exception e) {
+//            System.err.println("I keep re-trying, don't worry");
+            //TODO just a reminder that nothing happens.
+            //Errors will get caught when the client is ready but the game has not been started yet.
+            //We dont need sleep time, we need the extra 20 ms for AI :)
+            // ~simon
           }
         }
       }};
@@ -930,10 +975,12 @@ public class Client implements GameClientInterface {
                       gameSaveHandler.addMove(getCurrentState().getLastMove(), GameUtilities.teamsGaveUp(lastState, currentState));
                   }
                   if (isGameOver()) {
-                    scheduler.shutdown();
+                    if(enableLogging)
+                    gameSaveHandler.getSavedGame().setWinner(winners);
+                      scheduler.shutdown();
                   }
-                  Thread.sleep(this.refreshTime);
-                } catch (InterruptedException e) {
+                  sleep();
+                } catch (Exception e) {
                   throw new Error("Something went wrong in the Client Thread");
                 }
               }
@@ -941,15 +988,6 @@ public class Client implements GameClientInterface {
                 gameSaveHandler.writeOut();
             });
     gameThread.start();
-  }
-
-  /**
-   * Setter to change the refreshing period dynamically if desired
-   *
-   * @author rsyed
-   */
-  public void setRefreshTime(long refreshtime) {
-    this.refreshTime = refreshtime;
   }
 
   // **************************************************

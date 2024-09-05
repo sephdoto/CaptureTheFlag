@@ -80,11 +80,14 @@ public class AIClient extends Client {
           }
           pullData();
           tryMakeMove();
-          if(this.isGameOver())
+          if(this.isGameOver()) {
+            if(enableLogging)
+              gameSaveHandler.getSavedGame().setWinner(winners);
             this.aiPlayScheduler.shutdown();
-          else
+          } else {
+            sleep();
             startPlayTask();
-
+          }
         } catch (NoMovesLeftException | InvalidShapeException e) {
           System.out.println(e instanceof NoMovesLeftException ? "no moves left" :"invalid shape");
           throw new UnknownError("Games most likely over");
@@ -310,6 +313,7 @@ public class AIClient extends Client {
             //TODO just a reminder that nothing happens.
             //Errors will get caught when the client is ready but the game has not been started yet.
             //We dont need sleep time, we need the extra 20 ms for AI :)
+            // ~simon
           }
         }
       }

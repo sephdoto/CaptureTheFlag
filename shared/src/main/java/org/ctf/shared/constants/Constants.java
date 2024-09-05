@@ -100,9 +100,15 @@ public class Constants {
    * Strength of the border glow around figures
    */
   public static double borderGlowSpread = 0.5;
-  
+  /**
+   * Background resize Bug fix for maps in createGameScene / playGameScreenV2.
+   * Should be disabled by default.
+   */
   public static boolean useBackgroundResizeFix = false;
- 
+  /**
+   * Time a Client waits before asking the server for another GameSession
+   */
+  public static int clientSleepTime = 0;
   ///////////////////////////////////////////////////////
   //                    other                          //
   ///////////////////////////////////////////////////////

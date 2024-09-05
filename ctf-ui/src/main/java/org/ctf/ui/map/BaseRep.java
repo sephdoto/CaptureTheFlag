@@ -147,16 +147,16 @@ public class BaseRep extends Pane {
   }
 
   public void hoverAttackable() {
-    parent.hoverAttackable();
+    getParentCell().hoverAttackable();
   }
   
   public void removeHoverAttackable() {
-    parent.removeHoverAttackable();
+    getParentCell().removeHoverAttackable();
   }
   
   public void setAttackable() {
     isAttackable = true;
-    parent.showAttackable();
+    getParentCell().showAttackable();
   }
 
   public void setUnattacble() {
@@ -169,6 +169,11 @@ public class BaseRep extends Pane {
 
   public void setTeamID(String teamID) {
     this.teamID = teamID;
+  }
+
+
+  public BackgroundCellV2 getParentCell() {
+    return parent;
   }
 
 

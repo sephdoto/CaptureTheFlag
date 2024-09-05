@@ -224,10 +224,12 @@ public class MoveVisualizer {
       }
     }
     for (CostumFigurePain c : cb.getFigures().values()) {
-      c.removeHoverAttackable();
+      if(!c.getParentCell().isActive())
+        c.removeHoverAttackable();
     }
     for (BaseRep b : cb.getBases().values()) {
-      b.removeHoverAttackable();
+      if(!b.getParentCell().isActive())
+        b.removeHoverAttackable();
     }
     cb.showLastMove();
   }

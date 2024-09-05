@@ -399,6 +399,10 @@ public class BackgroundCellV2 extends Pane {
   public void setActive() {
     this.active = true;
   }
+  
+  public boolean isActive() {
+    return active;
+  }
 
   public boolean isOccupied() {
     return occupied;
