@@ -1,5 +1,6 @@
 package org.ctf.ui.creators;
 
+import org.ctf.shared.client.Client;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.customobjects.PopUpPane;
@@ -74,8 +75,9 @@ public class PopupCreatorGameOver {
         @Override
         public void run() {
           try {
+            Client client = ClientStorage.getMainClient();
             sleep(10000);
-            ClientStorage.getMainClient().deleteSession();
+            client.deleteSession();
           } catch (Exception e) {
             System.err.println("Error at " + e.getStackTrace()[0] 
                 + "\n\tSession might have been deleted earlier, no worries."

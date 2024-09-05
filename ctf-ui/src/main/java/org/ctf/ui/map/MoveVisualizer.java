@@ -267,7 +267,7 @@ public class MoveVisualizer {
   }
 
   public static void setState(GameState state) {
-    MoveVisualizer.state = state;
+    MoveVisualizer.state = GameUtilities.deepCopyGameState(state);
   }
 
   public static void setCb(GamePane cb) {

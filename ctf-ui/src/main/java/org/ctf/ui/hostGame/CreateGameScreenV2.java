@@ -766,6 +766,7 @@ public class CreateGameScreenV2 extends Scene {
     exit.prefHeightProperty().bind(exit.widthProperty().multiply(0.25));
     exit.setOnAction(e -> {
       portText.setDisable(false);
+      CreateGameController.clearUsedNames();
       serverIPText.setDisable(false);
       CreateGameController.deleteGame();
       root.getChildren().remove(aiOrHumanPop);

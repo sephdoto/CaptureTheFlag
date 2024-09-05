@@ -745,6 +745,7 @@ public class WaitingScene extends Scene {
       if (ClientStorage.getMainClient() != null) {
         if (ClientStorage.getMainClient().getStartDate() != null) {
           scheduler.shutdown();
+          CreateGameController.clearUsedNames();
           Platform.runLater(() -> {
             SceneHandler.switchToPlayGameScene(false);
           });

@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Test;
  * @author sistumpf
  */
 class SavedGameTest {
-  @Test
+//  @Test
   void testRealGame() {
     GameSaveHandler gsh = new GameSaveHandler();
-    gsh.readFile("2024_09_05 06-05_44");
+    gsh.readFile("2024_09_05 15-51_52");
     SavedGame save = gsh.getSavedGame();
     
     System.out.println("first player: " + save.getFirstPlayer());
@@ -27,6 +27,7 @@ class SavedGameTest {
     for(int s : save.getTimestamps())
       System.out.print(s + " ");
     System.out.println();
+    System.out.println(save.getMoves().size() + " " + save.getTimestamps().size());
   }
 
   /**
