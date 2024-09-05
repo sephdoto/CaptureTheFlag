@@ -48,6 +48,7 @@ public class PopupCreatorGameOver {
 
   // Attributes to manage the font-sizes
   private ObjectProperty<Font> popUpLabel;
+  private ObjectProperty<Font> scoreLabel;
   private ObjectProperty<Font> leaveButtonText;
   private ObjectProperty<Font> moreWinnerheader;
   private ObjectProperty<Font> moreWinnersName;
@@ -66,6 +67,7 @@ public class PopupCreatorGameOver {
     this.scene = scene;
     this.root = root;
     popUpLabel = new SimpleObjectProperty<Font>(Font.font(scene.getWidth() / 30));
+    scoreLabel = new SimpleObjectProperty<Font>(Font.font(scene.getWidth() / 50));
     leaveButtonText = new SimpleObjectProperty<Font>(Font.font(scene.getWidth() / 80));
     moreWinnerheader = new SimpleObjectProperty<Font>(Font.font(scene.getWidth() / 40));
     moreWinnersName = new SimpleObjectProperty<Font>(Font.font(scene.getWidth() / 50));
@@ -102,6 +104,7 @@ public class PopupCreatorGameOver {
       public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth,
           Number newWidth) {
         popUpLabel.set(Font.font(newWidth.doubleValue() / 30));
+        scoreLabel.set(Font.font(newWidth.doubleValue() / 50));
         leaveButtonText.set(Font.font(newWidth.doubleValue() / 80));
         moreWinnerheader.set(Font.font(newWidth.doubleValue() / 40));
         moreWinnersName.set(Font.font(newWidth.doubleValue() / 50));
@@ -115,7 +118,7 @@ public class PopupCreatorGameOver {
    * animations
    * 
    * @author Manuel Krakowski
-   * @param name: Name of the winner
+   * @param name Name of the winner
    */
   public void createGameOverPopUpforOneWinner(String name) {
     gameOverPopUp = new PopUpPane(scene, 0.6, 0.5, 0.6); // TODO
@@ -128,6 +131,7 @@ public class PopupCreatorGameOver {
       top.setSpacing(spacing);
       top.setPadding(new Insets(padding, 0, 0, 0));
     });
+    VBox scoreAndButton = new VBox();
     top.setAlignment(Pos.TOP_CENTER);
     Label l = new Label("The Winner is " + name);
     l.prefWidthProperty().bind(gameOverPopUp.widthProperty());
@@ -137,6 +141,14 @@ public class PopupCreatorGameOver {
     l.fontProperty().bind(popUpLabel);
     Button playAgainButton = createConfigButton("Play Again");
     playAgainButton.setVisible(false);
+    Label score = new Label(calculateScore());
+    score.setStyle("-fx-background-fill: red");
+    score.prefWidthProperty().bind(gameOverPopUp.widthProperty());
+    score.setAlignment(Pos.CENTER);
+    score.setTextFill(Color.GOLD);
+    score.setFont(Font.font(scene.getWidth() / 50));
+    score.fontProperty().bind(scoreLabel);
+    score.setVisible(false);
     Button analyseGameButton = createConfigButton("Analyze Game");
     analyseGameButton.setVisible(false);
     TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(2), l);
@@ -150,11 +162,14 @@ public class PopupCreatorGameOver {
     FadeTransition fadeTransition1 = new FadeTransition(Duration.seconds(1), playAgainButton);
     fadeTransition1.setFromValue(0);
     fadeTransition1.setToValue(1);
-    fadeTransition1.setOnFinished(event -> playAgainButton.setVisible(true));
     FadeTransition fadeTransition2 = new FadeTransition(Duration.seconds(1), analyseGameButton);
     fadeTransition2.setFromValue(0);
     fadeTransition2.setToValue(1);
-    fadeTransition2.setOnFinished(event -> analyseGameButton.setVisible(true));
+    fadeTransition2.setOnFinished(event -> {
+      score.setVisible(true);
+      playAgainButton.setVisible(true);
+      analyseGameButton.setVisible(true);
+    });
     SequentialTransition textTransition =
         new SequentialTransition(translateTransition, scaleTransition);
     ParallelTransition buttonTransition = new ParallelTransition(fadeTransition1, fadeTransition2);
@@ -164,20 +179,43 @@ public class PopupCreatorGameOver {
     HBox x = createButtonBox();
     x.getChildren().addAll(playAgainButton, analyseGameButton);
     top.getChildren().add(createHeader(poproot, "gameOver3"));
-    top.getChildren().add(l);
-    top.getChildren().add(x);
+//    top.getChildren().add(l);
+    scoreAndButton.getChildren().add(l);
+    scoreAndButton.getChildren().add(score);
+    scoreAndButton.getChildren().add(x);
+//    top.getChildren().add(score);
+    top.getChildren().add(scoreAndButton);
     poproot.getChildren().add(top);
     gameOverPopUp.setContent(poproot);
     root.getChildren().add(gameOverPopUp);
   }
 
+  /**
+   * Calculates a score, in case the MainClient is a winner
+   */
+  private String calculateScore() {
+    boolean mainClientIsWinner = false;
+    for(String winner :ClientStorage.getMainClient().getWinners())
+      if(winner.equals(ClientStorage.getMainClient().getRequestedTeamName())) {
+        mainClientIsWinner = true;
+        break;
+      }
+    if(!mainClientIsWinner)
+      return "";
+    
+    // add score calculation here
+    long score = 12321323;
+    
+    return ClientStorage.getMainClient().getRequestedTeamName() + "'s score: " + score;
+  }
+  
 
   /**
    * Creates a Game Over Popup-Pane in case their is more than one Winner, showing the list of all
    * Winners a scrollPane
    * 
    * @author Manuel Krakowski
-   * @param names: List of the names of all the winners
+   * @param names List of the names of all the winners
    */
   public void createGameOverPopUpforMoreWinners(String[] names) {
     gameOverPopUp = new PopUpPane(scene, 0.6, 0.8, 0.6); //TODO
@@ -190,14 +228,30 @@ public class PopupCreatorGameOver {
       top.setSpacing(spacing);
       top.setPadding(new Insets(padding, 0, 0, 0));
     });
+
+    Label score = new Label(calculateScore());
+    score.setStyle("-fx-background-fill: red");
+    score.prefWidthProperty().bind(gameOverPopUp.widthProperty());
+    score.setAlignment(Pos.CENTER);
+    score.setTextFill(Color.GOLD);
+    score.setFont(Font.font(scene.getWidth() / 50));
+    score.fontProperty().bind(scoreLabel);
+    
     top.setAlignment(Pos.TOP_CENTER);
     Button playAgainButton = createConfigButton("Play Again");
     Button analyseGameButton = createConfigButton("Analyze Game");
     HBox x = createButtonBox();
     x.getChildren().addAll(playAgainButton, analyseGameButton);
     top.getChildren().add(createHeader(poproot, "gameOver3"));
-    top.getChildren().add(createWinnersPane(names));
-    top.getChildren().add(x);
+    
+    VBox scoreAndButton = new VBox();
+    scoreAndButton.getChildren().add(createWinnersPane(names));
+    scoreAndButton.getChildren().add(score);
+    scoreAndButton.getChildren().add(x);
+    top.getChildren().add(scoreAndButton);
+//    top.getChildren().add(createWinnersPane(names));
+//    top.getChildren().add(score);
+//    top.getChildren().add(x);
     poproot.getChildren().add(top);
     gameOverPopUp.setContent(poproot);
     root.getChildren().add(gameOverPopUp);
@@ -209,7 +263,7 @@ public class PopupCreatorGameOver {
    * Popup-Pane for more winners
    * 
    * @author Manuel Krakowski
-   * @param winners: List of the names of all the winners
+   * @param winners List of the names of all the winners
    * @return Vbox inclduing one header label and the scrollpane with all the winners names
    */
   private VBox createWinnersPane(String[] winners) {
@@ -261,7 +315,7 @@ public class PopupCreatorGameOver {
    * Greates an Image containing the words 'Game Over' which is showed on top of the Popup-Pane
    * 
    * @author Manuel Krakowski
-   * @param conRoot: StackPane on which the image is placed, used for relative resizing
+   * @param conRoot StackPane on which the image is placed, used for relative resizing
    * @return Game-Over-Image
    */
   private ImageView createHeader(StackPane conRoot, String imageName) {
@@ -278,7 +332,7 @@ public class PopupCreatorGameOver {
    * Creates a GIF which constantly shows Konfetti falling down in the background of the PopUp-Pane
    * 
    * @author Manuel Krakowski
-   * @param configRoot: StackPane on which the Konfetti is placed
+   * @param configRoot StackPane on which the Konfetti is placed
    * @return
    */
   private ImageView createBackgroundKonfetti(StackPane configRoot) {
@@ -316,7 +370,7 @@ public class PopupCreatorGameOver {
    * the home-Screen
    * 
    * @author Manuel Krakowski
-   * @param b: Play-Again-button
+   * @param b Play-Again-button
    */
   private void perfromPlayAgain(Button b) {
     b.setOnAction(e -> {
@@ -341,7 +395,7 @@ public class PopupCreatorGameOver {
    * analyze-game buttons
    * 
    * @author Manuel Krakowski
-   * @param text: Text that is displayed on the button
+   * @param text Text that is displayed on the button
    * @return Button
    */
   private Button createConfigButton(String text) {
@@ -398,7 +452,7 @@ public class PopupCreatorGameOver {
    * 
    * @author Manuel Krakowski
    * @param configRoot:parent for relative resizing
-   * @return: Imageview of a skelton
+   * @return Imageview of a skelton
    */
   private ImageView createBackgroundscelett(StackPane configRoot) {
     Image mp = ImageController.loadThemedImage(ImageType.MISC, "DootDoot");
