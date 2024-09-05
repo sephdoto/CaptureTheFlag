@@ -24,7 +24,7 @@ import org.ctf.ui.customobjects.Timer;
 import org.ctf.ui.data.ClientStorage;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.map.BaseRep;
-import org.ctf.ui.map.CostumFigurePain;
+import org.ctf.ui.map.CustomFigurePane;
 import org.ctf.ui.map.GamePane;
 import org.ctf.ui.map.MoveVisualizer;
 import org.ctf.ui.threads.PointAnimation;
@@ -71,7 +71,7 @@ import javafx.util.Duration;
  * @author sistumpf
  * @author Manuel Krakowski
  */
-public class PlayGameScreenV2 extends Scene {
+public class PlayGameScreen extends Scene {
 
   // Data which is used to always refresh the scene with the newest state
   private ScheduledExecutorService scheduler;
@@ -138,7 +138,7 @@ public class PlayGameScreenV2 extends Scene {
    * @param height initial height of the screen
    * @param isRemote true if the screen is used from remote-join
    */
-  public PlayGameScreenV2(
+  public PlayGameScreen(
       double width, double height, boolean isRemote) {
     super(new StackPane(), width, height);
     schedulerLock = true;
@@ -386,7 +386,7 @@ public class PlayGameScreenV2 extends Scene {
                         MoveVisualizer.initializeGame(gm);  
                       
                       // Update the "it is your turn" label
-                      PlayGameScreenV2.this.setTeamTurn();
+                      PlayGameScreen.this.setTeamTurn();
 
                       schedulerLock = true;
                       timeToShowGameState.add(
@@ -422,7 +422,7 @@ public class PlayGameScreenV2 extends Scene {
           (e) -> {
             schedulerLock = true;
             System.out.println("Redraw Task Failed");
-            PlayGameScreenV2.this.reinitUiUpdateScheduler();
+            PlayGameScreen.this.reinitUiUpdateScheduler();
           });
     }
 
@@ -933,7 +933,7 @@ public class PlayGameScreenV2 extends Scene {
     CreateGameController.getColors()
         .get(r.getTeamID())
         .bind(myCustomColorPicker.customColorProperty());
-    for (CostumFigurePain p : gm.getFigures().values()) {
+    for (CustomFigurePane p : gm.getFigures().values()) {
       if (p.getTeamID().equals(r.getTeamID())) {
         p.showTeamColorWhenSelecting(CreateGameController.getColors().get(r.getTeamID()));
       }
@@ -943,7 +943,7 @@ public class PlayGameScreenV2 extends Scene {
     contextMenu.setOnHiding(
         t -> {
           sceneColorProperty.unbind();
-          for (CostumFigurePain m : gm.getFigures().values()) {
+          for (CustomFigurePane m : gm.getFigures().values()) {
             m.unbind();
           }
         });

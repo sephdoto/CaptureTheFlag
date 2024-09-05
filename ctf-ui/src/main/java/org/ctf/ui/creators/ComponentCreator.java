@@ -6,7 +6,7 @@ import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.editor.EditorScene;
 import org.ctf.ui.editor.TemplateEngine;
-import org.ctf.ui.hostGame.CreateGameScreenV2;
+import org.ctf.ui.hostGame.CreateGameScreen;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -111,7 +111,7 @@ public class ComponentCreator {
     submit.getStyleClass().add("save-button");
     submit.setOnAction(e -> {
       if (nameField.getText().equals("")) {
-        CreateGameScreenV2.informationmustBeEntered(nameField, "custom-search-field2",
+        CreateGameScreen.informationmustBeEntered(nameField, "custom-search-field2",
             "custom-search-field2");
         return;
       }

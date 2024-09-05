@@ -7,7 +7,7 @@ import org.ctf.shared.state.Piece;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.hostGame.CreateGameController;
-import org.ctf.ui.hostGame.PlayGameScreenV2;
+import org.ctf.ui.hostGame.PlayGameScreen;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.event.EventHandler;
@@ -28,7 +28,7 @@ import javafx.util.Duration;
  * 
  * @author Manuel Krakowski
  */
-public class CostumFigurePain extends Pane {
+public class CustomFigurePane extends Pane {
   // Data about the corresponding piece
   private String teamID;
   private Piece piece;
@@ -37,7 +37,7 @@ public class CostumFigurePain extends Pane {
   // Data about the position
   private int posX;
   private int posY;
-  private BackgroundCellV2 parent;
+  private BackgroundCell parent;
 
   // Data about the condition
   private boolean active;
@@ -59,7 +59,7 @@ public class CostumFigurePain extends Pane {
    * @author Manuel Krakowski
    * @param piece corresponding piece
    */
-  public CostumFigurePain(Piece piece) {
+  public CustomFigurePane(Piece piece) {
     this.piece = piece;
     this.type = piece.getDescription().getType();
     this.teamID = piece.getTeamId();
@@ -79,7 +79,7 @@ public class CostumFigurePain extends Pane {
     });
     this.setOnMouseExited(new EventHandler<MouseEvent>() {
       public void handle(MouseEvent e) {
-        MoveVisualizer.removeHoverPossibleMoves(CostumFigurePain.this);
+        MoveVisualizer.removeHoverPossibleMoves(CustomFigurePane.this);
       }
     });
   }
@@ -155,7 +155,7 @@ public class CostumFigurePain extends Pane {
     } else {
       SoundController.playSound(piece.getDescription().getType(), SoundType.SELECT);
       showPieceInformationWhenClicked();
-      MoveVisualizer.setCurrent(CostumFigurePain.this);
+      MoveVisualizer.setCurrent(CustomFigurePane.this);
       MoveVisualizer.showPossibleMoves();
       parent.showSelected();
     }
@@ -176,16 +176,16 @@ public class CostumFigurePain extends Pane {
    * @author Manuel Krakowski
    */
   public void showPieceInformationWhenClicked() {
-//    PlayGameScreenV2.setIdLabelText("id: " + piece.getId());
-    PlayGameScreenV2.setTypeLabelText(piece.getDescription().getType());
-    PlayGameScreenV2
+//    PlayGameScreen.setIdLabelText("id: " + piece.getId());
+    PlayGameScreen.setTypeLabelText(piece.getDescription().getType());
+    PlayGameScreen
         .setAttackPowLabelText("attack power: " + piece.getDescription().getAttackPower());
-    PlayGameScreenV2.setCountLabelText("count: " + piece.getDescription().getCount());
-//    PlayGameScreenV2.setTeamLabelText("team: " + piece.getTeamId());
-    PlayGameScreenV2.setFigureBackground(CreateGameController.getColors().get(piece.getTeamId()).get());
-    PlayGameScreenV2.setFigureImage(bImage);
+    PlayGameScreen.setCountLabelText("count: " + piece.getDescription().getCount());
+//    PlayGameScreen.setTeamLabelText("team: " + piece.getTeamId());
+    PlayGameScreen.setFigureBackground(CreateGameController.getColors().get(piece.getTeamId()).get());
+    PlayGameScreen.setFigureImage(bImage);
     
-    PlayGameScreenV2.setPieceWalkPane(piece);
+    PlayGameScreen.setPieceWalkPane(piece);
   }
 
   /**
@@ -222,9 +222,9 @@ public class CostumFigurePain extends Pane {
   public void showHoverWalkableTiles() {
     if(initialized)
       if(MoveVisualizer.getCurrent() != null && MoveVisualizer.getCurrent() == this) {
-        MoveVisualizer.removeHoverPossibleMoves(CostumFigurePain.this);
+        MoveVisualizer.removeHoverPossibleMoves(CustomFigurePane.this);
       } else {
-        MoveVisualizer.hoverPossibleMoves(CostumFigurePain.this, piece);
+        MoveVisualizer.hoverPossibleMoves(CustomFigurePane.this, piece);
       }
   }
 
@@ -248,7 +248,7 @@ public class CostumFigurePain extends Pane {
    * @author Manuel Krakowski
    * @param parent
    */
-  public void setParente(BackgroundCellV2 parent) {
+  public void setParente(BackgroundCell parent) {
     this.parent = parent;
     this.posX = parent.getX();
     this.posY = parent.getY();
@@ -275,11 +275,11 @@ public class CostumFigurePain extends Pane {
     return teamID;
   }
 
-  public BackgroundCellV2 getParentCell() {
+  public BackgroundCell getParentCell() {
     return parent;
   }
 
-  public void setParent(BackgroundCellV2 parent) {
+  public void setParent(BackgroundCell parent) {
     this.parent = parent;
   }
 

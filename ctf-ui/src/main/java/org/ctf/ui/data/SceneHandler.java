@@ -15,8 +15,8 @@ import org.ctf.ui.creators.settings.SettingsWindow;
 import org.ctf.ui.editor.EditorScene;
 import org.ctf.ui.gameAnalyzer.AiAnalyzerScene;
 import org.ctf.ui.hostGame.CreateGameController;
-import org.ctf.ui.hostGame.CreateGameScreenV2;
-import org.ctf.ui.hostGame.PlayGameScreenV2;
+import org.ctf.ui.hostGame.CreateGameScreen;
+import org.ctf.ui.hostGame.PlayGameScreen;
 import org.ctf.ui.hostGame.WaitingScene;
 import org.ctf.ui.remoteGame.JoinScene;
 import org.ctf.ui.remoteGame.RemoteWaitingScene;
@@ -132,7 +132,7 @@ public class SceneHandler {
   
   public static void switchToCreateGameScene() {
     SceneHandler.switchCurrentScene(
-        new CreateGameScreenV2(
+        new CreateGameScreen(
             SceneHandler.getMainStage().getWidth() - App.offsetWidth, SceneHandler.getMainStage().getHeight() - App.offsetHeight)
         );
     addStyleSheet("createGame");
@@ -196,8 +196,8 @@ public class SceneHandler {
       return;
     }
 
-    PlayGameScreenV2 playOn =
-        new PlayGameScreenV2(
+    PlayGameScreen playOn =
+        new PlayGameScreen(
             SceneHandler.getMainStage().getWidth() - App.offsetWidth,
             SceneHandler.getMainStage().getHeight() - App.offsetHeight,
             isRemote);

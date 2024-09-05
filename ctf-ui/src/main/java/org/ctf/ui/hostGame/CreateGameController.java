@@ -15,7 +15,7 @@ import org.ctf.shared.constants.Enums.AI;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.data.ClientStorage;
-import org.ctf.ui.map.CostumFigurePain;
+import org.ctf.ui.map.CustomFigurePane;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.paint.Color;
@@ -54,7 +54,7 @@ public class CreateGameController {
       new HashMap<String, ObjectProperty<Color>>();
 
   private static HashSet<String> usedTeamNames = new HashSet<String>();
-  private static HashMap<String, CostumFigurePain> lastfigures;
+  private static HashMap<String, CustomFigurePane> lastfigures;
   
   // To comunicate between diferent scenes
   private static HomeSceneController hsc;
@@ -302,11 +302,11 @@ public class CreateGameController {
     CreateGameController.colors = colors;
   }
 
-  public static HashMap<String, CostumFigurePain> getLastFigures() {
+  public static HashMap<String, CustomFigurePane> getLastFigures() {
     return lastfigures;
   }
 
-  public static void setFigures(HashMap<String, CostumFigurePain> figures) {
+  public static void setFigures(HashMap<String, CustomFigurePane> figures) {
     lastfigures = figures;
   }
 

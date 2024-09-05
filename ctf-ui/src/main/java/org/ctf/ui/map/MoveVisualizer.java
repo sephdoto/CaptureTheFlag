@@ -26,7 +26,7 @@ public class MoveVisualizer {
   private static GameState state;
 
   // Current-player and current team
-  private static CostumFigurePain currentPlayer;
+  private static CustomFigurePane currentPlayer;
   private static int currentTeam;
 
   // client whose moves are shown and list of moves
@@ -78,7 +78,7 @@ public class MoveVisualizer {
    * @author Manuel Krakowski
    */
   public static void setCurrentTeamActive() {
-    for (CostumFigurePain c : cb.getFigures().values()) {
+    for (CustomFigurePane c : cb.getFigures().values()) {
       if (c.getTeamID().equals(String.valueOf(currentTeam))) {
         c.setActive();
       }
@@ -88,7 +88,7 @@ public class MoveVisualizer {
 
   /**
    * sends a move-request by using the local client who currently has its turn. can be either called
-   * by {@link BackgroundCellV2} when an empty cell is clicked {@link CostumFigurePain} when a piece
+   * by {@link BackgroundCell} when an empty cell is clicked {@link CustomFigurePane} when a piece
    * is attacked or BaseRep when a base is conquered
    * 
    * @author Manuel Krakowski
@@ -122,10 +122,10 @@ public class MoveVisualizer {
    */
   public static void resetStateAfterMoveRequest() {
     currentPlayer = null;
-    for (BackgroundCellV2 c : cb.getCells().values()) {
+    for (BackgroundCell c : cb.getCells().values()) {
       c.deselect();
     }
-    for (CostumFigurePain cf : cb.getFigures().values()) {
+    for (CustomFigurePane cf : cb.getFigures().values()) {
       cf.setUnactive();
       cf.setUnattacble();
     }
@@ -145,13 +145,13 @@ public class MoveVisualizer {
     currentlySelected = true;
     String pieceName = currentPlayer.getPiece().getId();
     possibleMoves = GameUtilities.getPossibleMoves(state, pieceName, possibleMoves);
-    for (BackgroundCellV2 c : cb.getCells().values()) {
+    for (BackgroundCell c : cb.getCells().values()) {
       if (c != currentPlayer.getParentCell()) {
         c.removePossibleMoveOnHover();
         c.deselect();
       }
     }
-    for (CostumFigurePain c : cb.getFigures().values()) {
+    for (CustomFigurePane c : cb.getFigures().values()) {
       c.removeHoverAttackable();
       c.setUnattacble();
     }
@@ -160,7 +160,7 @@ public class MoveVisualizer {
       b.setUnattacble();
     }
     cb.showLastMove();
-    for (BackgroundCellV2 c : cb.getCells().values()) {
+    for (BackgroundCell c : cb.getCells().values()) {
       for (int[] pos : possibleMoves) {
         if (c.getX() == pos[0] && c.getY() == pos[1]) {
 //          System.out.println(" " + pos[0] + ", " + pos[1]);
@@ -184,7 +184,7 @@ public class MoveVisualizer {
    * 
    * @author sistumpf
    */
-  public static void hoverPossibleMoves(CostumFigurePain currentPlayer, Piece piece) {
+  public static void hoverPossibleMoves(CustomFigurePane currentPlayer, Piece piece) {
     int currentTeam = state.getCurrentTeam();
     state.setCurrentTeam(Integer.parseInt(piece.getTeamId()));
     possibleMoves = GameUtilities.getPossibleMoves(state, piece.getId(), possibleMoves);
@@ -194,7 +194,7 @@ public class MoveVisualizer {
     currentlyHovering = true;
     
     //cb.showLastMove();
-    for (BackgroundCellV2 c : cb.getCells().values()) {
+    for (BackgroundCell c : cb.getCells().values()) {
       for (int[] pos : possibleMoves) {
         if (c.getX() == pos[0] && c.getY() == pos[1]) {
 //          System.out.println(" " + pos[0] + ", " + pos[1]);
@@ -216,14 +216,14 @@ public class MoveVisualizer {
   /**
    * Removes the selection of hover-possible moves and hover-attackable pieces
    */
-  public static void removeHoverPossibleMoves(CostumFigurePain currentPlayer) {
+  public static void removeHoverPossibleMoves(CustomFigurePane currentPlayer) {
     currentlyHovering = false;
-    for (BackgroundCellV2 c : cb.getCells().values()) {
+    for (BackgroundCell c : cb.getCells().values()) {
       if (currentPlayer == null || c != currentPlayer.getParentCell()) {
         c.removePossibleMoveOnHover();
       }
     }
-    for (CostumFigurePain c : cb.getFigures().values()) {
+    for (CustomFigurePane c : cb.getFigures().values()) {
       if(!c.getParentCell().isActive())
         c.removeHoverAttackable();
     }
@@ -242,7 +242,7 @@ public class MoveVisualizer {
   public static void deselectFigure() {
     currentlySelected = false;
     if (cb != null) {
-      for (BackgroundCellV2 c : cb.getCells().values()) {
+      for (BackgroundCell c : cb.getCells().values()) {
         if(c.getStyle().equals("-fx-background-color: transparent;" + "-fx-border-color: black; "
         + "-fx-border-width: 1.2px ")) {
           if(c.getChild() != null)
@@ -250,7 +250,7 @@ public class MoveVisualizer {
         }
         c.deselect();
       }
-      for (CostumFigurePain cf : cb.getFigures().values()) {
+      for (CustomFigurePane cf : cb.getFigures().values()) {
         cf.setUnattacble();
       }
       currentPlayer = null;
@@ -258,11 +258,11 @@ public class MoveVisualizer {
     }
   }
 
-  public static CostumFigurePain getCurrent() {
+  public static CustomFigurePane getCurrent() {
     return currentPlayer;
   }
 
-  public static void setCurrent(CostumFigurePain current) {
+  public static void setCurrent(CustomFigurePane current) {
     currentPlayer = current;
   }
 

@@ -3,7 +3,7 @@ package org.ctf.ui.map;
 
 import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.controllers.SoundController;
-import org.ctf.ui.hostGame.PlayGameScreenV2;
+import org.ctf.ui.hostGame.PlayGameScreen;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.event.EventHandler;
@@ -30,7 +30,7 @@ public class BaseRep extends Pane {
 
 
   // Components that need to be accessed
-  private BackgroundCellV2 parent;
+  private BackgroundCell parent;
   private Label label;
 
   // booleans to handle different mouse-clicks
@@ -38,7 +38,7 @@ public class BaseRep extends Pane {
   private boolean isAttackable;
 
   // to enable base-colors when playing a game
-  private PlayGameScreenV2 scene;
+  private PlayGameScreen scene;
 
   // event-handler to listen to mouse-click
   private final EventHandler<MouseEvent> clickHandler;
@@ -55,7 +55,7 @@ public class BaseRep extends Pane {
    * @param teamID: Team-id of the team the base belongs to
    * @param parent: backgroundcell the base is placed on
    */
-  public BaseRep(int flags, String color, String teamID, BackgroundCellV2 parent) {
+  public BaseRep(int flags, String color, String teamID, BackgroundCell parent) {
     this.parent = parent;
     showBasecolers = false;
     isAttackable = false;
@@ -141,7 +141,7 @@ public class BaseRep extends Pane {
   //////////////////////////////////////////////////////////////////////////////////
 
 
-  public void setScene(PlayGameScreenV2 scene) {
+  public void setScene(PlayGameScreen scene) {
     showBasecolers = true;
     this.scene = scene;
   }
@@ -172,7 +172,7 @@ public class BaseRep extends Pane {
   }
 
 
-  public BackgroundCellV2 getParentCell() {
+  public BackgroundCell getParentCell() {
     return parent;
   }
 

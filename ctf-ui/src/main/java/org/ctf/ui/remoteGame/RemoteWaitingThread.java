@@ -4,12 +4,12 @@ import org.ctf.shared.constants.Constants;
 import org.ctf.shared.state.data.exceptions.SessionNotFound;
 import org.ctf.ui.data.ClientStorage;
 import org.ctf.ui.data.SceneHandler;
-import org.ctf.ui.hostGame.PlayGameScreenV2;
+import org.ctf.ui.hostGame.PlayGameScreen;
 import javafx.application.Platform;
 
 /**
  * Updates a {@link RemoteWaitingScene} and initializes a Scene switch to the
- * {@link PlayGameScreenV2} according to data pulled from a Client.
+ * {@link PlayGameScreen} according to data pulled from a Client.
  * 
  * @author aniemesc
  * @author sistumpf

@@ -8,7 +8,7 @@ import test.CreateTextGameStates;
 /**
  * @mkrakows This class is used to Store Maps which are uniqly identified by their name
  */
-public class StroeMaps {
+public class StoreMaps {
   public static HashMap<String, GameState> maps = new HashMap<String, GameState>();
   public static Set<String> mapNames;
 

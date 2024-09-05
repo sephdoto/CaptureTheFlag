@@ -12,7 +12,7 @@ import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.map.MapTemplate;
 import org.ctf.shared.tools.JsonTools;
 import org.ctf.shared.wave.WaveFunctionCollapse;
-import org.ctf.ui.StroeMaps;
+import org.ctf.ui.StoreMaps;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.creators.PopUpCreator;
 import org.ctf.ui.creators.PopUpCreatorEnterTeamName;
@@ -61,7 +61,7 @@ import javafx.util.Duration;
  * 
  * @author Manuel Krakowski
  */
-public class CreateGameScreenV2 extends Scene {
+public class CreateGameScreen extends Scene {
 
   // Data in the scene
   private String selected;
@@ -104,7 +104,7 @@ public class CreateGameScreenV2 extends Scene {
    * @param width
    * @param height
    */
-  public CreateGameScreenV2(double width, double height) {
+  public CreateGameScreen(double width, double height) {
     super(new StackPane(), width, height);
     this.root = (StackPane) this.getRoot();
     popUpCreator = new PopUpCreator(this, root);
@@ -145,13 +145,13 @@ public class CreateGameScreenV2 extends Scene {
    * @author Manuel Krakowski
    */
   private void createLayout() {
-    StroeMaps.initDefaultMaps();
+    StoreMaps.initDefaultMaps();
     VBox mainBox = createMainBox();
     mainBox.setAlignment(Pos.TOP_CENTER);
     sep = createMiddleSperator();
     left = createBasicPane();
     left.getChildren().add(createMiddleLeft());
-    selected = StroeMaps.getRandomMapName();
+    selected = StoreMaps.getRandomMapName();
     right = createShowMapPane();
     sep.getChildren().add(left);
     sep.getChildren().add(right);
@@ -547,7 +547,7 @@ public class CreateGameScreenV2 extends Scene {
     showMapBox.maxWidthProperty().bind(SceneHandler.getMainStage().widthProperty().multiply(0.45));
     showMapBox.maxHeightProperty().bind(SceneHandler.getMainStage().heightProperty().multiply(0.65));
     showMapBox.paddingProperty().bind(padding);
-    // state = StroeMaps.getMap(name);
+    // state = StoreMaps.getMap(name);
     maps = JsonTools.getTemplateAndGameState(c.getValue());
     if (!maps.isEmpty()) {
       Map.Entry<MapTemplate, GameState> entry = maps.entrySet().iterator().next();
@@ -624,7 +624,7 @@ public class CreateGameScreenV2 extends Scene {
       @Override
       public void run() {task.run();}
       @Override
-      public void interrupt() {task.stop(); pointAnimation.interrupt(); CreateGameScreenV2.this.generateBackgroundThread = null;}
+      public void interrupt() {task.stop(); pointAnimation.interrupt(); CreateGameScreen.this.generateBackgroundThread = null;}
     };
     generateBackgroundThread.start();
     return showMapBox;

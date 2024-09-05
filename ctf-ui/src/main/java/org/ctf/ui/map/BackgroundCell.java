@@ -18,7 +18,7 @@ import javafx.scene.shape.Circle;
  * @author Manuel Krakowski
  */
 
-public class BackgroundCellV2 extends Pane {
+public class BackgroundCell extends Pane {
 
 
   private int x, y; // Coordinates of the cell in the grid
@@ -28,7 +28,7 @@ public class BackgroundCellV2 extends Pane {
   private Circle rc3; // Circle to show possible move on empty cell, shown when hovered
   private boolean active; // When cell is active user can click it to make move-request
   private StackPane base; // StackPane as base of the cell where objects are placed on
-  private CostumFigurePain child; // if there is a piece on the cell, null otherwise
+  private CustomFigurePane child; // if there is a piece on the cell, null otherwise
   private BaseRep teamBase; // if there is a base on the cell, null otherwise
   private Color testColor;
 
@@ -39,7 +39,7 @@ public class BackgroundCellV2 extends Pane {
    * @param x x-coordinate in the grid
    * @param y y-coordinate in the grid
    */
-  public BackgroundCellV2(int x, int y) {
+  public BackgroundCell(int x, int y) {
     testColor = Color.rgb(173, 216, 230, 0.7);
     this.setStyle("-fx-border-color: black; " + "-fx-border-width: 1.2px ");
     this.x = x;
@@ -100,9 +100,9 @@ public class BackgroundCellV2 extends Pane {
    * Adds a figure to the cell and resizes it with it
    * 
    * @author Manuel Krakowski
-   * @param figure {@link CostumFigurePain}
+   * @param figure {@link CustomFigurePane}
    */
-  public void addFigure(CostumFigurePain figure) {
+  public void addFigure(CustomFigurePane figure) {
     getBase().getChildren().remove(rc);
     occupied = true;
     child = figure;
@@ -133,7 +133,7 @@ public class BackgroundCellV2 extends Pane {
    */
   public void addBlock(boolean isVisible) {
     occupied = true;
-    BlockRepV3 blocki = new BlockRepV3();
+    BlockRep blocki = new BlockRep();
     if (!isVisible) {
       blocki.setOpacitytoZero();
     }
@@ -408,7 +408,7 @@ public class BackgroundCellV2 extends Pane {
     return occupied;
   }
 
-  public CostumFigurePain getChild() {
+  public CustomFigurePane getChild() {
     return child;
   }
 

@@ -8,7 +8,7 @@ import org.ctf.shared.state.Piece;
 import org.ctf.shared.state.Team;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.hostGame.CreateGameController;
-import org.ctf.ui.hostGame.PlayGameScreenV2;
+import org.ctf.ui.hostGame.PlayGameScreen;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
@@ -46,8 +46,8 @@ public class GamePane extends HBox {
 
   // Stored Objects on the map
   private HashMap<Integer, BaseRep> bases = new HashMap<Integer, BaseRep>();
-  private HashMap<Integer, BackgroundCellV2> cells = new HashMap<Integer, BackgroundCellV2>();
-  private HashMap<String, CostumFigurePain> figures = new HashMap<String, CostumFigurePain>();
+  private HashMap<Integer, BackgroundCell> cells = new HashMap<Integer, BackgroundCell>();
+  private HashMap<String, CustomFigurePane> figures = new HashMap<String, CustomFigurePane>();
 
 
   // Attributes for resizing
@@ -149,7 +149,7 @@ public class GamePane extends HBox {
         setDynamicCellBackground(cells.get(generateKey(xNewPos, yNewPos)));
       }
       if(CreateGameController.getLastFigures() != null) {
-        CostumFigurePain old = CreateGameController.getLastFigures().get(lastMove.getPieceId());
+        CustomFigurePane old = CreateGameController.getLastFigures().get(lastMove.getPieceId());
         if (CreateGameController.getLastFigures() != null && colerforAnlyzer.equals("") && old != null) {
           int xOldPosX = old.getPosX();
           int oldPosY = old.getPosY();
@@ -158,7 +158,7 @@ public class GamePane extends HBox {
       }
       if(newGP) {
         newGP = false;
-        if(SceneHandler.getCurrentScene() instanceof PlayGameScreenV2 
+        if(SceneHandler.getCurrentScene() instanceof PlayGameScreen 
             && CreateGameController.getLastFigures() != null 
             && CreateGameController.getLastFigures().get(lastMove.getPieceId()) != null)
           Platform.runLater(() -> CreateGameController.getLastFigures().get(lastMove.getPieceId()).showPieceInformationWhenClicked());
@@ -172,7 +172,7 @@ public class GamePane extends HBox {
    * 
    * @author sistumpf
    */
-  private void setDynamicCellBackground(BackgroundCellV2 cell){
+  private void setDynamicCellBackground(BackgroundCell cell){
     try {
       cell.showLastMoveWithColor(CreateGameController.getColors().get(state.getLastMove().getTeamId()).get().toString(), "blue");
     } catch (Exception e) {
@@ -200,7 +200,7 @@ public class GamePane extends HBox {
    * @author Manuel Krakowski
    * @param scene scene in which base colors are enabled by clicking
    */
-  public void enableBaseColors(PlayGameScreenV2 scene) {
+  public void enableBaseColors(PlayGameScreen scene) {
     for (BaseRep b : bases.values()) {
       b.setScene(scene);
     }
@@ -229,7 +229,7 @@ public class GamePane extends HBox {
   public void fillGrid() {
     for (int i = 0; i < getRows(); i++) {
       for (int j = 0; j < getCols(); j++) {
-        BackgroundCellV2 child = new BackgroundCellV2(i, j);
+        BackgroundCell child = new BackgroundCell(i, j);
         cells.put(generateKey(i, j), child);
         String objectOnMap = map[i][j];
         if (objectOnMap.equals("b")) {
@@ -269,7 +269,7 @@ public class GamePane extends HBox {
       cells.get(generateKey(baseX, baseY)).addBasis(b);
       Piece[] pieces = currenTeam.getPieces();
       for (Piece piece : pieces) {
-        CostumFigurePain pieceRep = new CostumFigurePain(piece);
+        CustomFigurePane pieceRep = new CustomFigurePane(piece);
         if (!CreateGameController.getColors().isEmpty()) {
           pieceRep
               .showTeamColorWhenSelecting(CreateGameController.getColors().get(piece.getTeamId()));
@@ -290,19 +290,19 @@ public class GamePane extends HBox {
   //                            Getters and Setters                               //
   //////////////////////////////////////////////////////////////////////////////////
 
-  public HashMap<String, CostumFigurePain> getFigures() {
+  public HashMap<String, CustomFigurePane> getFigures() {
     return figures;
   }
 
-  public void setFigures(HashMap<String, CostumFigurePain> figures) {
+  public void setFigures(HashMap<String, CustomFigurePane> figures) {
     this.figures = figures;
   }
 
-  public HashMap<Integer, BackgroundCellV2> getCells() {
+  public HashMap<Integer, BackgroundCell> getCells() {
     return cells;
   }
 
-  public void setCells(HashMap<Integer, BackgroundCellV2> cells) {
+  public void setCells(HashMap<Integer, BackgroundCell> cells) {
     this.cells = cells;
   }
 

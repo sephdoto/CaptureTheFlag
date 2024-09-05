@@ -8,7 +8,7 @@ import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.data.ClientCreator;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.hostGame.CreateGameController;
-import org.ctf.ui.hostGame.CreateGameScreenV2;
+import org.ctf.ui.hostGame.CreateGameScreen;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -103,7 +103,7 @@ public class PopUpCreatorEnterTeamName {
     top.getChildren().add(l);
     HBox enterNameBox = new HBox();
     enterNameBox.setAlignment(Pos.CENTER);
-    enterNamefield = CreateGameScreenV2.createTextfield("Team Name", null, 0.5);
+    enterNamefield = CreateGameScreen.createTextfield("Team Name", null, 0.5);
     enterNamefield.prefWidthProperty().bind(enterNameBox.widthProperty().multiply(0.8));
     enterNameBox.getChildren().add(enterNamefield);
     top.getChildren().add(enterNameBox);
@@ -136,10 +136,10 @@ public class PopUpCreatorEnterTeamName {
     exit.setOnAction(e -> {
       SoundController.playSound("Button", SoundType.MISC);
       if (enterNamefield.getText().isEmpty()) {
-        CreateGameScreenV2.informationmustBeEntered(enterNamefield,
+        CreateGameScreen.informationmustBeEntered(enterNamefield,
             "custom-search-field2-mustEnter", "custom-search-field2");
       } else if (CreateGameController.isNameUsed(enterNamefield.getText())) {
-        CreateGameScreenV2.informationmustBeEntered(enterNamefield,
+        CreateGameScreen.informationmustBeEntered(enterNamefield,
             "custom-search-field2-mustEnter", "custom-search-field2");
         enterNamefield.clear();
         enterNamefield.setPromptText("Enter a unique Teamname");

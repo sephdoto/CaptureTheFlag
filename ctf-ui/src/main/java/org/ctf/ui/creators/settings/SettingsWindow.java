@@ -17,7 +17,7 @@ import org.ctf.ui.creators.settings.components.IntegerBoxFactory.ChooseIntegerBo
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.gameAnalyzer.AiAnalyzerScene;
-import org.ctf.ui.hostGame.PlayGameScreenV2;
+import org.ctf.ui.hostGame.PlayGameScreen;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -155,13 +155,13 @@ public abstract class SettingsWindow extends ComponentCreator {
             case "fullAiPower": Constants.FULL_AI_POWER = (boolean) ((ChooseBooleanButton) node).getValue(); break;
             case "opacity": 
               Constants.backgroundImageOpacity = ((ChooseDoubleBox) node).getValue(); 
-              if(SceneHandler.getCurrentScene() instanceof PlayGameScreenV2)
-                ((PlayGameScreenV2)SceneHandler.getCurrentScene()).updateLeftSide();
+              if(SceneHandler.getCurrentScene() instanceof PlayGameScreen)
+                ((PlayGameScreen)SceneHandler.getCurrentScene()).updateLeftSide();
               break;
             case "updateTime": 
               Constants.UIupdateTime = ((ChooseIntegerBox) node).getValue();
-              if(SceneHandler.getCurrentScene() instanceof PlayGameScreenV2)
-                ((PlayGameScreenV2)SceneHandler.getCurrentScene()).reinitUiUpdateScheduler();
+              if(SceneHandler.getCurrentScene() instanceof PlayGameScreen)
+                ((PlayGameScreen)SceneHandler.getCurrentScene()).reinitUiUpdateScheduler();
               break;
             case "aiThinkTime":
               Constants.analyzeTimeInSeconds = ((ChooseIntegerBox) node).getValue();

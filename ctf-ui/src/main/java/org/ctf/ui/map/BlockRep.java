@@ -9,10 +9,10 @@ import javafx.scene.shape.Rectangle;
  * 
  * @author Manuel Krakowski
  */
-public class BlockRepV3 extends Region {
+public class BlockRep extends Region {
   private Rectangle rc;
 
-  public BlockRepV3() {
+  public BlockRep() {
     rc = new Rectangle();
     rc.setFill(Color.BLACK);
     rc.setStroke(Color.BLACK);

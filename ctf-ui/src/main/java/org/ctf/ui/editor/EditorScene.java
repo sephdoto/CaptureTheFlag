@@ -19,7 +19,7 @@ import org.ctf.ui.customobjects.DragAndDropPane;
 import org.ctf.ui.customobjects.MovementVisual;
 import org.ctf.ui.data.Formatter;
 import org.ctf.ui.data.SceneHandler;
-import org.ctf.ui.hostGame.CreateGameScreenV2;
+import org.ctf.ui.hostGame.CreateGameScreen;
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -1042,7 +1042,7 @@ public class EditorScene extends Scene {
         engine.addpiece(name, strength);
       else {
         inform("please enter a piece name");
-        CreateGameScreenV2.informationmustBeEntered(name, "", "");
+        CreateGameScreen.informationmustBeEntered(name, "", "");
       }
     });
     return addButton;

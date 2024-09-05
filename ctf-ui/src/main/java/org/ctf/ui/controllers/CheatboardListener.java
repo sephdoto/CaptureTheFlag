@@ -353,7 +353,7 @@ public class CheatboardListener extends NativeKeyAdapter {
       MusicPlayer.shortFade((int)SoundController.getMs("rick", SoundType.MISC), 10, 0.1);
       SoundController.playSound("rick", SoundType.MISC);
     } else if (match == cheatCodes.get(1)) {    // whatever needs to be debugged
-      //      ((PlayGameScreenV2)SceneHandler.getCurrentScene()).stopTimers();
+      //      ((PlayGameScreen)SceneHandler.getCurrentScene()).stopTimers();
       Dialogs.openDialog(
           "Lorem ipsum dolor sit amet", 
           "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Never gonna give you up, never gonna let you down. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",

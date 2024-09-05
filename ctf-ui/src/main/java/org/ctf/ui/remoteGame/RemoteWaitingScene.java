@@ -6,7 +6,7 @@ import org.ctf.ui.App;
 import org.ctf.ui.controllers.HomeSceneController;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.data.SceneHandler;
-import org.ctf.ui.hostGame.PlayGameScreenV2;
+import org.ctf.ui.hostGame.PlayGameScreen;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -25,7 +25,7 @@ import javafx.scene.text.Text;
 /**
  * Provides a JavaFx Scene that is shown while waiting for an remote game to start. It displays the
  * current state and the number of players waiting in the lobby. It switches over to the
- * {@link PlayGameScreenV2} when the sessions starts.
+ * {@link PlayGameScreen} when the sessions starts.
  * 
  * @author aniemesc
  */

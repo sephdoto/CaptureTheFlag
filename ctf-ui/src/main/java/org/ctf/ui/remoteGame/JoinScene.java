@@ -18,7 +18,7 @@ import org.ctf.ui.data.ClientStorage;
 import org.ctf.ui.data.Formatter;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.editor.EditorScene;
-import org.ctf.ui.hostGame.CreateGameScreenV2;
+import org.ctf.ui.hostGame.CreateGameScreen;
 import org.ctf.ui.threads.PointAnimation;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -498,7 +498,7 @@ public class JoinScene extends Scene {
     Button joinButton = createControlButton(vbox, "Join", "save-button");
     joinButton.setOnAction(e -> {
       if (nameField.getText().equals("")) {
-        CreateGameScreenV2.informationmustBeEntered(nameField, "custom-search-field2",
+        CreateGameScreen.informationmustBeEntered(nameField, "custom-search-field2",
             "custom-search-field2");
         return;
       }
@@ -517,7 +517,7 @@ public class JoinScene extends Scene {
             } else {
               nameField.clear();
               nameField.requestFocus();
-              CreateGameScreenV2.informationmustBeEntered(nameField, "custom-search-field2",
+              CreateGameScreen.informationmustBeEntered(nameField, "custom-search-field2",
                   "custom-search-field2");
             }
           });
