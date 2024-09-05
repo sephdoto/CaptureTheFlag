@@ -140,8 +140,8 @@ public class PieceWalkPane extends GridPane {
     pane.setPrefHeight(1);
     pane.setPrefWidth(1);
     pane.prefWidthProperty().bind(widthProperty().divide(7));
-    pane.prefHeightProperty().bind(pane.widthProperty());
-    pane.minHeightProperty().bind(pane.widthProperty().multiply(0.95));
+    pane.prefHeightProperty().bind(pane.prefWidthProperty());
+    pane.minHeightProperty().bind(pane.prefHeightProperty());
     this.add(pane, x, y);
     
     // add Circle

@@ -1155,18 +1155,16 @@ public class PlayGameScreenV2 extends Scene {
     vBox.getChildren().add(createDeslabelBox());
     hBox.getChildren().add(vBox);
     
-    
-
-    /*hBox.prefHeightProperty().bind(this.heightProperty().multiply(0.65));
+    hBox.prefHeightProperty().bind(this.heightProperty().multiply(0.65));
     hBox.prefWidthProperty().bind(right.widthProperty().multiply(0.8));
-    double pad1 = hBox.widthProperty().doubleValue() * 0.08;
-    hBox.setPadding(new Insets(pad1, pad1, pad1, pad1));
+    double pad1 = hBox.widthProperty().doubleValue() * 0.05;
+    hBox.setPadding(new Insets(pad1, 0, pad1, 0));
     hBox.widthProperty()
         .addListener(
             (observable, oldValue, newValue) -> {
               double padding = newValue.doubleValue() * 0.08;
               hBox.setPadding(new Insets(padding, padding, padding, padding));
-            });*/
+            });
     double pad = vBox.widthProperty().doubleValue() * 0.05;
     vBox.setPadding(new Insets(pad, pad, pad, pad));
     vBox.widthProperty()

@@ -200,14 +200,16 @@ public class CostumFigurePain extends Pane {
             "attack power: " + piece.getDescription().getAttackPower()
             /*"ID : " + piece.getId()*/;
     Tooltip tooltip = new Tooltip(pieceInfos);
-    Duration delay = new Duration(100);
+    Duration delay = new Duration(250);
     tooltip.setShowDelay(delay);
-    Duration displayTime = new Duration(10000);
+    Duration displayTime = new Duration(1500);
     tooltip.setShowDuration(displayTime);
     tooltip.setFont(new Font(15));
     tooltip.setOnShown((e) -> {
-      new ShowMoveThread(tooltip).start();
+      Platform.runLater(() -> {
+        showHoverWalkableTiles();    
       });
+    });
     this.setPickOnBounds(true);
     Tooltip.install(this, tooltip);
   }
@@ -252,42 +254,6 @@ public class CostumFigurePain extends Pane {
     this.posY = parent.getY();
   }
 
-  ////////////////////////////////////////////////////////////////////////
-  //                            THREAD                                  //
-  ////////////////////////////////////////////////////////////////////////
-
-
-  private class ShowMoveThread extends Thread {
-    Tooltip tooltip;
-    public ShowMoveThread(Tooltip tooltip) {
-      this.tooltip = tooltip;
-    }
-    public void run() {
-      long showTime = System.currentTimeMillis();
-      boolean showTip = false;
-      while(tooltip.isShowing() && System.currentTimeMillis() - showTime < 200) {
-        try { Thread.sleep(Constants.UIupdateTime);
-        } catch (InterruptedException e1) { e1.printStackTrace(); }
-        showTip = System.currentTimeMillis() - showTime >= 200;
-      }
-      if(showTip) {
-        Platform.runLater(() -> {
-          showHoverWalkableTiles();    
-        });
-      }
-      showTime = System.currentTimeMillis();
-      while(tooltip.isShowing() && System.currentTimeMillis() - showTime < 1500) {
-        try { Thread.sleep(Constants.UIupdateTime);
-        } catch (InterruptedException e1) { e1.printStackTrace(); }
-        showTip = System.currentTimeMillis() - showTime >= 500;
-      }
-      if(showTip) {
-        Platform.runLater(() -> {
-          tooltip.hide();
-        });
-      }
-    }
-  }
 
   /////////////////////////////////////////////////////////////////////////////////
   //Getters and Setters
