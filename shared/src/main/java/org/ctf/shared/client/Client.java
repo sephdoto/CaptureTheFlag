@@ -1149,4 +1149,8 @@ public class Client implements GameClientInterface {
     return couldJoin;
   }
 
+  public String getRequestedTeamName() {
+    return requestedTeamName;
+  }
+
 }
