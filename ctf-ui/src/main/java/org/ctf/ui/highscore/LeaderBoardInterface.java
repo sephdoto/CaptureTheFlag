@@ -28,24 +28,6 @@ public interface LeaderBoardInterface {
    */
   public LeaderBoardEntry createEntry(Score score, SavedGame game);
 
-  /**
-   * Checks if the score is one of the top 10 scores. To be used as an internal check while using
-   * addScore
-   *
-   * @param score the score that has to be checked
-   * @return true the entry can be a top 10 entry, false if not
-   */
-  public boolean isTop10Score(Score score);
-
-  /**
-   * Deletes a score from the list. Might not be needed because of an implementation using ordered
-   * list
-   *
-   * @param score the score you want to delete
-   * @return true the entry can be a top 10 entry, false if not
-   */
-  public boolean deleteScore(Score score);
-
-  /** Returns the list of currently stored scores in descending order (top to bottom) */
+  /** Returns the list of currently stored scores in descending order (bottom to top) */
   public LeaderBoardEntry[] getEntries();
 }

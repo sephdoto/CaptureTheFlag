@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
     xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
@@ -21,26 +22,26 @@
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
-	  		<classifier>mac</classifier>
+            <classifier>mac</classifier>
             <artifactId>javafx-controls</artifactId>
             <version>21.0.2</version>
         </dependency>
         <dependency>
-	      <groupId>org.openjfx</groupId>
-	  		<classifier>mac</classifier>
-	      <artifactId>javafx-media</artifactId>
-	      <version>21.0.2</version>
-	 	</dependency>
+            <groupId>org.openjfx</groupId>
+            <classifier>mac</classifier>
+            <artifactId>javafx-media</artifactId>
+            <version>21.0.2</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-fxml -->
         <dependency>
             <groupId>org.openjfx</groupId>
-	  		<classifier>mac</classifier>
+            <classifier>mac</classifier>
             <artifactId>javafx-fxml</artifactId>
             <version>21.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
-	  		<classifier>mac</classifier>
+            <classifier>mac</classifier>
             <artifactId>javafx-graphics</artifactId>
             <version>21.0.2</version>
         </dependency>
@@ -54,17 +55,17 @@
             <groupId>de.uni-mannheim.swt.pse</groupId>
             <artifactId>ctf</artifactId>
             <version>1.1.5</version>
-        </dependency>      
-    	<dependency>
-    		<groupId>com.1stleg</groupId>
-    		<artifactId>jnativehook</artifactId>
-    		<version>2.1.0</version>
-		</dependency>
+        </dependency>
         <dependency>
-    		<groupId>net.jthink</groupId>
-    		<artifactId>jaudiotagger</artifactId>
-    		<version>3.0.1</version>
-		</dependency>
+            <groupId>com.1stleg</groupId>
+            <artifactId>jnativehook</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.jthink</groupId>
+            <artifactId>jaudiotagger</artifactId>
+            <version>3.0.1</version>
+        </dependency>
     </dependencies>
 
     <build>

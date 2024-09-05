@@ -1,5 +1,7 @@
 package org.ctf.ui.highscore;
 
+import java.io.Serializable;
+
 import org.ctf.shared.gameanalyzer.SavedGame;
 
 /**
@@ -8,12 +10,21 @@ import org.ctf.shared.gameanalyzer.SavedGame;
  * @author sephdoto
  */
 
-public class LeaderBoardEntry implements Comparable<LeaderBoardEntry>{
+public class LeaderBoardEntry implements Comparable<LeaderBoardEntry>, Serializable {
 
   private String name;
-  private Score score;
+  private Integer points;
   private SavedGame savedGame;
 
+  public LeaderBoardEntry(String name, Integer points, SavedGame savedGame){
+    this.name = name;
+    this.points = points;
+    this.savedGame = savedGame;
+  }
+
+  public LeaderBoardEntry(){
+  }
+  
   public String getName() {
     return name;
   }
@@ -22,12 +33,12 @@ public class LeaderBoardEntry implements Comparable<LeaderBoardEntry>{
     this.name = name;
   }
 
-  public Score getScore() {
-    return score;
+  public Integer getPoints() {
+    return points;
   }
 
-  public void setScore(Score score) {
-    this.score = score;
+  public void setPoints(Integer points) {
+    this.points = points;
   }
 
   public SavedGame getSavedGame() {
@@ -40,6 +51,6 @@ public class LeaderBoardEntry implements Comparable<LeaderBoardEntry>{
 
   @Override
   public int compareTo(LeaderBoardEntry o) {
-    return this.getScore().compareTo(o.getScore());
+    return this.getPoints().compareTo(o.getPoints());
   }
 }

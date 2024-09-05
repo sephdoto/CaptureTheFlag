@@ -168,6 +168,7 @@ public class Constants {
   public static final String toUIStyles = Constants.toUIResources + "styling" + File.separator;
   public static final String sharedResourcesFolder = toUIResources + "game" + File.separator;
   public static final String toUIPictures = Constants.toUIResources + "pictures" + File.separator;
+  
 
   // to AI config folder
   public static final String aiConfigFolder = sharedResourcesFolder + "ai_configs" + File.separator;
@@ -179,6 +180,7 @@ public class Constants {
       sharedResourcesFolder + "maptemplates" + File.separator;
   public static final String mapTemplateFolder =
       aboveMapTemplateFolder + "templates" + File.separator;
+  public static final String TOLEADERBOARD = sharedResourcesFolder + "leaderboard" + File.separator;
 
   /**
    * Constants needed for file paths
