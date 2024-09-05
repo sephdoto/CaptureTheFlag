@@ -273,50 +273,28 @@ public class AiAnalyzerScene extends Scene {
   
   /**
    * Changes the colors to some predetermined colors.
-   * Experimental color change to the old colors is there but not ready.
    * 
    *  @author sistumpf
    */
   private void changeColors() {
-//    if(Constants.changeAnalyzerColors) {
-      if(colorHasChanged) return;
+    if(colorHasChanged) return;
 
-      for(int entry=0; entry<teamLabels.size(); entry++) {
-        int teamInGameState = 0;
-        if(AnalyzerExtra.parseIntError(teamLabels.get(entry)[1].getText())) {
-          String name = teamLabels.get(entry)[1].getText();
-          for(int i=0; i<gsh.getSavedGame().getNames().length; i++)
-            if(name.equals(gsh.getSavedGame().getNames()[i]))
-              teamInGameState = i;
-        } else {
-          teamInGameState = Integer.parseInt(teamLabels.get(entry)[1].getText());
-        }
-        if(aiStates[currentMove+1].getTeams()[teamInGameState] != null) {
-          teamLabels.get(entry)[1].setStyle("-fx-text-fill: "+ aiStates[currentMove+1].getTeams()[teamInGameState].getColor() +";");
-        }
+    for(int entry=0; entry<teamLabels.size(); entry++) {
+      int teamInGameState = 0;
+      if(entry == 0) {
+        String name = teamLabels.get(entry)[1].getText();
+        for(int i=0; i<gsh.getSavedGame().getNames().length; i++)
+          if(name.equals(gsh.getSavedGame().getNames()[i]))
+            teamInGameState = i;
+      } else {
+        teamInGameState = Integer.parseInt(teamLabels.get(entry)[1].getText());
       }
-      colorHasChanged = true;
-    }/*else {
-      if(!colorHasChanged) return;
-      
-      for(int entry=0; entry<teamLabels.size(); entry++) {
-        int teamInGameState = 0;
-        if(AnalyzerExtra.parseIntError(teamLabels.get(entry)[1].getText())) {
-          String name = teamLabels.get(entry)[1].getText();
-          for(int i=0; i<gsh.getSavedGame().getNames().length; i++)
-            if(name.equals(gsh.getSavedGame().getNames()[i]))
-              teamInGameState = i;
-        } else {
-          teamInGameState = Integer.parseInt(teamLabels.get(entry)[1].getText());
-        }
-        if(aiStates[currentMove+1].getTeams()[teamInGameState] != null) {
-          teamLabels.get(entry)[1].setStyle("-fx-text-fill: "+ gsh.getSavedGame().getInitialState().getTeams()[teamInGameState].getColor() +";");
-        }
+      if(aiStates[currentMove+1].getTeams()[teamInGameState] != null) {
+        teamLabels.get(entry)[1].setStyle("-fx-text-fill: "+ aiStates[currentMove+1].getTeams()[teamInGameState].getColor() +";");
       }
-      colorHasChanged = true;
     }
-  }*/
-  
+    colorHasChanged = true;
+  }
 
   public GameAnalyzer getAnalyzer() {
     return analyzer;
