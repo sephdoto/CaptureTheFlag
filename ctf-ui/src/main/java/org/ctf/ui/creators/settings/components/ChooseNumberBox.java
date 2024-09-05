@@ -66,7 +66,7 @@ public abstract class ChooseNumberBox<T> extends GridPane implements ValueExtrac
    * @param postfix preferable a short unit like "ms" or "s"
    */
   public void setPostfix(String postfix) {
-    this.postfix.setText("  " + postfix);
+    this.postfix.setText(" " + postfix);
   }
   
   @Override

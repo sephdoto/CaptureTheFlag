@@ -9,6 +9,7 @@ import org.ctf.shared.ai.AIController;
 import org.ctf.shared.ai.GameUtilities;
 import org.ctf.shared.ai.GameUtilities.InvalidShapeException;
 import org.ctf.shared.ai.GameUtilities.NoMovesLeftException;
+import org.ctf.shared.ai.MonteCarloTreeSearch;
 import org.ctf.shared.client.service.CommLayerInterface;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.AI;
@@ -40,7 +41,10 @@ public class AIClient extends Client {
   private boolean saveToken = true;
   private boolean controllerToken = true;
   private boolean firstGameStateToken = true;
-
+  
+  private String moveInfo;
+  private String moreMoveInfo;
+  
   ScheduledExecutorService aiClientScheduler = Executors.newScheduledThreadPool(1);
   ExecutorService aiPlayScheduler = Executors.newSingleThreadExecutor();
 
@@ -138,8 +142,11 @@ public class AIClient extends Client {
           }
           if (isItMyTurn()) {
             Move move = getController().getNextMove();
-            if(getController().getAi() != AI.RANDOM && getController().getMcts() != null)
+            if(getController().getAi() != AI.RANDOM && getController().getMcts() != null) {
+              MonteCarloTreeSearch ai = getController().getMcts();
+              this.setMoveInfo(ai.getDepth(), ai.getExpansionCounter().get(), ai.getSimulationCounter().get(), ai.getHeuristicCounter().get(), ai.getChance(), ai.printResults(move));
               System.out.println(getController().getAi() + ":\n" + getController().getMcts().printResults(move));
+            }
             if(!isGameOver())
               makeMove(move);
           }
@@ -171,6 +178,8 @@ public class AIClient extends Client {
     this.selectedAI = selected;
     this.aiConfig = aiConfig;
     this.enableLogging = enableLogging;
+    this.moveInfo = null;
+    this.moreMoveInfo = null;
     if (enableLogging) {
       gameSaveHandler = new GameSaveHandler();
     }
@@ -375,5 +384,28 @@ public class AIClient extends Client {
 
   public AIController getController() {
     return controller;
+  }
+
+  public String getMoveInfo() {
+    return moveInfo;
+  }
+  
+  public String getMoreMoveInfo() {
+    return moreMoveInfo;
+  }
+
+  public void setMoveInfo(int depth, int expansions, int simulations, int heuristics, double chance, String moreMoveInfo) {
+    this.moveInfo = 
+        "depth: " + depth + "\n" 
+            + "expansions: " + expansions + "\n"
+            + "simulations: " + simulations + "\n"
+            + "heuristics: " + heuristics + "\n"
+            + "certainty: " + (int)Math.round(chance) + "%";
+    this.moreMoveInfo = moreMoveInfo;
+  }
+  
+  public void clearMoveInfo() {
+    this.moveInfo = null;
+    this.moreMoveInfo = null;
   }
 }

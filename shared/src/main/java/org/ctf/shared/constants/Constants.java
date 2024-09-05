@@ -109,6 +109,10 @@ public class Constants {
    * Time a Client waits before asking the server for another GameSession
    */
   public static int clientSleepTime = 0;
+  /**
+   * Shows AI statistics after it made a move
+   */
+  public static boolean showAiStats = true;
   ///////////////////////////////////////////////////////
   //                    other                          //
   ///////////////////////////////////////////////////////

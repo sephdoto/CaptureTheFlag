@@ -981,7 +981,8 @@ public class Client implements GameClientInterface {
                   }
                   sleep();
                 } catch (Exception e) {
-                  throw new Error("Something went wrong in the Client Thread");
+//                  throw new Error("Something went wrong in the Client Thread");
+                  System.err.println("Something went wrong in the Client Thread" + "Client.java:985");
                 }
               }
               if(enableLogging)

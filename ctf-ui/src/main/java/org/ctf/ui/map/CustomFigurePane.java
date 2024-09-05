@@ -196,9 +196,9 @@ public class CustomFigurePane extends Pane {
   public void showPieceInformationWhenHovering() {
     String pieceInfos = 
         piece.getDescription().getType() + "\n" + 
+            "attack power: " + piece.getDescription().getAttackPower() + "\n" +
             "teamID : " + piece.getTeamId() + "\n" +
-            "attack power: " + piece.getDescription().getAttackPower()
-            /*"ID : " + piece.getId()*/;
+            "pieceID : " + piece.getId();
     Tooltip tooltip = new Tooltip(pieceInfos);
     Duration delay = new Duration(250);
     tooltip.setShowDelay(delay);

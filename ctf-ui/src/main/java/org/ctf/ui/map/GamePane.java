@@ -176,7 +176,7 @@ public class GamePane extends HBox {
     try {
       cell.showLastMoveWithColor(CreateGameController.getColors().get(state.getLastMove().getTeamId()).get().toString(), "blue");
     } catch (Exception e) {
-      e.printStackTrace();
+//      e.printStackTrace();
       cell.showLastMove();
     };
   }

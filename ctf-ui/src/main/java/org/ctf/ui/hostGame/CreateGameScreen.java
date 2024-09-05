@@ -553,7 +553,6 @@ public class CreateGameScreen extends Scene {
       Map.Entry<MapTemplate, GameState> entry = maps.entrySet().iterator().next();
       template = entry.getKey();
       state = entry.getValue();
-      MoveVisualizer.setState(state);
     }
 
     gm = new GamePane(state, true, "", null, null, 0);

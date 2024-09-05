@@ -10,6 +10,7 @@ import org.ctf.shared.state.Piece;
 import org.ctf.ui.controllers.SoundController;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.map.GamePane;
+import org.ctf.ui.map.MoveVisualizer;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -153,9 +154,11 @@ public class AnalyzerExtra {
    * @author Manuel Krakowski
    */
   protected void setNewToolTip() {
-    Tooltip tooltip = new Tooltip("Expandierte Knoten: " + scene.expansions[scene.currentMove] + "\n"
-        + "angewendete Heuristiken: " + scene.heuristics[scene.currentMove] + "\n"
-        + "Angewendete Simulationen: " + scene.simulations[scene.currentMove]);
+    Tooltip tooltip = new Tooltip(
+        "depth: " + scene.analysedGames[scene.currentMove].getDepth() + "\n"
+        + "expanded nodes: " + scene.expansions[scene.currentMove] + "\n"
+        + "heuristics applied: " + scene.heuristics[scene.currentMove] + "\n"
+        + "complete simulations: " + scene.simulations[scene.currentMove]);
     tooltip.setStyle("-fx-background-color: " + getCurrentTeamsColor() + ";");
     Duration delay = new Duration(1);
     tooltip.setShowDelay(delay);
@@ -226,6 +229,7 @@ public class AnalyzerExtra {
     if(scene.userStates[scene.currentMove] != null) {
       scene.showMapBox.getChildren().clear();
       scene.gm = new GamePane(scene.userStates[scene.currentMove], true, scene.moveColors[scene.currentMove], null, null, 0);
+      MoveVisualizer.setCb(scene.gm);
       if(!teamGaveUpChecker(scene.currentMove+1) && scene.userStates[scene.currentMove].getLastMove() != null) {
         Move m = scene.userStates[scene.currentMove].getLastMove();
         Piece p = Arrays

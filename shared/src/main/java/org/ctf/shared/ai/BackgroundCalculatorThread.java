@@ -30,7 +30,7 @@ public class BackgroundCalculatorThread extends Thread{
 //      mcts.getConfig().C = 1000;
       
       while(!interrupted && Constants.FULL_AI_POWER) {
-        mcts.getMove(10);
+        mcts.getMove(50);
         //      System.out.println("BackgroundCalculator" + BackgroundCalculatorThread.this + " " +mcts.getExpansionCounter());
       }
       //    System.err.println("BackgroundCalculator" + BackgroundCalculatorThread.this + " stopped");

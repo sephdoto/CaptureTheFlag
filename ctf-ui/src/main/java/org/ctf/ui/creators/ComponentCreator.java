@@ -295,7 +295,6 @@ public class ComponentCreator {
     select.setFont(Font.font("Century Gothic", select.getHeight() * 0.5));
     select.prefHeightProperty().addListener((obs, oldv, newV) -> {
       double size = newV.doubleValue() * 0.5;
-      System.out.println(size);
       select.setFont(Font.font("Century Gothic", size));
     });
 

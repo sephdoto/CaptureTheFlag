@@ -25,7 +25,6 @@
     -fx-background-color: transparent;
     -fx-text-fill:white;
     -fx-wrap-text: true;
-    -fx-font-size:15.0px;
   }
   
   /* Pane header */
@@ -66,6 +65,12 @@
   -fx-fill:white;
   -fx-wrap-text: true;
   -fx-font-size: 16px;
+}
+.content-text-small {
+  -fx-background-color: transparent;
+  -fx-fill:white;
+  -fx-wrap-text: true;
+  -fx-font-size: 14px;
 }
 
 /* Text im Dialog */

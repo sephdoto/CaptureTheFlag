@@ -111,8 +111,7 @@ public class AnalyzerUtils extends AnalyzerExtra {
     });
     scene.progressBar.getStyleClass().add("option-pane");
     // scene.progressBar.setAlignment(Pos.BOTTOM_CENTER);
-    Tooltip tooltip = new Tooltip("Expandierte Knoten:" + "\n" + "angewendete Heuristiken:" + "\n"
-        + "Angewendete Simulationen:");
+    Tooltip tooltip = new Tooltip("nothing to show\n... yet");
     tooltip.setStyle("-fx-background-color: blue");
     Duration delay = new Duration(1);
     tooltip.setShowDelay(delay);

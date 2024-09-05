@@ -23,6 +23,7 @@ public class AnalyzedGameState {
   private int betterMoves;
   private GameState initialGameState;
   private GameState userGaveUp;
+  private int depth;
 
   /**
    * Generates all the accessible information when getting initialized.
@@ -34,6 +35,7 @@ public class AnalyzedGameState {
    * @throws NeedMoreTimeException if the game could not be analyzed because too little time was given
    */
   public AnalyzedGameState(MonteCarloTreeSearch mcts, Move userChoice, Move aiChoice, GameState initialGameState, GameState userGaveUp) throws NeedMoreTimeException {
+    this.depth = mcts.getDepth();
     this.previousState = mcts.getRoot().deepCloneWithChildren();
     this.aiChoice = findNodeByMove(aiChoice);
     this.expansions = mcts.getExpansionCounter().get();
@@ -285,6 +287,10 @@ public class AnalyzedGameState {
 
   public GameState getUserGaveUp() {
     return this.userGaveUp;
+  }
+
+  public int getDepth() {
+    return depth;
   }
   
   /**

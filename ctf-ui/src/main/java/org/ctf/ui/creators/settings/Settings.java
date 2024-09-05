@@ -19,7 +19,9 @@ public enum Settings {
   BACKGROUND_OPACITY("Background opacity "),
   GLOW_SPREAD("Glow intensity "),
   RANDOM_SLEEP_TIME("RandomAI wait time "),
-  BACKGROUND_FIT_FIX("Background-fit Fix ");
+  BACKGROUND_FIT_FIX("Background-fit Fix "),
+  AI_STATS("Show AI Stats: "),
+  CLIENT_SLEEP_TIME("Client sleep time: ");
   
   private String name;
   

@@ -260,29 +260,33 @@ public class TemplateEngine {
    * least 1 piece remaining.
    * 
    * @author aniemesc
-   * @param spinner - Spinner that was changed
-   * @param type - String value for the type of the piece whose amount was changed
-   * @param old - int value for old amount
-   * @param newV - int value for new amount
+   * @param spinner Spinner that was changed
+   * @param type String value for the type of the piece whose amount was changed
+   * @param old int value for old amount
+   * @param newV int value for new amount
    * @return boolean that indicates whether new template was valid
    */
   public boolean updatePiece(Spinner<Integer> spinner, String type, int old, int newV) {
     if (newV == 0 && tmpTemplate.getPieces().length == 1) {
       editorscene.setSpinnerChange(true);
       spinner.getValueFactory().setValue(old);
-      editorscene.inform("You need at least one Figure!");
+      editorscene.inform("You need at least one Piece!");
       return false;
-
     }
-    betterUpdateCount(type, newV);
+    try {
+      betterUpdateCount(type, newV);
+    } catch (Exception e) {
+      spinner.getEditor().setText("0");
+      editorscene.inform("Please select a valid Piece.");
+      return false;
+    }
     boolean isvalid = TemplateChecker.checkTemplate(tmpTemplate);
-    System.out.println(isvalid);
     if (!isvalid) {
       betterUpdateCount(type, old);
       editorscene.setSpinnerChange(true);
       spinner.getValueFactory().setValue(old);
 
-      editorscene.inform(("There is not enough space for that many figures!"));
+      editorscene.inform(("There is not enough space for that many Pieces!"));
     }
     editorscene.setValidTemplate(true);
     MapPreviewThread thread = new MapPreviewThread(editorscene);
@@ -466,7 +470,6 @@ public class TemplateEngine {
         tmpMovement.getDirections().setLeft(newv);
         break;
       case "Right":
-        System.out.println("Test");
         tmpMovement.getDirections().setRight(newv);
         break;
       case "Up":

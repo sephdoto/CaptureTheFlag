@@ -102,15 +102,15 @@ public class MoveVisualizer {
       cliento.makeMove(move);
       resetStateAfterMoveRequest();
     } catch (SessionNotFound e) {
-      Dialogs.openDialog("Session not found", e.getMessage(), -1);
+      Dialogs.openDialog("Session not found", e.getMessage(), -1, -1);
     } catch (ForbiddenMove e) {
-      Dialogs.openDialog("Forbidden Move", e.getMessage(), -1);
+      Dialogs.openDialog("Forbidden Move", e.getMessage(), -1, -1);
     } catch (InvalidMove e) {
-      Dialogs.openDialog("Invalid Move", e.getMessage(), -1);
+      Dialogs.openDialog("Invalid Move", e.getMessage(), -1, -1);
     } catch (GameOver e) {
-      Dialogs.openDialog("Game Over", e.getMessage(), -1);
+      Dialogs.openDialog("Game Over", e.getMessage(), -1, -1);
     } catch (UnknownError e) {
-      Dialogs.openDialog("Unknown Error", e.getMessage(), -1);
+      Dialogs.openDialog("Unknown Error", e.getMessage(), -1, -1);
     }
   }
 
@@ -266,12 +266,13 @@ public class MoveVisualizer {
     currentPlayer = current;
   }
 
-  public static void setState(GameState state) {
+  private static void setState(GameState state) {
     MoveVisualizer.state = GameUtilities.deepCopyGameState(state);
   }
 
   public static void setCb(GamePane cb) {
     MoveVisualizer.cb = cb;
+    MoveVisualizer.setState(cb.getState());
   }
 
   public static boolean isCurrentlyHovering() {

@@ -58,6 +58,7 @@ public class Tips {
     String randomTip = getRandomTip();
     int tipIndex = tips.indexOf(randomTip);
     int msToClose = -1;
+    int wrappingWidth = -1;
     String closeName = "CLOSE";
     String nextName = "NEXT TIP";
     Runnable[] run = {() -> openTipDialog()};
@@ -65,10 +66,10 @@ public class Tips {
     
     switch(tipIndex) {
       case 0:   //take me to MapEditor
-        Dialogs.openDialogThreeButtons("Tip #"+tipIndex, randomTip, msToClose, "TEST IT!", () -> SceneHandler.switchToMapEditorScene(), nextName, closeName, () -> openTipDialog());
+        Dialogs.openDialogThreeButtons("Tip #"+tipIndex, randomTip, msToClose, wrappingWidth, "TEST IT!", () -> SceneHandler.switchToMapEditorScene(), nextName, closeName, () -> openTipDialog());
         return;
       case 1: 
-        Dialogs.openDialogThreeButtons("Tip #"+tipIndex, randomTip, msToClose, "TEST IT!", () -> SceneHandler.switchToMapEditorScene(), nextName, closeName, () -> openTipDialog());
+        Dialogs.openDialogThreeButtons("Tip #"+tipIndex, randomTip, msToClose, wrappingWidth, "TEST IT!", () -> SceneHandler.switchToMapEditorScene(), nextName, closeName, () -> openTipDialog());
         return;
       case 2:   //normal Alert vs my Alert
         nextName = "SURE!";
@@ -77,7 +78,7 @@ public class Tips {
               () -> Dialogs.openDialogTwoButtons(
                   "Thats the normal Alert",
                   "Looks kinda boring, doesn't it?",
-                  -1, "CLOSE", "NEXT TIP", () -> openTipDialog()),
+                  -1, wrappingWidth, "CLOSE", "NEXT TIP", () -> openTipDialog()),
               () -> 
               {
                 Alert alert = new Alert(AlertType.ERROR); 
@@ -93,10 +94,10 @@ public class Tips {
       case 5:
         ArrayList<Integer> match = new ArrayList<Integer>();
         match.add(NativeKeyEvent.VC_I);match.add(NativeKeyEvent.VC_N);match.add(NativeKeyEvent.VC_F);match.add(NativeKeyEvent.VC_O);
-        Dialogs.openDialogThreeButtons("Tip #"+tipIndex, randomTip, msToClose, "SHOW ME", () -> CheatboardListener.findAndOpenMatch(match), nextName, closeName, () -> openTipDialog());
+        Dialogs.openDialogThreeButtons("Tip #"+tipIndex, randomTip, msToClose, wrappingWidth, "SHOW ME", () -> CheatboardListener.findAndOpenMatch(match), nextName, closeName, () -> openTipDialog());
         return;
     }
     
-    Dialogs.openDialogTwoButtons("Tip #"+tipIndex, randomTip, msToClose, closeName, nextName, run);
+    Dialogs.openDialogTwoButtons("Tip #"+tipIndex, randomTip, msToClose, wrappingWidth, closeName, nextName, run);
   }
 }

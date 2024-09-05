@@ -243,7 +243,6 @@ private ObjectProperty<Font> popUpLabel;
 			if(aiorHumanpopup != null) {
 			root.getChildren().remove(aiLevelPopUpPane);
 			root.getChildren().add(aiorHumanpopup);
-			System.out.println("Peter");
 			} else {
 				root.getChildren().remove(aiLevelPopUpPane);
 			}
@@ -673,27 +672,21 @@ private ObjectProperty<Font> popUpLabel;
 		switch (config) {
 		case ATTACK_POWER_MUL:
 			defaultConfig.attackPowerMultiplier = newValue;
-			System.out.println("Attack Power: " + defaultConfig.attackPowerMultiplier);
 			break;
 		case PIECE_MUL:
 			defaultConfig.pieceMultiplier = newValue;
-			System.out.println("Pice: " + newValue);
 			break;
 		case BASE_DISTANCE_MUL:
 			defaultConfig.distanceBaseMultiplier = newValue;
-			System.out.println("Base : " + newValue);
 			break;
 		case DIRECTION_MUL:
 			defaultConfig.directionMultiplier = newValue;
-			System.out.println("Distance: " + newValue);
 			break;
 		case FLAG_MUL:
 			defaultConfig.flagMultiplier = newValue;
-			System.out.println("Flags: " + newValue);
 			break;
 		case SHAPE_REACH_MUL:
 			defaultConfig.shapeReachMultiplier = newValue;
-			System.out.println("Shape Reach: " + newValue);
 			break;
 		case NUM_THREADS:
 			defaultConfig.numThreads = newValue;

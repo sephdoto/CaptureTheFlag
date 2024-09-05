@@ -36,10 +36,11 @@ public class Dialogs {
    * @param title the Dialogs title
    * @param message the Dialogs message
    * @param ms milliseconds till the Dialog automatically closes, <0 to disable auto close
+   * @param wrappingWidth max text width before wrapping, -1 for default
    * @param run several Runnables which will be executed when a user clicks "OK"
    */
-  public static void openDialog(String title, String message, int ms, Runnable ... run) {
-    Platform.runLater(() -> new Dialog(title, message, ms, run).show());
+  public static void openDialog(String title, String message, int ms, int wrappingWidth, Runnable ... run) {
+    Platform.runLater(() -> new Dialog(title, message, ms, wrappingWidth, run).show());
   }
 
   /**
@@ -49,13 +50,14 @@ public class Dialogs {
    * @param title the Dialogs title
    * @param message the Dialogs message
    * @param ms milliseconds till the Dialog automatically closes, <0 to disable auto close
+   * @param wrappingWidth max text width before wrapping, -1 for default
    * @param okButtonText name of the button that closes the Dialog
    * @param nextButtonText the functional buttons name
    * @param run several Runnables which will be executed when a user clicks button the nextButtonText describes
    */
 
-  public static void openDialogTwoButtons(String title, String message, int ms, String okButtonText, String nextButtonText, Runnable ... run) {
-      Platform.runLater(() -> getDialogTwoButtons(title, message, ms, okButtonText, nextButtonText, run).show());
+  public static void openDialogTwoButtons(String title, String message, int ms, int wrappingWidth, String okButtonText, String nextButtonText, Runnable ... run) {
+      Platform.runLater(() -> getDialogTwoButtons(title, message, ms, wrappingWidth, okButtonText, nextButtonText, run).show());
     }
   /**
    * Creates a new {@link Dialog} with title and message and three buttons.
@@ -65,14 +67,15 @@ public class Dialogs {
    * @param title the Dialogs title
    * @param message the Dialogs message
    * @param ms milliseconds till the Dialog automatically closes, <0 to disable auto close
+   * @param wrappingWidth max text width before wrapping, -1 for default
    * @param leftButtonText name of the left button
    * @param leftRunnable  whatever the left button executes
    * @param middleButtonText name of the middle button
    * @param rightButtonText name of the right button, which just closes the window
    * @param run several Runnables which will be executed when a user clicks the middle button
    */
-  public static void openDialogThreeButtons(String title, String message, int ms, String leftButtonText, Runnable leftRunnable, String middleButtonText, String rightButtonText, Runnable ... middleRunnables) {
-    Platform.runLater(() -> getDialogThreeButtons(title, message, ms, leftButtonText, leftRunnable, middleButtonText, rightButtonText, middleRunnables).show());
+  public static void openDialogThreeButtons(String title, String message, int ms, int wrappingWidth, String leftButtonText, Runnable leftRunnable, String middleButtonText, String rightButtonText, Runnable ... middleRunnables) {
+    Platform.runLater(() -> getDialogThreeButtons(title, message, ms, wrappingWidth, leftButtonText, leftRunnable, middleButtonText, rightButtonText, middleRunnables).show());
   }
   
   /**
@@ -84,14 +87,15 @@ public class Dialogs {
    * @param title the Dialogs title
    * @param message the Dialogs message
    * @param ms milliseconds till the Dialog automatically closes, <0 to disable auto close
+   * @param wrappingWidth max text width before wrapping, -1 for default
    * @param leftButtonText name of the left button
    * @param leftRunnable  whatever the left button executes
    * @param middleButtonText name of the middle button
    * @param rightButtonText name of the right button, which just closes the window
    * @param run several Runnables which will be executed when a user clicks the middle button
    */
-  public static Dialog getDialogThreeButtons(String title, String message, int ms, String leftButtonText, Runnable leftRunnable, String middleButtonText, String rightButtonText, Runnable ... middleRunnables) {
-    Dialog threeButtons = getDialogTwoButtons(title, message, ms, rightButtonText, middleButtonText, middleRunnables); 
+  public static Dialog getDialogThreeButtons(String title, String message, int ms, int wrappingWidth, String leftButtonText, Runnable leftRunnable, String middleButtonText, String rightButtonText, Runnable ... middleRunnables) {
+    Dialog threeButtons = getDialogTwoButtons(title, message, ms, wrappingWidth, rightButtonText, middleButtonText, middleRunnables); 
 
     //add next button, then modify it
     ButtonType left = ButtonType.YES;
@@ -114,12 +118,13 @@ public class Dialogs {
    * @param title the Dialogs title
    * @param message the Dialogs message
    * @param ms milliseconds till the Dialog automatically closes, <0 to disable auto close
+   * @param wrappingWidth max text width before wrapping, -1 for default
    * @param okButtonText name of the button that closes the Dialog
    * @param nextButtonText the functional buttons name
    * @param run several Runnables which will be executed when a user clicks the button nextButtonText describes
    */
-  public static Dialog getDialogTwoButtons(String title, String message, int ms, String okButtonText, String nextButtonText, Runnable ... run) {
-    Dialog twoButtons = new Dialog(title, message, ms, run); 
+  public static Dialog getDialogTwoButtons(String title, String message, int ms, int wrappingWidth, String okButtonText, String nextButtonText, Runnable ... run) {
+    Dialog twoButtons = new Dialog(title, message, ms, wrappingWidth, run); 
 
     //remove close Button from executing Runnables
     Button close = (Button) twoButtons.getDialogPane().lookupButton(ButtonType.OK);
@@ -176,9 +181,10 @@ public class Dialogs {
      * @param title to show above the message
      * @param message the message displayed in the Alerts body
      * @param ms milliseconds till the Dialog automatically closes, <0 to disable auto close
+     * @param wrappingWidth max text width before wrapping, -1 for default
      * @param run several Runnables which will be executed when a user clicks "OK"
      */
-    public Dialog(String title, String message, int ms, Runnable ... run) {
+    public Dialog(String title, String message, int ms, int wrappingWidth, Runnable ... run) {
       super(AlertType.NONE, "", ButtonType.OK);
       setX(SceneHandler.getMainStage().getX() + App.offsetWidth);
       setY(SceneHandler.getMainStage().getY() + 20 * openInstances + App.offsetHeight);
@@ -202,8 +208,11 @@ public class Dialogs {
       setHeaderText(title);
 //      setContentText(message);
       Text text = new Text(message);
-      text.getStyleClass().add("content-text");
-      text.setWrappingWidth(400);
+      if(wrappingWidth >= 800)
+        text.getStyleClass().add("content-text-small");
+      else 
+        text.getStyleClass().add("content-text");
+      text.setWrappingWidth(wrappingWidth < 0 ? 400 : wrappingWidth);
       StackPane wrapper = new StackPane(text);
       wrapper.getStyleClass().add("content-wrapper");
       getDialogPane().setContent(wrapper);

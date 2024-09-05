@@ -28,6 +28,7 @@ import org.ctf.ui.map.CustomFigurePane;
 import org.ctf.ui.map.GamePane;
 import org.ctf.ui.map.MoveVisualizer;
 import org.ctf.ui.threads.PointAnimation;
+import dialogs.Dialogs;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -325,6 +326,16 @@ public class PlayGameScreen extends Scene {
    */
   private void updateUI(boolean forceRedraw) {
     if (ClientStorage.getMainClient() != null && (ClientStorage.getMainClient().queuedGameStates() > 0 || forceRedraw)) {
+      if(Constants.showAiStats) {
+        for(AIClient ai : ClientStorage.getLocalAIClients())
+          if(ai.getMoveInfo() != null) {
+            int timeTillClose = ai.getRemainingMoveTimeInSeconds() < 5 ? 8 : (int)(ai.getRemainingMoveTimeInSeconds() * 0.9);
+            String fullInfo = ai.getMoreMoveInfo();
+            Dialogs.openDialogTwoButtons(ai.getRequestedTeamName() + "-AI Statistics: ", ai.getMoveInfo(), timeTillClose * 1000, 180, "CLOSE", "ENHANCE", 
+                () -> Dialogs.openDialog("Full " + ai.getRequestedTeamName() + " Statistics", fullInfo, -1, 800));
+            ai.clearMoveInfo();
+          }
+      }
       if (schedulerLock || forceRedraw) {
         schedulerLock = false;
 

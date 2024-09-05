@@ -521,7 +521,21 @@ public class MCTS implements MonteCarloTreeSearch {
     gameState.setLastMove(move);
     MCTSUtilities.toNextTeam(gameState);
   }
+  
+  public int getDepth() {
+    int depth = 0;
+    TreeNode child = this.getRoot();
+    while(child != null) {
+      child = getRootBest(child);
+      depth++;
+    }
+    return depth;
+  }
 
+  public double getChance() {
+    return getRootBest(root).getV() * 100;
+  }
+  
   /**
    * prints some important values to the console
    *
@@ -544,7 +558,7 @@ public class MCTS implements MonteCarloTreeSearch {
             + simulationCounter
             + ", heuristic used: "
             + heuristicCounter);
-    sb.append("\nBest children:");
+    sb.append("\nBest children with depth " + getDepth() +":");
     // if not all children are expanded they cannot be sorted.
     try {
       Arrays.sort(getRoot().getChildren());

@@ -35,6 +35,22 @@ public interface MonteCarloTreeSearch {
    * @return the algorithms choice for the best move
    */
   public Move getMove(Move influencer, int milis);
+
+  /**
+   * Returns the depth of the best possible path.
+   * Iteratively looks for a root nodes best child, which becomes the new root node,
+   * until the maximum depth is reached.
+   * 
+   * @return depth of the best possible path
+   */
+  public int getDepth();
+  
+  /**
+   * Returns the best root-childs winning chance in %
+   * 
+   * @return certainty to win in percent
+   */
+  public double getChance();
   
   /**
    * Returns the root of the current MCTS instance

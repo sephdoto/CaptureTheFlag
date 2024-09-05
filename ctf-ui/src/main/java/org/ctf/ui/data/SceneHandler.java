@@ -188,10 +188,12 @@ public class SceneHandler {
       Dialogs.openDialog("Server error", 
           "Client could not join the Server, it is most likely a Server Error.\n"
           + "Try selecting another Port in HomeScreen to start a new Server, as the old Port is most likely used by an unsupported Server or Application.",
-          30000,
+          20000,
+          -1,
           () -> switchToHomeScreen(),
           () -> Dialogs.openDialog("How to start a new Server", 
               "Hover over \"START LOCAL SERVER\" in the bottom right till it highlights, then click it once and type a number you like, for example 8080",
+              -1,
               -1));
       return;
     }
