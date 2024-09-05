@@ -1,6 +1,7 @@
 package org.ctf.ui.gameAnalyzer;
 
 import java.io.File;
+import java.util.ArrayList;
 import org.ctf.shared.ai.AIConfig;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.gameanalyzer.AnalyzedGameState;
@@ -61,7 +62,7 @@ public class AiAnalyzerScene extends Scene {
 
   protected HBox[] rows;
 
-  protected Label[] teamLabels;
+  protected ArrayList<Label[]> teamLabels;
   protected Label[] classificationlabels;
   protected Double[] percentagesbyUser;
   protected Double[] percentagesbyAI;
@@ -79,6 +80,8 @@ public class AiAnalyzerScene extends Scene {
   protected boolean showHuman;
   public boolean switched;
 
+  boolean colorHasChanged;
+
   private GameAnalyzer analyzer;
 
   private AnalyzerUtils utils;
@@ -90,9 +93,10 @@ public class AiAnalyzerScene extends Scene {
       return;
     }
     switched = true;
+    colorHasChanged = false;
     manageFontSizes();
     rows = new HBox[totalmoves];
-    teamLabels = new Label[totalmoves];
+    teamLabels = new ArrayList<Label[]>(totalmoves);
     classificationlabels = new Label[totalmoves];
     percentagesbyUser = new Double[totalmoves];
     percentagesbyAI = new Double[totalmoves];
@@ -133,10 +137,9 @@ public class AiAnalyzerScene extends Scene {
   private void initalize() {
     try {
       //adjust SavedGame initial team and move team (weird bug, only fix I see right now @sistumpf) TODO
-      System.out.println("first Team: " + gsh.getSavedGame().getInitialState().getCurrentTeam() + ", first Move Team: " + gsh.getSavedGame().getMoves().get("1").getTeamId());
+//      System.out.println("first Team: " + gsh.getSavedGame().getInitialState().getCurrentTeam() + ", first Move Team: " + gsh.getSavedGame().getMoves().get("1").getTeamId());
 //      gsh.getSavedGame().getInitialState().setCurrentTeam(Integer.parseInt(gsh.getSavedGame().getMoves().get("1").getTeamId()));
 
-      // TODO
       analyzer = new GameAnalyzer(gsh.getSavedGame(), new AIConfig());
       analysedGames = getAnalyzer().getResults();
       Thread initThread = new Thread() {
@@ -151,7 +154,13 @@ public class AiAnalyzerScene extends Scene {
                 @Override
                 public void run() {
                   GameState state = g.getPreviousGameState();
-                  teamLabels[currentMove].setText("" + state.getCurrentTeam());
+                  
+//                  teamLabels.get(currentMove)[1].setText("" + state.getCurrentTeam());                      //TODO teamlabel
+
+                  String name = gsh.getSavedGame().getNames()[Integer.parseInt(gsh.getSavedGame().getMoves().get(currentMove+1 + "").getTeamId())];
+                  teamLabels.get(currentMove)[0].setText("");
+                  teamLabels.get(currentMove)[1].setText(name);
+                  
                   String col;
                   if(g.getMoveEvaluation() != null) {
                     classificationlabels[currentMove].setText(g.getMoveEvaluation().name());
@@ -163,7 +172,10 @@ public class AiAnalyzerScene extends Scene {
                     col = "1b02fa";  
                     percentagesbyUser[currentMove] = 0.;
                     userStates[currentMove] = g.getUserGaveUp() == null ? state : g.getUserGaveUp();
-                    teamLabels[currentMove].setText("" + g.getAiChoice().getLastMove().getTeamId());
+//                    teamLabels.get(currentMove)[1].setText("" + g.getAiChoice().getLastMove().getTeamId()); //TODO teamlabel
+                    name = gsh.getSavedGame().getNames()[Integer.parseInt(gsh.getSavedGame().getMoves().get(currentMove + "").getTeamId())];
+                    teamLabels.get(currentMove)[0].setText("");
+                    teamLabels.get(currentMove)[1].setText(name);
                   };
                   classificationlabels[currentMove].setStyle("-fx-text-fill: " + col);
                   moveColors[currentMove] = col;
@@ -172,9 +184,7 @@ public class AiAnalyzerScene extends Scene {
                   heuristics[currentMove] = g.getHeuristic();
                   expansions[currentMove] = g.getExpansions();
                   aiStates[currentMove] = g.getAiChoice();
-                  for(int i=0; i<teamLabels.length; i++) 
-                    if(aiStates[currentMove].getTeams()[Integer.parseInt(teamLabels[i].getText())] != null)
-                      teamLabels[i].setStyle("-fx-text-fill: "+ aiStates[currentMove].getTeams()[Integer.parseInt(teamLabels[i].getText())].getColor() +";");
+                  changeColors();
                   utils.tryScrolling(currentMove);
                 }};
                 Platform.runLater(showResults);
@@ -199,7 +209,6 @@ public class AiAnalyzerScene extends Scene {
       firstMessage.setAlignment(Pos.CENTER);
     }
   }
-
 
   /**
    * Creates the whole layout of the scene
@@ -260,6 +269,53 @@ public class AiAnalyzerScene extends Scene {
     });
   }
 
+
+  
+  /**
+   * Changes the colors to some predetermined colors.
+   * Experimental color change to the old colors is there but not ready.
+   * 
+   *  @author sistumpf
+   */
+  private void changeColors() {
+//    if(Constants.changeAnalyzerColors) {
+      if(colorHasChanged) return;
+
+      for(int entry=0; entry<teamLabels.size(); entry++) {
+        int teamInGameState = 0;
+        if(AnalyzerExtra.parseIntError(teamLabels.get(entry)[1].getText())) {
+          String name = teamLabels.get(entry)[1].getText();
+          for(int i=0; i<gsh.getSavedGame().getNames().length; i++)
+            if(name.equals(gsh.getSavedGame().getNames()[i]))
+              teamInGameState = i;
+        } else {
+          teamInGameState = Integer.parseInt(teamLabels.get(entry)[1].getText());
+        }
+        if(aiStates[currentMove+1].getTeams()[teamInGameState] != null) {
+          teamLabels.get(entry)[1].setStyle("-fx-text-fill: "+ aiStates[currentMove+1].getTeams()[teamInGameState].getColor() +";");
+        }
+      }
+      colorHasChanged = true;
+    }/*else {
+      if(!colorHasChanged) return;
+      
+      for(int entry=0; entry<teamLabels.size(); entry++) {
+        int teamInGameState = 0;
+        if(AnalyzerExtra.parseIntError(teamLabels.get(entry)[1].getText())) {
+          String name = teamLabels.get(entry)[1].getText();
+          for(int i=0; i<gsh.getSavedGame().getNames().length; i++)
+            if(name.equals(gsh.getSavedGame().getNames()[i]))
+              teamInGameState = i;
+        } else {
+          teamInGameState = Integer.parseInt(teamLabels.get(entry)[1].getText());
+        }
+        if(aiStates[currentMove+1].getTeams()[teamInGameState] != null) {
+          teamLabels.get(entry)[1].setStyle("-fx-text-fill: "+ gsh.getSavedGame().getInitialState().getTeams()[teamInGameState].getColor() +";");
+        }
+      }
+      colorHasChanged = true;
+    }
+  }*/
   
 
   public GameAnalyzer getAnalyzer() {

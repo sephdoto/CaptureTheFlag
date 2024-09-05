@@ -36,6 +36,21 @@ public class AnalyzerExtra {
   }
 
   /**
+   * Determines if a String can be parsed to an Integer
+   * 
+   * @param s String to parse as an int
+   * @return true if the String can be parsed to an Integer
+   */
+  public static boolean parseIntError(String s) {
+    try {
+      Integer.parseInt(s);
+    } catch (NumberFormatException e) {
+      return true;
+    }
+    return false;
+  }
+  
+  /**
    * When the Ai-button is clicked the Ai's Move is shown
    * 
    * @param aiButton

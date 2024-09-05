@@ -370,7 +370,7 @@ public class AnalyzerUtils extends AnalyzerExtra {
     Label moveNrLabel = createNormalLabel(oneRow, moveNr);
     HBox teamLabel = new HBox();
     teamLabel.setAlignment(Pos.CENTER);
-    scene.teamLabels[moveNr] = createTeamLabel(oneRow, moveNr, teamLabel);
+    scene.teamLabels.add(moveNr, createTeamLabel(oneRow, moveNr, teamLabel));
     Label moveLabel = createMoveClassificationLabel(oneRow, moveNr, "");
     scene.classificationlabels[moveNr] = moveLabel;
     oneRow.getChildren().addAll(moveNrLabel, teamLabel, moveLabel);
@@ -412,7 +412,7 @@ public class AnalyzerUtils extends AnalyzerExtra {
    * @param teamLabel a HBox to put prefix and teamName into
    * @return Label
    */
-  protected Label createTeamLabel(HBox h, int i, HBox teamLabel) {
+  protected Label[] createTeamLabel(HBox h, int i, HBox teamLabel) {
     Label teamName = new Label(scene.gsh.getSavedGame().getMoves().get(1+i + "").getTeamId());
     Label prefix = new Label("Team: ");
     
@@ -439,7 +439,7 @@ public class AnalyzerUtils extends AnalyzerExtra {
     teamName.fontProperty().bind(scene.moveTableContent);
     prefix.fontProperty().bind(scene.moveTableContent);
     teamLabel.getChildren().addAll(prefix, teamName);
-    return teamName;
+    return new Label[] {prefix, teamName};
   }
 
   /**
