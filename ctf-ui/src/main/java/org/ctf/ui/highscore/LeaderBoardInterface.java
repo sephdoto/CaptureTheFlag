@@ -28,6 +28,9 @@ public interface LeaderBoardInterface {
    */
   public LeaderBoardEntry createEntry(Score score, SavedGame game);
 
-  /** Returns the list of currently stored scores in descending order (bottom to top) */
-  public LeaderBoardEntry[] getEntries();
+  /** Returns the list of currently stored scores in descending order (bottom to top) 
+   * @param numberOfEntriesYouWant 
+   * @return LeaderBoardEntry objects in an array
+  */
+  public LeaderBoardEntry[] getEntries(int numberOfEntriesYouWant);
 }

@@ -14,7 +14,7 @@
     },
     {
       "name": "Seph",
-      "points": 12321321321312321,
+      "points": 12321,
       "savedGame": {
         "teamsGaveUpMap": {},
         "lastMovesMap": {},
@@ -81,6 +81,17 @@
     {
       "name": "Seph",
       "points": 1232112121,
+      "savedGame": {
+        "teamsGaveUpMap": {},
+        "lastMovesMap": {},
+        "counter": 1,
+        "startingTime": 0,
+        "timestamps": []
+      }
+    },
+    {
+      "name": "Seph",
+      "points": 12321321321312321,
       "savedGame": {
         "teamsGaveUpMap": {},
         "lastMovesMap": {},

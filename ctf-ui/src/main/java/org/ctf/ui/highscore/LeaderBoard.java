@@ -23,7 +23,7 @@ public class LeaderBoard implements LeaderBoardInterface, Serializable {
   }
 
   @Override
-  public LeaderBoardEntry[] getEntries() {
+  public LeaderBoardEntry[] getEntries(int number) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'getEntries'");
   }

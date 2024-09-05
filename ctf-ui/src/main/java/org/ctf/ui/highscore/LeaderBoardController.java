@@ -2,7 +2,6 @@ package org.ctf.ui.highscore;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -10,21 +9,22 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import org.ctf.shared.constants.Constants;
+import org.ctf.shared.gameanalyzer.SavedGame;
 
 public class LeaderBoardController {
-  private Gson gson;
-  private LeaderBoard board;
+  private static Gson gson;
+  private static LeaderBoard board;
 
-  public LeaderBoardController() {
+  static {
     gson = new GsonBuilder().setPrettyPrinting().create();
     if (checkIfFileExists()) {
-        loadBoard();
-      } else {
-        board = new LeaderBoard();
-      }
+      loadBoard();
+    } else {
+      board = new LeaderBoard();
+    }
   }
 
-  public boolean saveCurrentBoard() {
+  public static boolean saveCurrentBoard() {
     try (Writer writer = new FileWriter(Constants.TOLEADERBOARD + "leaderboard" + ".json")) {
       gson.toJson(board, writer);
     } catch (IOException io) {
@@ -33,7 +33,7 @@ public class LeaderBoardController {
     return true;
   }
 
-  public boolean loadBoard() {
+  public static boolean loadBoard() {
     try (Reader reader = new FileReader(Constants.TOLEADERBOARD + "leaderboard" + ".json")) {
       board = gson.fromJson(reader, LeaderBoard.class);
     } catch (IOException io) {
@@ -42,12 +42,21 @@ public class LeaderBoardController {
     return true;
   }
 
-  public boolean checkIfFileExists() {
+  public static boolean checkIfFileExists() {
     File f = new File(Constants.TOLEADERBOARD + "leaderboard" + ".json");
     return (f.exists() && !f.isDirectory());
   }
 
-  public LeaderBoard getBoard() {
+  public static boolean clearBoard() {
+    board = new LeaderBoard();
+    return saveCurrentBoard();
+  }
+
+  public static LeaderBoard getBoard() {
     return board;
+  }
+
+  public static boolean addEntry(Score score, SavedGame sg) {
+    return getBoard().addScore(score, sg);
   }
 }
