@@ -13,10 +13,10 @@ import org.ctf.shared.gameanalyzer.SavedGame;
 public class LeaderBoardEntry implements Comparable<LeaderBoardEntry>, Serializable {
 
   private String name;
-  private Integer points;
+  private Long points;
   private SavedGame savedGame;
 
-  public LeaderBoardEntry(String name, Integer points, SavedGame savedGame){
+  public LeaderBoardEntry(String name, Long points, SavedGame savedGame){
     this.name = name;
     this.points = points;
     this.savedGame = savedGame;
@@ -33,11 +33,11 @@ public class LeaderBoardEntry implements Comparable<LeaderBoardEntry>, Serializa
     this.name = name;
   }
 
-  public Integer getPoints() {
+  public Long getPoints() {
     return points;
   }
 
-  public void setPoints(Integer points) {
+  public void setPoints(Long points) {
     this.points = points;
   }
 

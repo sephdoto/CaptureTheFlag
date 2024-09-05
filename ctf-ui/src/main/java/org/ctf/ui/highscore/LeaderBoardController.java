@@ -1,6 +1,8 @@
 package org.ctf.ui.highscore;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -14,17 +16,12 @@ public class LeaderBoardController {
   private LeaderBoard board;
 
   public LeaderBoardController() {
-    gson = new Gson();
-    init();
-  }
-
-  /** Checks if board already exists, loads it if possible, otherwise creates a new empty board */
-  public void init() {
+    gson = new GsonBuilder().setPrettyPrinting().create();
     if (checkIfFileExists()) {
-      loadBoard();
-    } else {
-      board = new LeaderBoard();
-    }
+        loadBoard();
+      } else {
+        board = new LeaderBoard();
+      }
   }
 
   public boolean saveCurrentBoard() {
@@ -37,7 +34,7 @@ public class LeaderBoardController {
   }
 
   public boolean loadBoard() {
-    try (Reader reader = new FileReader("person.json")) {
+    try (Reader reader = new FileReader(Constants.TOLEADERBOARD + "leaderboard" + ".json")) {
       board = gson.fromJson(reader, LeaderBoard.class);
     } catch (IOException io) {
       return false;

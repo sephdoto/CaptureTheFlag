@@ -8,7 +8,14 @@ package org.ctf.ui.highscore;
 public class Score implements Comparable<Score> {
 
   private String name;
-  private Integer playerPoints;
+  private Long playerPoints;
+
+  public Score(String name, Long playerPoints) {
+    this.name = name;
+    this.playerPoints = playerPoints;
+  }
+
+  public Score() {}
 
   public String getplayerName() {
     return name;
@@ -18,15 +25,11 @@ public class Score implements Comparable<Score> {
     this.name = name;
   }
 
-  public Integer getPoints() {
+  public Long getPoints() {
     return playerPoints;
   }
 
-  public void setPoints(Integer playerPoints) {
-    this.playerPoints = playerPoints;
-  }
-
-  public void setPoints(int playerPoints) {
+  public void setPoints(Long playerPoints) {
     this.playerPoints = playerPoints;
   }
 

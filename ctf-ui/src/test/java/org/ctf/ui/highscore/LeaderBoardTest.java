@@ -14,13 +14,13 @@ class LeaderBoardTest {
   void testDataBank() {
     SortedSet<LeaderBoardEntry> dataSet = new TreeSet<>();
     SavedGame sg = new SavedGame();
-    dataSet.add(new LeaderBoardEntry("Seph", 12, sg));
-    dataSet.add(new LeaderBoardEntry("Seph2", 14444442, sg));
-    dataSet.add(new LeaderBoardEntry("Seph4123", 12312, sg));
-    dataSet.add(new LeaderBoardEntry("Seph3123", 12132, sg));
-    dataSet.add(new LeaderBoardEntry("Seph1212", 13232, sg));
+    dataSet.add(new LeaderBoardEntry("Seph", 12L, sg));
+    dataSet.add(new LeaderBoardEntry("Seph2", 14444442L, sg));
+    dataSet.add(new LeaderBoardEntry("Seph4123", 12312L, sg));
+    dataSet.add(new LeaderBoardEntry("Seph3123", 12132L, sg));
+    dataSet.add(new LeaderBoardEntry("Seph1212", 13232L, sg));
 
-    Integer[] output = new Integer[5];
+    Long[] output = new Long[5];
     @SuppressWarnings("rawtypes")
     Iterator iterator = dataSet.iterator();
 
@@ -31,24 +31,24 @@ class LeaderBoardTest {
       i++;
     }
 
-    assertEquals(output[0], Integer.valueOf(12));
-    assertEquals(output[1], Integer.valueOf(12132));
-    assertEquals(output[2], Integer.valueOf(12312));
-    assertEquals(output[3], Integer.valueOf(13232));
-    assertEquals(output[4], Integer.valueOf(14444442));
+    assertEquals(output[0], Long.valueOf(12L));
+    assertEquals(output[1], Long.valueOf(12132L));
+    assertEquals(output[2], Long.valueOf(12312L));
+    assertEquals(output[3], Long.valueOf(13232L));
+    assertEquals(output[4], Long.valueOf(14444442L));
   }
 
   @Test
   void testReplaceNewScore() {
     SortedSet<LeaderBoardEntry> dataSet = new TreeSet<>();
     SavedGame sg = new SavedGame();
-    dataSet.add(new LeaderBoardEntry("Seph", 12, sg));
-    dataSet.add(new LeaderBoardEntry("Seph2", 14444442, sg));
-    dataSet.add(new LeaderBoardEntry("Seph4123", 12312, sg));
-    dataSet.add(new LeaderBoardEntry("Seph3123", 12132, sg));
-    dataSet.add(new LeaderBoardEntry("Seph1212", 13232, sg));
+    dataSet.add(new LeaderBoardEntry("Seph", 12L, sg));
+    dataSet.add(new LeaderBoardEntry("Seph2", 14444442L, sg));
+    dataSet.add(new LeaderBoardEntry("Seph4123", 12312L, sg));
+    dataSet.add(new LeaderBoardEntry("Seph3123", 12132L, sg));
+    dataSet.add(new LeaderBoardEntry("Seph1212", 13232L, sg));
 
-    Integer[] output = new Integer[5];
+    Long[] output = new Long[5];
     @SuppressWarnings("rawtypes")
     Iterator iterator = dataSet.iterator();
 
@@ -59,17 +59,17 @@ class LeaderBoardTest {
       i++;
     }
 
-    assertEquals(output[0], Integer.valueOf(12));
-    assertEquals(output[1], Integer.valueOf(12132));
-    assertEquals(output[2], Integer.valueOf(12312));
-    assertEquals(output[3], Integer.valueOf(13232));
-    assertEquals(output[4], Integer.valueOf(14444442));
+    assertEquals(output[0], Long.valueOf(12));
+    assertEquals(output[1], Long.valueOf(12132));
+    assertEquals(output[2], Long.valueOf(12312));
+    assertEquals(output[3], Long.valueOf(13232));
+    assertEquals(output[4], Long.valueOf(14444442));
 
     if (dataSet.first().getPoints() < 1111) {
-      dataSet.add(new LeaderBoardEntry("Seph123123", 1111, sg));
+      dataSet.add(new LeaderBoardEntry("Seph123123", 1111L, sg));
     }
     
-    Integer[] newOutput = new Integer[5];
+    Long[] newOutput = new Long[5];
     int j = 0;
     Iterator iterator1 = dataSet.iterator();
     while (iterator1.hasNext() && j < 5) {
@@ -77,7 +77,7 @@ class LeaderBoardTest {
       newOutput[j] = element.getPoints();
       j++;
     }
-    assertEquals(newOutput[0], Integer.valueOf(1111));
+    assertEquals(newOutput[1], Long.valueOf(1111L));
   }
 
   @Test
