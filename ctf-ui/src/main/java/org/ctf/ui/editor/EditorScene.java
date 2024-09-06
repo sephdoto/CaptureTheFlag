@@ -229,7 +229,7 @@ public class EditorScene extends Scene {
       controlgrid.setVgap(spacing);
     });
     controlgrid.add(createText(mapRoot, "Rows", 30), 0, 0);
-    controlgrid.add(createText(mapRoot, "Collums", 30), 0, 1);
+    controlgrid.add(createText(mapRoot, "Columns", 30), 0, 1);
     controlgrid.add(createText(mapRoot, "Teams", 30), 0, 2);
     controlgrid.add(createText(mapRoot, "Flags", 30), 2, 2);
     controlgrid.add(createText(mapRoot, "Blocks", 30), 2, 0);

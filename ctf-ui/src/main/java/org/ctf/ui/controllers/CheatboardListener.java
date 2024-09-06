@@ -7,7 +7,6 @@ import org.ctf.ui.creators.settings.SettingsSetter;
 import org.ctf.ui.data.FixedStack;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.highscore.LeaderBoardController;
-import org.ctf.ui.highscore.Score;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyAdapter;
@@ -372,13 +371,14 @@ public class CheatboardListener extends NativeKeyAdapter {
       Dialogs.openDialog(
           "Lorem ipsum dolor sit amet", 
           "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Never gonna give you up, never gonna let you down. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-          -1, -1,
-          () -> {
-            for(int i=0; i<60; i++) {
-              Score score = new Score("TestEntry", (long)(Math.random() * 90000));
-              LeaderBoardController.addEntry(score);
-            }
-          });
+          -1, -1
+//          ,() -> {
+//            for(int i=0; i<60; i++) {
+//              Score score = new Score("TestEntry", (long)(Math.random() * 90000));
+//              LeaderBoardController.addEntry(score);
+//            }
+//          }
+    );
       
     } else if (match == cheatCodes.get(2)) {    // skip current song
       SettingsSetter.getCurrentPlayer().startShuffle();
@@ -488,12 +488,14 @@ public class CheatboardListener extends NativeKeyAdapter {
           code.append(NativeKeyEvent.getKeyText(c));
         codes[i] = code.toString();
       }
+      
       for(int code=0; code<cheatCodes.size(); code++) {
         StringBuilder insets = new StringBuilder().append(" ");
-        for(int i= (cheatCodes.size()-1 - code)/10; i>0; i--)
+        for(int i= (cheatCodes.size()-2 - code)/10; i>0; i--)
           insets.append("  ");
         allCodes += "(" + code + ")" + insets.toString() + codes[code] + " : " + infos.get(code) + "\n";
       }
+      
       Dialogs.openDialog("All available \"CheatCodes\"", 
           allCodes,
           -1, -1);
