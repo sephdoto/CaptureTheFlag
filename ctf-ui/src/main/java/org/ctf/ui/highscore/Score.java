@@ -12,7 +12,6 @@ public class Score implements Comparable<Score> {
 
   private String name;
   private Long playerPoints;
-  private SavedGame sg;
 
   public Score() {}
 
@@ -23,12 +22,11 @@ public class Score implements Comparable<Score> {
 
   public Score(String name, SavedGame sg) {
     this.name = name;
-    this.sg = sg;
-    this.playerPoints = calculateScore();
+    this.playerPoints = calculateScore(sg);
   }
   
-  private long calculateScore() {
-    HashMap<String, Long> nameTimePairs = fillHashMap();
+  private long calculateScore(SavedGame sg) {
+    HashMap<String, Long> nameTimePairs = fillHashMap(sg);
 
     // TODO score calculation is possible here
     // it is ok like this but now its just the total time
@@ -41,13 +39,13 @@ public class Score implements Comparable<Score> {
    * 
    * @return filled HashMap
    */
-  private HashMap<String, Long> fillHashMap(){
+  private HashMap<String, Long> fillHashMap(SavedGame sg){
     HashMap<String, Long> nameTimePairs = new HashMap<String, Long>();
     for(String name : sg.getNames())
       nameTimePairs.put(name, 0L);
     
     for(int i=0; i<sg.getTimestamps().size(); i++) {
-      String name = sg.getNames()[(i + getStartPlayerIndex()) % sg.getNames().length];
+      String name = sg.getNames()[(i + getStartPlayerIndex(sg)) % sg.getNames().length];
       Long time = nameTimePairs.get(name);
       time += sg.getTimestamps().get(i);
       nameTimePairs.replace(name, time);
@@ -58,7 +56,7 @@ public class Score implements Comparable<Score> {
   /**
    * @return the first players index in the names Array
    */
-  private int getStartPlayerIndex() {
+  private int getStartPlayerIndex(SavedGame sg) {
     for(int i=0; i<sg.getNames().length; i++)
       if(sg.getNames()[i].equals(sg.getFirstPlayer()))
         return i;
@@ -79,14 +77,6 @@ public class Score implements Comparable<Score> {
 
   public void setPoints(Long playerPoints) {
     this.playerPoints = playerPoints;
-  }
-
-  public SavedGame getSg() {
-    return sg;
-  }
-
-  public void setSg(SavedGame sg) {
-    this.sg = sg;
   }
 
   @Override
