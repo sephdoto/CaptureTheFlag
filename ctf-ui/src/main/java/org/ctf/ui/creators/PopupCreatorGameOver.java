@@ -1,11 +1,15 @@
 package org.ctf.ui.creators;
 
+import java.util.ArrayList;
 import org.ctf.shared.client.Client;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.data.ClientStorage;
 import org.ctf.ui.data.SceneHandler;
+import org.ctf.ui.highscore.LeaderBoard;
+import org.ctf.ui.highscore.LeaderBoardController;
+import org.ctf.ui.highscore.Score;
 import org.ctf.ui.hostGame.CreateGameController;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
@@ -192,21 +196,29 @@ public class PopupCreatorGameOver {
 
   /**
    * Calculates a score, in case the MainClient is a winner
+   * 
+   * @author sistumpf
    */
   private String calculateScore() {
-    boolean mainClientIsWinner = false;
-    for(String winner :ClientStorage.getMainClient().getWinners())
-      if(winner.equals(ClientStorage.getMainClient().getRequestedTeamName())) {
-        mainClientIsWinner = true;
-        break;
+    String highScore = "";
+    ArrayList<Score> scores = new ArrayList<Score>();
+    for(String winner : ClientStorage.getMainClient().getWinners())
+      for(Client client : ClientStorage.getLocalHumanClients())
+        if(winner.equals(client.getRequestedTeamName())) {
+          Score newScore = new Score(client.getRequestedTeamName(), ClientStorage.getMainClient().getGameSaveHandler().savedGame);
+          scores.add(newScore);
+          LeaderBoardController.addEntry(newScore);
       }
-    if(!mainClientIsWinner)
-      return "";
     
-    // add score calculation here
-    long score = 12321323;
+    long bestScore = -1;
+    for(Score score : scores) {
+      if(bestScore < score.getPoints()) {
+        bestScore = score.getPoints();
+        highScore = score.getplayerName() + "'s score: " + bestScore;
+      }
+    }
     
-    return ClientStorage.getMainClient().getRequestedTeamName() + "'s score: " + score;
+    return bestScore < 0 ? "" : highScore;
   }
   
 
