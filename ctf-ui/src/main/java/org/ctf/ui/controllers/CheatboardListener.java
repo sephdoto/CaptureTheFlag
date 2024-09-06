@@ -13,9 +13,13 @@ import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyAdapter;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import dialogs.Dialogs;
+import dialogs.Dialogs.Dialog;
 import dialogs.Tips;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 /**
  * A KeyLogger to trigger easter eggs.
@@ -502,6 +506,15 @@ public class CheatboardListener extends NativeKeyAdapter {
   
   private static void openScoreDialog(int top) {
     int size = 10;
-    Dialogs.openDialogTwoButtons("LeaderBoard " + (top-size) + " to " + top, LeaderBoardController.getEntryString(top-size, top), -1, 250, "OK", "NEXT 10", () -> openScoreDialog(top + size));
+    Platform.runLater(() -> {
+      Dialog dialog;
+      if(!LeaderBoardController.getEntryString(top, top+size).isEmpty()) {
+        dialog = Dialogs.getDialogTwoButtons("LeaderBoard " + (top-size) + " to " + top, LeaderBoardController.getEntryString(top-size, top), -1, 300, "OK", "NEXT 10", () -> openScoreDialog(top + size));
+      } else {
+        dialog = new Dialog("LeaderBoard " + (top-size) + " to " + top, LeaderBoardController.getEntryString(top-size, top), -1, 300);
+      }
+      ((Text)((StackPane)dialog.getDialogPane().getChildren().get(3)).getChildren().get(0)).setTextAlignment(TextAlignment.CENTER);
+      dialog.show();
+    });
   }
 }

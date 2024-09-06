@@ -79,38 +79,6 @@ public class Dialogs {
   }
   
   /**
-   * Creates a new {@link Dialog} with title and message and three buttons.
-   * The left button runs leftRunnable, the middleButton runs all middleRunnables and the right button just closes the window.
-   * Does not open the Dialog.
-   * 
-   * @author sistumpf
-   * @param title the Dialogs title
-   * @param message the Dialogs message
-   * @param ms milliseconds till the Dialog automatically closes, <0 to disable auto close
-   * @param wrappingWidth max text width before wrapping, -1 for default
-   * @param leftButtonText name of the left button
-   * @param leftRunnable  whatever the left button executes
-   * @param middleButtonText name of the middle button
-   * @param rightButtonText name of the right button, which just closes the window
-   * @param run several Runnables which will be executed when a user clicks the middle button
-   */
-  public static Dialog getDialogThreeButtons(String title, String message, int ms, int wrappingWidth, String leftButtonText, Runnable leftRunnable, String middleButtonText, String rightButtonText, Runnable ... middleRunnables) {
-    Dialog threeButtons = getDialogTwoButtons(title, message, ms, wrappingWidth, rightButtonText, middleButtonText, middleRunnables); 
-
-    //add next button, then modify it
-    ButtonType left = ButtonType.YES;
-    threeButtons.getButtonTypes().add(left);
-    Button leftB = (Button) threeButtons.getDialogPane().lookupButton(ButtonType.YES);
-    leftB.setText(leftButtonText);
-    leftB.setOnAction(e -> {
-      threeButtons.cleanClose();
-      leftRunnable.run();
-      e.consume();
-    });
-    return threeButtons;
-  }
-  
-  /**
    * Creates a new {@link Dialog} with title and message and two buttons, from which nextButton(the left one) gets all the run Runnables applied.
    * Does not open the Dialog.
    * 
@@ -150,13 +118,45 @@ public class Dialogs {
   }
   
   /**
+   * Creates a new {@link Dialog} with title and message and three buttons.
+   * The left button runs leftRunnable, the middleButton runs all middleRunnables and the right button just closes the window.
+   * Does not open the Dialog.
+   * 
+   * @author sistumpf
+   * @param title the Dialogs title
+   * @param message the Dialogs message
+   * @param ms milliseconds till the Dialog automatically closes, <0 to disable auto close
+   * @param wrappingWidth max text width before wrapping, -1 for default
+   * @param leftButtonText name of the left button
+   * @param leftRunnable  whatever the left button executes
+   * @param middleButtonText name of the middle button
+   * @param rightButtonText name of the right button, which just closes the window
+   * @param run several Runnables which will be executed when a user clicks the middle button
+   */
+  public static Dialog getDialogThreeButtons(String title, String message, int ms, int wrappingWidth, String leftButtonText, Runnable leftRunnable, String middleButtonText, String rightButtonText, Runnable ... middleRunnables) {
+    Dialog threeButtons = getDialogTwoButtons(title, message, ms, wrappingWidth, rightButtonText, middleButtonText, middleRunnables); 
+
+    //add next button, then modify it
+    ButtonType left = ButtonType.YES;
+    threeButtons.getButtonTypes().add(left);
+    Button leftB = (Button) threeButtons.getDialogPane().lookupButton(ButtonType.YES);
+    leftB.setText(leftButtonText);
+    leftB.setOnAction(e -> {
+      threeButtons.cleanClose();
+      leftRunnable.run();
+      e.consume();
+    });
+    return threeButtons;
+  }
+  
+  /**
    * CSS Styled Alert implementation that always stays in focus,
    * is movable by clicking and dragging,
    * and does not stop background activity.
    * 
    * @author sistumpf
    */
-  private static class Dialog extends Alert {
+  public static class Dialog extends Alert {
     /** How many pixels the mouse is into the Dialog Window, left side is always 0 **/
     private double xOffset = 0; 
     /** How many pixels the mouse is into the Dialog Window, upper side is always 0 **/
@@ -173,7 +173,7 @@ public class Dialogs {
     private TimeThread timeThread;
     /** Keeping track of the Dialog being open to suppress race conditions **/
     private boolean isOpen = true;
-
+    
     /**
      * Creates an Alert with transparent background, displaying title and message.
      * Also applies CSS sheets to the Scene.
