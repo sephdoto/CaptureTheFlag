@@ -1,5 +1,7 @@
 package org.ctf.ui.highscore;
 
+import java.util.ArrayList;
+
 import org.ctf.shared.gameanalyzer.SavedGame;
 
 /**

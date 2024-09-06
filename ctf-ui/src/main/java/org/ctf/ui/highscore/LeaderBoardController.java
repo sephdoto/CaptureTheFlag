@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import org.ctf.shared.constants.Constants;
-import org.ctf.shared.gameanalyzer.SavedGame;
 
 public class LeaderBoardController {
   private static Gson gson;
@@ -24,6 +23,25 @@ public class LeaderBoardController {
     }
   }
 
+  public static boolean clearBoard() {
+    board = new LeaderBoard();
+    return saveCurrentBoard();
+  }
+
+  public static LeaderBoard getBoard() {
+    return board;
+  }
+
+  public static boolean addEntry(Score score) {
+    return getBoard().addScore(score);
+  }
+
+  public static Score[] getEntries(int length) {
+
+    throw new UnsupportedOperationException("Unimplemented method 'getEntries'");
+  }
+
+  // FILE Operation Methods
   public static boolean saveCurrentBoard() {
     try (Writer writer = new FileWriter(Constants.TOLEADERBOARD + "leaderboard" + ".json")) {
       gson.toJson(board, writer);
@@ -46,17 +64,5 @@ public class LeaderBoardController {
     File f = new File(Constants.TOLEADERBOARD + "leaderboard" + ".json");
     return (f.exists() && !f.isDirectory());
   }
-
-  public static boolean clearBoard() {
-    board = new LeaderBoard();
-    return saveCurrentBoard();
-  }
-
-  public static LeaderBoard getBoard() {
-    return board;
-  }
-
-  public static boolean addEntry(Score score, SavedGame sg) {
-    return getBoard().addScore(score, sg);
-  }
+  // END of File Operation Methods
 }

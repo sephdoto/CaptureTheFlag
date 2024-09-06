@@ -1,8 +1,6 @@
 package org.ctf.ui.highscore;
 
 
-import org.ctf.shared.gameanalyzer.SavedGame;
-
 /**
  * Defines the functionality which needs to be implemented
  *
@@ -17,20 +15,13 @@ public interface LeaderBoardInterface {
    * @param game saves the game with the score
    * @return true if score is added, false if rejected
    */
-  public boolean addScore(Score score, SavedGame game);
+  public boolean addScore(Score score);
 
   /**
-   * Creates an LeaderBoardEntry Object from Score Object
+   * Returns the list of currently stored scores in descending order (bottom to top)
    *
-   * @param score the score you want added to the HighScoreBoard
-   * @param game saves the game with the score
-   * @return true if score is added, false if rejected
-   */
-  public LeaderBoardEntry createEntry(Score score, SavedGame game);
-
-  /** Returns the list of currently stored scores in descending order (bottom to top) 
-   * @param numberOfEntriesYouWant 
+   * @param numberOfEntriesYouWant
    * @return LeaderBoardEntry objects in an array
-  */
-  public LeaderBoardEntry[] getEntries(int numberOfEntriesYouWant);
+   */
+  public Score[] getEntries(int numberOfEntriesYouWant);
 }
