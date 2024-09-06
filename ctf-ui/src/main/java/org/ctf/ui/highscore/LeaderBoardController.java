@@ -37,8 +37,7 @@ public class LeaderBoardController {
   }
 
   public static Score[] getEntries(int length) {
-
-    throw new UnsupportedOperationException("Unimplemented method 'getEntries'");
+    return getBoard().getEntries(length);
   }
 
   // FILE Operation Methods

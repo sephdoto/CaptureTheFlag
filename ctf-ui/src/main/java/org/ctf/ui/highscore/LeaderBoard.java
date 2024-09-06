@@ -1,5 +1,6 @@
 package org.ctf.ui.highscore;
 
+import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -14,7 +15,21 @@ public class LeaderBoard implements LeaderBoardInterface {
 
   @Override
   public Score[] getEntries(int number) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getEntries'");
+    Score[] re;
+    if(dataSet.size() < number){
+      re = new Score[dataSet.size()];
+    } else {
+      re = new Score[number];
+    }
+    Iterator iterator = dataSet.iterator();
+    int i = 0;
+    while (iterator.hasNext() && i <= number-1) {
+      Score element = (Score) iterator.next();
+      if(element != null){
+        re[i] = element;
+        i++;
+      }
+    }
+    return re;
   }
 }

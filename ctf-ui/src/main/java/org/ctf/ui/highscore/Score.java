@@ -3,6 +3,7 @@ package org.ctf.ui.highscore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.ctf.shared.gameanalyzer.SavedGame;
+import org.springframework.boot.test.autoconfigure.OverrideAutoConfiguration;
 
 /**
  * POJO to store score data
@@ -92,5 +93,10 @@ public class Score implements Comparable<Score> {
   @Override
   public int compareTo(Score o) {
     return playerPoints.compareTo(o.getPoints());
+  }
+
+  @Override
+  public String toString(){
+    return "Player " + getplayerName() + " scored " + getPoints();
   }
 }
