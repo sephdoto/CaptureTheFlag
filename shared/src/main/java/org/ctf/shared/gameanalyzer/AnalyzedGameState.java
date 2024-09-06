@@ -44,16 +44,18 @@ public class AnalyzedGameState {
     this.initialGameState = initialGameState;
     if(userChoice != null) {
       this.userChoice = findNodeByMove(userChoice);
-      generateInformation();
+      generateInformation(mcts);
     }
     this.userGaveUp = userGaveUp;
   }
 
   /**
    * Generates information about the moves, which can be accessed by getters.
+   * 
+   * @param mcts to calculate superblunders, great moves and misses
    */
-  private void generateInformation() {
-    this.moveEvaluation = evaluateMove();
+  private void generateInformation(MonteCarloTreeSearch mcts) {
+    this.moveEvaluation = evaluateMove(mcts);
 
 
     MonteCarloTreeNode[] children = previousState.getChildren();
@@ -99,22 +101,24 @@ public class AnalyzedGameState {
    * TODO Miss einbauen, Evaluation verbessern
    * 
    * Evaluates the users move, in comparison to the AIs move.
+   * 
+   * @param mcts to calculate superblunders, great moves and misses
    */
-  private MoveEvaluation evaluateMove() {
-    int goodMoves = 0;
-    int badMoves = 0;
+  private MoveEvaluation evaluateMove(MonteCarloTreeSearch mcts) {
+    int goodMoves = howManyGoodMoves(mcts);
+    int badMoves = howManyBadMoves(mcts);
     MoveEvaluation moveEvaluation;
     try {
-      int difference = getPercentageDifference();
+      int difference = getPercentageDifference(aiChoice, userChoice);
       if(difference <= 1)
         moveEvaluation = MoveEvaluation.BEST;
       else if (difference <= 3)
         moveEvaluation = MoveEvaluation.EXCELLENT;
-      else if (difference <= 7)
+      else if (difference <= 6)
         moveEvaluation = MoveEvaluation.GOOD;
-      else if (difference <= 10)
+      else if (difference <= 9)
         moveEvaluation = MoveEvaluation.OK;
-      else if (difference <= 15)
+      else if (difference <= 14)
         moveEvaluation = MoveEvaluation.INACCURACY;
       else if (difference <= 20)
         moveEvaluation = MoveEvaluation.MISTAKE;
@@ -125,15 +129,50 @@ public class AnalyzedGameState {
         moveEvaluation = (badMoves == 1 && moveEvaluation == MoveEvaluation.BLUNDER) ? MoveEvaluation.SUPERBLUNDER :
           (goodMoves == 1 && moveEvaluation == MoveEvaluation.BEST) ? MoveEvaluation.GREAT :
             moveEvaluation;
+      
+      if(userChoice.getV() < 0.4)
+        if(aiChoice.getV() > 0.7)
+          moveEvaluation = MoveEvaluation.MISS;
+      
+      System.out.println(userChoice.getV() + " " + aiChoice.getV());
+      
     } catch (Exception e) {
       moveEvaluation = MoveEvaluation.ERROR;
     }
     return moveEvaluation;
   }
 
+
   ///////////////////////////////////////
   //       private useful Methods      //
   ///////////////////////////////////////
+  /**
+   * @param mcts MonteCarloTreeSearch to examine the root of
+   * @return how many Moves with a bad evaluation exist for mcts root
+   */
+  private int howManyGoodMoves(MonteCarloTreeSearch mcts) {
+    int goodMoves = 0;
+    for(MonteCarloTreeNode child : mcts.getRoot().getChildren()) {
+      if(aiChoice != child && getPercentageDifference(aiChoice, child) < 15)
+        goodMoves++;
+    } 
+    System.out.print("best: " + goodMoves);
+    return goodMoves;
+  }
+  /**
+   * @param mcts MonteCarloTreeSearch to examine the root of
+   * @return how many Moves with a good evaluation exist for mcts root
+   */
+  private int howManyBadMoves(MonteCarloTreeSearch mcts) {
+    int badMoves = 0;
+    for(MonteCarloTreeNode child : mcts.getRoot().getChildren()) {
+      if(aiChoice != child && getPercentageDifference(aiChoice, child) > 15)
+        badMoves++;
+    } 
+    System.out.println(",  worst: " + badMoves);
+    return badMoves;
+  }
+  
   /**
    * Finds the MonteCarloTreeNode which represents a move in this classes MonteCarloTreeSearch.
    * 
@@ -159,9 +198,11 @@ public class AnalyzedGameState {
   /**
    * Returns the win chance percentage difference between the ai move and user move
    * 
+   * @param aiChoice the best move
+   * @param userChoice the move to compare to the best move
    * @return the win chance percentage difference between the ai move and user move
    */
-  private int getPercentageDifference() {
+  private int getPercentageDifference(MonteCarloTreeNode aiChoice, MonteCarloTreeNode userChoice) {
     return (int)Math.round((aiChoice.getV() - userChoice.getV()) * 100);
   }
 

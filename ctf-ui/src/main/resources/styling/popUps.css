@@ -129,10 +129,10 @@
     -fx-background-radius: 20px; 
     -fx-border-radius: 20px;
     -fx-effect: dropshadow( three-pass-box , rgba(53,89,119,0.4) , 8, 0.0 , 0 , 0 );
-    -fx-background-color: rgb(12, 12, 12); 
+    -fx-background-color: rgb(41, 41, 41); 
 }
 .popup-spinner .text-field:hover {
-    -fx-background-color: rgb(30, 30, 30); 
+    -fx-background-color: rgb(66, 66, 66); 
 }
 .popup-spinner .text-field:focus-within {
     -fx-border-color: rgb(255, 255, 255);
