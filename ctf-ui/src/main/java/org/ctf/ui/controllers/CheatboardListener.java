@@ -6,6 +6,8 @@ import org.ctf.shared.constants.Enums.SoundType;
 import org.ctf.ui.creators.settings.SettingsSetter;
 import org.ctf.ui.data.FixedStack;
 import org.ctf.ui.data.SceneHandler;
+import org.ctf.ui.highscore.LeaderBoardController;
+import org.ctf.ui.highscore.Score;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyAdapter;
@@ -247,6 +249,15 @@ public class CheatboardListener extends NativeKeyAdapter {
     tip.add(NativeKeyEvent.VC_P);
     cheatCodes.add(tip);
     infos.add("opens a random tip/fact/I was bored");
+    
+    ArrayList<Integer> scores = new ArrayList<Integer>();
+    scores.add(NativeKeyEvent.VC_P);
+    scores.add(NativeKeyEvent.VC_E);
+    scores.add(NativeKeyEvent.VC_P);
+    scores.add(NativeKeyEvent.VC_E);
+    scores.add(NativeKeyEvent.VC_S);
+    cheatCodes.add(scores);
+    infos.add("shows the top players in leaderboard");
   }
 
   /**
@@ -358,7 +369,12 @@ public class CheatboardListener extends NativeKeyAdapter {
           "Lorem ipsum dolor sit amet", 
           "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Never gonna give you up, never gonna let you down. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
           -1, -1,
-          () -> Tips.openTipDialog());
+          () -> {
+            for(int i=0; i<60; i++) {
+              Score score = new Score("TestEntry", (long)(Math.random() * 90000));
+              LeaderBoardController.addEntry(score);
+            }
+          });
       
     } else if (match == cheatCodes.get(2)) {    // skip current song
       SettingsSetter.getCurrentPlayer().startShuffle();
@@ -479,6 +495,13 @@ public class CheatboardListener extends NativeKeyAdapter {
           -1, -1);
     } else if (match == cheatCodes.get(19)){    // opens a random tip
       Tips.openTipDialog();
+    } else if (match == cheatCodes.get(20)) {
+      openScoreDialog(10);
     }
+  }
+  
+  private static void openScoreDialog(int top) {
+    int size = 10;
+    Dialogs.openDialogTwoButtons("LeaderBoard " + (top-size) + " to " + top, LeaderBoardController.getEntryString(top-size, top), -1, 250, "OK", "NEXT 10", () -> openScoreDialog(top + size));
   }
 }

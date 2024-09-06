@@ -39,6 +39,22 @@ public class LeaderBoardController {
   public static Score[] getEntries(int length) {
     return getBoard().getEntries(length);
   }
+  
+  public static String getEntryString(int from, int to) {
+    StringBuilder entries = new StringBuilder();
+    Score[] scores = board.getEntries(to);
+    for(int i=from; i<to && i<board.getEntries(to).length; i++) {
+      entries.append(
+          i
+          + ". "
+          + scores[i].getplayerName() 
+          + " : " 
+          + scores[i].getPoints() 
+          + "\n");
+    }
+    
+    return entries.toString();
+  }
 
   // FILE Operation Methods
   public static boolean saveCurrentBoard() {
