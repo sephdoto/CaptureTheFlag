@@ -7,7 +7,6 @@ import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.customobjects.PopUpPane;
 import org.ctf.ui.data.ClientStorage;
 import org.ctf.ui.data.SceneHandler;
-import org.ctf.ui.highscore.LeaderBoard;
 import org.ctf.ui.highscore.LeaderBoardController;
 import org.ctf.ui.highscore.Score;
 import org.ctf.ui.hostGame.CreateGameController;

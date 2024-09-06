@@ -1,7 +1,7 @@
 package org.ctf.ui.highscore;
 
 import java.util.ArrayList;
-
+import java.util.HashMap;
 import org.ctf.shared.gameanalyzer.SavedGame;
 
 /**
@@ -25,6 +25,44 @@ public class Score implements Comparable<Score> {
   public Score(String name, SavedGame sg) {
     this.name = name;
     this.sg = sg;
+    this.playerPoints = calculateScore();
+  }
+  
+  private long calculateScore() {
+    HashMap<String, Long> nameTimePairs = fillHashMap();
+    
+    // TODO calculate score with times here
+    
+    return nameTimePairs.get(name);
+  }
+  
+  /**
+   * Fills a <String, Long> HashMap with the total time it took the players to complete the game
+   * 
+   * @return filled HashMap
+   */
+  private HashMap<String, Long> fillHashMap(){
+    HashMap<String, Long> nameTimePairs = new HashMap<String, Long>();
+    for(String name : sg.getNames())
+      nameTimePairs.put(name, 0L);
+    
+    for(int i=0; i<sg.getTimestamps().size(); i++) {
+      String name = sg.getNames()[(i + getStartPlayerIndex()) % sg.getNames().length];
+      Long time = nameTimePairs.get(name);
+      time += sg.getTimestamps().get(i);
+      nameTimePairs.replace(name, time);
+    }
+    return nameTimePairs;
+  }
+  
+  /**
+   * @return the first players index in the names Array
+   */
+  private int getStartPlayerIndex() {
+    for(int i=0; i<sg.getNames().length; i++)
+      if(sg.getNames()[i].equals(sg.getFirstPlayer()))
+        return i;
+    return 0;
   }
 
   public String getplayerName() {
