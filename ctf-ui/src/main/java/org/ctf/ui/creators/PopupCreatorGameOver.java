@@ -2,6 +2,7 @@ package org.ctf.ui.creators;
 
 import java.util.ArrayList;
 import org.ctf.shared.client.Client;
+import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.ImageType;
 import org.ctf.ui.controllers.ImageController;
 import org.ctf.ui.customobjects.PopUpPane;
@@ -205,7 +206,8 @@ public class PopupCreatorGameOver {
         if(winner.equals(client.getRequestedTeamName())) {
           Score newScore = new Score(client.getRequestedTeamName(), ClientStorage.getMainClient().getGameSaveHandler().savedGame);
           scores.add(newScore);
-          LeaderBoardController.addEntry(newScore);
+          if(Constants.tournamentMode)
+            LeaderBoardController.addEntry(newScore);
         }
       }
     }
@@ -223,7 +225,8 @@ public class PopupCreatorGameOver {
     if(bestScore < 0)
       return "";
     else
-      LeaderBoardController.saveCurrentBoard();
+      if(Constants.tournamentMode)
+        LeaderBoardController.saveCurrentBoard();
     return highScore;
   }
   

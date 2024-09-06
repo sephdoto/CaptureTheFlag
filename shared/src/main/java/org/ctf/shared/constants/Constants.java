@@ -113,6 +113,15 @@ public class Constants {
    * Shows AI statistics after it made a move
    */
   public static boolean showAiStats = true;
+  /**
+   * Only allows the selection of one specific MapTemplate.
+   * If this is true, Scores get saved to the leaderboard
+   */
+  public static boolean tournamentMode = false;
+  /**
+   * Only allowed MapTemplate for TournamentMode
+   */
+  public static String[] tournamentModeTemplates = {"Tournament"};
   ///////////////////////////////////////////////////////
   //                    other                          //
   ///////////////////////////////////////////////////////

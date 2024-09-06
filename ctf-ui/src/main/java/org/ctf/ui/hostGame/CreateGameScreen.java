@@ -433,12 +433,18 @@ public class CreateGameScreen extends Scene {
   public ArrayList<String> getTemplateNames() {
     File templateFolder = new File(JsonTools.mapTemplates);
     if (templateFolder.isDirectory()) {
-      String[] names = templateFolder.list();
-      for (int i = 0; i < names.length; i++) {
-        names[i] = names[i].substring(0, names[i].length() - 5);
-      }
       ArrayList<String> result = new ArrayList<String>();
-      result.addAll(Arrays.asList(names));
+      if(!Constants.tournamentMode) {
+        String[] names;
+        names = templateFolder.list();
+        for (int i = 0; i < names.length; i++) {
+          names[i] = names[i].substring(0, names[i].length() - 5);
+        }
+        result.addAll(Arrays.asList(names));
+        result.removeAll(Arrays.asList(Constants.tournamentModeTemplates));
+      } else {
+        result.addAll(Arrays.asList(Constants.tournamentModeTemplates));
+      }
       return result;
     }
     return new ArrayList<String>();

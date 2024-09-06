@@ -12,6 +12,7 @@ import org.ctf.ui.creators.settings.components.ChooseFullAiPowerButton;
 import org.ctf.ui.creators.settings.components.ChooseMusicSlider;
 import org.ctf.ui.creators.settings.components.ChooseSoundSlider;
 import org.ctf.ui.creators.settings.components.ChooseThemeBox;
+import org.ctf.ui.creators.settings.components.ChooseTournamentModeButton;
 import org.ctf.ui.creators.settings.components.DoubleBoxFactory;
 import org.ctf.ui.creators.settings.components.DoubleBoxFactory.ChooseDoubleBox;
 import org.ctf.ui.creators.settings.components.IntegerBoxFactory;
@@ -132,6 +133,9 @@ public abstract class SettingsWindow extends ComponentCreator {
       case FORCE_THINK_TIME:
         node = new IntegerBoxFactory.ChooseForceAiThinkTimeBox(settingsBox);
         break;
+      case TOURNAMENT_MODE:
+        node = new ChooseTournamentModeButton(settingsBox);
+        break;
       default:
         node = new Text("something went wrong");
     }
@@ -202,6 +206,8 @@ public abstract class SettingsWindow extends ComponentCreator {
                 if(client.getController() != null)
                   client.getController().setThinkingTime(Constants.forceAiThinkingTime);
               break;
+            case "tournamentMode":
+              Constants.tournamentMode = (boolean) ((ChooseBooleanButton) node).getValue(); break;
               
             case "booleanButton": System.out.println((boolean) ((ChooseBooleanButton) node).getValue()); 
               break;

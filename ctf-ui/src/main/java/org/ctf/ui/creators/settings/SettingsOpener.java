@@ -8,6 +8,7 @@ public class SettingsOpener {
         addNewComponent(Settings.THEME);
         addNewComponent(Settings.MUSIC);
         addNewComponent(Settings.SOUND);
+        addNewComponent(Settings.TOURNAMENT_MODE);
         addNewComponent(Settings.FULL_AI_POWER);
       }
     };
