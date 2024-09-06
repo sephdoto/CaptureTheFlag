@@ -173,6 +173,7 @@ public class CustomFigurePane extends Pane {
   /**
    * Shows information about the piece on the right side of the play-game-scene when it is selected
    * 
+   * @author sistumpf
    * @author Manuel Krakowski
    */
   public void showPieceInformationWhenClicked() {
@@ -191,6 +192,7 @@ public class CustomFigurePane extends Pane {
   /**
    * Shows information about the piece when hovering over the piece
    * 
+   * @author sistumpf
    * @author Manuel Krakowski
    */
   public void showPieceInformationWhenHovering() {

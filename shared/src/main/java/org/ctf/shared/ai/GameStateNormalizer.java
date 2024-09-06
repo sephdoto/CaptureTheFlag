@@ -130,7 +130,8 @@ public class GameStateNormalizer {
         }
       }*/
       move.setPieceId(unToNorm.get(newState.getLastMove().getPieceId()));
-      move.setTeamId(move.getPieceId().split(":")[1].split("_")[0]);
+      if(move.getPieceId() != null)
+        move.setTeamId(move.getPieceId().split(":")[1].split("_")[0]);
       if(this.rowThanColumn)
         move.setNewPosition(newState.getLastMove().getNewPosition().clone());
       else

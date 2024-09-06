@@ -541,6 +541,7 @@ public class Client implements GameClientInterface {
         System.out.println("UnknownError");
         throw new UnknownError();
       }
+      System.gc();
     }
   }
 

@@ -1,5 +1,6 @@
 package org.ctf.ui.creators.settings;
 
+import org.ctf.shared.client.AIClient;
 import org.ctf.shared.constants.Constants;
 import org.ctf.shared.constants.Enums.Themes;
 import org.ctf.ui.controllers.MusicPlayer;
@@ -16,6 +17,7 @@ import org.ctf.ui.creators.settings.components.DoubleBoxFactory.ChooseDoubleBox;
 import org.ctf.ui.creators.settings.components.IntegerBoxFactory;
 import org.ctf.ui.creators.settings.components.IntegerBoxFactory.ChooseIntegerBox;
 import org.ctf.ui.customobjects.PopUpPane;
+import org.ctf.ui.data.ClientStorage;
 import org.ctf.ui.data.SceneHandler;
 import org.ctf.ui.gameAnalyzer.AiAnalyzerScene;
 import org.ctf.ui.hostGame.PlayGameScreen;
@@ -127,6 +129,9 @@ public abstract class SettingsWindow extends ComponentCreator {
       case CLIENT_SLEEP_TIME:
         node = new IntegerBoxFactory.ChooseClientSleepTimeIntegerBox(settingsBox);
         break;
+      case FORCE_THINK_TIME:
+        node = new IntegerBoxFactory.ChooseForceAiThinkTimeBox(settingsBox);
+        break;
       default:
         node = new Text("something went wrong");
     }
@@ -191,6 +196,12 @@ public abstract class SettingsWindow extends ComponentCreator {
               Constants.showAiStats = (boolean) ((ChooseBooleanButton) node).getValue(); break;
             case "sleepTime":
               Constants.clientSleepTime = (int) ((ChooseIntegerBox) node).getValue(); break;
+            case "forceThinkTime":
+              Constants.forceAiThinkingTime = (int) ((ChooseIntegerBox) node).getValue(); 
+              for(AIClient client : ClientStorage.getLocalAIClients())
+                if(client.getController() != null)
+                  client.getController().setThinkingTime(Constants.forceAiThinkingTime);
+              break;
               
             case "booleanButton": System.out.println((boolean) ((ChooseBooleanButton) node).getValue()); 
               break;

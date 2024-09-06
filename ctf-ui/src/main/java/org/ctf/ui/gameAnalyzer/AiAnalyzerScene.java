@@ -10,6 +10,7 @@ import org.ctf.shared.gameanalyzer.GameSaveHandler;
 import org.ctf.shared.gameanalyzer.NeedMoreTimeException;
 import org.ctf.shared.state.GameState;
 import org.ctf.ui.map.GamePane;
+import dialogs.Dialogs;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -138,7 +139,15 @@ public class AiAnalyzerScene extends Scene {
     try {
       //adjust SavedGame initial team and move team (weird bug, only fix I see right now @sistumpf) TODO
 //      System.out.println("first Team: " + gsh.getSavedGame().getInitialState().getCurrentTeam() + ", first Move Team: " + gsh.getSavedGame().getMoves().get("1").getTeamId());
-//      gsh.getSavedGame().getInitialState().setCurrentTeam(Integer.parseInt(gsh.getSavedGame().getMoves().get("1").getTeamId()));
+      
+      if(gsh.getSavedGame().getInitialState().getCurrentTeam() != Integer.parseInt(gsh.getSavedGame().getMoves().get("1").getTeamId()))
+        Dialogs.openDialog("Weird SaveGame", 
+            "The GameStates first current team does not match the team which moved first.\n"
+            + "The GameStates currentTeam got adjusted to represent the team from Move, "
+            + "but the SaveGame could be corrupted.\n"
+            + "The first Team might have given up what caused this issue.", 
+            -1, -1);
+      gsh.getSavedGame().getInitialState().setCurrentTeam(Integer.parseInt(gsh.getSavedGame().getMoves().get("1").getTeamId()));
 
       analyzer = new GameAnalyzer(gsh.getSavedGame(), new AIConfig());
       analysedGames = getAnalyzer().getResults();

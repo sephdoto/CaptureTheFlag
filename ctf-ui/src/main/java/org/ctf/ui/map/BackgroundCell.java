@@ -197,8 +197,11 @@ public class BackgroundCell extends Pane {
    */
   public void showLastMoveWithColor(String background, String border) {
     background = background.startsWith("0x") ? background.substring(2) : background;
-    this.setStyle("-fx-background-color: " + hextoString(background) + "; -fx-border-color: " + border + ";"
+    if(!getStyle().contains("-fx-border-color: red;") && !getStyle().contains("-fx-border-color: rgb(255,0,255,0.4);")) {
+//    if(!this.active)
+      this.setStyle("-fx-background-color: " + hextoString(background) + "; -fx-border-color: " + border + ";"
         + "-fx-border-width: 1.2px");
+    }
   }
 
   /**

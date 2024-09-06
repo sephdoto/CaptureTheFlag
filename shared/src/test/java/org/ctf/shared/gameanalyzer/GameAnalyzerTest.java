@@ -16,7 +16,7 @@ class GameAnalyzerTest {
     try {
       GameAnalyzer analyzer = new GameAnalyzer(gsh.getSavedGame(), new AIConfig());
       analyzer.setAi(AI.MCTS);
-      analyzer.setThinkingTime(1000);
+      analyzer.setThinkingTime(1);
       while(analyzer.isActive() || currentMove < analyzer.howManyMoves()){
         if(currentMove != analyzer.getCurrentlyAnalyzing())
           System.out.println(GameUtilities.howManyTeams(analyzer.results[currentMove++].getPreviousGameState())+ " teams left");

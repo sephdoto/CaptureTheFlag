@@ -43,8 +43,8 @@ public class AIController {
     this.backgroundCalc = backgroundCalc;
     this.bctLock = false;
     setActive(false);
-    setThinkingTime(thinkingTime < 0 ? 5000 : thinkingTime == 0 ? 700 : thinkingTime * 1000);
-//    this.setThinkingTime(100);
+    setThinkingTime(thinkingTime);
+    setThinkingTime(Constants.forceAiThinkingTime);
     this.setAi(config == null ? AI.RANDOM : ai);
     this.normalizedGameState = new GameStateNormalizer(gameState, true);
     this.setConfig(config);
@@ -310,12 +310,16 @@ public class AIController {
   }
 
   /**
-   * Reduces thinkingTime by 10% and sets it as the attribute.
+   * Reduces thinkingTime by 10% (unless its Experimental, then 30%) and sets it as the attribute.
    * 
-   * @param thinkingTime in millis
+   * @param thinkingTime in s
    */
   public void setThinkingTime(int thinkingTime) {
-    thinkingTime = (int)Math.round((thinkingTime / 100.) * 90);
+    if(thinkingTime < 0) return;
+    thinkingTime = thinkingTime == 0 ? 500 : thinkingTime * 1000;
+    
+    int percentage = this.ai == AI.EXPERIMENTAL ? 70 : 90;
+    thinkingTime = (int)Math.round((thinkingTime / 100.) * percentage);
     this.thinkingTime = thinkingTime;
   }
 

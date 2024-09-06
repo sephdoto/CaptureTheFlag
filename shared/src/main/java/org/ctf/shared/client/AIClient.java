@@ -83,7 +83,8 @@ public class AIClient extends Client {
             controllerToken = false;
           }
           pullData();
-          tryMakeMove();
+          if(isAlive)
+            tryMakeMove();
           if(this.isGameOver()) {
             if(enableLogging)
               gameSaveHandler.getSavedGame().setWinner(winners);
@@ -350,9 +351,9 @@ public class AIClient extends Client {
       gameState = comm.getCurrentGameState(currentServer);
       initMyTeam(gameState);
       if (gameState.getTeams()[myTeam] == null) {
+        if(isAlive)
+          this.controller.shutDown();
         this.isAlive = false;
-        //Kill the client? IDK TODO
-//        this.gameOver = true;
       }
     } catch (SessionNotFound e) {
       throw new SessionNotFound("Session isnt available for this request");

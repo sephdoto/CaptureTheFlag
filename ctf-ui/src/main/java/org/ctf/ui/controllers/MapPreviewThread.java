@@ -4,6 +4,7 @@ import org.ctf.shared.state.GameState;
 import org.ctf.shared.state.data.exceptions.UnknownError;
 import org.ctf.ui.editor.EditorScene;
 import org.ctf.ui.map.GamePane;
+import org.ctf.ui.map.MoveVisualizer;
 import javafx.application.Platform;
 import javafx.scene.layout.StackPane;
 
@@ -41,6 +42,7 @@ public class MapPreviewThread extends Thread {
       GameState state = mp.getGameState();
       editorScene.setState(state);
       GamePane gp = new GamePane(state,true,"", null, null, 0);
+      MoveVisualizer.setCb(gp);
       Platform.runLater(() -> {
         StackPane root = editorScene.getVisualRoot();
         root.getChildren().clear();

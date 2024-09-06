@@ -330,9 +330,10 @@ public class PlayGameScreen extends Scene {
         for(AIClient ai : ClientStorage.getLocalAIClients())
           if(ai.getMoveInfo() != null) {
             int timeTillClose = ai.getRemainingMoveTimeInSeconds() < 5 ? 8 : (int)(ai.getRemainingMoveTimeInSeconds() * 0.9);
+            timeTillClose = Constants.forceAiThinkingTime > 0 ? Constants.forceAiThinkingTime : timeTillClose;
             String fullInfo = ai.getMoreMoveInfo();
             Dialogs.openDialogTwoButtons(ai.getRequestedTeamName() + "-AI Statistics: ", ai.getMoveInfo(), timeTillClose * 1000, 180, "CLOSE", "ENHANCE", 
-                () -> Dialogs.openDialog("Full " + ai.getRequestedTeamName() + " Statistics", fullInfo, -1, 800));
+                () -> Dialogs.openDialog("Full " + ai.getRequestedTeamName() + " Statistics", fullInfo, -1, 825));
             ai.clearMoveInfo();
           }
       }

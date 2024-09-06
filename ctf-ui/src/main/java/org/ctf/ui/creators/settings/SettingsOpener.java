@@ -35,6 +35,7 @@ public class SettingsOpener {
     SettingsWindow settings = new SettingsWindow("Bdvanced") {
       @Override
       public void fillWithContent() {
+        addNewComponent(Settings.FORCE_THINK_TIME);
         addNewComponent(Settings.RANDOM_SLEEP_TIME);
         addNewComponent(Settings.ANALYZER_THINKING_TIME);
         addNewComponent(Settings.AI_STATS);

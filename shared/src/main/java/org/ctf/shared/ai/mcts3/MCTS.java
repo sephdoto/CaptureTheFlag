@@ -550,7 +550,9 @@ public class MCTS implements MonteCarloTreeSearch {
             + " moves to "
             + move.getNewPosition()[0]
             + ","
-            + move.getNewPosition()[1]);
+            + move.getNewPosition()[1]
+            + ", best path depth is " 
+            + getDepth());
     sb.append(
         "\nNodes expanded: "
             + getExpansionCounter()
@@ -558,14 +560,13 @@ public class MCTS implements MonteCarloTreeSearch {
             + simulationCounter
             + ", heuristic used: "
             + heuristicCounter);
-    sb.append("\nBest children with depth " + getDepth() +":");
+    int n = 5;
+    sb.append("\nBest " + n + " children:");
     // if not all children are expanded they cannot be sorted.
     try {
       Arrays.sort(getRoot().getChildren());
     } catch (NullPointerException npe) {
     }
-    ;
-    int n = 5;
     for (int i = 0; i < (getRoot().getChildren().length > n ? n : getRoot().getChildren().length); i++) {
       if (getRoot().getChildren()[i] == null) {
         n += 1;

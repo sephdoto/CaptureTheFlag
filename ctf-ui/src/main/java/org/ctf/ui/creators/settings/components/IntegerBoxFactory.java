@@ -90,4 +90,23 @@ public class IntegerBoxFactory {
       return Constants.randomAiSleepTimeMS;
     }
   }
+  
+  /**
+   * Implementation of {@link ChooseIntegerBox} for the time RandomAI sleeps when making a move
+   */
+  public static class ChooseForceAiThinkTimeBox extends ChooseIntegerBox {
+    public ChooseForceAiThinkTimeBox(VBox settingsBox) {
+      super(settingsBox, "s", "forceThinkTime");
+    }
+    
+    @Override
+    protected Integer getInitialValue() {
+      return Constants.forceAiThinkingTime;
+    }
+    
+    @Override
+    protected void applyFormatter() {
+      Formatter.applyIntegerFormatter(content, -1, null);
+    }
+  }
 }
