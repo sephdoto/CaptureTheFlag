@@ -1,5 +1,7 @@
 package org.ctf.ui.highscore;
 
+import org.ctf.shared.gameanalyzer.SavedGame;
+
 /**
  * POJO to store score data
  *
@@ -9,13 +11,19 @@ public class Score implements Comparable<Score> {
 
   private String name;
   private Long playerPoints;
+  private SavedGame sg;
+
+  public Score() {}
 
   public Score(String name, Long playerPoints) {
     this.name = name;
     this.playerPoints = playerPoints;
   }
 
-  public Score() {}
+  public Score(String name, SavedGame sg) {
+    this.name = name;
+    this.sg = sg;
+  }
 
   public String getplayerName() {
     return name;
@@ -31,6 +39,14 @@ public class Score implements Comparable<Score> {
 
   public void setPoints(Long playerPoints) {
     this.playerPoints = playerPoints;
+  }
+
+  public SavedGame getSg() {
+    return sg;
+  }
+
+  public void setSg(SavedGame sg) {
+    this.sg = sg;
   }
 
   @Override
