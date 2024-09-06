@@ -1,9 +1,7 @@
 package org.ctf.ui.highscore;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import org.ctf.shared.gameanalyzer.SavedGame;
-import org.springframework.boot.test.autoconfigure.OverrideAutoConfiguration;
 
 /**
  * POJO to store score data
@@ -31,8 +29,9 @@ public class Score implements Comparable<Score> {
   
   private long calculateScore() {
     HashMap<String, Long> nameTimePairs = fillHashMap();
-    
-    // TODO calculate score with times here
+
+    // TODO score calculation is possible here
+    // it is ok like this but now its just the total time
     
     return nameTimePairs.get(name);
   }

@@ -94,7 +94,6 @@ public class PopupCreatorGameOver {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    ClientStorage.clearAllClients();
   }
 
   /**
@@ -201,23 +200,31 @@ public class PopupCreatorGameOver {
   private String calculateScore() {
     String highScore = "";
     ArrayList<Score> scores = new ArrayList<Score>();
-    for(String winner : ClientStorage.getMainClient().getWinners())
-      for(Client client : ClientStorage.getLocalHumanClients())
+    for(String winner : ClientStorage.getMainClient().getWinners()) {
+      for(Client client : ClientStorage.getLocalHumanClients()) {
         if(winner.equals(client.getRequestedTeamName())) {
           Score newScore = new Score(client.getRequestedTeamName(), ClientStorage.getMainClient().getGameSaveHandler().savedGame);
           scores.add(newScore);
           LeaderBoardController.addEntry(newScore);
+        }
       }
+    }
     
     long bestScore = -1;
     for(Score score : scores) {
       if(bestScore < score.getPoints()) {
         bestScore = score.getPoints();
-        highScore = score.getplayerName() + "'s score: " + bestScore;
+        highScore = score.getplayerName() + "'s total time: " + bestScore;
       }
     }
-    
-    return bestScore < 0 ? "" : highScore;
+
+    ClientStorage.clearAllClients();
+
+    if(bestScore < 0)
+      return "";
+    else
+      LeaderBoardController.saveCurrentBoard();
+    return highScore;
   }
   
 
