@@ -33,7 +33,7 @@ jobs:
 
     - name: run maven install test command
       working-directory: CaptureTheFlagServer/
-      run: mvn install --file /CaptureTheFlagServer/pom.xml
+      run: mvn install
     
     - name: Build Client Maven
       run: mvn -B package --file pom.xml
