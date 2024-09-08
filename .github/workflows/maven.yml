@@ -25,5 +25,15 @@ jobs:
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
-    - name: Build with Maven
+    - name: checkout Server project
+      uses: actions/checkout@v2
+      with:
+        repository: sephdoto/CaptureTheFlagServer
+        path: CaptureTheFlagServer
+
+    - name: run maven install test command
+      working-directory: CaptureTheFlagServer/
+      run: mvn -Dtest=TestMessageBuilder test
+    
+    - name: Build Client Maven
       run: mvn -B package --file pom.xml
