@@ -36,4 +36,5 @@ jobs:
       run: mvn install
     
     - name: Build Client Maven
+      working-directory: ${{ github.workspace }}
       run: mvn -B package --file pom.xml
